@@ -5,6 +5,7 @@
  */
 
 use App\Events\PusherTest;
+use App\PusherDam;
 use App\PusherNotificationsTest;
 
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
@@ -2425,8 +2426,13 @@ Route::get('pusher-test', function () {
 Route::post('pusher-test', function () {
     $message = PusherNotificationsTest::forceCreate(request(['body']));
     PusherTest::dispatch($message);
+//    event(new PusherTest($message));
 });
 
 Route::get('pusher-test-real-time-notif', function () {
     return view('pusher.pusher');
+});
+
+Route::get('/projects/{project}', function (PusherDam $pusherDam) {
+    $pusherDam->load('messages');
 });

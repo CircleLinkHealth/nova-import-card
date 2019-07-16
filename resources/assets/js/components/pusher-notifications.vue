@@ -1,11 +1,11 @@
 <template>
     <div>
         <ul>
-            <li v-for="test in tests" v-text="test">
+            <li v-for="message in messages" v-text="message">
 
             </li>
         </ul>
-        <input type="text" v-model="newTest" @blur="addTest">
+        <input type="text" v-model="newMessage" @blur="addMessage">
     </div>
 </template>
 
@@ -15,25 +15,25 @@
 
         data() {
             return {
-                tests: [],
-                newTest: '',
+                messages: [],
+                newMessage: '',
             }
         },
 
         methods: {
-            addTest() {
-                axios.post('/pusher-test', {body: this.newTest});
-                this.tests.push(this.newTest);
-                this.newTest = '';
+            addMessage() {
+                axios.post('/pusher-test', {body: this.newMessage});
+                this.messages.push(this.newMessage);
+                this.newMessage = '';
             }
         },
 
         created() {
-            axios.get('/pusher-test').then(response => (this.tests = response.data));
+            axios.get('/pusher-test').then(response => (this.messages = response.data));
 
-            window.Echo('pusher-test').listen('PusherTest', e => {
-                this.tests.push(e.message.body);
-            })
+            window.Echo.channel('pusher-test' + this.project.id).listen('PusherTest', ({message}) => {
+                this.messages.push(message.body);
+            });
         }
     }
 </script>
