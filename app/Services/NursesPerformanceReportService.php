@@ -82,7 +82,7 @@ class NursesPerformanceReportService
                     ]);
 
                     foreach ($nurses as $nurse) {
-                        $data[] = $this->getDataForNurse($nurse, $date, $aggregatedTime->totalCcmTime($nurse->id));
+                        $data[] = $this->getDataForNurse($nurse, $date, $aggregatedTime->totalSystemTime($nurse->id));
                     }
                 }
             );
@@ -143,15 +143,15 @@ class NursesPerformanceReportService
      *
      * @return Collection
      */
-    public function getDataForNurse(User $nurse, Carbon $date, int $totalCcmTime): Collection
+    public function getDataForNurse(User $nurse, Carbon $date, int $totalSystemTime): Collection
     {
         $patientsForMonth = $this->getUniquePatientsAssignedForNurseForMonth($nurse, $date);
 
         $data = [
             'nurse_id'        => $nurse->id,
             'nurse_full_name' => $nurse->getFullName(),
-            'systemTime'      => $totalCcmTime,
-            'actualHours'     => round((float) ($totalCcmTime / 3600), 1),
+            'systemTime'      => $totalSystemTime,
+            'actualHours'     => round((float) ($totalSystemTime / 3600), 1),
             'committedHours'  => $nurse->nurseInfo->isOnHoliday($date, $this->companyHolidays)
                 ? 0
                 : $nurse->nurseInfo->getHoursCommittedForCarbonDate($date),
@@ -465,22 +465,14 @@ class NursesPerformanceReportService
             )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
+            ->leftJoin('patient_info', 'users.id', '=', 'patient_info.user_id')
             ->whereRaw(
-                "(
-(
-DATE(calls.scheduled_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}')
-AND
-DATE(calls.scheduled_date)<=DATE('{$date->toDateString()}')
-) 
-OR (
-DATE(calls.called_date) >= DATE('{$date->copy()->startOfMonth()->toDateString()}') 
-AND
-DATE(calls.called_date)<=DATE('{$date->toDateString()}')
-)
-)
+                "
+calls.status = 'scheduled'
 AND (calls.type IS NULL OR calls.type='call') 
-AND calls.outbound_cpm_id = {$nurse->id} AND
-DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth()->toDateString()}')"
+AND calls.outbound_cpm_id = {$nurse->id}
+AND patient_info.ccm_status = 'enrolled'
+AND DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth()->toDateString()}')"
             )
             ->get();
     }

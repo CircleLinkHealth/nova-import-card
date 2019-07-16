@@ -186,6 +186,8 @@
       "@php artisan package:discover --ansi"
     ],
     "post-update-cmd": [
+      "php artisan nova:publish",
+      "php artisan view:clear",
       "Illuminate\\Foundation\\ComposerScripts::postUpdate"
     ],
     "test-db-mysql": [
