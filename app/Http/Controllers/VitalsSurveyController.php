@@ -16,7 +16,7 @@ class VitalsSurveyController extends Controller
         $this->service = $service;
     }
 
-    public function showWelcome($practiceId, $patientId)
+    public function showWelcome($patientId)
     {
         $patient = User::findOrFail($patientId);
 
@@ -25,7 +25,7 @@ class VitalsSurveyController extends Controller
         ]);
     }
 
-    public function showNotAuthorized($practiceId, $patientId)
+    public function showNotAuthorized($patientId)
     {
         $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
 
@@ -44,16 +44,15 @@ class VitalsSurveyController extends Controller
      * Patient cannot access this route.
      * User must have `vitals-survey-complete` permission.
      *
-     * @param $practiceId
      * @param $patientId
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getSurvey($practiceId, $patientId)
+    public function getCurrentSurvey($patientId)
     {
         //no need to have this check here
         if ( ! Auth::check()) {
-            return redirect()->route('survey.vitals.welcome', ['practiceId' => $practiceId, 'patientId' => $patientId]);
+            return redirect()->route('survey.vitals.welcome', ['patientId' => $patientId]);
         }
 
 //        if (!Auth::user()->hasPermissionForSite('vitals-survey-complete', $practiceId)) {

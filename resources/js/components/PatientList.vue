@@ -1,6 +1,14 @@
 <template>
     <div>
         <v-server-table class="table" :url="getUrl()" :columns="columns" :options="options" ref="table">
+            <template slot="hra_status" slot-scope="props">
+                <a v-if="props.row.hra_status" :href="getHraUrl(props.row)">{{getStatusTitle(props.row.hra_status)}}</a>
+                <span v-else>{{getStatusTitle(props.row.hra_status)}}</span>
+            </template>
+            <template slot="vitals_status" slot-scope="props">
+                <a v-if="props.row.vitals_status" :href="getVitalsUrl(props.row)">{{getStatusTitle(props.row.vitals_status)}}</a>
+                <span v-else>{{getStatusTitle(props.row.vitals_status)}}</span>
+            </template>
             <template slot="eligibility" slot-scope="props">
                 <!-- todo -->
                 <span>Eligible</span>
@@ -58,16 +66,16 @@
                     filterByColumn: true,
                     listColumns: {
                         hra_status: [
-                            {id: 'null', text: 'N/A'},
-                            {id: 'pending', text: 'Not Started'},
-                            {id: 'in_progress', text: 'In Progress'},
-                            {id: 'completed', text: 'Completed'},
+                            {id: 'null', text: this.getStatusTitle('null')},
+                            {id: 'pending', text: this.getStatusTitle('pending')},
+                            {id: 'in_progress', text: this.getStatusTitle('in_progress')},
+                            {id: 'completed', text: this.getStatusTitle('completed')},
                         ],
                         vitals_status: [
-                            {id: 'null', text: 'N/A'},
-                            {id: 'pending', text: 'Not Started'},
-                            {id: 'in_progress', text: 'In Progress'},
-                            {id: 'completed', text: 'Completed'},
+                            {id: 'null', text: this.getStatusTitle('null')},
+                            {id: 'pending', text: this.getStatusTitle('pending')},
+                            {id: 'in_progress', text: this.getStatusTitle('in_progress')},
+                            {id: 'completed', text: this.getStatusTitle('completed')},
                         ]
                     },
                     //todo: eligibility should have a dropdown for filters
@@ -85,6 +93,27 @@
         methods: {
             getUrl() {
                 return `/manage-patients/list`
+            },
+
+            getHraUrl(patient) {
+                return `survey/hra/${patient.patient_id}`;
+            },
+
+            getVitalsUrl(patient) {
+                return `survey/vitals/${patient.patient_id}`;
+            },
+
+            getStatusTitle(id) {
+                switch (id) {
+                    case "pending":
+                        return "Not Started";
+                    case "in_progress":
+                        return "In Progress";
+                    case "completed":
+                        return "Completed";
+                    default:
+                        return 'N/A';
+                }
             },
 
             isLastRow(props) {

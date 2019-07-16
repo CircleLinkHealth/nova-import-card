@@ -1,7 +1,20 @@
 <template>
     <div class="container main-container">
+
+        <div class="top-left-fixed">
+            <a :href="getPatientsListUrl()">
+                <font-awesome-icon icon="chevron-circle-left" size="3x"/>
+            </a>
+        </div>
+
+        <div class="top-right-fixed">
+            <mdb-btn :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
+                {{readOnlyMode ? 'Read Only Mode' : 'Edit Mode'}}
+            </mdb-btn>
+        </div>
+
         <!--Survey welcome note-->
-        <div class="survey-container" :class="stage === 'complete' ? 'max' : ''">
+        <div class="survey-container" :class="{ max: stage === 'complete', 'read-only': readOnlyMode }">
             <template v-if="stage === 'welcome'">
                 <div class="practice-title">
                     <label id="title">
@@ -57,7 +70,7 @@
             <template v-if="stage === 'survey'">
                 <div class="questions-box question"
                      :id="question.id"
-                     :class="currentQuestionIndex !== index ? (question.conditions && question.conditions.length > 0 ? 'non-visible' : 'watermark') : 'active'"
+                     :class="!readOnlyMode && currentQuestionIndex !== index ? (question.conditions && question.conditions.length > 0 ? 'non-visible' : 'watermark') : 'active'"
                      v-show="index >= currentQuestionIndex"
                      v-for="(question, index) in questions">
                     <div class="questions-body">
@@ -82,6 +95,7 @@
                                 :is-active="currentQuestionIndex === index"
                                 :on-done-func="postAnswerAndGoToNext"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'text'">
                             </question-type-text>
 
@@ -93,6 +107,7 @@
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
@@ -104,10 +119,12 @@
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'multi_select'">
                             </question-type-muti-select>
 
                             <question-type-range
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'range'">
                             </question-type-range>
 
@@ -119,6 +136,7 @@
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'number'">
                             </question-type-number>
 
@@ -131,10 +149,12 @@
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'radio'">
                             </question-type-radio>
 
                             <question-type-date
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'date'">
                             </question-type-date>
                         </div>
@@ -193,7 +213,7 @@
                     </div>
                 </div>
                 <!--scroll buttons-->
-                <div class="col-5 col-sm-5 col-md-4 col-lg-3 no-padding">
+                <div class="col-5 col-sm-5 col-md-4 col-lg-3 no-padding" v-show="!readOnlyMode">
                     <div class="row scroll-buttons">
                         <div class="col text-right">
 
@@ -231,9 +251,14 @@
     import callAssistance from "./callAssistance";
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
 
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faChevronCircleLeft} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+
+    library.add(faChevronCircleLeft);
 
     export default {
-        props: ['surveyData'],
+        props: ['surveyData', 'adminMode'],
 
         components: {
             'mdb-btn': mdbBtn,
@@ -246,7 +271,8 @@
             'question-type-date': questionTypeDate,
             'call-assistance': callAssistance,
 
-            'question-type-muti-select': questionTypeMultiSelect
+            'question-type-muti-select': questionTypeMultiSelect,
+            'font-awesome-icon': FontAwesomeIcon
         },
 
         data() {
@@ -275,7 +301,8 @@
                 practiceName: null,
                 doctorsLastName: null,
                 totalQuestions: 0,
-                totalQuestionWithSubQuestions: 0
+                totalQuestionWithSubQuestions: 0,
+                readOnlyMode: false,
             }
         },
 
@@ -312,6 +339,11 @@
         },
 
         methods: {
+
+            getPatientsListUrl() {
+                return '/manage-patients';
+            },
+
             showCallHelp() {
                 this.callAssistance = true;
                 this.showPhoneButton = false;
@@ -448,7 +480,7 @@
                 this.error = null;
                 this.waiting = true;
 
-                axios.post(`/survey/hra/${this.practiceId}/${this.userId}/save-answer`, {
+                axios.post(`/survey/hra/${this.userId}/save-answer`, {
                     patient_id: this.userId,
                     practice_id: this.practiceId,
                     survey_instance_id: this.surveyInstanceId,
@@ -670,8 +702,21 @@
 
             getQuestionsOfOrder(order) {
                 return this.questions.filter(q => q.pivot.order === order);
-            }
+            },
 
+            toggleReadOnlyMode() {
+                if (this.readOnlyMode) {
+                    const currentQuestion = this.questions[this.currentQuestionIndex];
+                    $('.survey-container').animate({
+                        scrollTop: $(`#${currentQuestion.id}`).offset().top
+                    }, 519, 'swing', () => {
+                        this.readOnlyMode = !this.readOnlyMode;
+                    });
+                }
+                else {
+                    this.readOnlyMode = !this.readOnlyMode;
+                }
+            }
         },
         mounted() {
         },
@@ -724,6 +769,11 @@
 
             if (this.surveyData.answers && this.surveyData.answers.length === this.questions.length) {
                 this.stage = "complete";
+            }
+
+            if (this.adminMode) {
+                this.stage = "survey";
+                this.readOnlyMode = true;
             }
         },
 

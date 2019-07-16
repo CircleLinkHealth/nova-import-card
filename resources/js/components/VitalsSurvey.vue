@@ -1,7 +1,20 @@
 <template>
     <div class="container main-container">
+
+        <div class="top-left-fixed">
+            <a :href="getPatientsListUrl()">
+                <font-awesome-icon icon="chevron-circle-left" size="3x"/>
+            </a>
+        </div>
+
+        <div class="top-right-fixed">
+            <mdb-btn :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
+                {{readOnlyMode ? 'Read Only Mode' : 'Edit Mode'}}
+            </mdb-btn>
+        </div>
+
         <!--Survey welcome note-->
-        <div class="survey-container" :class="stage === 'complete' ? 'max' : ''">
+        <div class="survey-container" :class="{ max: stage === 'complete', 'read-only': readOnlyMode }">
             <template v-if="stage === 'welcome'">
                 <div class="card-body">
                     <div class="welcome-icon-container">
@@ -36,7 +49,7 @@
             <template v-else-if="stage === 'survey'">
                 <div class="questions-box question"
                      :id="question.id"
-                     :class="currentQuestionIndex !== index ? 'watermark' : 'active'"
+                     :class="!readOnlyMode && currentQuestionIndex !== index ? 'watermark' : 'active'"
                      v-show="index >= currentQuestionIndex"
                      v-for="(question, index) in questions">
 
@@ -248,9 +261,14 @@
     import questionTypeRadio from "./questionTypeRadio";
     import questionTypeDate from "./questionTypeDate";
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faChevronCircleLeft} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+
+    library.add(faChevronCircleLeft);
 
     export default {
-        props: ['data'],
+        props: ['data', 'adminMode'],
 
         components: {
             'mdb-btn': mdbBtn,
@@ -261,7 +279,8 @@
             'question-type-number': questionTypeNumber,
             'question-type-radio': questionTypeRadio,
             'question-type-date': questionTypeDate,
-            'question-type-muti-select': questionTypeMultiSelect
+            'question-type-muti-select': questionTypeMultiSelect,
+            'font-awesome-icon': FontAwesomeIcon
         },
 
         data() {
@@ -280,6 +299,7 @@
                 practiceId: -1,
                 patientName: '',
                 surveyInstanceId: -1,
+                readOnlyMode: false,
             }
         },
         computed: {
@@ -296,6 +316,10 @@
             }
         },
         methods: {
+
+            getPatientsListUrl() {
+                return '/manage-patients';
+            },
 
             startSurvey() {
                 this.stage = "survey";
@@ -359,7 +383,7 @@
                 this.waiting = true;
 
                 return axios
-                    .post(`/survey/vitals/${this.practiceId}/${this.patientId}/save-answer`, {
+                    .post(`/survey/vitals/${this.patientId}/save-answer`, {
                         patient_id: this.patientId,
                         practice_id: this.practiceId,
                         survey_instance_id: this.surveyInstanceId,
@@ -457,6 +481,20 @@
             hasAnsweredAllOfOrder(order) {
                 const questions = this.questions.filter(q => q.pivot.order === order);
                 return questions.every(q => q.answer !== undefined);
+            },
+
+            toggleReadOnlyMode() {
+                if (this.readOnlyMode) {
+                    const currentQuestion = this.questions[this.currentQuestionIndex];
+                    $('.survey-container').animate({
+                        scrollTop: $(`#${currentQuestion.id}`).offset().top
+                    }, 519, 'swing', () => {
+                        this.readOnlyMode = !this.readOnlyMode;
+                    });
+                }
+                else {
+                    this.readOnlyMode = !this.readOnlyMode;
+                }
             }
 
         },
@@ -498,6 +536,11 @@
 
             if (this.data.answers && this.data.answers.length === this.questions.length) {
                 this.stage = "complete";
+            }
+
+            if (this.adminMode) {
+                this.stage = "survey";
+                this.readOnlyMode = true;
             }
         }
     }

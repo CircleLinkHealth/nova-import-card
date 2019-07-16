@@ -20,9 +20,6 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')
      ->name('home');
 
-Route::get('enter-patient-form', 'InvitationLinksController@enterPatientForm')
-     ->name('enter.patient.form');
-
 Route::group([
     'prefix' => 'auth',
 ], function () {
@@ -77,13 +74,18 @@ Route::group([
         'prefix' => 'hra',
     ], function () {
 
-        Route::get('{practiceId}/{patientId}/{surveyId}', [
+        Route::get('{patientId}', [
+            'uses' => 'SurveyController@getCurrentSurvey',
+            'as'   => 'survey.hra',
+        ]);
+
+        Route::get('{patientId}/{surveyId}', [
             'uses' => 'SurveyController@getSurvey',
             'as'   => 'survey.hra',
         ]);
 
         //why are we passing practice id here?
-        Route::post('{practiceId}/{patientId}/save-answer', [
+        Route::post('{patientId}/save-answer', [
             'uses' => 'SurveyController@storeAnswer',
             'as'   => 'survey.hra.store.answer',
         ]);
@@ -94,22 +96,22 @@ Route::group([
         'prefix' => 'vitals',
     ], function () {
 
-        Route::get('{practiceId}/{patientId}/welcome', [
+        Route::get('{patientId}/welcome', [
             'uses' => 'VitalsSurveyController@showWelcome',
             'as'   => 'survey.vitals.welcome',
         ]);
 
-        Route::get('{practiceId}/{patientId}/not-auth', [
+        Route::get('{patientId}/not-auth', [
             'uses' => 'VitalsSurveyController@showNotAuthorized',
             'as'   => 'survey.vitals.not.authorized',
         ]);
 
-        Route::get('{practiceId}/{patientId}', [
-            'uses' => 'VitalsSurveyController@getSurvey',
+        Route::get('{patientId}', [
+            'uses' => 'VitalsSurveyController@getCurrentSurvey',
             'as'   => 'survey.vitals',
         ]);
 
-        Route::post('{practiceId}/{patientId}/save-answer', [
+        Route::post('{patientId}/save-answer', [
             'uses' => 'VitalsSurveyController@storeAnswer',
             'as'   => 'survey.vitals.store.answer',
         ]);

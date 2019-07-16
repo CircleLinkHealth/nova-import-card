@@ -59,11 +59,11 @@
                                class="text-field"
                                v-model="subPart.value"
                                :placeholder="subPart.placeholder"
-                               :disabled="!isActive">
+                               :disabled="readOnly || !isActive">
                     </div>
 
                     <!--remove input fields button-->
-                    <div v-if="subParts.length > 1"
+                    <div v-if="!readOnly && subParts.length > 1"
                          class="col-md-12"
                          v-for="extraFieldButtonName in extraFieldButtonNames">
                         <div @click="removeInputFields(index)"
@@ -80,7 +80,7 @@
                 <br/>
 
                 <!--add input fields button-->
-                <div class="row no-gutters" v-if="canAddInputFields">
+                <div class="row no-gutters" v-if="!readOnly && canAddInputFields">
                     <div v-for="extraFieldButtonName in extraFieldButtonNames"
                          class="col-md-12">
                     <span class="button-text-only"
@@ -99,7 +99,7 @@
 
         <!--next button-->
         <div :class="isLastQuestion ? 'text-center' : 'text-left'">
-            <mdbBtn v-show="isActive"
+            <mdbBtn v-show="!readOnly && isActive"
                     color="primary"
                     class="next-btn"
                     name="number"
@@ -128,7 +128,7 @@
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
         components: {mdbBtn, FontAwesomeIcon},
 
 

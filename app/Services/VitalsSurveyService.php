@@ -9,10 +9,7 @@ class VitalsSurveyService
 {
     public function getSurveyData($patientId)
     {
-        $surveyId = Survey::where('name', '=', Survey::VITALS)->pluck('id')->first();
-
-        return SurveyService::getSurveyData($patientId, $surveyId);
-
+        return SurveyService::getCurrentSurveyData($patientId, Survey::VITALS);
     }
 
     public function updateOrCreateAnswer(StoreVitalsAnswer $request)

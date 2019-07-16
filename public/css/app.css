@@ -11501,6 +11501,10 @@ body,
   height: calc(100% - 56px);
 }
 
+.survey-container.read-only {
+  overflow-y: auto;
+}
+
 .survey-container.max {
   height: 100%;
   border: 1px solid #808080;
@@ -11981,5 +11985,17 @@ a.navbar-title {
 
 a.navbar-title:hover {
   color: #fafafa;
+}
+
+.top-left-fixed {
+  position: fixed;
+  top: 15px;
+  left: 30px;
+}
+
+.top-right-fixed {
+  position: fixed;
+  top: 15px;
+  right: 30px;
 }
 
