@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\InvalidArgumentException;
 use App\Http\Requests\CreateLegacyBhiConsentDecision;
 use App\Note;
+use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Support\Facades\Cache;
@@ -59,7 +60,7 @@ class LegacyBhiConsentController extends Controller
         $now      = Carbon::now();
         $tomorrow = $now->addDay()->copy()->startOfDay();
 
-        $nextScheduledCallDate = auth()->user()->patientNextScheduledCallDate($patientId);
+        $nextScheduledCallDate = SchedulerService::getNextScheduledCall($patientId, false)->scheduled_date;
         $key                   = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
 
         $seconds = null !== $nextScheduledCallDate
