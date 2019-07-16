@@ -9,6 +9,8 @@ import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "./store";
 import {ClientTable} from 'vue-tables-2'
+import EventBus from './admin/time-tracker/comps/event-bus'
+import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
 
 Vue.use(ClientTable, {}, false)
 
@@ -17,8 +19,7 @@ if (document) {
     const elem = document.querySelector('meta[name="base-url"]')
     if (elem) {
         axios.defaults.baseURL = elem.getAttribute('content');
-    }
-    else {
+    } else {
         console.error('base url not found.')
     }
 }
@@ -78,9 +79,7 @@ const CcdUploader = () => import(/* webpackChunkName: "chunk-ccd-uploader" */ '.
 const CcdViewer = () => import(/* webpackChunkName: "chunk-ccd-viewer" */ './components/importer/ccd-viewer');
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
 const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../Modules/NurseInvoices/Resources/assets/js/components/dispute-invoice')
-
-import EventBus from './admin/time-tracker/comps/event-bus'
-import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
+const PusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-notifications')
 
 Vue.component('billing-report', BillingComponent);
 Vue.component('component-proxy', ComponentProxy);
@@ -127,6 +126,7 @@ Vue.component('ccd-upload', CcdUploader);
 Vue.component('ccd-viewer', CcdViewer);
 Vue.component('call-mgmt-app-v2', CallMgmtAppV2);
 Vue.component('dispute-nurse-invoice', DisputeNurseInvoice);
+Vue.component('pusher-notifications', PusherNotifications);
 
 const App = new Vue({
     el: '#app',

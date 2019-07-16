@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Events\PusherTest;
+use App\PusherNotificationsTest;
 
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
@@ -2428,5 +2428,13 @@ class Message
 }
 
 Route::get('pusher-test', function () {
-    PusherTest::dispatch(new Message(1));
+//    PusherNotificationsTest::dispatch(new Message(1));
+    return PusherNotificationsTest::latest()->pluck('body');
+});
+Route::post('pusher-test', function () {
+    PusherNotificationsTest::forceCreate(request(['body']));
+});
+
+Route::get('pusher-test-real-time-notif', function () {
+    return view('pusher.pusher');
 });

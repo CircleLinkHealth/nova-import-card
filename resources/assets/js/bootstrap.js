@@ -34,7 +34,7 @@ window.Echo = new Echo({
     encrypted: true
 });
 
-window.Echo.channel('pusher-test').listen('PusherTest', e => {
+window.Echo.channel('pusher-test').listen('PusherNotificationsTest', e => {
     console.log('Hey man new notification you have '+ e.message.id +'');
     console.log(e);
 });
