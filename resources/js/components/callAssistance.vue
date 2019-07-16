@@ -3,17 +3,20 @@
     <div class="call-assistance-modal">
         <div class="content">
             <div class="header">
-                <button type="button"
-                        id="close-call-assistance"
-                        class="btn btn-sm"
-                        @click="handleClick">
-                    <i class="fas fa-angle-left"></i>
-                </button>
+                <mdb-btn @click="handleClick" class="btn-transparent">
+                    <font-awesome-icon icon="angle-left" size="3x"></font-awesome-icon>
+                </mdb-btn>
                 <span class="title">Call</span>
             </div>
             <br>
             <div class="body">
                 Request Call Assistance
+                <br/>
+                {{phoneNumber}}
+                <mdb-btn size="sm">
+                    <font-awesome-icon icon="phone-alt"></font-awesome-icon>
+                </mdb-btn>
+
             </div>
         </div>
     </div>
@@ -21,16 +24,24 @@
 </template>
 
 <script>
+
+    import {mdbBtn} from 'mdbvue';
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faAngleLeft, faPhoneAlt} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+
+    library.add(faAngleLeft, faPhoneAlt);
+
     export default {
         name: "callAssistance",
+        components: {FontAwesomeIcon, mdbBtn},
+        props: ['phoneNumber'],
         data() {
-            return {
-
-            }
+            return {}
         },
 
         methods: {
-            handleClick(){
+            handleClick() {
                 this.$emit('closeCallAssistanceModal')
             }
         },
@@ -57,12 +68,8 @@
         background-color: #50b2e2;
     }
 
-    .btn-sm {
-        padding-top: 12px;
-    }
-
     .title {
-        font-family: Poppins;
+        font-family: Poppins, serif;
         letter-spacing: 1px;
         color: #ffffff;
     }
@@ -70,7 +77,7 @@
     .body {
         width: 260px;
         height: 46px;
-        font-family: Poppins;
+        font-family: Poppins, serif;
         font-size: 14px;
         letter-spacing: 0.8px;
         padding-left: 15px;
@@ -83,8 +90,12 @@
     }
 
     .fa-angle-left {
-        width: 20px;
-        height: 30px;
         color: #ffffff;
+    }
+
+    .btn-transparent {
+        background-color: transparent !important;
+        padding: 0 10px;
+        box-shadow: none;
     }
 </style>

@@ -168,7 +168,11 @@
             </template>
         </div>
         <div class="call-assistance">
-            <call-assistance v-if="callAssistance" @closeCallAssistanceModal="hideCallHelp"></call-assistance>
+            <call-assistance v-if="practiceOutgoingPhoneNumber"
+                             v-show="callAssistance"
+                             :phone-number="practiceOutgoingPhoneNumber"
+                             @closeCallAssistanceModal="toggleCallAssistance">
+            </call-assistance>
         </div>
 
 
@@ -195,7 +199,14 @@
         <div class="bottom-navbar container" :class="stage === 'complete' ? 'hidden' : ''">
             <!-- justify-content-end -->
             <div class="row">
-                <div class="col-5 offset-2 col-sm-7 offset-sm-0 col-md-8 offset-md-0 col-lg-6 offset-lg-3 no-padding">
+                <div class="col-1 col-sm-1 col-md-1 col-lg-1 text-center no-padding">
+                    <div class="row scroll-buttons" v-show="!readOnlyMode">
+                        <mdb-btn color="primary" @click="toggleCallAssistance" class="call-btn-round">
+                            <font-awesome-icon :icon="callAssistance ? 'times' : 'phone-alt'" size="2x"></font-awesome-icon>
+                        </mdb-btn>
+                    </div>
+                </div>
+                <div class="col-5 offset-1 col-sm-1 offset-sm-0 col-md-1 offset-md-0 col-lg-6 offset-lg-2 no-padding">
                     <div class="container">
                         <div class="row progress-container">
                             <div class="col-12 col-sm-12 col-md-6 text-center">
@@ -250,12 +261,13 @@
     import questionTypeDate from "./questionTypeDate";
     import callAssistance from "./callAssistance";
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
+    import $ from "jquery";
 
     import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faChevronCircleLeft} from '@fortawesome/free-solid-svg-icons';
+    import {faChevronCircleLeft, faPhoneAlt, faTimes} from '@fortawesome/free-solid-svg-icons';
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
-    library.add(faChevronCircleLeft);
+    library.add(faChevronCircleLeft, faPhoneAlt, faTimes);
 
     export default {
         props: ['surveyData', 'adminMode'],
@@ -278,7 +290,6 @@
         data() {
             return {
                 stage: "welcome",
-                showPhoneButton: true,
                 questionsStage: false,
                 welcomeStage: true,
                 callAssistance: false,
@@ -299,6 +310,7 @@
                 waiting: false,
                 practiceId: null,
                 practiceName: null,
+                practiceOutgoingPhoneNumber: null,
                 doctorsLastName: null,
                 totalQuestions: 0,
                 totalQuestionWithSubQuestions: 0,
@@ -342,16 +354,6 @@
 
             getPatientsListUrl() {
                 return '/manage-patients';
-            },
-
-            showCallHelp() {
-                this.callAssistance = true;
-                this.showPhoneButton = false;
-            },
-
-            hideCallHelp() {
-                this.callAssistance = false;
-                this.showPhoneButton = true;
             },
 
             showQuestions() {
@@ -716,6 +718,15 @@
                 else {
                     this.readOnlyMode = !this.readOnlyMode;
                 }
+            },
+
+            toggleCallAssistance() {
+                this.callAssistance = !this.callAssistance;
+                if (this.callAssistance) {
+                    const btnOffset = $('.call-btn-round').offset();
+                    const modalOffset = $('.call-assistance-modal').height() + 10;
+                    $('.call-assistance').offset({ top: btnOffset.top - modalOffset, left: btnOffset.left });
+                }
             }
         },
         mounted() {
@@ -724,6 +735,8 @@
 
             this.practiceId = this.surveyData.primary_practice.id;
             this.practiceName = this.surveyData.primary_practice.display_name;
+            this.practiceOutgoingPhoneNumber= this.surveyData.primary_practice.outgoing_phone_number;
+
             this.doctorsLastName = this.surveyData.billing_provider[0].user.last_name;
 
             this.surveyInstanceId = this.surveyData.survey_instances[0].id
@@ -782,4 +795,19 @@
 
 <style lang="scss" scoped>
 
+    .call-assistance {
+        position: fixed;
+    }
+
+    .call-btn-round {
+        margin-left: 40px;
+        margin-right: 0 !important;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+    }
+
+    .fa-phone-alt, .fa-times {
+        color: #ffffff;
+    }
 </style>
