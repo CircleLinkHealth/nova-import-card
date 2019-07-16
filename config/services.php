@@ -15,13 +15,13 @@ return [
     */
 
     'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
+        'domain'   => env('MAILGUN_DOMAIN'),
+        'secret'   => env('MAILGUN_SECRET'),
         'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
     ],
 
     'ses' => [
-        'key' => env('SES_KEY'),
+        'key'    => env('SES_KEY'),
         'secret' => env('SES_SECRET'),
         'region' => env('SES_REGION', 'us-east-1'),
     ],
@@ -31,22 +31,22 @@ return [
     ],
 
     'stripe' => [
-        'model' => CircleLinkHealth\Customer\Entities\User::class,
-        'key' => env('STRIPE_KEY'),
-        'secret' => env('STRIPE_SECRET'),
+        'model'   => CircleLinkHealth\Customer\Entities\User::class,
+        'key'     => env('STRIPE_KEY'),
+        'secret'  => env('STRIPE_SECRET'),
         'webhook' => [
-            'secret' => env('STRIPE_WEBHOOK_SECRET'),
+            'secret'    => env('STRIPE_WEBHOOK_SECRET'),
             'tolerance' => env('STRIPE_WEBHOOK_TOLERANCE', 300),
         ],
     ],
 
     'twilio' => [
-        'enabled'          => env('TWILIO_ENABLED', false),
-        'sid'              => env('TWILIO_SID', 'somerandomstring'),
-        'token'            => env('TWILIO_TOKEN', 'somerandomstring'),
-        'from'             => env('TWILIO_FROM', 'somerandomstring'),
-        'twiml-app-sid'    => env('TWIML_APP_SID', 'somerandomstring'),
-        'cpm-caller-url'   => env('CPM_CALLER_URL', ''),
+        'enabled'        => env('TWILIO_ENABLED', false),
+        'account_sid'    => env('TWILIO_SID', 'somerandomstring'),
+        'auth_token'     => env('TWILIO_TOKEN', 'somerandomstring'),
+        'from'           => env('TWILIO_FROM', 'somerandomstring'),
+        'twiml_app_sid'  => env('TWIML_APP_SID', 'somerandomstring'),
+        'cpm-caller-url' => env('CPM_CALLER_URL', ''),
     ],
 
 ];

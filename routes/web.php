@@ -27,9 +27,6 @@ Route::group([
     'prefix' => 'auth',
 ], function () {
 
-    Route::post('send-invitation-link', 'InvitationLinksController@createSendInvitationUrl')
-         ->name('auth.send.signed.url');
-
     //this is a signed route
     Route::get('login-survey/{user}/{survey}', 'Auth\PatientLoginController@showLoginForm')
          ->name('auth.login.signed')
@@ -53,6 +50,21 @@ Route::group([
     Route::get('list', [
         'uses' => 'PatientController@getPatientList',
         'as'   => 'patient.list.ajax',
+    ]);
+
+    Route::get('{userId}/contact-info', [
+        'uses' => 'PatientController@getPatientContactInfo',
+        'as'   => 'patient.contact.info',
+    ]);
+
+    Route::post('{userId}/send-link/hra', [
+        'uses' => 'InvitationLinksController@sendHraLink',
+        'as'   => 'patient.send.link.hra',
+    ]);
+
+    Route::post('{userId}/send-link/vitals', [
+        'uses' => 'InvitationLinksController@sendVitalsLink',
+        'as'   => 'patient.send.link.vitals',
     ]);
 });
 
@@ -117,4 +129,4 @@ Route::group([
 });
 
 Route::post('twilio/sms/status', 'TwilioController@smsStatusCallback')
-    ->name('twilio.sms.status');
+     ->name('twilio.sms.status');

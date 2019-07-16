@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Filters\PatientListFilters;
 use App\PatientAwvSurveyInstanceStatusView;
+use App\User;
 use Illuminate\Http\Request;
 
 class PatientController extends Controller
@@ -53,5 +54,16 @@ class PatientController extends Controller
             'data'  => $results,
             'count' => $count,
         ];
+    }
+
+    public function getPatientContactInfo(Request $request, $userId)
+    {
+        $user = User::with('phoneNumbers')->findOrFail($userId);
+
+        return response()->json([
+            'user_id'       => $userId,
+            'phone_numbers' => $user->phoneNumbers,
+            'email'         => $user->email,
+        ]);
     }
 }

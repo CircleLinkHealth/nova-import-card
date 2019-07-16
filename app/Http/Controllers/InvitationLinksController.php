@@ -2,93 +2,129 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SendSurveyLinkRequest;
+use App\NotifiableUser;
+use App\Notifications\SurveyInvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\Services\SurveyService;
 use App\Services\TwilioClientService;
 use App\Survey;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Twilio\Exceptions\TwilioException;
 
 class InvitationLinksController extends Controller
 {
     private $service;
     private $surveyService;
+    private $twilioService;
 
-    public function __construct(SurveyInvitationLinksService $service, SurveyService $surveyService)
-    {
+    public function __construct(
+        SurveyInvitationLinksService $service,
+        SurveyService $surveyService,
+        TwilioClientService $twilioService
+    ) {
         $this->service       = $service;
         $this->surveyService = $surveyService;
+        $this->twilioService = $twilioService;
     }
 
-    public function enterPatientForm()
+    /**
+     * Send HRA survey link to patient
+     *
+     * @param SendSurveyLinkRequest $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendHraLink(SendSurveyLinkRequest $request)
     {
-        return view('invitationLink.enterPatientForm');
-    }
-
-    public function createSendInvitationUrl(Request $request, TwilioClientService $twilioClientService)
-    {
-        //@todo:should validate using more conditions
-        $validator = Validator::make($request->all(), [
-            'id' => 'required|exists:users,id',
-        ]);
-
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
-                ->withInput();
+        try {
+            $sent = $this->generateUrlAndSend($request, Survey::HRA);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
         }
 
-        $userId = $request->get('id');
-        $user   = User
+        if ( ! $sent) {
+            return response()->json(['error' => 'Could not send survey link'], 400);
+        }
+
+        return response()->json(['message' => 'success']);
+    }
+
+    /**
+     * Send Vitals link to practice staff
+     *
+     * @param SendSurveyLinkRequest $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendVitalsLink(SendSurveyLinkRequest $request)
+    {
+        try {
+            $sent = $this->generateUrlAndSend($request, Survey::VITALS);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+
+        if ( ! $sent) {
+            return response()->json(['error' => 'Could not send survey link'], 400);
+        }
+
+        return response()->json(['message' => 'success']);
+    }
+
+    /**
+     * @param SendSurveyLinkRequest $request
+     * @param string $surveyName
+     *
+     * @return string
+     * @throws \Exception
+     */
+    private function generateUrlAndSend(
+        SendSurveyLinkRequest $request,
+        string $surveyName
+    ) {
+        $target_user_id = $request->get('target_patient_id');
+        $channel        = $request->get('channel');
+        $channelValue   = $request->get('channel_value');
+
+        $user = User
             ::with([
                 'phoneNumbers',
                 'patientInfo',
                 'primaryPractice',
                 'billingProvider',
-                'surveyInstances' => function ($query) {
-                    $query->ofSurvey(Survey::HRA)->current();
+                'surveyInstances' => function ($query) use ($surveyName) {
+                    $query->ofSurvey($surveyName)->current();
                 },
             ])
-            ->where('id', '=', $userId)
+            ->where('id', '=', $target_user_id)
             ->firstOrFail();
 
-        try {
-            $url = $this->service->createAndSaveUrl($user, Carbon::now()->year);
-        } catch (\Exception $e) {
-            return back()
-                ->withErrors(['message' => $e->getMessage()])
-                ->withInput();
+        $url = $this->service->createAndSaveUrl($user, $surveyName, Carbon::now()->year, false);
+
+        /** @var User $targetNotifiable */
+        $targetNotifiable = null;
+
+        if ($channel === 'sms') {
+            $targetNotifiable = User
+                ::whereHas('phoneNumbers', function ($q) use ($channelValue) {
+                    $q->where('number', '=', $channelValue);
+                })
+                ->first();
+        } else {
+            $targetNotifiable = User::whereEmail($channelValue)->first();
         }
 
-
-        $resp = $this->sendSms($twilioClientService, $user, $url);
-
-        if ( ! $resp) {
-            return back()
-                ->withErrors(['message' => 'Could not send SMS'])
-                ->withInput();
+        if ( ! $targetNotifiable) {
+            throw new \Exception("Could not find user[$channelValue] in the system.");
         }
 
-        return back()->with(['message' => 'success']);
-    }
-
-    public function sendSms(
-        TwilioClientService $twilioService,
-        User $user,
-        string $url
-    ) {
-        $phoneNumber = $user->phoneNumbers->first();
-        $text        = $this->service->getSMSText($user, $url);
-
-        try {
-            $messageId = $twilioService->sendSMS($phoneNumber, $text);
-            //todo: save message id in db
-        } catch (TwilioException $e) {
-            return false;
-        }
+        (new NotifiableUser($targetNotifiable, $channel === 'mail'
+            ? $channelValue
+            : null, $channel === 'sms'
+            ? $channelValue
+            : null))
+            ->notify(new SurveyInvitationLink($url, $surveyName, $channel));
 
         return true;
     }

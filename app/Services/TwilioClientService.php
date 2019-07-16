@@ -41,9 +41,10 @@ class TwilioClientService
      */
     public function __construct()
     {
-        $this->client     = new Client(config('services.twilio.sid'), config('services.twilio.token'));
-        $this->capability = new ClientToken(config('services.twilio.sid'), config('services.twilio.token'));
-        $this->capability->allowClientOutgoing(config('services.twilio.twiml-app-sid'));
+        $this->client     = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
+        $this->capability = new ClientToken(config('services.twilio.account_sid'),
+            config('services.twilio.auth_token'));
+        $this->capability->allowClientOutgoing(config('services.twilio.twiml_app_sid'));
         $this->outgoingNumber = config('services.twilio.from');
     }
 
