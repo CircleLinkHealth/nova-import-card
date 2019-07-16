@@ -37,6 +37,8 @@ fi
 # laravel needs these to run, and git does not clone empty folders
 mkdir -p $RELEASE/storage/framework/{framework,sessions,views,cache}
 
+composer dump-autoload —classmap-authoritative
+
 # Run migrations
 php artisan migrate --force
 
