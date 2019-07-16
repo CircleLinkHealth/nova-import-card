@@ -232,7 +232,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
      */
     public function isOnHoliday(Carbon $date, $companyHolidays = null): bool
     {
-        $isNurseHoliday = $this->holidays->where('date', '=', $date->toDateString())->count() > 0;
+        $isNurseHoliday = $this->holidays->where('date', $date->copy()->startOfDay())->count() > 0;
         if ($isNurseHoliday) {
             return true;
         }
@@ -267,7 +267,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         }
 
         $companyHolidays = $this->companyHolidaysFrom($date);
-        $nurseHolidays   = $this->holidays->where('date', '>=', $date->format('Y-m-d'));
+        $nurseHolidays   = $this->holidays->where('date', '>=', $date->copy()->startOfDay());
 
         return $companyHolidays->merge($nurseHolidays)->unique();
     }
