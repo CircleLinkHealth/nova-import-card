@@ -30,6 +30,10 @@
 
         created() {
             axios.get('/pusher-test').then(response => (this.tests = response.data));
+
+            window.Echo('pusher-test').listen('PusherTest', e => {
+                this.tests.push(e.message.body);
+            })
         }
     }
 </script>

@@ -1,4 +1,4 @@
-@extends('partials.adminUI')
+@extends('partials.providerUI')
 
 @section('content')
     <div class="container">
