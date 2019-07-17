@@ -82,6 +82,7 @@
         },
         data() {
             return {
+                onPhone: {},
                 hasError: false,
                 log: null,
                 ready: false,
@@ -113,7 +114,6 @@
 
             resetPhoneState: function () {
                 self.onPhone = {};
-                self.muted = {};
                 self.waiting = false;
             },
 
@@ -127,7 +127,6 @@
                 //important - need to get a copy of the variable here
                 //otherwise the computed value changes and our logic does not work
                 if (!this.onPhone[number]) {
-                    this.$set(this.muted, number, false);
                     this.$set(this.onPhone, number, true);
 
                     if (!isDebug) {
@@ -135,7 +134,6 @@
                         this.connection = this.device.connect(this.getTwimlAppRequest(number));
                     }
                 } else {
-                    this.$set(this.muted, number, false);
                     this.$set(this.onPhone, number, false);
 
                     if (!isDebug) {

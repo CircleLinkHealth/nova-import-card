@@ -172,6 +172,7 @@
                              :phone-number="practiceOutgoingPhoneNumber"
                              :cpm-caller-token="cpmCallerToken"
                              :cpm-caller-url="cpmCallerUrl"
+                             :debug="debug"
                              @closeCallAssistanceModal="toggleCallAssistance">
             </call-assistance>
         </div>
@@ -251,7 +252,7 @@
     library.add(faChevronCircleLeft, faPhoneAlt, faTimes);
 
     export default {
-        props: ['surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken'],
+        props: ['surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'debug'],
 
         components: {
             'mdb-btn': mdbBtn,
