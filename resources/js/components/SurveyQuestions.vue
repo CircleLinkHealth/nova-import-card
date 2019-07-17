@@ -168,41 +168,22 @@
             </template>
         </div>
         <div class="call-assistance">
-            <call-assistance v-if="practiceOutgoingPhoneNumber"
-                             v-show="callAssistance"
+            <call-assistance v-if="practiceOutgoingPhoneNumber && callAssistance"
                              :phone-number="practiceOutgoingPhoneNumber"
+                             :cpm-caller-token="cpmCallerToken"
+                             :cpm-caller-url="cpmCallerUrl"
                              @closeCallAssistanceModal="toggleCallAssistance">
             </call-assistance>
         </div>
 
-
-        <!--bottom-navbar-->
-        <!--@todo: this is the call assistance modal. needs some styling and setup twilio-->
-        <!--&lt;!&ndash;phone assistance&ndash;&gt;
-        <div class="row">
-            <div v-if="showPhoneButton" class="call-assistance col-lg-1">
-                <button type="button"
-                        class="btn btn-default"
-                        @click="showCallHelp">
-                    <i class="fa fa-phone" aria-hidden="true"></i>
-                </button>
-            </div>
-            <div v-if="!showPhoneButton" class="call-assistance col-lg-1">
-                <button type="button"
-                        class="btn btn-default"
-                        @click="hideCallHelp">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
--->
-        <!--bottom-navbar-->
         <div class="bottom-navbar container" :class="stage === 'complete' ? 'hidden' : ''">
             <!-- justify-content-end -->
             <div class="row">
                 <div class="col-1 col-sm-1 col-md-1 col-lg-1 text-center no-padding">
                     <div class="row scroll-buttons" v-show="!readOnlyMode">
                         <mdb-btn color="primary" @click="toggleCallAssistance" class="call-btn-round">
-                            <font-awesome-icon :icon="callAssistance ? 'times' : 'phone-alt'" size="2x"></font-awesome-icon>
+                            <font-awesome-icon :icon="callAssistance ? 'times' : 'phone-alt'"
+                                               size="2x"></font-awesome-icon>
                         </mdb-btn>
                     </div>
                 </div>
@@ -270,7 +251,7 @@
     library.add(faChevronCircleLeft, faPhoneAlt, faTimes);
 
     export default {
-        props: ['surveyData', 'adminMode'],
+        props: ['surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken'],
 
         components: {
             'mdb-btn': mdbBtn,
@@ -724,8 +705,11 @@
                 this.callAssistance = !this.callAssistance;
                 if (this.callAssistance) {
                     const btnOffset = $('.call-btn-round').offset();
-                    const modalOffset = $('.call-assistance-modal').height() + 10;
-                    $('.call-assistance').offset({ top: btnOffset.top - modalOffset, left: btnOffset.left });
+                    let modalOffset = $('.call-assistance-modal').height() + 10;
+                    if (isNaN(modalOffset)) {
+                        modalOffset = 260;
+                    }
+                    $('.call-assistance').offset({top: btnOffset.top - modalOffset, left: btnOffset.left});
                 }
             }
         },
@@ -735,7 +719,7 @@
 
             this.practiceId = this.surveyData.primary_practice.id;
             this.practiceName = this.surveyData.primary_practice.display_name;
-            this.practiceOutgoingPhoneNumber= this.surveyData.primary_practice.outgoing_phone_number;
+            this.practiceOutgoingPhoneNumber = this.surveyData.primary_practice.outgoing_phone_number;
 
             this.doctorsLastName = this.surveyData.billing_provider[0].user.last_name;
 
