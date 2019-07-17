@@ -276,7 +276,7 @@ class NursesPerformanceReportService
 
             //we count the hours only if the nurse has not scheduled a holiday for that day.
             if ( ! $isHolidayForDate) {
-                $hours[] = $nurse->nurseInfo->getHoursCommittedForCarbonDate($date);
+                $hours[] = $nurse->nurseInfo->getHoursCommittedForCarbonDate($mutableDate);
             }
 
             $mutableDate->addDay()->startOfDay();
