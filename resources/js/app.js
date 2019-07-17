@@ -43,6 +43,7 @@ Vue.use(ServerTable, {}, false, 'bootstrap4');
  */
 import $ from 'jquery';
 window.$ = $;
+require('jquery.scrollto');
 
 import 'lodash';
 import 'popper.js';

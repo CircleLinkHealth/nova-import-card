@@ -347,7 +347,12 @@
                 }
 
                 this.error = null;
-                this.currentQuestionIndex = this.getPreviousQuestionIndex(this.currentQuestionIndex);
+
+                const prevQuestionIndex = this.getPreviousQuestionIndex(this.currentQuestionIndex);
+                this.scrollToQuestion(this.questions[this.currentQuestionIndex].id)
+                    .then(() => {
+                        this.currentQuestionIndex = prevQuestionIndex;
+                    });
             },
 
             scrollDown() {
@@ -356,7 +361,13 @@
                 }
 
                 this.error = null;
-                this.currentQuestionIndex = this.getNextQuestionIndex(this.currentQuestionIndex);
+
+                const nextQuestionIndex = this.getNextQuestionIndex(this.currentQuestionIndex);
+                this.scrollToQuestion(this.questions[this.currentQuestionIndex].id)
+                    .then(() => {
+                        this.currentQuestionIndex = nextQuestionIndex;
+                    });
+
             },
 
             isSubQuestion(question) {
@@ -648,6 +659,30 @@
                 } : this.getNextQuestion(index + 1);
             },
 
+            scrollToQuestion(questionId) {
+                return new Promise((resolve) => {
+                    const surveyContainer = $('.survey-container');
+                    const currentQuestionOffset = $(`#${questionId}`).offset().top;
+
+                    let scrollTo = 0;
+                    if (currentQuestionOffset < 0) {
+                        scrollTo = surveyContainer.scrollTop() + currentQuestionOffset;
+                    }
+                    else {
+                        scrollTo = currentQuestionOffset
+                    }
+
+                    surveyContainer.scrollTo(
+                        scrollTo,
+                        500,
+                        {
+                            onAfter: () => {
+                                resolve();
+                            }
+                        });
+                });
+            },
+
             goToNextQuestion(incrementProgress) {
 
                 const next = this.getNextQuestion(this.currentQuestionIndex);
@@ -666,10 +701,8 @@
                 const nextQuestion = next.question;
                 const nextIndex = next.index;
 
-                return new Promise(resolve => {
-                    $('.survey-container').animate({
-                        scrollTop: $(`#${nextQuestion.id}`).offset().top
-                    }, 519, 'swing', () => {
+                return this.scrollToQuestion(nextQuestion.id)
+                    .then(() => {
                         this.latestQuestionAnsweredIndex = this.currentQuestionIndex;
                         this.currentQuestionIndex = nextIndex;
                         const answered = this.questions[this.latestQuestionAnsweredIndex];
@@ -678,9 +711,8 @@
                             this.progress = this.progress + 1;
                         }
 
-                        resolve();
+                        return Promise.resolve();
                     });
-                });
             },
 
             getQuestionsOfOrder(order) {
@@ -690,11 +722,10 @@
             toggleReadOnlyMode() {
                 if (this.readOnlyMode) {
                     const currentQuestion = this.questions[this.currentQuestionIndex];
-                    $('.survey-container').animate({
-                        scrollTop: $(`#${currentQuestion.id}`).offset().top
-                    }, 519, 'swing', () => {
-                        this.readOnlyMode = !this.readOnlyMode;
-                    });
+                    this.scrollToQuestion(currentQuestion.id)
+                        .then(() => {
+                            this.readOnlyMode = !this.readOnlyMode;
+                        });
                 }
                 else {
                     this.readOnlyMode = !this.readOnlyMode;
