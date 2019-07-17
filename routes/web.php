@@ -429,6 +429,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'get.care-docs',
     ]);
 
+    Route::get('view-care-document/{patient_id}/{doc_id}', [
+        'uses' => 'API\PatientCareDocumentsController@viewCareDocument',
+        'as'   => 'view.care-doc',
+    ]);
+
     Route::get('download-care-document/{patient_id}/{doc_id}', [
         'uses' => 'API\PatientCareDocumentsController@downloadCareDocument',
         'as'   => 'download.care-doc',
@@ -1091,7 +1096,7 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::post('/unassign-ca', [
                 'uses' => 'EnrollmentDirectorController@unassignCareAmbassadorFromEnrollees',
-                'as'   => 'ca-director.mark-ineligible',
+                'as'   => 'ca-director.unassign-ambassador',
             ]);
 
             Route::post('/edit-enrollee', [

@@ -40,7 +40,7 @@ class LegacyBhiConsentController extends Controller
 
         return Note::create([
             'patient_id'   => $patientId,
-            'author_id'    => 948, //clh patient support
+            'author_id'    => auth()->user()->id,
             'body'         => $body,
             'type'         => $type,
             'performed_at' => Carbon::now()->toDateTimeString(),
@@ -48,15 +48,22 @@ class LegacyBhiConsentController extends Controller
     }
 
     /**
-     * When the User clicks `Not Now` we want to hide the banner for 24 hours.
+     * When the User clicks `Not Now` we want to hide the banner till next scheduled call.
+     * If Scheduled call is null will show banner & flag again tomorrow.
      *
      * @param $patientId
      */
     private function storeNotNowResponse($patientId)
     {
-        $key     = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
-        $minutes = intval(Carbon::now()->secondsUntilEndOfDay() / 60);
+        $now                   = Carbon::now();
+        $tomorrow              = $now->copy()->addHours(24);
+        $nextScheduledCallDate = auth()->user()->patientNextScheduledCallDate($patientId);
+        $key                   = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
 
-        Cache::put($key, true, $minutes);
+        $seconds = null !== $nextScheduledCallDate
+            ? Carbon::parse($nextScheduledCallDate)->diffInSeconds($now)
+            : $tomorrow->diffInSeconds($now);
+
+        Cache::put($key, true, $seconds);
     }
 }

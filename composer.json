@@ -132,7 +132,7 @@
     "friendsofphp/php-cs-fixer": "^2.13",
     "jkocik/laravel-profiler": "^1.2",
     "laravel/dusk": "^3.0",
-    "mockery/mockery": "0.9.*",
+    "mockery/mockery": "^1.0",
     "nwidart/laravel-modules": "^4.0",
     "orangehill/iseed": "dev-master",
     "phpunit/phpunit": "^7.0",
@@ -178,6 +178,8 @@
       "@php artisan package:discover --ansi"
     ],
     "post-update-cmd": [
+      "php artisan nova:publish",
+      "php artisan view:clear",
       "Illuminate\\Foundation\\ComposerScripts::postUpdate"
     ],
     "test-db-mysql": [

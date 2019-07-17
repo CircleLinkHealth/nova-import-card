@@ -25,15 +25,134 @@
         <div v-if="noDocsFound" class="col-md-12" style="padding-left: 42%">
             <div><strong>No Care Documents were found.</strong></div>
         </div>
-        <div class="col-md-12" >
+        <div class="col-md-12">
             <div v-if="showBanner" :class="bannerClass">{{this.errors.errors}}</div>
         </div>
 
 
         <div class="col-md-12">
-            <div v-for="(docs, type) in careDocs">
-                <div v-for="doc in docs" class="col-md-3">
-                    <care-document-box :doc="doc" :type="type"></care-document-box>
+            <div v-for="status in patientAWVStatuses">
+                <div class="col-md-3">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4>Wellness Survey</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-md-12  panel-section" style="margin-top: 20px">
+                                <div v-if="status.hra_status === 'pending' ">
+                                    <button class="col-md-6 btn btn-danger btn-m">
+                                        Not Started
+                                    </button>
+                                </div>
+                                <div v-if="status.hra_status === 'in_progress' ">
+                                    <button class="col-md-6 btn btn-warning btn-m">
+                                        In Progress
+                                    </button>
+                                </div>
+                                <div v-if="status.hra_status === 'completed' ">
+                                    <button class="col-md-6 btn btn-success btn-m">
+                                        Completed
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-12  panel-section" style="margin-top: 5px">
+                                <div class="col-md-6">
+                                    {{status.year}}
+                                </div>
+                                <!--<div class="col-md-6">-->
+                                <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
+                                <!--</div>-->
+                            </div>
+                            <div class="col-md-12  panel-section" style="margin-top: 10px">
+                                <p><strong>Send Assessment Link to Provider via:</strong></p>
+                            </div>
+                            <div class="col-md-12  panel-section">
+                                <button class="col-md-6 btn btn-method btn-s">
+                                    SMS
+                                </button>
+                                <button class="col-md-6 btn btn-method btn-s">
+                                    Email
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4>Vitals</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-md-12  panel-section" style="margin-top: 20px">
+                                <div v-if="status.vitals_status === 'pending' ">
+                                    <button class="col-md-6 btn btn-danger btn-m">
+                                            Not Started
+                                    </button>
+                                </div>
+                                <div v-if="status.vitals_status === 'in_progress' ">
+                                    <button class="col-md-6 btn btn-warning btn-m">
+                                        In Progress
+                                    </button>
+                                </div>
+                                <div v-if="status.vitals_status === 'completed' ">
+                                    <button class="col-md-6 btn btn-success btn-m" >
+                                        Completed
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-12  panel-section" style="margin-top: 5px">
+                                <div class="col-md-6">
+                                    {{status.year}}
+                                </div>
+                                <!--<div class="col-md-6">-->
+                                <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
+                                <!--</div>-->
+                            </div>
+                            <div class="col-md-12  panel-section" style="margin-top: 10px">
+                                <p><strong>Send Assessment Link to Provider via:</strong></p>
+                            </div>
+                            <div class="col-md-12  panel-section">
+                                <button class="col-md-6 btn btn-method btn-s">
+                                    SMS
+                                </button>
+                                <button class="col-md-6 btn btn-method btn-s">
+                                    Email
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!--<div v-for="(docs, type) in careDocs">-->
+                <!--<div v-for="doc in docs" class="col-md-3">-->
+                    <!--<care-document-box :doc="doc" :type="type"></care-document-box>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div v-if="careDocs['PPP']">
+                <div v-for="doc in careDocs['PPP']" class="col-md-3">
+                    <care-document-box :doc="doc" :type="'PPP'"></care-document-box>
+                </div>
+            </div>
+            <div v-else>
+                <div class="col-md-3">
+                    <care-document-box :type="'PPP'"></care-document-box>
+                </div>
+            </div>
+            <div v-if="careDocs['Provider Report']">
+                <div v-for="doc in careDocs['Provider Report']" class="col-md-3">
+                    <care-document-box :doc="doc" :type="'Provider Report'"></care-document-box>
+                </div>
+            </div>
+            <div v-else>
+            <div class="col-md-3">
+                <care-document-box :type="'Provider Report'"></care-document-box>
+            </div>
+            </div>
+            <div v-if="careDocs['Lab Results']">
+                <div v-for="doc in careDocs['Lab Results']" class="col-md-3">
+                    <care-document-box :doc="doc" :type="'Lab Results'"></care-document-box>
                 </div>
             </div>
         </div>
@@ -117,6 +236,7 @@
                     {label: 'Vitals', value: 'Vitals'},
                 ],
                 selectedDocumentType: null,
+                patientAWVStatuses: [],
                 careDocs: [],
                 noDocsFound: false,
                 showPast: false,
@@ -159,8 +279,9 @@
                     .get(rootUrl('/care-docs/' + this.patient.id + '/' + this.showPast))
                     .then(response => {
                         this.loading = false;
-                        this.careDocs = response.data;
-                        this.noDocsFound = Object.keys(response.data).length === 0;;
+                        this.careDocs = response.data.files;
+                        this.patientAWVStatuses = response.data.patientAWVStatuses;
+                        this.noDocsFound = Object.keys(response.data).length === 0;
 
                         return this.careDocs;
                     })
@@ -208,6 +329,41 @@
 <style>
 
 
+    .panel {
+        border: 0;
+        width: 250px;
+        height: 300px;
+        border-radius: 5px;
+    }
+
+    .panel-primary > .panel-heading {
+        background-color: #5cc0dd;
+        border-color: #5cc0dd;
+        font-family: Roboto;
+        padding-left: 20px;
+    }
+
+    h4 {
+        color: #ffffff;
+    }
+
+    .panel-body {
+        padding: 5px;
+        font-family: Roboto;
+    }
+
+    .panel-section {
+        margin-bottom: 10px;
+
+    }
+
+    .btn-method {
+        border-color: #5cc0dd;
+        width: 100px;
+        max-height: 30px;
+        margin: 2px;
+    }
+
     .modal-upload-care-doc .loader {
         position: absolute;
         right: 5px;
@@ -245,6 +401,7 @@
         text-align: center;
         color: #5cc0dd;
     }
+
     .margin-top-10 {
         margin-top: 10%;
     }
@@ -256,10 +413,12 @@
     .btn {
         min-width: 100px;
     }
+
     .vue-dropzone .dz-preview .dz-remove {
         font-size: initial;
     }
-    .dropzone .dz-preview .dz-error-message{
+
+    .dropzone .dz-preview .dz-error-message {
         margin-top: 55px;
     }
 
