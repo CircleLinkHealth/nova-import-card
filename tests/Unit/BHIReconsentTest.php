@@ -6,7 +6,7 @@
 
 namespace Tests\Unit;
 
-use App\ChargeableService;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use App\Models\CPM\CpmProblem;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;

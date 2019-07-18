@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use App\ChargeableService;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use App\Exceptions\InvalidArgumentException;
 use App\Models\CCD\Problem;
 use Cache;
