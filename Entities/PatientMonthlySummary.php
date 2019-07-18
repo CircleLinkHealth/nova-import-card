@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\Models\CCD\Problem;
-use App\Traits\HasChargeableServices;
+use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\TimeTracking\Entities\Activity;

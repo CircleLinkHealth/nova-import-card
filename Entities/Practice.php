@@ -7,11 +7,11 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\CareAmbassadorLog;
-use App\ChargeableService;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use App\CLH\Helpers\StringManipulation;
 use App\EnrolleeCustomFilter;
 use App\Repositories\PatientSummaryEloquentRepository;
-use App\Traits\HasChargeableServices;
+use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use App\ValueObjects\PatientReportData;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
@@ -59,34 +59,34 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Settings[]|\Illuminate\Database\Eloquent\Collection $settings
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $users
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice active()
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice active()
  * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Query\Builder|\App\Practice onlyTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Practice onlyTrashed()
  * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereAutoApproveCareplans($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereBillToName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereClhPppm($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereDisplayName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereEhrId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereExternalId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereFederalTaxId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereInvoiceRecipients($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereOutgoingPhoneNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereSameClinicalContact($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereSameEhrLogin($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereSendAlerts($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereSmsMarketingNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereTermDays($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereWeeklyReportRecipients($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Practice withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Practice withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereAutoApproveCareplans($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereBillToName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereClhPppm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereEhrId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereExternalId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereFederalTaxId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereInvoiceRecipients($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereOutgoingPhoneNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereSameClinicalContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereSameEhrLogin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereSendAlerts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereSmsMarketingNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereTermDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Practice whereWeeklyReportRecipients($value)
+ * @method static \Illuminate\Database\Query\Builder|Practice withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Practice withoutTrashed()
  * @mixin \Eloquent
  *
  * @property int|null $saas_account_id
