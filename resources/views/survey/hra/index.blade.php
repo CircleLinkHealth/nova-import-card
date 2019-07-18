@@ -1,4 +1,9 @@
 @extends('layouts.surveysMaster')
 @section('content')
-    <survey-questions :survey-data="{{json_encode($data)}}"></survey-questions>
+    <survey-questions :admin-mode="{{json_encode(!auth()->user()->hasRole('participant'))}}"
+                      cpm-caller-url="{{config('services.twilio.cpm-caller-url')}}"
+                      cpm-caller-token="{{getCpmCallerToken()}}"
+                      :debug="@json(!isProductionEnv())"
+                      :survey-data="{{json_encode($data)}}">
+    </survey-questions>
 @endsection

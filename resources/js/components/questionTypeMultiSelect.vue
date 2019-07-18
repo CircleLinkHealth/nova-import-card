@@ -12,6 +12,7 @@
                                 :value="select.selected"
                                 :close-on-select="false"
                                 :options="select.options"
+                                :disabled="readOnly"
                                 :placeholder="select.placeholder"/>
                 </div>
             </div>
@@ -19,7 +20,7 @@
 
         <br/>
 
-        <mdbBtn v-show="isActive"
+        <mdbBtn v-show="!readOnly && isActive"
                 color="primary"
                 class="next-btn"
                 :disabled="!hasSelections"
@@ -44,7 +45,7 @@
 
     export default {
         name: "questionTypeMultiSelect",
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'getAllQuestionsFunc'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'getAllQuestionsFunc', 'readOnly'],
         components: {FontAwesomeIcon, vueSelect, mdbBtn},
 
         data() {

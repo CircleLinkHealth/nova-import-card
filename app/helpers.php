@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 if ( ! function_exists('is_json')) {
@@ -37,25 +38,41 @@ if ( ! function_exists('sortSurveyQuestions')) {
      *
      * @return \Illuminate\Support\Collection
      */
-    function sortSurveyQuestions(Collection $questions) : Collection
+    function sortSurveyQuestions(Collection $questions): Collection
     {
         $ordering = [
             'a' => 1,
             'b' => 2,
             'c' => 3,
             'd' => 4,
-            'e' => 5
+            'e' => 5,
         ];
 
-        return $questions->sortBy(function ($question) use ($ordering){
+        return $questions->sortBy(function ($question) use ($ordering) {
 
             $subOrder = 0;
-            $pivot = $question->pivot;
+            $pivot    = $question->pivot;
 
-            if ($pivot->sub_order){
-                $subOrder = is_numeric($pivot->sub_order) ? $pivot->sub_order: $ordering[strtolower($pivot->sub_order)];
+            if ($pivot->sub_order) {
+                $subOrder = is_numeric($pivot->sub_order)
+                    ? $pivot->sub_order
+                    : $ordering[strtolower($pivot->sub_order)];
             }
-            return floatval("{$pivot->order}"."."."{$subOrder}");
+
+            return floatval("{$pivot->order}" . "." . "{$subOrder}");
         });
     }
+}
+
+if ( ! function_exists('getCpmCallerToken')) {
+
+    /**
+     * naive authentication for the CPM Caller Service
+     * @return string
+     */
+    function getCpmCallerToken()
+    {
+        return \Hash::make(config('app.key') . Carbon::today()->toDateString());
+    }
+
 }

@@ -7,7 +7,7 @@
                 class="number-field"
                 name="numberTypeAnswer[]"
                 v-model="inputNumbers[0]"
-                :disabled="!isActive"
+                :disabled="readOnly || !isActive"
                 :placeholder="this.questionPlaceHolder">
         </div>
         <br>
@@ -19,7 +19,7 @@
                        :class="subPartsStyle"
                        name="numberTypeAnswer[]"
                        v-model="inputNumbers[index]"
-                       :disabled="!isActive"
+                       :disabled="readOnly || !isActive"
                        :placeholder="subPart.placeholder">
                 <span
                     v-if="questionSubPartsSeparator === 'dash' && index !== questionSubParts.length - 1">
@@ -36,7 +36,7 @@
 
         <!--next button-->
         <br>
-        <mdbBtn v-show="isActive"
+        <mdbBtn v-show="!readOnly && isActive"
                 color="primary"
                 class="next-btn"
                 name="number"
@@ -61,7 +61,7 @@
 
     export default {
         name: "questionTypeNumber",
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
         components: {mdbBtn, FontAwesomeIcon},
 
         mounted() {

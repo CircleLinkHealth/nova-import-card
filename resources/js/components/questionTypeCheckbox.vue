@@ -8,6 +8,7 @@
                            type="checkbox"
                            :id="checkBox.id"
                            :name="checkBox.id"
+                           :disabled="readOnly"
                            v-model="checkBox.checked">
                     <span>{{checkBox.value}}</span>
                 </label>
@@ -18,7 +19,7 @@
                     <input class="text-field"
                            :type="getCustomInputType(checkBox)"
                            v-model="checkBox.customInput"
-                           :disabled="answerChecked && isSingleCustomInput"
+                           :disabled="readOnly ||(answerChecked && isSingleCustomInput)"
                            :placeholder="getCustomInputPlaceholder(checkBox)">
 
                     <br/>
@@ -30,7 +31,7 @@
 
         <br/>
 
-        <mdbBtn v-show="isActive"
+        <mdbBtn v-show="!readOnly && isActive"
                 color="primary"
                 class="next-btn"
                 :disabled="!answerChecked"
@@ -52,7 +53,7 @@
     library.add(faSpinner);
     export default {
         name: "questionTypeCheckbox",
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting'],
+        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
         components: {
             mdbBtn,
             FontAwesomeIcon

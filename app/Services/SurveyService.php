@@ -5,12 +5,21 @@ namespace App\Services;
 
 use App\Answer;
 use App\Events\SurveyInstancePivotSaved;
+use App\Survey;
 use App\SurveyInstance;
 use App\User;
 use Carbon\Carbon;
 
 class SurveyService
 {
+
+    public static function getCurrentSurveyData($patientId, $surveyName)
+    {
+        $surveyId = Survey::where('name', '=', $surveyName)->pluck('id')->first();
+
+        return self::getSurveyData($patientId, $surveyId);
+    }
+
     public static function getSurveyData($patientId, $surveyId)
     {
         $patientWithSurveyData = User
@@ -108,7 +117,7 @@ class SurveyService
 
         $instance = $user->surveyInstances->first();
 
-        if (! $instance->pivot->start_date ) {
+        if ( ! $instance->pivot->start_date) {
             $instance->pivot->start_date = Carbon::now();
         }
 
@@ -147,7 +156,7 @@ class SurveyService
 
         if ( ! $summary) {
             $patient->patientAWVSummaries()->create([
-                'year'       => $date->year,
+                'year'             => $date->year,
                 'is_initial_visit' => $isInitial,
             ]);
         }

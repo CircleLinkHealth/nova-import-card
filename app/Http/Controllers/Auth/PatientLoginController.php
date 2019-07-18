@@ -133,7 +133,6 @@ class PatientLoginController extends Controller
 
         return route('survey.hra',
             [
-                'practiceId' => $user->program_id,
                 'patientId'  => $user,
                 'surveyId'   => $surveyId,
             ]);

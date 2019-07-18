@@ -11501,6 +11501,10 @@ body,
   height: calc(100% - 56px);
 }
 
+.survey-container.read-only {
+  overflow-y: auto;
+}
+
 .survey-container.max {
   height: 100%;
   border: 1px solid #808080;
@@ -11922,25 +11926,9 @@ When progress text and bar are in one line (col-sm screens)
   color: #1a1a1a;
 }
 
-.call-assistance {
-  padding-left: 3%;
-  position: absolute;
-}
-
 .welcome-icon {
   width: 108px;
   margin: auto;
-}
-
-.fa-phone {
-  transform: scaleX(-1);
-  color: #ffffff;
-}
-
-.fa-times {
-  width: 20px;
-  height: 20px;
-  color: #ffffff;
 }
 
 .card-body {
@@ -11981,5 +11969,28 @@ a.navbar-title {
 
 a.navbar-title:hover {
   color: #fafafa;
+}
+
+.top-left-fixed {
+  position: fixed;
+  top: 15px;
+  left: 30px;
+}
+
+.top-right-fixed {
+  position: fixed;
+  top: 15px;
+  right: 30px;
+}
+
+.spinner-overlay {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 9999;
 }
 

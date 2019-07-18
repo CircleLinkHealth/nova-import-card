@@ -1,7 +1,20 @@
 <template>
     <div class="container main-container">
+
+        <div class="top-left-fixed">
+            <a :href="getPatientsListUrl()">
+                <font-awesome-icon icon="chevron-circle-left" size="3x"/>
+            </a>
+        </div>
+
+        <div class="top-right-fixed">
+            <mdb-btn :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
+                {{readOnlyMode ? 'Read Only Mode' : 'Edit Mode'}}
+            </mdb-btn>
+        </div>
+
         <!--Survey welcome note-->
-        <div class="survey-container" :class="stage === 'complete' ? 'max' : ''">
+        <div class="survey-container" :class="{ max: stage === 'complete', 'read-only': readOnlyMode }">
             <template v-if="stage === 'welcome'">
                 <div class="practice-title">
                     <label id="title">
@@ -57,8 +70,8 @@
             <template v-if="stage === 'survey'">
                 <div class="questions-box question"
                      :id="question.id"
-                     :class="currentQuestionIndex !== index ? (question.conditions && question.conditions.length > 0 ? 'non-visible' : 'watermark') : 'active'"
-                     v-show="index >= currentQuestionIndex"
+                     :class="!readOnlyMode && currentQuestionIndex !== index ? (question.conditions && question.conditions.length > 0 ? 'non-visible' : 'watermark') : 'active'"
+                     v-show="readOnlyMode || index >= currentQuestionIndex"
                      v-for="(question, index) in questions">
                     <div class="questions-body">
 
@@ -82,6 +95,7 @@
                                 :is-active="currentQuestionIndex === index"
                                 :on-done-func="postAnswerAndGoToNext"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'text'">
                             </question-type-text>
 
@@ -93,6 +107,7 @@
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
@@ -104,10 +119,12 @@
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'multi_select'">
                             </question-type-muti-select>
 
                             <question-type-range
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'range'">
                             </question-type-range>
 
@@ -119,6 +136,7 @@
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'number'">
                             </question-type-number>
 
@@ -131,10 +149,12 @@
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'radio'">
                             </question-type-radio>
 
                             <question-type-date
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'date'">
                             </question-type-date>
                         </div>
@@ -148,34 +168,27 @@
             </template>
         </div>
         <div class="call-assistance">
-            <call-assistance v-if="callAssistance" @closeCallAssistanceModal="hideCallHelp"></call-assistance>
+            <call-assistance v-if="practiceOutgoingPhoneNumber && callAssistance"
+                             :phone-number="practiceOutgoingPhoneNumber"
+                             :cpm-caller-token="cpmCallerToken"
+                             :cpm-caller-url="cpmCallerUrl"
+                             :debug="debug"
+                             @closeCallAssistanceModal="toggleCallAssistance">
+            </call-assistance>
         </div>
 
-
-        <!--bottom-navbar-->
-        <!--@todo: this is the call assistance modal. needs some styling and setup twilio-->
-        <!--&lt;!&ndash;phone assistance&ndash;&gt;
-        <div class="row">
-            <div v-if="showPhoneButton" class="call-assistance col-lg-1">
-                <button type="button"
-                        class="btn btn-default"
-                        @click="showCallHelp">
-                    <i class="fa fa-phone" aria-hidden="true"></i>
-                </button>
-            </div>
-            <div v-if="!showPhoneButton" class="call-assistance col-lg-1">
-                <button type="button"
-                        class="btn btn-default"
-                        @click="hideCallHelp">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
--->
-        <!--bottom-navbar-->
         <div class="bottom-navbar container" :class="stage === 'complete' ? 'hidden' : ''">
             <!-- justify-content-end -->
             <div class="row">
-                <div class="col-5 offset-2 col-sm-7 offset-sm-0 col-md-8 offset-md-0 col-lg-6 offset-lg-3 no-padding">
+                <div class="col-1 col-sm-1 col-md-1 col-lg-1 text-center no-padding">
+                    <div class="row scroll-buttons" v-show="!readOnlyMode">
+                        <mdb-btn color="primary" @click="toggleCallAssistance" class="call-btn-round">
+                            <font-awesome-icon :icon="callAssistance ? 'times' : 'phone-alt'"
+                                               size="2x"></font-awesome-icon>
+                        </mdb-btn>
+                    </div>
+                </div>
+                <div class="col-5 offset-1 col-sm-1 offset-sm-0 col-md-1 offset-md-0 col-lg-6 offset-lg-2 no-padding">
                     <div class="container">
                         <div class="row progress-container">
                             <div class="col-12 col-sm-12 col-md-6 text-center">
@@ -193,7 +206,7 @@
                     </div>
                 </div>
                 <!--scroll buttons-->
-                <div class="col-5 col-sm-5 col-md-4 col-lg-3 no-padding">
+                <div class="col-5 col-sm-5 col-md-4 col-lg-3 no-padding" v-show="!readOnlyMode">
                     <div class="row scroll-buttons">
                         <div class="col text-right">
 
@@ -230,10 +243,16 @@
     import questionTypeDate from "./questionTypeDate";
     import callAssistance from "./callAssistance";
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
+    import $ from "jquery";
 
+    import {library} from '@fortawesome/fontawesome-svg-core';
+    import {faChevronCircleLeft, faPhoneAlt, faTimes} from '@fortawesome/free-solid-svg-icons';
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+
+    library.add(faChevronCircleLeft, faPhoneAlt, faTimes);
 
     export default {
-        props: ['surveyData'],
+        props: ['surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'debug'],
 
         components: {
             'mdb-btn': mdbBtn,
@@ -246,13 +265,13 @@
             'question-type-date': questionTypeDate,
             'call-assistance': callAssistance,
 
-            'question-type-muti-select': questionTypeMultiSelect
+            'question-type-muti-select': questionTypeMultiSelect,
+            'font-awesome-icon': FontAwesomeIcon
         },
 
         data() {
             return {
                 stage: "welcome",
-                showPhoneButton: true,
                 questionsStage: false,
                 welcomeStage: true,
                 callAssistance: false,
@@ -273,9 +292,11 @@
                 waiting: false,
                 practiceId: null,
                 practiceName: null,
+                practiceOutgoingPhoneNumber: null,
                 doctorsLastName: null,
                 totalQuestions: 0,
-                totalQuestionWithSubQuestions: 0
+                totalQuestionWithSubQuestions: 0,
+                readOnlyMode: false,
             }
         },
 
@@ -312,14 +333,9 @@
         },
 
         methods: {
-            showCallHelp() {
-                this.callAssistance = true;
-                this.showPhoneButton = false;
-            },
 
-            hideCallHelp() {
-                this.callAssistance = false;
-                this.showPhoneButton = true;
+            getPatientsListUrl() {
+                return '/manage-patients';
             },
 
             showQuestions() {
@@ -332,7 +348,12 @@
                 }
 
                 this.error = null;
-                this.currentQuestionIndex = this.getPreviousQuestionIndex(this.currentQuestionIndex);
+
+                const prevQuestionIndex = this.getPreviousQuestionIndex(this.currentQuestionIndex);
+                this.scrollToQuestion(this.questions[this.currentQuestionIndex].id)
+                    .then(() => {
+                        this.currentQuestionIndex = prevQuestionIndex;
+                    });
             },
 
             scrollDown() {
@@ -341,7 +362,13 @@
                 }
 
                 this.error = null;
-                this.currentQuestionIndex = this.getNextQuestionIndex(this.currentQuestionIndex);
+
+                const nextQuestionIndex = this.getNextQuestionIndex(this.currentQuestionIndex);
+                this.scrollToQuestion(this.questions[this.currentQuestionIndex].id)
+                    .then(() => {
+                        this.currentQuestionIndex = nextQuestionIndex;
+                    });
+
             },
 
             isSubQuestion(question) {
@@ -448,7 +475,7 @@
                 this.error = null;
                 this.waiting = true;
 
-                axios.post(`/survey/hra/${this.practiceId}/${this.userId}/save-answer`, {
+                axios.post(`/survey/hra/${this.userId}/save-answer`, {
                     patient_id: this.userId,
                     practice_id: this.practiceId,
                     survey_instance_id: this.surveyInstanceId,
@@ -633,6 +660,30 @@
                 } : this.getNextQuestion(index + 1);
             },
 
+            scrollToQuestion(questionId) {
+                return new Promise((resolve) => {
+                    const surveyContainer = $('.survey-container');
+                    const currentQuestionOffset = $(`#${questionId}`).offset().top;
+
+                    let scrollTo = 0;
+                    if (currentQuestionOffset < 0) {
+                        scrollTo = surveyContainer.scrollTop() + currentQuestionOffset;
+                    }
+                    else {
+                        scrollTo = currentQuestionOffset
+                    }
+
+                    surveyContainer.scrollTo(
+                        scrollTo,
+                        500,
+                        {
+                            onAfter: () => {
+                                resolve();
+                            }
+                        });
+                });
+            },
+
             goToNextQuestion(incrementProgress) {
 
                 const next = this.getNextQuestion(this.currentQuestionIndex);
@@ -651,10 +702,8 @@
                 const nextQuestion = next.question;
                 const nextIndex = next.index;
 
-                return new Promise(resolve => {
-                    $('.survey-container').animate({
-                        scrollTop: $(`#${nextQuestion.id}`).offset().top
-                    }, 519, 'swing', () => {
+                return this.scrollToQuestion(nextQuestion.id)
+                    .then(() => {
                         this.latestQuestionAnsweredIndex = this.currentQuestionIndex;
                         this.currentQuestionIndex = nextIndex;
                         const answered = this.questions[this.latestQuestionAnsweredIndex];
@@ -663,15 +712,38 @@
                             this.progress = this.progress + 1;
                         }
 
-                        resolve();
+                        return Promise.resolve();
                     });
-                });
             },
 
             getQuestionsOfOrder(order) {
                 return this.questions.filter(q => q.pivot.order === order);
-            }
+            },
 
+            toggleReadOnlyMode() {
+                if (this.readOnlyMode) {
+                    const currentQuestion = this.questions[this.currentQuestionIndex];
+                    this.scrollToQuestion(currentQuestion.id)
+                        .then(() => {
+                            this.readOnlyMode = !this.readOnlyMode;
+                        });
+                }
+                else {
+                    this.readOnlyMode = !this.readOnlyMode;
+                }
+            },
+
+            toggleCallAssistance() {
+                this.callAssistance = !this.callAssistance;
+                if (this.callAssistance) {
+                    const btnOffset = $('.call-btn-round').offset();
+                    let modalOffset = $('.call-assistance-modal').height() + 10;
+                    if (isNaN(modalOffset)) {
+                        modalOffset = 260;
+                    }
+                    $('.call-assistance').offset({top: btnOffset.top - modalOffset, left: btnOffset.left});
+                }
+            }
         },
         mounted() {
         },
@@ -679,6 +751,8 @@
 
             this.practiceId = this.surveyData.primary_practice.id;
             this.practiceName = this.surveyData.primary_practice.display_name;
+            this.practiceOutgoingPhoneNumber = this.surveyData.primary_practice.outgoing_phone_number;
+
             this.doctorsLastName = this.surveyData.billing_provider[0].user.last_name;
 
             this.surveyInstanceId = this.surveyData.survey_instances[0].id
@@ -725,6 +799,11 @@
             if (this.surveyData.answers && this.surveyData.answers.length === this.questions.length) {
                 this.stage = "complete";
             }
+
+            if (this.adminMode) {
+                this.stage = "survey";
+                this.readOnlyMode = true;
+            }
         },
 
     }
@@ -732,4 +811,19 @@
 
 <style lang="scss" scoped>
 
+    .call-assistance {
+        position: fixed;
+    }
+
+    .call-btn-round {
+        margin-left: 40px;
+        margin-right: 0 !important;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+    }
+
+    .fa-phone-alt, .fa-times {
+        color: #ffffff;
+    }
 </style>
