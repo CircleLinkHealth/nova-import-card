@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\Billing;
 
 use App\AppConfig;
-use App\ChargeableService;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovableBillablePatient;
 use App\Models\CCD\Problem;
