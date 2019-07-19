@@ -37,18 +37,7 @@ fi
 # laravel needs these to run, and git does not clone empty folders
 mkdir -p $RELEASE/storage/framework/{framework,sessions,views,cache}
 
-
-npm install
-
-npm run prod
-
-composer install --no-dev --classmap-authoritative --prefer-dist --no-scripts
-
-# Exit if composer failed
-if [ $? -ne 0 ]; then
-    echo "Composer failed.";
-    exit 1;
-fi
+composer dump-autoload --classmap-authoritative
 
 # Run migrations
 php artisan migrate --force
