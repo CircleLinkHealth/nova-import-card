@@ -10,7 +10,7 @@ use App\Call;
 use App\CareAmbassador;
 use App\CarePlan;
 use App\CareplanAssessment;
-use App\ChargeableService;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use App\Constants;
 use App\Exceptions\InvalidArgumentException;
 use App\ForeignId;
