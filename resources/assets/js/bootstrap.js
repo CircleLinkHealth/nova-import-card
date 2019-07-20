@@ -24,17 +24,18 @@ require('./bootstrap-axios');
 import Echo from 'laravel-echo'
 
 import pusher_js from "pusher-js";
-
+const JWTtoken = `Bearer ${localStorage.getItem('token')}`;
 window.Pusher = pusher_js;
 
 window.Echo = new Echo({
     broadcaster: 'pusher',
     key: 'dca1637b1d26e1c5867f',
     cluster: 'mt1',
-    encrypted: true
-});
+    encrypted: true,
 
-window.Echo.channel('pusher-test').listen('PusherNotificationsTest', e => {
-    console.log('Hey man new notification you have '+ e.message.id +'');
-    console.log(e);
+    // auth:{
+    //     headers:{
+    //         Authorization: JWTtoken
+    //     }
+    // }
 });

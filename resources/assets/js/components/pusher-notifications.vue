@@ -1,38 +1,39 @@
 <template>
     <div>
         <ul>
-            <li v-for="message in messages" v-text="message">
-
+            <li v-for="notification in notifications">
+                {{notification}}
             </li>
+            <li>Pusher Notifications Test !!!</li>
         </ul>
-        <input type="text" v-model="newMessage" @blur="addMessage">
+        <!--        <input type="text" v-model="newnotification" @blur="addnotification">-->
     </div>
 </template>
 
 <script>
+
     export default {
         name: "pusher-notifications",
 
+        props: [
+            'user'
+        ],
+
         data() {
             return {
-                messages: [],
-                newMessage: '',
+                notifications: [],
+                authUserId: this.user.id,
             }
         },
 
-        methods: {
-            addMessage() {
-                axios.post('/pusher-test', {body: this.newMessage});
-                this.messages.push(this.newMessage);
-                this.newMessage = '';
-            }
-        },
+        methods: {},
 
         created() {
-            axios.get('/pusher-test').then(response => (this.messages = response.data));
+            // axios.get('/pusher-test').then(response => (this.notifications = response.data));
 
-            window.Echo.channel('pusher-test' + this.project.id).listen('PusherTest', ({message}) => {
-                this.messages.push(message.body);
+            window.Echo.private('pusher-test.' + this.authUserId).listen('PusherTest', ({dataToPusher}) => {
+                this.notifications.push(dataToPusher);
+                console.log(dataToPusher);
             });
         }
     }

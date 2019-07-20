@@ -19,27 +19,26 @@ class PusherTest implements ShouldBroadcast
     use InteractsWithSockets;
     use SerializesModels;
 
-    public $message;
+    public $dataToPusher;
 
     /**
      * Create a new event instance.
      *
-     * @param string $message
+     * @param mixed $dataToPusher
      */
-    public function __construct($message)
+    public function __construct($dataToPusher)
     {
-        $this->message = $message;
+        $this->dataToPusher = $dataToPusher;
         $this->dontBroadcastToCurrentUser();
     }
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return array|Channel
+     * @return Channel
      */
     public function broadcastOn()
     {
-        return new Channel('pusher-test'); //this is a public channel @todo: make use of Private Channels
-//        return new PrivateChannel('channel-name');
+        return new PrivateChannel('pusher-test.'.$this->dataToPusher['note_author']);
     }
 }

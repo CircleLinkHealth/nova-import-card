@@ -9,8 +9,10 @@ namespace App\Http\Controllers;
 use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\NoteFinalSaved;
+use App\Events\PusherTest;
 use App\Http\Requests\NotesReport;
 use App\Note;
+use App\Notifications\AddendumCreated;
 use App\Repositories\PatientWriteRepository;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
@@ -22,6 +24,8 @@ use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -139,7 +143,7 @@ class NotesController extends Controller
                         'window_start',
                         'window_end',
                     ]
-                                       )
+                )
                 ->get();
         }
 
@@ -211,6 +215,26 @@ class NotesController extends Controller
         $note->delete();
 
         return redirect()->route('patient.note.index', ['patientId' => $patientId]);
+    }
+
+    /**
+     * @param $getNote
+     *
+     * @return mixed
+     */
+    public function getNoteAuthorId($getNote)
+    {
+        return $getNote->author_id;
+    }
+
+    /**
+     * @param $noteId
+     *
+     * @return Collection|Model|Note|Note[]|null
+     */
+    public function getNoteForAddendum($noteId)
+    {
+        return Note::find($noteId);
     }
 
     public function index(
@@ -327,6 +351,22 @@ class NotesController extends Controller
         }
 
         return view('wpUsers.patient.note.list', $data)->with('input', $request->input());
+    }
+
+    /**
+     * @param $note
+     * @param $noteAuthorId
+     */
+    public function notifyViaPusher($note, $noteAuthorId)
+    {
+        User::find($noteAuthorId)->notify(new AddendumCreated($note));
+
+        $dataToPusher = [
+            'addendum_author' => $note->author_user_id,
+            'note_author'     => $noteAuthorId,
+        ];
+
+        $this->service->dispatchPusherEvent($dataToPusher);
     }
 
     public function send(
@@ -689,12 +729,17 @@ class NotesController extends Controller
             ]
         );
 
-        $note = Note::find($noteId)->addendums()->create(
+        $getNote      = $this->getNoteForAddendum($noteId);
+        $noteAuthorId = $this->getNoteAuthorId($getNote);
+
+        $note = $getNote->addendums()->create(
             [
                 'body'           => $request->input('addendum-body'),
                 'author_user_id' => auth()->user()->id,
             ]
         );
+
+        $notifyViaPusher = $this->notifyViaPusher($note, $noteAuthorId);
 
         return redirect()->to(
             route(
@@ -774,7 +819,7 @@ class NotesController extends Controller
                     $q->where('name', '=', 'phoenix-heart')
                         ->orWhere('name', '=', 'demo');
                 }
-                       )
+            )
             ->exists();
     }
 

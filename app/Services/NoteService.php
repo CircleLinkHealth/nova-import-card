@@ -9,6 +9,7 @@ namespace App\Services;
 use App\Call;
 use App\CareplanAssessment;
 use App\CLH\Repositories\UserRepository;
+use App\Events\PusherTest;
 use App\Filters\NoteFilters;
 use App\Note;
 use App\Repositories\CareplanAssessmentRepository;
@@ -75,7 +76,7 @@ class NoteService
         $patient = User::find($note->patient_id);
 
         $note->body = 'Created/Edited Assessment for '.$patient->name().' ('.$assessment->careplan_id.') ... See '.
-                              URL::to('/manage-patients/'.$assessment->careplan_id.'/view-careplan/assessment');
+            URL::to('/manage-patients/'.$assessment->careplan_id.'/view-careplan/assessment');
         $note->type         = 'Edit Assessment';
         $note->performed_at = Carbon::now();
         $note->save();
@@ -102,6 +103,14 @@ class NoteService
         }
 
         return null;
+    }
+
+    /**
+     * @param $dataToPusher
+     */
+    public function dispatchPusherEvent($dataToPusher)
+    {
+        PusherTest::dispatch($dataToPusher);
     }
 
     public function editNote(Note $note, $requestInput): Note
@@ -264,15 +273,27 @@ class NoteService
             ->with('notifiable')
             ->get()
             ->mapWithKeys(function ($notification) {
-                        if ( ! $notification->notifiable) {
-                            return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
-                        }
+                if ( ! $notification->notifiable) {
+                    return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
+                }
 
-                        return [$notification->notifiable->getFullName() => $notification->created_at->format('m/d/y h:iA T')];
-                    });
+                return [$notification->notifiable->getFullName() => $notification->created_at->format('m/d/y h:iA T')];
+            });
     }
 
-    //Save call information for note
+    //Get all notes for patients with specified date range
+
+//    public function getNotesAndOfflineActivitiesForPatient(User $patient)
+//    {
+//        $notes = $patient->notes;
+//        $activities = $patient->activities;
+//        $appointments = $patient->appointments;
+//
+//        return $notes->merge($activities)
+//            ->merge($appointments);
+//    }
+
+    //Get all notes that have been sent to anyone for a given provider with specified date range
 
     public function getNotesWithRangeForPatients(
         $patients,
@@ -289,19 +310,7 @@ class NoteService
             ->get();
     }
 
-    //Get all notes for patients with specified date range
-
-//    public function getNotesAndOfflineActivitiesForPatient(User $patient)
-//    {
-//        $notes = $patient->notes;
-//        $activities = $patient->activities;
-//        $appointments = $patient->appointments;
-//
-//        return $notes->merge($activities)
-//            ->merge($appointments);
-//    }
-
-    //Get all notes that have been sent to anyone for a given provider with specified date range
+    //Save call information for note
 
     public function getNotesWithRangeForProvider(
         $providers,
@@ -346,8 +355,8 @@ class NoteService
             ->whereNotNull('read_at')
             ->get()
             ->mapWithKeys(function ($notification) {
-                        return [$notification->notifiable->getFullName() => $notification->read_at->format('m/d/y h:iA T')];
-                    });
+                return [$notification->notifiable->getFullName() => $notification->read_at->format('m/d/y h:iA T')];
+            });
     }
 
     public function getUserDraftNotes($userId)
@@ -482,4 +491,9 @@ class NoteService
                 ->exists()
             : null;
     }
+
+//    public function addendumPusherToNurse($noteAuthorId, $dataToPusher)
+//    {
+//        PusherTest::dispatch($dataToPusher);
+//    }
 }
