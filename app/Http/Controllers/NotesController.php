@@ -216,16 +216,6 @@ class NotesController extends Controller
     }
 
     /**
-     * @param $getNote
-     *
-     * @return mixed
-     */
-    public function getNoteAuthorId($getNote)
-    {
-        return $getNote->author_id;
-    }
-
-    /**
      * @param $noteId
      *
      * @return Collection|Model|Note|Note[]|null
@@ -718,7 +708,7 @@ class NotesController extends Controller
                 'body'           => $request->input('addendum-body'),
                 'author_user_id' => auth()->user()->id,
             ]
-        ); //Check also:Addendum Observer
+        ); //Check also:AddendumObserver
 
         return redirect()->to(
             route(
