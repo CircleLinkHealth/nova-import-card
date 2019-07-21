@@ -31,7 +31,7 @@
         created() {
             // axios.get('/pusher-test').then(response => (this.notifications = response.data));
 
-            window.Echo.private('pusher-test.' + this.authUserId).listen('PusherTest', ({dataToPusher}) => {
+            window.Echo.private('addendum.' + this.authUserId).listen('Pusher', ({dataToPusher}) => {
                 this.notifications.push(dataToPusher);
                 console.log(dataToPusher);
             });

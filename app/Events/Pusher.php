@@ -13,7 +13,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PusherTest implements ShouldBroadcast
+class Pusher implements ShouldBroadcast
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -39,6 +39,6 @@ class PusherTest implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('pusher-test.'.$this->dataToPusher['note_author']);
+        return new PrivateChannel('addendum.'.$this->dataToPusher['note_author']);
     }
 }

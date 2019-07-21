@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\Events\PusherTest;
+use App\Events\Pusher;
 use App\Notifications\AddendumCreated;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -26,7 +26,7 @@ class AddendumNotificationsService
      */
     public function dispatchPusherEvent($dataToPusher)
     {
-        PusherTest::dispatch($dataToPusher);
+        Pusher::dispatch($dataToPusher);
     }
 
     /**
