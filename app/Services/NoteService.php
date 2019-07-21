@@ -9,7 +9,6 @@ namespace App\Services;
 use App\Call;
 use App\CareplanAssessment;
 use App\CLH\Repositories\UserRepository;
-use App\Events\PusherTest;
 use App\Filters\NoteFilters;
 use App\Note;
 use App\Repositories\CareplanAssessmentRepository;
@@ -103,14 +102,6 @@ class NoteService
         }
 
         return null;
-    }
-
-    /**
-     * @param $dataToPusher
-     */
-    public function dispatchPusherEvent($dataToPusher)
-    {
-        PusherTest::dispatch($dataToPusher);
     }
 
     public function editNote(Note $note, $requestInput): Note
@@ -491,9 +482,4 @@ class NoteService
                 ->exists()
             : null;
     }
-
-//    public function addendumPusherToNurse($noteAuthorId, $dataToPusher)
-//    {
-//        PusherTest::dispatch($dataToPusher);
-//    }
 }

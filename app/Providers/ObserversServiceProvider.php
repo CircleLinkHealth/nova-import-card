@@ -11,9 +11,11 @@ use App\Call;
 use App\CarePlan;
 use App\CarePlanTemplate;
 use App\EligibilityBatch;
+use App\Models\Addendum;
 use App\Models\CCD\Medication;
 use App\Models\CCD\Problem;
 use App\Models\ProblemCode;
+use App\Observers\AddendumObserver;
 use App\Observers\AppConfigObserver;
 use App\Observers\CallObserver;
 use App\Observers\CarePlanObserver;
@@ -66,6 +68,7 @@ class ObserversServiceProvider extends ServiceProvider
         User::observe(UserObserver::class);
         Call::observe(CallObserver::class);
         Problem::observe(ProblemObserver::class);
+        Addendum::observe(AddendumObserver::class);
     }
 
     /**

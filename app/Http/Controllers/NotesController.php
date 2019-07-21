@@ -9,10 +9,8 @@ namespace App\Http\Controllers;
 use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\NoteFinalSaved;
-use App\Events\PusherTest;
 use App\Http\Requests\NotesReport;
 use App\Note;
-use App\Notifications\AddendumCreated;
 use App\Repositories\PatientWriteRepository;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
@@ -351,22 +349,6 @@ class NotesController extends Controller
         }
 
         return view('wpUsers.patient.note.list', $data)->with('input', $request->input());
-    }
-
-    /**
-     * @param $note
-     * @param $noteAuthorId
-     */
-    public function notifyViaPusher($note, $noteAuthorId)
-    {
-        User::find($noteAuthorId)->notify(new AddendumCreated($note));
-
-        $dataToPusher = [
-            'addendum_author' => $note->author_user_id,
-            'note_author'     => $noteAuthorId,
-        ];
-
-        $this->service->dispatchPusherEvent($dataToPusher);
     }
 
     public function send(
@@ -729,17 +711,14 @@ class NotesController extends Controller
             ]
         );
 
-        $getNote      = $this->getNoteForAddendum($noteId);
-        $noteAuthorId = $this->getNoteAuthorId($getNote);
+        $getNote = $this->getNoteForAddendum($noteId);
 
         $note = $getNote->addendums()->create(
             [
                 'body'           => $request->input('addendum-body'),
                 'author_user_id' => auth()->user()->id,
             ]
-        );
-
-        $notifyViaPusher = $this->notifyViaPusher($note, $noteAuthorId);
+        ); //Check also:Addendum Observer
 
         return redirect()->to(
             route(

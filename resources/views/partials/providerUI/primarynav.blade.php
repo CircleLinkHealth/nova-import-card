@@ -138,10 +138,10 @@ $user = auth()->user();
                                           :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                         </li>
                     @endif
-{{--TESTIN PUSHER REAL TIME NOTIFS--}}
-                    <li>
-                        <pusher-notifications :user="{{json_encode(Auth::user())}}"></pusher-notifications>
-                    </li>
+{{--TESTIN PUSHER REAL TIME NOTIFS UI(unfinished)- Enable for testing only--}}
+{{--                    <li>--}}
+{{--                        <pusher-notifications :user="{{json_encode(Auth::user())}}"></pusher-notifications>--}}
+{{--                    </li>--}}
                     <li>
                         <a href="{{ route('patients.dashboard') }}" class="text-white"><i
                                     class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>

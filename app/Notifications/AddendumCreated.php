@@ -14,17 +14,17 @@ use Illuminate\Notifications\Notification;
 class AddendumCreated extends Notification
 {
     use Queueable;
+    public $addendum;
     public $attachment;
-    public $note;
 
     /**
      * Create a new notification instance.
      *
-     * @param Addendum $note
+     * @param Addendum $addendum
      */
-    public function __construct(Addendum $note)
+    public function __construct(Addendum $addendum)
     {
-        $this->attachment = $this->note = $note;
+        $this->attachment = $this->addendum = $addendum;
     }
 
     /**
