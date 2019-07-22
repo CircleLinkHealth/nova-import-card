@@ -14,7 +14,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
-use Yajra\DataTables\Facades\DataTables;
 
 class NursePerformanceRepController extends Controller
 {
