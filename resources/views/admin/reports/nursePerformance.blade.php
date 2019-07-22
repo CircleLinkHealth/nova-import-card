@@ -47,7 +47,7 @@
             $(function () {
                 var columnForBorder = 1;
                 var columnsForTextFormating = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-
+                // $.fn.dataTable.moment( 'dddd, MMMM Do, YYYY' );
                 $('#nurse_metrics').DataTable({
                     "rowCallback": function (row, data) {
                         if (data.name === "Z - Totals for:") {
@@ -126,8 +126,10 @@
             });
 
         </script>
+        <script src="//cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>
         <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
         <script src="//cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
+
 
     @endpush
 @stop
