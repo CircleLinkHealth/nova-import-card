@@ -126,7 +126,6 @@
             });
 
         </script>
-        <script src="//cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>
         <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
         <script src="//cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
 

@@ -188,7 +188,7 @@ class NursePerformanceRepController extends Controller
         $n              = 0;
         foreach ($nurses as $name => $report) {
             foreach ($report as $day => $reportPerDay) {
-                $nurseDailyData[$n]['weekDay']                   = Carbon::parse($day)->copy()->format('jS D')/*format('D jS')*/;
+                $nurseDailyData[$n]['weekDay']                   = Carbon::parse($day)->copy()->format('jS D');
                 $nurseDailyData[$n]['name']                      = $reportPerDay['nurse_full_name'];
                 $nurseDailyData[$n]['actualHours']               = $reportPerDay['actualHours'];
                 $nurseDailyData[$n]['committedHours']            = $reportPerDay['committedHours'];
