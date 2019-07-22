@@ -47,7 +47,8 @@ class AddendumCreated extends Notification
         return [
             'sender_id'   => auth()->id(),
             'receiver_id' => $notifiable->id,
-            'subject'     => 'dgkfsfgajfg',
+            'description' => 'Addendum',
+            'subject'     => 'has created an addendum for',
         ];
     }
 
