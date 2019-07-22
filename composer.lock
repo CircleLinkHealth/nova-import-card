@@ -700,7 +700,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "2c4c48a5b56a2f03418f86710dc63ebe57882bbf"
+                "reference": "0947321b4eaf52aec06492c755f00007facf24dd"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -733,7 +733,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-07-16T19:56:14+00:00"
+            "time": "2019-07-19T15:00:57+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -6023,8 +6023,8 @@
             "authors": [
                 {
                     "name": "Antonio Carlos Ribeiro",
-                    "email": "acr@antoniocarlosribeiro.com",
-                    "role": "Creator & Designer"
+                    "role": "Creator & Designer",
+                    "email": "acr@antoniocarlosribeiro.com"
                 }
             ],
             "description": "Laravel Server & App Health Monitor and Notifier",
@@ -12277,8 +12277,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "lead"
+                    "role": "lead",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "The PHP Unit Testing framework.",
