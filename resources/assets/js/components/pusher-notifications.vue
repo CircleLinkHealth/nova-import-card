@@ -17,7 +17,6 @@
             return {
                 notifications: [],
                 authUserId: this.user.id,
-                showCount: false,
                 count: '',
             }
         },
@@ -35,6 +34,8 @@
         methods: {},
 
         created() {
+            axios.get('/addendum-notifications').then(response => (this.notifications.push(...response.data[0])));
+
             window.Echo.private('addendum.' + this.authUserId).listen('Pusher', ({dataToPusher}) => {
                 this.notifications.push(dataToPusher);
                 console.log(dataToPusher);

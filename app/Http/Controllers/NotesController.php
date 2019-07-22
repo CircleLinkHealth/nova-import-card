@@ -24,6 +24,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -213,6 +214,23 @@ class NotesController extends Controller
         $note->delete();
 
         return redirect()->route('patient.note.index', ['patientId' => $patientId]);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function getAddendumNotifications()
+    {
+        $nurse = User::find(13244);
+
+        $unreadNotifications = [];
+        foreach ($nurse->unreadNotifications as $notification) {
+            $unreadNotifications[] = $notification->type;
+        }
+
+        return response()->json([
+            $unreadNotifications,
+        ], 200);
     }
 
     /**

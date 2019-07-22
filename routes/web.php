@@ -2413,3 +2413,8 @@ Route::get(
         'as'   => 'process.eligibility.local.zip',
     ]
 )->middleware(['auth', 'role:administrator']);
+
+Route::get('addendum-notifications', [
+    'uses' => 'NotesController@getAddendumNotifications',
+    'as'   => 'nurse.addendum.notification',
+])->middleware('permission:provider.read,note.read');
