@@ -19,13 +19,13 @@
 
                             <div class="panel-heading">Nurse Performance Report</div>
 
-                            <div class="calendar-date" style="padding-left: 2%;">
+                            <div class="calendar-date" style="padding-left: 2%; padding-top: 1%;" >
                                 @include('admin.reports.nursesPerformanceForm')
                             </div>
-
-                            <div class="dates">
-                                {{$startDate->format('l F jS')}} - {{$endDate->format('l F jS Y')}}
-                            </div>
+{{--We need less white space + start and end date are already dispalyed in placeholder and table row--}}
+{{--                            <div class="dates">--}}
+{{--                                {{$startDate->format('l F jS')}} - {{$endDate->format('l F jS Y')}}--}}
+{{--                            </div>--}}
 
                             <div class="panel-body">
                                 <table class="table table-hover" id="nurse_metrics" style="width: 100%">
@@ -40,14 +40,12 @@
             </div>
         </div>
     </div>
-
-
     @push('scripts')
         <script>
             $(function () {
                 var columnForBorder = 1;
                 var columnsForTextFormating = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-                // $.fn.dataTable.moment( 'dddd, MMMM Do, YYYY' );
+
                 $('#nurse_metrics').DataTable({
                     "rowCallback": function (row, data) {
                         if (data.name === "Z - Totals for:") {
@@ -73,8 +71,9 @@
                         {
                             className: 'dt-center',
                             targets: columnsForTextFormating
-                        }
+                        },
                     ],
+
                     deferRender: true,
                     scrollY: "95%",
                     scrollX: "100%",
@@ -82,7 +81,7 @@
                     processing: true,
                     serverSide: true,
                     paging: false,
-                    //fixed columns disables ability to sort data on demand. Can we fix this?
+                    //fixed columns disables ability to sort data on demand.
                     fixedColumns: {
                         leftColumns: 2,
                     },
@@ -96,7 +95,6 @@
                             d.end_date = '{{$endDate}}';
                         },
                         error: function () {
-                            //not always shows accurate response.
                             alert("File does not exist for: '{{$startDate->format('l F jS')}}'")
                         },
 
@@ -146,7 +144,7 @@
     }
 
     .dates {
-        font-size: large;
+        font-size: medium;
         text-align: center;
         font-weight: bold;
     }
