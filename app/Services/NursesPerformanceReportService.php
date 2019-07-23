@@ -469,7 +469,6 @@ class NursesPerformanceReportService
             ->whereRaw(
                 "
 calls.status = 'scheduled'
-AND (calls.type IS NULL OR calls.type='call') 
 AND calls.outbound_cpm_id = {$nurse->id}
 AND patient_info.ccm_status = 'enrolled'
 AND DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth()->toDateString()}')"
