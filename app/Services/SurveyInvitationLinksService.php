@@ -9,7 +9,6 @@ use App\SurveyInstance;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
 
 class SurveyInvitationLinksService
 {
@@ -135,18 +134,22 @@ class SurveyInvitationLinksService
             throw new \Exception("There is no VITALS survey instance for year $forYear");
         }
 
-        $user->surveys()
-             ->attach($vitalsSurvey->id, [
-                     'survey_instance_id' => $vitalsSurvey->instances->first()->id,
-                     'status'             => SurveyInstance::PENDING,
-                 ]
-             );
+        if ($user->surveyInstances->where('survey_id', '=', $vitalsSurvey->id)->isEmpty()) {
+            $user->surveys()
+                 ->attach($vitalsSurvey->id, [
+                         'survey_instance_id' => $vitalsSurvey->instances->first()->id,
+                         'status'             => SurveyInstance::PENDING,
+                     ]
+                 );
+        }
 
-        $user->surveys()
-             ->attach($hraSurvey->id, [
-                 'survey_instance_id' => $hraSurvey->instances->first()->id,
-                 'status'             => SurveyInstance::PENDING,
-             ]);
+        if ($user->surveyInstances->where('survey_id', '=', $hraSurvey->id)->isEmpty()) {
+            $user->surveys()
+                 ->attach($hraSurvey->id, [
+                     'survey_instance_id' => $hraSurvey->instances->first()->id,
+                     'status'             => SurveyInstance::PENDING,
+                 ]);
+        }
 
         return [
             Survey::HRA    => $hraSurvey->id,

@@ -11,6 +11,7 @@ use App\Services\TwilioClientService;
 use App\Survey;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class InvitationLinksController extends Controller
 {
@@ -72,6 +73,32 @@ class InvitationLinksController extends Controller
         return response()->json(['message' => 'success']);
     }
 
+
+    public function enrollUser(Request $request, $userId) {
+
+        try {
+
+            $forYear = Carbon::now()->year;
+
+            $user = User
+                ::with([
+                    'surveyInstances' => function ($query) use ($forYear) {
+                        $query->forYear($forYear);
+                    },
+                ])
+                ->where('id', '=', $userId)
+                ->firstOrFail();
+
+            $this->service->enrolUser($user, $forYear);
+        }
+        catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+
+        return response()->json(['message' => 'success']);
+    }
+
+
     /**
      * @param SendSurveyLinkRequest $request
      * @param string $surveyName
@@ -87,20 +114,22 @@ class InvitationLinksController extends Controller
         $channel        = $request->get('channel');
         $channelValue   = $request->get('channel_value');
 
+        $forYear = Carbon::now()->year;
+
         $user = User
             ::with([
                 'phoneNumbers',
                 'patientInfo',
                 'primaryPractice',
                 'billingProvider',
-                'surveyInstances' => function ($query) use ($surveyName) {
-                    $query->ofSurvey($surveyName)->current();
+                'surveyInstances' => function ($query) use ($surveyName, $forYear) {
+                    $query->ofSurvey($surveyName)->forYear($forYear);
                 },
             ])
             ->where('id', '=', $target_user_id)
             ->firstOrFail();
 
-        $url = $this->service->createAndSaveUrl($user, $surveyName, Carbon::now()->year, false);
+        $url = $this->service->createAndSaveUrl($user, $surveyName, $forYear, false);
 
         /** @var User $targetNotifiable */
         $targetNotifiable = null;

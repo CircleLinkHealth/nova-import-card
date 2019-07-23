@@ -63,6 +63,11 @@ Route::group([
         'uses' => 'InvitationLinksController@sendVitalsLink',
         'as'   => 'patient.send.link.vitals',
     ]);
+
+    Route::post('{userId}/enroll', [
+        'uses' => 'InvitationLinksController@enrollUser',
+        'as'   => 'patient.enroll',
+    ]);
 });
 
 Route::group([

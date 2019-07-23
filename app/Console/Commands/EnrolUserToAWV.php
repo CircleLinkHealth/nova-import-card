@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Services\SurveyInvitationLinksService;
-use App\Survey;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -48,7 +47,7 @@ class EnrolUserToAWV extends Command
         $user = User
             ::with([
                 'surveyInstances' => function ($query) {
-                    $query->ofSurvey(Survey::HRA)->current();
+                    $query->current();
                 },
             ])
             ->where('id', '=', $userId)
@@ -65,7 +64,8 @@ class EnrolUserToAWV extends Command
             $forYear = Carbon::now()->year;
         }
 
-        if ( ! $user->surveyInstances->isEmpty()) {
+        //exit if enrolled for both HRA and Vitals
+        if ($user->surveyInstances->count() > 1) {
             $this->warn("User[$userId] is already enrolled to AWV for year $forYear");
 
             return;
