@@ -32,10 +32,4 @@ window.Echo = new Echo({
     key: 'dca1637b1d26e1c5867f',
     cluster: 'mt1',
     encrypted: true,
-
-    // auth:{
-    //     headers:{
-    //         Authorization: JWTtoken
-    //     }
-    // }
 });
