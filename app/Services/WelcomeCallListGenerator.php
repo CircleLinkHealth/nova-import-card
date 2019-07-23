@@ -133,15 +133,7 @@ class WelcomeCallListGenerator
             $this->createEnrollees();
         } catch (\Exception $e) {
             if ($this->eligibilityJob) {
-                $this->setEligibilityJobStatus(
-                    2,
-                    [
-                        'code'    => $e->getCode(),
-                        'message' => $e->getMessage(),
-                        'file'    => $e->getFile(),
-                        'line'    => $e->getLine(),
-                    ]
-                );
+                $this->setEligibilityJobStatusFromException($e);
 
                 $this->eligibilityJob->save();
             }
@@ -984,6 +976,19 @@ class WelcomeCallListGenerator
         $this->eligibilityJob->messages = $messages;
         $this->eligibilityJob->outcome  = $outcome;
         $this->eligibilityJob->reason   = $reason;
+    }
+
+    private function setEligibilityJobStatusFromException(\Exception $e)
+    {
+        $this->setEligibilityJobStatus(
+            2,
+            [
+                'code'    => $e->getCode(),
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ]
+        );
     }
 
     private function validateInsuranceWithCollection($record)
