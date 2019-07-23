@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
         <div class="col-md-12" style="margin-top: 15px">
-            <div class="col-md-5 text-left" style="height: 30px; padding-top: 5px">
+            <div class="col-md-8 text-left" style="height: 30px; padding-top: 5px">
                 <button class="col-md-3 btn btn-secondary btn-xs pointer" v-bind:class="{'btn-info': !this.showPast}"
                         @click="showCurrentDocuments()">Current
                 </button>
@@ -12,9 +12,13 @@
                 <button class="col-md-3 btn btn-info btn-xs pointer"
                         @click="uploadCareDocument()">Upload Documents
                 </button>
+                <button class="col-md-2 btn btn-info btn-xs pointer"
+                        style="margin-left: 10px"
+                        @click="enrollIntoAwv()">Enroll into AWV
+                </button>
             </div>
-            <div class="col-md-2">
-                <loader style="margin-left: 80px; text-align: center" v-if="loading"/>
+            <div class="col-md-1">
+                <loader style="text-align: center" v-if="loading"/>
             </div>
         </div>
 
@@ -39,20 +43,13 @@
                         </div>
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
-                                <div v-if="status.hra_status === 'pending' ">
-                                    <button class="col-md-6 btn btn-danger btn-m">
-                                        Not Started
-                                    </button>
-                                </div>
-                                <div v-if="status.hra_status === 'in_progress' ">
-                                    <button class="col-md-6 btn btn-warning btn-m">
-                                        In Progress
-                                    </button>
-                                </div>
-                                <div v-if="status.hra_status === 'completed' ">
-                                    <button class="col-md-6 btn btn-success btn-m">
-                                        Completed
-                                    </button>
+                                <div>
+                                    <a class="col-md-6 btn btn-m"
+                                       :class="getButtonColorFromStatus(status.hra_status)"
+                                       target="_blank"
+                                       :href="getViewHraSurveyUrl()">
+                                        {{getButtonTextFromStatus(status.hra_status)}}
+                                    </a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
@@ -84,20 +81,13 @@
                         </div>
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
-                                <div v-if="status.vitals_status === 'pending' ">
-                                    <button class="col-md-6 btn btn-danger btn-m">
-                                            Not Started
-                                    </button>
-                                </div>
-                                <div v-if="status.vitals_status === 'in_progress' ">
-                                    <button class="col-md-6 btn btn-warning btn-m">
-                                        In Progress
-                                    </button>
-                                </div>
-                                <div v-if="status.vitals_status === 'completed' ">
-                                    <button class="col-md-6 btn btn-success btn-m" >
-                                        Completed
-                                    </button>
+                                <div>
+                                    <a class="col-md-6 btn btn-m"
+                                       :class="getButtonColorFromStatus(status.vitals_status)"
+                                       target="_blank"
+                                       :href="getViewVitalsSurveyUrl()">
+                                        {{getButtonTextFromStatus(status.vitals_status)}}
+                                    </a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
@@ -126,9 +116,9 @@
 
 
             <!--<div v-for="(docs, type) in careDocs">-->
-                <!--<div v-for="doc in docs" class="col-md-3">-->
-                    <!--<care-document-box :doc="doc" :type="type"></care-document-box>-->
-                <!--</div>-->
+            <!--<div v-for="doc in docs" class="col-md-3">-->
+            <!--<care-document-box :doc="doc" :type="type"></care-document-box>-->
+            <!--</div>-->
             <!--</div>-->
             <div v-if="careDocs['PPP']">
                 <div v-for="doc in careDocs['PPP']" class="col-md-3">
@@ -146,9 +136,9 @@
                 </div>
             </div>
             <div v-else>
-            <div class="col-md-3">
-                <care-document-box :type="'Provider Report'"></care-document-box>
-            </div>
+                <div class="col-md-3">
+                    <care-document-box :type="'Provider Report'"></care-document-box>
+                </div>
             </div>
             <div v-if="careDocs['Lab Results']">
                 <div v-for="doc in careDocs['Lab Results']" class="col-md-3">
@@ -253,6 +243,10 @@
             patient: {
                 type: Object,
                 required: true,
+            },
+            awvUrl: {
+                type: String,
+                required: true
             }
         },
         mounted() {
@@ -271,6 +265,86 @@
             }
         },
         methods: {
+
+            getViewHraSurveyUrl() {
+                return this.getAwvUrl(`survey/hra/${this.patient.id}`);
+            },
+
+            getViewVitalsSurveyUrl() {
+                return this.getAwvUrl(`survey/vitals/${this.patient.id}`);
+            },
+
+            getButtonTextFromStatus(status) {
+                switch (status) {
+                    case "pending":
+                        return "Not Started";
+
+                    case "in_progress":
+                        return "In Progress";
+
+                    case "completed":
+                        return "Completed";
+                }
+
+                return status;
+            },
+
+            getButtonColorFromStatus(status) {
+                switch (status) {
+                    case "pending":
+                        return "btn-danger";
+
+                    case "in_progress":
+                        return "btn-warning";
+
+                    case "completed":
+                        return "btn-success";
+                }
+
+                return status;
+            },
+
+            getAwvUrl: function (path) {
+
+                if (!this.awvUrl) {
+                    return null;
+                }
+
+                if (this.awvUrl[this.awvUrl.length - 1] === "/") {
+                    return this.awvUrl + path;
+                }
+                else {
+                    return this.awvUrl + "/" + path;
+                }
+            },
+            enrollIntoAwv() {
+                this.loading = true;
+                this.errors.setErrors({});
+                this.axios
+                    .post(this.getAwvUrl(`manage-patients/${this.patient.id}/enroll`))
+                    .then(response => {
+                        this.loading = false;
+                    })
+                    .catch(err => {
+                        this.loading = false;
+
+                        switch (err.response.status) {
+                            case 404:
+                                this.errors.setErrors({error: "Not found"});
+                            case 419:
+                                this.errors.setErrors({error: "Not authenticated"});
+                            case 500:
+                                this.errors.setErrors({error: "Server error"});
+                            default:
+                                let errors = err.response.data.errors ? err.response.data.errors : {};
+                                this.errors.setErrors(errors);
+                                self.bannerText = err.response.data.message;
+                        }
+
+                        self.bannerType = 'danger';
+                        self.showBanner = true;
+                    });
+            },
             uploadCareDocument() {
                 this.showUploadModal = true
             },
