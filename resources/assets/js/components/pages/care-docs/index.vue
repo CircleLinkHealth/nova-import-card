@@ -12,10 +12,12 @@
                 <button class="col-md-3 btn btn-info btn-xs pointer"
                         @click="uploadCareDocument()">Upload Documents
                 </button>
-                <button class="col-md-2 btn btn-info btn-xs pointer"
-                        style="margin-left: 10px"
-                        @click="enrollIntoAwv()">Enroll into AWV
-                </button>
+                <a class="col-md-2 btn btn-info btn-xs pointer"
+                   style="margin-left: 10px"
+                   target="_blank"
+                   :href="getAwvUrl(`manage-patients/${this.patient.id}/enroll`)">
+                    Enroll into AWV
+                </a>
             </div>
             <div class="col-md-1">
                 <loader style="text-align: center" v-if="loading"/>
@@ -266,6 +268,19 @@
         },
         methods: {
 
+            getAwvUrl: function (path) {
+                if (!this.awvUrl) {
+                    return null;
+                }
+
+                if (this.awvUrl[this.awvUrl.length - 1] === "/") {
+                    return this.awvUrl + path;
+                }
+                else {
+                    return this.awvUrl + "/" + path;
+                }
+            },
+
             getViewHraSurveyUrl() {
                 return this.getAwvUrl(`survey/hra/${this.patient.id}`);
             },
@@ -304,50 +319,10 @@
                 return status;
             },
 
-            getAwvUrl: function (path) {
-
-                if (!this.awvUrl) {
-                    return null;
-                }
-
-                if (this.awvUrl[this.awvUrl.length - 1] === "/") {
-                    return this.awvUrl + path;
-                }
-                else {
-                    return this.awvUrl + "/" + path;
-                }
-            },
-            enrollIntoAwv() {
-                this.loading = true;
-                this.errors.setErrors({});
-                this.axios
-                    .post(this.getAwvUrl(`manage-patients/${this.patient.id}/enroll`))
-                    .then(response => {
-                        this.loading = false;
-                    })
-                    .catch(err => {
-                        this.loading = false;
-
-                        switch (err.response.status) {
-                            case 404:
-                                this.errors.setErrors({error: "Not found"});
-                            case 419:
-                                this.errors.setErrors({error: "Not authenticated"});
-                            case 500:
-                                this.errors.setErrors({error: "Server error"});
-                            default:
-                                let errors = err.response.data.errors ? err.response.data.errors : {};
-                                this.errors.setErrors(errors);
-                                self.bannerText = err.response.data.message;
-                        }
-
-                        self.bannerType = 'danger';
-                        self.showBanner = true;
-                    });
-            },
             uploadCareDocument() {
                 this.showUploadModal = true
             },
+
             getCareDocuments() {
                 return this.axios
                     .get(rootUrl('/care-docs/' + this.patient.id + '/' + this.showPast))
