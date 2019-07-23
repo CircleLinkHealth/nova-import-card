@@ -175,7 +175,7 @@ $user = auth()->user();
                             </li>
                         </ul>
                     </li>
-{{--Pusher bell notif Icon. Incomment when done only--}}
+{{--AddendumPusher bell notif Icon. Incomment when done only--}}
                         <li>
                             <a><pusher-notifications :user="{{json_encode(Auth::user())}}"></pusher-notifications></a>
                         </li>

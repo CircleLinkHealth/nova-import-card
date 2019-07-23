@@ -7,6 +7,7 @@
 namespace App\Notifications;
 
 use App\Models\Addendum;
+use App\Services\AddendumNotificationsService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -36,7 +37,18 @@ class AddendumCreated extends Notification
     }
 
     /**
+     * Get patient_id that the addendum was written for.
+     *
+     * @return mixed
+     */
+    public function getPatientId()
+    {
+        return $this->getAttachment()->addendumable->patient_id;
+    }
+
+    /**
      * Get the array representation of the notification.
+     * $notifiable = User who wrote the note.
      *
      * @param mixed $notifiable
      *
@@ -47,8 +59,9 @@ class AddendumCreated extends Notification
         return [
             'sender_id'   => auth()->id(),
             'receiver_id' => $notifiable->id,
-            'description' => 'Addendum',
-            'subject'     => 'has created an addendum for',
+            'patient_id'  => $this->getPatientId(),
+            'description' => AddendumNotificationsService::ADDENDUM_DESCRIPTION,
+            'subject'     => AddendumNotificationsService::ADDENDUM_SUBJECT,
         ];
     }
 

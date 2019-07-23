@@ -6,13 +6,16 @@
 
 namespace App\Services;
 
-use App\Events\Pusher;
+use App\Events\AddendumPusher;
 use App\Notifications\AddendumCreated;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 
 class AddendumNotificationsService
-{
+{//constants values are demo
+    const ADDENDUM_DESCRIPTION = 'Addendum';
+    const ADDENDUM_SUBJECT     = 'has created an addendum for';
+
     /**
      * Validates if the auth user is allowed to see notification on the client side.
      * Only the author of a note can see a notification about an addendum related to that note.
@@ -49,7 +52,7 @@ class AddendumNotificationsService
      */
     public function dispatchPusherEvent($dataToPusher)
     {
-        Pusher::dispatch($dataToPusher);
+        AddendumPusher::dispatch($dataToPusher);
     }
 
     /**
@@ -71,8 +74,11 @@ class AddendumNotificationsService
     public function notifyViaPusher($addendum, $noteAuthorId)
     {
         $dataToPusher = [
-            'addendum_author' => $addendum->author_user_id,
-            'note_author'     => $noteAuthorId,
+            'sender_id'   => $addendum->author_user_id,
+            'receiver_id' => $noteAuthorId,
+            'patient_id'  => $addendum->addendumable->patient_id,
+            'description' => self::ADDENDUM_DESCRIPTION,
+            'subject'     => self::ADDENDUM_SUBJECT,
         ];
 
         $this->dispatchPusherEvent($dataToPusher);
