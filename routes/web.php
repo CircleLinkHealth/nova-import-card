@@ -64,6 +64,11 @@ Route::group([
         'as'   => 'patient.send.link.vitals',
     ]);
 
+    Route::get('{userId}/enroll', [
+        'uses' => 'InvitationLinksController@showEnrollUserForm',
+        'as'   => 'patient.enroll',
+    ]);
+
     Route::post('{userId}/enroll', [
         'uses' => 'InvitationLinksController@enrollUser',
         'as'   => 'patient.enroll',

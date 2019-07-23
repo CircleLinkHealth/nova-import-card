@@ -73,6 +73,15 @@ class InvitationLinksController extends Controller
         return response()->json(['message' => 'success']);
     }
 
+    public function showEnrollUserForm(Request $request, $userId) {
+
+        $patient = User::findOrFail($userId);
+
+        return view('enrollUser', [
+            'patientName' => $patient->display_name,
+        ]);
+    }
+
 
     public function enrollUser(Request $request, $userId) {
 
