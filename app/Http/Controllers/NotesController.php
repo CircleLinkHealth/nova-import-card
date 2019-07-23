@@ -13,6 +13,7 @@ use App\Http\Requests\NotesReport;
 use App\Note;
 use App\Repositories\PatientWriteRepository;
 use App\SafeRequest;
+use App\Services\AddendumNotificationsService;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
 use App\Services\NoteService;
@@ -32,6 +33,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class NotesController extends Controller
 {
+    private $addendumNotificationsService;
     private $formatter;
     private $patientRepo;
     private $service;
@@ -39,11 +41,13 @@ class NotesController extends Controller
     public function __construct(
         NoteService $noteService,
         ReportFormatter $formatter,
-        PatientWriteRepository $patientWriteRepository
+        PatientWriteRepository $patientWriteRepository,
+        AddendumNotificationsService $addendumNotifications
     ) {
-        $this->service     = $noteService;
-        $this->formatter   = $formatter;
-        $this->patientRepo = $patientWriteRepository;
+        $this->service                      = $noteService;
+        $this->formatter                    = $formatter;
+        $this->patientRepo                  = $patientWriteRepository;
+        $this->addendumNotificationsService = $addendumNotifications;
     }
 
     public function create(
@@ -221,15 +225,13 @@ class NotesController extends Controller
      */
     public function getAddendumNotifications()
     {
-        $nurse = User::find(13244);
+        $authUser = auth()->user();
 
-        $unreadNotifications = [];
-        foreach ($nurse->unreadNotifications as $notification) {
-            $unreadNotifications[] = $notification->type;
-        }
+        $unreadAddendumNotifications = $this->addendumNotificationsService->getUnreadAddendumNotifications($authUser);
+        $notificationsToPusherVue    = $this->addendumNotificationsService->addendumNotificationsToPusherVue($unreadAddendumNotifications, $authUser);
 
         return response()->json([
-            $unreadNotifications,
+            $notificationsToPusherVue,
         ], 200);
     }
 
