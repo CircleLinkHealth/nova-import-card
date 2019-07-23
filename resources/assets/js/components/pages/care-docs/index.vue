@@ -12,7 +12,8 @@
                 <button class="col-md-3 btn btn-info btn-xs pointer"
                         @click="uploadCareDocument()">Upload Documents
                 </button>
-                <a class="col-md-2 btn btn-info btn-xs pointer"
+                <a v-if="!userEnrolledIntoAwv"
+                   class="col-md-2 btn btn-info btn-xs pointer"
                    style="margin-left: 10px"
                    target="_blank"
                    :href="getAwvUrl(`manage-patients/${this.patient.id}/enroll`)">
@@ -46,7 +47,12 @@
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
                                 <div>
-                                    <a class="col-md-6 btn btn-m"
+                                    <button v-if="awvUrl.length === 0" class="col-md-6 btn btn-m"
+                                            disabled
+                                            :class="getButtonColorFromStatus(status.hra_status)">
+                                        {{getButtonTextFromStatus(status.hra_status)}}
+                                    </button>
+                                    <a v-else class="col-md-6 btn btn-m"
                                        :class="getButtonColorFromStatus(status.hra_status)"
                                        target="_blank"
                                        :href="getViewHraSurveyUrl()">
@@ -84,7 +90,12 @@
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
                                 <div>
-                                    <a class="col-md-6 btn btn-m"
+                                    <button v-if="awvUrl.length === 0" class="col-md-6 btn btn-m"
+                                            disabled
+                                            :class="getButtonColorFromStatus(status.vitals_status)">
+                                        {{getButtonTextFromStatus(status.vitals_status)}}
+                                    </button>
+                                    <a v-else class="col-md-6 btn btn-m"
                                        :class="getButtonColorFromStatus(status.vitals_status)"
                                        target="_blank"
                                        :href="getViewVitalsSurveyUrl()">
@@ -257,6 +268,11 @@
             this.loading = true;
 
             this.getCareDocuments();
+
+            if (!this.awvUrl || this.awvUrl.length === 0) {
+                console.error('Wellness Care Docs:Missing AWV url. Please contact support.');
+            }
+
         },
         computed: {
             uploadUrl() {
@@ -264,6 +280,29 @@
             },
             bannerClass() {
                 return 'alert alert-' + this.bannerType;
+            },
+            userEnrolledIntoAwv() {
+
+                //if we do not have the awvUrl, then we cannot show the button
+                //so, just pretend that user is enrolled
+                if (!this.awvUrl || this.awvUrl.length === 0) {
+                    return true;
+                }
+
+                if (this.patientAWVStatuses.length === 0) {
+                    return false;
+                }
+
+                //assuming that first in list is the current
+                if (!this.patientAWVStatuses[0].hasOwnProperty('vitals_status') || this.patientAWVStatuses[0]['vitals_status'] == null || this.patientAWVStatuses[0]['vitals_status'].length === 0) {
+                    return false;
+                }
+
+                if (!this.patientAWVStatuses[0].hasOwnProperty('hra_status') || this.patientAWVStatuses[0]['hra_status'] == null || this.patientAWVStatuses[0]['hra_status'].length === 0) {
+                    return false;
+                }
+
+                return true;
             }
         },
         methods: {
