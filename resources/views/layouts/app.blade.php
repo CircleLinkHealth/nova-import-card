@@ -27,7 +27,7 @@
             <a class="navbar-title" href="{{ url('/') }}">
                 <img src="{{ url('/images/clh_logo_lt.png') }}"
                      alt="CarePlan Manager" width='50px'
-                     style="position:relative;top:-5px">
+                     style="position:relative;">
                 &nbsp;&nbsp;CarePlanManager™
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
