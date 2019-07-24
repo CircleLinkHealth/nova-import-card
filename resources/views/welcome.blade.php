@@ -55,4 +55,9 @@
             </div>
         </div>
     </div>
+    <div class="text-center" style="margin-top: 100px">
+        <a class="btn btn-primary btn-lg" href="https://www.careplanmanager.com">
+            Looking for CarePlanManager™ ? Click Here!
+        </a>
+    </div>
 @endsection

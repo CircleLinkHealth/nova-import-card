@@ -28,7 +28,6 @@
                 <img src="{{ url('/images/clh_logo_lt.png') }}"
                      alt="CarePlan Manager" width='50px'
                      style="position:relative;">
-                &nbsp;&nbsp;CarePlanManager™
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -43,18 +42,19 @@
                 </ul>
 
                 <!-- Right Side Of Navbar -->
-                <ul class="navbar-nav ml-auto">
-                    <!-- Authentication Links -->
-                    @guest
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">{{ __('Provider Login') }}</a>
-                        </li>
-                    @else
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                              style="display: none;">
-                            @csrf
-                        </form>
-                    <!--
+                @if(!Route::is('login'))
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Authentication Links -->
+                        @guest
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('Provider Login') }}</a>
+                            </li>
+                        @else
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                  style="display: none;">
+                                @csrf
+                            </form>
+                        <!--
                     dropdown not working for some reason
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
@@ -66,23 +66,24 @@
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault();document.getElementById('logout-form').submit();">
                                     {{ __('Logout') }}
-                        </a>
-                    </div>
-                </li>
+                            </a>
+                        </div>
+                    </li>
 -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" style="cursor:default">
-                                {{ Auth::user()->display_name }}
-                            </a>
-                        </li>
-                        <li>
-                            <a class="nav-link" href="{{ route('logout') }}"
-                               onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                                {{ __('Logout') }}
-                            </a>
-                        </li>
-                    @endguest
-                </ul>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" style="cursor:default">
+                                    {{ Auth::user()->display_name }}
+                                </a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="{{ route('logout') }}"
+                                   onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                                    {{ __('Logout') }}
+                                </a>
+                            </li>
+                        @endguest
+                    </ul>
+                @endif
             </div>
         </div>
     </nav>

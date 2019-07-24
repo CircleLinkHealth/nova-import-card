@@ -124,7 +124,7 @@ class PatientLoginController extends Controller
 
         $prevUrl = Session::previousUrl();
         if (empty($prevUrl) || !$user->hasRole('participant')) {
-            return '/home';
+            return route('home');
         }
 
         $parsed   = parse_url($prevUrl);

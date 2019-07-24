@@ -11675,6 +11675,10 @@ body,
   width: 190px;
 }
 
+.btn {
+  text-transform: initial;
+}
+
 .btn-start-container {
   text-align: center;
 }
