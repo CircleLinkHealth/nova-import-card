@@ -3,13 +3,14 @@
 namespace App\Console\Commands;
 
 use App\Console\Traits\DryRunnable;
+use App\NotifiableUser;
+use App\Notifications\SurveyInvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\Services\TwilioClientService;
 use App\Survey;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Twilio\Exceptions\TwilioException;
 
 class SendInvitationLinkUsingSMS extends Command
 {
@@ -50,7 +51,8 @@ class SendInvitationLinkUsingSMS extends Command
      */
     public function handle(SurveyInvitationLinksService $service, TwilioClientService $twilioService)
     {
-        $userId = $this->argument('userId');
+        $userId     = $this->argument('userId');
+        $surveyName = Survey::HRA;
 
         $user = User
             ::with([
@@ -58,8 +60,8 @@ class SendInvitationLinkUsingSMS extends Command
                 'patientInfo',
                 'primaryPractice',
                 'billingProvider',
-                'surveyInstances' => function ($query) {
-                    $query->ofSurvey(Survey::HRA)->current();
+                'surveyInstances' => function ($query) use ($surveyName) {
+                    $query->ofSurvey($surveyName)->current();
                 },
             ])
             ->where('id', '=', $userId)
@@ -77,7 +79,7 @@ class SendInvitationLinkUsingSMS extends Command
         }
 
         try {
-            $url = $service->createAndSaveUrl($user, $forYear, true);
+            $url = $service->createAndSaveUrl($user, $surveyName, $forYear, true);
         } catch (\Exception $e) {
             $this->error($e->getMessage());
 
@@ -95,17 +97,27 @@ class SendInvitationLinkUsingSMS extends Command
             return;
         }
 
-        $text = $service->getSMSText($user, $url);
+        /** @var User $targetNotifiable */
+        $targetNotifiable = User::find($userId);
+
+        if ( ! $targetNotifiable) {
+            throw new \Exception("Could not find user[$phoneNumber] in the system.");
+        }
+
+        $notifiableUser = new NotifiableUser($targetNotifiable, null, $phoneNumber);
+        $invitation     = new SurveyInvitationLink($url, $surveyName, 'sms');
 
         try {
             if ($this->isDryRun()) {
-                $this->info("SMS[$phoneNumber] -> $text");
+                $text = $invitation->toTwilio($notifiableUser);
+                $this->info("SMS[$phoneNumber] -> $text->content");
             } else {
-                $twilioService->sendSMS($phoneNumber, $text);
+                $notifiableUser->notify($invitation);
+                $this->info('Sending notification');
             }
             $this->info("Done");
 
-        } catch (TwilioException $e) {
+        } catch (\Exception $e) {
             $this->error($e->getMessage());
         }
 

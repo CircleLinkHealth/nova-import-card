@@ -108,7 +108,7 @@
         </mdb-modal-body>
         <mdb-modal-footer>
             <mdb-btn color="warning" @click.native="cancel">Cancel</mdb-btn>
-            <mdb-btn color="primary" @click.native="sendLink" :disabled="waiting || error != null">Send</mdb-btn>
+            <mdb-btn color="primary" @click.native="sendLink" :disabled="waiting">Send</mdb-btn>
         </mdb-modal-footer>
     </mdb-modal>
 </template>
