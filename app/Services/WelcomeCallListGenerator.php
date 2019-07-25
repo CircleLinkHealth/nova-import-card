@@ -686,7 +686,11 @@ class WelcomeCallListGenerator
                 if ($problems) {
                     foreach ($problems as $p) {
                         if ( ! is_a($p, Problem::class)) {
-                            throw new \Exception('This is not an object of type '.Problem::class);
+                            $e = new \Exception('This is not an object of type '.Problem::class);
+                            $this->setEligibilityJobStatusFromException($e);
+                            $this->eligibilityJob->save();
+
+                            return false;
                         }
 
                         $codeType = null;
