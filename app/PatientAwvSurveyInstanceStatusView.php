@@ -10,6 +10,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * Class Survey
  *
  * @property-read int patient_id
+ * @property-read int practice_id
  * @property-read string patient_name
  * @property-read Carbon dob
  * @property-read string provider_name

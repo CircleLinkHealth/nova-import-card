@@ -6,6 +6,7 @@
 
 namespace App\Filters;
 
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -96,6 +97,14 @@ class PatientListFilters extends QueryFilters
         return $this->builder->whereIn('year', $value);
     }
 
+    public function practiceIds(array $value) {
+        if (empty($value)) {
+            return $this->builder;
+        }
+
+        return $this->builder->whereIn('practice_id', $value);
+    }
+
     public function globalFilters(): array
     {
         $query = $this->request->get('query');
@@ -108,6 +117,10 @@ class PatientListFilters extends QueryFilters
             $now               = Carbon::now();
             $filtered['years'] = [$now->year - 1, $now->year, $now->year + 1];
         }
+
+        /** @var User $user */
+        $user = auth()->user();
+        $filtered['practiceIds'] = $user->viewableProgramIds();
 
         return $filtered->all();
     }
