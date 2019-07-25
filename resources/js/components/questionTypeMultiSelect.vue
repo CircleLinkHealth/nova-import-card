@@ -45,7 +45,7 @@
 
     export default {
         name: "questionTypeMultiSelect",
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'getAllQuestionsFunc', 'readOnly'],
+        props: ['question', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'getAllQuestionsFunc', 'readOnly'],
         components: {FontAwesomeIcon, vueSelect, mdbBtn},
 
         data() {

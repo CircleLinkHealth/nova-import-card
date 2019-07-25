@@ -76,8 +76,7 @@
 
     export default {
         name: "questionTypeRadio",
-        props: ['question', 'userId',
-            'surveyInstanceId', 'isActive', 'isSubQuestion',
+        props: ['question', 'isActive', 'isSubQuestion',
             'onDoneFunc', 'styleHorizontal',
             'getAllQuestionsFunc', 'isLastQuestion', 'waiting', 'readOnly'],
         components: {mdbBtn, FontAwesomeIcon},

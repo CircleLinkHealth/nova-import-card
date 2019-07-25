@@ -50,7 +50,7 @@
                 <div class="questions-box question"
                      :id="question.id"
                      :class="!readOnlyMode && currentQuestionIndex !== index ? 'watermark' : 'active'"
-                     v-show="index >= currentQuestionIndex"
+                     v-show="readOnlyMode || index >= currentQuestionIndex"
                      v-for="(question, index) in questions">
 
                     <div class="questions-body">
@@ -72,40 +72,37 @@
                         <div class="question-answer-type">
                             <question-type-text
                                 :question="question"
-                                :userId="patientId"
-                                :surveyInstanceId="surveyInstanceId"
                                 :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'text'">
                             </question-type-text>
 
                             <question-type-checkbox
                                 :question="question"
-                                :userId="patientId"
-                                :surveyInstanceId="surveyInstanceId"
                                 :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
                             <question-type-muti-select
                                 :question="question"
-                                :userId="patientId"
-                                :surveyInstanceId="surveyInstanceId"
                                 :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'multi_select'">
                             </question-type-muti-select>
 
@@ -116,26 +113,24 @@
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'range'">
                             </question-type-range>
 
                             <question-type-number
                                 :question="question"
-                                :userId="patientId"
-                                :surveyInstanceId="surveyInstanceId"
                                 :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :get-all-questions-func="getAllQuestions"
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'number'">
                             </question-type-number>
 
                             <question-type-radio
                                 :question="question"
-                                :userId="patientId"
-                                :surveyInstanceId="surveyInstanceId"
                                 :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :style-horizontal="true"
@@ -143,6 +138,7 @@
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'radio'">
                             </question-type-radio>
 
@@ -153,6 +149,7 @@
                                 :on-done-func="postAnswerAndGoToNext"
                                 :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
+                                :read-only="readOnlyMode"
                                 v-if="question.type.type === 'date'">
                             </question-type-date>
                         </div>
@@ -511,7 +508,7 @@
             if (this.data.answers && this.data.answers.length) {
                 let lastOrder = -1;
                 this.questions.forEach(q => {
-                    const a = this.surveyData.answers.find(a => a.question_id === q.id);
+                    const a = this.data.answers.find(a => a.question_id === q.id);
                     if (a) {
                         q.answer = a;
                         if (lastOrder !== q.pivot.order) {

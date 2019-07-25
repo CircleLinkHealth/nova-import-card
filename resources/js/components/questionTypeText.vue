@@ -128,7 +128,7 @@
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'userId', 'surveyInstanceId', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
+        props: ['question', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
         components: {mdbBtn, FontAwesomeIcon},
 
 
