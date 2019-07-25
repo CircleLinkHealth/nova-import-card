@@ -17,28 +17,6 @@ class AddendumNotificationsService
     const ADDENDUM_SUBJECT     = 'has created an addendum for';
 
     /**
-     * Validates if the auth user is allowed to see notification on the client side.
-     * Only the author of a note can see a notification about an addendum related to that note.
-     *
-     * @param $unreadAddendumNotifications
-     * @param mixed $authUser
-     *
-     * @return Collection
-     */
-    public function addendumNotificationsToPusherVue($unreadAddendumNotifications, $authUser)
-    {
-        return collect($unreadAddendumNotifications)->map(
-            function ($notification) use ($authUser) {
-                if ($notification->notifiable_id === $authUser->id) {
-                    return $notification;
-                }
-
-                return $notification = [];
-            }
-        );
-    }
-
-    /**
      * @param $noteAuthorId
      * @param $addendum
      */
@@ -62,9 +40,15 @@ class AddendumNotificationsService
      */
     public function getUnreadAddendumNotifications($authUser)
     {
-        return $authUser->unreadNotifications->map(function ($notification) {
-            return $notification;
-        })->where('type', '=', 'App\Notifications\AddendumCreated')->all();
+        return $authUser->unreadNotifications->where('type', '=', 'App\Notifications\AddendumCreated')->all();
+    }
+
+    /**
+     * @return string|null
+     */
+    public static function getUrlToRedirectUser()
+    {
+        return session()->previousUrl();
     }
 
     /**
@@ -77,10 +61,31 @@ class AddendumNotificationsService
             'sender_id'   => $addendum->author_user_id,
             'receiver_id' => $noteAuthorId,
             'patient_id'  => $addendum->addendumable->patient_id,
+            'note_id'     => $addendum->addendumable_id,
+            'redirectTo'  => $this->getUrlToRedirectUser(),
             'description' => self::ADDENDUM_DESCRIPTION,
             'subject'     => self::ADDENDUM_SUBJECT,
         ];
 
         $this->dispatchPusherEvent($dataToPusher);
+    }
+
+    /**
+     * @param $unreadAddendumNotifications
+     * @param mixed $authUser
+     *
+     * @return Collection
+     */
+    public function whoCanSeeRealTimeNotifications($unreadAddendumNotifications, $authUser)
+    {
+        return collect($unreadAddendumNotifications)->map(
+            function ($notification) use ($authUser) {
+                if ($notification->notifiable_id === $authUser->id) {
+                    return $notification;
+                }
+
+                return $notification = [];
+            }
+        );
     }
 }

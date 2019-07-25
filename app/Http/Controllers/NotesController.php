@@ -221,6 +221,8 @@ class NotesController extends Controller
     }
 
     /**
+     * Get addendum Notifications to show  in vueJs.
+     *
      * @return JsonResponse
      */
     public function getAddendumNotifications()
@@ -228,7 +230,7 @@ class NotesController extends Controller
         $authUser = auth()->user();
 
         $unreadAddendumNotifications = $this->addendumNotificationsService->getUnreadAddendumNotifications($authUser);
-        $notificationsToPusherVue    = $this->addendumNotificationsService->addendumNotificationsToPusherVue($unreadAddendumNotifications, $authUser);
+        $notificationsToPusherVue    = $this->addendumNotificationsService->whoCanSeeRealTimeNotifications($unreadAddendumNotifications, $authUser);
 
         return response()->json([
             $notificationsToPusherVue,

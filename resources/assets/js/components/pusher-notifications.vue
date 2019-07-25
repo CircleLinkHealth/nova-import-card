@@ -7,7 +7,7 @@
         <ul class="dropdown-menu" role="menu">
             <li class="dropdown-header">NOTIFICATIONS</li>
             <li v-for="notification in notifications">
-                <a @click="redirectToSource()">{{notification.sender_id}} {{notification.subject}} {{notification.patient_id}}</a>
+                <a @click="redirectToSource(notification)">{{notification.sender_id}} {{notification.subject}} {{notification.patient_id}}</a>
             </li>
         </ul>
     </div>
@@ -41,9 +41,8 @@
 
         },
         methods: {
-            redirectToSource(){
-                window.location.href = '/';
-
+            redirectToSource(notification){
+                window.location.href = notification.redirectTo;
             }
         },
 
@@ -54,8 +53,8 @@
                         this.notifications.push(...notificationsData)
                     }
                 );
-
-            window.Echo.private('addendum.' + this.authUserId).listen('Pusher', ({dataToPusher}) => {
+//Real Time Notifications
+            window.Echo.private('addendum.' + this.authUserId).listen('AddendumPusher', ({dataToPusher}) => {
                 this.notifications.push(dataToPusher);
             });
         }

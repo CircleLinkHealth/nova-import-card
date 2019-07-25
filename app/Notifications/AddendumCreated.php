@@ -37,6 +37,14 @@ class AddendumCreated extends Notification
     }
 
     /**
+     * @return mixed
+     */
+    public function getNoteId()
+    {
+        return $this->getAttachment()->addendumable_id;
+    }
+
+    /**
      * Get patient_id that the addendum was written for.
      *
      * @return mixed
@@ -60,6 +68,8 @@ class AddendumCreated extends Notification
             'sender_id'   => auth()->id(),
             'receiver_id' => $notifiable->id,
             'patient_id'  => $this->getPatientId(),
+            'note_id'     => $this->getNoteId(),
+            'redirectTo'  => AddendumNotificationsService::getUrlToRedirectUser(),
             'description' => AddendumNotificationsService::ADDENDUM_DESCRIPTION,
             'subject'     => AddendumNotificationsService::ADDENDUM_SUBJECT,
         ];
