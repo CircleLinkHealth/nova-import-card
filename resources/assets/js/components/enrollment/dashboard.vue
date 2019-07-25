@@ -342,7 +342,7 @@
 
                     <input type="hidden" name="status" value="consented">
                     <input type="hidden" name="enrollee_id" :value="enrolleeId">
-                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system">
+                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                     <input type="hidden" name="time_elapsed" :value="time_elapsed">
 
                 </div>
