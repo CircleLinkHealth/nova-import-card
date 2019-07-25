@@ -7,7 +7,9 @@
         <ul class="dropdown-menu" role="menu">
             <li class="dropdown-header">NOTIFICATIONS</li>
             <li v-for="notification in notifications">
-                <a @click="redirectToSource(notification)">{{notification.sender_id}} {{notification.subject}} {{notification.patient_id}}</a>
+                <a @click="redirectAndMarkAsRead(notification)">
+                    {{notification.sender_id}} {{notification.subject}} {{notification.patient_id}}
+                </a>
             </li>
         </ul>
     </div>
@@ -25,6 +27,7 @@
         data() {
             return {
                 notifications: [],
+                notificationsModel: [],
                 authUserId: this.user.id,
                 count: '',
             }
@@ -39,9 +42,20 @@
                 return this.countNotifications !== 0;
             },
 
+            isMarkedAsUnread() {
+
+            },
+
         },
         methods: {
-            redirectToSource(notification){
+            redirectAndMarkAsRead(notification) {
+                axios.post(`/redirect-addendum/${notification.receiver_id}/${notification.attachment_id}`)
+                    .then(response => {
+                            this.markAsRead(notification);
+                        }
+                    );
+            },
+            markAsRead(notification) {
                 window.location.href = notification.redirectTo;
             }
         },
@@ -49,10 +63,14 @@
         created() {
             axios.get('/addendum-notifications')
                 .then(response => {
+                        console.log(response.data);
+                        const notificationsModel = response.data[0].map(q => q);
                         const notificationsData = response.data[0].map(q => q.data);
+                        this.notificationsModel.push(...notificationsModel)
                         this.notifications.push(...notificationsData)
                     }
                 );
+
 //Real Time Notifications
             window.Echo.private('addendum.' + this.authUserId).listen('AddendumPusher', ({dataToPusher}) => {
                 this.notifications.push(dataToPusher);

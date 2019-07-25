@@ -2418,3 +2418,8 @@ Route::get('addendum-notifications', [
     'uses' => 'NotesController@getAddendumNotifications',
     'as'   => 'nurse.addendum.notification',
 ])->middleware('permission:provider.read,note.read');
+
+Route::post('/redirect-addendum/{receiverId}/{attachmentId}', [
+    'uses' => 'NotesController@markAddendumAsRead',
+    'as'   => 'nurse.addendum.redirect',
+]);

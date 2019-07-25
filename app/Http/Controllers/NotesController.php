@@ -229,8 +229,8 @@ class NotesController extends Controller
     {
         $authUser = auth()->user();
 
-        $unreadAddendumNotifications = $this->addendumNotificationsService->getUnreadAddendumNotifications($authUser);
-        $notificationsToPusherVue    = $this->addendumNotificationsService->whoCanSeeRealTimeNotifications($unreadAddendumNotifications, $authUser);
+        $addendumNotifications    = $this->addendumNotificationsService->getAddendumNotifications($authUser);
+        $notificationsToPusherVue = $this->addendumNotificationsService->whoCanSeeRealTimeNotifications($addendumNotifications, $authUser);
 
         return response()->json([
             $notificationsToPusherVue,
@@ -363,6 +363,22 @@ class NotesController extends Controller
         return view('wpUsers.patient.note.list', $data)->with('input', $request->input());
     }
 
+    /**
+     * @param mixed $receiverId
+     * @param $attachmentId
+     *
+     * @return JsonResponse
+     */
+    public function markAddendumAsRead($receiverId, $attachmentId)
+    {
+        $this->addendumNotificationsService->markAddendumNotifAsRead($receiverId, $attachmentId);
+
+        return response()->json([
+            'readBy'     => $receiverId,
+            'addendumId' => $attachmentId,
+        ], 200);
+    }
+
     public function send(
         Request $input,
         $patientId,
@@ -373,7 +389,7 @@ class NotesController extends Controller
 
         $note->forward($input['notify_careteam'], $input['notify_circlelink_support']);
 
-        return redirect()->route('patient.note.index', ['patient' => $patientId]);
+        return redirect()->route('patient.note.index', [$noteId]);
     }
 
     public function show(

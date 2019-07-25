@@ -7,6 +7,7 @@
 namespace App\Services;
 
 use App\Events\AddendumPusher;
+use App\Models\Addendum;
 use App\Notifications\AddendumCreated;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
@@ -38,9 +39,9 @@ class AddendumNotificationsService
      *
      * @return mixed
      */
-    public function getUnreadAddendumNotifications($authUser)
+    public function getAddendumNotifications($authUser)
     {
-        return $authUser->unreadNotifications->where('type', '=', 'App\Notifications\AddendumCreated')->all();
+        return $authUser->notifications->where('type', '=', 'App\Notifications\AddendumCreated')->all();
     }
 
     /**
@@ -51,6 +52,18 @@ class AddendumNotificationsService
         return session()->previousUrl();
     }
 
+    public function markAddendumNotifAsRead($receiverId, $attachmentId)
+    {
+        $user = User::find($receiverId);
+
+        $user->unreadNotifications()
+            ->hasNotifiableType(User::class)
+            ->hasAttachmentType(Addendum::class)
+            ->where('attachment_id', '=', $attachmentId)
+            ->get()
+            ->markAsRead();
+    }
+
     /**
      * @param $addendum
      * @param $noteAuthorId
@@ -58,27 +71,30 @@ class AddendumNotificationsService
     public function notifyViaPusher($addendum, $noteAuthorId)
     {
         $dataToPusher = [
-            'sender_id'   => $addendum->author_user_id,
-            'receiver_id' => $noteAuthorId,
-            'patient_id'  => $addendum->addendumable->patient_id,
-            'note_id'     => $addendum->addendumable_id,
-            'redirectTo'  => $this->getUrlToRedirectUser(),
-            'description' => self::ADDENDUM_DESCRIPTION,
-            'subject'     => self::ADDENDUM_SUBJECT,
+            'sender_id'       => $addendum->author_user_id,
+            'receiver_id'     => $noteAuthorId,
+            'patient_id'      => $addendum->addendumable->patient_id,
+            'note_id'         => $addendum->addendumable_id,
+            'attachment_id'   => $addendum->id,
+            'attachment_type' => Addendum::class,
+            'hasBeenRead'     => false,
+            'redirectTo'      => $this->getUrlToRedirectUser(),
+            'description'     => self::ADDENDUM_DESCRIPTION,
+            'subject'         => self::ADDENDUM_SUBJECT,
         ];
 
         $this->dispatchPusherEvent($dataToPusher);
     }
 
     /**
-     * @param $unreadAddendumNotifications
+     * @param $addendumNotifications
      * @param mixed $authUser
      *
      * @return Collection
      */
-    public function whoCanSeeRealTimeNotifications($unreadAddendumNotifications, $authUser)
+    public function whoCanSeeRealTimeNotifications($addendumNotifications, $authUser)
     {
-        return collect($unreadAddendumNotifications)->map(
+        return collect($addendumNotifications)->map(
             function ($notification) use ($authUser) {
                 if ($notification->notifiable_id === $authUser->id) {
                     return $notification;
