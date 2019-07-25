@@ -49,7 +49,7 @@
     export default {
         name: "EnrollUser",
         components: {mdbBtn, mdbAlert, FontAwesomeIcon},
-        props: ['patientName'],
+        props: ['patientName', 'patientId'],
         data() {
             return {
                 waiting: false,
@@ -63,7 +63,7 @@
                 this.success = false;
                 this.error = null;
                 axios
-                    .post(`/manage-patients/${this.user.id}/enroll`)
+                    .post(`/manage-patients/${this.patientId}/enroll`)
                     .then(response => {
                         this.waiting = false;
                         this.success = true;

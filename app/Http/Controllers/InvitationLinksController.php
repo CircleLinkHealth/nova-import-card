@@ -78,6 +78,7 @@ class InvitationLinksController extends Controller
         $patient = User::findOrFail($userId);
 
         return view('enrollUser', [
+            'patientId' => $patient->id,
             'patientName' => $patient->display_name,
         ]);
     }
