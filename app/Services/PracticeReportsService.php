@@ -7,7 +7,7 @@
 namespace App\Services;
 
 use App\Billing\Practices\PracticeInvoiceGenerator;
-use App\ChargeableService;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use App\Exports\FromArray;
 use App\ValueObjects\QuickBooksRow;
 use Carbon\Carbon;
