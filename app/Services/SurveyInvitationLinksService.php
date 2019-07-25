@@ -52,27 +52,33 @@ class SurveyInvitationLinksService
             $surveyId = $hraSurveyInstance->survey_id;
         }
 
-        $patientInfoId = $user->patientInfo->id;
-        $this->expireAllPastUrls($patientInfoId, $surveyId);
+        if (Survey::HRA === $surveyName) {
+            $patientInfoId = $user->patientInfo->id;
+            $this->expireAllPastUrls($patientInfoId, $surveyId);
 
-        //APP_URL must be set correctly in .env for this to work
-        $url = URL::signedRoute('auth.login.signed',
-            [
-                'user'      => $user->id,
-                'survey'    => $surveyId,
+            //APP_URL must be set correctly in .env for this to work
+            $url = URL::signedRoute('auth.login.signed',
+                [
+                    'user'      => $user->id,
+                    'survey'    => $surveyId,
 
-                //added this so it will generate a new url every time
-                'timestamp' => Carbon::now()->timestamp,
+                    //added this so it will generate a new url every time
+                    'timestamp' => Carbon::now()->timestamp,
+                ]);
+
+            $urlToken = $this->parseUrl($url);
+
+            InvitationLink::create([
+                'patient_info_id'     => $patientInfoId,
+                'survey_id'           => $surveyId,
+                'link_token'          => $urlToken,
+                'is_manually_expired' => false,
             ]);
-
-        $urlToken = $this->parseUrl($url);
-
-        InvitationLink::create([
-            'patient_info_id'     => $patientInfoId,
-            'survey_id'           => $surveyId,
-            'link_token'          => $urlToken,
-            'is_manually_expired' => false,
-        ]);
+        } else {
+            $url = route('survey.vitals', [
+                'patientId' => $user->id,
+            ]);
+        }
 
         return $url;
     }
@@ -155,5 +161,13 @@ class SurveyInvitationLinksService
             Survey::HRA    => $hraSurvey->id,
             Survey::VITALS => $vitalsSurvey->id,
         ];
+    }
+
+    public static function getSurveyIdFromSignedUrl(string $url)
+    {
+        $parsed = parse_url($url);
+        $path   = explode('/', $parsed['path']);
+
+        return end($path);
     }
 }

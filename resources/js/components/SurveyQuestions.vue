@@ -1,15 +1,15 @@
 <template>
     <div class="container main-container">
 
-        <div class="top-left-fixed">
+        <div class="top-left-fixed" v-if="adminMode">
             <a :href="getPatientsListUrl()">
                 <font-awesome-icon icon="chevron-circle-left" size="3x"/>
             </a>
         </div>
 
-        <div class="top-right-fixed">
+        <div class="top-right-fixed" v-if="adminMode">
             <mdb-btn :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
-                {{readOnlyMode ? 'Read Only Mode' : 'Edit Mode'}}
+                {{readOnlyMode ? 'Switch to Edit Mode' : 'Switch to Read Only Mode'}}
             </mdb-btn>
         </div>
 

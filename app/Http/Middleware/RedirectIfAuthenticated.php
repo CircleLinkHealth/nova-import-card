@@ -2,8 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\SurveyInvitationLinksService;
+use App\Survey;
+use App\User;
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 class RedirectIfAuthenticated
 {
@@ -14,20 +18,39 @@ class RedirectIfAuthenticated
      * @param  \Closure $next
      * @param  string|null $guard
      *
+     *
      * @return mixed
      */
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
 
-            if (auth()->user()->hasRole('participant')) {
+            /** @var User $user */
+            $user = auth()->user();
+
+            if ($user->hasRole('participant')) {
+
+                if (Route::is('auth.login.signed')) {
+
+                    $surveyId = SurveyInvitationLinksService::getSurveyIdFromSignedUrl($request->url());
+                    $name     = Survey::find($surveyId)->get('name');
+
+                    if (Survey::HRA === $name) {
+                        return redirect()->route('survey.hra',
+                            [
+                                'patientId' => $user->id,
+                                'surveyId'  => $surveyId,
+                            ]);
+                    }
+                }
+
                 //show a welcome message and ask patient to open AWV with the link provided
                 return redirect()->route('home');
-            } else {
-                return redirect()->route('patient.list');
             }
 
+            return redirect()->route('patient.list');
         }
+
         return $next($request);
     }
 }

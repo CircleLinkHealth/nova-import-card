@@ -9,7 +9,7 @@
 
         <div class="top-right-fixed">
             <mdb-btn :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
-                {{readOnlyMode ? 'Read Only Mode' : 'Edit Mode'}}
+                {{readOnlyMode ? 'Switch to Edit Mode' : 'Switch to Read Only Mode'}}
             </mdb-btn>
         </div>
 

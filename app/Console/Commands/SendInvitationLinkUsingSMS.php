@@ -21,14 +21,14 @@ class SendInvitationLinkUsingSMS extends Command
      *
      * @var string
      */
-    protected $signature = 'invite:sms {userId} {phoneNumber?} {forYear?} {{--dry-run}}';
+    protected $signature = 'invite:sms {userId} {surveyName} {phoneNumber?} {forYear?} {{--dry-run}}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Send SMS with invitation link to HRA.';
+    protected $description = 'Send SMS with invitation link to HRA or Vitals.';
 
     /**
      * Create a new command instance.
@@ -49,10 +49,17 @@ class SendInvitationLinkUsingSMS extends Command
      * @return mixed
      * @throws \Exception
      */
-    public function handle(SurveyInvitationLinksService $service, TwilioClientService $twilioService)
+    public function handle(SurveyInvitationLinksService $service)
     {
         $userId     = $this->argument('userId');
-        $surveyName = Survey::HRA;
+        $surveyName = $this->argument('surveyName');
+        if ( ! ($surveyName === Survey::HRA || $surveyName === Survey::VITALS)) {
+            $hra    = Survey::HRA;
+            $vitals = Survey::VITALS;
+            $this->warn("surveyName must be $hra or $vitals");
+
+            return;
+        }
 
         $user = User
             ::with([

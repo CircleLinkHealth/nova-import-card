@@ -32,7 +32,7 @@ Route::group([
 
 Route::group([
     'prefix'     => 'manage-patients',
-    'middleware' => ['auth'],
+    'middleware' => ['auth', 'permission:vitals-survey-complete'],
 ], function () {
 
     Route::get('', [
@@ -100,6 +100,7 @@ Route::group([
 
     Route::group([
         'prefix' => 'vitals',
+        'middleware' => ['permission:vitals-survey-complete'],
     ], function () {
 
         Route::get('{patientId}/welcome', [

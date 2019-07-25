@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Services\SurveyInvitationLinksService;
+use App\Survey;
 use App\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -123,19 +124,27 @@ class PatientLoginController extends Controller
         $user = auth()->user();
 
         $prevUrl = Session::previousUrl();
-        if (empty($prevUrl) || !$user->hasRole('participant')) {
+        if (empty($prevUrl) || ! $user->hasRole('participant')) {
             return route('home');
         }
 
-        $parsed   = parse_url($prevUrl);
-        $path     = explode('/', $parsed['path']);
-        $surveyId = end($path);
+        $surveyId = $this->service->getSurveyIdFromSignedUrl($prevUrl);
+        $name     = Survey::find($surveyId)->get('name');
+        if ( ! Survey::HRA === $name) {
+            return route('home');
+        }
 
-        return route('survey.hra',
+        $route = route('survey.hra',
             [
-                'patientId'  => $user,
-                'surveyId'   => $surveyId,
+                'patientId' => $user->id,
+                'surveyId'  => $surveyId,
             ]);
+
+        //fixme: don't know why I had to do this
+        //without it, it would redirect to home page '/'
+        Session::put('url.intended', $route);
+
+        return $route;
     }
 
     protected function username()
