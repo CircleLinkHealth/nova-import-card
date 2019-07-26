@@ -93,6 +93,10 @@ class RequiredPermissionsTableSeeder extends Seeder
                 'name'         => 'vitals-survey-complete',
                 'display_name' => 'Allows user to complete the AWV Vitals Survey',
             ],
+            [
+                'name'         => 'ehr-report-writer-access',
+                'display_name' => 'Has access to EHR Report Writer panel.'
+            ]
         ];
 
         return array_merge($perms, $old);
