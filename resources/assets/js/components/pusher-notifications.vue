@@ -71,7 +71,7 @@
         created() {
             axios.get('/addendum-notifications')
                 .then(response => {
-                        const notificationsFromDb = response.data[0].map(q => q);
+                        const notificationsFromDb = response.data[0];
                         this.notificationsFromDb.push(...notificationsFromDb)
 
                     }
