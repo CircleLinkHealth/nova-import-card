@@ -39,6 +39,6 @@ class AddendumPusher implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('addendum.'.$this->dataToPusher['receiver_id']);
+        return new PrivateChannel('addendum.'.$this->dataToPusher['data']['receiver_id']);
     }
 }

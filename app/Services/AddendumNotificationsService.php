@@ -71,16 +71,19 @@ class AddendumNotificationsService
     public function notifyViaPusher($addendum, $noteAuthorId)
     {
         $dataToPusher = [
-            'sender_id'       => $addendum->author_user_id,
-            'receiver_id'     => $noteAuthorId,
-            'patient_id'      => $addendum->addendumable->patient_id,
-            'note_id'         => $addendum->addendumable_id,
-            'attachment_id'   => $addendum->id,
-            'attachment_type' => Addendum::class,
-            'hasBeenRead'     => false,
-            'redirectTo'      => $this->getUrlToRedirectUser(),
-            'description'     => self::ADDENDUM_DESCRIPTION,
-            'subject'         => self::ADDENDUM_SUBJECT,
+            'data' => collect(
+                [
+                    'sender_id'       => $addendum->author_user_id,
+                    'receiver_id'     => $noteAuthorId,
+                    'patient_id'      => $addendum->addendumable->patient_id,
+                    'note_id'         => $addendum->addendumable_id,
+                    'attachment_id'   => $addendum->id,
+                    'attachment_type' => Addendum::class,
+                    'redirectTo'      => $this->getUrlToRedirectUser(),
+                    'description'     => self::ADDENDUM_DESCRIPTION,
+                    'subject'         => self::ADDENDUM_SUBJECT,
+                ]
+            ),
         ];
 
         $this->dispatchPusherEvent($dataToPusher);

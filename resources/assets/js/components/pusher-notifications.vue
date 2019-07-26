@@ -7,8 +7,9 @@
         <ul class="dropdown-menu" role="menu">
             <li class="dropdown-header">NOTIFICATIONS</li>
             <li v-for="notification in notifications">
-                <a @click="redirectAndMarkAsRead(notification)">
-                    {{notification.sender_id}} {{notification.subject}} {{notification.patient_id}}
+                <a :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
+                        @click="redirectAndMarkAsRead(notification)">
+                    {{notification.data.sender_id}} {{notification.data.subject}} {{notification.data.patient_id}}
                 </a>
             </li>
         </ul>
@@ -26,54 +27,59 @@
 
         data() {
             return {
-                notifications: [],
-                notificationsModel: [],
+                notificationsFromPusher: [],
+                notificationsFromDb: [],
                 authUserId: this.user.id,
                 count: '',
             }
         },
         computed: {
-            countNotifications() {
-                this.count = this.notifications.length;
-                return this.notifications.length;
-            },
-
             shouldShowCount() {
-                return this.countNotifications !== 0;
+                return this.countUnreadNotifications !== 0;
             },
 
-            isMarkedAsUnread() {
+            countUnreadNotifications() {
+                // NotificationsFromPusher is always unread - it doesnt have property: "read_at"
+                const notificationsFromPusher = this.notificationsFromPusher.length;
+                const count = this.notificationsFromDb.filter(q=>q.read_at === null).length;
+                const sum = count + notificationsFromPusher;
+                this.count = sum ;
+
+                return sum;
 
             },
+
+            notifications() {
+                return this.notificationsFromDb.concat(this.notificationsFromPusher);
+            }
 
         },
         methods: {
             redirectAndMarkAsRead(notification) {
-                axios.post(`/redirect-addendum/${notification.receiver_id}/${notification.attachment_id}`)
+                axios.post(`/redirect-addendum/${notification.data.receiver_id}/${notification.data.attachment_id}`)
                     .then(response => {
                             this.markAsRead(notification);
                         }
                     );
             },
+
             markAsRead(notification) {
-                window.location.href = notification.redirectTo;
+                window.location.href = notification.data.redirectTo;
             }
         },
 
         created() {
             axios.get('/addendum-notifications')
                 .then(response => {
-                        console.log(response.data);
-                        const notificationsModel = response.data[0].map(q => q);
-                        const notificationsData = response.data[0].map(q => q.data);
-                        this.notificationsModel.push(...notificationsModel)
-                        this.notifications.push(...notificationsData)
+                        const notificationsFromDb = response.data[0].map(q => q);
+                        this.notificationsFromDb.push(...notificationsFromDb)
+
                     }
                 );
 
 //Real Time Notifications
             window.Echo.private('addendum.' + this.authUserId).listen('AddendumPusher', ({dataToPusher}) => {
-                this.notifications.push(dataToPusher);
+                this.notificationsFromPusher.push(dataToPusher);
             });
         }
     }
@@ -108,6 +114,10 @@
         cursor: default;
         font-weight: bold;
         border-bottom: 1px solid #90949c;
+    }
+
+    .greyOut {
+        opacity: 0.6;
     }
 
 </style>
