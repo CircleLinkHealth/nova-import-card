@@ -4,15 +4,31 @@
              aria-expanded="false" style="padding: inherit;"><i class="glyphicon glyphicon-bell"></i> Notifications
             <span v-show="shouldShowCount" class="badge badge-secondary">{{count}}</span></div>
 
-        <ul class="dropdown-menu" role="menu">
-            <li class="dropdown-header">NOTIFICATIONS</li>
-            <li v-for="notification in notifications">
-                <a :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
-                        @click="redirectAndMarkAsRead(notification)">
-                    {{notification.data.sender_id}} {{notification.data.subject}} {{notification.data.patient_id}}
-                </a>
-            </li>
-        </ul>
+        <!--        <ul class="dropdown-menu" role="menu">-->
+        <!--            <li class="dropdown-header">NOTIFICATIONS</li>-->
+        <!--            <li v-for="notification in notifications">-->
+        <!--                <a :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"-->
+        <!--                        @click="redirectAndMarkAsRead(notification)">-->
+        <!--                    {{notification.data.sender_id}} {{notification.data.subject}} {{notification.data.patient_id}}-->
+        <!--                </a>-->
+        <!--            </li>-->
+        <!--        </ul>-->
+        <div class="dropdown-menu">
+            <div class="dropdown-header">
+                NOTIFICATIONS
+            </div>
+
+            <div class="dropdown-content">
+                <div v-for="notification in notifications" class="dropdown-item"
+                   :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
+                   @click="redirectAndMarkAsRead(notification)">
+
+                    {{notification.data.sender_id}} {{notification.data.subject}}
+                    {{notification.data.patient_id}}
+                </div>
+            </div>
+
+        </div>
     </div>
 </template>
 
@@ -41,9 +57,9 @@
             countUnreadNotifications() {
                 // NotificationsFromPusher is always unread - it doesnt have property: "read_at"
                 const notificationsFromPusher = this.notificationsFromPusher.length;
-                const count = this.notificationsFromDb.filter(q=>q.read_at === null).length;
+                const count = this.notificationsFromDb.filter(q => q.read_at === null).length;
                 const sum = count + notificationsFromPusher;
-                this.count = sum ;
+                this.count = sum;
 
                 return sum;
 
@@ -71,7 +87,7 @@
         created() {
             axios.get('/addendum-notifications')
                 .then(response => {
-                        const notificationsFromDb = response.data[0];
+                        const notificationsFromDb = response.data[0].map(q => q);
                         this.notificationsFromDb.push(...notificationsFromDb)
 
                     }
@@ -92,13 +108,15 @@
         word-spacing: 5px;
         background: #ffffff;
         padding-bottom: unset;
+        width: 217%;
+    }
+    .dropdown-content {
         overflow-y: scroll;
-        max-height: 480%;
+        max-height: 280px;
     }
 
-    .dropdown-menu li > a {
-        padding-top: 4%;
-        padding-bottom: 4%;
+    .dropdown-item {
+        padding: 5%;
         color: #90949c;
         font-family: Helvetica, Arial, sans-serif;
         background-color: #ffffff;
@@ -109,12 +127,12 @@
         background-color: #e46745;
     }
 
-    .dropdown-header {
-        color: #90949c;
-        cursor: default;
-        font-weight: bold;
-        border-bottom: 1px solid #90949c;
-    }
+    /*.dropdown-header {*/
+    /*    color: #90949c;*/
+    /*    cursor: default;*/
+    /*    font-weight: bold;*/
+    /*    border-bottom: 1px solid #90949c;*/
+    /*}*/
 
     .greyOut {
         opacity: 0.6;
