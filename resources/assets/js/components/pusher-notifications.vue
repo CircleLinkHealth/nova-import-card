@@ -20,12 +20,16 @@
 
             <div class="dropdown-content">
                 <div v-for="notification in notifications" class="dropdown-item"
-                   :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
-                   @click="redirectAndMarkAsRead(notification)">
+                     :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
+                     @click="redirectAndMarkAsRead(notification)">
 
                     {{notification.data.sender_id}} {{notification.data.subject}}
                     {{notification.data.patient_id}}
                 </div>
+            </div>
+
+            <div class="dropdown-footer">
+                See All
             </div>
 
         </div>
@@ -110,6 +114,7 @@
         padding-bottom: unset;
         width: 217%;
     }
+
     .dropdown-content {
         overflow-y: scroll;
         max-height: 280px;
@@ -127,12 +132,19 @@
         background-color: #e46745;
     }
 
-    /*.dropdown-header {*/
-    /*    color: #90949c;*/
-    /*    cursor: default;*/
-    /*    font-weight: bold;*/
-    /*    border-bottom: 1px solid #90949c;*/
-    /*}*/
+    .dropdown-header {
+        color: #90949c;
+        cursor: default;
+        font-weight: bold;
+        border-bottom: 1px solid #90949c;
+    }
+
+    .dropdown-footer {
+        color: #00bfff;
+        text-align: center;
+        padding-bottom: 2%;
+        border-top: 1px solid;
+    }
 
     .greyOut {
         opacity: 0.6;
