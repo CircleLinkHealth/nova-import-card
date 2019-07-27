@@ -238,6 +238,20 @@ class NotesController extends Controller
     }
 
     /**
+     * @param $patientId
+     *
+     * @return JsonResponse
+     */
+    public function getName($patientId)
+    {
+        $patientName = User::find($patientId)->display_name;
+
+        return response()->json([
+            'name' => $patientName,
+        ], 200);
+    }
+
+    /**
      * @param $noteId
      *
      * @return Collection|Model|Note|Note[]|null
@@ -245,6 +259,20 @@ class NotesController extends Controller
     public function getNoteForAddendum($noteId)
     {
         return Note::find($noteId);
+    }
+
+    /**
+     * @param $senderId
+     *
+     * @return JsonResponse
+     */
+    public function getSenderName($senderId)
+    {
+        $senderName = User::find($senderId)->display_name;
+
+        return response()->json([
+            'senderName' => $senderName,
+        ], 200);
     }
 
     public function index(

@@ -2419,7 +2419,17 @@ Route::get('addendum-notifications', [
     'as'   => 'nurse.addendum.notification',
 ])->middleware('permission:provider.read,note.read');
 
-Route::post('/redirect-addendum/{receiverId}/{attachmentId}', [
-    'uses' => 'NotesController@markAddendumAsRead',
-    'as'   => 'nurse.addendum.redirect',
+Route::post('/redirect-mark-read/{receiverId}/{attachmentId}', [
+    'uses' => 'PusherController@markNotificationAsRead',
+    'as'   => 'notification.redirect',
 ]);
+
+Route::get('getName/{patientId}', [
+    'uses' => 'NotesController@getName',
+    'as'   => 'nurse.addendum.notification.get.name',
+])->middleware('permission:provider.read,note.read');
+
+Route::get('getSenderName/{senderId}', [
+    'uses' => 'NotesController@getSenderName',
+    'as'   => 'nurse.addendum.notification.get.senderName',
+])->middleware('permission:provider.read,note.read');

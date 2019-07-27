@@ -52,18 +52,6 @@ class AddendumNotificationsService
         return session()->previousUrl();
     }
 
-    public function markAddendumNotifAsRead($receiverId, $attachmentId)
-    {
-        $user = User::find($receiverId);
-
-        $user->unreadNotifications()
-            ->hasNotifiableType(User::class)
-            ->hasAttachmentType(Addendum::class)
-            ->where('attachment_id', '=', $attachmentId)
-            ->get()
-            ->markAsRead();
-    }
-
     /**
      * @param $addendum
      * @param $noteAuthorId

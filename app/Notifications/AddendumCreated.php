@@ -65,14 +65,17 @@ class AddendumCreated extends Notification
     public function toArray($notifiable)
     {
         return [
-            'sender_id'     => auth()->id(),
-            'receiver_id'   => $notifiable->id,
-            'patient_id'    => $this->getPatientId(),
-            'note_id'       => $this->getNoteId(),
-            'attachment_id' => $this->getAttachment()->id,
-            'redirectTo'    => AddendumNotificationsService::getUrlToRedirectUser(),
-            'description'   => AddendumNotificationsService::ADDENDUM_DESCRIPTION,
-            'subject'       => AddendumNotificationsService::ADDENDUM_SUBJECT,
+            'sender_id'       => auth()->id(),
+            'receiver_id'     => $notifiable->id,
+            'sender_name'     => auth()->user()->display_name,
+            'patient_name'    => $notifiable->find($this->getPatientId())->display_name,
+            'patient_id'      => $this->getPatientId(),
+            'note_id'         => $this->getNoteId(),
+            'attachment_id'   => $this->getAttachment()->id,
+            'redirectTo'      => AddendumNotificationsService::getUrlToRedirectUser(),
+            'attachment_type' => Addendum::class,
+            'description'     => AddendumNotificationsService::ADDENDUM_DESCRIPTION,
+            'subject'         => AddendumNotificationsService::ADDENDUM_SUBJECT,
         ];
     }
 
