@@ -18,8 +18,11 @@
                 </div>
             </div>
 
-            <div class="dropdown-footer">
-                See All
+            <div class="dropdown-footer"
+                 @click="showAll(notifications)">
+                <a>
+                    See All
+                </a>
             </div>
 
         </div>
@@ -27,7 +30,6 @@
 </template>
 
 <script>
-
     export default {
         name: "pusher-notifications",
         components: {},
@@ -79,7 +81,6 @@
                 } else {
                     return showIfDataFromPusher;
                 }
-
             },
 
             setPatientName(notification) {
@@ -116,6 +117,12 @@
 
             markAsRead(notification) {
                 window.location.href = notification.data.redirectTo;
+            },
+
+            showAll(notifications) {
+
+                return notifications;
+                //@todo show view / vue with all notifications
             }
         },
 
@@ -138,11 +145,31 @@
 
 <style scoped>
     .dropdown-menu {
+        background: #fff;
+        border: 1px solid rgba(100, 100, 100, .4);
+        border-radius: 0 0 2px 2px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, .25);
+        color: #1d2129;
+        overflow: visible;
+        position: absolute;
+        top: 50px;
+        width: 430px;
+        z-index: 1;
+        height: 702%;
         cursor: pointer;
         word-spacing: 5px;
-        background: #ffffff;
-        padding-bottom: unset;
-        width: 217%;
+    }
+
+    .dropdown-menu:before {
+        content: '';
+        display: block;
+        width: 0;
+        height: 0;
+        color: transparent;
+        border: 10px solid #CCC;
+        border-color: transparent transparent #FFF;
+        margin-top: -27px;
+        margin-left: 84%;
     }
 
     .dropdown-content {
@@ -152,7 +179,7 @@
 
     .dropdown-item {
         padding: 5%;
-        color: #90949c;
+        color: #3e3e3ede;
         font-family: Helvetica, Arial, sans-serif;
         background-color: #ffffff;
         border-bottom: 1px solid #90949c;
@@ -165,15 +192,34 @@
     .dropdown-header {
         color: #90949c;
         cursor: default;
+        display: block;
+        background: #FFF;
         font-weight: bold;
-        border-bottom: 1px solid #90949c;
+        font-size: 13px;
+        padding: 8px;
+        margin: 0;
+        border-bottom: solid 1px rgba(100, 100, 100, .30);
     }
 
     .dropdown-footer {
-        color: #00bfff;
+        background: #F6F7F8;
+        padding: 8px;
+        font-size: 12px;
+        font-weight: bold;
+        border-top: solid 1px rgba(100, 100, 100, .30);
         text-align: center;
-        padding-bottom: 2%;
-        border-top: 1px solid;
+    }
+
+    .dropdown-footer a {
+        color:#4fb2e2;
+    }
+
+    .dropdown-footer a:hover {
+        text-decoration:underline;
+    }
+
+    .dropdown-item:hover {
+        background: #ecf8ff;
     }
 
     .greyOut {
