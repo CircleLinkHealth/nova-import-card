@@ -75,9 +75,10 @@
                 const getSenderName = this.setSenderName(notification);
                 const getNotificationSubject = this.getNotificationSubject(notification);
                 const getPatientName = this.setPatientName(notification);
+                const nowDate = moment(); //not sure
 
-                const showIfDataFromDb = `<strong>${getSenderName}</strong> ${getNotificationSubject} <strong>${getPatientName}</strong> ${notification.updated_at}`;
-                const showIfDataFromPusher = `<strong>${this.senderName}</strong> ${getNotificationSubject} <strong>${this.name}</strong>`;
+                const showIfDataFromDb = `<strong>${getSenderName}</strong> ${getNotificationSubject} <strong>${getPatientName}</strong> ${this.notificationPosted(notification.updated_at)}`;
+                const showIfDataFromPusher = `<strong>${this.senderName}</strong> ${getNotificationSubject} <strong>${this.name}</strong> ${this.notificationPosted(nowDate)}`;
 
                 if (getSenderName !== undefined && getPatientName !== undefined) {
                     return showIfDataFromDb;
