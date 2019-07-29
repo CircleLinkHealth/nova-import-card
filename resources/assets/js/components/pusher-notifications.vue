@@ -75,10 +75,14 @@
                 const getSenderName = this.setSenderName(notification);
                 const getNotificationSubject = this.getNotificationSubject(notification);
                 const getPatientName = this.setPatientName(notification);
-                const nowDate = moment(); //not sure
 
-                const showIfDataFromDb = `<strong>${getSenderName}</strong> ${getNotificationSubject} <strong>${getPatientName}</strong> ${this.notificationPosted(notification.updated_at)}`;
-                const showIfDataFromPusher = `<strong>${this.senderName}</strong> ${getNotificationSubject} <strong>${this.name}</strong> ${this.notificationPosted(nowDate)}`;
+                const nowDate = moment();
+
+                const showIfDataFromDb = `<strong>${getSenderName}</strong> ${getNotificationSubject}<strong> ${getPatientName}</strong>
+                <span style="float: right;padding-top: 4%; color: #90949c">${this.notificationPosted(notification.updated_at)}</span>`;
+
+                const showIfDataFromPusher = `<strong>${this.senderName}</strong> ${getNotificationSubject} <strong> ${this.name}</strong> <span style="float: right;
+    padding-top: 4%; color: #90949c"> ${this.notificationPosted(nowDate)}</span>`;
 
                 if (getSenderName !== undefined && getPatientName !== undefined) {
                     return showIfDataFromDb;
@@ -251,5 +255,4 @@
         font-weight: bold;
         color: #000;
     }
-
 </style>
