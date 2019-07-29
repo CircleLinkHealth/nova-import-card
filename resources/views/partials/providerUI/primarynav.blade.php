@@ -175,10 +175,12 @@ $user = auth()->user();
                             </li>
                         </ul>
                     </li>
-{{--AddendumPusher bell notif Icon. Incomment when done only--}}
+                    {{--AddendumPusher bell notif Icon. Incomment when done only--}}
+
                         <li>
                             <a><pusher-notifications :user="{{json_encode(Auth::user())}}"></pusher-notifications></a>
                         </li>
+
                     <li class="dropdown">
                         <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
                              aria-expanded="false">

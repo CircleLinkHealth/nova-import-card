@@ -14,7 +14,7 @@
                      class="dropdown-item"
                      :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
                      @click="redirectAndMarkAsRead(notification)">
-                    {{show(notification)}}
+                    {{show(notification)}} {{notificationPosted(notification.updated_at)}}
                 </div>
             </div>
 
@@ -30,6 +30,8 @@
 </template>
 
 <script>
+    import moment from 'moment'
+
     export default {
         name: "pusher-notifications",
         components: {},
@@ -123,7 +125,14 @@
 
                 return notifications;
                 //@todo show view / vue with all notifications
-            }
+            },
+
+            notificationPosted(date) {
+                //@todo: db timestamp is in US time zone(FIX)
+                var notificationCreatedAt = moment(date);
+                var now = moment();
+                return notificationCreatedAt.from(now);
+            },
         },
 
         created() {
@@ -155,9 +164,9 @@
         top: 50px;
         width: 430px;
         z-index: 1;
-        height: 702%;
-        cursor: pointer;
+        max-height: 702%;
         word-spacing: 5px;
+        padding-bottom: unset;
     }
 
     .dropdown-menu:before {
@@ -183,10 +192,17 @@
         font-family: Helvetica, Arial, sans-serif;
         background-color: #ffffff;
         border-bottom: 1px solid #90949c;
+        cursor: pointer;
     }
 
     .badge-secondary {
-        background-color: #e46745;
+        display: inline;
+        background: #e46745;
+        color: #FFF;
+        font-size: 14px;
+        font-weight: 400;
+        padding: 2px 7px;
+        z-index: 1;
     }
 
     .dropdown-header {
@@ -211,11 +227,11 @@
     }
 
     .dropdown-footer a {
-        color:#4fb2e2;
+        color: #4fb2e2;
     }
 
     .dropdown-footer a:hover {
-        text-decoration:underline;
+        text-decoration: underline;
     }
 
     .dropdown-item:hover {
