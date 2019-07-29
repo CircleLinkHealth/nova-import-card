@@ -890,7 +890,7 @@ class WelcomeCallListGenerator
     {
         if (EligibilityBatch::TYPE_ONE_CSV == $this->batch->type && $this->eligibilityJob) {
             $csvPatientList = new CsvPatientList(collect($this->patientList));
-            $isValid        = $csvPatientList->guessValidator() ?? null;
+            $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
 
             $this->patientList->each(
                 function ($patient) use ($isValid) {
