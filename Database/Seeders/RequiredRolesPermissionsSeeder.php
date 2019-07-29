@@ -1115,6 +1115,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'EHR Report Writer',
                 'description'  => 'A user that can upload CSVs or Json files for eligibility to be processed by our system',
                 'permissions'  => [
+                    'ehr-report-writer-access'
                 ],
             ],
             [
