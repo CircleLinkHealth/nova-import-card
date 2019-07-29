@@ -20,4 +20,16 @@ class TrixField extends Model
         'language',
         'body',
     ];
+
+    /**
+     * Get Care.
+     *
+     * @param $builder
+     * @param $language
+     */
+    public function scopeCareAmbassador($builder, $language)
+    {
+        $builder->where('type', TrixField::CARE_AMBASSADOR_SCRIPT)
+            ->where('language', strtolower($language));
+    }
 }
