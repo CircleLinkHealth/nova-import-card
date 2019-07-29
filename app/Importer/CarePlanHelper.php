@@ -340,7 +340,7 @@ class CarePlanHelper
         $primaryPractice = $this->user->primaryPractice;
 
         if (self::NBI_PRACTICE_NAME == $primaryPractice->name) {
-            $dataFromPractice = NbiPatientData::where('first_name', $this->user->first_name)
+            $dataFromPractice = NbiPatientData::where('first_name', 'like', "{$this->user->first_name}%")
                 ->where('last_name', $this->user->last_name)
                 ->where('dob', $this->dem->dob)
                 ->first();
