@@ -13,8 +13,8 @@
                 <div v-for="notification in notifications"
                      class="dropdown-item"
                      :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
-                     @click="redirectAndMarkAsRead(notification)">
-                    {{show(notification)}} {{notificationPosted(notification.updated_at)}}
+                     @click="redirectAndMarkAsRead(notification)"
+                     v-html="show(notification)">
                 </div>
             </div>
 
@@ -68,6 +68,7 @@
             notifications() {
                 return this.notificationsFromDb.concat(this.notificationsFromPusher);
             },
+
         },
         methods: {
             show(notification) {
@@ -75,8 +76,8 @@
                 const getNotificationSubject = this.getNotificationSubject(notification);
                 const getPatientName = this.setPatientName(notification);
 
-                const showIfDataFromDb = getSenderName + ' ' + getNotificationSubject + ' ' + getPatientName;
-                const showIfDataFromPusher = this.senderName + ' ' + getNotificationSubject + ' ' + this.name;
+                const showIfDataFromDb = `<strong>${getSenderName}</strong> ${getNotificationSubject} <strong>${getPatientName}</strong> ${notification.updated_at}`;
+                const showIfDataFromPusher = `<strong>${this.senderName}</strong> ${getNotificationSubject} <strong>${this.name}</strong>`;
 
                 if (getSenderName !== undefined && getPatientName !== undefined) {
                     return showIfDataFromDb;
@@ -240,6 +241,14 @@
 
     .greyOut {
         opacity: 0.6;
+    }
+
+    /*    */
+
+
+    .senderName {
+        font-weight: bold;
+        color: #000;
     }
 
 </style>
