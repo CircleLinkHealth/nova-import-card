@@ -108,6 +108,8 @@ class WelcomeCallListGenerator
         EligibilityBatch $batch = null,
         EligibilityJob $eligibilityJob = null
     ) {
+        ini_set('memory_limit', '128M');
+
         $this->patientList        = $patientList;
         $this->ineligiblePatients = new Collection();
 
