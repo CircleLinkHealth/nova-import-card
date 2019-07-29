@@ -143,6 +143,7 @@ class EnrollmentCenterController extends Controller
                 'enrollee' => $enrollee,
                 'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
                 'script'   => TrixField::careAmbassador($enrollee->lang)->first(),
+                'provider' => $enrollee->provider,
             ]
         );
     }

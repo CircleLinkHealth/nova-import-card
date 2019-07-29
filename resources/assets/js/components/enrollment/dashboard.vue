@@ -58,6 +58,7 @@
                                 <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b> {{providerFullName}}</span></li>
                                 <li class="sidebar-demo-list"><span :title="provider_pronunciation"><b>Provider Pronunciation:</b> {{provider_pronunciation}}</span></li>
                                 <li class="sidebar-demo-list"><span :title="provider_sex"><b>Provider Sex:</b> {{provider_sex}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="providerPhone"><b>Provider Phone:</b> {{providerPhone}}</span></li>
                                 <li class="sidebar-demo-list"><span :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span></li>
                             </ul>
                         </div>
@@ -651,6 +652,7 @@
                 csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 userFullName: userFullName,
                 providerFullName: providerFullName,
+                providerPhone: providerPhone,
                 hasTips: hasTips,
                 report: report,
                 script: script,
