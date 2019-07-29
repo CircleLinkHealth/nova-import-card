@@ -16,7 +16,7 @@ class DummyClass extends Migration
     {
         if (!isUnitTestingEnv()) {
             Artisan::call('db:seed', [
-                '--class' => RequiredRolesPermissionsSeeder::class,
+                '--class' => \CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder::class,
             ]);
         }
     }
