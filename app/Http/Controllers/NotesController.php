@@ -238,16 +238,16 @@ class NotesController extends Controller
     }
 
     /**
-     * @param $patientId
+     * @param $senderId
      *
      * @return JsonResponse
      */
-    public function getName($patientId)
+    public function getAddendumSenderName($senderId)
     {
-        $patientName = User::find($patientId)->display_name;
+        $senderName = User::find($senderId)->display_name;
 
         return response()->json([
-            'name' => $patientName,
+            'senderName' => $senderName,
         ], 200);
     }
 
@@ -262,16 +262,16 @@ class NotesController extends Controller
     }
 
     /**
-     * @param $senderId
+     * @param $patientId
      *
      * @return JsonResponse
      */
-    public function getSenderName($senderId)
+    public function getPatientName($patientId)
     {
-        $senderName = User::find($senderId)->display_name;
+        $patientName = User::find($patientId)->display_name;
 
         return response()->json([
-            'senderName' => $senderName,
+            'patientName' => $patientName,
         ], 200);
     }
 

@@ -45,7 +45,7 @@
                 notificationsFromDb: [],
                 authUserId: this.user.id,
                 count: '',
-                name: '',
+                patientName: '',
                 senderName: ''
             }
         },
@@ -81,7 +81,7 @@
                 const showIfDataFromDb = `<strong>${getSenderName}</strong> ${getNotificationSubject}<strong> ${getPatientName}</strong>
                 <span style="float: right;padding-top: 4%; color: #90949c">${this.notificationPosted(notification.updated_at)}</span>`;
 
-                const showIfDataFromPusher = `<strong>${this.senderName}</strong> ${getNotificationSubject} <strong> ${this.name}</strong> <span style="float: right;
+                const showIfDataFromPusher = `<strong>${this.senderName}</strong> ${getNotificationSubject} <strong> ${this.patientName}</strong> <span style="float: right;
     padding-top: 4%; color: #90949c"> ${this.notificationPosted(nowDate)}</span>`;
 
                 if (getSenderName !== undefined && getPatientName !== undefined) {
@@ -96,8 +96,8 @@
 
             },
             getPatientName(notification) {
-                axios.get(`/getName/${notification.data.patient_id}`).then(response => {
-                    this.name = response.data.name;
+                axios.get(`/get-patient-name/${notification.data.patient_id}`).then(response => {
+                    this.patientName = response.data.patientName;
                 });
             },
             getNotificationSubject(notification) {
@@ -109,7 +109,7 @@
             },
 
             getSenderName(notification) {
-                axios.get(`/getSenderName/${notification.data.sender_id}`).then(response => {
+                axios.get(`/get-sender-name/${notification.data.sender_id}`).then(response => {
                     this.senderName = response.data.senderName;
                 });
 
