@@ -108,6 +108,8 @@ class WelcomeCallListGenerator
         EligibilityBatch $batch = null,
         EligibilityJob $eligibilityJob = null
     ) {
+        ini_set('memory_limit', '128M');
+
         $this->patientList        = $patientList;
         $this->ineligiblePatients = new Collection();
 
@@ -890,7 +892,7 @@ class WelcomeCallListGenerator
     {
         if (EligibilityBatch::TYPE_ONE_CSV == $this->batch->type && $this->eligibilityJob) {
             $csvPatientList = new CsvPatientList(collect($this->patientList));
-            $isValid        = $csvPatientList->guessValidator() ?? null;
+            $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
 
             $this->patientList->each(
                 function ($patient) use ($isValid) {

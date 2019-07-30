@@ -97,7 +97,7 @@ class ProcessEligibilityService
             $patientListCsvFilePath,
             function ($row) use ($batch) {
                 $csvPatientList = new CsvPatientList(collect([$row]));
-                $isValid = $csvPatientList->guessValidator();
+                $isValid = $csvPatientList->guessValidatorAndValidate();
 
                 if ( ! $isValid) {
                     return [
