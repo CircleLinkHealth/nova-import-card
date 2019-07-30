@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
         <div class="col-md-12" style="margin-top: 15px">
-            <div class="col-md-5 text-left" style="height: 30px; padding-top: 5px">
+            <div class="col-md-8 text-left" style="height: 30px; padding-top: 5px">
                 <button class="col-md-3 btn btn-secondary btn-xs pointer" v-bind:class="{'btn-info': !this.showPast}"
                         @click="showCurrentDocuments()">Current
                 </button>
@@ -12,9 +12,16 @@
                 <button class="col-md-3 btn btn-info btn-xs pointer"
                         @click="uploadCareDocument()">Upload Documents
                 </button>
+                <a v-if="!userEnrolledIntoAwv"
+                   class="col-md-2 btn btn-info btn-xs pointer"
+                   style="margin-left: 10px"
+                   target="_blank"
+                   :href="getAwvUrl(`manage-patients/${this.patient.id}/enroll`)">
+                    Enroll into AWV
+                </a>
             </div>
-            <div class="col-md-2">
-                <loader style="margin-left: 80px; text-align: center" v-if="loading"/>
+            <div class="col-md-1">
+                <loader style="text-align: center" v-if="loading"/>
             </div>
         </div>
 
@@ -39,20 +46,18 @@
                         </div>
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
-                                <div v-if="status.hra_status === 'pending' ">
-                                    <button class="col-md-6 btn btn-danger btn-m">
-                                        Not Started
+                                <div>
+                                    <button v-if="awvUrl.length === 0" class="col-md-6 btn btn-m"
+                                            disabled
+                                            :class="getButtonColorFromStatus(status.hra_status)">
+                                        {{getButtonTextFromStatus(status.hra_status)}}
                                     </button>
-                                </div>
-                                <div v-if="status.hra_status === 'in_progress' ">
-                                    <button class="col-md-6 btn btn-warning btn-m">
-                                        In Progress
-                                    </button>
-                                </div>
-                                <div v-if="status.hra_status === 'completed' ">
-                                    <button class="col-md-6 btn btn-success btn-m">
-                                        Completed
-                                    </button>
+                                    <a v-else class="col-md-6 btn btn-m"
+                                       :class="getButtonColorFromStatus(status.hra_status)"
+                                       target="_blank"
+                                       :href="getViewHraSurveyUrl()">
+                                        {{getButtonTextFromStatus(status.hra_status)}}
+                                    </a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
@@ -84,20 +89,18 @@
                         </div>
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
-                                <div v-if="status.vitals_status === 'pending' ">
-                                    <button class="col-md-6 btn btn-danger btn-m">
-                                            Not Started
+                                <div>
+                                    <button v-if="awvUrl.length === 0" class="col-md-6 btn btn-m"
+                                            disabled
+                                            :class="getButtonColorFromStatus(status.vitals_status)">
+                                        {{getButtonTextFromStatus(status.vitals_status)}}
                                     </button>
-                                </div>
-                                <div v-if="status.vitals_status === 'in_progress' ">
-                                    <button class="col-md-6 btn btn-warning btn-m">
-                                        In Progress
-                                    </button>
-                                </div>
-                                <div v-if="status.vitals_status === 'completed' ">
-                                    <button class="col-md-6 btn btn-success btn-m" >
-                                        Completed
-                                    </button>
+                                    <a v-else class="col-md-6 btn btn-m"
+                                       :class="getButtonColorFromStatus(status.vitals_status)"
+                                       target="_blank"
+                                       :href="getViewVitalsSurveyUrl()">
+                                        {{getButtonTextFromStatus(status.vitals_status)}}
+                                    </a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
@@ -126,9 +129,9 @@
 
 
             <!--<div v-for="(docs, type) in careDocs">-->
-                <!--<div v-for="doc in docs" class="col-md-3">-->
-                    <!--<care-document-box :doc="doc" :type="type"></care-document-box>-->
-                <!--</div>-->
+            <!--<div v-for="doc in docs" class="col-md-3">-->
+            <!--<care-document-box :doc="doc" :type="type"></care-document-box>-->
+            <!--</div>-->
             <!--</div>-->
             <div v-if="careDocs['PPP']">
                 <div v-for="doc in careDocs['PPP']" class="col-md-3">
@@ -146,9 +149,9 @@
                 </div>
             </div>
             <div v-else>
-            <div class="col-md-3">
-                <care-document-box :type="'Provider Report'"></care-document-box>
-            </div>
+                <div class="col-md-3">
+                    <care-document-box :type="'Provider Report'"></care-document-box>
+                </div>
             </div>
             <div v-if="careDocs['Lab Results']">
                 <div v-for="doc in careDocs['Lab Results']" class="col-md-3">
@@ -253,6 +256,10 @@
             patient: {
                 type: Object,
                 required: true,
+            },
+            awvUrl: {
+                type: String,
+                required: true
             }
         },
         mounted() {
@@ -261,6 +268,11 @@
             this.loading = true;
 
             this.getCareDocuments();
+
+            if (!this.awvUrl || this.awvUrl.length === 0) {
+                console.error('Wellness Care Docs:Missing AWV url. Please contact support.');
+            }
+
         },
         computed: {
             uploadUrl() {
@@ -268,12 +280,88 @@
             },
             bannerClass() {
                 return 'alert alert-' + this.bannerType;
+            },
+            userEnrolledIntoAwv() {
+
+                //if we do not have the awvUrl, then we cannot show the button
+                //so, just pretend that user is enrolled
+                if (!this.awvUrl || this.awvUrl.length === 0) {
+                    return true;
+                }
+
+                if (this.patientAWVStatuses.length === 0) {
+                    return false;
+                }
+
+                //assuming that first in list is the current
+                if (!this.patientAWVStatuses[0].hasOwnProperty('vitals_status') || this.patientAWVStatuses[0]['vitals_status'] == null || this.patientAWVStatuses[0]['vitals_status'].length === 0) {
+                    return false;
+                }
+
+                if (!this.patientAWVStatuses[0].hasOwnProperty('hra_status') || this.patientAWVStatuses[0]['hra_status'] == null || this.patientAWVStatuses[0]['hra_status'].length === 0) {
+                    return false;
+                }
+
+                return true;
             }
         },
         methods: {
+
+            getAwvUrl: function (path) {
+                if (!this.awvUrl) {
+                    return null;
+                }
+
+                if (this.awvUrl[this.awvUrl.length - 1] === "/") {
+                    return this.awvUrl + path;
+                }
+                else {
+                    return this.awvUrl + "/" + path;
+                }
+            },
+
+            getViewHraSurveyUrl() {
+                return this.getAwvUrl(`survey/hra/${this.patient.id}`);
+            },
+
+            getViewVitalsSurveyUrl() {
+                return this.getAwvUrl(`survey/vitals/${this.patient.id}`);
+            },
+
+            getButtonTextFromStatus(status) {
+                switch (status) {
+                    case "pending":
+                        return "Not Started";
+
+                    case "in_progress":
+                        return "In Progress";
+
+                    case "completed":
+                        return "Completed";
+                }
+
+                return status;
+            },
+
+            getButtonColorFromStatus(status) {
+                switch (status) {
+                    case "pending":
+                        return "btn-danger";
+
+                    case "in_progress":
+                        return "btn-warning";
+
+                    case "completed":
+                        return "btn-success";
+                }
+
+                return status;
+            },
+
             uploadCareDocument() {
                 this.showUploadModal = true
             },
+
             getCareDocuments() {
                 return this.axios
                     .get(rootUrl('/care-docs/' + this.patient.id + '/' + this.showPast))
