@@ -1,14 +1,11 @@
 <template>
     <div>
-        <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
-             aria-expanded="false" style="padding: inherit;"><i class="glyphicon glyphicon-bell"></i> Notifications
-            <span v-show="shouldShowCount" class="badge badge-secondary">{{count}}</span></div>
-
+        <span v-show="shouldShowCount" class="badge badge-secondary">{{count}}</span>
         <div class="dropdown-menu">
             <div class="dropdown-header">
                 NOTIFICATIONS
             </div>
-
+<!---->
             <div class="dropdown-content">
                 <div v-for="notification in notifications"
                      class="dropdown-item"
@@ -17,14 +14,14 @@
                      v-html="show(notification)">
                 </div>
             </div>
-
+<!---->
             <div class="dropdown-footer"
                  @click="showAll(notifications)">
                 <a>
                     See All
                 </a>
             </div>
-
+<!---->
         </div>
     </div>
 </template>
@@ -134,7 +131,6 @@
             },
 
             notificationPosted(date) {
-                //@todo: db timestamp is in US time zone(FIX)
                 var notificationCreatedAt = moment(date);
                 var now = moment();
                 return notificationCreatedAt.from(now);
