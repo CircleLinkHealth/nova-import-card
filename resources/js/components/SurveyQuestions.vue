@@ -65,7 +65,6 @@
                 </div>
             </template>
 
-
             <!--Questions-->
             <template v-if="stage === 'survey'">
                 <div class="questions-box question"
@@ -93,7 +92,9 @@
                             <question-type-text
                                 :question="question"
                                 :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
                                 :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
                                 :waiting="waiting"
                                 :read-only="readOnlyMode"
                                 v-if="question.type.type === 'text'">
@@ -338,6 +339,10 @@
                 return '/manage-patients';
             },
 
+            getVitalsWelcomeUrl() {
+                return `/survey/vitals/${this.userId}/welcome`;
+            },
+
             showQuestions() {
                 this.stage = "survey";
             },
@@ -493,6 +498,11 @@
                         const incrementProgress = typeof q.answer === "undefined";
                         q.answer = {value: answer};
 
+                        if (isLastQuestion) {
+                            window.location.href = this.getVitalsWelcomeUrl();
+                            return;
+                        }
+
                         this.goToNextQuestion(incrementProgress)
                             .then(() => {
                                 //NOTE
@@ -564,7 +574,7 @@
                             else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
                                 canGoToPrev = false;
                             }
-                            else if (questions[0].answer.value.value.length === 0) {
+                            else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
                                 canGoToPrev = false;
                             }
 
@@ -604,7 +614,7 @@
                             else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
                                 canGoToNext = false;
                             }
-                            else if (questions[0].answer.value.value.length === 0) {
+                            else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
                                 canGoToNext = false;
                             }
 
@@ -642,7 +652,7 @@
                             else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
                                 shouldDisable = true;
                             }
-                            else if (questions[0].answer.value.value.length === 0) {
+                            else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
                                 shouldDisable = true;
                             }
 

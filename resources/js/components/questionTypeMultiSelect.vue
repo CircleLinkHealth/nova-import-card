@@ -7,7 +7,7 @@
                 <div class="col-md-12 select-title" :class="{active: select.active}">
                     {{select.key}}
                 </div>
-                <div class="col-md-12 select-dropdown" :class="{active: select.active}">
+                <div class="col-md-12 select-dropdown min-height-300" :class="{active: select.active}">
                     <vue-select multiple @input="function (val) {onOptionSelected(select, val)}"
                                 :value="select.selected"
                                 :close-on-select="false"
@@ -165,4 +165,7 @@
         color: #1a1a1a;
     }
 
+    .min-height-300 {
+        min-height: 300px;
+    }
 </style>

@@ -9,7 +9,7 @@ class ProviderReportService
     public function formatReportDataForView($report)
     {
         $demographicData['age']    = ! empty($report->demographic_data['age'])
-            ? $report->demographic_data['age']
+            ? $report->demographic_data['age'][0]
             : 'N/A';
         $demographicData['race']   = ! empty($report->demographic_data['race'])
             ? ucwords(strtolower($report->demographic_data['race']))
@@ -92,7 +92,7 @@ class ProviderReportService
 
         $screenings = [];
         if ( ! empty($report->screenings)) {
-            if ( ! empty($report->screenings['breast_cancer'] &&  $report->screenings['breast_cancer'] !== '10+ years ago/Never/Unsure')) {
+            if ( ! empty($report->screenings['breast_cancer'] && $report->screenings['breast_cancer'] !== '10+ years ago/Never/Unsure')) {
                 $screenings['Breast cancer'] = " (Mammogram): Had " . $report->screenings['breast_cancer'] . '.';
             }
             if ( ! empty($report->screenings['cervical_cancer'] && $report->screenings['cervical_cancer'] !== '10+ years ago/Never/Unsure')) {
@@ -138,8 +138,8 @@ class ProviderReportService
                 ? $report->vitals['blood_pressure']['second_metric']
                 : 'N/A';
         }
-        if ( ! empty($report->vitals['bmi']) && (float)$report->vitals['bmi'] !== 0) {
-            $vitals['bmi'] = $report->vitals['bmi'];
+        if ( ! empty($report->vitals['bmi'])) {
+            $vitals['bmi'] = $report->vitals['bmi'][0];
             if ((float)$report->vitals['bmi'] < 18.5) {
                 $vitals['bmi_diagnosis']  = 'low';
                 $vitals['body_diagnosis'] = 'underweight';
@@ -149,7 +149,7 @@ class ProviderReportService
                     ? 'obese'
                     : 'overweight';
             } else {
-                $vitals['bmi_diagnosis'] = 'normal';
+                $vitals['bmi_diagnosis']  = 'normal';
                 $vitals['body_diagnosis'] = 'normal';
             }
         } else {
@@ -166,8 +166,8 @@ class ProviderReportService
             : 'N/A';
 
 
-        $vitals['weight'] = ! empty($report->vitals['weight']) && (int)$report->vitals['weight'] !== 0
-            ? $report->vitals['weight']
+        $vitals['weight'] = ! empty($report->vitals['weight'])
+            ? $report->vitals['weight'][0]
             : 'N/A';
 
 
@@ -184,20 +184,28 @@ class ProviderReportService
             }
         }
 
-        $functionalCapacity                       = [];
-        $functionalCapacity['has_fallen']         = strtolower($report->functional_capacity['has_fallen'] === 'yes' ? 'has' : 'has not');
-        $functionalCapacity['have_assistance']    = strtolower($report->functional_capacity['have_assistance']) === 'yes'
+        $functionalCapacity                                 = [];
+        $functionalCapacity['has_fallen']                   = strtolower($report->functional_capacity['has_fallen'] === 'yes'
+            ? 'has'
+            : 'has not');
+        $functionalCapacity['have_assistance']              = strtolower($report->functional_capacity['have_assistance']) === 'yes'
             ? 'do'
             : 'do not';
-        $functionalCapacity['hearing_difficulty'] = strtolower($report->functional_capacity['hearing_difficulty']) === 'yes'
+        $functionalCapacity['hearing_difficulty']           = strtolower($report->functional_capacity['hearing_difficulty']) === 'yes'
             ? 'has'
             : (strtolower($report->functional_capacity['hearing_difficulty']) === 'sometimes'
                 ? 'sometimes has'
                 : 'does not have');
-        $functionalCapacity['mci_cognitive']['clock']      = $report->functional_capacity['mci_cognitive']['clock'] == 2 ? 'able' : 'unable' ;
-        $functionalCapacity['mci_cognitive']['word_recall']      = $report->functional_capacity['mci_cognitive']['word_recall'];
-        $functionalCapacity['mci_cognitive']['total']      = $report->functional_capacity['mci_cognitive']['total'];
-        $functionalCapacity['mci_cognitive']['diagnosis'] = $report->functional_capacity['mci_cognitive']['total'] > 3 ? 'no cognitive impairment' : ($report->functional_capacity['mci_cognitive']['total'] == 3 ? 'mild cognitive impairment' : 'dementia');
+        $functionalCapacity['mci_cognitive']['clock']       = $report->functional_capacity['mci_cognitive']['clock'] == 2
+            ? 'able'
+            : 'unable';
+        $functionalCapacity['mci_cognitive']['word_recall'] = $report->functional_capacity['mci_cognitive']['word_recall'];
+        $functionalCapacity['mci_cognitive']['total']       = $report->functional_capacity['mci_cognitive']['total'];
+        $functionalCapacity['mci_cognitive']['diagnosis']   = $report->functional_capacity['mci_cognitive']['total'] > 3
+            ? 'no cognitive impairment'
+            : ($report->functional_capacity['mci_cognitive']['total'] == 3
+                ? 'mild cognitive impairment'
+                : 'dementia');
         if ( ! empty($report->functional_capacity['needs_help_for_tasks'])) {
             foreach ($report->functional_capacity['needs_help_for_tasks'] as $task) {
                 $functionalCapacity['needs_help_for_tasks'][] = strtolower($task['name']);
@@ -257,7 +265,7 @@ class ProviderReportService
             'functional_capacity'        => $functionalCapacity,
             'current_providers'          => $currentProviders,
             'advanced_care_planning'     => $advancedCarePlanning,
-            'specific_patient_requests'  => $report->specific_patient_requests,
+            'specific_patient_requests'  => $report->specific_patient_requests[0]['name'],
         ]);
     }
 

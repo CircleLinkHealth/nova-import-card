@@ -33,8 +33,8 @@ class SurveySeeder extends Seeder
         ]);
 
         $currentInstance = SurveyInstance::firstOrCreate([
-            'survey_id'  => $vitals->id,
-            'year'       => $this->date->year,
+            'survey_id' => $vitals->id,
+            'year'      => $this->date->year,
         ]);
 
         $questionsData = $this->vitalsQuestionData();
@@ -51,8 +51,8 @@ class SurveySeeder extends Seeder
         ]);
 
         $currentInstance = SurveyInstance::firstOrCreate([
-            'survey_id'  => $hra->id,
-            'year'       => $this->date->year,
+            'survey_id' => $hra->id,
+            'year'      => $this->date->year,
         ]);
 
         $questionsData = $this->hraQuestionData();
@@ -955,7 +955,7 @@ class SurveySeeder extends Seeder
                 'sub_order'             => 'a',
                 'question_body'         => 'Who in your family has had:',
                 'question_type'         => QuestionType::MULTI_SELECT,
-                'conditions'           => [
+                'conditions'            => [
                     [
                         'related_question_order_number' => 18,
                         //accept any answer
@@ -1146,12 +1146,12 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'order'                => 23,
-                'sub_order'            => 'a',
-                'question_body'        => 'If you answered yes to any of the above, do you have someone who can assist you?',
-                'question_type'        => QuestionType::RADIO,
-                'optional'             => true,
-                'conditions'           => [
+                'order'                 => 23,
+                'sub_order'             => 'a',
+                'question_body'         => 'If you answered yes to any of the above, do you have someone who can assist you?',
+                'question_type'         => QuestionType::RADIO,
+                'optional'              => true,
+                'conditions'            => [
                     [
                         'related_question_order_number' => 23,
                         //accept any answer
@@ -1173,9 +1173,9 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'order'                => 24,
-                'question_body'        => 'Have you fallen in the past 6 months? (a fall is when the body goes to the ground without being pushed)',
-                'question_type'        => QuestionType::RADIO,
+                'order'                 => 24,
+                'question_body'         => 'Have you fallen in the past 6 months? (a fall is when the body goes to the ground without being pushed)',
+                'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'Yes',
@@ -1208,9 +1208,9 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'order'                => 26,
-                'question_body'        => 'Have you had a flu shot this year or are you planning to receive one this year?',
-                'question_type'        => QuestionType::RADIO,
+                'order'                 => 26,
+                'question_body'         => 'Have you had a flu shot this year or are you planning to receive one this year?',
+                'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'Yes',
@@ -1624,9 +1624,19 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'order'         => 46,
-                'question_body' => 'Do you have any other questions or concerns that you would like to speak to your provider about at your next Annual Wellness Visit?',
-                'question_type' => QuestionType::TEXT,
+                'order'                 => 46,
+                'question_body'         => 'Do you have any other questions or concerns that you would like to speak to your provider about at your next Annual Wellness Visit?',
+                'question_type'         => QuestionType::TEXT,
+                'question_type_answers' => [
+                    [
+                        'options' => [
+                            'title'          => '',
+                            'placeholder'    => 'Type response here...',
+                            'allow_multiple' => false,
+                            'key'            => 'name',
+                        ],
+                    ],
+                ],
             ],
         ]);
     }

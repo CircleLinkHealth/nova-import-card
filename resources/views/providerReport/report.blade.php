@@ -29,7 +29,8 @@
                 <h4>Demographic Data</h4>
             </div>
             <div class="section-body">
-                The patient is a {{$reportData['demographic_data']['age']}} year old {{$reportData['demographic_data']['race']}} who
+                The patient is a {{$reportData['demographic_data']['age']}} year
+                old {{$reportData['demographic_data']['race']}} who
                 identifies as {{$reportData['demographic_data']['gender']}}.
                 In general, the patient has self-assessed their health as {{$reportData['demographic_data']['health']}}.
             </div>
@@ -180,9 +181,12 @@
             <div class="section-body">
                 The patient's diet consists of {{$reportData['diet']['fruits_vegetables']}} servings of fresh fruits and
                 vegetables, {{$reportData['diet']['grain_fiber']}} servings of whole grain or high fiber foods,
-                and {{$reportData['diet']['fried_fatty']}} servings of fried or high fat foods on average each day. Over the
-                past week, they have consumed {{$reportData['diet']['sugary_beverages']}} non-diet sugar-sweetened beverages.
-                In the past two weeks, they {{$reportData['diet']['have_changed_diet']}} experienced a change in the amount they eat.
+                and {{$reportData['diet']['fried_fatty']}} servings of fried or high fat foods on average each day. Over
+                the
+                past week, they have consumed {{$reportData['diet']['sugary_beverages']}} non-diet sugar-sweetened
+                beverages.
+                In the past two weeks, they {{$reportData['diet']['have_changed_diet']}} experienced a change in the
+                amount they eat.
             </div>
             <hr>
         </div>
@@ -198,7 +202,8 @@
                     smoked {{$reportData['social_factors']['tobacco']['amount']}} packs/day, but
                     @if($reportData['social_factors']['tobacco']['interest_in_quitting'] === 'Yes' || $reportData['social_factors']['tobacco']['interest_in_quitting'] === 'Maybe')
                         are interested in quitting.
-                    @elseif($reportData['social_factors']['tobacco']['interest_in_quitting'] === 'No') are not interested in
+                    @elseif($reportData['social_factors']['tobacco']['interest_in_quitting'] === 'No') are not
+                    interested in
                     quitting. @else have already quit. @endif
                 @endif
                 <br>
@@ -208,7 +213,8 @@
                     They do not drink alcohol.
                 @endif
                 <br>
-                @if($reportData['social_factors']['recreational_drugs']['has_used'] === 'Yes') They have used recreational
+                @if($reportData['social_factors']['recreational_drugs']['has_used'] === 'Yes') They have used
+                recreational
                 drugs in the past year. They
                 have used
                 @foreach($reportData['social_factors']['recreational_drugs']['type_of_drug'] as $drug)
@@ -227,7 +233,8 @@
             <div class="section-body">
                 @if(strtolower($reportData['sexual_activity']['active']) === 'yes')
                     The patient is sexually active. The
-                    patient @if(strtolower($reportData['sexual_activity']['multiple_partners']) === 'yes')does @else does not @endif have
+                    patient @if(strtolower($reportData['sexual_activity']['multiple_partners']) === 'yes')does @else
+                        does not @endif have
                     multiple sexual partners.
                     The patient {{strtolower($reportData['sexual_activity']['safe_sex'])}} practices safe sex.
                 @else
@@ -258,13 +265,15 @@
                     @foreach($reportData['functional_capacity']['needs_help_for_tasks'] as $task)
                         {{$task}}{{$loop->last ? '.' : ', '}}
                     @endforeach
-                    They {{$reportData['functional_capacity']['have_assistance']}} have someone to assist them with these tasks.
+                    They {{$reportData['functional_capacity']['have_assistance']}} have someone to assist them with
+                    these tasks.
                 @endif
                 <br>
                 <br>
                 <strong>MCI/Cognitive</strong>
                 <br>
-                The patient was {{$reportData['functional_capacity']['mci_cognitive']['clock']}} to put in the hour markers and the time at ten minutes past eleven o'clock.
+                The patient was {{$reportData['functional_capacity']['mci_cognitive']['clock']}} to put in the hour
+                markers and the time at ten minutes past eleven o'clock.
                 The patient was able to recall {{$reportData['functional_capacity']['mci_cognitive']['word_recall']}}/3
                 objects. The patient has a score of {{$reportData['functional_capacity']['mci_cognitive']['total']}}.
                 This indicates a diagnosis of {{$reportData['functional_capacity']['mci_cognitive']['diagnosis']}}.
@@ -307,7 +316,8 @@
             </div>
             <div class="section-body">
                 The patient {{$reportData['advanced_care_planning']['has_attorney']}} a Medical Power of Attorney.
-                The patient @if($reportData['advanced_care_planning']['living_will'] === 'yes') has a living will/advance
+                The patient @if($reportData['advanced_care_planning']['living_will'] === 'yes') has a living
+                will/advance
                 directive.
                 A copy of the patient's advance
                 directive {{$reportData['advanced_care_planning']['existing_copy'] === 'yes'}}

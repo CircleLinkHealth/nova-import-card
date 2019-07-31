@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Survey;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class GenerateProviderReportService
 {
@@ -48,12 +47,12 @@ class GenerateProviderReportService
 
         $summary = $this->patient->patientAWVSummaries->first();
 
-        if (! $summary){
+        if ( ! $summary) {
 //            Log::error('Patient needs AWV summary for a provider report to be generated');
 //            return false;
 
             $summary = $this->patient->patientAWVSummaries()->create([
-                'month_year'    => Carbon::now()->startOfMonth(),
+                'month_year'       => Carbon::now()->startOfMonth(),
                 'is_initial_visit' => 1,
             ]);
         }

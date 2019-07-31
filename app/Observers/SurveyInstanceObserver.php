@@ -4,7 +4,6 @@
 namespace App\Observers;
 
 
-use App\Jobs\GeneratePatientReports;
 use App\SurveyInstance;
 
 class SurveyInstanceObserver

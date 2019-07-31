@@ -20,7 +20,7 @@ class SurveyInstancePivotSaved
     /**
      * Create a new event instance.
      *
-     * @return void
+     * @param SurveyInstance $surveyInstance
      */
     public function __construct(SurveyInstance $surveyInstance)
     {

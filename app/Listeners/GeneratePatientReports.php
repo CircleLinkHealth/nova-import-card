@@ -3,10 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\SurveyInstancePivotSaved;
-use App\Jobs\GeneratePatientReports as GenerateReports;
+use App\Jobs\GeneratePatientReportsJob as GenerateReports;
 use App\SurveyInstance;
 use App\User;
-use Carbon\Carbon;
 
 class GeneratePatientReports
 {
@@ -35,7 +34,7 @@ class GeneratePatientReports
 
             $patient = User::with([
                 'surveyInstances' => function ($i) use ($instance) {
-                    $i->forYear($i->year)
+                    $i->forYear($instance->year)
                       ->where('survey_instances.survey_id', '!=', $instance->survey_id)
                       ->where('users_surveys.status', SurveyInstance::COMPLETED);
                 },

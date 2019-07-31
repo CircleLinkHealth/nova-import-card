@@ -16,16 +16,22 @@
                         Thank you for completing your AWV Health Risk Assessment. When your Vitals are taken in the
                         office, please hand over your phone to the clinician so they can enter your information.
                     </div>
-                    <div class="survey-sub-welcome-text">
-                        <b>If you're the provider</b>, please click Login below to input {{patientsName}} Vitals
+                    <div class="survey-sub-welcome-text" v-if="isProviderLoggedIn">
+                        <b>If you're the provider</b>, please click below to input {{patientName}} Vitals
                         information.
                     </div>
-
+                    <div class="survey-sub-welcome-text" v-else>
+                        <b>If you're the provider</b>, please click Login below to input {{patientName}} Vitals
+                        information.
+                    </div>
                 </div>
 
                 <div class="btn-start-container">
-                    <mdb-btn color="primary" class="btn-login" @click="login">Provider Login for {{patientsName}}'s
-                        Vitals
+                    <mdb-btn v-if="isProviderLoggedIn" color="primary" class="btn-login" @click="showVitalsSurvey">
+                        Proceed to enter {{patientName}}'s Vitals
+                    </mdb-btn>
+                    <mdb-btn v-else color="primary" class="btn-login" @click="login">
+                        Provider Login for {{patientName}}'s Vitals
                     </mdb-btn>
                 </div>
 
@@ -43,9 +49,14 @@
 
     export default {
         name: "VitalsSurveyWelcome",
-        props: ['patientsName'],
+        props: ['patientId', 'patientName', 'isProviderLoggedIn'],
         components: {mdbBtn},
         methods: {
+
+            showVitalsSurvey() {
+                window.location.href = `/survey/vitals/${this.patientId}`;
+            },
+
             login() {
                 window.location.href = '/auth/login';
             }

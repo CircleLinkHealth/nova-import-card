@@ -46,8 +46,8 @@ class SurveyService
                 'patientAWVSummaries',
             ])
             ->whereHas('surveys', function ($survey) use ($surveyId) {
-                $survey->where('survey_id', $surveyId)
-                       ->where('status', '!=', SurveyInstance::COMPLETED);
+                $survey->where('survey_id', $surveyId);
+                       //->where('status', '!=', SurveyInstance::COMPLETED);
             })
             ->whereHas('surveyInstances', function ($instance) use ($surveyId) {
                 $instance->where('users_surveys.survey_id', $surveyId);
@@ -133,10 +133,14 @@ class SurveyService
 
         if ($isComplete) {
             $instance->pivot->completed_at = Carbon::now();
-            event(new SurveyInstancePivotSaved($instance));
         }
 
+        //save and then dispatch the event
         $instance->pivot->save();
+
+        if ($isComplete) {
+            event(new SurveyInstancePivotSaved($instance));
+        }
 
         return $instance->pivot->status;
     }

@@ -404,7 +404,7 @@ class PersonalizedPreventionPlanPrepareData
         $index                = 0;
         $weightBmiUnderweight = [];
         $weightBmi['bmi']     = ! empty($patientPppData->answers_for_eval['bmi'])
-            ? $patientPppData->answers_for_eval['bmi']
+            ? $patientPppData->answers_for_eval['bmi'][0]
             : 'N/A';
 
         if ($weightBmi['bmi'] <= '13.5') {

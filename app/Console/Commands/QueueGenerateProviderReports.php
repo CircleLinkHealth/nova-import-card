@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\GeneratePatientReports;
+use App\Jobs\GeneratePatientReportsJob;
 use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -70,7 +70,7 @@ class QueueGenerateProviderReports extends Command
     public function handle()
     {
         foreach ($this->patientIds as $patientId){
-            GeneratePatientReports::dispatch($patientId, $this->date)->onQueue('high');
+            GeneratePatientReportsJob::dispatch($patientId, $this->date)->onQueue('high');
         }
     }
 }

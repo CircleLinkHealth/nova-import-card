@@ -21,7 +21,8 @@ class VitalsSurveyController extends Controller
         $patient = User::findOrFail($patientId);
 
         return view('survey.vitals.welcome', [
-            'patientsName' => $patient->display_name,
+            'patientId' => $patient->id,
+            'patientName' => $patient->display_name,
         ]);
     }
 

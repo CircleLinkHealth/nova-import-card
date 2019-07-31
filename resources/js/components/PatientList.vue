@@ -16,7 +16,7 @@
             <template slot="actions" slot-scope="props">
                 <mdb-dropdown class="actions">
                     <mdb-dropdown-toggle slot="toggle" class="actions-toggle">...</mdb-dropdown-toggle>
-                    <mdb-dropdown-menu right :dropup="isLastRow(props)">
+                    <mdb-dropdown-menu right :dropup="shouldDropUp(props)">
                         <mdb-dropdown-item @click="sendHraLink(props.row)">Send HRA link</mdb-dropdown-item>
                         <mdb-dropdown-item @click="sendVitalsLink(props.row)">Send Vitals link</mdb-dropdown-item>
                     </mdb-dropdown-menu>
@@ -49,6 +49,7 @@
                 },
                 columns: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob', 'actions'],
                 options: {
+                    debounce: 1500,
                     requestAdapter(data) {
                         if (typeof (self) !== 'undefined') {
                             // data.query.hideStatus = self.hideStatus;
@@ -116,8 +117,9 @@
                 }
             },
 
-            isLastRow(props) {
-                return this.$refs.table.count === props.index;
+            shouldDropUp(props) {
+                const diff = this.$refs.table.count - props.index;
+                return diff < 2;
             },
 
             sendHraLink(patient) {

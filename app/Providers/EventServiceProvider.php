@@ -2,7 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Event;
+use App\Events\SurveyInstancePivotSaved;
+use App\Listeners\GeneratePatientReports;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -15,11 +16,11 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        Registered::class => [
+        Registered::class               => [
             SendEmailVerificationNotification::class,
         ],
-        'App\Events\SurveyInstancePivotSaved' => [
-            'App\Listeners\GeneratePatientReports',
+        SurveyInstancePivotSaved::class => [
+            GeneratePatientReports::class,
         ],
     ];
 

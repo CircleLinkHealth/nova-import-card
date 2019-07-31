@@ -17,7 +17,7 @@ class PatientSurveyAnswersSeeder extends Seeder
      * This seeder is currently used for testing.
      * When the seeder runs it is going to create answers.
      * SurveyService will automatically update survey_status, and eventually set both instance status to complete,
-     * That will triger the generation of the 2 reports by Jobs/GeneratePatientReports
+     * That will trigger the generation of the 2 reports by Jobs/GeneratePatientReportsJob
      *
      * @return void
      */
@@ -29,7 +29,7 @@ class PatientSurveyAnswersSeeder extends Seeder
         $user = User::ofType('participant')
                     ->first();
 
-        if(!$user){
+        if ( ! $user) {
             $user = $this->createTestUser();
         }
 
@@ -598,7 +598,9 @@ class PatientSurveyAnswersSeeder extends Seeder
                 'order'    => 46,
                 'subOrder' => null,
                 'answer'   => [
-                    'value' => 'I have a question about something',
+                    [
+                        'name' => 'I have a question about something',
+                    ],
                 ],
             ],
         ]);
@@ -607,8 +609,6 @@ class PatientSurveyAnswersSeeder extends Seeder
     public function getQuestionWithOrder($instance, $order, $subOrder = null)
     {
         return $instance->questions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
-
-
     }
 
     public function vitalsAnswerData(): Collection
@@ -674,9 +674,10 @@ class PatientSurveyAnswersSeeder extends Seeder
      *
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
-    public function createTestUser(){
+    public function createTestUser()
+    {
 
-        $faker   = Factory::create();
+        $faker = Factory::create();
 
         $user = User::create([
             'first_name'           => $faker->name,
@@ -698,10 +699,10 @@ class PatientSurveyAnswersSeeder extends Seeder
         ]);
 
         $user->patientInfo()->create([
-             'user_id'         => $user->id,
-             'birth_date'      => $faker->date('y-m-d'),
-             'general_comment' => $faker->text,
-         ]);
+            'user_id'         => $user->id,
+            'birth_date'      => $faker->date('y-m-d'),
+            'general_comment' => $faker->text,
+        ]);
 
         return $user;
     }
