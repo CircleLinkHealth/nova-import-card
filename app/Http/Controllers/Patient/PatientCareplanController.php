@@ -368,7 +368,7 @@ class PatientCareplanController extends Controller
             'Changed Insurance',
             'Dialysis / End-Stage Renal Disease',
             'Expired',
-            'Home Health Services',
+            'Patient in Hospice',
             'Other',
         ];
 

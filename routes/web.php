@@ -81,7 +81,10 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download',
     ])->middleware('doNotCacheResponse');
 
-    Route::group(['prefix' => 'ehr-report-writer'], function () {
+    Route::group([
+        'prefix'     => 'ehr-report-writer',
+        'middleware' => ['permission:ehr-report-writer-access'],
+    ], function () {
         Route::get('index', [
             'uses' => 'EhrReportWriterController@index',
             'as'   => 'report-writer.dashboard',
@@ -105,6 +108,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('notify', [
             'uses' => 'EhrReportWriterController@notifyReportWriter',
             'as'   => 'report-writer.notify',
+        ]);
+
+        Route::get('google-drive', [
+            'uses' => 'EhrReportWriterController@redirectToGoogleDriveFolder',
+            'as'   => 'report-writer.google-drive',
         ]);
     });
 
@@ -571,6 +579,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('care-docs/{patient_id}/{show_past?}', [
         'uses' => 'API\PatientCareDocumentsController@getCareDocuments',
         'as'   => 'get.care-docs',
+    ]);
+
+    Route::get('view-care-document/{patient_id}/{doc_id}', [
+        'uses' => 'API\PatientCareDocumentsController@viewCareDocument',
+        'as'   => 'view.care-doc',
     ]);
 
     Route::get('download-care-document/{patient_id}/{doc_id}', [

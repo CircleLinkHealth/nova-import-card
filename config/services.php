@@ -98,4 +98,8 @@ return [
         'secret'  => env('ATHENA_SECRET'),
         'version' => env('ATHENA_VERSION'),
     ],
+
+    'awv' => [
+        'url' => env('AWV_URL', ''),
+    ],
 ];

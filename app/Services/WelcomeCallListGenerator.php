@@ -108,6 +108,8 @@ class WelcomeCallListGenerator
         EligibilityBatch $batch = null,
         EligibilityJob $eligibilityJob = null
     ) {
+        ini_set('memory_limit', '128M');
+
         $this->patientList        = $patientList;
         $this->ineligiblePatients = new Collection();
 
@@ -133,15 +135,7 @@ class WelcomeCallListGenerator
             $this->createEnrollees();
         } catch (\Exception $e) {
             if ($this->eligibilityJob) {
-                $this->setEligibilityJobStatus(
-                    2,
-                    [
-                        'code'    => $e->getCode(),
-                        'message' => $e->getMessage(),
-                        'file'    => $e->getFile(),
-                        'line'    => $e->getLine(),
-                    ]
-                );
+                $this->setEligibilityJobStatusFromException($e);
 
                 $this->eligibilityJob->save();
             }
@@ -694,7 +688,11 @@ class WelcomeCallListGenerator
                 if ($problems) {
                     foreach ($problems as $p) {
                         if ( ! is_a($p, Problem::class)) {
-                            throw new \Exception('This is not an object of type '.Problem::class);
+                            $e = new \Exception('This is not an object of type '.Problem::class);
+                            $this->setEligibilityJobStatusFromException($e);
+                            $this->eligibilityJob->save();
+
+                            return false;
                         }
 
                         $codeType = null;
@@ -894,7 +892,7 @@ class WelcomeCallListGenerator
     {
         if (EligibilityBatch::TYPE_ONE_CSV == $this->batch->type && $this->eligibilityJob) {
             $csvPatientList = new CsvPatientList(collect($this->patientList));
-            $isValid        = $csvPatientList->guessValidator() ?? null;
+            $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
 
             $this->patientList->each(
                 function ($patient) use ($isValid) {
@@ -984,6 +982,19 @@ class WelcomeCallListGenerator
         $this->eligibilityJob->messages = $messages;
         $this->eligibilityJob->outcome  = $outcome;
         $this->eligibilityJob->reason   = $reason;
+    }
+
+    private function setEligibilityJobStatusFromException(\Exception $e)
+    {
+        $this->setEligibilityJobStatus(
+            2,
+            [
+                'code'    => $e->getCode(),
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ]
+        );
     }
 
     private function validateInsuranceWithCollection($record)
