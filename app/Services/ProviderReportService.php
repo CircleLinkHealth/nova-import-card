@@ -8,18 +8,11 @@ class ProviderReportService
 {
     public function formatReportDataForView($report)
     {
-        $demographicData['age']    = ! empty($report->demographic_data['age'])
-            ? $report->demographic_data['age'][0]
-            : 'N/A';
-        $demographicData['race']   = ! empty($report->demographic_data['race'])
-            ? ucwords(strtolower($report->demographic_data['race']))
-            : 'N/A';
-        $demographicData['gender'] = ! empty($report->demographic_data['gender'])
-            ? strtolower($report->demographic_data['gender'])
-            : 'N/A';
-        $demographicData['health'] = ! empty($report->demographic_data['health'])
-            ? strtolower($report->demographic_data['health'])
-            : 'N/A';
+        $demographicData['age']    = $this->getStringValue($report->demographic_data['age'], 'N/A');
+        $demographicData['race']   = ucwords(strtolower($this->getStringValue($report->demographic_data['race'],
+            'N/A')));
+        $demographicData['gender'] = strtolower($this->getStringValue($report->demographic_data['gender'], 'N/A'));
+        $demographicData['health'] = strtolower($this->getStringValue($report->demographic_data['health'], 'N/A'));
 
         $allergyHistory = [];
         if ( ! empty($report->allergy_history)) {
@@ -44,7 +37,7 @@ class ProviderReportService
         $medicalHistoryOther = [];
         if ( ! empty($report->medical_history['other_conditions'])) {
             foreach ($report->medical_history['other_conditions'] as $condition) {
-                if ( ! empty($condition)) {
+                if ( ! empty($condition) && ! empty($condition['name'])) {
                     $medicalHistoryOther[] = ucwords(strtolower($condition['name']));
                 }
             }
@@ -68,7 +61,7 @@ class ProviderReportService
         $familyConditions = [];
         if ( ! empty($report->family_medical_history)) {
             foreach ($report->family_medical_history as $condition) {
-                if ( ! empty($condition)) {
+                if ( ! empty($condition) && ! empty($condition['name'])) {
                     $conditionData      = [
                         'name'   => ucwords(strtolower($condition['name'])),
                         'family' => strtolower(implode(', ', $condition['family'])),
@@ -139,13 +132,16 @@ class ProviderReportService
                 : 'N/A';
         }
         if ( ! empty($report->vitals['bmi'])) {
-            $vitals['bmi'] = $report->vitals['bmi'][0];
-            if ((float)$report->vitals['bmi'] < 18.5) {
+
+            $bmiVal = $this->getStringValue($report->vitals['bmi']);
+
+            $vitals['bmi'] = $bmiVal;
+            if ((float)$bmiVal < 18.5) {
                 $vitals['bmi_diagnosis']  = 'low';
                 $vitals['body_diagnosis'] = 'underweight';
-            } elseif ((float)$report->vitals['bmi'] > 25) {
+            } elseif ((float)$bmiVal > 25) {
                 $vitals['bmi_diagnosis']  = 'high';
-                $vitals['body_diagnosis'] = (float)$report->vitals['bmi'] < 30
+                $vitals['body_diagnosis'] = (float)$bmiVal < 30
                     ? 'obese'
                     : 'overweight';
             } else {
@@ -166,34 +162,35 @@ class ProviderReportService
             : 'N/A';
 
 
-        $vitals['weight'] = ! empty($report->vitals['weight'])
-            ? $report->vitals['weight'][0]
-            : 'N/A';
+        $vitals['weight'] = $this->getStringValue($report->vitals['weight'], 'N/A');
 
 
         $diet = [];
         if ( ! empty($report->diet)) {
-            $diet['fried_fatty']       = $report->diet['fried_fatty'];
-            $diet['grain_fiber']       = $report->diet['grain_fiber'];
-            $diet['sugary_beverages']  = $report->diet['sugary_beverages'];
-            $diet['fruits_vegetables'] = $report->diet['fruits_vegetables'];
+            $diet['fried_fatty']       = $this->getStringValue($report->diet['fried_fatty']);
+            $diet['grain_fiber']       = $this->getStringValue($report->diet['grain_fiber']);
+            $diet['sugary_beverages']  = $this->getStringValue($report->diet['sugary_beverages']);
+            $diet['fruits_vegetables'] = $this->getStringValue($report->diet['fruits_vegetables']);
             if ( ! empty($report->diet['change_in_diet'])) {
-                $diet['have_changed_diet'] = strtolower($report->diet['change_in_diet']) === 'yes'
+
+                $change = $this->getStringValue($report->diet['change_in_diet']);
+
+                $diet['have_changed_diet'] = strtolower($change) === 'yes'
                     ? 'have'
                     : 'have not';
             }
         }
 
         $functionalCapacity                                 = [];
-        $functionalCapacity['has_fallen']                   = strtolower($report->functional_capacity['has_fallen'] === 'yes'
+        $functionalCapacity['has_fallen']                   = strtolower($this->getStringValue($report->functional_capacity['has_fallen'])) === 'yes'
             ? 'has'
-            : 'has not');
-        $functionalCapacity['have_assistance']              = strtolower($report->functional_capacity['have_assistance']) === 'yes'
+            : 'has not';
+        $functionalCapacity['have_assistance']              = strtolower($this->getStringValue($report->functional_capacity['have_assistance'])) === 'yes'
             ? 'do'
             : 'do not';
-        $functionalCapacity['hearing_difficulty']           = strtolower($report->functional_capacity['hearing_difficulty']) === 'yes'
+        $functionalCapacity['hearing_difficulty']           = strtolower($this->getStringValue($report->functional_capacity['hearing_difficulty'])) === 'yes'
             ? 'has'
-            : (strtolower($report->functional_capacity['hearing_difficulty']) === 'sometimes'
+            : (strtolower($this->getStringValue($report->functional_capacity['hearing_difficulty'])) === 'sometimes'
                 ? 'sometimes has'
                 : 'does not have');
         $functionalCapacity['mci_cognitive']['clock']       = $report->functional_capacity['mci_cognitive']['clock'] == 2
@@ -236,11 +233,11 @@ class ProviderReportService
         }
 
         $advancedCarePlanning                  = [];
-        $advancedCarePlanning['living_will']   = strtolower($report->advanced_care_planning['living_will']);
-        $advancedCarePlanning['has_attorney']  = strtolower($report->advanced_care_planning['has_attorney']) === 'yes'
+        $advancedCarePlanning['living_will']   = strtolower($this->getStringValue($report->advanced_care_planning['living_will']));
+        $advancedCarePlanning['has_attorney']  = strtolower($this->getStringValue($report->advanced_care_planning['has_attorney'])) === 'yes'
             ? 'has'
             : 'does not have';
-        $advancedCarePlanning['existing_copy'] = strtolower($report->advanced_care_planning['existing_copy']) === 'yes'
+        $advancedCarePlanning['existing_copy'] = strtolower($this->getStringValue($report->advanced_care_planning['existing_copy'])) === 'yes'
             ? 'is'
             : 'is not';
 
@@ -265,8 +262,35 @@ class ProviderReportService
             'functional_capacity'        => $functionalCapacity,
             'current_providers'          => $currentProviders,
             'advanced_care_planning'     => $advancedCarePlanning,
-            'specific_patient_requests'  => $report->specific_patient_requests[0]['name'],
+            'specific_patient_requests'  => $this->getStringValue($report->specific_patient_requests),
         ]);
+    }
+
+    public static function getStringValue($val, $default = '')
+    {
+
+        if (empty($val)) {
+            return $default;
+        }
+
+        if (is_string($val)) {
+            return $val;
+        }
+
+        if (is_array($val)) {
+
+            if (array_key_exists('name', $val)) {
+                return self::getStringValue($val['name']);
+            }
+
+            if (array_key_exists('value', $val)) {
+                return self::getStringValue($val['value']);
+            }
+
+            return self::getStringValue($val[0]);
+        }
+
+        return $val;
     }
 
 }

@@ -523,7 +523,7 @@
                 const lastQuestionAnsweredId = this.data.survey_instances[0].pivot.last_question_answered_id;
                 const index = this.questions.findIndex(q => q.id === lastQuestionAnsweredId);
                 this.latestQuestionAnsweredIndex = index;
-                if (this.latestQuestionAnsweredIndex >= this.questions.length) {
+                if (this.latestQuestionAnsweredIndex >= (this.questions.length - 1)) {
                     this.currentQuestionIndex = 0;
                 }
                 else {
