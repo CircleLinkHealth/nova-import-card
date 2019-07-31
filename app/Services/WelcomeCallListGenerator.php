@@ -987,6 +987,12 @@ class WelcomeCallListGenerator
 
     private function setEligibilityJobStatusFromException(\Exception $e)
     {
+        switch ((int) $e->getCode()) {
+            case 422: $reason = 'invalid data'; break;
+            case 500: $reason = 'possible bug'; break;
+            default: $reason  = null;
+        }
+
         $this->setEligibilityJobStatus(
             2,
             [
@@ -994,7 +1000,9 @@ class WelcomeCallListGenerator
                 'message' => $e->getMessage(),
                 'file'    => $e->getFile(),
                 'line'    => $e->getLine(),
-            ]
+            ],
+            EligibilityJob::ERROR,
+            $reason
         );
     }
 
