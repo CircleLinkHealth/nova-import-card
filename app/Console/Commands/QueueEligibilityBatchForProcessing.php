@@ -342,15 +342,13 @@ class QueueEligibilityBatchForProcessing extends Command
         $unprocessedQuery = EligibilityJob::whereBatchId($batch->id)
             ->where('status', '<', 2);
 
-        $unprocessedQuery->chunk(500, function ($jobs) use ($batch) {
-            foreach ($jobs as $job) {
-                ProcessSinglePatientEligibility::dispatch(
-                    collect([$job->data]),
-                    $job,
-                    $batch,
-                    $batch->practice
-                );
-            }
+        $unprocessedQuery->take(200)->get()->each(function ($job) use ($batch) {
+            ProcessSinglePatientEligibility::dispatchNow(
+                collect([$job->data]),
+                $job,
+                $batch,
+                $batch->practice
+            );
         });
 
         if ( ! $unprocessedQuery->exists()) {
