@@ -11,6 +11,7 @@ use App\Constants;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
+use App\Exceptions\Eligibility\InvalidStructureException;
 use App\Models\CPM\CpmProblem;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
 use App\Services\Eligibility\Csv\CsvPatientList;
@@ -923,7 +924,7 @@ class WelcomeCallListGenerator
         }
         if ($this->invalidStructure) {
             //if there are structure errors we stop the process because create enrollees fails from missing arguements
-            throw new \Exception(
+            throw new InvalidStructureException(
                 "Record with eligibility job id: {$this->eligibilityJob->id} has invalid structure.",
                 422
             );
