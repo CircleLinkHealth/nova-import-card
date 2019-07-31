@@ -23,6 +23,15 @@
             </div>
 <!---->
         </div>
+
+
+<!--            <div :is="currentComponent"></div>-->
+<!--            <div v-show="!currentComponent" v-for="component in componentsArray">-->
+<!--                <button @click="swapComponent(component)">{{component}}</button>-->
+<!--            </div>-->
+
+<!--        <button @click="swapComponent(null)">Close</button>-->
+
     </div>
 </template>
 
@@ -31,7 +40,14 @@
 
     export default {
         name: "pusher-notifications",
-        components: {},
+        components: {
+            // 'foo': {
+            //     template: '<h1>Foo component</h1>'
+            // },
+            // 'bar': {
+            //     template: '<h1>Bar component</h1>'
+            // }
+        },
         props: [
             'user'
         ],
@@ -43,7 +59,9 @@
                 authUserId: this.user.id,
                 count: '',
                 patientName: '',
-                senderName: ''
+                senderName: '',
+                // currentComponent: null,
+                // componentsArray: ['foo', 'bar']
             }
         },
         computed: {
@@ -68,6 +86,10 @@
 
         },
         methods: {
+            swapComponent: function(component)
+            {
+                this.currentComponent = component;
+            },
             show(notification) {
                 const getSenderName = this.setSenderName(notification);
                 const getNotificationSubject = this.getNotificationSubject(notification);
@@ -125,7 +147,6 @@
             },
 
             showAll(notifications) {
-
                 return notifications;
                 //@todo show view / vue with all notifications
             },

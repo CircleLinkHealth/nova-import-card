@@ -80,7 +80,7 @@ const CcdViewer = () => import(/* webpackChunkName: "chunk-ccd-viewer" */ './com
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
 const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../Modules/NurseInvoices/Resources/assets/js/components/dispute-invoice')
 const PusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-notifications')
-const AddendumPusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/addendum-pusher-notifications')
+
 
 Vue.component('billing-report', BillingComponent);
 Vue.component('component-proxy', ComponentProxy);
@@ -128,7 +128,7 @@ Vue.component('ccd-viewer', CcdViewer);
 Vue.component('call-mgmt-app-v2', CallMgmtAppV2);
 Vue.component('dispute-nurse-invoice', DisputeNurseInvoice);
 Vue.component('pusher-notifications', PusherNotifications);
-Vue.component('addendum-pusher-notifications', AddendumPusherNotifications);
+
 
 const App = new Vue({
     el: '#app',

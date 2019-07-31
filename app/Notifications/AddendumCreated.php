@@ -6,13 +6,14 @@
 
 namespace App\Notifications;
 
+use App\Contracts\PusherNotification;
 use App\Models\Addendum;
 use App\Services\AddendumNotificationsService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class AddendumCreated extends Notification
+class AddendumCreated extends Notification implements PusherNotification
 {
     use Queueable;
     public $addendum;
@@ -49,9 +50,14 @@ class AddendumCreated extends Notification
      *
      * @return mixed
      */
-    public function getPatientId()
+    public function getPatientId(): ?int
     {
         return $this->getAttachment()->addendumable->patient_id;
+    }
+
+    public function getUrlToRedirectUser(): ?string
+    {
+        return session()->previousUrl();
     }
 
     /**
@@ -65,18 +71,24 @@ class AddendumCreated extends Notification
     public function toArray($notifiable)
     {
         return [
-            'sender_id'       => auth()->id(),
-            'receiver_id'     => $notifiable->id,
-            'sender_name'     => auth()->user()->display_name,
-            'patient_name'    => $notifiable->find($this->getPatientId())->display_name,
-            'patient_id'      => $this->getPatientId(),
-            'note_id'         => $this->getNoteId(),
-            'attachment_id'   => $this->getAttachment()->id,
-            'redirectTo'      => AddendumNotificationsService::getUrlToRedirectUser(),
+            'sender_id'     => auth()->id(),
+            'receiver_id'   => $notifiable->id,
+            'patient_id'    => $this->getPatientId(),
+            'note_id'       => $this->getNoteId(),
+            'attachment_id' => $this->getAttachment()->id,
+            //            'redirectTo'      => AddendumNotificationsService::getUrlToRedirectUser(),
             'attachment_type' => Addendum::class,
             'description'     => AddendumNotificationsService::ADDENDUM_DESCRIPTION,
             'subject'         => AddendumNotificationsService::ADDENDUM_SUBJECT,
         ];
+    }
+
+    public function toDatabase($notifiable)
+    {
+        return array_merge([
+            'patient_name' => $this->addendum->addendumable->patient->display_name,
+            'sender_name'  => auth()->user()->display_name,
+        ], $this->toArray($notifiable));
     }
 
     /**
@@ -92,6 +104,21 @@ class AddendumCreated extends Notification
             ->line('The introduction to the notification.')
             ->action('Notification Action', url('/'))
             ->line('Thank you for using our application!');
+    }
+
+    public function toPusher(): \App\ValueObjects\PusherNotification
+    {
+        return new \App\ValueObjects\PusherNotification(
+            auth()->id(),
+            $this->notifiable_id,
+            $this->getPatientId(),
+            optional($this->attachment->id),
+            $this->attachment_id,
+            $this->getUrlToRedirectUser(),
+            $this->attachment_type,
+            'Addendum',
+            'has created an addendum for'
+        );
     }
 
     /**

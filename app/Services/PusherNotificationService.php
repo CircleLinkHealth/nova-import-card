@@ -6,10 +6,27 @@
 
 namespace App\Services;
 
+use App\Events\PusherNotificationCreated;
 use CircleLinkHealth\Customer\Entities\User;
 
 class PusherNotificationService
 {
+    /**
+     * @param $dataToPusher
+     */
+    public function dispatchPusherEvent($dataToPusher)
+    {
+        PusherNotificationCreated::dispatch($dataToPusher);
+    }
+
+    /**
+     * @return string|null
+     */
+    public static function getUrlToRedirectUser()
+    {
+        return session()->previousUrl();
+    }
+
     /**
      * @param $receiverId
      * @param $attachmentId
@@ -21,6 +38,20 @@ class PusherNotificationService
         $user->unreadNotifications()
             ->where('attachment_id', '=', $attachmentId)
             ->get()
-            ->markAsRead();
+            ->markAsRead(); //include type also
+    }
+
+    /**
+     * @param \App\Contracts\PusherNotification $notification
+     */
+    public function notifyViaPusher(\App\Contracts\PusherNotification $notification)
+    {
+        $dataToPusher = [
+            'data' => [
+                $notification->toPusher(),
+            ],
+        ];
+
+        $this->dispatchPusherEvent($dataToPusher);
     }
 }

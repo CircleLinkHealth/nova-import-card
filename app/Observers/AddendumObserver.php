@@ -6,7 +6,10 @@
 
 namespace App\Observers;
 
+use App\Events\PusherNotificationCreated;
 use App\Models\Addendum;
+use App\Notifications\AddendumCreated;
+use App\PusherNotifier;
 use App\Services\AddendumNotificationsService;
 
 class AddendumObserver
@@ -25,8 +28,18 @@ class AddendumObserver
      */
     public function created(Addendum $addendum)
     {
-        $noteAuthorId = $addendum->addendumable->author_id;
-        $this->service->createNotifForAddendum($noteAuthorId, $addendum);
-        $this->service->notifyViaPusher($addendum, $noteAuthorId);
+        $notification = new AddendumCreated($addendum);
+        PusherNotificationCreated::dispatch($notification);
+
+        //@todo:consider deleting this
+
+//        $addendum->loadMissing(['addendumable.author', 'addendumable.patient']);
+//        $noteAuthor = $addendum->addendumable->author;
+//
+//        $notification = $this->service->createNotifForAddendum($noteAuthor, $addendum);
+
+//        $this->service->notifyViaPusher($notification, $noteAuthor);
+
+//        $notifier = new PusherNotifier($notification, $noteAuthor);
     }
 }

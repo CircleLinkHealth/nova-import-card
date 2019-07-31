@@ -23,6 +23,7 @@ use App\Observers\CarePlanTemplateObserver;
 use App\Observers\EligibilityBatchObserver;
 use App\Observers\HolidayObserver;
 use App\Observers\MedicationObserver;
+use App\Observers\NotificationsPusherObserver;
 use App\Observers\NurseContactWindowObserver;
 use App\Observers\PageTimerObserver;
 use App\Observers\PatientMonthlySummaryObserver;
@@ -33,6 +34,7 @@ use App\Observers\ProblemObserver;
 use App\Observers\RevisionObserver;
 use App\Observers\SaasAccountObserver;
 use App\Observers\UserObserver;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -69,6 +71,7 @@ class ObserversServiceProvider extends ServiceProvider
         Call::observe(CallObserver::class);
         Problem::observe(ProblemObserver::class);
         Addendum::observe(AddendumObserver::class);
+        DatabaseNotification::observe(NotificationsPusherObserver::class);
     }
 
     /**

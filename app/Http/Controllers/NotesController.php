@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Call;
 use App\Contracts\ReportFormatter;
+use App\Events\ForwardAddendum;
 use App\Events\NoteFinalSaved;
 use App\Http\Requests\NotesReport;
 use App\Note;
@@ -774,7 +775,9 @@ class NotesController extends Controller
                 'body'           => $request->input('addendum-body'),
                 'author_user_id' => auth()->user()->id,
             ]
-        ); //Check also:AddendumObserver
+        );
+
+        ForwardAddendum::dispatch($note);
 
         return redirect()->to(
             route(
