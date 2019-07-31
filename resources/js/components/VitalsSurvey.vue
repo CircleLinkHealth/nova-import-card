@@ -523,7 +523,12 @@
                 const lastQuestionAnsweredId = this.data.survey_instances[0].pivot.last_question_answered_id;
                 const index = this.questions.findIndex(q => q.id === lastQuestionAnsweredId);
                 this.latestQuestionAnsweredIndex = index;
-                this.currentQuestionIndex = this.latestQuestionAnsweredIndex + 1;
+                if (this.latestQuestionAnsweredIndex >= this.questions.length) {
+                    this.currentQuestionIndex = 0;
+                }
+                else {
+                    this.currentQuestionIndex = this.latestQuestionAnsweredIndex + 1;
+                }
             }
 
             this.totalQuestionWithSubQuestions = this.questions.length;
