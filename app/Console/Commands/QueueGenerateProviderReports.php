@@ -28,7 +28,7 @@ class QueueGenerateProviderReports extends Command
      *
      * @var string
      */
-    protected $signature = 'reports:providerReport {date? : in format YYYY-MM-DD} {patientIds? : comma separated. leave empty to attempt to generate for all}';
+    protected $signature = 'reports:providerReport {patientIds : comma separated.} {date? : in format YYYY-MM-DD}';
 
     /**
      * The console command description.
@@ -45,21 +45,6 @@ class QueueGenerateProviderReports extends Command
     public function __construct()
     {
         parent::__construct();
-
-//        $patientIds = $this->argument('patientIds') ?? null;
-//        if ($patientIds) {
-//            $patientIds = explode(',', $patientIds);
-//        } else {
-//            $patientIds = User::ofType('participant')
-//                              ->pluck('id')
-//                              ->all();
-//        }
-//
-//        $this->patientIds = $patientIds;
-//        $this->date       = $this->argument('date')
-//            ? Carbon::parse($this->argument('date'))
-//            : Carbon::now();
-
     }
 
     /**
@@ -69,6 +54,18 @@ class QueueGenerateProviderReports extends Command
      */
     public function handle()
     {
+
+        $patientIds = $this->argument('patientIds') ?? null;
+        if ($patientIds) {
+            $patientIds = explode(',', $patientIds);
+        } else {
+            $patientIds = [];
+        }
+
+        $this->patientIds = $patientIds;
+//        $this->date       = $this->argument('date')
+//            ? Carbon::parse($this->argument('date'))
+//            : Carbon::now();
         foreach ($this->patientIds as $patientId){
             GeneratePatientReportsJob::dispatch($patientId, $this->date)->onQueue('high');
         }

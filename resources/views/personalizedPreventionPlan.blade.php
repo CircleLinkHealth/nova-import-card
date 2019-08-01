@@ -1,5 +1,33 @@
 @extends('layouts.surveysMaster')
 
+<?php
+function getStringValue($val, $default = '')
+{
+    if (empty($val)) {
+        return $default;
+    }
+
+    if (is_string($val)) {
+        return $val;
+    }
+
+    if (is_array($val)) {
+
+        if (array_key_exists('name', $val)) {
+            return getStringValue($val['name']);
+        }
+
+        if (array_key_exists('value', $val)) {
+            return getStringValue($val['value']);
+        }
+
+        return getStringValue($val[0]);
+    }
+
+    return $val;
+}
+?>
+
 @section('content')
     <link href="{{asset('css/PersonalizedPreventionPlan.css')}}" rel="stylesheet">
     <div class="container report">
@@ -9,7 +37,7 @@
         </div>
         <div>
             Patient Name: <span style="color: #50b2e2">{{$patient->display_name}}</span> <br>
-            Date of Birth: <strong>{{$patient->patientInfo->birth_date}}</strong><br>
+            Date of Birth: <strong>{{--{{$patient->patientInfo->birth_date}}--}}</strong><br>
             Age: <strong>{{$patient->getAge()}}</strong> <br>
             Address: <strong>{{$patient->address}}</strong> <br>
             City, State, Zip: <strong>{{$patient->city}}, {{$patient->state}}, {{$patient->zip}}</strong> <br>
@@ -21,10 +49,10 @@
             <hr>
         </div>
         <div>
-            Weight: <strong>{{$patientPppData->answers_for_eval['weight'][0]}} </strong><br>
-            Height: <strong>{{$patientPppData->answers_for_eval['height']['feet']}}' {{$patientPppData->answers_for_eval['height']['inches']}}'</strong><br>
-            Body Mass Index (BMI): <strong>{{$patientPppData->answers_for_eval['bmi'][0]}}</strong> <br>
-            Blood Pressure: <strong>{{$patientPppData->answers_for_eval['blood_pressure']['first_metric']}} / {{$patientPppData->answers_for_eval['blood_pressure']['second_metric']}}</strong> <br>
+            Weight: <strong>{{getStringValue($patientPppData->answers_for_eval['weight'])}} </strong><br>
+            Height: <strong> </strong><br>
+            Body Mass Index (BMI): <strong>{{getStringValue($patientPppData->answers_for_eval['bmi'])}}</strong> <br>
+            Blood Pressure: <strong> </strong> <br>
         </div>
         <br>
         <div class="row">
@@ -77,16 +105,23 @@
                         </div>
                     @endif
                     <br>
-
                     @foreach($tasks['tasks'] as $key => $recommendations)
-                            @if($recommendations !== [])
-{{--                            <div class="recommendations-area">--}}
-{{--                                <div style="font-weight: 600">{{$recommendations['qualitative_trigger']}}</div>--}}
-{{--                                <div>{{$recommendations['task_body']}}</div>--}}
-{{--                                <br>--}}
-{{--                                <div style="font-weight: 400"><i>{{$recommendations['recommendation_body']}}</i></div>--}}
-{{--                                <br>--}}
-{{--                            </div>--}}
+                        @if(! empty($recommendations) && isset($recommendations['qualitative_trigger']))
+                            <div class="recommendations-area">
+                                <div style="font-weight: 600">{{$recommendations['qualitative_trigger']}}</div>
+                                <div>{{$recommendations['task_body']}}</div>
+                                <br>
+                                @if (is_array($recommendations['recommendation_body']))
+                                    @foreach($recommendations['recommendation_body'] as $recBodyItem)
+                                        <div style="font-weight: 400"><i>{{$recBodyItem}}</i>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div style="font-weight: 400"><i>{{$recommendations['recommendation_body']}}</i>
+                                    </div>
+                                @endif
+                                <br>
+                            </div>
                         @endif
                     @endforeach
                 @endforeach
