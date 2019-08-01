@@ -9,7 +9,7 @@
         </div>
         <div>
             Patient Name: <span style="color: #50b2e2">{{$patient->display_name}}</span> <br>
-            Date of Birth: <strong>{{--{{$patient->patientInfo->birth_date}}--}}</strong><br>
+            Date of Birth: <strong>{{$patient->patientInfo->birth_date}}</strong><br>
             Age: <strong>{{$patient->getAge()}}</strong> <br>
             Address: <strong>{{$patient->address}}</strong> <br>
             City, State, Zip: <strong>{{$patient->city}}, {{$patient->state}}, {{$patient->zip}}</strong> <br>
@@ -21,10 +21,10 @@
             <hr>
         </div>
         <div>
-            Weight: <strong>{{$patientPppData->answers_for_eval['weight']}} </strong><br>
-            Height: <strong> </strong><br>
-            Body Mass Index (BMI): <strong>{{$patientPppData->answers_for_eval['bmi']}}</strong> <br>
-            Blood Pressure: <strong> </strong> <br>
+            Weight: <strong>{{$patientPppData->answers_for_eval['weight'][0]}} </strong><br>
+            Height: <strong>{{$patientPppData->answers_for_eval['height']['feet']}}' {{$patientPppData->answers_for_eval['height']['inches']}}'</strong><br>
+            Body Mass Index (BMI): <strong>{{$patientPppData->answers_for_eval['bmi'][0]}}</strong> <br>
+            Blood Pressure: <strong>{{$patientPppData->answers_for_eval['blood_pressure']['first_metric']}} / {{$patientPppData->answers_for_eval['blood_pressure']['second_metric']}}</strong> <br>
         </div>
         <br>
         <div class="row">
@@ -77,15 +77,16 @@
                         </div>
                     @endif
                     <br>
+
                     @foreach($tasks['tasks'] as $key => $recommendations)
-                        @if(! empty($recommendations))
-                            <div class="recommendations-area">
-                                <div style="font-weight: 600">{{$recommendations['qualitative_trigger']}}</div>
-                                <div>{{$recommendations['task_body']}}</div>
-                                <br>
-                                <div style="font-weight: 400"><i>{{$recommendations['recommendation_body']}}</i></div>
-                                <br>
-                            </div>
+                            @if($recommendations !== [])
+{{--                            <div class="recommendations-area">--}}
+{{--                                <div style="font-weight: 600">{{$recommendations['qualitative_trigger']}}</div>--}}
+{{--                                <div>{{$recommendations['task_body']}}</div>--}}
+{{--                                <br>--}}
+{{--                                <div style="font-weight: 400"><i>{{$recommendations['recommendation_body']}}</i></div>--}}
+{{--                                <br>--}}
+{{--                            </div>--}}
                         @endif
                     @endforeach
                 @endforeach
