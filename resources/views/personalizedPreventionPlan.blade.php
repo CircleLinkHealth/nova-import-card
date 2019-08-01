@@ -37,8 +37,8 @@ function getStringValue($val, $default = '')
         </div>
         <div>
             Patient Name: <span style="color: #50b2e2">{{$patient->display_name}}</span> <br>
-            Date of Birth: <strong>{{--{{$patient->patientInfo->birth_date}}--}}</strong><br>
-            Age: <strong>{{$patient->getAge()}}</strong> <br>
+            Date of Birth: <strong>{{$patient->patientInfo->birth_date}}</strong><br>
+            Age: <strong>{{getStringValue($patientPppData->answers_for_eval['age'])}}</strong> <br>
             Address: <strong>{{$patient->address}}</strong> <br>
             City, State, Zip: <strong>{{$patient->city}}, {{$patient->state}}, {{$patient->zip}}</strong> <br>
             Provider: <strong>{{$patient->getBillingProviderName()}}</strong>
@@ -50,21 +50,24 @@ function getStringValue($val, $default = '')
         </div>
         <div>
             Weight: <strong>{{getStringValue($patientPppData->answers_for_eval['weight'])}} </strong><br>
-            Height: <strong> </strong><br>
+            Height: <strong>{{getStringValue($patientPppData->answers_for_eval['height']['feet'])}}
+                ' {{getStringValue($patientPppData->answers_for_eval['height']['inches'])}}' </strong><br>
             Body Mass Index (BMI): <strong>{{getStringValue($patientPppData->answers_for_eval['bmi'])}}</strong> <br>
-            Blood Pressure: <strong> </strong> <br>
+            Blood Pressure:
+            <strong>{{getStringValue($patientPppData->answers_for_eval['blood_pressure']['first_metric'])}}
+                / {{getStringValue($patientPppData->answers_for_eval['blood_pressure']['second_metric'])}}</strong><br>
         </div>
         <br>
-        <div class="row">
-            <div class="col">
-                <div class="report-title">
-                    <h3>Suggested CheckList</h3>
-                </div>
+        <div class="suggested-list">
+            <div class="report-title col-md-6">
+                <h3>Suggested CheckList</h3>
             </div>
-            <div class="col" style="padding-top: 1%">
+            <div class="side-title col-md-6">
                 Ask your doctor about:
             </div>
         </div>
+
+
         <hr>
 
         <table class="table table-borderless">
@@ -76,11 +79,12 @@ function getStringValue($val, $default = '')
             </tr>
             </thead>
             <tbody>
+
             @foreach($personalizedHealthAdvices as $key => $tasks)
                 @if(! empty($tasks['tasks']))
                     @foreach($tasks['table_data'] as $table)
                         <tr>
-                            <td style="font-weight: 500">{{$table['body']}}</td>
+                            <td style="font-weight: 500;">{{$table['body']}}</td>
                             <td>{{$table['time_frame']}}</td>
                             <td style="font-weight: 500">{{$table['code']}}</td>
                         </tr>
