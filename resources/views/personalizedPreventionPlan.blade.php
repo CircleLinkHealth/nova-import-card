@@ -1,5 +1,33 @@
 @extends('layouts.surveysMaster')
 
+<?php
+function getStringValue($val, $default = '')
+{
+    if (empty($val)) {
+        return $default;
+    }
+
+    if (is_string($val)) {
+        return $val;
+    }
+
+    if (is_array($val)) {
+
+        if (array_key_exists('name', $val)) {
+            return getStringValue($val['name']);
+        }
+
+        if (array_key_exists('value', $val)) {
+            return getStringValue($val['value']);
+        }
+
+        return getStringValue($val[0]);
+    }
+
+    return $val;
+}
+?>
+
 @section('content')
     <link href="{{asset('css/PersonalizedPreventionPlan.css')}}" rel="stylesheet">
     <div class="container report">
@@ -21,9 +49,9 @@
             <hr>
         </div>
         <div>
-            Weight: <strong>{{$patientPppData->answers_for_eval['weight']}} </strong><br>
+            Weight: <strong>{{getStringValue($patientPppData->answers_for_eval['weight'])}} </strong><br>
             Height: <strong> </strong><br>
-            Body Mass Index (BMI): <strong>{{$patientPppData->answers_for_eval['bmi']}}</strong> <br>
+            Body Mass Index (BMI): <strong>{{getStringValue($patientPppData->answers_for_eval['bmi'])}}</strong> <br>
             Blood Pressure: <strong> </strong> <br>
         </div>
         <br>
@@ -78,12 +106,20 @@
                     @endif
                     <br>
                     @foreach($tasks['tasks'] as $key => $recommendations)
-                        @if(! empty($recommendations))
+                        @if(! empty($recommendations) && isset($recommendations['qualitative_trigger']))
                             <div class="recommendations-area">
                                 <div style="font-weight: 600">{{$recommendations['qualitative_trigger']}}</div>
                                 <div>{{$recommendations['task_body']}}</div>
                                 <br>
-                                <div style="font-weight: 400"><i>{{$recommendations['recommendation_body']}}</i></div>
+                                @if (is_array($recommendations['recommendation_body']))
+                                    @foreach($recommendations['recommendation_body'] as $recBodyItem)
+                                        <div style="font-weight: 400"><i>{{$recBodyItem}}</i>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div style="font-weight: 400"><i>{{$recommendations['recommendation_body']}}</i>
+                                    </div>
+                                @endif
                                 <br>
                             </div>
                         @endif

@@ -185,8 +185,18 @@
                         </div>
                         <br/>
                         <div class="survey-sub-welcome-text">
-                            If you are using the patient's phone, please hand it back now.
+                            If you are using the patient's phone, please <strong>logout</strong> and hand it back now.
                         </div>
+
+                    </div>
+
+                    <div class="btn-start-container">
+                        <mdb-btn color="primary" class="btn-start" @click="logout">
+                            Logout
+                        </mdb-btn>
+
+                        <form id="logout-form" action="/logout" method="POST" style="display: none;">
+                        </form>
                     </div>
 
                     <div class="by-circlelink text-center">
@@ -492,6 +502,19 @@
                 else {
                     this.readOnlyMode = !this.readOnlyMode;
                 }
+            },
+
+            logout() {
+                const token = document.head.querySelector('meta[name="csrf-token"]');
+                $('<input>')
+                    .attr({
+                        type: 'hidden',
+                        name: '_token',
+                        value: token.content
+                    })
+                    .appendTo('#logout-form');
+
+                $('#logout-form').submit();
             }
 
         },
@@ -540,10 +563,10 @@
                 this.stage = "complete";
             }
 
-            if (this.adminMode) {
-                this.stage = "survey";
-                this.readOnlyMode = true;
-            }
+            // if (this.adminMode) {
+            //     this.stage = "survey";
+            //     this.readOnlyMode = true;
+            // }
         }
     }
 </script>
