@@ -563,10 +563,10 @@
                 this.stage = "complete";
             }
 
-            // if (this.adminMode) {
-            //     this.stage = "survey";
-            //     this.readOnlyMode = true;
-            // }
+            if (this.adminMode) {
+                this.stage = "survey";
+                this.readOnlyMode = true;
+            }
         }
     }
 </script>
