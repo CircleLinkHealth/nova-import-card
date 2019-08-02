@@ -8,13 +8,11 @@ namespace App\Http\Controllers;
 
 use App\Call;
 use App\Contracts\ReportFormatter;
-use App\Events\ForwardAddendum;
 use App\Events\NoteFinalSaved;
 use App\Http\Requests\NotesReport;
 use App\Note;
 use App\Repositories\PatientWriteRepository;
 use App\SafeRequest;
-use App\Services\AddendumNotificationsService;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
 use App\Services\NoteService;
@@ -34,7 +32,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class NotesController extends Controller
 {
-    private $addendumNotificationsService;
     private $formatter;
     private $patientRepo;
     private $service;
@@ -42,13 +39,11 @@ class NotesController extends Controller
     public function __construct(
         NoteService $noteService,
         ReportFormatter $formatter,
-        PatientWriteRepository $patientWriteRepository,
-        AddendumNotificationsService $addendumNotifications
+        PatientWriteRepository $patientWriteRepository
     ) {
-        $this->service                      = $noteService;
-        $this->formatter                    = $formatter;
-        $this->patientRepo                  = $patientWriteRepository;
-        $this->addendumNotificationsService = $addendumNotifications;
+        $this->service     = $noteService;
+        $this->formatter   = $formatter;
+        $this->patientRepo = $patientWriteRepository;
     }
 
     public function create(
@@ -222,23 +217,6 @@ class NotesController extends Controller
     }
 
     /**
-     * Get addendum Notifications to show  in vueJs.
-     *
-     * @return JsonResponse
-     */
-    public function getAddendumNotifications()
-    {
-        $authUser = auth()->user();
-
-        $addendumNotifications    = $this->addendumNotificationsService->getAddendumNotifications($authUser);
-        $notificationsToPusherVue = $this->addendumNotificationsService->whoCanSeeRealTimeNotifications($addendumNotifications, $authUser);
-
-        return response()->json([
-            $notificationsToPusherVue,
-        ], 200);
-    }
-
-    /**
      * @param $senderId
      *
      * @return JsonResponse
@@ -390,22 +368,6 @@ class NotesController extends Controller
         }
 
         return view('wpUsers.patient.note.list', $data)->with('input', $request->input());
-    }
-
-    /**
-     * @param mixed $receiverId
-     * @param $attachmentId
-     *
-     * @return JsonResponse
-     */
-    public function markAddendumAsRead($receiverId, $attachmentId)
-    {
-        $this->addendumNotificationsService->markAddendumNotifAsRead($receiverId, $attachmentId);
-
-        return response()->json([
-            'readBy'     => $receiverId,
-            'addendumId' => $attachmentId,
-        ], 200);
     }
 
     public function send(
@@ -776,8 +738,6 @@ class NotesController extends Controller
                 'author_user_id' => auth()->user()->id,
             ]
         );
-
-        ForwardAddendum::dispatch($note);
 
         return redirect()->to(
             route(

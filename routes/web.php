@@ -2414,13 +2414,18 @@ Route::get(
     ]
 )->middleware(['auth', 'role:administrator']);
 
-Route::get('addendum-notifications', [
-    'uses' => 'NotesController@getAddendumNotifications',
-    'as'   => 'nurse.addendum.notification',
+Route::get('notifications/{id}', [
+    'uses' => 'NotificationController@show',
+    'as'   => 'notifications.show',
+])->middleware('permission:provider.read,note.read');
+
+Route::get('notifications', [
+    'uses' => 'NotificationController@index',
+    'as'   => 'notifications.index',
 ])->middleware('permission:provider.read,note.read');
 
 Route::post('/redirect-mark-read/{receiverId}/{attachmentId}', [
-    'uses' => 'PusherController@markNotificationAsRead',
+    'uses' => 'NotificationController@markNotificationAsRead',
     'as'   => 'notification.redirect',
 ]);
 
