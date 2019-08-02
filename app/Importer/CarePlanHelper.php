@@ -352,13 +352,7 @@ class CarePlanHelper
                 ->first();
 
             if ( ! $dataFromPractice) {
-                $patientProfileRoute = route('patient.demographics.show', ['patientId' => $this->user->id]);
-                $nbiListRoute        = url('/superadmin/resources/n-b-i-patient-datas');
-                sendSlackMessage(
-                    '#nbi_rwjbarnabas',
-                    "We could not find <a href='{$patientProfileRoute}' target=_blank><strong>this patient</strong></a> in <a href='{$nbiListRoute}' target=_blank><strong>NBI's supplementary MRN list</strong></a>. Approval process has been locked.
-                            Please add the correct MRN for this patient in <a href='{$nbiListRoute}' target=_blank><strong>NBI's supplementary MRN list</strong></a>."
-                );
+                sendNbiPatientMrnWarning($this->user->id);
 
                 $recipients = AppConfig::where('config_key', '=', self::RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS)->get();
 

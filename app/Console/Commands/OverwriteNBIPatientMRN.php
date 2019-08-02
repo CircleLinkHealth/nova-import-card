@@ -42,14 +42,14 @@ class OverwriteNBIPatientMRN extends Command
             $q->select('mrn')->from((new PatientData())->getTable());
         })->where('created_at', '>', self::CUTOFF_DATE)->get()
             ->map(
-                             function ($patientInfo) {
-                                 $this->info("Checking User id: $patientInfo->user_id");
+                function ($patientInfo) {
+                    $this->info("Checking User id: $patientInfo->user_id");
 
-                                 return [
-                                     'user_id'      => $patientInfo->user_id,
-                                     'was_replaced' => $this->lookupAndReplaceMrn($patientInfo),
-                                 ];
-                             }
+                    return [
+                        'user_id'      => $patientInfo->user_id,
+                        'was_replaced' => $this->lookupAndReplaceMrn($patientInfo),
+                    ];
+                }
             );
 
         $this->table(['user_id', 'was_replaced'], $result->all());
@@ -69,11 +69,7 @@ class OverwriteNBIPatientMRN extends Command
             return true;
         }
 
-        $patientUrl        = route('patient.demographics.show', ['patientId' => $patientInfo->user_id]);
-        $patientProfileUrl = "<$patientUrl|this patient>";
-        $novaUrl           = url('/superadmin/resources/n-b-i-patient-datas');
-        $novaLink          = "<$novaUrl|NBI's supplementary MRN list>";
-        sendSlackMessage('#nbi_rwjbarnabas', "@channel URGENT! Could not find $patientProfileUrl in $novaLink. All NBI MRNs need to be replaced. Please add the correct MRN for this patient in $novaLink. The system will replace the MRN in patient's chart with the MRN you input.", true);
+        sendNbiPatientMrnWarning($patientInfo->user_id);
 
         return false;
     }

@@ -1484,3 +1484,17 @@ if ( ! function_exists('minutesToHhMm')) {
         return sprintf('%02d:%02d', $H, $i);
     }
 }
+
+if ( ! function_exists('sendNbiPatientMrnWarning')) {
+    /**
+     * @param $patientId
+     */
+    function sendNbiPatientMrnWarning($patientId)
+    {
+        $patientUrl        = route('patient.demographics.show', ['patientId' => $patientId]);
+        $patientProfileUrl = "<$patientUrl|this patient>";
+        $novaUrl           = url('/superadmin/resources/n-b-i-patient-datas');
+        $novaLink          = "<$novaUrl|NBI's supplementary MRN list>";
+        sendSlackMessage('#nbi_rwjbarnabas', "@channel URGENT! Could not find $patientProfileUrl in $novaLink. All NBI MRNs need to be replaced. Please add the correct MRN for this patient in $novaLink. The system will replace the MRN in patient's chart with the MRN you input.", true);
+    }
+}
