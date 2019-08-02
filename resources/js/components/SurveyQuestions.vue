@@ -763,7 +763,7 @@
             this.practiceName = this.surveyData.primary_practice.display_name;
             this.practiceOutgoingPhoneNumber = this.surveyData.primary_practice.outgoing_phone_number;
 
-            this.doctorsLastName = this.surveyData.billing_provider[0].user.last_name;
+            this.doctorsLastName = this.surveyData.billing_provider && this.surveyData.billing_provider.length ? this.surveyData.billing_provider[0].user.last_name : '???';
 
             this.surveyInstanceId = this.surveyData.survey_instances[0].id
 
