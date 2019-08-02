@@ -33,14 +33,21 @@ class RedirectIfAuthenticated
                 if (Route::is('auth.login.signed')) {
 
                     $surveyId = SurveyInvitationLinksService::getSurveyIdFromSignedUrl($request->url());
-                    $name     = Survey::find($surveyId)->get('name');
+                    $name     = Survey::find($surveyId, ['name'])->name;
 
                     if (Survey::HRA === $name) {
-                        return redirect()->route('survey.hra',
-                            [
-                                'patientId' => $user->id,
-                                'surveyId'  => $surveyId,
-                            ]);
+                        return redirect()
+                            ->route('survey.hra',
+                                [
+                                    'patientId' => $user->id,
+                                    'surveyId'  => $surveyId,
+                                ]);
+                    } else if (Survey::VITALS === $name) {
+                        return redirect()
+                            ->route('survey.vitals.not.authorized',
+                                [
+                                    'patientId' => $user->id,
+                                ]);
                     }
                 }
 

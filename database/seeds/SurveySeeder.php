@@ -988,6 +988,7 @@ class SurveySeeder extends Seeder
             ],
             [
                 'order'                 => 19,
+                'optional'              => true,
                 'question_body'         => 'Please list any surgeries/hospital stays you have had and their approximate date/year:',
                 'question_type'         => QuestionType::TEXT,
                 'question_type_answers' => [
@@ -1019,6 +1020,7 @@ class SurveySeeder extends Seeder
             ],
             [
                 'order'                 => 20,
+                'optional'              => true,
                 'question_body'         => 'If you are taking any medications regularly, please list them here, including over-the-counter pharmaceuticals:',
                 'question_type'         => QuestionType::TEXT,
                 'question_type_answers' => [
@@ -1050,6 +1052,7 @@ class SurveySeeder extends Seeder
             ],
             [
                 'order'                 => 21,
+                'optional'              => true,
                 'question_body'         => 'Please list any allergies or reactions:',
                 'question_type'         => QuestionType::TEXT,
                 'question_type_answers' => [

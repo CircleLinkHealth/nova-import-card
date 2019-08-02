@@ -49,9 +49,14 @@ class PatientLoginController extends Controller
     {
         $urlWithToken = $request->getRequestUri();
 
-        $user            = User::with(['primaryPractice', 'billingProvider'])->where('id', '=', $userId)->firstOrFail();
-        $practiceName    = $user->getPrimaryPracticeName();
-        $doctorsLastName = $user->billingProviderUser()->display_name;
+        $user         = User::with(['primaryPractice', 'billingProvider'])->where('id', '=', $userId)->firstOrFail();
+        $practiceName = $user->getPrimaryPracticeName();
+
+        $doctor          = $user->billingProviderUser();
+        $doctorsLastName = "???";
+        if ($doctor) {
+            $doctorsLastName = $doctor->display_name;
+        }
 
         return view('surveyUrlAuth.surveyLoginForm',
             compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName'));
@@ -129,16 +134,20 @@ class PatientLoginController extends Controller
         }
 
         $surveyId = $this->service->getSurveyIdFromSignedUrl($prevUrl);
-        $name     = Survey::find($surveyId)->get('name');
-        if ( ! Survey::HRA === $name) {
-            return route('home');
-        }
+        $name     = Survey::find($surveyId, ['name'])->name;
 
-        $route = route('survey.hra',
-            [
-                'patientId' => $user->id,
-                'surveyId'  => $surveyId,
-            ]);
+        if (Survey::HRA === $name) {
+            $route = route('survey.hra',
+                [
+                    'patientId' => $user->id,
+                    'surveyId'  => $surveyId,
+                ]);
+        } else {
+            $route = route('survey.vitals.not.authorized',
+                [
+                    'patientId' => $user->id,
+                ]);
+        }
 
         //fixme: don't know why I had to do this
         //without it, it would redirect to home page '/'

@@ -54,12 +54,21 @@
                 selectBoxes: [],
             }
         },
+
         computed: {
 
             hasSelections() {
                 return this.selectBoxes.every(s => s.selected.length > 0);
             }
 
+        },
+
+        watch: {
+            isActive: function (newVal, oldVal) {
+                if (newVal) {
+                    this.refreshSelections();
+                }
+            }
         },
 
         methods: {
@@ -89,45 +98,48 @@
                     answer.push(result);
                 });
                 this.onDoneFunc(this.question.id, questionTypeAnswerId, answer, this.isLastQuestion);
+            },
+
+            refreshSelections() {
+                this.options = this.question.type.question_type_answers.map(q => q.options);
+
+                const shouldImportCheckboxValuesFromOtherAnswer = this.options.length && this.options[0].import_answers_from_question;
+                if (shouldImportCheckboxValuesFromOtherAnswer) {
+                    const questionOrder = this.options[0].import_answers_from_question.question_order;
+                    const questions = this.getAllQuestionsFunc();
+                    const targetQuestion = questions.find(q => q.pivot.order === questionOrder);
+                    //should never happen
+                    if (!targetQuestion.answer) {
+                        targetQuestion.answer = {value: []};
+                    }
+
+                    const selectOptions = this.options[0].multi_select_options;
+                    const placeholder = this.options[0].placeholder;
+
+                    const key = this.options[0].key;
+                    const selectKey = this.options[0].multi_select_key;
+
+                    this.selectBoxes = targetQuestion.answer.value.map(v => {
+
+                        let selected = [];
+                        if (this.question.answer && this.question.answer.value) {
+                            const valueFromServer = this.question.answer.value.find(x => x[key] === v[key]);
+                            if (valueFromServer) {
+                                selected = valueFromServer[selectKey];
+                            }
+                        }
+                        return {key: v[key], options: selectOptions, placeholder, active: false, selected};
+                    });
+
+                }
+                else {
+                    //todo
+                }
             }
 
         },
         mounted() {
-            this.options = this.question.type.question_type_answers.map(q => q.options);
-
-            const shouldImportCheckboxValuesFromOtherAnswer = this.options.length && this.options[0].import_answers_from_question;
-            if (shouldImportCheckboxValuesFromOtherAnswer) {
-                const questionOrder = this.options[0].import_answers_from_question.question_order;
-                const questions = this.getAllQuestionsFunc();
-                const targetQuestion = questions.find(q => q.pivot.order === questionOrder);
-                //should never happen
-                if (!targetQuestion.answer) {
-                    targetQuestion.answer = {value: []};
-                }
-
-                const selectOptions = this.options[0].multi_select_options;
-                const placeholder = this.options[0].placeholder;
-
-                const key = this.options[0].key;
-                const selectKey = this.options[0].multi_select_key;
-
-                this.selectBoxes = targetQuestion.answer.value.map(v => {
-
-                    let selected = [];
-                    if (this.question.answer && this.question.answer.value) {
-                        const valueFromServer = this.question.answer.value.find(x => x[key] === v[key]);
-                        if (valueFromServer) {
-                            selected = valueFromServer[selectKey];
-                        }
-                    }
-                    return {key: v[key], options: selectOptions, placeholder, active: false, selected};
-                });
-
-            }
-            else {
-                //todo
-            }
-
+            this.refreshSelections();
         },
 
         created() {
