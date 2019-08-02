@@ -27,7 +27,6 @@ function getStringValue($val, $default = '')
     return $val;
 }
 ?>
-
 @section('content')
     <link href="{{asset('css/PersonalizedPreventionPlan.css')}}" rel="stylesheet">
     <div class="container report">
@@ -59,7 +58,7 @@ function getStringValue($val, $default = '')
         </div>
         <br>
         <div class="suggested-list">
-            <div class="report-title col-md-6">
+            <div class="report-title">
                 <h3>Suggested CheckList</h3>
             </div>
             <div class="side-title col-md-6">

@@ -75,8 +75,12 @@
 .side-title {
     top: 5%;
     float: right;
+    /*These work in pure HTML but NOT when in PDF also some other styles behave the same way when in pdf*/
+    /*padding-left: 3%;*/
+    /*padding-top: 1%;*/
 }
 
 .suggested-list-body {
     font-weight: 500;
 }
+
