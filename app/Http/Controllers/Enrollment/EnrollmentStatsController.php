@@ -200,12 +200,12 @@ class EnrollmentStatsController extends Controller
             $end   = Carbon::now()->endOfDay()->toDateTimeString();
         }
 
-        $practices = DB::table('enrollees')->distinct('practice_id')->pluck('practice_id');
+        $practices = DB::table('enrollees')->distinct('practice_id')->pluck('practice_id')->filter();
 
         $data = [];
 
         foreach ($practices as $practiceId) {
-            $practice = Practice::find($practiceId);
+            $practice = Practice::findOrFail($practiceId);
 
             $data[$practice->id]['name'] = $practice->display_name;
 
@@ -249,7 +249,7 @@ class EnrollmentStatsController extends Controller
                     ->where('last_attempt_at', '<=', $end)
                     ->sum('total_time_spent');
 
-            $data[$practice->id]['labor_hours'] = secondsToHHMM($total_time);
+            $data[$practice->id]['labor_hours'] = secondsToHMS($total_time);
 
             $enrollers = Enrollee::select(DB::raw('care_ambassador_user_id, sum(total_time_spent) as total'))
                 ->where('practice_id', $practice->id)
