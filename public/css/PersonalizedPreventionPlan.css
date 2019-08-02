@@ -55,16 +55,19 @@
 .table.table td, table.table th {
     padding-top: 0.4rem;
     padding-bottom: 0.2rem;
+    align-content: center;
 }
 
 .table.table thead th {
-    width: 900px;
     padding-left: 1%;
+    width: 250px;
+
 }
 
 .suggested-list {
     display: flex;
 }
+
 .report-title {
 
 }
@@ -72,4 +75,8 @@
 .side-title {
     top: 5%;
     float: right;
+}
+
+.suggested-list-body {
+    font-weight: 500;
 }
