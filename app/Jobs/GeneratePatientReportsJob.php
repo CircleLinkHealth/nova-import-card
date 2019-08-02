@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Notifications\SendReport;
+use App\PersonalizedPreventionPlan;
 use App\Services\GeneratePersonalizedPreventionPlanService;
 use App\Services\GenerateProviderReportService;
 use App\Services\PersonalizedPreventionPlanPrepareData;
@@ -42,8 +43,8 @@ class GeneratePatientReportsJob implements ShouldQueue
     public function __construct($patientId, $instanceYear)
     {
         $this->instanceYear = Carbon::parse($instanceYear);
-        $this->patientId    = $patientId;
-        $this->currentDate  = Carbon::now();
+        $this->patientId = $patientId;
+        $this->currentDate = Carbon::now();
 
     }
 
@@ -56,33 +57,33 @@ class GeneratePatientReportsJob implements ShouldQueue
     {
         //Retrieve User with data needed for reports
         $patient = User::with([
-            'surveyInstances'     => function ($instance) {
+            'surveyInstances' => function ($instance) {
                 $instance->with(['survey', 'questions.type.questionTypeAnswers'])
-                         ->forYear($this->instanceYear);
+                    ->forYear($this->instanceYear);
             },
-            'answers'             => function ($answers) {
+            'answers' => function ($answers) {
                 $answers->whereHas('surveyInstance', function ($instance) {
                     $instance->forYear($this->instanceYear);
                 });
             },
-            'providerReports'     => function ($report) {
+            'providerReports' => function ($report) {
                 $report->whereHas('hraSurveyInstance', function ($instance) {
                     $instance->forYear($this->instanceYear);
                 })
-                       ->whereHas('vitalsSurveyInstance', function ($instance) {
-                           $instance->forYear($this->instanceYear);
-                       });
+                    ->whereHas('vitalsSurveyInstance', function ($instance) {
+                        $instance->forYear($this->instanceYear);
+                    });
             },
             'patientAWVSummaries' => function ($summary) {
                 $summary->where('year', Carbon::now()->year);
             },
         ])
-                       ->findOrFail($this->patientId);
+            ->findOrFail($this->patientId);
 
         //Generate Reports
         $providerReport = (new GenerateProviderReportService($patient))->generateData();
 
-        if ( ! $providerReport) {
+        if (!$providerReport) {
             \Log::error("Something went wrong while generating Provider Report for patient with id:{$patient->id} ");
 
             //todo: send notification to slack? when command stops?
@@ -91,7 +92,7 @@ class GeneratePatientReportsJob implements ShouldQueue
 
         $pppReport = (new GeneratePersonalizedPreventionPlanService($patient))->generateData();
 
-        if ( ! $pppReport) {
+        if (!$pppReport) {
             \Log::error("Something went wrong while generating PPP for patient with id:{$patient->id} ");
 
             return;
@@ -100,7 +101,7 @@ class GeneratePatientReportsJob implements ShouldQueue
         //Create PDFs for reports and upload the to S3 Media
         $providerReportUploaded = $this->createAndUploadPdfProviderReport($providerReport, $patient);
 
-        if ( ! $providerReportUploaded) {
+        if (!$providerReportUploaded) {
             \Log::error("Something went wrong while uploading Provider Report for patient with id:{$patient->id} ");
 
             return;
@@ -108,7 +109,7 @@ class GeneratePatientReportsJob implements ShouldQueue
 
         $pppUploaded = $this->createAndUploadPdfPPP($pppReport, $patient);
 
-        if ( ! $pppUploaded) {
+        if (!$pppUploaded) {
             \Log::error("Something went wrong while uploading PPP for patient with id:{$patient->id} ");
 
             return;
@@ -173,23 +174,23 @@ class GeneratePatientReportsJob implements ShouldQueue
 
         $saved = file_put_contents($path, $pdf->output());
 
-        if ( ! $saved) {
+        if (!$saved) {
             return false;
         }
 
         return $patient->addMedia($path)
-                       ->withCustomProperties(['doc_type' => 'Provider Report'])
-                       ->toMediaCollection('patient-care-documents');
+            ->withCustomProperties(['doc_type' => 'Provider Report'])
+            ->toMediaCollection('patient-care-documents');
     }
 
-    private function createAndUploadPdfPPP($ppp, $patient)
+    private function createAndUploadPdfPPP(PersonalizedPreventionPlan $ppp, User $patient)
     {
         $personalizedHealthAdvices = (new PersonalizedPreventionPlanPrepareData())->prepareRecommendations($ppp);
 
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadView('personalizedPreventionPlan', [
-            'patientPppData'            => $ppp,
-            'patient'                   => $patient,
+            'patientPppData' => $ppp,
+            'patient' => $patient,
             'personalizedHealthAdvices' => $personalizedHealthAdvices,
         ]);
 
@@ -198,12 +199,12 @@ class GeneratePatientReportsJob implements ShouldQueue
 
         $saved = file_put_contents($path, $pdf->output());
 
-        if ( ! $saved) {
+        if (!$saved) {
             return false;
         }
 
         return $patient->addMedia($path)
-                       ->withCustomProperties(['doc_type' => 'PPP'])
-                       ->toMediaCollection('patient-care-documents');
+            ->withCustomProperties(['doc_type' => 'PPP'])
+            ->toMediaCollection('patient-care-documents');
     }
 }
