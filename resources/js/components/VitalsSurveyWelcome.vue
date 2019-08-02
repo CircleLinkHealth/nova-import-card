@@ -30,9 +30,13 @@
                     <mdb-btn v-if="isProviderLoggedIn" color="primary" class="btn-login" @click="showVitalsSurvey">
                         Proceed to enter {{patientName}}'s Vitals
                     </mdb-btn>
-                    <mdb-btn v-else color="primary" class="btn-login" @click="login">
+                    <mdb-btn v-else color="primary" class="btn-login" @click="logout">
                         Provider Login for {{patientName}}'s Vitals
                     </mdb-btn>
+
+                    <form id="logout-form" action="/logout" method="POST" style="display: none;">
+                    </form>
+
                 </div>
 
                 <div class="by-circlelink text-center">
@@ -57,8 +61,17 @@
                 window.location.href = `/survey/vitals/${this.patientId}`;
             },
 
-            login() {
-                window.location.href = '/auth/login';
+            logout() {
+                const token = document.head.querySelector('meta[name="csrf-token"]');
+                $('<input>')
+                    .attr({
+                        type: 'hidden',
+                        name: '_token',
+                        value: token.content
+                    })
+                    .appendTo('#logout-form');
+
+                $('#logout-form').submit();
             }
         }
     }

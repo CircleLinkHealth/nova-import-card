@@ -103,16 +103,6 @@ Route::group([
         'middleware' => ['permission:vitals-survey-complete'],
     ], function () {
 
-        Route::get('{patientId}/welcome', [
-            'uses' => 'VitalsSurveyController@showWelcome',
-            'as'   => 'survey.vitals.welcome',
-        ]);
-
-        Route::get('{patientId}/not-auth', [
-            'uses' => 'VitalsSurveyController@showNotAuthorized',
-            'as'   => 'survey.vitals.not.authorized',
-        ]);
-
         Route::get('{patientId}', [
             'uses' => 'VitalsSurveyController@getCurrentSurvey',
             'as'   => 'survey.vitals',
@@ -121,6 +111,22 @@ Route::group([
         Route::post('{patientId}/save-answer', [
             'uses' => 'VitalsSurveyController@storeAnswer',
             'as'   => 'survey.vitals.store.answer',
+        ]);
+
+    });
+
+    Route::group([
+        'prefix' => 'vitals',
+    ], function () {
+
+        Route::get('{patientId}/welcome', [
+            'uses' => 'VitalsSurveyController@showWelcome',
+            'as'   => 'survey.vitals.welcome',
+        ]);
+
+        Route::get('{patientId}/not-auth', [
+            'uses' => 'VitalsSurveyController@showNotAuthorized',
+            'as'   => 'survey.vitals.not.authorized',
         ]);
 
     });
