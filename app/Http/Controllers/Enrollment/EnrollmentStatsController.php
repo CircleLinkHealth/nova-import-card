@@ -140,7 +140,7 @@ class EnrollmentStatsController extends Controller
 
             $data[$ambassador->id]['name'] = User::find($ambassadorUser)->getFullName();
 
-            $data[$ambassador->id]['total_hours'] = secondsToHHMM($base->sum('total_time_in_system'));
+            $data[$ambassador->id]['total_hours'] = secondsToHMS($base->sum('total_time_in_system'));
 
             $data[$ambassador->id]['no_enrolled']         = $base->sum('no_enrolled');
             $data[$ambassador->id]['mins_per_enrollment'] = (0 != $base->sum('no_enrolled'))
