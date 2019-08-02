@@ -13,7 +13,6 @@ use App\Filters\EnrolleeFilters;
 use App\Http\Requests\AddEnrolleeCustomFilter;
 use App\Http\Requests\EditEnrolleeData;
 use App\Http\Requests\UpdateMultipleEnrollees;
-use App\Jobs\UpdateEnrolleesFromEnglishEnrollmentSheetCsv;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
@@ -49,13 +48,13 @@ class EnrollmentDirectorController extends Controller
         )
             ->get()
             ->map(function ($e) use ($request) {
-                $e->care_ambassador_user_id = $request->input('ambassadorId');
+                    $e->care_ambassador_user_id = $request->input('ambassadorId');
 
-                if (Enrollee::SOFT_REJECTED != $e->status) {
-                    $e->status = Enrollee::TO_CALL;
-                }
-                $e->save();
-            });
+                    if (Enrollee::SOFT_REJECTED != $e->status) {
+                        $e->status = Enrollee::TO_CALL;
+                    }
+                    $e->save();
+                });
 
         return response()->json([], 200);
     }
@@ -116,6 +115,14 @@ class EnrollmentDirectorController extends Controller
                 ? 'ASC'
                 : 'DESC';
             $data->orderBy($orderBy, $direction);
+        } else {
+            $data->orderByRaw("CASE
+   WHEN status = 'engaged' THEN 1
+   WHEN status = 'call_queue' THEN 2
+   WHEN status = 'utc' THEN 3
+   WHEN status = 'soft_rejected' THEN 4
+   ELSE 5
+END ASC, attempt_count ASC");
         }
 
         $results = $data->get()->toArray();
