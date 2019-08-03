@@ -13,11 +13,19 @@ class NotificationController extends Controller
 {
     public $service;
 
+    /**
+     * NotificationController constructor.
+     *
+     * @param PusherNotificationService $pusherNotificationService
+     */
     public function __construct(PusherNotificationService $pusherNotificationService)
     {
         $this->service = $pusherNotificationService;
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index()
     {
         $notifications = DatabaseNotification::whereNotifiableId(auth()->id())->orderByDesc('id')->take(5)->get();
@@ -34,9 +42,14 @@ class NotificationController extends Controller
         $this->service->markNotificationAsRead($receiverId, $attachmentId);
     }
 
+    /**
+     * @param $id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show($id)
     {
-        $notification = DatabaseNotification::firstOrFail($id);
+        $notification = DatabaseNotification::findOrFail($id);
 
         return response()->json($notification->toArray());
     }

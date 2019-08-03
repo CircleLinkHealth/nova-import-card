@@ -5,34 +5,32 @@
             <div class="dropdown-header">
                 NOTIFICATIONS
             </div>
-<!---->
+            <!---->
             <div class="dropdown-content">
                 <div v-for="notification in notifications"
                      class="dropdown-item"
                      :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
                      v-html="show(notification)">
+
                 </div>
             </div>
-<!--   @click="redirectAndMarkAsRead(notification)" -->
+            <!--   @click="redirectAndMarkAsRead(notification)" -->
             <div class="dropdown-footer"
                  @click="showAll(notifications)">
                 <a>
                     See All
                 </a>
             </div>
-<!---->
+            <!---->
         </div>
     </div>
 </template>
 
 <script>
-    import moment from 'moment'
 
     export default {
         name: "pusher-notifications",
-        components: {
-
-        },
+        components: {},
         props: [
             'user'
         ],
@@ -50,97 +48,67 @@
             }
         },
         computed: {
-            // shouldShowCount() {
-            //     return this.countUnreadNotifications !== 0;
-            // },
-            //
-            // countUnreadNotifications() {
-            //     // NotificationsFromPusher is always unread - it doesnt have property: "read_at"
-            //     const notificationsFromPusher = this.notificationsFromPusher.length;
-            //     const count = this.notificationsFromDb.filter(q => q.read_at === null).length;
-            //     const sum = count + notificationsFromPusher;
-            //     this.count = sum;
-            //
-            //     return sum;
-            //
-            // },
-            //
+            shouldShowCount() {
+                return this.countUnreadNotifications !== 0;
+            },
+
+            countUnreadNotifications() {
+                // NotificationsFromPusher is always unread - it doesnt have property: "read_at"
+                const notificationsFromPusher = this.notificationsFromPusher.length;
+                const count = this.notificationsFromDb.filter(q => q.read_at === null).length;
+                const sum = count + notificationsFromPusher;
+                this.count = sum;
+                return sum;
+            },
+
             notifications() {
                 return this.notificationsFromDb.concat(this.notificationsFromPusher);
             },
 
         },
         methods: {
-    //         swapComponent: function(component)
-    //         {
-    //             this.currentComponent = component;
-    //         },
-    //         show(notification) {
-    //             const getSenderName = this.setSenderName(notification);
-    //             const getNotificationSubject = this.getNotificationSubject(notification);
-    //             const getPatientName = this.setPatientName(notification);
-    //
-    //             const nowDate = moment();
-    //
-    //             const showIfDataFromDb = `<strong>${getSenderName}</strong> ${getNotificationSubject}<strong> ${getPatientName}</strong>
-    //             <span style="float: right;padding-top: 4%; color: #90949c">${this.notificationPosted(notification.updated_at)}</span>`;
-    //
-    //             const showIfDataFromPusher = `<strong>${this.senderName}</strong> ${getNotificationSubject} <strong> ${this.patientName}</strong> <span style="float: right;
-    // padding-top: 4%; color: #90949c"> ${this.notificationPosted(nowDate)}</span>`;
-    //
-    //             if (getSenderName !== undefined && getPatientName !== undefined) {
-    //                 return showIfDataFromDb;
-    //             } else {
-    //                 return showIfDataFromPusher;
-    //             }
-    //         },
-    //
-    //         setPatientName(notification) {
-    //             return notification.data.hasOwnProperty('patient_name') ? notification.data.patient_name : this.getPatientName(notification);
-    //
-    //         },
-    //         getPatientName(notification) {
-    //             axios.get(`/get-patient-name/${notification.data.patient_id}`).then(response => {
-    //                 this.patientName = response.data.patientName;
-    //             });
-    //         },
-    //         getNotificationSubject(notification) {
-    //             return notification.data.subject;
-    //         },
-    //
-    //         setSenderName(notification) {
-    //             return notification.data.hasOwnProperty('sender_name') ? notification.data.sender_name : this.getSenderName(notification);
-    //         },
-    //
-    //         getSenderName(notification) {
-    //             axios.get(`/get-sender-name/${notification.data.sender_id}`).then(response => {
-    //                 this.senderName = response.data.senderName;
-    //             });
-    //
-    //         },
-    //
-    //         redirectAndMarkAsRead(notification) {
-    //             axios.post(`/redirect-mark-read/${notification.data.receiver_id}/${notification.data.attachment_id}`)
-    //                 .then(response => {
-    //                         this.markAsRead(notification);
-    //                     }
-    //                 );
-    //         },
-    //
-    //         markAsRead(notification) {
-    //             window.location.href = notification.data.redirectTo;
-    //         },
-    //
-    //         showAll(notifications) {
-    //             return notifications;
-    //             //@todo show view / vue with all notifications
-    //         },
-    //
-    //         notificationPosted(date) {
-    //             var notificationCreatedAt = moment(date);
-    //             var now = moment();
-    //             return notificationCreatedAt.from(now);
-    //         },
+            //         swapComponent: function(component)
+            //         {
+            //             this.currentComponent = component;
+            //         },
+            show(notification) {
+                const getSenderName = this.setSenderName(notification);
+                const getNotificationSubject = this.getNotificationSubject(notification);
+                const getPatientName = this.setPatientName(notification);
+
+                return `<strong>${getSenderName}</strong> ${getNotificationSubject}<strong> ${getPatientName}</strong>
+                        <span style="float: right;padding-top: 4%; color: #90949c"></span>`;
+
+            },
+            setPatientName(notification) {
+                return notification.data.hasOwnProperty('patient_name') ? notification.data.patient_name : 'No patient name';
+
+            },
+
+            getNotificationSubject(notification) {
+                return notification.data.subject;
+            },
+
+            setSenderName(notification) {
+                return notification.data.hasOwnProperty('sender_name') ? notification.data.sender_name : 'sender name missing';
+            },
+
+            redirectAndMarkAsRead(notification) {
+                axios.post(`/redirect-mark-read/${notification.data.receiver_id}/${notification.data.attachment_id}`)
+                    .then(response => {
+                            this.markAsRead(notification);
+                        }
+                    );
+            },
+
+            markAsRead(notification) {
+                window.location.href = notification.data.redirectTo;
+            },
+
+            showAll(notifications) {
+                //@todo show view / vue with all notifications
+            },
+
         },
 
         created() {
@@ -151,11 +119,11 @@
                     }
                 );
 
-            //Real Time Notifications
-            window.Echo.private('notifications.' + 13267).listen('AddendumCreated', ({dataToPusher}) => {
-                axios.get(dataToPusher.link)
+            // Real Time Notifications
+            window.Echo.private('notifications.' + 13267).listen('AddendumCreatedEvent', ({dataToPusher}) => {
+                axios.get(`/notifications/${dataToPusher.notificationId}`)
                     .then(response => {
-                            this.notificationsFromPusher.push(response)
+                            this.notificationsFromPusher.push(response.data)
                         }
                     );
             });

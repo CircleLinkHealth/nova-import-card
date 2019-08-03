@@ -48,7 +48,7 @@ abstract class PusherEvent implements PusherNotification, ShouldBroadcast
         }
 
         $this->dataToPusher = [
-            'link' => route('notifications.show', [$this->notification->id]),
+            'notificationId' => $this->notification->id,
         ];
     }
 

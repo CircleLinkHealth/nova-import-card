@@ -8,7 +8,7 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\PrivateChannel;
 
-class AddendumCreated extends PusherEvent
+class AddendumCreatedEvent extends PusherEvent
 {
     /**
      * Get the channels the event should broadcast on.
@@ -17,7 +17,7 @@ class AddendumCreated extends PusherEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('notifications'.$this->getPatientId());
+        return new PrivateChannel('notifications.'.$this->getPatientId());
     }
 
     public function getPatientId(): int

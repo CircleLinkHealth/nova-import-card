@@ -6,6 +6,7 @@
 
 namespace App\Observers;
 
+use App\Events\AddendumCreatedEvent;
 use App\Models\Addendum;
 use App\Notifications\AddendumCreated;
 
@@ -18,6 +19,6 @@ class AddendumObserver
      */
     public function created(Addendum $addendum)
     {
-        \App\Events\AddendumCreated::dispatch(new AddendumCreated($addendum));
+        AddendumCreatedEvent::dispatch(new AddendumCreated($addendum));
     }
 }
