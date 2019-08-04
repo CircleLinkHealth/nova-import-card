@@ -16,6 +16,7 @@ use App\Http\Requests\UpdateMultipleEnrollees;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EnrollmentDirectorController extends Controller
 {
@@ -42,19 +43,15 @@ class EnrollmentDirectorController extends Controller
 
     public function assignCareAmbassadorToEnrollees(UpdateMultipleEnrollees $request)
     {
-        Enrollee::whereIn(
-            'id',
-            $request->input('enrolleeIds')
-        )
-            ->get()
-            ->map(function ($e) use ($request) {
-                    $e->care_ambassador_user_id = $request->input('ambassadorId');
+        $enrolleeIds  = implode(',', $request->input('enrolleeIds'));
+        $toCall       = Enrollee::TO_CALL;
+        $softDeclined = Enrollee::SOFT_REJECTED;
 
-                    if (Enrollee::SOFT_REJECTED != $e->status) {
-                        $e->status = Enrollee::TO_CALL;
-                    }
-                    $e->save();
-                });
+        DB::statement("UPDATE enrollees
+SET
+    care_ambassador_user_id = {$request->input('ambassadorId')},
+    status = CASE WHEN status = '{$softDeclined}' THEN '{$toCall}' ELSE status END
+WHERE id IN ({$enrolleeIds})");
 
         return response()->json([], 200);
     }
