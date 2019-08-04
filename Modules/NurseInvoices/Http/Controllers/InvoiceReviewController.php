@@ -51,7 +51,7 @@ class InvoiceReviewController extends Controller
             ->where('nurse_info_id', $nurseInfoId)
             ->firstOrFail();
 
-        return $this->invoice($request, $invoice, []);
+        return $this->invoice($request, $invoice);
     }
 
     /**
@@ -127,7 +127,7 @@ class InvoiceReviewController extends Controller
             ->with(['dispute.resolver'])
             ->firstOrFail();
 
-        return $this->invoice($request, $invoice, []);
+        return $this->invoice($request, $invoice);
     }
 
     private function canBeDisputed(NurseInvoice $invoice, Carbon $deadline)
