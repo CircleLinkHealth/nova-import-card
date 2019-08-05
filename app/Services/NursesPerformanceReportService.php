@@ -276,7 +276,7 @@ class NursesPerformanceReportService
 
             //we count the hours only if the nurse has not scheduled a holiday for that day.
             if ( ! $isHolidayForDate) {
-                $hours[] = $nurse->nurseInfo->getHoursCommittedForCarbonDate($date);
+                $hours[] = $nurse->nurseInfo->getHoursCommittedForCarbonDate($mutableDate);
             }
 
             $mutableDate->addDay()->startOfDay();
@@ -450,29 +450,48 @@ class NursesPerformanceReportService
         )->sum('billable_duration');
     }
 
+    /**
+     * @param $nurse
+     * @param $date
+     * We need a collection of all the ENROLLED patients that the nurse has SCHEDULED calls with,
+     * (no date restriction on scheduled calls) along with their ccm + bhi time and successful calls
+     *
+     * @return Collection
+     */
     public function getUniquePatientsAssignedForNurseForMonth($nurse, $date)
     {
+        //We first create a subquery to bring the patient summary of the date's month. If we just joined the summary table on the query below,
+        //we would then need to do WHERE month_year=$date->startOfMonth at the end of the main query.
+        //This would exclude patients that have scheduled calls, but no summary for the date's month.
+        $sub = \DB::table('patient_monthly_summaries')
+            ->select('patient_id', 'ccm_time', 'bhi_time', 'no_of_successful_calls')
+            ->where('month_year', $date->copy()->startOfMonth());
+
         return \DB::table('calls')
             ->select(
+                //avoid duplicate patients so the total count of patients is accurate
                 \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                //we check null entries (in case there is no summary for the date's month)
                 \DB::raw(
-                    'GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60 as patient_time'
+                    'if (GREATEST(pms.ccm_time, pms.bhi_time) is null, 0, GREATEST(pms.ccm_time, pms.bhi_time)/60) as patient_time'
                 ),
                 \DB::raw(
-                    "({$this->timeGoal} - (GREATEST(patient_monthly_summaries.ccm_time, patient_monthly_summaries.bhi_time)/60)) as patient_time_left"
+                    "if (GREATEST(pms.ccm_time, pms.bhi_time) is null, {$this->timeGoal}, ({$this->timeGoal} - (GREATEST(pms.ccm_time, pms.bhi_time)/60))) as patient_time_left"
                 ),
-                'no_of_successful_calls as successful_calls'
+                \DB::raw(
+                    'if (pms.no_of_successful_calls is null, 0, pms.no_of_successful_calls) as successful_calls'
+                )
             )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
-            ->leftJoin('patient_monthly_summaries', 'users.id', '=', 'patient_monthly_summaries.patient_id')
+            ->leftJoinSub($sub, 'pms', function ($join) {
+                $join->on('calls.inbound_cpm_id', '=', 'pms.patient_id');
+            })
             ->leftJoin('patient_info', 'users.id', '=', 'patient_info.user_id')
             ->whereRaw(
                 "
 calls.status = 'scheduled'
-AND (calls.type IS NULL OR calls.type='call') 
 AND calls.outbound_cpm_id = {$nurse->id}
-AND patient_info.ccm_status = 'enrolled'
-AND DATE(patient_monthly_summaries.month_year) = DATE('{$date->copy()->startOfMonth()->toDateString()}')"
+AND patient_info.ccm_status = 'enrolled'"
             )
             ->get();
     }

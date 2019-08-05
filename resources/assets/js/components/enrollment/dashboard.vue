@@ -58,6 +58,7 @@
                                 <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b> {{providerFullName}}</span></li>
                                 <li class="sidebar-demo-list"><span :title="provider_pronunciation"><b>Provider Pronunciation:</b> {{provider_pronunciation}}</span></li>
                                 <li class="sidebar-demo-list"><span :title="provider_sex"><b>Provider Sex:</b> {{provider_sex}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="providerPhone"><b>Provider Phone:</b> {{providerPhone}}</span></li>
                                 <li class="sidebar-demo-list"><span :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span></li>
                             </ul>
                         </div>
@@ -175,29 +176,7 @@
                 </blockquote>
 
                 <div class="enrollment-script">
-
-                    <template v-if="has_copay">
-                        <template v-if="lang === 'EN'">
-                            <copay-en :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName"
-                                      :practice-name="practice_name"></copay-en>
-                        </template>
-                        <template v-else>
-                            <copay-es :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName"
-                                      :practice-name="practice_name"></copay-es>
-                        </template>
-                    </template>
-                    <template v-else>
-                        <template v-if="lang === 'EN'">
-                            <no-copay-en :name="name" :user-full-name="userFullName"
-                                         :provider-full-name="providerFullName"
-                                         :practice-name="practice_name"></no-copay-en>
-                        </template>
-                        <template v-else>
-                            <no-copay-es :name="name" :user-full-name="userFullName"
-                                         :provider-full-name="providerFullName"
-                                         :practice-name="practice_name"></no-copay-es>
-                        </template>
-                    </template>
+                    <p v-html="care_ambassador_script"></p>
                 </div>
             </div>
 
@@ -342,7 +321,7 @@
 
                     <input type="hidden" name="status" value="consented">
                     <input type="hidden" name="enrollee_id" :value="enrolleeId">
-                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system">
+                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                     <input type="hidden" name="time_elapsed" :value="time_elapsed">
 
                 </div>
@@ -651,6 +630,21 @@
             },
             last_office_visit_at: function(){
                 return enrollee.last_encounter ? enrollee.last_encounter: 'N/A';
+            },
+            care_ambassador_script: function(){
+
+                if(! script){
+                    return 'Script not found.'
+                }
+                let ca_script = script.body;
+
+                let processed_script = ca_script.replace(/{doctor}/gi, providerFullName)
+                    .replace(/{patient}/gi, this.name)
+                    .replace(/{practice}/gi, this.practice_name)
+                    .replace(/{last visit}/gi, this.last_office_visit_at)
+                    .replace(/{enroller}/gi, userFullName);
+
+                return processed_script;
             }
         },
         data: function () {
@@ -658,8 +652,10 @@
                 csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 userFullName: userFullName,
                 providerFullName: providerFullName,
+                providerPhone: providerPhone,
                 hasTips: hasTips,
                 report: report,
+                script: script,
 
                 home_phone: enrollee.home_phone,
                 cell_phone: enrollee.cell_phone,

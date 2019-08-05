@@ -9,6 +9,7 @@ namespace App\Nova;
 use App\Enrollee;
 use App\Nova\Importers\EnroleeStatus as EnroleeStatusImporter;
 use Illuminate\Http\Request;
+use Jubeki\Nova\Cards\Linkable\LinkableAway;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
@@ -92,6 +93,11 @@ class EnroleeStatus extends Resource
     {
         return [
             new NovaImportCard(self::class),
+            (new LinkableAway())
+                ->title('CSV Template')
+                ->url(route('download.google.csv', ['filename' => 'UpdateEnroleeDataTemplate']))
+                ->subtitle('Click to download.')
+                ->target('_self'),
         ];
     }
 

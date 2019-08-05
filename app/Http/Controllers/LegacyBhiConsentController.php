@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\InvalidArgumentException;
 use App\Http\Requests\CreateLegacyBhiConsentDecision;
 use App\Note;
+use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Support\Facades\Cache;
@@ -33,14 +34,15 @@ class LegacyBhiConsentController extends Controller
         if ( ! in_array($type, [Patient::BHI_REJECTION_NOTE_TYPE, Patient::BHI_CONSENT_NOTE_TYPE])) {
             throw new InvalidArgumentException("`${type}` is not a valid type for a legacy BHI consent note type");
         }
+        $consenderName = auth()->user()->display_name;
 
         $body = Patient::BHI_CONSENT_NOTE_TYPE == $type
-            ? 'The patient consented to receiving BHI services.'
-            : 'The patient did not consent to receiving BHI services.';
+            ? "The patient consented to receiving BHI services. \n 'Consented action taken by: $consenderName'"
+            : "The patient did not consent to receiving BHI services. \n 'Not consented action taken by: $consenderName'";
 
         return Note::create([
             'patient_id'   => $patientId,
-            'author_id'    => auth()->user()->id,
+            'author_id'    => 948, //This user is CLH patient support
             'body'         => $body,
             'type'         => $type,
             'performed_at' => Carbon::now()->toDateTimeString(),
@@ -55,9 +57,10 @@ class LegacyBhiConsentController extends Controller
      */
     private function storeNotNowResponse($patientId)
     {
-        $now                   = Carbon::now();
-        $tomorrow              = $now->copy()->addHours(24);
-        $nextScheduledCallDate = auth()->user()->patientNextScheduledCallDate($patientId);
+        $now      = Carbon::now();
+        $tomorrow = $now->copy()->addDay()->startOfDay();
+
+        $nextScheduledCallDate = SchedulerService::getNextScheduledCall($patientId, false)->scheduled_date;
         $key                   = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
 
         $seconds = null !== $nextScheduledCallDate
