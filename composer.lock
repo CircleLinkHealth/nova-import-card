@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d486274f71a0c61460407b87dcf06266",
+    "content-hash": "abf98bdf0c3f7e9d9f6120850a60bcdd",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -2912,6 +2912,47 @@
                 "security"
             ],
             "time": "2018-09-03T09:48:16+00:00"
+        },
+        {
+            "name": "jubeki/nova-card-linkable",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Jubeki/Nova-Card-Linkable.git",
+                "reference": "2de82012ec71de4f731695da9f89bab7586dda38"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Jubeki/Nova-Card-Linkable/zipball/2de82012ec71de4f731695da9f89bab7586dda38",
+                "reference": "2de82012ec71de4f731695da9f89bab7586dda38",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jubeki\\Nova\\Cards\\Linkable\\CardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jubeki\\Nova\\Cards\\Linkable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova card, which has a link",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-03-04T15:17:41+00:00"
         },
         {
             "name": "julien-c/iso3166",
@@ -13751,7 +13792,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.4.0",
+        "php": ">=7.2.0",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",
