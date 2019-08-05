@@ -58,7 +58,7 @@ class LegacyBhiConsentController extends Controller
     {
         $nextCall = SchedulerService::getNextScheduledCall($patientId, false);
 
-        return null !== $nextCall ? $nextCall->scheduled_date : $nextScheduledCallDate = null;
+        return null !== $nextCall ? $nextCall->scheduled_date : null;
     }
 
     /**
@@ -87,8 +87,8 @@ class LegacyBhiConsentController extends Controller
         $key                   = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
         $nextScheduledCallDate = $this->getNextCallDate($patientId);
 
-        $remainingTimeToShowBhiBannerAgain = $this->remainingTimeToShowBhiBannerAgain($nextScheduledCallDate);
+        $remainingTimeToShowBhiBannerAgainInSec = $this->remainingTimeToShowBhiBannerAgain($nextScheduledCallDate);
 
-        Cache::put($key, true, $remainingTimeToShowBhiBannerAgain);
+        Cache::put($key, true, $remainingTimeToShowBhiBannerAgainInSec);
     }
 }
