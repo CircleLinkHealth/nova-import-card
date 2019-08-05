@@ -627,7 +627,7 @@ class ProcessEligibilityService
             $stream = $driveHandler
                 ->getFileStream($driveFileName, $driveFolder);
         } catch (\Exception $e) {
-            \Log::debug("EXCEPTION `{$e->getMessage()}`");
+            \Log::info("EXCEPTION `{$e->getMessage()}`");
             $batch->status = 2;
             $batch->save();
 
@@ -645,7 +645,7 @@ class ProcessEligibilityService
         }
 
         try {
-            \Log::debug("BEGIN creating eligibility jobs from json file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
+            \Log::info("BEGIN creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
 
             $iterator = read_file_using_generator($pathToFile);
 
@@ -699,15 +699,15 @@ class ProcessEligibilityService
                 $patient['eligibility_job_id'] = $job->id;
             }
 
-            \Log::debug("FINISH creating eligibility jobs from json file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
+            \Log::info("FINISH creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
 
             $mem = format_bytes(memory_get_peak_usage());
 
-            \Log::debug("BEGIN deleting `${fileName}`");
+            \Log::info("BEGIN deleting `${fileName}`");
             $deleted = $localDisk->delete($fileName);
-            \Log::debug("FINISH deleting `${fileName}`");
+            \Log::info("FINISH deleting `${fileName}`");
 
-            \Log::debug("memory_get_peak_usage: ${mem}");
+            \Log::info("memory_get_peak_usage: ${mem}");
 
             $options                        = $batch->options;
             $options['patientList']         = $data->toArray();
@@ -722,11 +722,11 @@ class ProcessEligibilityService
 
             return $patientList;
         } catch (\Exception $e) {
-            \Log::debug("EXCEPTION `{$e->getMessage()}`");
+            \Log::info("EXCEPTION `{$e->getMessage()}`");
 
-            \Log::debug("BEGIN deleting `${fileName}`");
+            \Log::info("BEGIN deleting `${fileName}`");
             $deleted = $localDisk->delete($fileName);
-            \Log::debug("FINISH deleting `${fileName}`");
+            \Log::info("FINISH deleting `${fileName}`");
 
             throw $e;
         }
