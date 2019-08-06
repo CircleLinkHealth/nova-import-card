@@ -49,9 +49,8 @@ class EnrollmentDirectorController extends Controller
 
         DB::statement("UPDATE enrollees
 SET
-    care_ambassador_user_id = {$request->input('ambassadorId')},
-    status = CASE WHEN status = '{$softDeclined}' THEN '{$toCall}' ELSE status END
-WHERE id IN ({$enrolleeIds})");
+    care_ambassador_user_id = ?, status = CASE WHEN status = ? THEN ? ELSE status END
+WHERE id IN (?)", [$request->input('ambassadorId'), $softDeclined, $toCall, $enrolleeIds]);
 
         return response()->json([], 200);
     }
