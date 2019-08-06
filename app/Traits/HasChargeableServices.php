@@ -6,8 +6,8 @@
 
 namespace App\Traits;
 
-use App\ChargeableService;
 use Cache;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 
 trait HasChargeableServices
 {

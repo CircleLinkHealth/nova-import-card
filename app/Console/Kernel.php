@@ -19,6 +19,7 @@ use App\Console\Commands\EmailRNDailyReportToDeprecate;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
+use App\Console\Commands\OverwriteNBIPatientMRN;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
@@ -112,13 +113,11 @@ class Kernel extends ConsoleKernel
         $schedule->command(GetCcds::class)
             ->dailyAt('03:00')->onOneServer();
 
-        //old report - to deprecate - send to all
         $schedule->command(EmailRNDailyReportToDeprecate::class)
             ->dailyAt('07:00')->onOneServer();
 
-        //new report - testing with 3 nurses
-        $schedule->command(EmailRNDailyReport::class, ['nurseUserIds' => '11321,8151,1920'])
-            ->dailyAt('07:20')->onOneServer();
+        $schedule->command(EmailRNDailyReport::class)
+            ->dailyAt('07:05')->onOneServer();
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
             ->dailyAt('23:40')->onOneServer();
@@ -188,7 +187,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
 
-        $schedule->command(OverwriteNBIImportedData::class)->everyFiveMinutes()->onOneServer();
+        $schedule->command(OverwriteNBIImportedData::class)->everyThirtyMinutes()->onOneServer();
+
+        $schedule->command(OverwriteNBIPatientMRN::class)->everyThirtyMinutes()->onOneServer();
 
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->monthlyOn(1, '00:30')->onOneServer();
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)->monthlyOn(1, '08:30')->onOneServer();

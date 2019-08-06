@@ -28,9 +28,7 @@ class ImportService
      */
     public function createTabularMedicalRecordAndImport($row, Practice $practice)
     {
-        $row['dob'] = $row['dob']
-            ? Carbon::parse($row['dob'])->toDateString()
-            : null;
+        $row['dob']         = $this->parseDate($row['dob']);
         $row['practice_id'] = $practice->id;
         $row['location_id'] = $practice->primary_location_id;
 
@@ -74,11 +72,13 @@ class ImportService
             }
         }
 
-        $exists = TabularMedicalRecord::where([
-            'first_name' => $row['first_name'],
-            'last_name'  => $row['last_name'],
-            'dob'        => $row['dob'],
-        ])->first();
+        $exists = TabularMedicalRecord::where(
+            [
+                'first_name' => $row['first_name'],
+                'last_name'  => $row['last_name'],
+                'dob'        => $row['dob'],
+            ]
+        )->first();
 
         if ($exists) {
             if ( ! $exists->importedMedicalRecord()) {
@@ -135,9 +135,12 @@ class ImportService
         }
 
         if ($ccda->mrn && $ccda->practice_id) {
-            $exists = User::whereHas('patientInfo', function ($q) use ($ccda) {
-                $q->where('mrn_number', $ccda->mrn);
-            })->whereProgramId($ccda->practice_id)
+            $exists = User::whereHas(
+                'patientInfo',
+                function ($q) use ($ccda) {
+                    $q->where('mrn_number', $ccda->mrn);
+                }
+            )->whereProgramId($ccda->practice_id)
                 ->first();
 
             if ($exists) {
@@ -152,10 +155,12 @@ class ImportService
         $imr = $ccda->import();
 
         $update = Ccda::whereId($ccdaId)
-            ->update([
-                'status'   => Ccda::QA,
-                'imported' => true,
-            ]);
+            ->update(
+                [
+                    'status'   => Ccda::QA,
+                    'imported' => true,
+                ]
+                      );
 
         $response->success = true;
         $response->message = 'CCDA successfully imported.';
@@ -213,5 +218,32 @@ class ImportService
         }
 
         return null;
+    }
+
+    private function parseDate($dob)
+    {
+        if ( ! $dob) {
+            return null;
+        }
+
+        if (str_contains($dob, '/')) {
+            $delimiter = '/';
+        } elseif (str_contains($dob, '-')) {
+            $delimiter = '-';
+        }
+        $date = explode($delimiter, $dob);
+
+        if (count($date) < 3) {
+            throw new \Exception("Invalid date $dob");
+        }
+
+        $year = $date[2];
+
+        if (2 == strlen($year)) {
+            //if date is two digits we are assuming it's from the 1900s
+            $year = (int) $year + 1900;
+        }
+
+        return Carbon::createFromDate($year, $date[0], $date[1]);
     }
 }

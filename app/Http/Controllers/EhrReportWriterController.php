@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CLH\Repositories\UserRepository;
 use App\Notifications\EhrReportWriterNotification;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\GoogleDrive;
@@ -14,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Storage;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class EhrReportWriterController extends Controller
 {
@@ -67,11 +69,16 @@ class EhrReportWriterController extends Controller
      */
     public function index()
     {
-        $messages  = [];
-        $files     = [];
-        $user      = auth()->user();
+        $messages = [];
+        $files    = [];
+
+        /**
+         * @var User
+         * */
+        $user = auth()->user();
+
         $practices = $user->practices()->get();
-        if ($user->hasRole('ehr-report-writer') && $user->ehrReportWriterInfo) {
+        if ($user->ehrReportWriterInfo) {
             $googleFiles = $this->getUnprocessedFilesFromGoogleFolder($user->ehrReportWriterInfo);
             if (is_null($googleFiles)) {
                 $messages['warnings'][] = 'No Google Drive folder found!';
@@ -100,6 +107,30 @@ class EhrReportWriterController extends Controller
             'message' => 'Ehr Report Writer successfully notified.',
             'type'    => 'success',
         ]);
+    }
+
+    /**
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function redirectToGoogleDriveFolder()
+    {
+        /**
+         * @var User
+         * */
+        $user = auth()->user();
+
+        if ( ! $user->ehrReportWriterInfo) {
+            $params = new ParameterBag([
+                'user_id' => $user->id,
+            ]);
+
+            $repo = new UserRepository();
+            $repo->saveOrUpdateEhrReportWriterInfo($user, $params);
+
+            $user->load('ehrReportWriterInfo');
+        }
+
+        return redirect($user->ehrReportWriterInfo->getFolderUrl());
     }
 
     /**

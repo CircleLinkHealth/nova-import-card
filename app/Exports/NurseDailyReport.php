@@ -45,19 +45,10 @@ class NurseDailyReport implements FromCollection, Responsable, WithHeadings
     {
         return NurseStatsService::data($this->date)->map(
             function ($nurseReport) {
-                $fullName = explode(' ', $nurseReport['name']);
-                $first = $fullName[0];
-                $last = $fullName[1];
-
                 $nurse = User::ofType('care-center')
                     ->with('nurseInfo.workhourables')
-                    ->where(
-                        [
-                            ['first_name', '=', $first],
-                            ['last_name', '=', $last],
-                        ]
-                             )->has('nurseInfo')
-                    ->first();
+                    ->has('nurseInfo')
+                    ->find($nurseReport['id']);
 
                 if ( ! $nurse) {
                     \Log::error("User not found: {$nurseReport['name']}");

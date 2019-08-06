@@ -11,6 +11,7 @@ use App\ChargeableService;
 use App\Exports\FromArray;
 use App\ValueObjects\QuickBooksRow;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
