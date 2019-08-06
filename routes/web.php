@@ -81,6 +81,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download',
     ])->middleware('doNotCacheResponse');
 
+    Route::get('download-google-drive-csv/{filename}/{dir?}/{recursive?}', [
+        'uses' => 'DownloadController@downloadCsvFromGoogleDrive',
+        'as'   => 'download.google.csv',
+    ])->middleware('doNotCacheResponse');
+
     Route::group([
         'prefix'     => 'ehr-report-writer',
         'middleware' => ['permission:ehr-report-writer-access'],
