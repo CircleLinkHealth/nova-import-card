@@ -854,19 +854,17 @@ class PersonalizedPreventionPlanPrepareData
         string $conditionName,
         string $conditionType
     ) {
-        $conditionWithTypeIsSelected = [];
+        $conditionWithTypeIsSelected = false;
         $checkInAnswers = $screenings;
-        if ($checkInAnswers[$checkInCategory] !== 'N/A') {
+        if ($checkInAnswers[$checkInCategory] !== 'N/A') { //if answer if left blank
             foreach ($checkInAnswers[$checkInCategory] as $data) {
-                if (array_key_exists('type', $data)
-                    && isset($data['type'])) {
-                    $data['name'] === $conditionName && $data['type'] === $conditionType
-                        ? $conditionWithTypeIsSelected = true
-                        : $conditionWithTypeIsSelected = false;
+                if (array_key_exists('type', $data) //Not all answers have type key
+                    && isset($data['type'])) { //and if they have is it blank or filled?
+                    $conditionWithTypeIsSelected = $data['name'] === $conditionName && $data['type'] === $conditionType;
                 }
+
             }
         }
-
         return $conditionWithTypeIsSelected;
     }
 
