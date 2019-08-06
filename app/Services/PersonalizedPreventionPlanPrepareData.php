@@ -881,7 +881,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param string $condition
      * @return int
      */
-    public function countFamilyMembersWithSkinCancer($screenings, $condition = 'Skin Cancer'): int
+    public function countFamilyMembersWithSkinCancer($screenings, $condition): int
     {
         $answers = [];
         $checkInCategory = 'family_members_with_condition';
