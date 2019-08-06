@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e010527e3952a218ba20b941a317c94b",
+    "content-hash": "95895b3dcde4e50074994ead217ac543",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -315,6 +315,41 @@
                 }
             ],
             "time": "2019-05-09T21:47:13+00:00"
+        },
+        {
+            "name": "circlelinkhealth/raygun",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/module-raygun.git",
+                "reference": "28ecce828d9ef1dec1cb42bba86a7a02eb331ee7"
+            },
+            "require": {
+                "illuminate/contracts": "^5.0",
+                "mindscape/raygun4php": "1.*",
+                "psr/log": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\Raygun\\Providers\\RaygunServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\Raygun\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2019-07-05T16:15:33+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -2559,6 +2594,56 @@
             "time": "2019-04-01T11:39:49+00:00"
         },
         {
+            "name": "mindscape/raygun4php",
+            "version": "v1.8.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MindscapeHQ/raygun4php.git",
+                "reference": "5a917d01c45b250f5ccd8bca451dbee6ae6fb16a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MindscapeHQ/raygun4php/zipball/5a917d01c45b250f5ccd8bca451dbee6ae6fb16a",
+                "reference": "5a917d01c45b250f5ccd8bca451dbee6ae6fb16a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "suggest": {
+                "ext-curl": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Raygun4php": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mindscape",
+                    "email": "contact@mindscape.co.nz",
+                    "homepage": "http://www.mindscapehq.com"
+                }
+            ],
+            "description": "Raygun.io client for PHP 5.3, to send errors and exceptions automatically.",
+            "homepage": "http://raygun.io",
+            "keywords": [
+                "errors",
+                "exceptions",
+                "logging",
+                "raygun"
+            ],
+            "time": "2019-02-21T23:25:31+00:00"
+        },
+        {
             "name": "monolog/monolog",
             "version": "1.24.0",
             "source": {
@@ -4747,7 +4832,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "BackEndTea@gmail.com"
+                    "email": "backendtea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -7181,7 +7266,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "circlelinkhealth/core": 20,
-        "circlelinkhealth/customer": 20
+        "circlelinkhealth/customer": 20,
+        "circlelinkhealth/raygun": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

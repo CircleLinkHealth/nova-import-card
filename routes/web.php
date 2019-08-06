@@ -15,6 +15,11 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+//fixme: remove after deployment
+$router->get('/throw-exception', function () use ($router) {
+    throw new Exception("testing");
+});
+
 /**
  * This group has authenticated routes
  */
