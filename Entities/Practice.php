@@ -157,9 +157,7 @@ class Practice extends BaseModel implements HasMedia
 
     public function cpmSettings()
     {
-        if ( ! $this->relationLoaded('settings')) {
-            $this->load('settings');
-        }
+        $this->loadMissing('settings');
 
         return $this->settings->isEmpty()
             ? $this->syncSettings(new Settings())
