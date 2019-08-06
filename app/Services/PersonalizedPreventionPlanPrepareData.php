@@ -892,13 +892,10 @@ class PersonalizedPreventionPlanPrepareData
                     $answers = $data['family'];
                 }
             }
-        } else {
-            $answers = [];
         }
 
-        $familyMembersWithSkinCancerCount = count($answers);
+        return count($answers);
 
-        return $familyMembersWithSkinCancerCount;
     }
 
     public function osteoporosis($patientPppData, $title)
