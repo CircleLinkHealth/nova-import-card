@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\AppConfig;
 use App\Importer\CarePlanHelper;
 use App\Models\PatientData\NBI\PatientData;
 use Carbon\Carbon;
@@ -73,13 +74,14 @@ class OverwriteNBIPatientMRN extends Command
         $key = "NBIPatientMRNNotFound:$patientInfo->user_id";
 
         if ( ! \Cache::has($key)) {
+            $handles           = AppConfig::pull('nbi_rwjbarnabas_mrn_slack_watchers', '');
             $patientUrl        = route('patient.demographics.show', ['patientId' => $patientInfo->user_id]);
             $patientProfileUrl = "<$patientUrl|this patient>";
             $novaUrl           = url('/superadmin/resources/n-b-i-patient-datas');
             $novaLink          = "<$novaUrl|NBI's supplementary MRN list>";
             sendSlackMessage(
                 '#nbi_rwjbarnabas',
-                "@channel URGENT! Could not find $patientProfileUrl in $novaLink. All NBI MRNs need to be replaced. Please add the correct MRN for this patient in $novaLink. The system will replace the MRN in patient's chart with the MRN you input.",
+                "$handles URGENT! Could not find $patientProfileUrl in $novaLink. All NBI MRNs need to be replaced. Please add the correct MRN for this patient in $novaLink. The system will replace the MRN in patient's chart with the MRN you input.",
                 true
             );
 
