@@ -50,23 +50,45 @@ class LegacyBhiConsentController extends Controller
     }
 
     /**
-     * When the User clicks `Not Now` we want to hide the banner till next scheduled call.
-     * If Scheduled call is null will show banner & flag again tomorrow.
-     *
      * @param $patientId
+     *
+     * @return mixed|null
      */
-    private function storeNotNowResponse($patientId)
+    private function getNextCallDate($patientId)
+    {
+        $nextCall = SchedulerService::getNextScheduledCall($patientId, false);
+
+        return null !== $nextCall ? $nextCall->scheduled_date : null;
+    }
+
+    /**
+     * When the User clicks `Not Now` we want to hide the banner till next scheduled call.
+     * If next Scheduled call is null will show banner again tomorrow.
+     *
+     * @param $nextScheduledCallDate
+     *
+     * @return int
+     */
+    private function remainingTimeToShowBhiBannerAgain($nextScheduledCallDate)
     {
         $now      = Carbon::now();
         $tomorrow = $now->copy()->addDay()->startOfDay();
 
-        $nextScheduledCallDate = SchedulerService::getNextScheduledCall($patientId, false)->scheduled_date;
-        $key                   = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
-
-        $seconds = null !== $nextScheduledCallDate
+        return null !== $nextScheduledCallDate
             ? Carbon::parse($nextScheduledCallDate)->diffInSeconds($now)
             : $tomorrow->diffInSeconds($now);
+    }
 
-        Cache::put($key, true, $seconds);
+    /**
+     * @param $patientId
+     */
+    private function storeNotNowResponse($patientId)
+    {
+        $key                   = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
+        $nextScheduledCallDate = $this->getNextCallDate($patientId);
+
+        $remainingTimeToShowBhiBannerAgainInSec = $this->remainingTimeToShowBhiBannerAgain($nextScheduledCallDate);
+
+        Cache::put($key, true, $remainingTimeToShowBhiBannerAgainInSec);
     }
 }
