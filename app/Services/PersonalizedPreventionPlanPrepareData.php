@@ -549,6 +549,7 @@ class PersonalizedPreventionPlanPrepareData
 
         $vaccines['flu_influenza'] = $this->getStringValue($patientPppData->answers_for_eval, 'flu_influenza');
         if ($vaccines['flu_influenza'] === 'No'
+            //unsure does not in exist in answers options (HRA Q26.). Im waiting for Raph's feedback on this.
             || $vaccines['flu_influenza'] === 'Unsure') {
             $fluInfluenza = $this->getTaskRecommendations($title, $index);
         }
