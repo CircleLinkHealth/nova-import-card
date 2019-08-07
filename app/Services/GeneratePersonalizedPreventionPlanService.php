@@ -64,9 +64,6 @@ class GeneratePersonalizedPreventionPlanService
         $this->hraAnswers    = $patient->answers->where('survey_instance_id', $this->hraInstance->id);
         $this->vitalsAnswers = $patient->answers->where('survey_instance_id', $this->vitalsInstance->id);
 
-
-//        //@todo::remove this when done dev
-//        $this->generateData($patient);
     }
 
     public function generateData()
