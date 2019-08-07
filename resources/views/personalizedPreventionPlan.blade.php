@@ -83,9 +83,9 @@ function getStringValue($val, $default = '')
                 @if(! empty($tasks['tasks']))
                     @foreach($tasks['table_data'] as $table)
                         <tr>
-                            <td class="suggested-list-body">{{$table['body']}}</td>
-                            <td>{{$table['time_frame']}}</td>
-                            <td style="font-weight: 500">{{$table['code']}}</td>
+                            <td class="suggested-list-body">{{$table[0]['body']}}</td>
+                            <td>{{$table[0]['time_frame']}}</td>
+                            <td style="font-weight: 500">{{$table[0]['code']}}</td>
                         </tr>
                     @endforeach
                 @endif
