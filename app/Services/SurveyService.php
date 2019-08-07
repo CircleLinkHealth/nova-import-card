@@ -55,11 +55,6 @@ class SurveyService
             })
             ->findOrFail($patientId);
 
-        //todo: trying to sort questions, need to test still
-//        $instance = $patientWithSurveyData->surveyInstances->first();
-//        $instance->questions = sortSurveyQuestions($instance->questions);
-//        $patientWithSurveyData->surveyInstances->prepend($instance);
-
         self::updateOrCreatePatientAWVSummary($patientWithSurveyData);
 
         return $patientWithSurveyData;
