@@ -82,7 +82,7 @@ return [
             'handler'      => LogdnaHandler::class,
             'handler_with' => [
                 'ingestion_key' => env('LOG_DNA_INGESTION_KEY'),
-                'hostname'      => env('APP_URL', null),
+                'hostname'      => env('APP_URL'),
                 'level'         => env('LOG_DNA_LEVEl', \Monolog\Logger::DEBUG),
             ],
             'formatter' => LogdnaFormatter::class,
