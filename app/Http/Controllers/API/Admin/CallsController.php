@@ -11,7 +11,7 @@ use App\Filters\CallFilters;
 use App\Filters\PatientFilters;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
-use App\Http\Resources\User as UserResource;
+use App\Http\Resources\UserResource;
 use App\Services\Calls\ManagementService;
 use App\Services\CallService;
 use App\Services\NoteService;
