@@ -90,10 +90,12 @@ $app->routeMiddleware([
 |
 */
 
- $app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
 $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(App\Providers\TwilioClientServiceProvider::class);
 $app->register(Propaganistas\LaravelPhone\PhoneServiceProvider::class);
+$app->register(App\Providers\AuthServiceProvider::class);
+$app->register(CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class);
 $app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 
 /*
