@@ -2,6 +2,7 @@
 
 namespace CircleLinkHealth\Raygun\PsrLogger;
 
+use Illuminate\Support\Facades\App;
 use Exception;
 use Psr\Log\LogLevel;
 use Raygun4php\RaygunClient;
@@ -97,7 +98,7 @@ class RaygunLogger extends AbstractLogger
      * @return array
      */
     protected function getTagsFor($exception) {
-        return [get_class($exception), $exception->getMessage(), 'env:'.\App::environment()];
+        return [get_class($exception), $exception->getMessage(), 'env:'.App::environment()];
     }
     
     /**
