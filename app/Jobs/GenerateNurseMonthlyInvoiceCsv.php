@@ -60,10 +60,13 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
      */
     public function handle()
     {
-        $csvInvoices = (new NurseInvoiceCsv($this->date))
-            ->storeAndAttachMediaTo(SaasAccount::whereSlug('circlelink-health')->firstOrFail());
+        $report = (new NurseInvoiceCsv($this->date));
+
+        $csvInvoices = $report->storeAndAttachMediaTo(SaasAccount::whereSlug('circlelink-health')->firstOrFail());
 
         $this->sendCsvInvoicesTo($csvInvoices);
+
+        $this->markMonthInvoicesAsSent($report);
     }
 
     public function sendCsvInvoicesTo($csvInvoices)
@@ -74,5 +77,10 @@ class GenerateNurseMonthlyInvoiceCsv implements ShouldQueue
             Notification::route('mail', $csvReceiver)
                 ->notify((new SendMonthlyInvoicesToAccountant($this->date, $csvInvoices))->delay($sendNotifAt));
         }
+    }
+
+    private function markMonthInvoicesAsSent(NurseInvoiceCsv $report)
+    {
+        return $report->invoicesQuery()->update(['sent_to_accountant_at' => Carbon::now()]);
     }
 }
