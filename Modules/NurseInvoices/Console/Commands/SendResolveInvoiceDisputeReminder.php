@@ -11,6 +11,7 @@ use App\Jobs\GenerateNurseMonthlyInvoiceCsv;
 use App\Notifications\ResolveDisputeReminder;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
 use Illuminate\Console\Command;
@@ -82,6 +83,31 @@ class SendResolveInvoiceDisputeReminder extends Command
             Notification::route('mail', $email)
                 ->notify((new ResolveDisputeReminder($disputesCount))->delay($sendNotifAt));
         }
+    }
+
+    /**
+     * Returns whether the command should be skipped, ie. not run.
+     *
+     * @return bool
+     */
+    public static function shouldSkip()
+    {
+        $disputeResolutionDeadline = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->addDays(2);
+
+        $today = Carbon::now();
+        //This is when we dispute submissions and resolutions begin.
+        $disputesCanExist = $disputeResolutionDeadline->copy()->startOfMonth();
+        //The month before $disputesCanExist is the month for which we are generating invoices for.
+        $invoiceMonth                         = $disputesCanExist->copy()->subMonth()->startOfMonth();
+        $invoicesNotSentToAccountantSentQuery = \CircleLinkHealth\NurseInvoices\Entities\NurseInvoice::where('month_year', $invoiceMonth)->whereNull('sent_to_accountant_at');
+        if ( ! $invoicesNotSentToAccountantSentQuery->exists()) {
+            return true;
+        }
+        if ($today->gte($disputesCanExist) && $today->lte($disputeResolutionDeadline)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function unresolvedDisputesCount($month)

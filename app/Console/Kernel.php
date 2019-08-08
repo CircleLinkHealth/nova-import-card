@@ -198,22 +198,8 @@ class Kernel extends ConsoleKernel
         $sendReminderAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->subHours(36);
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)->monthlyOn($sendReminderAt->day, $sendReminderAt->format('H:i'))->onOneServer();
 
-        $disputeResolutionDeadline = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->addDays(2);
-        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('08:35')->skip(function () use ($disputeResolutionDeadline) {
-            $today = Carbon::now();
-            //This is when we dispute submissions and resolutions begin.
-            $disputesCanExist = $disputeResolutionDeadline->copy()->startOfMonth();
-            //The month before $disputesCanExist is the month for which we are generating invoices for.
-            $invoiceMonth = $disputesCanExist->copy()->subMonth()->startOfMonth();
-            $invoicesNotSentToAccountantSentQuery = \CircleLinkHealth\NurseInvoices\Entities\NurseInvoice::where('month_year', $invoiceMonth)->whereNull('sent_to_accountant_at');
-            if ( ! $invoicesNotSentToAccountantSentQuery->exists()) {
-                return true;
-            }
-            if ($today->gte($disputesCanExist) && $today->lte($disputeResolutionDeadline)) {
-                return true;
-            }
-
-            return false;
+        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('08:35')->skip(function () {
+            SendResolveInvoiceDisputeReminder::shouldSkip();
         })->onOneServer();
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30')->onOneServer();
     }
