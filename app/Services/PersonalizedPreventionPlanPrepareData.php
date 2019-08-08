@@ -161,8 +161,7 @@ class PersonalizedPreventionPlanPrepareData
             $tableData = [];
             foreach ($tasks as $task) {
                 if (!empty($task['report_table_data'])) {
-                    //fixme: should this be $tableData[] ?
-                    $tableData = $task['report_table_data'];
+                    $tableData[] = $task['report_table_data'];
                 }
             }
 

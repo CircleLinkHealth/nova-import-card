@@ -112,7 +112,7 @@ class ProviderReportService
         }
 
         $mentalState = [];
-        if ( ! empty($report->mental_state['depression_score'])) {
+        if ( ! empty($report->mental_state['depression_score']) || $report->mental_state['depression_score'] === 0) {
             $mentalState['score'] = $report->mental_state['depression_score'];
             $diagnosis            = 'no depression';
             if ($report->mental_state['depression_score'] > 2) {
