@@ -5,7 +5,7 @@
  */
 
 return [
-    'host' => 'https://api.phaxio.com/v1/',
+    'host' => 'https://api.phaxio.com/v2/',
 
     //Production Credentials
     'production' => [

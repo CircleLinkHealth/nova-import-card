@@ -9,15 +9,8 @@ namespace App\Contracts;
 interface Efax
 {
     /**
-     * @param $faxId
-     *
-     * @return mixed
-     */
-    public function getStatus($faxId);
-
-    /**
      * @param $faxNumber
-     * @param $pathOrMessage
+     * @param array|string $pathOrMessage
      *
      * @return mixed
      */

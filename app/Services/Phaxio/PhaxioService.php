@@ -7,7 +7,7 @@
 namespace App\Services\Phaxio;
 
 use App\Contracts\Efax;
-use Phaxio\Phaxio;
+use Phaxio;
 
 class PhaxioService implements Efax
 {
@@ -18,13 +18,35 @@ class PhaxioService implements Efax
         $this->fax = $phaxio;
     }
 
-    public function getStatus($faxId)
-    {
-        return $this->fax->faxStatus($faxId);
-    }
-
+    /**
+     * @param $to
+     * @param array|string $files
+     *
+     * @return mixed|Phaxio\Fax
+     */
     public function send($to, $files)
     {
-        return $this->fax->sendFax($to, $files);
+        return $this->fax->faxes()->create(['to' => $to, 'file' => $this->prepareFiles($files)]);
+    }
+
+    private function prepareFiles($files)
+    {
+        if ( ! $files) {
+            return [];
+        }
+
+        if ( ! is_array($files)) {
+            $files = [$files];
+        }
+
+        $handles = [];
+
+        foreach ($files as $file) {
+            if (file_exists($file)) {
+                $handles = fopen($file, 'r');
+            }
+        }
+
+        return $handles;
     }
 }

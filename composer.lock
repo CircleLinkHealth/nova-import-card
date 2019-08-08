@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "abf98bdf0c3f7e9d9f6120850a60bcdd",
+    "content-hash": "7a00e7cfe92446d0f2fc9aeb253a1c4d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -5465,6 +5465,53 @@
             "time": "2019-05-25T20:07:01+00:00"
         },
         {
+            "name": "nvanheuverzwijn/monolog-logdna",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nvanheuverzwijn/monolog-logdna.git",
+                "reference": "6e484afbb216396dc7ce93563790c51bae3ed967"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nvanheuverzwijn/monolog-logdna/zipball/6e484afbb216396dc7ce93563790c51bae3ed967",
+                "reference": "6e484afbb216396dc7ce93563790c51bae3ed967",
+                "shasum": ""
+            },
+            "require": {
+                "monolog/monolog": ">=1.0",
+                "php": "^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zwijn\\Monolog\\": "src/Monolog"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Vanheuverzwijn",
+                    "email": "nicolas.vanheu@gmail.com"
+                }
+            ],
+            "description": "Logdna handler for Monolog",
+            "homepage": "http://github.com/nvanheuverzwijn/monolog-logdna",
+            "keywords": [
+                "log",
+                "logdna",
+                "logging",
+                "psr-3"
+            ],
+            "time": "2018-08-20T01:23:44+00:00"
+        },
+        {
             "name": "opis/closure",
             "version": "3.3.1",
             "source": {
@@ -5572,16 +5619,16 @@
         },
         {
             "name": "phaxio/phaxio",
-            "version": "1.0.3",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phaxio/phaxio-php.git",
-                "reference": "71325401e91825f8994e31e6e777d1ef40f6fec5"
+                "reference": "6ad1f76b4f1ff1f68176dab9509ae66fdaa85487"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phaxio/phaxio-php/zipball/71325401e91825f8994e31e6e777d1ef40f6fec5",
-                "reference": "71325401e91825f8994e31e6e777d1ef40f6fec5",
+                "url": "https://api.github.com/repos/phaxio/phaxio-php/zipball/6ad1f76b4f1ff1f68176dab9509ae66fdaa85487",
+                "reference": "6ad1f76b4f1ff1f68176dab9509ae66fdaa85487",
                 "shasum": ""
             },
             "require": {
@@ -5590,7 +5637,8 @@
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "Phaxio\\": "lib/"
+                    "Phaxio\\": "lib/",
+                    "Phaxio": "lib/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -5603,7 +5651,7 @@
                 "fax",
                 "phaxio"
             ],
-            "time": "2017-06-09T18:00:44+00:00"
+            "time": "2019-03-08T19:14:29+00:00"
         },
         {
             "name": "php-http/guzzle6-adapter",

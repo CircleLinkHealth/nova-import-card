@@ -35,7 +35,7 @@ class CarePlanProviderApproved extends Notification
     ) {
         $this->attachment = $this->carePlan = $carePlan;
 
-        $this->channels = array_merge($this->channels, $channels);
+        $this->channels = array_unique(array_merge($this->channels, $channels));
     }
 
     /**
