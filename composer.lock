@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "95895b3dcde4e50074994ead217ac543",
+    "content-hash": "ecaf4278bda9ebe07089d1cad94fc01e",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -249,7 +249,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "effe115abe6c469c51fd4642a0d16267e737f220"
+                "reference": "eadbacc5fc55b55225020dddc0961fd179e9f604"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -258,7 +258,8 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\Core\\Providers\\CoreServiceProvider"
+                        "CircleLinkHealth\\Core\\Providers\\CoreServiceProvider",
+                        "CircleLinkHealth\\Core\\Providers\\CoreDeferredBindingsServiceProvider"
                     ],
                     "aliases": []
                 }
@@ -266,7 +267,10 @@
             "autoload": {
                 "psr-4": {
                     "CircleLinkHealth\\Core\\": ""
-                }
+                },
+                "files": [
+                    "Helpers/helpers.php"
+                ]
             },
             "authors": [
                 {
@@ -274,7 +278,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-04-18T19:38:24+00:00"
+            "time": "2019-07-08T14:44:56+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -282,11 +286,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "35b1e3d993f3829b01527b292d5bafd16a456a19"
+                "reference": "8d108606ec21257755e732f890df28546e9e6692"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
                 "laravel/passport": "^7.0",
+                "laravel/scout": "^7.1",
                 "michalisantoniou6/laravel-cerberus": "dev-master",
                 "spatie/laravel-medialibrary": "^7.0.0"
             },
@@ -314,7 +319,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-05-09T21:47:13+00:00"
+            "time": "2019-08-06T08:11:27+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -322,7 +327,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "28ecce828d9ef1dec1cb42bba86a7a02eb331ee7"
+                "reference": "3d3728485ecb39af1185236d070d5996535a4475"
             },
             "require": {
                 "illuminate/contracts": "^5.0",
@@ -349,7 +354,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-07-05T16:15:33+00:00"
+            "time": "2019-08-08T12:42:49+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -1953,6 +1958,71 @@
                 "passport"
             ],
             "time": "2019-03-13T14:21:06+00:00"
+        },
+        {
+            "name": "laravel/scout",
+            "version": "v7.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/scout.git",
+                "reference": "3e7c978597b0e66f7886b9feac6079dda225e78e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/scout/zipball/3e7c978597b0e66f7886b9feac6079dda225e78e",
+                "reference": "3e7c978597b0e66f7886b9feac6079dda225e78e",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/bus": "~5.4.0|~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0",
+                "illuminate/contracts": "~5.4.0|~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0",
+                "illuminate/database": "~5.4.0|~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0",
+                "illuminate/pagination": "~5.4.0|~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0",
+                "illuminate/queue": "~5.4.0|~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0",
+                "illuminate/support": "~5.4.0|~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0",
+                "php": "^7.1.3"
+            },
+            "require-dev": {
+                "algolia/algoliasearch-client-php": "^2.2",
+                "mockery/mockery": "~1.0",
+                "phpunit/phpunit": "~6.0"
+            },
+            "suggest": {
+                "algolia/algoliasearch-client-php": "Required to use the Algolia engine (^2.2)."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "7.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Scout\\ScoutServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Scout\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "Laravel Scout provides a driver based solution to searching your Eloquent models.",
+            "keywords": [
+                "algolia",
+                "laravel",
+                "search"
+            ],
+            "time": "2019-07-30T16:04:11+00:00"
         },
         {
             "name": "laravel/slack-notification-channel",
@@ -7272,7 +7342,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.1.3",
+        "php": ">=7.2.0",
         "ext-simplexml": "*"
     },
     "platform-dev": []
