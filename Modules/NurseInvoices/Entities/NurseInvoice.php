@@ -10,6 +10,7 @@ use App\Contracts\Pdfable;
 use App\Services\PdfService;
 use App\Traits\NotificationAttachable;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\NurseInvoices\Traits\Disputable;
 use CircleLinkHealth\NurseInvoices\Traits\Nursable;
@@ -112,7 +113,7 @@ class NurseInvoice extends Model implements HasMedia, Pdfable
     }
 
     /**
-     * @return \Spatie\MediaLibrary\Models\Media
+     * @return Media|\Spatie\MediaLibrary\Models\Media
      */
     public function toPdfAndStoreAsMedia()
     {
