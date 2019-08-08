@@ -35,6 +35,7 @@ use App\Spatie\ResponseCache\Commands\Clear;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
+use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Console\Scheduling\Schedule;
@@ -197,22 +198,23 @@ class Kernel extends ConsoleKernel
         $sendReminderAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->subHours(36);
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)->monthlyOn($sendReminderAt->day, $sendReminderAt->format('H:i'))->onOneServer();
 
-//        @todo: enable after testing a bit more
-//        $lastDayToResolveDisputesAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->addDays(2);
-//        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')
-//            ->skip(function () use ($lastDayToResolveDisputesAt) {
-//                $today = Carbon::now();
-//                $disputeStartDate = $lastDayToResolveDisputesAt
-//                    ->startOfMonth()
-//                    ->startOfDay()
-//                    ->addMinutes(515); //that's 08:35
-//                $disputeEndDate = $lastDayToResolveDisputesAt;
-//
-//                if ($today->gte($disputeStartDate)
-//                && $today->lte($disputeEndDate)) {
-//                    return true;
-//                }
-//            })->onOneServer();
+        $disputeResolutionDeadline = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->addDays(2);
+        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('08:35')->skip(function () use ($disputeResolutionDeadline) {
+            $today = Carbon::now();
+            //This is when we dispute submissions and resolutions begin.
+            $disputesCanExist = $disputeResolutionDeadline->copy()->startOfMonth();
+            //The month before $disputesCanExist is the month for which we are generating invoices for.
+            $invoiceMonth = $disputesCanExist->copy()->subMonth()->startOfMonth();
+            $invoicesNotSentToAccountantSentQuery = \CircleLinkHealth\NurseInvoices\Entities\NurseInvoice::where('month_year', $invoiceMonth)->whereNull('sent_to_accountant_at');
+            if ( ! $invoicesNotSentToAccountantSentQuery->exists()) {
+                return true;
+            }
+            if ($today->gte($disputesCanExist) && $today->lte($disputeResolutionDeadline)) {
+                return true;
+            }
+
+            return false;
+        })->onOneServer();
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30')->onOneServer();
     }
 }
