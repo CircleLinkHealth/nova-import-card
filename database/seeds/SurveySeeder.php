@@ -191,7 +191,8 @@ class SurveySeeder extends Seeder
             [
                 'order'                 => 5,
                 'sub_order'             => 'a',
-                'question_body'         => 'Word Recall (1 point for each word spontaneously recalled without cueing)',
+                'question_body'         => 'Word Recall (1 point for each word spontaneously recalled without cueing) 
+                http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf',
                 'question_type'         => QuestionType::RADIO,
                 //we have to see about (c) and inserting the link
                 'question_group'        => 'Based off of the Mini-Cog(c) assessment, how did your patient score? (insert link)',
@@ -675,7 +676,7 @@ class SurveySeeder extends Seeder
             ],
             [
                 'order'                 => 14,
-                'question_body'         => 'How often do you exerise?',
+                'question_body'         => 'How often do you exercise?',
                 'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
                     [
