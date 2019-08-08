@@ -155,6 +155,7 @@
             <div class="section-body">
                 The patient has a PHQ-2 score of {{$reportData['mental_state']['score']}}. This indicates a
                 diagnosis of {{$reportData['mental_state']['diagnosis']}}.
+
             </div>
             <hr>
         </div>
