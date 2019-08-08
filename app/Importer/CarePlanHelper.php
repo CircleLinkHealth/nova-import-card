@@ -352,10 +352,7 @@ class CarePlanHelper
                 ->first();
 
             if ( ! $dataFromPractice) {
-                sendSlackMessage(
-                    '#nbi_rwjbarnabas',
-                    "We could not find patient with id: {$this->user->id} in NBI's supplementary MRN list. Approval process has been locked."
-                );
+                sendNbiPatientMrnWarning($this->user->id);
 
                 $recipients = AppConfig::where('config_key', '=', self::RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS)->get();
 
