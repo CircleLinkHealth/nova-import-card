@@ -13,6 +13,7 @@ use App\Providers\NovaServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\TwilioClientServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
+use App\Spatie\ResponseCache\ResponseCacheServiceProvider;
 use App\View\Composers\FabComposer;
 use App\View\Composers\ProviderUITimerComposer;
 use App\View\Composers\SAAS\Admin\ManageInternalUser;
@@ -194,6 +195,7 @@ return [
 
         // Application Service Providers...
         RaygunServiceProvider::class,
+        ResponseCacheServiceProvider::class,
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
 
@@ -207,6 +209,7 @@ return [
 
         App\Providers\UserMetaParserHelpersServiceProvider::class,
         App\Providers\StringManipulationServiceProvider::class,
+        App\Providers\HtmlToPdfServiceProvider::class,
 
         // CPM Providers
         \Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,

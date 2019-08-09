@@ -19,6 +19,7 @@ use App\Console\Commands\EmailRNDailyReportToDeprecate;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
+use App\Console\Commands\OverwriteNBIPatientMRN;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
@@ -30,6 +31,7 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
+use App\Spatie\ResponseCache\Commands\Clear;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
@@ -45,6 +47,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        Clear::class,
     ];
 
     /**
@@ -110,13 +113,11 @@ class Kernel extends ConsoleKernel
         $schedule->command(GetCcds::class)
             ->dailyAt('03:00')->onOneServer();
 
-        //old report - to deprecate - send to all
         $schedule->command(EmailRNDailyReportToDeprecate::class)
             ->dailyAt('07:00')->onOneServer();
 
-        //new report - testing with 3 nurses
-        $schedule->command(EmailRNDailyReport::class, ['nurseUserIds' => '11321,8151,1920'])
-            ->dailyAt('07:20')->onOneServer();
+        $schedule->command(EmailRNDailyReport::class)
+            ->dailyAt('07:05')->onOneServer();
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
             ->dailyAt('23:40')->onOneServer();
@@ -182,17 +183,13 @@ class Kernel extends ConsoleKernel
 //                 ->everyThirtyMinutes()
 //                 ->withoutOverlapping()->onOneServer();
 
-//        Disable backup till we fix the issue of it not running
-//        if (isProductionEnv()) {
-//            $schedule->command(CleanupCommand::class)->daily()->at('01:00')->onOneServer();
-//            $schedule->command(BackupCommand::class)->daily()->at('02:00')->onOneServer();
-//        }
-
         $schedule->command(SecurityMailCommand::class)->weekly()->onOneServer();
 
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
 
-        $schedule->command(OverwriteNBIImportedData::class)->everyFiveMinutes()->onOneServer();
+        $schedule->command(OverwriteNBIImportedData::class)->everyThirtyMinutes()->onOneServer();
+
+        $schedule->command(OverwriteNBIPatientMRN::class)->everyThirtyMinutes()->onOneServer();
 
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->monthlyOn(1, '00:30')->onOneServer();
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)->monthlyOn(1, '08:30')->onOneServer();

@@ -6,6 +6,7 @@
 
 namespace App\Importer;
 
+use App\AppConfig;
 use App\CarePlan;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
@@ -22,17 +23,22 @@ use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Models\PatientData\NBI\PatientData as NbiPatientData;
 use App\Models\ProblemCode;
+use App\Notifications\NBISupplementaryDataNotFound;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rule;
 
 class CarePlanHelper
 {
     const NBI_PRACTICE_NAME = 'bethcare-newark-beth-israel';
+
+    const RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS = 'receives_nbi_exceptions_notifications';
+
     public $all;
     public $carePlan;
     public $dem;
@@ -340,10 +346,21 @@ class CarePlanHelper
         $primaryPractice = $this->user->primaryPractice;
 
         if (self::NBI_PRACTICE_NAME == $primaryPractice->name) {
-            $dataFromPractice = NbiPatientData::where('first_name', $this->user->first_name)
+            $dataFromPractice = NbiPatientData::where('first_name', 'like', "{$this->user->first_name}%")
                 ->where('last_name', $this->user->last_name)
                 ->where('dob', $this->dem->dob)
                 ->first();
+
+            if ( ! $dataFromPractice) {
+                sendNbiPatientMrnWarning($this->user->id);
+
+                $recipients = AppConfig::where('config_key', '=', self::RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS)->get();
+
+                foreach ($recipients as $recipient) {
+                    Notification::route('mail', $recipient->config_value)
+                        ->notify(new NBISupplementaryDataNotFound($this->user));
+                }
+            }
 
             if (optional($dataFromPractice)->mrn) {
                 $mrn = $dataFromPractice->mrn;

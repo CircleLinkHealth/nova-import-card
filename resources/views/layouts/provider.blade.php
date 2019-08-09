@@ -36,7 +36,7 @@
 
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
 
-    @if (str_contains(Route::getCurrentRoute()->getName(), 'admin'))
+    @if (str_contains(optional(Route::getCurrentRoute())->getName(), 'admin'))
         <link href="{{mix('/css/bootstrap.min.css')}}" rel="stylesheet">
     @endif
 
@@ -119,7 +119,7 @@
 @endif
 
 @auth
-    @if(!isset($isPdf) && auth()->user()->isAdmin() || auth()->user()->isCareCoach())
+    @if(!isset($isPdf) && (auth()->user()->isAdmin() || auth()->user()->isCareCoach()))
         @include('partials.jira-issue-collector')
     @endif
 @endauth

@@ -6,10 +6,10 @@
 
 namespace App\Repositories;
 
-use App\ChargeableService;
 use App\Exceptions\InvalidArgumentException;
 use App\Models\CCD\Problem;
 use Cache;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;

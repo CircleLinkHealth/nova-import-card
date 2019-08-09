@@ -50,6 +50,13 @@
 
     @include('partials.confirm-modal')
 
+    <form id="delete-form" action="{{ route('patient.note.delete.draft', [
+                                    'patientId' => Route::getCurrentRoute()->parameter('patientId'),
+                                    'noteId' => Route::getCurrentRoute()->parameter('noteId')
+                                ]) }}" method="POST" style="display: none;">
+        {{ csrf_field() }}
+    </form>
+
     <form id="newNote" method="post"
           action="{{route('patient.note.store', ['patientId' => $patient->id, 'noteId' => !empty($note) ? $note->id : null])}}"
           class="form-horizontal">
@@ -70,6 +77,11 @@
 
                     @include('partials.userheader')
 
+                    {{--If today is scheduled call day then just show banner--}}
+                    @if(isset($patient) && auth()->check() && !isset($isPdf) && auth()->user()->shouldShowBhiBannerIfPatientHasScheduledCallToday($patient))
+                        @include('partials.providerUI.bhi-notification-banner', ['user' => $patient])
+                    @endif
+
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                          style=" border-bottom:3px solid #50b2e2;padding: 8px 0px;">
 
@@ -85,17 +97,22 @@
                         </div>
                     </div>
 
-                    <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
-                         style=" border:0 solid #50b2e2;padding: 10px 35px;">
-
-                        @if (!empty($note) && $note->status === 'draft')
-                            <div class="col-md-12 text-center">
-                                This is a draft note. Please click Save/Send in order to finalize and create a new
-                                one.
+                    @if (!empty($note) && $note->status === 'draft')
+                        <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
+                             style=" border-bottom:3px solid #50b2e2;padding: 8px 0px;">
+                            <div class="col-md-12 text-center" style="line-height: 2.6;">
+                                This is a draft note. Please finalize and click Save or
+                                <a href="#" id="delete-note" style="font-weight: bold; color: red">
+                                    DELETE HERE
+                                </a>.
                             </div>
                             <br/>
                             <br/>
-                        @endif
+                        </div>
+                    @endif
+
+                    <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
+                         style=" border:0 solid #50b2e2;padding: 10px 35px;">
 
                         <div class="col-md-6">
 
@@ -423,7 +440,8 @@
                                             Full Note
                                         </label>
                                         <div class="col-sm-12">
-                                            <persistent-textarea storage-key="notes:{{$patient->id}}:add" id="note"
+                                            <persistent-textarea ref="bodyComponent"
+                                                                 storage-key="notes:{{$patient->id}}:add" id="note"
                                                                  class-name="form-control" :rows="10" :cols="100"
                                                                  placeholder="Enter Note..."
                                                                  value="{{ !empty($note) ? $note->body : '' }}"
@@ -844,10 +862,7 @@
 
                     submitted = true;
 
-                    var key = 'notes:{{$patient->id}}:add';
-                    window.sessionStorage.removeItem(key);
-                    key = 'notes-summaries:{{$patient->id}}:add';
-                    window.sessionStorage.removeItem(key);
+                    clearDraftFromClientSide();
                     //when we associate a note with task, we disable the note topic
                     //we have to enable it back before posting to server,
                     //otherwise its value will not reach the server
@@ -892,7 +907,12 @@
             */
 
             function getNoteBodyExcludingMedications(noteBody) {
-                return noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
+                const medicationsIndex = noteBody.indexOf(MEDICATIONS_SEPARATOR);
+
+                if (medicationsIndex > -1) {
+                    return noteBody.substring(0, medicationsIndex).trim();
+                }
+                return noteBody;
             }
 
 
@@ -909,7 +929,16 @@
 
             const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
             const saveDraft = () => {
+
+                const fullBody = $('#note').val();
+                const body = getNoteBodyExcludingMedications(fullBody);
+                if (!body.length) {
+                    setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+                    return;
+                }
+
                 isSavingDraft = true;
+
                 window.axios
                     .post(saveDraftUrl, {
                         patient_id: $('#patient_id').val(),
@@ -926,7 +955,7 @@
                         medication_recon: $('#medication_recon').is(":checked"),
                         tcm: $('#tcm').is(":checked"),
                         summary: $('#summary').val(),
-                        body: $('#note').val(),
+                        body: fullBody,
                         logger_id: $('#logger_id').val(),
                         programId: $('#programId').val(),
                         task_status: $('#task_status').val()
@@ -936,6 +965,9 @@
                         if (response.data && response.data.note_id) {
                             noteId = response.data.note_id;
                         }
+
+                        clearDraftFromClientSide();
+
                         setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
                     })
                     .catch(err => {
@@ -947,6 +979,33 @@
 
             if (!disableAutoSave) {
                 setTimeout(() => saveDraft(), AUTO_SAVE_INTERVAL);
+            }
+
+            const deleteElem = $('#delete-note');
+            if (deleteElem && deleteElem.length) {
+                deleteElem.click(function (e) {
+                    e.preventDefault();
+                    if (confirm('Are you sure?')) {
+                        clearDraftFromClientSide();
+                        $('#delete-form').submit();
+                    }
+                });
+            }
+
+            function clearDraftFromClientSide() {
+
+                if (typeof App === "undefined") {
+                    return;
+                }
+
+                if (App.$refs.bodyComponent && App.$refs.bodyComponent.clearFromStorage) {
+                    App.$refs.bodyComponent.clearFromStorage();
+                }
+
+                if (App.$refs.summaryInput && App.$refs.summaryInput.clearFromStorage) {
+                    App.$refs.summaryInput.clearFromStorage();
+                }
+
             }
         </script>
     @endpush

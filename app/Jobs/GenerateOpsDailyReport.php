@@ -139,7 +139,7 @@ class GenerateOpsDailyReport implements ShouldQueue
         if ( ! $saved) {
             if (isProductionEnv()) {
                 sendSlackMessage(
-                    '#callcenter_ops',
+                    '#carecoach_ops',
                     "Daily Call Center Operations Report for {$this->date->toDateString()} could not be created. \n"
                 );
             }
@@ -151,7 +151,7 @@ class GenerateOpsDailyReport implements ShouldQueue
 
         if (isProductionEnv()) {
             sendSlackMessage(
-                '#callcenter_ops',
+                '#carecoach_ops',
                 "Daily Call Center Operations Report for {$this->date->toDateString()} created. \n"
             );
         }

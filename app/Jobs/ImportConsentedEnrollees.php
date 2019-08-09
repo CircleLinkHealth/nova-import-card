@@ -53,31 +53,19 @@ class ImportConsentedEnrollees implements ShouldQueue
      */
     public function handle(ImportService $importService)
     {
-        $imported = Enrollee::whereIn('id', $this->enrolleeIds)
-            ->with(['targetPatient', 'practice'])
-            ->get()
-            ->map(function ($enrollee) use ($importService) {
-                $url = route(
-                    'import.ccd.remix',
-                    'Click here to Create and a CarePlan and review.'
-                                );
+        $imported = collect();
 
-                //verify it wasn't already imported
-                if ($enrollee->user_id) {
-                    return [
-                        'patient' => $enrollee->nameAndDob(),
-                        'message' => 'This patient has already been imported',
-                        'type'    => 'error',
-                    ];
-                }
+        Enrollee::whereIn('id', $this->enrolleeIds)
+            ->with(['targetPatient', 'practice', 'eligibilityJob'])
+            ->chunk(10, function ($enrollees) use ($importService, &$imported) {
+                $newImported = $enrollees->map(function ($enrollee) use ($importService) {
+                    $url = route(
+                        'import.ccd.remix',
+                        'Click here to Create and a CarePlan and review.'
+                    );
 
-                //verify it wasn't already imported
-                $imr = $enrollee->getImportedMedicalRecord();
-                if ($imr) {
-                    if ($imr->patient_id) {
-                        $enrollee->user_id = $imr->patient_id;
-                        $enrollee->save();
-
+                    //verify it wasn't already imported
+                    if ($enrollee->user_id) {
                         return [
                             'patient' => $enrollee->nameAndDob(),
                             'message' => 'This patient has already been imported',
@@ -85,49 +73,66 @@ class ImportConsentedEnrollees implements ShouldQueue
                         ];
                     }
 
-                    return [
-                        'patient' => $enrollee->nameAndDob(),
-                        'message' => "The CCD was imported. ${url}",
-                        'type'    => 'success',
-                    ];
-                }
+                    //verify it wasn't already imported
+                    $imr = $enrollee->getImportedMedicalRecord();
+                    if ($imr) {
+                        if ($imr->patient_id) {
+                            $enrollee->user_id = $imr->patient_id;
+                            $enrollee->save();
 
-                //import PHX
-                if (139 == $enrollee->practice_id) {
-                    ImportPHXEnrollee::dispatch($enrollee);
+                            return [
+                                'patient' => $enrollee->nameAndDob(),
+                                'message' => 'This patient has already been imported',
+                                'type'    => 'error',
+                            ];
+                        }
 
-                    return $enrollee;
-                }
-
-                //import from AthenaAPI
-                if ($enrollee->targetPatient) {
-                    return $this->importTargetPatient($enrollee);
-                }
-
-                //import from eligibility jobs
-                $job = $this->eligibilityJob($enrollee);
-                if ($job) {
-                    return $this->importFromEligibilityJob($enrollee, $job);
-                }
-
-                //import ccda
-                if ($importService->isCcda($enrollee->medical_record_type)) {
-                    $response = $importService->importExistingCcda($enrollee->medical_record_id);
-
-                    if ($response->imr) {
                         return [
                             'patient' => $enrollee->nameAndDob(),
                             'message' => "The CCD was imported. ${url}",
                             'type'    => 'success',
                         ];
                     }
-                }
 
-                return [
-                    'patient' => $enrollee->nameAndDob(),
-                    'message' => $response->message ?? 'Sorry. Some random error occured. Please post to #qualityassurance to notify everyone to stop using the importer, and also tag Michalis to fix this asap.',
-                    'type'    => 'error',
-                ];
+                    //import PHX
+                    if (139 == $enrollee->practice_id) {
+                        ImportPHXEnrollee::dispatch($enrollee);
+
+                        return $enrollee;
+                    }
+
+                    //import from AthenaAPI
+                    if ($enrollee->targetPatient) {
+                        return $this->importTargetPatient($enrollee);
+                    }
+
+                    //import from eligibility jobs
+                    $job = $this->eligibilityJob($enrollee);
+                    if ($job) {
+                        return $this->importFromEligibilityJob($enrollee, $job);
+                    }
+
+                    //import ccda
+                    if ($importService->isCcda($enrollee->medical_record_type)) {
+                        $response = $importService->importExistingCcda($enrollee->medical_record_id);
+
+                        if ($response->imr) {
+                            return [
+                                'patient' => $enrollee->nameAndDob(),
+                                'message' => "The CCD was imported. ${url}",
+                                'type'    => 'success',
+                            ];
+                        }
+                    }
+
+                    return [
+                        'patient' => $enrollee->nameAndDob(),
+                        'message' => $response->message ?? 'Sorry. Some random error occured. Please post to #qualityassurance to notify everyone to stop using the importer, and also tag Michalis to fix this asap.',
+                        'type'    => 'error',
+                    ];
+                });
+
+                $imported = $imported->merge($newImported);
             });
 
         if ($this->batch && $imported->isNotEmpty()) {

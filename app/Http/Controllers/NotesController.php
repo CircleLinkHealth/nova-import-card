@@ -103,6 +103,7 @@ class NotesController extends Controller
         asort($provider_info);
         asort($careteam_info);
 
+        $existingNote = null;
         if ($noteId) {
             $existingNote = Note::findOrFail($noteId);
         } else {
@@ -156,7 +157,7 @@ class NotesController extends Controller
             'Changed Insurance',
             'Dialysis / End-Stage Renal Disease',
             'Expired',
-            'Home Health Services',
+            'Patient in Hospice',
             'Other',
         ];
 
@@ -194,6 +195,22 @@ class NotesController extends Controller
         ];
 
         return view('wpUsers.patient.note.create', $view_data);
+    }
+
+    public function deleteDraft(Request $request, $patientId, $noteId)
+    {
+        $note = Note::findOrFail($noteId);
+        if (Note::STATUS_DRAFT !== $note->status) {
+            throw new \Exception('You cannot delete a non-draft note');
+        }
+
+        if ($note->author_id != auth()->id()) {
+            throw new \Exception('Only the author of the note can delete it');
+        }
+
+        $note->delete();
+
+        return redirect()->route('patient.note.index', ['patientId' => $patientId]);
     }
 
     public function index(
@@ -438,7 +455,10 @@ class NotesController extends Controller
         }
 
         //performed_at entered in patient's timezone and stored in app's timezone
-        $input['performed_at'] = Carbon::parse($input['performed_at'], $patient->timezone)->setTimezone(config('app.timezone'))->toDateTimeString();
+        $input['performed_at'] = Carbon::parse(
+            $input['performed_at'],
+            $patient->timezone
+        )->setTimezone(config('app.timezone'))->toDateTimeString();
 
         $noteIsAlreadyComplete = false;
         if ($editingNoteId) {
@@ -700,6 +720,8 @@ class NotesController extends Controller
 
         $input = $request->allSafe();
 
+        $patient = User::findOrFail($patientId);
+
         $noteId = ! empty($input['note_id'])
             ? $input['note_id']
             : null;
@@ -708,7 +730,11 @@ class NotesController extends Controller
         if ( ! isset($input['author_id'])) {
             $input['author_id'] = auth()->id();
         }
-        $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
+
+        $input['performed_at'] = Carbon::parse(
+            $input['performed_at'],
+            $patient->timezone
+        )->setTimezone(config('app.timezone'))->toDateTimeString();
 
         if ($noteId) {
             $note = Note::find($noteId);
@@ -779,7 +805,7 @@ class NotesController extends Controller
         if (isset($input['ccm_status']) && in_array(
             $input['ccm_status'],
             [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED]
-        )) {
+            )) {
             $info->ccm_status = $input['ccm_status'];
 
             if ('withdrawn' == $input['ccm_status']) {

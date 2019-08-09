@@ -59,7 +59,7 @@ jobs:
     - run: cp .env.circleci .env
     #    - run: php artisan migrate --force
 
-    # run tests with phpunit or codecept
+    # run tests with phpunit or paratest
     #    - run: ./vendor/bin/phpunit --testsuite=Unit
     #- run: ./vendor/bin/codecept build
     #        - run: ./vendor/bin/codecept run --xml result.xml
