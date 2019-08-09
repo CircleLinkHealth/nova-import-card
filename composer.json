@@ -112,6 +112,7 @@
     "league/fractal": "0.12.*",
     "maatwebsite/excel": "^3.1",
     "nao-pon/flysystem-google-drive": "~1.1",
+    "nvanheuverzwijn/monolog-logdna": "^2.1",
     "phaxio/phaxio": "^1.0",
     "pragmarx/health": "^0.9.16",
     "pragmarx/version": "^0.2.8",
