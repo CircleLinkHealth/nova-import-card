@@ -6,8 +6,10 @@
 
 namespace App\Console\Commands;
 
+use App\AppConfig;
 use App\Importer\CarePlanHelper;
 use App\Models\PatientData\NBI\PatientData;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Console\Command;
 
@@ -69,11 +71,7 @@ class OverwriteNBIPatientMRN extends Command
             return true;
         }
 
-        $patientUrl        = route('patient.demographics.show', ['patientId' => $patientInfo->user_id]);
-        $patientProfileUrl = "<$patientUrl|this patient>";
-        $novaUrl           = url('/superadmin/resources/n-b-i-patient-datas');
-        $novaLink          = "<$novaUrl|NBI's supplementary MRN list>";
-        sendSlackMessage('#nbi_rwjbarnabas', "@channel URGENT! Could not find $patientProfileUrl in $novaLink. All NBI MRNs need to be replaced. Please add the correct MRN for this patient in $novaLink. The system will replace the MRN in patient's chart with the MRN you input.", true);
+        sendNbiPatientMrnWarning($patientInfo->user_id);
 
         return false;
     }
