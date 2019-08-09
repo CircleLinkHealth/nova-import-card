@@ -115,4 +115,7 @@ $app->router->group([
     require __DIR__ . '/../routes/web.php';
 });
 
+//register some aliases, helps with compatibility of Laravel packages
+class_alias('Illuminate\Support\Facades\Config', 'Config');
+
 return $app;
