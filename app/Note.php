@@ -74,6 +74,10 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
     use SoftDeletes;
     const STATUS_COMPLETE = 'complete';
     const STATUS_DRAFT    = 'draft';
+    const SUMMARY_FYI     = 'FYI';
+
+    // Note Summary types
+    const SUMMARY_TODO = 'To-do';
 
     protected $dates = [
         'performed_at',
@@ -84,6 +88,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         'author_id',
         'logger_id',
         'summary',
+        'summary_type',
         'body',
         'isTCM',
         'type',

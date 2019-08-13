@@ -5,6 +5,9 @@
 
 @section('content')
     @push('styles')
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+              integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+              crossorigin="anonymous">
         <style type="text/css">
             div.inline {
                 float: left;
@@ -143,18 +146,7 @@
                     <div class="form-block col-md-12">
                         <div class="row">
                             <div class="new-note-item">
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <input type="hidden" name="meta[1][meta_key]" value="comment">
-                                        <label for="meta[1][meta_value]">
-                                            Full Note
-                                        </label>
-                                        <textarea id="note" class="form-control" rows="10"
-                                                  name="meta[1][meta_value]"
-                                                  readonly>{{trim($note['comment'])}}</textarea> <br/>
-                                    </div>
-                                </div>
-
+                                <!-- Send To CareTeam -->
                                 <div class="form-block col-md-12">
                                     <div class="row">
                                         <div class="new-note-item">
@@ -162,6 +154,23 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Full Note -->
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <hr>
+                                        <input type="hidden" name="meta[1][meta_key]" value="comment">
+                                        <i class="fas fa-book" style="font-size:12px; margin-right: 10px"></i>
+                                        <label for="meta[1][meta_value]">
+                                            <span style="color: #50b2e2">{{$author->getFullName()}}</span> wrote a note
+                                            on <span style="color: grey">{{$note['created_at']}}</span>
+                                        </label>
+                                        <textarea id="note" class="form-control" rows="10"
+                                                  name="meta[1][meta_value]"
+                                                  readonly>{{trim($note['comment'])}}</textarea> <br/>
+                                    </div>
+                                </div>
+
                                 <div class="form-group col-sm-4">
                                     <input type="hidden" name="patient_id" value="{{$patient->id}}">
                                     <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">

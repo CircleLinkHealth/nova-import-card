@@ -34,24 +34,31 @@
                     )
                 </label>
 
+            <hr>
                 <div class="form-group load-hidden">
-                    <label for="summary">
-                        Communication to Practice
-                    </label>
-                    <div class="col-sm-12">
+                    <div class="col-sm-12 no-padding-left">
+                        <i class="fa fa-star" style="font-size:12px; margin-right: 8px"></i>
+                        <label for="summary">
+                            Communication to Practice @if(isset($note['summary_type']) && !empty($note['summary_type']))<span style="color: #50b2e2">({{$note['summary_type']}})</span>@endif
+                        </label>
+                    </div>
+                    <div class="col-sm-12 no-padding-left">
                         @if(Route::is('patient.note.create'))
+                            <div class="col-sm-1 no-padding-left"><input type="radio" name="summary_type" style="display:initial" value="{{\App\Note::SUMMARY_FYI}}"> FYI</div>
+                            <div class="col-sm-11 no-padding-left"><input type="radio" name="summary_type" style="display:initial" value="{{\App\Note::SUMMARY_TODO}}"> To-do<br></div>
+                        <div class="col-sm-12 no-padding-left">
                             <persistent-textarea ref="summaryInput" storage-key="notes-summaries:{{$patient->id}}:add"
                                                  id="summary"
                                                  class-name="form-control text-area-summary" :rows="3" :cols="100"
                                                  :max-chars="280"
-                                                 placeholder="Enter Note Summary..."
+                                                 placeholder="Write a summary here to describe what happened in the call. This is generally 1-2 sentences to highlight the important tasks for the doctor."
                                                  value="{{ optional($note)->summary ?? '' }}"
                                                  name="summary"></persistent-textarea>
+                        </div>
                         @elseif(isset($note['summary']) && !empty($note['summary']))
-                            <textarea id="note" class="form-control" rows="3"
-                                      name="summary"
-                                      readonly>{{trim($note['summary'])}}
-                            </textarea>
+                            <div class="col-sm-12" style="padding-top: 10px">
+                                <span><strong>{{trim($note['summary'])}}</strong></span>
+                            </div>
                         @endif
                         <br>
                     </div>
@@ -66,6 +73,10 @@
     <style>
         .load-hidden {
             display: none;
+        }
+
+        .no-padding-left {
+            padding-left: 0px;
         }
     </style>
 @endpush

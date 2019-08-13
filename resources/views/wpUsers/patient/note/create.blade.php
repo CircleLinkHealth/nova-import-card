@@ -436,29 +436,32 @@
                         <div class="form-block col-md-12">
                             <div class="row col-md-12">
 
+                                <!-- Enter CareTeam -->
+                                <div class="form-block col-md-12">
+                                    <div class="row">
+                                        <div class="new-note-item">
+                                            @include('partials.sendToCareTeam')
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="new-note-item">
                                     <!-- Enter Note -->
                                     <div class="form-group">
-                                        <label for="body">
-                                            Full Note
-                                        </label>
+                                        <div  class="col-sm-12">
+                                            <i class="fas fa-book" style="font-size:12px; margin-right: 10px"></i>
+                                            <label for="body">
+                                                Full Note
+                                            </label>
+                                        </div>
                                         <div class="col-sm-12">
                                             <persistent-textarea ref="bodyComponent"
                                                                  storage-key="notes:{{$patient->id}}:add" id="note"
                                                                  class-name="form-control" :rows="10" :cols="100"
-                                                                 placeholder="Enter Note..."
+                                                                 placeholder="Write all your notes here to describe what happened in the call. This may contain observations, upcoming appointments, medication, and more."
                                                                  value="{{ !empty($note) ? $note->body : '' }}"
                                                                  name="body" :required="true"></persistent-textarea>
                                             <br>
-                                        </div>
-                                    </div>
-
-                                    <!-- Enter CareTeam -->
-                                    <div class="form-block col-md-12">
-                                        <div class="row">
-                                            <div class="new-note-item">
-                                                @include('partials.sendToCareTeam')
-                                            </div>
                                         </div>
                                     </div>
 

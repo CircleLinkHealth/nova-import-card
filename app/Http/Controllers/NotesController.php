@@ -130,15 +130,15 @@ class NotesController extends Controller
                 ->where('inbound_cpm_id', '=', $patientId)
                 ->where('outbound_cpm_id', '=', $author_id)
                 ->select(
-                    [
-                        'id',
-                        'type',
-                        'sub_type',
-                        'attempt_note',
-                        'scheduled_date',
-                        'window_start',
-                        'window_end',
-                    ]
+                                           [
+                                               'id',
+                                               'type',
+                                               'sub_type',
+                                               'attempt_note',
+                                               'scheduled_date',
+                                               'window_start',
+                                               'window_end',
+                                           ]
                                        )
                 ->get();
         }
@@ -337,6 +337,7 @@ class NotesController extends Controller
         $note = Note::where('patient_id', $input['patient_id'])
             ->findOrFail($input['noteId']);
 
+        //TODO: Fix summary text
         $note->forward($input['notify_careteam'], $input['notify_circlelink_support']);
 
         return redirect()->route('patient.note.index', ['patient' => $patientId]);
@@ -349,7 +350,8 @@ class NotesController extends Controller
         /**
          * @var Note
          */
-        $note = Note::where('id', $noteId)
+        $note = Note::with('author')
+            ->where('id', $noteId)
             ->where('patient_id', $patientId)
             ->with(['call', 'notifications', 'patient'])
             ->firstOrFail();
@@ -366,10 +368,13 @@ class NotesController extends Controller
         //Sets up tags for patient note tags
         $meta_tags = $this->service->tags($note);
 
+        $author = $note->author;
+
         $data['type']         = $note->type;
         $data['id']           = $note->id;
-        $data['author_id']    = $note->author_id;
+        $data['author_id']    = $author->id;
         $data['performed_at'] = $note->performed_at;
+        $data['created_at']   = presentDate($note->created_at);
         $provider             = User::find($note->author_id);
         if ($provider) {
             $data['provider_name'] = $provider->getFullName();
@@ -377,9 +382,10 @@ class NotesController extends Controller
             $data['provider_name'] = '';
         }
 
-        $data['summary']   = $note->summary;
-        $data['comment']   = $note->body;
-        $data['addendums'] = $note->addendums->sortByDesc('created_at');
+        $data['summary']      = $note->summary;
+        $data['summary_type'] = $note->summary_type;
+        $data['comment']      = $note->body;
+        $data['addendums']    = $note->addendums->sortByDesc('created_at');
 
         $careteam_info = $this->service->getPatientCareTeamMembers($patientId);
 
@@ -396,6 +402,7 @@ class NotesController extends Controller
             'hasReaders'         => $readers->all(),
             'notifies_text'      => $patient->getNotifiesText(),
             'note_channels_text' => $patient->getNoteChannelsText(),
+            'author'             => $author,
         ];
 
         return view('wpUsers.patient.note.view', $view_data);
@@ -776,10 +783,10 @@ class NotesController extends Controller
     {
         return Practice::whereId($patient->program_id)
             ->where(
-                function ($q) {
-                    $q->where('name', '=', 'phoenix-heart')
-                        ->orWhere('name', '=', 'demo');
-                }
+                           function ($q) {
+                               $q->where('name', '=', 'phoenix-heart')
+                                   ->orWhere('name', '=', 'demo');
+                           }
                        )
             ->exists();
     }
