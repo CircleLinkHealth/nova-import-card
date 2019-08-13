@@ -119,6 +119,7 @@
                             {data: 'projectedHoursLeftInMonth', name: 'projectedHoursLeftInMonth'},
                             {data: 'hoursCommittedRestOfMonth', name: 'hoursCommittedRestOfMonth'},
                             {data: 'surplusShortfallHours', name: 'surplusShortfallHours'},
+                            {data: 'caseLoad', name: 'caseLoad'},
                             {data: 'caseLoadComplete', name: 'caseLoadComplete'},
                         ],
                 });
