@@ -294,6 +294,7 @@
             return {
                 stage: "welcome",
                 waiting: false,
+                actionsDisabled: false,
                 error: null,
                 questions: [],
                 subQuestions: [],
@@ -386,6 +387,11 @@
 
             postAnswerAndGoToNext(questionId, questionTypeAnswerId, answer, isLastQuestion) {
 
+                if (this.actionsDisabled) {
+                    return;
+                }
+
+                this.actionsDisabled = true;
                 this.error = null;
                 this.waiting = true;
 
@@ -420,12 +426,14 @@
                                 this.currentQuestionIndex = this.currentQuestionIndex + 1;
                                 this.$nextTick().then(() => {
                                     this.currentQuestionIndex = this.currentQuestionIndex - 1;
+                                    this.actionsDisabled = false;
                                 });
                             });
 
                     })
                     .catch((error) => {
                         console.log(error);
+                        this.actionsDisabled = false;
                         this.waiting = false;
 
                         if (error.response && error.response.status === 404) {
@@ -491,16 +499,25 @@
             },
 
             toggleReadOnlyMode() {
+
+                if (this.actionsDisabled) {
+                    return;
+                }
+
+                this.actionsDisabled = true;
+
                 if (this.readOnlyMode) {
                     const currentQuestion = this.questions[this.currentQuestionIndex];
                     $('.survey-container').animate({
                         scrollTop: $(`#${currentQuestion.id}`).offset().top
                     }, 519, 'swing', () => {
                         this.readOnlyMode = !this.readOnlyMode;
+                        this.actionsDisabled = false;
                     });
                 }
                 else {
                     this.readOnlyMode = !this.readOnlyMode;
+                    this.actionsDisabled = false;
                 }
             },
 
