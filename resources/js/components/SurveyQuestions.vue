@@ -273,6 +273,7 @@
         data() {
             return {
                 stage: "welcome",
+                actionsDisabled: false, //to prevent double-clicking
                 questionsStage: false,
                 welcomeStage: true,
                 callAssistance: false,
@@ -348,9 +349,11 @@
             },
 
             scrollUp() {
-                if (this.currentQuestionIndex === 0) {
+                if (this.currentQuestionIndex === 0 || this.actionsDisabled) {
                     return;
                 }
+
+                this.actionsDisabled = true;
 
                 this.error = null;
 
@@ -358,13 +361,16 @@
                 this.scrollToQuestion(this.questions[this.currentQuestionIndex].id)
                     .then(() => {
                         this.currentQuestionIndex = prevQuestionIndex;
+                        this.actionsDisabled = false;
                     });
             },
 
             scrollDown() {
-                if (this.latestQuestionAnsweredIndex < this.currentQuestionIndex) {
+                if ((this.latestQuestionAnsweredIndex < this.currentQuestionIndex) || this.actionsDisabled) {
                     return;
                 }
+
+                this.actionsDisabled = true;
 
                 this.error = null;
 
@@ -372,6 +378,7 @@
                 this.scrollToQuestion(this.questions[this.currentQuestionIndex].id)
                     .then(() => {
                         this.currentQuestionIndex = nextQuestionIndex;
+                        this.actionsDisabled = false;
                     });
 
             },
@@ -477,6 +484,11 @@
 
             postAnswerAndGoToNext(questionId, questionTypeAnswerId, answer, isLastQuestion) {
 
+                if (this.actionsDisabled) {
+                    return;
+                }
+
+                this.actionsDisabled = true;
                 this.error = null;
                 this.waiting = true;
 
@@ -515,12 +527,14 @@
                                 this.currentQuestionIndex = this.currentQuestionIndex - 1;
                                 this.$nextTick().then(() => {
                                     this.currentQuestionIndex = this.currentQuestionIndex + 1;
+                                    this.actionsDisabled = false;
                                 });
                             });
 
                     })
                     .catch((error) => {
                         console.log(error);
+                        this.actionsDisabled = false;
                         this.waiting = false;
 
                         if (error.response && error.response.status === 404) {
@@ -731,15 +745,24 @@
             },
 
             toggleReadOnlyMode() {
+
+                if (this.actionsDisabled) {
+                    return;
+                }
+
+                this.actionsDisabled = true;
+
                 if (this.readOnlyMode) {
                     const currentQuestion = this.questions[this.currentQuestionIndex];
                     this.scrollToQuestion(currentQuestion.id)
                         .then(() => {
                             this.readOnlyMode = !this.readOnlyMode;
+                            this.actionsDisabled = false;
                         });
                 }
                 else {
                     this.readOnlyMode = !this.readOnlyMode;
+                    this.actionsDisabled = false;
                 }
             },
 
