@@ -1252,6 +1252,15 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'call.delete',
                 ],
             ],
+            [
+                'name'         => 'developer',
+                'display_name' => 'CLH Developer',
+                'description'  => 'Access to Horizon and Ops report. Access to PHI is forbidden.',
+                'permissions'  => [
+                    'opsReport.read',
+                    'nurseReport.read'
+                ],
+            ],
         ];
     }
 
