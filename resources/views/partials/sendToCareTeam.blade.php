@@ -63,14 +63,14 @@
                     Communication to Practice @if(isset($note['summary_type']) && !empty($note['summary_type']))<span style="color: #50b2e2"><b>({{$note['summary_type']}})</b></span>@endif
                 </label>
             </div>
-            <div class="col-sm-12 no-padding-left">
+            <div class="col-sm-12 no-padding-left no-padding-right">
                 @if(Route::is('patient.note.create'))
                     <div class="col-sm-1 no-padding-left custom-radio"><input type="radio" name="summary_type" style="display:initial" value="{{\App\Note::SUMMARY_FYI}}">  FYI</div>
                     <div class="col-sm-11 no-padding-left custom-radio"><input type="radio" name="summary_type" style="display:initial" value="{{\App\Note::SUMMARY_TODO}}">  To-do<br></div>
-                    <div class="col-sm-12 no-padding-left">
+                    <div class="col-sm-12 no-padding-left no-padding-right">
                         <persistent-textarea ref="summaryInput" storage-key="notes-summaries:{{$patient->id}}:add"
                                              id="summary"
-                                             class-name="form-control text-area-summary" :rows="3" :cols="100"
+                                             class-name="form-control text-area-summary" :rows="2" :cols="100"
                                              :max-chars="280"
                                              placeholder="Write a summary here to describe what happened in the call. This is generally 1-2 sentences to highlight the important tasks for the doctor."
                                              value="{{ optional($note)->summary ?? '' }}"
@@ -96,6 +96,10 @@
 
         .no-padding-left {
             padding-left: 0px;
+        }
+
+        .no-padding-right {
+            padding-right: 0px;
         }
 
         .custom-radio {
