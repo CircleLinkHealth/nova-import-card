@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
               integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
               crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:500&display=swap" rel="stylesheet">
         <style type="text/css">
             div.inline {
                 float: left;
@@ -23,6 +24,12 @@
                 font-size: 17.5px;
                 border-left: 5px solid #50b2e2;
                 line-height: 24px;
+            }
+            body {
+                font-family: 'Roboto', sans-serif !important;
+            }
+            b {
+                font-weight: bolder;
             }
         </style>
     @endpush
@@ -166,7 +173,7 @@
                                         <i class="fas fa-book" style="font-size:12px; margin-right: 10px"></i>
                                         <label for="meta[1][meta_value]">
                                             <span style="color: #50b2e2">{{$author->getFullName()}}</span> wrote a note
-                                            on <span style="color: grey">{{$note['created_at']}}</span>
+                                            on <span style="color: lightgrey">{{$note['created_at']}}</span>
                                         </label>
                                         <textarea id="note" class="form-control" rows="10"
                                                   name="meta[1][meta_value]"

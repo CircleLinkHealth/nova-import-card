@@ -2,7 +2,7 @@
     <div class="col-sm-12">
         <label>Send Note To:</label>
     </div>
-    <div class="col-sm-12 no-padding-left">
+    <div class="col-sm-12 no-padding-left" style="padding-top: 10px">
         <div class="col-sm-4">
             <input type="checkbox" id="notify-circlelink-support" name="notify_circlelink_support" value="1">
             <label for="notify-circlelink-support"><span> </span>{{$patient->primaryPractice->saasAccountName()}}
@@ -31,7 +31,7 @@
                         <label for="notify-careteam" style="display: inline-block;"><span></span>Provider/CareTeam
 
                         </label>
-                        <i title="<b>Notifies:</b> <br>{{ $notifies_text }} <br> <u>via</u> {{ $note_channels_text }}" data-toggle="tooltip" class="fas fa-exclamation-circle" style="color:#50b2e2"></i>
+                        <i title="<b>Notifies:</b> {{ $notifies_text }} <u>via</u> {{ $note_channels_text }}" data-toggle="tooltip" class="fas fa-exclamation-circle" style="color:#50b2e2"></i>
 
                 </div>
 
@@ -60,13 +60,13 @@
             <div class="col-sm-12 no-padding-left">
                 <i class="fa fa-star" style="font-size:12px; margin-right: 8px"></i>
                 <label for="summary">
-                    Communication to Practice @if(isset($note['summary_type']) && !empty($note['summary_type']))<span style="color: #50b2e2">({{$note['summary_type']}})</span>@endif
+                    Communication to Practice @if(isset($note['summary_type']) && !empty($note['summary_type']))<span style="color: #50b2e2"><b>({{$note['summary_type']}})</b></span>@endif
                 </label>
             </div>
             <div class="col-sm-12 no-padding-left">
                 @if(Route::is('patient.note.create'))
-                    <div class="col-sm-1 no-padding-left"><input type="radio" name="summary_type" style="display:initial" value="{{\App\Note::SUMMARY_FYI}}"> FYI</div>
-                    <div class="col-sm-11 no-padding-left"><input type="radio" name="summary_type" style="display:initial" value="{{\App\Note::SUMMARY_TODO}}"> To-do<br></div>
+                    <div class="col-sm-1 no-padding-left custom-radio"><input type="radio" name="summary_type" style="display:initial" value="{{\App\Note::SUMMARY_FYI}}">  FYI</div>
+                    <div class="col-sm-11 no-padding-left custom-radio"><input type="radio" name="summary_type" style="display:initial" value="{{\App\Note::SUMMARY_TODO}}">  To-do<br></div>
                     <div class="col-sm-12 no-padding-left">
                         <persistent-textarea ref="summaryInput" storage-key="notes-summaries:{{$patient->id}}:add"
                                              id="summary"
@@ -96,6 +96,10 @@
 
         .no-padding-left {
             padding-left: 0px;
+        }
+
+        .custom-radio {
+            padding-top: 10px;
         }
 
     </style>
