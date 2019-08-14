@@ -72,7 +72,7 @@ class AppServiceProvider extends ServiceProvider
 
         Horizon::auth(
             function ($request) {
-                return optional(auth()->user())->isAdmin();
+                return optional(auth()->user())->hasRole(['administrator', 'developer']);
             }
         );
 

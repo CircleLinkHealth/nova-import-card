@@ -173,6 +173,15 @@ $user = auth()->user();
                             <li>
                                 <a href="{{route('patient.reports.u20')}}">Under 20 Minutes Report</a>
                             </li>
+                            @role('developer')
+                            <li>
+                                <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.reports.nurse.metrics') }}">
+                                    Nurse Performance Report</a>
+                            </li>
+                            @endrole
                         </ul>
                     </li>
                     <li class="dropdown">
