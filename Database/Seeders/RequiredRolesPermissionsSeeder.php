@@ -1261,6 +1261,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'nurseReport.read'
                 ],
             ],
+
         ];
     }
 
