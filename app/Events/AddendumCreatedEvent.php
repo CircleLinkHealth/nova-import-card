@@ -9,7 +9,7 @@ namespace App\Events;
 use Illuminate\Broadcasting\PrivateChannel;
 
 class AddendumCreatedEvent extends PusherEvent
-{
+{ //we are going to broadcast the notifications (will dismiss this event)
     /**
      * Get the channels the event should broadcast on.
      *
@@ -22,7 +22,7 @@ class AddendumCreatedEvent extends PusherEvent
 
     public function getPatientId(): int
     {
-        return 13267;
+        return 13251;
     }
 
     /**
@@ -30,6 +30,6 @@ class AddendumCreatedEvent extends PusherEvent
      */
     public function receivers(): array
     {
-        return [13238];
+        return [13244];
     }
 }

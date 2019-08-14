@@ -240,20 +240,6 @@ class NotesController extends Controller
         return Note::find($noteId);
     }
 
-    /**
-     * @param $patientId
-     *
-     * @return JsonResponse
-     */
-    public function getPatientName($patientId)
-    {
-        $patientName = User::find($patientId)->display_name;
-
-        return response()->json([
-            'patientName' => $patientName,
-        ], 200);
-    }
-
     public function index(
         Request $request,
         $patientId,

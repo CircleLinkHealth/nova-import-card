@@ -6,8 +6,11 @@
 
 namespace App\Notifications;
 
+use App\Http\Controllers\NotificationController;
 use App\Models\Addendum;
+use App\Note;
 use Illuminate\Bus\Queueable;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -54,8 +57,29 @@ class AddendumCreated extends Notification
     }
 
     /**
+     * @return JsonResponse
+     */
+    public function getPatientName()
+    {
+        $patientId = $this->getPatientId();
+
+        return NotificationController::getPatientName($patientId);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function redirectLink()
+    {
+        $note = Note::where('id', $this->getNoteId())->first();
+
+        return $note->link();
+    }
+
+    /**
      * Get the array representation of the notification.
      * $notifiable = User who wrote the note.
+     * This function should contain the same data(key => values) in all notifications.
      *
      * @param mixed $notifiable
      *
@@ -66,15 +90,30 @@ class AddendumCreated extends Notification
         return [
             'sender_id'       => auth()->id(),
             'receiver_id'     => $notifiable->id,
-            'patient_id'      => $this->getPatientId(),
+            'patient_name'    => $this->getPatientName(),
             'note_id'         => $this->getNoteId(),
             'attachment_id'   => $this->getAttachment()->id,
+            'redirect_link'   => $this->redirectLink(),
             'attachment_type' => Addendum::class,
             'description'     => 'Addendum',
             'subject'         => 'has created an addendum for',
             'sender_name'     => auth()->user()->display_name,
         ];
     }
+
+//    /**
+//     * Get the broadcastable representation of the notification.
+//     *
+//     * @param mixed $notifiable
+//     *
+//     * @return BroadcastMessage
+//     */
+//    public function toBroadcast($notifiable)
+//    {
+//        return new BroadcastMessage([
+//            should return notification link
+//        ]);
+//    }
 
     /**
      * Get the mail representation of the notification.

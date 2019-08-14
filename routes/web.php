@@ -2430,7 +2430,7 @@ Route::post('/redirect-mark-read/{receiverId}/{attachmentId}', [
 ]);
 
 //Route::get('get-patient-name/{patientId}', [
-//    'uses' => 'NotesController@getPatientName',
+//    'uses' => 'NotificationController@getPatientName',
 //    'as'   => 'nurse.addendum.notification.get.name',
 //])->middleware('permission:provider.read,note.read');
 

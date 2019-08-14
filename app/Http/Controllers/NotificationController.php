@@ -8,6 +8,8 @@ namespace App\Http\Controllers;
 
 use App\Services\PusherNotificationService;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
+use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Http\JsonResponse;
 
 class NotificationController extends Controller
 {
@@ -24,7 +26,17 @@ class NotificationController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\JsonResponse
+     * @param $patientId
+     *
+     * @return mixed|string
+     */
+    public static function getPatientName($patientId)
+    {
+        return User::find($patientId)->display_name;
+    }
+
+    /**
+     * @return JsonResponse
      */
     public function index()
     {
@@ -45,7 +57,7 @@ class NotificationController extends Controller
     /**
      * @param $id
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show($id)
     {

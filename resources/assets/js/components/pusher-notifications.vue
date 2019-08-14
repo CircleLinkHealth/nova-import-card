@@ -10,11 +10,10 @@
                 <div v-for="notification in notifications"
                      class="dropdown-item"
                      :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
+                     @click="redirectAndMarkAsRead(notification)"
                      v-html="show(notification)">
-
                 </div>
             </div>
-            <!--   @click="redirectAndMarkAsRead(notification)" -->
             <div class="dropdown-footer"
                  @click="showAll(notifications)">
                 <a>
@@ -23,14 +22,20 @@
             </div>
             <!---->
         </div>
+        <div>
+            <component v-bind:is="component"></component>
+        </div>
     </div>
 </template>
 
 <script>
+    import PusherSeeAllNotifications from './pusher-see-all-notifications.vue';
 
     export default {
         name: "pusher-notifications",
-        components: {},
+        components: {
+            'pusher-see-all-notifications': PusherSeeAllNotifications,
+        },
         props: [
             'user'
         ],
@@ -43,8 +48,7 @@
                 count: '',
                 patientName: '',
                 senderName: '',
-                // currentComponent: null,
-                // componentsArray: ['foo', 'bar']
+                component: '',
             }
         },
         computed: {
@@ -67,46 +71,30 @@
 
         },
         methods: {
-            //         swapComponent: function(component)
-            //         {
-            //             this.currentComponent = component;
-            //         },
             show(notification) {
-                const getSenderName = this.setSenderName(notification);
-                const getNotificationSubject = this.getNotificationSubject(notification);
-                const getPatientName = this.setPatientName(notification);
+                const getSenderName = notification.data.sender_name;
+                const getNotificationSubject = notification.data.subject;
+                const getPatientName = notification.data.patient_name;
 
                 return `<strong>${getSenderName}</strong> ${getNotificationSubject}<strong> ${getPatientName}</strong>
                         <span style="float: right;padding-top: 4%; color: #90949c"></span>`;
 
             },
-            setPatientName(notification) {
-                return notification.data.hasOwnProperty('patient_name') ? notification.data.patient_name : 'No patient name';
-
-            },
-
-            getNotificationSubject(notification) {
-                return notification.data.subject;
-            },
-
-            setSenderName(notification) {
-                return notification.data.hasOwnProperty('sender_name') ? notification.data.sender_name : 'sender name missing';
-            },
 
             redirectAndMarkAsRead(notification) {
                 axios.post(`/redirect-mark-read/${notification.data.receiver_id}/${notification.data.attachment_id}`)
                     .then(response => {
-                            this.markAsRead(notification);
+                            this.redirectTo(notification);
                         }
                     );
             },
 
-            markAsRead(notification) {
-                window.location.href = notification.data.redirectTo;
+            redirectTo(notification) {
+                window.location.href = notification.data.redirect_link;
             },
 
             showAll(notifications) {
-                //@todo show view / vue with all notifications
+               this.component = 'pusher-see-all-notifications';
             },
 
         },
@@ -119,8 +107,13 @@
                     }
                 );
 
+            // const userId = 13244;
+            // window.Echo.private('App.User.' + userId)
+            //     .notification((notification) => {
+            //         console.log(notification);
+            //     });
             // Real Time Notifications
-            window.Echo.private('notifications.' + 13267).listen('AddendumCreatedEvent', ({dataToPusher}) => {
+            window.Echo.private('notifications.' + 13251).listen('AddendumCreatedEvent', ({dataToPusher}) => {
                 axios.get(`/notifications/${dataToPusher.notificationId}`)
                     .then(response => {
                             this.notificationsFromPusher.push(response.data)
