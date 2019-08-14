@@ -109,6 +109,9 @@
                             <div class="row">
                                 <div class="new-note-item">
                                     <div class="form-group">
+                                        <div class="col-sm-12 form-group">
+
+                                        </div>
                                         <div class="col-sm-12">
                                             @foreach($meta as $tag)
                                                 <h5>
@@ -177,17 +180,6 @@
                                     <input type="hidden" name="noteId" value="{{$note['id']}}">
                                     <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
                                     <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
-                                </div>
-                                <div class="form-item form-item-spacing text-center">
-                                    <div>
-                                        <div class="col-sm-12">
-                                            <input type="hidden" value="new_activity"/>
-                                            <button id="update" name="submitAction" type="submit" value="new_activity"
-                                                    class="btn btn-primary btn-lg form-item--button form-item-spacing">
-                                                Return / Send
-                                            </button>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 @push('scripts')
