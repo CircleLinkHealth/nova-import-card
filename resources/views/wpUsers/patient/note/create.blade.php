@@ -184,24 +184,24 @@
 
 
                             <!-- Send Note To: -->
-                            <div class="form-block col-md-12">
+                            <div class="form-block col-md-12 no-padding-right">
                                 <div class="row">
                                     <div class="new-note-item">
                                         <div class="form-group">
-                                            <div class="col-sm-12">
+                                            <div class="col-sm-12 no-padding-right">
                                                 <label>Send Note To:</label>
                                             </div>
-                                            <div class="col-sm-12 no-padding-left" style="padding-top: 10px">
-                                                <div class="col-sm-6" style="padding-right: 0">
+                                            <div class="col-sm-12 no-padding-left no-padding-right" style="padding-top: 10px">
+                                                <div class="col-sm-6 no-padding-right" >
                                                     <input type="checkbox" id="notify-circlelink-support" name="notify_circlelink_support" value="1">
                                                     <label for="notify-circlelink-support"><span> </span>{{$patient->primaryPractice->saasAccountName()}}
                                                         Support</label>
                                                 </div>
-                                                <div class="col-sm-6">
+                                                <div class="col-sm-6 no-padding-right">
                                                     @empty($note_channels_text)
                                                         <b>This Practice has <em>Forwarded Note Notifications</em> turned off. Please notify CirleLink support.</b>
                                                     @else
-                                                        <div class="col-sm-12" style="position: absolute">
+                                                        <div class="col-sm-12 no-padding-right" style="position: absolute">
                                                             @empty($notifies_text)
                                                                 <p style="color: red;">
                                                                     No provider selected to receive email alerts. Use the add ("+" sign) or edit (pencil) icons in
