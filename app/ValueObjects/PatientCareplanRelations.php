@@ -30,6 +30,10 @@ class PatientCareplanRelations
             'cpmProblems',
             'cpmLifestyles',
             'cpmBiometrics',
+            'cpmWeight',
+            'cpmBloodSugar',
+            'cpmSmoking',
+            'cpmSymptoms',
             'cpmMedicationGroups',
         ];
     }
