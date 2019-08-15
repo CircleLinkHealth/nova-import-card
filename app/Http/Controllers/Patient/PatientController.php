@@ -153,6 +153,7 @@ class PatientController extends Controller
         $patientsPendingApproval        = [];
         $showPatientsPendingApprovalBox = false;
 
+        /** @var User $user */
         $user = auth()->user();
 
         if ($user->isCareCoach() && $user->nurseInfo) {
