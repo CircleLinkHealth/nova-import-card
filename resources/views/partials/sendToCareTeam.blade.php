@@ -31,7 +31,9 @@
                         <label for="notify-careteam" style="display: inline-block;"><span></span>Provider/CareTeam
 
                         </label>
-                        <i title="<b>Notifies:</b> {{ $notifies_text }} <u>via</u> {{ $note_channels_text }}" data-toggle="tooltip" class="fas fa-exclamation-circle" style="color:#50b2e2"></i>
+                        <div class="label" data-tooltip="Notifies: {{ $notifies_text }} via {{ $note_channels_text }}">
+                            <i class="fas fa-exclamation-circle fa-lg" style="color:#50b2e2"></i>
+                        </div>
 
                 </div>
 
