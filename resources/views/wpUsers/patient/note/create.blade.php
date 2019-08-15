@@ -182,32 +182,6 @@
                                 </div>
                             </div>
 
-                            <!-- Author -->
-                            <div class="form-block col-md-12">
-                                <div class="row">
-                                    <div class="new-note-item">
-                                        <div class="form-group">
-                                            <div class="col-sm-12">
-                                                <label for="author_id">
-                                                    Performed By
-                                                </label>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <select id="author_id" name="author_id"
-                                                            class="selectpickerX dropdown Valid form-control"
-                                                            data-size="10"
-                                                            required disabled>
-                                                        <option value="{{$author_id}}"
-                                                                selected> {{$author_name}} </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
 
                         <div class="col-md-6">

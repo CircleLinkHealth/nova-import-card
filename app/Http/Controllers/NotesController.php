@@ -455,10 +455,8 @@ class NotesController extends Controller
 
         $input['status'] = 'complete';
 
-        //in case Performed By field is removed from the form (per CPM-165)
-        if ( ! isset($input['author_id'])) {
-            $input['author_id'] = auth()->id();
-        }
+        //Performed By field is removed from the form (per CPM-1172)
+        $input['author_id'] = auth()->id();
 
         //performed_at entered in patient's timezone and stored in app's timezone
         $input['performed_at'] = Carbon::parse(
