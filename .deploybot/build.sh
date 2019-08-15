@@ -9,8 +9,10 @@ if [ ! -d "node_modules" ]; then
   npm install
 fi
 
-#install bower dependencies
-./node_modules/bower/bin/bower -V install --allow-root
+if [ -d "node_modules" ]; then
+    #install bower dependencies
+    ./node_modules/bower/bin/bower -V install --allow-root
+fi
 
 npm run prod
 
