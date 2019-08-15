@@ -412,7 +412,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'password_confirmation' => 'required|same:password',
         ];
     }
-
+//    public function receivesBroadcastNotificationsOn() { return 'users.'.$this->id; }
     public function activities()
     {
         return $this->hasMany(\CircleLinkHealth\TimeTracking\Entities\Activity::class, 'patient_id');
