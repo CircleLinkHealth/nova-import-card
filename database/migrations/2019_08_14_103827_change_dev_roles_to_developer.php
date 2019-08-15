@@ -23,6 +23,9 @@ class ChangeDevRolesToDeveloper extends Migration
      */
     public function up()
     {
+        if ( ! isProductionEnv()) {
+            return;
+        }
         $userIds = [
             //Antonis
             12489,
