@@ -201,7 +201,7 @@
                                                     @empty($note_channels_text)
                                                         <b>This Practice has <em>Forwarded Note Notifications</em> turned off. Please notify CirleLink support.</b>
                                                     @else
-                                                        <div class="col-sm-12 no-padding-right" style="position: absolute">
+                                                        <div class="col-sm-12 no-padding-left no-padding-right" style="position: absolute">
                                                             @empty($notifies_text)
                                                                 <p style="color: red;">
                                                                     No provider selected to receive email alerts. Use the add ("+" sign) or edit (pencil) icons in
