@@ -817,9 +817,16 @@ class ReportsController extends Controller
             'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
             'skippedAssessment'       => $skippedAssessment,
             'recentSubmission'        => $recentSubmission,
-            'careplan'                => $careplanService->careplan($patient),
+            'careplan'                => array_merge(
+                $careplanService->careplan($patient),
+                //vue front end expects this format
+            ['other' => [
+                ['name' => $careplan[$patientId]['other']],
+            ],
+            ]
+            ),
         ];
-        
+
         return view(
             'wpUsers.patient.careplan.print',
             $args
