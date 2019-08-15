@@ -1,32 +1,36 @@
 <template>
     <div>
         <span v-show="shouldShowCount" class="badge badge-secondary">{{count}}</span>
-        <div class="dropdown-menu">
-            <div class="dropdown-header">
-                NOTIFICATIONS
-            </div>
-            <!---->
-            <div class="dropdown-content">
-                <div v-for="notification in notifications"
-                     class="dropdown-item"
-                     :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
-                     @click="redirectAndMarkAsRead(notification)"
-                     v-html="show(notification)">
+        <div v-if="!isClicked">
+            <div class="dropdown-menu">
+                <div class="dropdown-header">
+                    NOTIFICATIONS
                 </div>
+                <!---->
+                <div class="dropdown-content">
+                    <div v-for="notification in notifications"
+                         class="dropdown-item"
+                         :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
+                         @click="redirectAndMarkAsRead(notification)"
+                         v-html="show(notification)">
+                    </div>
+                </div>
+                <div class="dropdown-footer"
+                     @click="showAll(notifications)">
+                    <a>
+                        See All
+                    </a>
+                </div>
+                <!---->
             </div>
-            <div class="dropdown-footer"
-                 @click="showAll(notifications)">
-                <a>
-                    See All
-                </a>
-            </div>
-            <!---->
         </div>
-        <div>
-            <component v-bind:is="component"></component>
+
+        <div id="fuck" class="sex" v-if="isClicked">
+            <pusher-see-all-notifications></pusher-see-all-notifications>
         </div>
     </div>
 </template>
+
 
 <script>
     import PusherSeeAllNotifications from './pusher-see-all-notifications.vue';
@@ -49,6 +53,7 @@
                 patientName: '',
                 senderName: '',
                 component: '',
+                isClicked: false,
             }
         },
         computed: {
@@ -94,7 +99,9 @@
             },
 
             showAll(notifications) {
-               this.component = 'pusher-see-all-notifications';
+
+                this.isClicked = true;
+                // this.component = 'pusher-see-all-notifications';
             },
 
         },
@@ -119,7 +126,7 @@
                             this.notificationsFromPusher.push(response.data)
                         }
                     );
-            });
+            })
         }
     }
 
@@ -168,6 +175,13 @@
         cursor: pointer;
     }
 
+    .sex {
+        overflow: visible;
+        position: absolute;
+        height: 1000px;
+        width: 1000px;
+    }
+
     .badge-secondary {
         display: inline;
         background: #e46745;
@@ -214,9 +228,6 @@
     .greyOut {
         opacity: 0.6;
     }
-
-    /*    */
-
 
     .senderName {
         font-weight: bold;

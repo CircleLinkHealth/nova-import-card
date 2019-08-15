@@ -39,7 +39,7 @@ class NotificationController extends Controller
      * @return JsonResponse
      */
     public function index()
-    {
+    {//figure out how to keep the unread notifications count(UI) since we are loading only 5.
         $notifications = DatabaseNotification::whereNotifiableId(auth()->id())->orderByDesc('id')->take(5)->get();
 
         return response()->json($notifications);
