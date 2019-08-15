@@ -61,14 +61,14 @@ class CpmMiscUserRepository
 
     public function patientMisc($userId, $miscTypeId = null)
     {
-        $query = ['patient_id' => $userId];
-        if ($miscTypeId) {
-            $query['cpm_misc_id'] = $miscTypeId;
-        }
-
-        $relQuery = [
+        $miscTypeId = (int) $miscTypeId;
+        $relQuery   = [
             'cpmMiscUserPivot.cpmInstruction',
-            'cpmMiscUserPivot.cpmMisc',
+            'cpmMiscUserPivot.cpmMisc' => function ($q) use ($miscTypeId) {
+                if ($miscTypeId) {
+                    $q->where('id', $miscTypeId);
+                }
+            },
         ];
 
         if (is_a($userId, User::class)) {
@@ -79,18 +79,28 @@ class CpmMiscUserRepository
             $user = User::with($relQuery)->findOrFail($userId);
         }
 
-        $miscData = $user->cpmMiscUserPivot->map(function ($userMisc) use ($user) {
+        $miscData = $user->cpmMiscUserPivot->when($miscTypeId, function ($cpmMiscUserPivotCollection) use ($miscTypeId) {
+            return $cpmMiscUserPivotCollection->where('cpm_misc_id', $miscTypeId);
+        })->map(function ($userMisc) use ($user) {
+            $instructions = [];
             $misc = $userMisc->cpmMisc;
 
             if ($userMisc->cpmInstruction) {
-                $instruction                 = $userMisc->cpmInstruction->toArray();
-                $instruction['misc_user_id'] = $userMisc->id;
+                $instructions[] = array_merge($userMisc->cpmInstruction->toArray(), [
+                    'misc_user_id' => $userMisc->id,
+                ]);
             }
-    
-            $misc['instructions'] = $instruction ?? [];
 
-            return $misc;
-        });
+            return [
+                'id'                   => $misc->id,
+                'details_care_item_id' => $misc->details_care_item_id,
+                'care_item_id'         => $misc->care_item_id,
+                'name'                 => $misc->name,
+                'created_at'           => $misc->created_at,
+                'updated_at'           => $misc->updated_at,
+                'instructions'         => $instructions,
+            ];
+        })->values();
 
         if ($miscData->isEmpty() && $miscTypeId) {
             $misc                 = CpmMisc::findOrFail($miscTypeId);
