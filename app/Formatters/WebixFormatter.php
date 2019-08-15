@@ -15,7 +15,6 @@ use App\Services\NoteService;
 use App\Services\ReportsService;
 use App\ValueObjects\PatientCareplanRelations;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Appointment;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
@@ -225,9 +224,9 @@ class WebixFormatter implements ReportFormatter
     {
         $careplanReport    = [];
         $cpmProblemService = app(\App\Services\CPM\CpmProblemService::class);
-        
+
         $user->loadMissing(PatientCareplanRelations::get());
-        
+
         $careplanReport[$user->id] = [
             'symptoms'    => $user->cpmSymptoms->pluck('name')->all(),
             'problem'     => $user->cpmProblems->sortBy('name')->pluck('name')->all(),
@@ -341,8 +340,6 @@ class WebixFormatter implements ReportFormatter
             $careplanReport[$user->id]['bio_data'][$metric]['verb'] = $biometric_values['verb'];
         }
 
-        array_reverse($careplanReport[$user->id]['bio_data']);
-
         //Medications List
         $careplanReport[$user->id]['taking_meds'] = $this->sectionTakingMeds($user->ccdMedications);
 
@@ -396,9 +393,9 @@ class WebixFormatter implements ReportFormatter
         //Appointments
         //Upcoming
         $upcoming = $user->appointments
-                ->where('date', '>', Carbon::now()->toDateString())
-                ->sortBy('date')
-                ->take(3);
+            ->where('date', '>', Carbon::now()->toDateString())
+            ->sortBy('date')
+            ->take(3);
 
         foreach ($upcoming as $appt) {
             $provider = $appt->provider;
