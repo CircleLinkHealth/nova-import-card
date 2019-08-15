@@ -31,6 +31,13 @@
             b {
                 font-weight: bolder;
             }
+
+            .meta-tags {
+                line-height: 1.2;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                margin-right: 10px;
+            }
         </style>
     @endpush
 
@@ -119,14 +126,14 @@
                                         <div class="col-sm-12 form-group">
 
                                         </div>
-                                        <div class="col-sm-12">
+                                        <div class="col-sm-12" style="margin-top: 10px">
                                             @foreach($meta as $tag)
-                                                <h5>
-                                                    <div class="label label-{{$tag->severity}}"
+
+                                                    <div class="label label-{{$tag->severity}} meta-tags"
                                                          @isset($tag->tooltip) data-tooltip="{{$tag->tooltip}}" @endisset>
                                                         {{ucwords($tag->title)}}
                                                     </div>
-                                                </h5>
+
                                             @endforeach
                                             @if(is_array($hasReaders))
                                                 @foreach($hasReaders as $key => $value)
@@ -168,7 +175,6 @@
                                 <!-- Full Note -->
                                 <div class="form-group">
                                     <div class="col-sm-12">
-                                        <hr>
                                         <input type="hidden" name="meta[1][meta_key]" value="comment">
                                         <i class="fas fa-book" style="font-size:12px; margin-right: 10px"></i>
                                         <label for="meta[1][meta_value]">

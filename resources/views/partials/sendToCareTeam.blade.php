@@ -92,6 +92,9 @@
                     <div class="col-sm-12" style="padding-top: 10px">
                         <span><strong>{{trim($note['summary'])}}</strong></span>
                     </div>
+                    <div class="col-sm-12">
+                        <hr>
+                    </div>
                 @endif
                 <br>
             </div>
