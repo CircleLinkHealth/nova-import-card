@@ -182,6 +182,62 @@
                                 </div>
                             </div>
 
+
+                            <!-- Send Note To: -->
+                            <div class="form-block col-md-12">
+                                <div class="row">
+                                    <div class="new-note-item">
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <label>Send Note To:</label>
+                                            </div>
+                                            <div class="col-sm-12 no-padding-left" style="padding-top: 10px">
+                                                <div class="col-sm-6" style="padding-right: 0">
+                                                    <input type="checkbox" id="notify-circlelink-support" name="notify_circlelink_support" value="1">
+                                                    <label for="notify-circlelink-support"><span> </span>{{$patient->primaryPractice->saasAccountName()}}
+                                                        Support</label>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    @empty($note_channels_text)
+                                                        <b>This Practice has <em>Forwarded Note Notifications</em> turned off. Please notify CirleLink support.</b>
+                                                    @else
+                                                        <div class="col-sm-12" style="position: absolute">
+                                                            @empty($notifies_text)
+                                                                <p style="color: red;">
+                                                                    No provider selected to receive email alerts. Use the add ("+" sign) or edit (pencil) icons in
+                                                                    the
+                                                                    <strong>{{link_to_route('patient.careplan.print', '"Care Team"', ['patientId' => $patient->id])}}</strong>
+                                                                    section of
+                                                                    the {{link_to_route('patient.careplan.print', 'View CarePlan', ['patientId' => $patient->id])}}
+                                                                    page to
+                                                                    add or edit providers to receive email alerts.
+                                                                </p>
+                                                            @else
+
+                                                                <input type="checkbox" id="notify-careteam" name="notify_careteam"
+                                                                       @empty($note_channels_text) disabled="disabled"
+                                                                       @endempty value="1">
+                                                                <label for="notify-careteam" style="display: inline-block;"><span></span>Provider/CareTeam
+
+                                                                </label>
+                                                                <div class="label" data-tooltip="Notifies: {{ $notifies_text }} via {{ $note_channels_text }}">
+                                                                    <i class="fas fa-exclamation-circle fa-lg" style="color:#50b2e2"></i>
+                                                                </div>
+
+                                                        </div>
+
+
+                                                    @endempty
+                                                    @endempty
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
                         <div class="col-md-6">
