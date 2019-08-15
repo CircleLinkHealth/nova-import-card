@@ -67,8 +67,15 @@
             </div>
             <div class="col-sm-12 no-padding-left no-padding-right">
                 @if(Route::is('patient.note.create'))
-                    <div class="col-sm-1 no-padding-left custom-radio"><input type="radio" name="summary_type" style="display:initial" value="{{\App\Note::SUMMARY_FYI}}">  FYI</div>
-                    <div class="col-sm-11 no-padding-left custom-radio"><input type="radio" name="summary_type" style="display:initial" value="{{\App\Note::SUMMARY_TODO}}">  To-do<br></div>
+                    <div class="col-sm-1 no-padding-left custom-radio">
+                        <input id='fyi' type="radio" name="summary_type" value="{{\App\Note::SUMMARY_FYI}}">
+                        <label for="fyi"><span> </span>FYI</label>
+                    </div>
+                    <div class="col-sm-11 no-padding-left custom-radio">
+                        <input id="to-do" type="radio" name="summary_type"  value="{{\App\Note::SUMMARY_TODO}}">
+                        <label for="to-do"><span> </span>To-do</label>
+                        <br>
+                    </div>
                     <div class="col-sm-12 no-padding-left no-padding-right">
                         <persistent-textarea ref="summaryInput" storage-key="notes-summaries:{{$patient->id}}:add"
                                              id="summary"
