@@ -8,6 +8,8 @@ use Exception;
 
 class ProviderReportService
 {
+    const YES = 'Yes';
+    const NO = 'No';
     /**
      * @param $report
      * @return \Illuminate\Support\Collection
@@ -320,7 +322,7 @@ class ProviderReportService
      */
     public static function checkInputValueIsNotEmptyString($answer, string $errorDescription)
     {
-        !is_array($answer) ? $value = $answer : $value = self::getStringValue($answer);
+        $value = !is_array($answer) ? $answer : self::getStringValue($answer);
 
         if ($value !== '') {
             return $value;
@@ -336,7 +338,8 @@ class ProviderReportService
      */
     public static function throwExceptionEmptyAnswer(string $errorDescription)
     {
-        throw new Exception("Error on question: $errorDescription");
+        $fileName = ProviderReportService::class;
+        throw new Exception("Empty answer in: $errorDescription in $fileName");
     }
 
     /**
@@ -370,13 +373,17 @@ class ProviderReportService
      */
     public static function resolveOrGetFirstAnswers($answers, $key, $errorMessage)
     {
-        if (is_string(reset($answers)) && reset($answers) === 'No') {
+        $firstElem = reset($answers);
+        $firstElemIsString = is_string($firstElem);
+        if ($firstElemIsString && $firstElem === self::NO) {
             return $answers;
-        } elseIf (is_string(reset($answers)) && reset($answers) === 'Yes') {
-            return !empty($answers[$key]) ? $answers : self::throwExceptionEmptyAnswer($errorMessage);
-        } else {
-            return reset($answers[$key]);
+        } elseIf ($firstElemIsString && $firstElem === self::YES) {
+            if (empty($answers[$key])) {
+                self::throwExceptionEmptyAnswer($errorMessage);
+            }
+            return $answers;
         }
+        return reset($answers[$key]);
     }
 
     /**
@@ -392,11 +399,10 @@ class ProviderReportService
      */
     public static function analyzeFirstAnswersAndTakeAction($firstAnswerForEachDependentQuestion, $key, $errorMessage)
     {
-        if (!empty($firstAnswerForEachDependentQuestion)) {
-            return $firstAnswerForEachDependentQuestion !== 'Yes' ? [$key => true] : [$key => false];
-        } else {
-            return self::throwExceptionEmptyAnswer($errorMessage);
+        if (empty($firstAnswerForEachDependentQuestion)) {
+            self::throwExceptionEmptyAnswer($errorMessage);
         }
+        return $firstAnswerForEachDependentQuestion !== self::YES ? [$key => true] : [$key => false];
     }
 
     /**
@@ -413,8 +419,8 @@ class ProviderReportService
         foreach ($validAnswers as $key => $isOptional) {
             if ($isOptional === false) {
                 foreach ($answers[$key] as $answer) {
-                    if (is_string($answer)) {
-                        $isValidString = !empty($answer) ? true : self::throwExceptionEmptyAnswer($errorMessage);
+                    if (is_string($answer) && empty($answer)) {
+                        self::throwExceptionEmptyAnswer($errorMessage);
                     } elseif (is_array($answer)) {
                         $isValidArray = !empty(self::checkInputValueIsNotEmptyArray($answer, $errorMessage));
                     }

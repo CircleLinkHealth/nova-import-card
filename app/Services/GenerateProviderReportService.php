@@ -235,7 +235,7 @@ class GenerateProviderReportService
     private function getSocialFactors()
     {
         $socialFactors = [];
-//11a is missing
+
         $socialFactors['tobacco']['has_used']             = $this->answerForHraQuestionWithOrder(11);
         $socialFactors['tobacco']['last_smoked']          = $this->answerForHraQuestionWithOrder(11, 'b');
         $socialFactors['tobacco']['amount']               = $this->answerForHraQuestionWithOrder(11, 'c');
