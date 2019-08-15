@@ -31,6 +31,11 @@
                 margin-left: -10px;
                 margin-bottom: 4px;
                 padding-left: 6px;
+                /*border: 1px solid #ccc;*/
+                /*border-radius: 4px;*/
+            }
+
+            .phone-session-container {
                 border: 1px solid #ccc;
                 border-radius: 4px;
             }
@@ -47,9 +52,14 @@
                 border-color: #353535;
             }
 
+            .label-margin {
+                margin-bottom: 9px;
+            }
+
             body {
                 font-family: 'Roboto', sans-serif !important;
             }
+
             b {
                 font-weight: bolder;
             }
@@ -125,15 +135,15 @@
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                          style=" border:0 solid #50b2e2;padding: 10px 35px;">
 
-                        <div class="col-md-6">
+                        <div class="col-md-6" style="padding-top: 10px">
 
                             <!-- Note Type -->
                             <div class="form-block col-md-12">
                                 <div class="row">
                                     <div class="new-note-item">
-                                        <div class="form-group">
+                                        <div class="form-group" style="margin-bottom: 10px">
                                             <div class="col-sm-12">
-                                                <label for="activityKey">
+                                                <label class="label-margin" for="activityKey">
                                                     Note Topic
                                                 </label>
                                             </div>
@@ -162,9 +172,9 @@
                             <div class="form-block col-md-12">
                                 <div class="row">
                                     <div class="new-note-item">
-                                        <div class="form-group">
+                                        <div class="form-group" style="margin-bottom: 10px">
                                             <div class="col-sm-12">
-                                                <label for="performed_at">
+                                                <label class="label-margin" for="performed_at">
                                                     When (Patient Local Time):
                                                 </label>
                                             </div>
@@ -187,24 +197,29 @@
                             <div class="form-block col-md-12 no-padding-right">
                                 <div class="row">
                                     <div class="new-note-item">
-                                        <div class="form-group">
+                                        <div class="form-group" style="margin-bottom: 10px">
                                             <div class="col-sm-12 no-padding-right">
                                                 <label>Send Note To:</label>
                                             </div>
-                                            <div class="col-sm-12 no-padding-left no-padding-right" style="padding-top: 10px">
-                                                <div class="col-sm-6 no-padding-right" >
-                                                    <input type="checkbox" id="notify-circlelink-support" name="notify_circlelink_support" value="1">
+                                            <div class="col-sm-12 no-padding-left no-padding-right"
+                                                 style="padding-top: 8px">
+                                                <div class="col-sm-6 no-padding-right">
+                                                    <input type="checkbox" id="notify-circlelink-support"
+                                                           name="notify_circlelink_support" value="1">
                                                     <label for="notify-circlelink-support"><span> </span>{{$patient->primaryPractice->saasAccountName()}}
                                                         Support</label>
                                                 </div>
                                                 <div class="col-sm-6 no-padding-right">
                                                     @empty($note_channels_text)
-                                                        <b>This Practice has <em>Forwarded Note Notifications</em> turned off. Please notify CirleLink support.</b>
+                                                        <b>This Practice has <em>Forwarded Note Notifications</em>
+                                                            turned off. Please notify CirleLink support.</b>
                                                     @else
-                                                        <div class="col-sm-12 no-padding-left no-padding-right" style="position: absolute">
+                                                        <div class="col-sm-12 no-padding-left no-padding-right"
+                                                             style="position: absolute">
                                                             @empty($notifies_text)
                                                                 <p style="color: red;">
-                                                                    No provider selected to receive email alerts. Use the add ("+" sign) or edit (pencil) icons in
+                                                                    No provider selected to receive email alerts. Use
+                                                                    the add ("+" sign) or edit (pencil) icons in
                                                                     the
                                                                     <strong>{{link_to_route('patient.careplan.print', '"Care Team"', ['patientId' => $patient->id])}}</strong>
                                                                     section of
@@ -214,14 +229,18 @@
                                                                 </p>
                                                             @else
 
-                                                                <input type="checkbox" id="notify-careteam" name="notify_careteam"
+                                                                <input type="checkbox" id="notify-careteam"
+                                                                       name="notify_careteam"
                                                                        @empty($note_channels_text) disabled="disabled"
                                                                        @endempty value="1">
-                                                                <label for="notify-careteam" style="display: inline-block;"><span></span>Provider/CareTeam
+                                                                <label for="notify-careteam"
+                                                                       style="display: inline-block;"><span></span>Provider/CareTeam
 
                                                                 </label>
-                                                                <div class="label" data-tooltip="Notifies: {{ $notifies_text }} via {{ $note_channels_text }}">
-                                                                    <i class="fas fa-exclamation-circle fa-lg" style="color:#50b2e2"></i>
+                                                                <div class="label"
+                                                                     data-tooltip="Notifies: {{ $notifies_text }} via {{ $note_channels_text }}">
+                                                                    <i class="fas fa-exclamation-circle fa-lg"
+                                                                       style="color:#50b2e2"></i>
                                                                 </div>
 
                                                         </div>
@@ -240,20 +259,20 @@
 
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-6" style="padding-top: 10px">
                             <!-- Phone Sessions -->
                             <div class="form-block col-md-12">
                                 <div class="row">
                                     <div class="new-note-item">
                                         <div class="form-group">
-                                            <div class="col-sm-12">
-                                                <label id="phone-label">
+                                            <div class="col-sm-12 no-padding-left">
+                                                <label id="phone-label" style="margin-bottom: 0">
                                                     <div>
                                                         <input type="checkbox"
                                                                @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
                                                                @endif
                                                                id="phone"/>
-                                                        <label for="phone">
+                                                        <label for="phone" style="margin-bottom: 0">
                                                             <span> </span>Patient Phone Session
                                                         </label>
                                                     </div>
@@ -323,146 +342,150 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            <div class="col-sm-12">
-                                                <div class="panel-group" id="accordion" style="margin-bottom: 2px">
-                                                    <div id="collapseOne" class="panel-collapse collapse in"
-                                                         style="display: none;">
-                                                        <div class="multi-input-wrapper">
-                                                            <div class="radio-inline"><input type="radio"
-                                                                                             @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
-                                                                                             @endif
-                                                                                             @if (!empty($call) && !$call->is_cpm_outbound) checked
-                                                                                             @endif
-                                                                                             name="phone"
-                                                                                             value="inbound"
-                                                                                             class="phone-radios"
-                                                                                             id="Inbound"/><label
-                                                                        for="Inbound"><span> </span>Inbound</label>
-                                                            </div>
-                                                            <div class="radio-inline"><input type="radio"
-                                                                                             @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
-                                                                                             @endif
-                                                                                             @if (!empty($call) && $call->is_cpm_outbound) checked
-                                                                                             @endif
-                                                                                             name="phone"
-                                                                                             class="phone-radios"
-                                                                                             value="outbound"
-                                                                                             id="Outbound"/><label
-                                                                        for="Outbound"><span> </span>Outbound</label>
+                                            <div class="col-sm-12 call-status-radios phone-session-container" style="padding: 0">
+                                                <div class="col-sm-12">
+                                                    <div class="panel-group" id="accordion" style="margin-bottom: 2px">
+                                                        <div id="collapseOne" class="panel-collapse collapse in"
+                                                             style="display: none;">
+                                                            <div class="multi-input-wrapper">
+                                                                <div class="radio-inline"><input type="radio"
+                                                                                                 @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                                                 @endif
+                                                                                                 @if (!empty($call) && !$call->is_cpm_outbound) checked
+                                                                                                 @endif
+                                                                                                 name="phone"
+                                                                                                 value="inbound"
+                                                                                                 class="phone-radios"
+                                                                                                 id="Inbound"/><label
+                                                                            for="Inbound"><span> </span>Inbound</label>
+                                                                </div>
+                                                                <div class="radio-inline"><input type="radio"
+                                                                                                 @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                                                 @endif
+                                                                                                 @if (!empty($call) && $call->is_cpm_outbound) checked
+                                                                                                 @endif
+                                                                                                 name="phone"
+                                                                                                 class="phone-radios"
+                                                                                                 value="outbound"
+                                                                                                 id="Outbound"/><label
+                                                                            for="Outbound"><span> </span>Outbound</label>
+                                                                </div>
+                                                                <hr style="margin-top: 0; margin-bottom: 0">
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                @if(auth()->user()->isCCMCountable())
-                                                    <div class="call-status-radios multi-input-wrapper"
-                                                         style="padding-bottom: 3px; display: none">
-                                                        <div class="radio">
-                                                            <input type="radio"
-                                                                   @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
-                                                                   @endif
-                                                                   @if (!empty($call) && $call->status === \App\Call::NOT_REACHED) checked
-                                                                   @endif
-                                                                   class="call-status-radio"
-                                                                   name="call_status"
-                                                                   value="not reached"
-                                                                   id="not-reached"/>
-                                                            <label for="not-reached">
-                                                                <span> </span>Patient Not Reached
-                                                            </label>
-                                                        </div>
-                                                        <div class="radio">
-                                                            <input type="radio"
-                                                                   @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
-                                                                   @endif
-                                                                   @if (!empty($call) && $call->status === \App\Call::REACHED) checked
-                                                                   @endif
-                                                                   name="call_status"
-                                                                   class="call-status-radio"
-                                                                   value="reached"
-                                                                   id="reached"/>
-                                                            <label for="reached">
-                                                                <span> </span>Successful Clinical Call
-                                                            </label>
-                                                        </div>
-                                                        <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
-                                                        <div class="radio">
-                                                            <input type="radio"
-                                                                   @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
-                                                                   @endif
-                                                                   @if (!empty($call) && $call->status === \App\Call::IGNORED) checked
-                                                                   @endif
-                                                                   name="call_status"
-                                                                   class="call-status-radio"
-                                                                   value="ignored"
-                                                                   id="ignored"/>
-                                                            <label for="ignored">
-                                                                <span> </span>Patient Busy - Rescheduled Call
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                @else
-                                                    <div class="call-status-radios multi-input-wrapper"
-                                                         style="padding-bottom: 3px; display: none">
-                                                        <div>
+                                                <div class="col-sm-12">
+                                                    @if(auth()->user()->isCCMCountable())
+                                                        <div class="call-status-radios multi-input-wrapper"
+                                                             style="padding-bottom: 3px; display: none">
                                                             <div class="radio">
-                                                                <input type="checkbox"
+                                                                <input type="radio"
                                                                        @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
                                                                        @endif
-                                                                       @if (!empty($call) && $call->status === \App\Call::WELCOME) checked
+                                                                       @if (!empty($call) && $call->status === \App\Call::NOT_REACHED) checked
                                                                        @endif
-                                                                       name="welcome_call"
-                                                                       value="welcome_call"
-                                                                       id="welcome_call"/>
-                                                                <label for="welcome_call">
-                                                                    <span> </span>Successful
-                                                                    Welcome Call
+                                                                       class="call-status-radio"
+                                                                       name="call_status"
+                                                                       value="not reached"
+                                                                       id="not-reached"/>
+                                                                <label for="not-reached">
+                                                                    <span> </span>Patient Not Reached
+                                                                </label>
+                                                            </div>
+                                                            <div class="radio">
+                                                                <input type="radio"
+                                                                       @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                       @endif
+                                                                       @if (!empty($call) && $call->status === \App\Call::REACHED) checked
+                                                                       @endif
+                                                                       name="call_status"
+                                                                       class="call-status-radio"
+                                                                       value="reached"
+                                                                       id="reached"/>
+                                                                <label for="reached">
+                                                                    <span> </span>Successful Clinical Call
+                                                                </label>
+                                                            </div>
+                                                            <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
+                                                            <div class="radio">
+                                                                <input type="radio"
+                                                                       @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                       @endif
+                                                                       @if (!empty($call) && $call->status === \App\Call::IGNORED) checked
+                                                                       @endif
+                                                                       name="call_status"
+                                                                       class="call-status-radio"
+                                                                       value="ignored"
+                                                                       id="ignored"/>
+                                                                <label for="ignored">
+                                                                    <span> </span>Patient Busy - Rescheduled Call
                                                                 </label>
                                                             </div>
                                                         </div>
-                                                        <div>
-                                                            <div class="radio">
-                                                                <input type="checkbox"
-                                                                       @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
-                                                                       @endif
-                                                                       @if (!empty($call) && $call->status === \App\Call::OTHER) checked
-                                                                       @endif
-                                                                       name="other_call"
-                                                                       value="other_call"
-                                                                       id="other_call"/>
-                                                                <label for="other_call">
-                                                                    <span> </span>Successful
-                                                                    Other
-                                                                    Patient Call
-                                                                </label>
+                                                        <hr style="margin-top: 0; margin-bottom: 0">
+                                                    @else
+                                                        <div class="call-status-radios multi-input-wrapper"
+                                                             style="padding-bottom: 3px; display: none">
+                                                            <div>
+                                                                <div class="radio">
+                                                                    <input type="checkbox"
+                                                                           @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                           @endif
+                                                                           @if (!empty($call) && $call->status === \App\Call::WELCOME) checked
+                                                                           @endif
+                                                                           name="welcome_call"
+                                                                           value="welcome_call"
+                                                                           id="welcome_call"/>
+                                                                    <label for="welcome_call">
+                                                                        <span> </span>Successful
+                                                                        Welcome Call
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="radio">
+                                                                    <input type="checkbox"
+                                                                           @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
+                                                                           @endif
+                                                                           @if (!empty($call) && $call->status === \App\Call::OTHER) checked
+                                                                           @endif
+                                                                           name="other_call"
+                                                                           value="other_call"
+                                                                           id="other_call"/>
+                                                                    <label for="other_call">
+                                                                        <span> </span>Successful
+                                                                        Other
+                                                                        Patient Call
+                                                                    </label>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                @endif
-                                                <div class="other-radios multi-input-wrapper"
-                                                     style="padding-top: 3px; display: none">
-                                                    <div><input type="checkbox"
-                                                                @if (!empty($note) && $note->did_medication_recon) checked
-                                                                @endif
-                                                                name="medication_recon"
-                                                                value="true"
-                                                                id="medication_recon"/>
-                                                        <label for="medication_recon">
-                                                            <span> </span>Medication Reconciliation
-                                                        </label>
-                                                    </div>
-                                                    <input type="hidden" name="tcm" value="hospital">
-                                                    <div><input type="checkbox"
-                                                                @if (!empty($note) && $note->isTCM) checked
-                                                                @endif
-                                                                name="tcm"
-                                                                value="true"
-                                                                id="tcm"/>
-                                                        <label for="tcm">
-                                                            <span> </span>Patient in Hospital/ER (now or
-                                                            recently)
-                                                        </label>
+                                                    @endif
+                                                    <div class="other-radios multi-input-wrapper"
+                                                         style="padding-top: 3px; display: none">
+                                                        <div><input type="checkbox"
+                                                                    @if (!empty($note) && $note->did_medication_recon) checked
+                                                                    @endif
+                                                                    name="medication_recon"
+                                                                    value="true"
+                                                                    id="medication_recon"/>
+                                                            <label for="medication_recon">
+                                                                <span> </span>Medication Reconciliation
+                                                            </label>
+                                                        </div>
+                                                        <input type="hidden" name="tcm" value="hospital">
+                                                        <div><input type="checkbox"
+                                                                    @if (!empty($note) && $note->isTCM) checked
+                                                                    @endif
+                                                                    name="tcm"
+                                                                    value="true"
+                                                                    id="tcm"/>
+                                                            <label for="tcm">
+                                                                <span> </span>Patient in Hospital/ER (now or
+                                                                recently)
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -486,7 +509,7 @@
                                 <div class="new-note-item">
                                     <!-- Enter Note -->
                                     <div class="form-group">
-                                        <div  class="col-sm-12">
+                                        <div class="col-sm-12">
                                             <i class="fas fa-book" style="font-size:12px; margin-right: 10px"></i>
                                             <label for="body">
                                                 Full Note
@@ -514,7 +537,7 @@
                                     </div>
 
                                     <!-- Submit -->
-                                    <div class="form-block form-item-spacing text-center">
+                                    <div class="form-block form-item-spacing text-right">
                                         <div>
                                             <div class="col-sm-12">
                                                 <button name="Submit" id="Submit" type="submit" value="Submit"
