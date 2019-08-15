@@ -29,15 +29,7 @@
         name: "pusher-see-all-notifications",
 
         methods: {
-            created() {
-                let self = this;
-                window.addEventListener('click', function (e) {
-                    // close dropdown when clicked outside
-                    if (!self.$el.contains(e.target)) {
-                        self.dropDropdown = false;
-                    }
-                })
-            },
+
         }
     }
 </script>

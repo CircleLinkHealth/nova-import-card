@@ -24,10 +24,6 @@
                 <!---->
             </div>
         </div>
-
-        <div id="fuck" class="sex" v-if="isClicked">
-            <pusher-see-all-notifications></pusher-see-all-notifications>
-        </div>
     </div>
 </template>
 
@@ -99,8 +95,7 @@
             },
 
             showAll(notifications) {
-
-                this.isClicked = true;
+                // this.isClicked = true;
                 // this.component = 'pusher-see-all-notifications';
             },
 
