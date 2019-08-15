@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
 
         Horizon::auth(
             function ($request) {
-                return optional(auth()->user())->isAdmin();
+                return optional(auth()->user())->hasRole(['administrator', 'developer']);
             }
         );
 
@@ -104,7 +104,7 @@ class AppServiceProvider extends ServiceProvider
         HeadingRowFormatter::extend('custom', function ($value) {
             return strtolower(str_slug($value));
         });
-        
+
         $this->app->register(\Maatwebsite\Excel\ExcelServiceProvider::class);
         $this->app->register(\Yajra\DataTables\DataTablesServiceProvider::class);
 

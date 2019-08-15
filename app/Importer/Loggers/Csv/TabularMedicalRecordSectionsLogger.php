@@ -250,12 +250,16 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
                 ], $this->foreignKeys)
             );
 
-            $problemCodeLog = ProblemCodeLog::create([
-                'code'                   => $problem['code'],
-                'code_system_name'       => $problem['code_system_name'],
-                'problem_code_system_id' => $problem['problem_code_system_id'],
-                'ccd_problem_log_id'     => $problemLog->id,
-            ]);
+            try {
+                $problemCodeLog = ProblemCodeLog::create([
+                    'code'                   => $problem['code'],
+                    'code_system_name'       => $problem['code_system_name'],
+                    'problem_code_system_id' => $problem['problem_code_system_id'],
+                    'ccd_problem_log_id'     => $problemLog->id,
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Error at '.__CLASS__.':'.__LINE__.' | defined vars:'.print_r(get_defined_vars()));
+            }
         }
 
         return $this;

@@ -6,6 +6,8 @@
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
+use Zwijn\Monolog\Formatter\LogdnaFormatter;
+use Zwijn\Monolog\Handler\LogdnaHandler;
 
 return [
     /*
@@ -72,6 +74,18 @@ return [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
             ],
+        ],
+
+        'logdna' => [
+            'driver'       => 'monolog',
+            'level'        => env('LOG_DNA_LEVEl', \Monolog\Logger::DEBUG),
+            'handler'      => LogdnaHandler::class,
+            'handler_with' => [
+                'ingestion_key' => env('LOG_DNA_INGESTION_KEY'),
+                'hostname'      => env('APP_URL'),
+                'level'         => env('LOG_DNA_LEVEl', \Monolog\Logger::DEBUG),
+            ],
+            'formatter' => LogdnaFormatter::class,
         ],
 
         'stderr' => [

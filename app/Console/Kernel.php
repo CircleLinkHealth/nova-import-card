@@ -19,6 +19,7 @@ use App\Console\Commands\EmailRNDailyReportToDeprecate;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
+use App\Console\Commands\OverwriteNBIPatientMRN;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
@@ -33,6 +34,7 @@ use App\Console\Commands\TuneScheduledCalls;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
+use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\ResponseCache\Commands\Clear;
@@ -184,7 +186,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
 
-        $schedule->command(OverwriteNBIImportedData::class)->everyFiveMinutes()->onOneServer();
+        $schedule->command(OverwriteNBIImportedData::class)->everyThirtyMinutes()->onOneServer();
+
+        $schedule->command(OverwriteNBIPatientMRN::class)->everyThirtyMinutes()->onOneServer();
 
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->monthlyOn(1, '00:30')->onOneServer();
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)->monthlyOn(1, '08:30')->onOneServer();
@@ -192,22 +196,9 @@ class Kernel extends ConsoleKernel
         $sendReminderAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->subHours(36);
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)->monthlyOn($sendReminderAt->day, $sendReminderAt->format('H:i'))->onOneServer();
 
-//        @todo: enable after testing a bit more
-//        $lastDayToResolveDisputesAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->addDays(2);
-//        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')
-//            ->skip(function () use ($lastDayToResolveDisputesAt) {
-//                $today = Carbon::now();
-//                $disputeStartDate = $lastDayToResolveDisputesAt
-//                    ->startOfMonth()
-//                    ->startOfDay()
-//                    ->addMinutes(515); //that's 08:35
-//                $disputeEndDate = $lastDayToResolveDisputesAt;
-//
-//                if ($today->gte($disputeStartDate)
-//                && $today->lte($disputeEndDate)) {
-//                    return true;
-//                }
-//            })->onOneServer();
+        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('08:35')->skip(function () {
+            SendResolveInvoiceDisputeReminder::shouldSkip();
+        })->onOneServer();
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30')->onOneServer();
     }
 }

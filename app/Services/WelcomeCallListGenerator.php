@@ -11,6 +11,7 @@ use App\Constants;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
+use App\Exceptions\Eligibility\InvalidStructureException;
 use App\Models\CPM\CpmProblem;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
 use App\Services\Eligibility\Csv\CsvPatientList;
@@ -108,6 +109,8 @@ class WelcomeCallListGenerator
         EligibilityBatch $batch = null,
         EligibilityJob $eligibilityJob = null
     ) {
+        ini_set('memory_limit', '128M');
+
         $this->patientList        = $patientList;
         $this->ineligiblePatients = new Collection();
 
@@ -890,7 +893,7 @@ class WelcomeCallListGenerator
     {
         if (EligibilityBatch::TYPE_ONE_CSV == $this->batch->type && $this->eligibilityJob) {
             $csvPatientList = new CsvPatientList(collect($this->patientList));
-            $isValid        = $csvPatientList->guessValidator() ?? null;
+            $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
 
             $this->patientList->each(
                 function ($patient) use ($isValid) {
@@ -921,7 +924,7 @@ class WelcomeCallListGenerator
         }
         if ($this->invalidStructure) {
             //if there are structure errors we stop the process because create enrollees fails from missing arguements
-            throw new \Exception(
+            throw new InvalidStructureException(
                 "Record with eligibility job id: {$this->eligibilityJob->id} has invalid structure.",
                 422
             );
@@ -984,6 +987,12 @@ class WelcomeCallListGenerator
 
     private function setEligibilityJobStatusFromException(\Exception $e)
     {
+        switch ((int) $e->getCode()) {
+            case 422: $reason = 'invalid data'; break;
+            case 500: $reason = 'possible bug'; break;
+            default: $reason  = null;
+        }
+
         $this->setEligibilityJobStatus(
             2,
             [
@@ -991,7 +1000,9 @@ class WelcomeCallListGenerator
                 'message' => $e->getMessage(),
                 'file'    => $e->getFile(),
                 'line'    => $e->getLine(),
-            ]
+            ],
+            EligibilityJob::ERROR,
+            $reason
         );
     }
 

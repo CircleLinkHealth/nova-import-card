@@ -19,13 +19,13 @@
 
                             <div class="panel-heading">Nurse Performance Report</div>
 
-                            <div class="calendar-date" style="padding-left: 2%;">
+                            <div class="calendar-date" style="padding-left: 2%; padding-top: 1%;">
                                 @include('admin.reports.nursesPerformanceForm')
                             </div>
-
-                            <div class="dates">
-                                {{$startDate->format('l F jS')}} - {{$endDate->format('l F jS Y')}}
-                            </div>
+                            {{--We need less white space + start and end date are already dispalyed in placeholder and table row--}}
+                            {{--                            <div class="dates">--}}
+                            {{--                                {{$startDate->format('l F jS')}} - {{$endDate->format('l F jS Y')}}--}}
+                            {{--                            </div>--}}
 
                             <div class="panel-body">
                                 <table class="table table-hover" id="nurse_metrics" style="width: 100%">
@@ -40,8 +40,6 @@
             </div>
         </div>
     </div>
-
-
     @push('scripts')
         <script>
             $(function () {
@@ -73,16 +71,17 @@
                         {
                             className: 'dt-center',
                             targets: columnsForTextFormating
-                        }
+                        },
                     ],
+
                     deferRender: true,
-                    scrollY: "95%",
+                    scrollY: "auto",
                     scrollX: "100%",
                     scrollCollapse: false,
                     processing: true,
                     serverSide: true,
                     paging: false,
-                    //fixed columns disables ability to sort data on demand. Can we fix this?
+                    //fixed columns disables ability to sort data on demand.
                     fixedColumns: {
                         leftColumns: 2,
                     },
@@ -96,7 +95,6 @@
                             d.end_date = '{{$endDate}}';
                         },
                         error: function () {
-                            //not always shows accurate response.
                             alert("File does not exist for: '{{$startDate->format('l F jS')}}'")
                         },
 
@@ -129,6 +127,7 @@
         <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
         <script src="//cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
 
+
     @endpush
 @stop
 
@@ -145,7 +144,7 @@
     }
 
     .dates {
-        font-size: large;
+        font-size: medium;
         text-align: center;
         font-weight: bold;
     }
@@ -167,4 +166,7 @@
         border-right: solid 1px #000000;
     }
 
+    .table.dataTable.no-footer {
+         border-bottom: unset;
+    }
 </style>

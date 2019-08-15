@@ -339,26 +339,24 @@ class QueueEligibilityBatchForProcessing extends Command
             return $batch;
         }
 
-        $unprocessed = EligibilityJob::whereBatchId($batch->id)
-            ->where('status', '<', 2)
-            ->take(500)
-            ->get();
+        $unprocessedQuery = EligibilityJob::whereBatchId($batch->id)
+            ->where('status', '<', 2);
 
-        if ($unprocessed->isEmpty()) {
+        $unprocessedQuery->take(200)->get()->each(function ($job) use ($batch) {
+            ProcessSinglePatientEligibility::dispatchNow(
+                collect([$job->data]),
+                $job,
+                $batch,
+                $batch->practice
+            );
+        });
+
+        if ( ! $unprocessedQuery->exists()) {
             $batch->status = EligibilityBatch::STATUSES['complete'];
             $batch->save();
 
             return $batch;
         }
-
-        $unprocessed->map(function ($job) use ($batch) {
-            (new ProcessSinglePatientEligibility(
-                collect([$job->data]),
-                $job,
-                $batch,
-                $batch->practice
-            ))->handle();
-        });
 
         $batch->status = EligibilityBatch::STATUSES['processing'];
         $batch->save();
