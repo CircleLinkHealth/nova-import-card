@@ -130,15 +130,15 @@ class NotesController extends Controller
                 ->where('inbound_cpm_id', '=', $patientId)
                 ->where('outbound_cpm_id', '=', $author_id)
                 ->select(
-                                           [
-                                               'id',
-                                               'type',
-                                               'sub_type',
-                                               'attempt_note',
-                                               'scheduled_date',
-                                               'window_start',
-                                               'window_end',
-                                           ]
+                    [
+                        'id',
+                        'type',
+                        'sub_type',
+                        'attempt_note',
+                        'scheduled_date',
+                        'window_start',
+                        'window_end',
+                    ]
                                        )
                 ->get();
         }
@@ -337,7 +337,6 @@ class NotesController extends Controller
         $note = Note::where('patient_id', $input['patient_id'])
             ->findOrFail($input['noteId']);
 
-        //TODO: Fix summary text
         $note->forward($input['notify_careteam'], $input['notify_circlelink_support']);
 
         return redirect()->route('patient.note.index', ['patient' => $patientId]);
@@ -783,10 +782,10 @@ class NotesController extends Controller
     {
         return Practice::whereId($patient->program_id)
             ->where(
-                           function ($q) {
-                               $q->where('name', '=', 'phoenix-heart')
-                                   ->orWhere('name', '=', 'demo');
-                           }
+                function ($q) {
+                    $q->where('name', '=', 'phoenix-heart')
+                        ->orWhere('name', '=', 'demo');
+                }
                        )
             ->exists();
     }
