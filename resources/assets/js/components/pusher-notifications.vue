@@ -109,8 +109,14 @@
                     }
                 );
 
-            // const userId = 13244;
+            // const userId = 13251;
             // window.Echo.private('App.User.' + userId)
+            //     .notification((notification) => {
+            //         console.log(notification);
+            //     });
+            //
+            //
+            // window.Echo.private('users.' + userId)
             //     .notification((notification) => {
             //         console.log(notification);
             //     });
