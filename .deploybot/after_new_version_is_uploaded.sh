@@ -28,7 +28,7 @@ fi
 
 
 # Install application dependencies
-composer install --no-dev --classmap-authoritative --prefer-dist
+composer install --no-dev --classmap-authoritative --prefer-dist --no-scripts
 
 # Exit if composer failed
 if [ $? -ne 0 ]; then

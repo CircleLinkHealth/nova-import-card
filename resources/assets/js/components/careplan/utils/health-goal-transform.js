@@ -11,7 +11,8 @@ const transformHealthGoal = (goal) => {
             goal.info.starting = ''
         }
         goal.start = () => (goal.info.starting || 'N/A')
-        goal.end = () => ((goal.info.target == '0') ? 'N/A' : (goal.info.target || 'N/A'))
+        //if smoking (goal.type === 3) then show 0 instead of N/A
+        goal.end = () => (goal.type === 3 ? goal.info.target : (goal.info.target == '0') ? 'N/A' : (goal.info.target || 'N/A'))
         goal.active = () => !!(goal.info.starting && goal.info.target)
         
         const start = (goal.start().split('/')[0] || 0)

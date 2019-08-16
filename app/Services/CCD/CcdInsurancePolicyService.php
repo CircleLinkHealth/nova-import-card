@@ -18,7 +18,8 @@ class CcdInsurancePolicyService
 {
     public function checkPendingInsuranceApproval(User $patient)
     {
-        $hasPolicies = $patient->ccdInsurancePolicies()->get();
+        $patient->loadMissing('ccdInsurancePolicies');
+        $hasPolicies = $patient->ccdInsurancePolicies;
 
         //patient has no policies, so no approval needed
         if ($hasPolicies->isEmpty()) {
@@ -26,9 +27,8 @@ class CcdInsurancePolicyService
         }
 
         //check if the user has approved insurance policies
-        $approvedInsurance = $patient->ccdInsurancePolicies()
-            ->whereApproved(true)
-            ->get();
+        $approvedInsurance = $patient->ccdInsurancePolicies
+            ->where('approved', true);
 
         return $approvedInsurance->isEmpty();
     }

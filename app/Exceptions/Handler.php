@@ -68,15 +68,6 @@ class Handler extends ExceptionHandler
         if ($e instanceof ModelNotFoundException) {
             return response($e->getMessage(), 400);
         }
-        if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
-            return response()->json(['token_expired'], $e->getStatusCode());
-        }
-        if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
-            return response()->json(['token_invalid'], $e->getStatusCode());
-        }
-        if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenBlacklistedException) {
-            return response()->json(['token_blacklisted'], '403');
-        }
         if ($this->isHttpException($e)) {
             return $this->renderHttpException($e);
         }

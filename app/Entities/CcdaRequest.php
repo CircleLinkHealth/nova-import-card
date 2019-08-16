@@ -7,8 +7,6 @@
 namespace App\Entities;
 
 use App\Models\MedicalRecords\Ccda;
-use Prettus\Repository\Contracts\Transformable;
-use Prettus\Repository\Traits\TransformableTrait;
 
 /**
  * App\Entities\CcdaRequest.
@@ -43,10 +41,8 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest query()
  */
-class CcdaRequest extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
+class CcdaRequest extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    use TransformableTrait;
-
     protected $fillable = [
         'ccda_id',
         'vendor',

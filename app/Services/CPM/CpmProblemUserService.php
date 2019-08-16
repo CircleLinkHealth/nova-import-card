@@ -7,68 +7,75 @@
 namespace App\Services\CPM;
 
 use App\Models\CPM\CpmInstruction;
-use App\Repositories\CpmProblemUserRepository;
-use App\Repositories\UserRepositoryEloquent;
+use App\Models\CPM\CpmProblem;
+use App\Models\CPM\CpmProblemUser;
 use CircleLinkHealth\Customer\Entities\User;
 
 class CpmProblemUserService
 {
     private $cpmProblemService;
-    private $cpmProblemUserRepo;
-    private $userRepo;
 
-    public function __construct(CpmProblemUserRepository $cpmProblemUserRepo, UserRepositoryEloquent $userRepo, CpmProblemService $cpmProblemService)
+    public function __construct(CpmProblemService $cpmProblemService)
     {
-        $this->cpmProblemUserRepo = $cpmProblemUserRepo;
-        $this->userRepo           = $userRepo;
-        $this->cpmProblemService  = $cpmProblemService;
+        $this->cpmProblemService = $cpmProblemService;
     }
 
     public function addInstructionToProblem($patientId, $cpmProblemId, $instructionId)
     {
-        $cpmProblemUser = $this->repo()->where([
-            'patient_id'         => $patientId,
-            'cpm_problem_id'     => $cpmProblemId,
-            'cpm_instruction_id' => $instructionId,
-        ])->first();
-        if ( ! $cpmProblemUser) {
-            return $this->repo()->create($patientId, $cpmProblemId, $instructionId);
-        }
-        throw new Exception('a similar instruction->problem relationship already exists');
+        return $this->create($patientId, $cpmProblemId, $instructionId);
     }
 
     public function addProblemToPatient($patientId, $cpmProblemId)
     {
-        $problemUser = $this->repo()->create($patientId, $cpmProblemId, null);
+        $problemUser = $this->create($patientId, $cpmProblemId, null);
         if ($problemUser) {
-            return $this->cpmProblemService->setupProblem($problemUser->problems()->first());
+            return $this->cpmProblemService->setupProblem(CpmProblem::with(['cpmInstructions' => function($q) { $q->latest(); },'snomedMaps',])->find($cpmProblemId));
         }
 
         return $problemUser;
+    }
+
+    /**
+     * @param $patientId
+     * @param $cpmProblemId
+     * @param null $instructionId
+     *
+     * @return CpmProblemUser|null
+     */
+    public function create(int $patientId, int $cpmProblemId, int $instructionId = null)
+    {
+        return CpmProblemUser::firstOrCreate([
+            'patient_id'     => $patientId,
+            'cpm_problem_id' => $cpmProblemId,
+        ], [
+            'cpm_instruction_id' => $instructionId,
+        ]);
     }
 
     public function getPatientProblems($userId)
     {
         $user = is_a($userId, User::class)
             ? $userId
-            : $this->userRepo->model()->findOrFail($userId);
+            : User::findOrFail($userId);
 
         $user->loadMissing(['cpmProblems']);
 
+        $instructions = CpmInstruction::findMany($user->cpmProblems->pluck('pivot.cpm_instruction_id')->all());
+
         return $user->cpmProblems
-            ->map(function ($p) {
+            ->map(function ($p) use ($instructions) {
                 return [
                     'id'          => $p->id,
                     'name'        => $p->name,
                     'code'        => $p->default_icd_10_code,
-                    'instruction' => CpmInstruction::find($p->pivot->cpm_instruction_id),
+                    'instruction' => $instructions->firstWhere('id', $p->pivot->cpm_instruction_id),
                 ];
             });
     }
 
     public function removeInstructionFromProblem($patientId, $cpmProblemId, $instructionId)
     {
-        $this->repo()->where([
+        CpmProblemUser::where([
             'patient_id'         => $patientId,
             'cpm_problem_id'     => $cpmProblemId,
             'cpm_instruction_id' => $instructionId,
@@ -77,11 +84,6 @@ class CpmProblemUserService
 
     public function removeProblemFromPatient($patientId, $cpmProblemId)
     {
-        return $this->repo()->remove($patientId, $cpmProblemId);
-    }
-
-    public function repo()
-    {
-        return $this->cpmProblemUserRepo;
+        return CpmProblemUser::where(['cpm_problem_id' => $cpmProblemId, 'patient_id' => $patientId])->delete();
     }
 }
