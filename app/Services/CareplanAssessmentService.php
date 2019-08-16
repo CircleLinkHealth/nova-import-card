@@ -98,6 +98,6 @@ class CareplanAssessmentService
 
             return $savedAssessments->first();
         }
-        throw new Exception('invalid parameter "assessments"');
+        throw new \Exception('invalid parameter "assessments"');
     }
 }

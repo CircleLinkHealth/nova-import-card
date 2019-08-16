@@ -8,7 +8,6 @@ namespace App\Console\Commands;
 
 use App\EligibilityBatch;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
-use App\Jobs\LGHDetermineCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -53,17 +52,6 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
             ->take(2000)
             ->get(['id', 'practice_id'])
             ->map(function ($ccda) use ($practices) {
-                //lgh
-                if (141 == $ccda->practice_id) {
-                    dispatch(
-                        (new LGHDetermineCcdaEnrollmentEligibility($ccda))
-                            ->delay(Carbon::now()->addSeconds(5))
-                            ->onQueue('low')
-                            );
-
-                    return true;
-                }
-
                 if ($ccda->practice_id) {
                     $practice = $practices[$ccda->practice_id] ?? null;
 

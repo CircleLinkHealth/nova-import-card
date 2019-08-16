@@ -98,8 +98,8 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
         )
             ->where('month_year', $this->date)
             ->whereHas('nurse.user', function ($q) {
-                               $q->withTrashed();
-                           });
+                $q->withTrashed();
+            });
     }
 
     /**

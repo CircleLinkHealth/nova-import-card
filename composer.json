@@ -22,10 +22,6 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:subzero10/laravel-raygun.git"
-    },
-    {
-      "type": "git",
       "url": "git@github.com:CircleLinkHealth/opcache-gui.git"
     },
     {
@@ -53,6 +49,10 @@
       "url": "git@github.com:CircleLinkHealth/module-core.git"
     },
     {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/module-responsecache.git"
+    },
+    {
       "type": "composer",
       "url": "https://packagist.org"
     },
@@ -76,11 +76,11 @@
     "algolia/scout-extended": "^1.6",
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "^2.0",
-    "arcturial/clickatell": "*",
-    "barryvdh/laravel-snappy": "0.4.3",
+    "barryvdh/laravel-snappy": "0.4.4",
     "circlelinkhealth/core": "dev-master",
     "circlelinkhealth/customer": "dev-master",
     "circlelinkhealth/raygun": "dev-master",
+    "circlelinkhealth/responsecache": "dev-master",
     "circlelinkhealth/timetracking": "dev-master",
     "circlelinkhealth/twofa": "dev-master",
     "daltcore/lara-pdf-merger": "dev-master",
@@ -88,7 +88,6 @@
     "doctrine/dbal": "~2.3",
     "fideloper/proxy": "^4.0",
     "fourstacks/nova-checkboxes": "^0.1.5",
-    "fzaninotto/faker": "~1.4",
     "genealabs/laravel-caffeine": "^0.8.1",
     "giggsey/libphonenumber-for-php": "^8.10",
     "guzzlehttp/guzzle": "~5.3|~6.0",
@@ -101,7 +100,6 @@
     "jubeki/nova-card-linkable": "^1.0",
     "lab404/laravel-impersonate": "^1.2",
     "laracasts/utilities": "~2.0",
-    "laravel/envoy": "^1.5",
     "laravel/framework": "5.7.*",
     "laravel/horizon": "^1.4",
     "laravel/nova": "~2.0",
@@ -114,22 +112,15 @@
     "nao-pon/flysystem-google-drive": "~1.1",
     "nvanheuverzwijn/monolog-logdna": "^2.1",
     "phaxio/phaxio": "^1.0",
-    "pragmarx/health": "^0.9.16",
     "pragmarx/version": "^0.2.8",
     "predis/predis": "^1.1",
-    "prettus/l5-repository": "dev-master",
-    "prettus/laravel-validation": "*",
     "propaganistas/laravel-phone": "^3.0",
-    "rap2hpoutre/laravel-log-viewer": "^0.4.0",
     "seld/jsonlint": "^1.7",
     "sparclex/nova-import-card": "^2.0",
-    "spatie/laravel-google-calendar": "^2.0",
     "spatie/laravel-medialibrary": "^7.0.0",
-    "spatie/laravel-responsecache": "^5.0",
     "spatie/laravel-view-models": "^1.1",
     "titasgailius/search-relations": "^1.0",
     "twilio/sdk": "5.7",
-    "tymon/jwt-auth": "0.5.*",
     "waavi/url-shortener": "dev-master",
     "wikimedia/composer-merge-plugin": "^1.4",
     "yajra/laravel-datatables-oracle": "~8.0"
@@ -140,6 +131,7 @@
     "brianium/paratest": "*",
     "darkaonline/l5-swagger": "^5.5",
     "filp/whoops": "~2.0",
+    "fzaninotto/faker": "~1.4",
     "friendsofphp/php-cs-fixer": "^2.13",
     "jkocik/laravel-profiler": "^1.2",
     "laravel/dusk": "^3.0",
@@ -231,7 +223,7 @@
     "laravel": {
       "dont-discover": [
         "laravel/dusk",
-        "spatie/laravel-responsecache"
+        "barryvdh/laravel-snappy"
       ]
     },
     "merge-plugin": {

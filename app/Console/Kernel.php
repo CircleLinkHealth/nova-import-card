@@ -31,16 +31,15 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
-use App\Spatie\ResponseCache\Commands\Clear;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
+use CircleLinkHealth\ResponseCache\Commands\Clear;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Jorijn\LaravelSecurityChecker\Console\SecurityMailCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -56,6 +55,10 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
+        if ( ! $this->app->runningInConsole()) {
+            return;
+        }
+
         $this->load(__DIR__.'/Commands');
 
         if ('local' == $this->app->environment()) {
@@ -72,6 +75,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        if ( ! isQueueWorkerEnv()) {
+            return;
+        }
+
         $schedule->command('horizon:snapshot')->everyFiveMinutes()->onOneServer();
 
         $schedule->command(DetermineTargetPatientEligibility::class)
@@ -100,10 +107,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(SendCarePlanApprovalReminders::class)
             ->weekdays()
             ->at('08:00')->onOneServer();
-
-        //commenting out due to isues with google calendar
-//        $schedule->command('nurseSchedule:export')
-//                 ->hourly()->onOneServer();
 
         $schedule->command(GetAppointments::class)
             ->dailyAt('22:30')->onOneServer();
@@ -140,9 +143,6 @@ class Kernel extends ConsoleKernel
 //                '--variable-time' => true,
 //            ]
 //        )->monthlyOn(1, '5:0')->onOneServer();
-
-//        $schedule->command('lgh:importInsurance')
-//            ->dailyAt('05:00')->onOneServer();
 
         $schedule->command(QueueGenerateNurseDailyReport::class)
             ->dailyAt('23:45')
@@ -183,8 +183,6 @@ class Kernel extends ConsoleKernel
 //        $schedule->command(DownloadTwilioRecordings::class)
 //                 ->everyThirtyMinutes()
 //                 ->withoutOverlapping()->onOneServer();
-
-        $schedule->command(SecurityMailCommand::class)->weekly()->onOneServer();
 
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
 

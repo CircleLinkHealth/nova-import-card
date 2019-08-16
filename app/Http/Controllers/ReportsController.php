@@ -17,6 +17,7 @@ use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\PrintPausedPatientLettersService;
 use App\Services\ReportsService;
+use App\ValueObjects\PatientCareplanRelations;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -486,7 +487,7 @@ class ReportsController extends Controller
         //     return redirect()->route('patient.careplan.print', ['patientId' => $patientId]);
         // }
 
-        $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
+        $careplan = $this->formatter->formatDataForViewPrintCareplanReport($patient);
 
         if ( ! $careplan) {
             return 'Careplan not found...';
@@ -773,22 +774,22 @@ class ReportsController extends Controller
     }
 
     public function viewPrintCareplan(
-        Request $request,
-        $patientId = false,
         CcdInsurancePolicyService $insurances,
-        CareplanService $careplanService
+        CareplanService $careplanService,
+        Request $request,
+        $patientId = false
     ) {
         if ( ! $patientId) {
             return 'Patient Not Found..';
         }
 
-        $patient = User::with('carePlan')->find($patientId);
+        $patient = User::with(PatientCareplanRelations::get())->findOrFail($patientId);
 
         if (CarePlan::PDF == $patient->getCareplanMode()) {
             return redirect()->route('patient.pdf.careplan.print', ['patientId' => $patientId]);
         }
 
-        $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
+        $careplan = $this->formatter->formatDataForViewPrintCareplanReport($patient);
 
         if ( ! $careplan) {
             return 'Careplan not found...';
@@ -800,26 +801,35 @@ class ReportsController extends Controller
 
         $recentSubmission = $request->input('recentSubmission') ?? false;
 
+        $args = [
+            'patient'                 => $patient,
+            'problems'                => $careplan[$patientId]['problems'],
+            'problemNames'            => $careplan[$patientId]['problem'],
+            'biometrics'              => $careplan[$patientId]['bio_data'],
+            'symptoms'                => $careplan[$patientId]['symptoms'],
+            'lifestyle'               => $careplan[$patientId]['lifestyle'],
+            'medications_monitor'     => $careplan[$patientId]['medications'],
+            'taking_medications'      => $careplan[$patientId]['taking_meds'],
+            'allergies'               => $careplan[$patientId]['allergies'],
+            'social'                  => $careplan[$patientId]['social'],
+            'appointments'            => $careplan[$patientId]['appointments'],
+            'other'                   => $careplan[$patientId]['other'],
+            'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
+            'skippedAssessment'       => $skippedAssessment,
+            'recentSubmission'        => $recentSubmission,
+            'careplan'                => array_merge(
+                $careplanService->careplan($patient),
+                //vue front end expects this format
+            ['other' => [
+                ['name' => $careplan[$patientId]['other']],
+            ],
+            ]
+            ),
+        ];
+
         return view(
             'wpUsers.patient.careplan.print',
-            [
-                'patient'                 => $patient,
-                'problems'                => $careplan[$patientId]['problems'],
-                'problemNames'            => $careplan[$patientId]['problem'],
-                'biometrics'              => $careplan[$patientId]['bio_data'],
-                'symptoms'                => $careplan[$patientId]['symptoms'],
-                'lifestyle'               => $careplan[$patientId]['lifestyle'],
-                'medications_monitor'     => $careplan[$patientId]['medications'],
-                'taking_medications'      => $careplan[$patientId]['taking_meds'],
-                'allergies'               => $careplan[$patientId]['allergies'],
-                'social'                  => $careplan[$patientId]['social'],
-                'appointments'            => $careplan[$patientId]['appointments'],
-                'other'                   => $careplan[$patientId]['other'],
-                'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
-                'skippedAssessment'       => $skippedAssessment,
-                'recentSubmission'        => $recentSubmission,
-                'careplan'                => $careplanService->careplan($patientId),
-            ]
+            $args
         );
     }
 }

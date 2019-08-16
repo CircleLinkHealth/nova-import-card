@@ -41,6 +41,11 @@ class AthenaAPIAdapter
         return $this->eligiblePatientList;
     }
 
+    /**
+     * @throws \Exception
+     *
+     * @return bool
+     */
     public function isEligible()
     {
         $patientList = collect();

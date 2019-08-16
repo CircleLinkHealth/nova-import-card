@@ -8,7 +8,6 @@ namespace App\Services\CPM;
 
 use App\Models\CPM\CpmInstruction;
 use App\Repositories\CpmInstructionRepository;
-use App\Repositories\UserRepositoryEloquent;
 use CircleLinkHealth\Customer\Entities\User;
 
 class CpmInstructionService
@@ -16,10 +15,9 @@ class CpmInstructionService
     private $instructionsRepo;
     private $userRepo;
 
-    public function __construct(CpmInstructionRepository $instructionsRepo, UserRepositoryEloquent $userRepo)
+    public function __construct(CpmInstructionRepository $instructionsRepo)
     {
         $this->instructionsRepo = $instructionsRepo;
-        $this->userRepo         = $userRepo;
     }
 
     public function create($name)

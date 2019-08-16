@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use App\Models\CCD\Problem;
+use App\Models\CCD\Problem as CcdProblem;
 use Illuminate\Support\Facades\DB;
 
 class CcdProblemRepository
@@ -22,28 +22,22 @@ class CcdProblemRepository
      */
     public function addPatientCcdProblem($ccdProblem)
     {
-        if ( ! $this->patientCcdExists($ccdProblem['userId'], $ccdProblem['name'])) {
-            $problem                 = new Problem();
-            $problem->patient_id     = $ccdProblem['userId'];
-            $problem->name           = $ccdProblem['name'];
-            $problem->cpm_problem_id = $ccdProblem['cpm_problem_id'];
-            $problem->is_monitored   = $ccdProblem['is_monitored'];
-            $problem->save();
-
-            return $problem;
-        }
-
-        return $this->model()->where(['patient_id' => $ccdProblem['userId'], 'name' => $ccdProblem['name']])->first();
+        return CcdProblem::firstOrCreate(['patient_id' => $ccdProblem['userId'], 'name' => $ccdProblem['name']], [
+            'patient_id'     => $ccdProblem['userId'],
+            'name'           => $ccdProblem['name'],
+            'cpm_problem_id' => $ccdProblem['cpm_problem_id'],
+            'is_monitored'   => $ccdProblem['is_monitored'],
+        ]);
     }
 
     public function count()
     {
-        return $this->model()->select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count();
+        return CcdProblem::select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count();
     }
 
     public function editPatientCcdProblem($userId, $ccdProblemId, $problemCode = null, $is_monitored = null)
     {
-        $problem = $this->model()->where(['id' => $ccdProblemId, 'patient_id' => $userId])->first();
+        $problem = CcdProblem::where(['id' => $ccdProblemId, 'patient_id' => $userId])->first();
 
         if ($problem) {
             $problem->cpm_problem_id = $problemCode;
@@ -54,34 +48,24 @@ class CcdProblemRepository
         return $problem;
     }
 
-    public function model()
-    {
-        return app(Problem::class);
-    }
-
     public function patientCcdExists($userId, $name)
     {
-        return (bool) $this->model()->where(['patient_id' => $userId, 'name' => $name])->first();
+        return (bool) CcdProblem::where(['patient_id' => $userId, 'name' => $name])->first();
     }
 
     public function patientIds($name)
     {
-        return $this->model()->where(['name' => $name])->distinct(['patient_id'])->get(['patient_id']);
+        return CcdProblem::where(['name' => $name])->distinct(['patient_id'])->get(['patient_id']);
     }
 
     public function problem($id)
     {
-        return $this->model()->findOrFail($id);
-    }
-
-    public function problems()
-    {
-        return $this->model()->groupBy('name')->orderBy('id')->paginate(30);
+        return CcdProblem::findOrFail($id);
     }
 
     public function removePatientCcdProblem($userId, $ccdId)
     {
-        $this->model()->where(['patient_id' => $userId, 'id' => $ccdId])->first()->delete();
+        CcdProblem::where(['patient_id' => $userId, 'id' => $ccdId])->delete();
 
         return [
             'message' => 'successful',
