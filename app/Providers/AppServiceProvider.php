@@ -16,6 +16,8 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
+use Maatwebsite\Excel\Imports\HeadingRowFormatter;
+use Orangehill\Iseed\IseedServiceProvider;
 use Queue;
 
 class AppServiceProvider extends ServiceProvider
@@ -50,7 +52,7 @@ class AppServiceProvider extends ServiceProvider
 
         Horizon::auth(
             function ($request) {
-                return optional(auth()->user())->isAdmin();
+                return optional(auth()->user())->hasRole(['administrator', 'developer']);
             }
         );
 
@@ -100,6 +102,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // Excel Package Importing Config
+        // Format input array keys to be all lower-case and sluggified
+        HeadingRowFormatter::extend('custom', function ($value) {
+            return strtolower(str_slug($value));
+        });
+
         $this->app->register(\Maatwebsite\Excel\ExcelServiceProvider::class);
         $this->app->register(\Yajra\DataTables\DataTablesServiceProvider::class);
 

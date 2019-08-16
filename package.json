@@ -52,7 +52,6 @@
     "materialize-css": "^0.99.0",
     "moment": "^2.19.1",
     "node-excel-export": "github:CircleLinkHealth/node-excel-export#development",
-    "notifyjs": "^3.0.0",
     "popper.js": "^1.12",
     "select2": "^4.0.3",
     "twilio-client": "^1.6.3",

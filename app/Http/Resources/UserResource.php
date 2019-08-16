@@ -8,7 +8,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
-class User extends Resource
+class UserResource extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -53,7 +53,7 @@ class User extends Resource
             'patient_info'      => PatientInfo::make($this->whenLoaded('patientInfo')),
             'patient_summaries' => PatientMonthlySummary::collection($this->whenLoaded('patientSummaries')),
             'provider_info'     => ProviderInfo::make($this->whenLoaded('providerInfo')),
-            'primary_practice'  => Practice::make($this->whenLoaded('primaryPractice')),
+            'primary_practice'  => PracticeResource::make($this->whenLoaded('primaryPractice')),
             'status'            => optional($this->carePlan)->status,
             'is_bhi'            => $this->isBhi(),
             'is_ccm'            => $this->isCcm(),

@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\Provider;
 
-use App\ChargeableService;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Http\Resources\SAAS\PracticeChargeableServices;

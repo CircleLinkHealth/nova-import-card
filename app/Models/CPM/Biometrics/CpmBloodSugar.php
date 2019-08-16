@@ -78,7 +78,8 @@ class CpmBloodSugar extends \CircleLinkHealth\Core\Entities\BaseModel implements
 
     public function getUserValues(User $user)
     {
-        $biometric = $this->wherePatientId($user->id)->first();
+        $user->loadMissing('cpmBloodSugar');
+        $biometric = $user->cpmBloodSugar;
 
         return $biometric
             ? [

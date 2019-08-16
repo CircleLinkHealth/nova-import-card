@@ -87,7 +87,15 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download',
     ])->middleware('doNotCacheResponse');
 
-    Route::group(['prefix' => 'ehr-report-writer'], function () {
+    Route::get('download-google-drive-csv/{filename}/{dir?}/{recursive?}', [
+        'uses' => 'DownloadController@downloadCsvFromGoogleDrive',
+        'as'   => 'download.google.csv',
+    ])->middleware('doNotCacheResponse');
+
+    Route::group([
+        'prefix'     => 'ehr-report-writer',
+        'middleware' => ['permission:ehr-report-writer-access'],
+    ], function () {
         Route::get('index', [
             'uses' => 'EhrReportWriterController@index',
             'as'   => 'report-writer.dashboard',
@@ -111,6 +119,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('notify', [
             'uses' => 'EhrReportWriterController@notifyReportWriter',
             'as'   => 'report-writer.notify',
+        ]);
+
+        Route::get('google-drive', [
+            'uses' => 'EhrReportWriterController@redirectToGoogleDriveFolder',
+            'as'   => 'report-writer.google-drive',
         ]);
     });
 
@@ -427,6 +440,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('care-docs/{patient_id}/{show_past?}', [
         'uses' => 'API\PatientCareDocumentsController@getCareDocuments',
         'as'   => 'get.care-docs',
+    ]);
+
+    Route::get('view-care-document/{patient_id}/{doc_id}', [
+        'uses' => 'API\PatientCareDocumentsController@viewCareDocument',
+        'as'   => 'view.care-doc',
     ]);
 
     Route::get('download-care-document/{patient_id}/{doc_id}', [
@@ -1091,7 +1109,7 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::post('/unassign-ca', [
                 'uses' => 'EnrollmentDirectorController@unassignCareAmbassadorFromEnrollees',
-                'as'   => 'ca-director.mark-ineligible',
+                'as'   => 'ca-director.unassign-ambassador',
             ]);
 
             Route::post('/edit-enrollee', [
@@ -1390,61 +1408,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'CallsDashboard.create-call',
                 ])->middleware('permission:call.create');
             });
-
-            Route::group([
-                'prefix' => 'ops-dashboard',
-            ], function () {
-                Route::get('/index', [
-                    'uses' => 'OpsDashboardController@index',
-                    'as'   => 'OpsDashboard.index',
-                ])->middleware('permission:opsReport.read');
-                Route::get('/index/csv', [
-                    'uses' => 'OpsDashboardController@dailyCsv',
-                    'as'   => 'OpsDashboard.dailyCsv',
-                ])->middleware('permission:opsReport.read');
-                Route::get('/ops-csv/{fileName}/{collection}', [
-                    'uses' => 'OpsDashboardController@downloadCsvReport',
-                    'as'   => 'OpsDashboard.makeCsv',
-                ])->middleware('permission:opsReport.read');
-
-                Route::get('/lost-added', [
-                    'uses' => 'OpsDashboardController@getLostAdded',
-                    'as'   => 'OpsDashboard.lostAdded',
-                ])->middleware('permission:opsReport.read');
-                Route::get('/patient-list-index', [
-                    'uses' => 'OpsDashboardController@getPatientListIndex',
-                    'as'   => 'OpsDashboard.patientListIndex',
-                ])->middleware('permission:opsReport.read');
-
-                Route::get('/patient-list', [
-                    'uses' => 'OpsDashboardController@getPatientList',
-                    'as'   => 'OpsDashboard.patientList',
-                ])->middleware('permission:opsReport.read');
-                Route::post('/make-excel', [
-                    'uses' => 'OpsDashboardController@makeExcelPatientReport',
-                    'as'   => 'OpsDashboard.makeExcel',
-                ])->middleware('permission:opsReport.read');
-
-                //billing churn
-                Route::get('/billing-churn', [
-                    'uses' => 'OpsDashboardController@getBillingChurn',
-                    'as'   => 'OpsDashboard.billingChurn',
-                ])->middleware('permission:opsReport.read');
-
-                //old dashboard
-                Route::get('/total-data', [
-                    'uses' => 'OpsDashboardController@getTotalPatientData',
-                    'as'   => 'OpsDashboard.totalData',
-                ]);
-                Route::get('/paused-patient-list', [
-                    'uses' => 'OpsDashboardController@getPausedPatientList',
-                    'as'   => 'OpsDashboard.pausedPatientList',
-                ]);
-                Route::get('/patients-by-practice', [
-                    'uses' => 'OpsDashboardController@getPatientsByPractice',
-                    'as'   => 'OpsDashboard.patientsByPractice',
-                ]);
-            });
         });
 
         Route::resource('report-settings', 'ReportSettingsController')->names([
@@ -1613,11 +1576,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.reports.nurse.daily.data',
         ])->middleware('permission:nurseReport.create');
 
-        Route::get('reports/nurse/weekly/data', [
-            'uses' => 'NursePerformanceRepController@nurseMetricsPerformanceData',
-            'as'   => 'admin.reports.nurse.performance.data',
-        ])->middleware('permission:nurseReport.create');
-
         Route::get('reports/nurse/allocation', [
             'uses' => 'NurseController@monthlyOverview',
             'as'   => 'admin.reports.nurse.allocation',
@@ -1628,10 +1586,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.reports.nurse.monthly',
         ])->middleware('permission:nurseReport.create');
 
-        Route::get('reports/nurse/weekly', [
-            'uses' => 'NursePerformanceRepController@nurseMetricsDashboard',
-            'as'   => 'admin.reports.nurse.metrics',
-        ])->middleware('permission:nurseReport.read');
         //STATS
         Route::get('reports/nurse/stats', [
             'uses' => 'NurseController@makeHourlyStatistics',
@@ -1833,6 +1787,72 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'care.center.work.schedule.holiday.destroy',
         ])->middleware('permission:nurseHoliday.delete');
     });
+
+    //OPS REPORTS - DEVS
+    Route::group([
+        'prefix' => 'ops-dashboard',
+    ], function () {
+        Route::get('/index', [
+            'uses' => 'OpsDashboardController@index',
+            'as'   => 'OpsDashboard.index',
+        ])->middleware('permission:opsReport.read');
+        Route::get('/index/csv', [
+            'uses' => 'OpsDashboardController@dailyCsv',
+            'as'   => 'OpsDashboard.dailyCsv',
+        ])->middleware('permission:opsReport.read');
+        Route::get('/ops-csv/{fileName}/{collection}', [
+            'uses' => 'OpsDashboardController@downloadCsvReport',
+            'as'   => 'OpsDashboard.makeCsv',
+        ])->middleware('permission:opsReport.read');
+
+        Route::get('/lost-added', [
+            'uses' => 'OpsDashboardController@getLostAdded',
+            'as'   => 'OpsDashboard.lostAdded',
+        ])->middleware('permission:opsReport.read');
+        Route::get('/patient-list-index', [
+            'uses' => 'OpsDashboardController@getPatientListIndex',
+            'as'   => 'OpsDashboard.patientListIndex',
+        ])->middleware('permission:opsReport.read');
+
+        Route::get('/patient-list', [
+            'uses' => 'OpsDashboardController@getPatientList',
+            'as'   => 'OpsDashboard.patientList',
+        ])->middleware('permission:opsReport.read');
+        Route::post('/make-excel', [
+            'uses' => 'OpsDashboardController@makeExcelPatientReport',
+            'as'   => 'OpsDashboard.makeExcel',
+        ])->middleware('permission:opsReport.read');
+
+        //billing churn
+        Route::get('/billing-churn', [
+            'uses' => 'OpsDashboardController@getBillingChurn',
+            'as'   => 'OpsDashboard.billingChurn',
+        ])->middleware('permission:opsReport.read');
+
+        //old dashboard
+        Route::get('/total-data', [
+            'uses' => 'OpsDashboardController@getTotalPatientData',
+            'as'   => 'OpsDashboard.totalData',
+        ]);
+        Route::get('/paused-patient-list', [
+            'uses' => 'OpsDashboardController@getPausedPatientList',
+            'as'   => 'OpsDashboard.pausedPatientList',
+        ]);
+        Route::get('/patients-by-practice', [
+            'uses' => 'OpsDashboardController@getPatientsByPractice',
+            'as'   => 'OpsDashboard.patientsByPractice',
+        ]);
+    });
+
+    //NURSE PERFORMANCE REPORT
+    Route::get('reports/nurse/weekly/data', [
+        'uses' => 'NursePerformanceRepController@nurseMetricsPerformanceData',
+        'as'   => 'admin.reports.nurse.performance.data',
+    ])->middleware('permission:nurseReport.read');
+    Route::get('reports/nurse/weekly', [
+        'uses' => 'NursePerformanceRepController@nurseMetricsDashboard',
+        'as'   => 'admin.reports.nurse.metrics',
+    ])->middleware('permission:nurseReport.read');
 });
 
 // pagetimer

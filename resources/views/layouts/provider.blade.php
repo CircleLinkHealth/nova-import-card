@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,7 +17,7 @@
 
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
 
-    @if (str_contains(Route::getCurrentRoute()->getName(), 'admin'))
+    @if (str_contains(optional(Route::getCurrentRoute())->getName(), 'admin'))
         <link href="{{mix('/css/bootstrap.min.css')}}" rel="stylesheet">
     @endif
 

@@ -7,7 +7,7 @@
 namespace App\Services\CPM;
 
 use App\Contracts\Services\CpmModel;
-use App\Models\CPM\CpmBiometricUser;
+use App\Models\CPM\CpmBiometric;
 use App\Repositories\CpmBiometricUserRepository;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -40,21 +40,6 @@ class CpmBiometricService implements CpmModel
         return $this->biometricUserRepo->addPatientWeight($userId, $biometricId, $biometric);
     }
 
-    public function biometric($biometricId)
-    {
-        $biometric             = CpmBiometricUser::find($biometricId);
-        $biometric['patients'] = $this->biometricUserRepo->patients($biometricId)->count();
-
-        return $biometric;
-    }
-
-    public function biometricPatients($biometricId)
-    {
-        return $this->biometricUserRepo->patients($biometricId)->get(['patient_id'])->map(function ($u) {
-            return $u->patient_id;
-        });
-    }
-
     public function patientBiometrics($userId)
     {
         if (is_a($userId, User::class)) {
@@ -68,9 +53,14 @@ class CpmBiometricService implements CpmModel
         }
 
         return $user->cpmBiometrics->map(function ($biometric) use ($user) {
+            $info = $this->isEnabled($biometric, $user);
+
             return [
-                'info'    => $biometric,
-                'enabled' => (bool) $biometric->pivot->patient_id,
+                'id'      => $biometric->id,
+                'type'    => $biometric->type,
+                'name'    => $biometric->name,
+                'info'    => $info,
+                'enabled' => (bool) $info,
             ];
         });
     }
@@ -83,5 +73,23 @@ class CpmBiometricService implements CpmModel
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {
         return $user->cpmBiometrics()->sync($ids);
+    }
+
+    private function isEnabled(CpmBiometric $biometric, User $user)
+    {
+        switch ($biometric->name) {
+            case CpmBiometric::BLOOD_PRESSURE:
+                return $user->cpmBloodPressure;
+                break;
+            case CpmBiometric::BLOOD_SUGAR:
+                return $user->cpmBloodSugar;
+                break;
+            case CpmBiometric::WEIGHT:
+                return $user->cpmWeight;
+                break;
+            case CpmBiometric::SMOKING:
+                return $user->cpmSmoking;
+                break;
+        }
     }
 }

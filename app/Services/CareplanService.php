@@ -11,6 +11,7 @@ use App\Models\CPM\CpmLifestyle;
 use App\Models\CPM\CpmMedicationGroup;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmSymptom;
+use App\Note;
 use App\Repositories\CareplanRepository;
 use App\Services\CCD\CcdAllergyService;
 use App\Services\CCD\CcdProblemService;
@@ -110,22 +111,34 @@ class CareplanService
             'misc'             => $this->miscService->patientMisc($userId),
             'allMisc'          => CpmMisc::get(),
             'appointments'     => $user->appointments,
-            'healthGoalNote'   => $user->carePlanAssessment ? [
-                'body                ' => $user->carePlanAssessment->key_treatment,
-                'author_id           ' => $user->carePlanAssessment->provider_approver_id,
-                'patient_id          ' => $user->carePlanAssessment->careplan_id,
-                'created_at          ' => $user->carePlanAssessment->created_at,
-                'updated_at          ' => $user->carePlanAssessment->updated_at,
-                'isTCM               ' => 0,
-                'did_medication_recon' => 0,
-                'type                ' => 'Biometrics',
-                'id                  ' => 0,
-            ] : [],
+            'healthGoalNote'   => $this->healthGoalNote($user),
         ];
     }
 
     public function repo()
     {
         return $this->careplanRepo;
+    }
+
+    private function healthGoalNote(User $user)
+    {
+        $assessment = $user->carePlanAssessment;
+
+        if ( ! $assessment) {
+            return null;
+        }
+
+        $note                       = new Note();
+        $note->body                 = $assessment->key_treatment;
+        $note->author_id            = $assessment->provider_approver_id;
+        $note->patient_id           = $assessment->careplan_id;
+        $note->created_at           = $assessment->created_at;
+        $note->updated_at           = $assessment->updated_at;
+        $note->isTCM                = 0;
+        $note->did_medication_recon = 0;
+        $note->type                 = 'Biometrics';
+        $note->id                   = 0;
+
+        return $note;
     }
 }

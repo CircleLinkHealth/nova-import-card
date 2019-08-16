@@ -10,7 +10,7 @@ Route::group(['prefix' => 'api'], function () {
         'middleware' => ['patientProgramSecurity'],
     ], function () {
         Route::get('', 'PatientController@index')->middleware('permission:patient.read');
-        
+
         Route::group(
             [
                 'prefix' => '{userId}',
@@ -38,23 +38,11 @@ Route::group(['prefix' => 'api'], function () {
                 Route::prefix('misc')->group(
                     function () {
                         Route::get('', 'UserMiscController@getMisc')->middleware('permission:misc.read');
-                        Route::get(
-                            '{miscTypeId}',
-                            'UserMiscController@getMiscByType'
-                        )->middleware('permission:misc.read');
+                        Route::get('{miscTypeId}', 'UserMiscController@getMiscByType')->middleware('permission:misc.read');
                         Route::post('', 'UserMiscController@addMisc')->middleware('permission:misc.create');
-                        Route::post(
-                            '{miscId}/instructions',
-                            'UserMiscController@addInstructionToMisc'
-                        )->middleware('permission:misc.create,misc.delete');
-                        Route::delete(
-                            '{miscId}/instructions/{instructionId}',
-                            'UserMiscController@removeInstructionFromMisc'
-                        )->middleware('permission:misc.delete');
-                        Route::delete(
-                            '{miscId}',
-                            'UserMiscController@removeMisc'
-                        )->middleware('permission:misc.delete');
+                        Route::post('{miscId}/instructions', 'UserMiscController@addInstructionToMisc')->middleware('permission:misc.create,misc.delete');
+                        Route::delete('{miscId}/instructions/{instructionId}', 'UserMiscController@removeInstructionFromMisc')->middleware('permission:misc.delete');
+                        Route::delete('{miscId}', 'UserMiscController@removeMisc')->middleware('permission:misc.delete');
                     }
                 );
 
@@ -95,14 +83,8 @@ Route::group(['prefix' => 'api'], function () {
                     Route::get('', 'MedicationController@getMedication')->middleware('permission:medication.read');
                     Route::post('', 'MedicationController@addMedication')->middleware('permission:medication.create');
                     Route::put('{id}', 'MedicationController@editMedication')->middleware('permission:medication.update');
-                    Route::delete(
-                                     '{medicationId}',
-                                     'MedicationController@removeMedication'
-                    )->middleware('permission:medication.delete');
-                    Route::get(
-                                     'groups',
-                                     'MedicationController@getMedicationGroups'
-                    )->middleware('permission:medication.read');
+                    Route::delete('{medicationId}', 'MedicationController@removeMedication')->middleware('permission:medication.delete');
+                    Route::get('groups', 'MedicationController@getMedicationGroups')->middleware('permission:medication.read');
                 });
 
                 Route::group([
@@ -110,23 +92,14 @@ Route::group(['prefix' => 'api'], function () {
                 ], function () {
                     Route::get('', 'ProviderInfoController@show')->middleware('permission:provider.read');
                 });
-    
-                Route::get(
-                    'lifestyles',
-                    'PatientController@getLifestyles'
-                )->middleware('permission:lifestyle.read');
-                Route::post(
-                    'lifestyles',
-                    'PatientController@addLifestyle'
-                )->middleware('permission:lifestyle.create');
-                Route::delete(
-                    'lifestyles/{lifestyleId}',
-                    'PatientController@removeLifestyle'
-                )->middleware('permission:lifestyle.delete');
-    
-                Route::get('notes', 'PatientController@getNotes')->middleware('permission:note.read');
-                Route::post('notes', 'PatientController@addNote')->middleware('permission:note.create');
-                Route::put('notes/{id}', 'PatientController@editNote')->middleware('permission:note.update');
+
+                Route::get('lifestyles', 'UserLifestyleController@getLifestyles')->middleware('permission:lifestyle.read');
+                Route::post('lifestyles', 'UserLifestyleController@addLifestyle')->middleware('permission:lifestyle.create');
+                Route::delete('lifestyles/{lifestyleId}', 'UserLifestyleController@removeLifestyle')->middleware('permission:lifestyle.delete');
+
+                Route::get('notes', 'NoteController@show')->middleware('permission:note.read');
+                Route::post('notes', 'NoteController@store')->middleware('permission:note.create');
+                Route::put('notes/{id}', 'NoteController@update')->middleware('permission:note.update');
             }
         );
     });

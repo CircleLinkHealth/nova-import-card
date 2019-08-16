@@ -22,6 +22,7 @@ class NurseInvoiceDailyDispute extends BaseModel
         'status',
         'invalidated',
     ];
+    
 
     public function nurseInvoice()
     {
