@@ -11,7 +11,9 @@ use App\Models\Addendum;
 use App\Note;
 use Illuminate\Bus\Queueable;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 
 class AddendumCreated extends Notification
@@ -101,19 +103,28 @@ class AddendumCreated extends Notification
         ];
     }
 
-//    /**
-//     * Get the broadcastable representation of the notification.
-//     *
-//     * @param mixed $notifiable
-//     *
-//     * @return BroadcastMessage
-//     */
-//    public function toBroadcast($notifiable)
-//    {
-//        return new BroadcastMessage([
-//            should return notification link
-//        ]);
-//    }
+    /**
+     * Get the broadcastable representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return BroadcastMessage
+     */
+    public function toBroadcast($notifiable)
+    {
+        return new BroadcastMessage([
+            'sender_id'       => auth()->id(),
+            'receiver_id'     => $notifiable->id,
+            'patient_name'    => $this->getPatientName(),
+            'note_id'         => $this->getNoteId(),
+            'attachment_id'   => $this->getAttachment()->id,
+            'redirect_link'   => $this->redirectLink(),
+            'attachment_type' => Addendum::class,
+            'description'     => 'Addendum',
+            'subject'         => 'has created an addendum for',
+            'sender_name'     => auth()->user()->display_name,
+        ]);
+    }
 
     /**
      * Get the mail representation of the notification.

@@ -78,7 +78,7 @@
                 const getPatientName = notification.data.patient_name;
 
                 return `<strong>${getSenderName}</strong> ${getNotificationSubject}<strong> ${getPatientName}</strong>
-                        <span style="float: right;padding-top: 4%; color: #90949c"></span>`;
+                        <span style="float: right;padding-top: 4%; color: #90949c">Time Here</span>`;
 
             },
 
@@ -109,14 +109,22 @@
                     }
                 );
 
-            // const userId = 13251;
+            // const userId = 13244;
             // window.Echo.private('App.User.' + userId)
             //     .notification((notification) => {
             //         console.log(notification);
             //     });
             //
+            // window.Echo.private('App.User.' + 13251)
+            //     .notification((notification) => {
+            //         console.log(notification);
+            //     });
             //
-            // window.Echo.private('users.' + userId)
+            // window.Echo.private('users.' + 13251)
+            //     .notification((notification) => {
+            //         console.log(notification);
+            //     });
+            // window.Echo.private('users.' + 13244)
             //     .notification((notification) => {
             //         console.log(notification);
             //     });
