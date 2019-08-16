@@ -22,6 +22,10 @@
                 background: transparent;
             }
 
+            .edgy-button {
+                border-radius: 3px;
+            }
+
             .radio-inline {
                 padding-left: 0;
                 margin-left: 0;
@@ -542,7 +546,7 @@
                                             <div class="col-sm-12">
                                                 <button name="Submit" id="Submit" type="submit" value="Submit"
                                                         form="newNote"
-                                                        class="btn btn-primary btn-lg form-item--button form-item-spacing">
+                                                        class="btn btn-primary btn-lg form-item--button form-item-spacing edgy-button">
                                                     Save Note
                                                 </button>
                                             </div>

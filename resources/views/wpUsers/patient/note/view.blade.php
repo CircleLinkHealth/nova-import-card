@@ -18,6 +18,10 @@
                 clear: both;
             }
 
+            .edgy-button {
+                border-radius: 3px;
+            }
+
             blockquote {
                 padding: 10px 20px;
                 margin: 10px 0 20px;
@@ -37,6 +41,7 @@
                 margin-top: 10px;
                 margin-bottom: 10px;
                 margin-right: 10px;
+                display: table-cell;
             }
         </style>
     @endpush
@@ -126,14 +131,14 @@
                                         <div class="col-sm-12 form-group">
 
                                         </div>
-                                        <div class="col-sm-12" style="margin-top: 10px">
+                                        <div class="col-sm-12">
                                             @foreach($meta as $tag)
-
+                                                <div style=" display: inline">
                                                     <div class="label label-{{$tag->severity}} meta-tags"
                                                          @isset($tag->tooltip) data-tooltip="{{$tag->tooltip}}" @endisset>
                                                         {{ucwords($tag->title)}}
                                                     </div>
-
+                                                </div>
                                             @endforeach
                                             @if(is_array($hasReaders))
                                                 @foreach($hasReaders as $key => $value)

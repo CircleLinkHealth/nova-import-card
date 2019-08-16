@@ -47,7 +47,7 @@
                 @if(Route::is('patient.note.view'))
                     <input type="hidden" value="new_activity"/>
                     <button id="update" name="submitAction" type="submit" value="new_activity"
-                            class="btn btn-primary btn-sm">
+                            class="btn btn-primary btn-sm edgy-button">
                         Send / Return
                     </button>
                 @endif
