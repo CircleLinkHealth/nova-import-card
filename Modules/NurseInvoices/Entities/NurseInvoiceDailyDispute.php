@@ -11,7 +11,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 class NurseInvoiceDailyDispute extends BaseModel
 {
     protected $casts = [
-        'status'       => 'boolean',
         'disputed_day' => 'date',
     ];
 
@@ -24,10 +23,8 @@ class NurseInvoiceDailyDispute extends BaseModel
         'invalidated',
     ];
 
-//    protected $table = 'nurse_invoice_daily_disputes';
-
     public function nurseInvoice()
     {
-        return $this->belongsTo(NurseInvoice::class, 'id', 'invoice_id');
+        return $this->belongsTo(NurseInvoice::class, 'invoice_id', 'id');
     }
 }

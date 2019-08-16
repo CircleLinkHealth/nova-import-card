@@ -15,14 +15,14 @@ use Illuminate\Support\Facades\Request;
 class NurseInvoiceDailyDisputesController extends Controller
 {
     /**
-     * @var \App\Services\NurseInvoiceDailyDisputeTimeService
+     * @var NurseInvoiceDailyDisputeTimeService
      */
     private $service;
 
     /**
      * NurseInvoiceDailyDisputesController constructor.
      *
-     * @param \App\Services\NurseInvoiceDailyDisputeTimeService $service
+     * @param NurseInvoiceDailyDisputeTimeService $service
      */
     public function __construct(NurseInvoiceDailyDisputeTimeService $service)
     {

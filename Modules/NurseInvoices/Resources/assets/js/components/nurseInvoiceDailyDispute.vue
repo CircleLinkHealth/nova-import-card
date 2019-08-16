@@ -7,25 +7,42 @@
            {{this.formattedTime}}
             <loader v-show="loader"></loader>
        </span>
+
             <!--Requested Time From nurse-->
             <span v-show="showTillRefresh"
-                  class="dispute-requested-time">
+                  class="dispute-requested-time"
+                  :class="{invalidated: strikethroughSuggestedTime || isInvalidated}">
             {{setRequestedValue}}
         </span>
+
+            <!--Status glyphicons-->
+            <span v-if="showDisputeStatus !== false"
+                  class="dispute-requested-time">
+                <i v-if="showDisputeStatus === 'approved' && !isInvalidated" class="glyphicon glyphicon-ok-circle"
+                   style="color: #008000;"></i>
+                <i v-else-if="showDisputeStatus === 'rejected' && !isInvalidated"
+                   class="glyphicon glyphicon-remove-sign"
+                   style="color: #ff0000;"></i>
+                <i v-else-if="showDisputeStatus === 'pending' && !isInvalidated"
+                   class="glyphicon glyphicon-option-horizontal"
+                   style="color: #00bfff;"></i>
+        </span>
+
             <!--Edit Btn-->
-            <span v-show="editButtonActive"
+            <span v-show="!isInvalidated && editButtonActive && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleEdit()"
                   aria-hidden="true"
                   class="edit-button">
-           <i class="glyphicon glyphicon-pencil"></i> Edit
+           <i class="glyphicon glyphicon-pencil"></i>
         </span>
 
             <!--Delete Btn-->
-            <span v-show="showDeleteBtn && showTillRefresh"
+            <span v-show="(showDeleteBtn && !isInvalidated && showTillRefresh)
+            && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleDelete()"
                   aria-hidden="true"
                   class="delete-button">
-           <i class="glyphicon glyphicon-erase"></i> Delete
+           <i class="glyphicon glyphicon-erase"></i>
         </span>
 
             <!--Input for new time hh:mm with save & dismiss btn-->
@@ -37,7 +54,7 @@
                                :class="{validation: !validateTime}"
                                placeholder="hh:mm"
                                v-model="liveRequestedTime">
-
+                <!--Save Button-->
             <span class="save">
                 <button class="button"
                         @click="saveDispute"
@@ -45,8 +62,8 @@
                         :disabled="disableButton">
                 <i class="glyphicon glyphicon-saved"></i>
                 </button>
-
             </span>
+                <!--Text box-->
                 <span class="dismiss">
                     <button v-show="showDisputeBox"
                             class="button"
@@ -90,20 +107,22 @@
                 requestedTimeFromDb: this.invoiceData.suggestedTime,
                 userDisputedTime: false,
                 strikethroughTime: false,
-                //these are used to force a behavior on an element
-                // eg. show/hide till user refreshes page so component can load the
-                //newly created data from DB.
+                strikethroughSuggestedTime: false,
                 showTillRefresh: true,
-                //
-
                 loader: false,
                 errors: [],
                 temporaryValue: '',
-
+                disputeStatus: this.invoiceData.status,
+                disputeInvalidated: this.invoiceData.invalidated,
             }
         },
 
         computed: {
+
+            isInvalidated() {
+                return !!this.disputeInvalidated;
+            },
+
             requestedTimeIsVisible() {
                 const requestedTimeFromDbExists = this.requestedTimeFromDb !== undefined;
                 const liveRequestedTime = !!this.liveRequestedTime;
@@ -139,6 +158,18 @@
 
             disableButton() {
                 return this.validateTime !== true || this.liveRequestedTime.length === 0;
+            },
+
+            showDisputeStatus() {
+                if (this.disputeStatus === undefined) {
+                    return false;
+                } else if (this.disputeStatus === 'approved') {
+                    return 'approved';
+                } else if (this.disputeStatus === 'rejected') {
+                    return 'rejected';
+                } else if (this.disputeStatus === 'pending') {
+                    return 'pending';
+                }
             }
         },
 
@@ -172,11 +203,12 @@
                         this.requestedTimeFromDb = undefined;
                         this.liveRequestedTime = '';
                         this.temporaryValue = '';
+                        this.disputeStatus = undefined;
                         this.loader = false;
 
                         this.addNotification({
                             title: "Deleted",
-                            text: "Your dispute has been submitted deleted",
+                            text: "Your dispute has been deleted",
                             type: "info",
                             timeout: true
                         });
@@ -211,6 +243,7 @@
                         this.showTillRefresh = true;
                         this.editButtonActive = false;
                         this.showDisputeBox = false;
+                        this.disputeStatus = 'pending';
                         this.temporaryValue = this.liveRequestedTime;
                         this.loader = false;
 
@@ -255,12 +288,12 @@
 <style scoped>
     .edit-button {
         color: #87cefa;
-        padding-left: 10%;
+        padding-left: 22%;
     }
 
     .delete-button {
         color: #ff0000;
-        padding-left: 3%;
+        padding-left: 8%;
     }
 
     .dispute-box {
@@ -305,11 +338,16 @@
         padding-left: 3%;
     }
 
-    .disable{
+    .disable {
         background-color: #f4f6f6;
         color: #d5dbdb;
         cursor: default;
         opacity: 0.7;
+    }
+
+    .invalidated {
+        text-decoration: line-through;
+        color: skyblue;
     }
 
 </style>

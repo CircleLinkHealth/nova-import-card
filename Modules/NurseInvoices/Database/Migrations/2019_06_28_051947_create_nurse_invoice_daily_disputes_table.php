@@ -29,7 +29,7 @@ class CreateNurseInvoiceDailyDisputesTable extends Migration
             $table->string('suggested_formatted_time')->nullable();
             $table->string('disputed_formatted_time')->nullable();
             $table->date('disputed_day')->nullable();
-            $table->boolean('status')->nullable();
+            $table->enum('status', ['approved', 'rejected', 'pending'])->nullable();
             $table->boolean('invalidated')->default(false);
             $table->timestamps();
 

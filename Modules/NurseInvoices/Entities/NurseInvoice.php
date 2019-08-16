@@ -10,11 +10,11 @@ use App\Contracts\Pdfable;
 use App\Services\PdfService;
 use App\Traits\NotificationAttachable;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\NurseInvoices\Traits\Disputable;
 use CircleLinkHealth\NurseInvoices\Traits\Nursable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -46,6 +46,9 @@ class NurseInvoice extends Model implements HasMedia, Pdfable
         'nurse_approved_at',
     ];
 
+    /**
+     * @return HasMany
+     */
     public function dailyDisputes()
     {
         return $this->hasMany(NurseInvoiceDailyDispute::class, 'invoice_id', 'id');
@@ -113,7 +116,7 @@ class NurseInvoice extends Model implements HasMedia, Pdfable
     }
 
     /**
-     * @return Media|\Spatie\MediaLibrary\Models\Media
+     * @return \Spatie\MediaLibrary\Models\Media
      */
     public function toPdfAndStoreAsMedia()
     {
