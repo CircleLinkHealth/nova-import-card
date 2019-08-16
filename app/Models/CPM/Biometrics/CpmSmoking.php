@@ -58,7 +58,8 @@ class CpmSmoking extends \CircleLinkHealth\Core\Entities\BaseModel implements Bi
 
     public function getUserValues(User $user)
     {
-        $biometric = $this->wherePatientId($user->id)->first();
+        $user->loadMissing('cpmSmoking');
+        $biometric = $user->cpmSmoking;
 
         return $biometric
             ? [

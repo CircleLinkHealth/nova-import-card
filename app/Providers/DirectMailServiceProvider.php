@@ -13,11 +13,18 @@ use Illuminate\Support\ServiceProvider;
 
 class DirectMailServiceProvider extends ServiceProvider
 {
+    protected $defer = true;
+
     /**
      * Bootstrap the application services.
      */
     public function boot()
     {
+    }
+
+    public function provides()
+    {
+        return [DirectMail::class];
     }
 
     /**

@@ -159,6 +159,20 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
         return $this->hasMany(ProblemImport::class);
     }
 
+    public function scopeWithIcd10Codes($builder)
+    {
+        return $builder->with(['snomedMaps' => function ($q) {
+            return $q->whereNotNull('icd_10_name')->where('icd_10_name', '!=', '')->distinct('icd_10_name')->groupBy('icd_10_name');
+        }]);
+    }
+
+    public function scopeWithLatestCpmInstruction($builder)
+    {
+        return $builder->with(['cpmInstructions' => function ($q) {
+            return $q->latest();
+        }]);
+    }
+
     public function snomedMaps()
     {
         return $this->hasMany(SnomedToCpmIcdMap::class);

@@ -6,7 +6,7 @@
 
 namespace App\Importer\Loggers\Ccda;
 
-use App\Facades\UserMetaParserHelpers;
+use App\CLH\CCD\Importer\ParsingStrategies\Helpers\UserMetaParserHelpers;
 use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 
@@ -43,7 +43,7 @@ class CcdToLogTranformer
      */
     public function demographics($demographics)
     {
-        $phones = UserMetaParserHelpers::getAllPhoneNumbers($demographics->phones);
+        $phones = (new UserMetaParserHelpers())->getAllPhoneNumbers($demographics->phones);
 
         return [
             'first_name' => array_key_exists(0, $demographics->name->given)
@@ -238,7 +238,7 @@ class CcdToLogTranformer
      */
     public function provider($provider)
     {
-        $phones = UserMetaParserHelpers::getAllPhoneNumbers($provider->phones);
+        $phones = (new UserMetaParserHelpers())->getAllPhoneNumbers($provider->phones);
 
         return [
             'provider_id' => isset($provider->provider_id)

@@ -1,7 +1,6 @@
 @extends('layouts.provider')
 
 @section('app')
-
     @if(!isset($isPdf))
         @include('partials.providerUI.primarynav')
 
@@ -20,14 +19,12 @@
     <?php
     /**
      * Sometimes, $patient is an instance of User::class,
-     * other times, it is an instance of Patient::class
+     * other times, it is an instance of \CircleLinkHealth\Customer\Entities\Patient::class
      * We have to make sure that $user is always an instance of User::class by deriving it from $patient.
      */
-    use CircleLinkHealth\Customer\Entities\Patient;
-
     $user = null;
     if (isset($patient)) {
-        if (is_a($patient, Patient::class)) {
+        if (is_a($patient, \CircleLinkHealth\Customer\Entities\Patient::class)) {
             $user = $patient->user;
         } else {
             $user = $patient;

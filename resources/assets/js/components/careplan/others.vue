@@ -27,6 +27,7 @@
     import { rootUrl } from '../../app.config'
     import { Event } from 'vue-tables-2'
     import MiscModal from './modals/misc.modal'
+    import CareplanMixin from './mixins/careplan.mixin'
 
     const MISC_ID = 7
 
@@ -39,6 +40,7 @@
         components: {
             'misc-modal': MiscModal
         },
+        mixins: [ CareplanMixin ],
         data() {
             return {
                  other: {
@@ -54,18 +56,32 @@
                 return other
             },
             getOther() {
-                return this.axios.get(rootUrl(`api/patients/${this.patientId}/misc/${MISC_ID}`)).then(response => {
-                    // console.log('others:get-other', response.data)
-                    this.other = this.setupOther(response.data)
-                    if (this.other) Event.$emit('misc:select', this.other)
-                }).catch(err => {
-                    console.error('others:get-other', err)
-                })
+                const existsOnWindowObject = this.getOtherFromWindow()
+
+                if (!existsOnWindowObject) {
+                    this.axios.get(rootUrl(`api/patients/${this.patientId}/misc/${MISC_ID}`)).then(response => {
+                        // console.log('others:get-other', response.data)
+                        this.other = this.setupOther(response.data)
+                        if (this.other) Event.$emit('misc:select', this.other)
+                    }).catch(err => {
+                        console.error('others:get-other', err)
+                    })
+                }
             },
             showModal() {
                 Event.$emit('modal-misc:show')
 
                 setTimeout(() => Event.$emit('misc:page', 'Other'), 5)
+            },
+            getOtherFromWindow() {
+                const other = this.careplan().other || null
+
+                if (null !== other) {
+                    this.other.instructions = other;
+                    return true
+                }
+
+                return false
             }
         },
         mounted() {

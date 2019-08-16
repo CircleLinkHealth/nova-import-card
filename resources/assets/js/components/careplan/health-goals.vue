@@ -12,7 +12,7 @@
                 <div class="row top-10">
                     <div :class="{ 'col-sm-12': !loaders.editNote && !loaders.getNote, 'col-sm-11': loaders.editNote }">
                         <form @submit="editNote">
-                            <textarea class="form-control free-note" v-model="note.body" placeholder="Enter Note and press ENTER" @change="editNote"></textarea>
+                            <textarea class="form-control free-note" v-model="note.body" placeholder="Enter Note and press ENTER" @change="editNote"  @keydown.enter.exact.prevent @keyup.enter.exact="editNote"></textarea>
                         </form>
                     </div>
                     <div class="col-sm-1" v-if="loaders.editNote || loaders.getNote">

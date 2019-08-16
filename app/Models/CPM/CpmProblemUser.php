@@ -51,7 +51,7 @@ class CpmProblemUser extends \CircleLinkHealth\Core\Entities\BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function problems()
+    public function problem()
     {
         return $this->belongsTo(CpmProblem::class, 'cpm_problem_id');
     }

@@ -13,8 +13,7 @@ use Tests\TestCase;
 
 class TestHelpersTest extends TestCase
 {
-    use
-        DatabaseTransactions;
+    use DatabaseTransactions;
     use SetupTestCustomerTrait;
     private $location;
     private $patient;

@@ -197,7 +197,7 @@ class TabularMedicalRecord extends MedicalRecordEloquent
      */
     public function getPatient(): User
     {
-        // TODO: Implement getPatient() method.
+        // TODO: Implement show() method.
     }
 
     /**
