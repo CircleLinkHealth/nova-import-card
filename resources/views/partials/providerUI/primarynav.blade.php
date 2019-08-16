@@ -49,10 +49,10 @@ $user = auth()->user();
 <nav class="navbar primary-navbar">
     <div class="container-fluid full-width margin-0">
         <a class="navbar-brand" href="{{ url('/') }}" style="border: none"><img
-                    src="{{mix('/img/ui/clh_logo_lt.png')}}"
+                    src="{{mix('/img/logos/LogoHorizontal_White.svg')}}"
                     alt="Care Plan Manager"
                     style="position:relative;top:-7px"
-                    width="50px"/></a>
+                    width="105px"/></a>
 
         <button type="button" class="navbar-toggle collapsed" style="border-color:white" data-toggle="collapse"
                 data-target="#navbar-collapse" aria-expanded="false">

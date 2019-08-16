@@ -67,10 +67,10 @@
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
-                        <img src="{{mix('/img/clh_logo_sm.png')}}"
+                        <img src="{{mix('/img/logos/LogoHorizontal_Color.svg')}}"
                              alt="Care Plan Manager"
-                             style="position:relative;top:-5px"
-                             width="50px"/>
+                             style="position:relative;top:-15px"
+                             width="100px"/>
                     </a>
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                         <span class="sr-only">Toggle navigation</span>
