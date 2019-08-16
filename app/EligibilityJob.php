@@ -98,6 +98,9 @@ class EligibilityJob extends BaseModel
     //Outcome: A patient that was found eligible, but is already an enrolled patient in CPM
     const ENROLLED = 'enrolled';
 
+    //Outcome: Something went wrong during processing.
+    const ERROR = 'error';
+
     //Outcome: An ineligile patient
     const INELIGIBLE = 'ineligible';
 

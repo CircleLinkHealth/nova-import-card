@@ -6,7 +6,7 @@
 
 namespace App\Services\AthenaAPI;
 
-use App\Contracts\Repositories\CcdaRequestRepository;
+use App\Entities\CcdaRequest;
 use App\Jobs\ImportCcda;
 use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
@@ -14,13 +14,11 @@ use Carbon\Carbon;
 class CreateAndPostPdfCareplan
 {
     protected $api;
-    protected $ccdaRequests;
     protected $ccdas;
 
-    public function __construct(CcdaRequestRepository $ccdaRequests, Calls $api)
+    public function __construct(Calls $api)
     {
-        $this->api          = $api;
-        $this->ccdaRequests = $ccdaRequests;
+        $this->api = $api;
     }
 
     public function getAppointments(
@@ -45,43 +43,41 @@ class CreateAndPostPdfCareplan
 
     public function getCcdsFromRequestQueue($number = 5)
     {
-        $imported = $this->ccdaRequests
-            ->skipPresenter()
-            ->findWhere([
-                'successful_call' => null,
-            ])->take($number)
-            ->map(function ($ccdaRequest) {
-                $xmlCcda = $this->api->getCcd(
-                    $ccdaRequest->patient_id,
-                    $ccdaRequest->practice_id,
-                    $ccdaRequest->department_id
-            );
+        $imported = CcdaRequest::whereNull('successful_call')
+            ->chunk($number, function ($ccdaRequests) {
+                foreach ($ccdaRequests as $ccdaRequest) {
+                    $xmlCcda = $this->api->getCcd(
+                        $ccdaRequest->patient_id,
+                        $ccdaRequest->practice_id,
+                        $ccdaRequest->department_id
+                    );
 
-                if ( ! isset($xmlCcda[0]['ccda'])) {
-                    return false;
+                    if ( ! isset($xmlCcda[0]['ccda'])) {
+                        return false;
+                    }
+
+                    $ccda = Ccda::create([
+                        'xml'    => $xmlCcda[0]['ccda'],
+                        'source' => Ccda::ATHENA_API,
+                    ]);
+
+                    $ccdaRequest->ccda_id = $ccda->id;
+                    $ccdaRequest->successful_call = true;
+                    $ccdaRequest->save();
+
+                    ImportCcda::dispatch($ccda)->onQueue('low');
+
+                    if (isProductionEnv()) {
+                        $link = route('import.ccd.remix');
+
+                        sendSlackMessage(
+                            '#ccd-file-status',
+                            "We received a CCD from Athena. \n Please visit {$link} to import."
+                        );
+                    }
+
+                    return $ccda;
                 }
-
-                $ccda = Ccda::create([
-                    'xml'    => $xmlCcda[0]['ccda'],
-                    'source' => Ccda::ATHENA_API,
-                ]);
-
-                $ccdaRequest->ccda_id = $ccda->id;
-                $ccdaRequest->successful_call = true;
-                $ccdaRequest->save();
-
-                ImportCcda::dispatch($ccda)->onQueue('low');
-
-                if (isProductionEnv()) {
-                    $link = route('import.ccd.remix');
-
-                    sendSlackMessage(
-                        '#ccd-file-status',
-                        "We received a CCD from Athena. \n Please visit {$link} to import."
-                );
-                }
-
-                return $ccda;
             });
     }
 

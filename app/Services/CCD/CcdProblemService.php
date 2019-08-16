@@ -6,30 +6,23 @@
 
 namespace App\Services\CCD;
 
+use App\Models\CCD\Problem as CcdProblem;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
 use App\Repositories\CcdProblemRepository;
-use App\Repositories\ProblemCodeRepository;
-use App\Repositories\UserRepositoryEloquent;
 use App\Services\CPM\CpmInstructionService;
 use CircleLinkHealth\Customer\Entities\User;
 
 class CcdProblemService
 {
     private $instructionService;
-    private $problemCodeRepo;
     private $problemRepo;
-    private $userRepo;
 
     public function __construct(
         CcdProblemRepository $problemRepo,
-        UserRepositoryEloquent $userRepo,
-        ProblemCodeRepository $problemCodeRepo,
         CpmInstructionService $instructionService
     ) {
         $this->problemRepo        = $problemRepo;
-        $this->userRepo           = $userRepo;
-        $this->problemCodeRepo    = $problemCodeRepo;
         $this->instructionService = $instructionService;
     }
 
@@ -37,14 +30,15 @@ class CcdProblemService
     {
         if ($ccdProblem) {
             if ($ccdProblem['userId'] && $ccdProblem['name'] && strlen($ccdProblem['name']) > 0) {
-                $problem = $this->setupProblem($this->repo()->addPatientCcdProblem($ccdProblem));
+                $problem = $this->setupProblem($this->problemRepo->addPatientCcdProblem($ccdProblem));
 
                 if ($problem && $ccdProblem['icd10']) {
                     $problemCode                         = new ProblemCode();
                     $problemCode->problem_id             = $problem['id'];
                     $problemCode->problem_code_system_id = 2;
                     $problemCode->code                   = $ccdProblem['icd10'];
-                    $this->problemCodeRepo->service()->add($problemCode);
+                    $problemCode->resolve();
+                    $problemCode->save();
 
                     return $this->problem($problem['id']);
                 }
@@ -64,7 +58,7 @@ class CcdProblemService
         $icd10 = null,
         $instruction = null
     ) {
-        $problem = $this->setupProblem($this->repo()->editPatientCcdProblem(
+        $problem = $this->setupProblem($this->problemRepo->editPatientCcdProblem(
             $userId,
             $ccdProblemId,
             $problemCode,
@@ -82,13 +76,13 @@ class CcdProblemService
 
             $problem['instruction'] = $instructionData;
 
-            $this->repo()->model()->where([
+            CcdProblem::where([
                 'id' => $ccdProblemId,
             ])->update([
                 'cpm_instruction_id' => $instructionData->id,
             ]);
         } else {
-            $this->repo()->model()->where([
+            CcdProblem::where([
                 'id' => $ccdProblemId,
             ])->update([
                 'cpm_instruction_id' => null,
@@ -101,7 +95,8 @@ class CcdProblemService
             $problemCode->problem_id             = $problem['id'];
             $problemCode->problem_code_system_id = 2;
             $problemCode->code                   = $icd10;
-            $this->problemCodeRepo->service()->add($problemCode);
+            $problemCode->resolve();
+            $problemCode->save();
 
             return $this->problem($problem['id']);
         }
@@ -135,7 +130,7 @@ class CcdProblemService
 
     public function problem($id)
     {
-        $problem = $this->repo()->model()->find($id);
+        $problem = CcdProblem::find($id);
         if ($problem) {
             return $this->setupProblem($problem);
         }
@@ -145,17 +140,12 @@ class CcdProblemService
 
     public function problems()
     {
-        $problems = $this->repo()->problems();
+        $problems = CcdProblem::groupBy('name')->orderBy('id')->paginate(30);
         $problems->getCollection()->transform(function ($value) {
             return $this->setupProblem($value);
         });
 
         return $problems;
-    }
-
-    public function repo()
-    {
-        return $this->problemRepo;
     }
 
     public function setupProblem($p)
@@ -171,7 +161,5 @@ class CcdProblemService
                 'instruction'   => $p->cpmInstruction,
             ];
         }
-
-        return $p;
     }
 }

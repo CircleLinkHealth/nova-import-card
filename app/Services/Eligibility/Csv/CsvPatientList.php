@@ -45,7 +45,7 @@ class CsvPatientList
         return $this->columnNames;
     }
 
-    public function guessValidator()
+    public function guessValidatorAndValidate()
     {
         $validators = [
             new SingleFieldsValidator(),

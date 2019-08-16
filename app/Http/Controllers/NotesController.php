@@ -157,7 +157,7 @@ class NotesController extends Controller
             'Changed Insurance',
             'Dialysis / End-Stage Renal Disease',
             'Expired',
-            'Home Health Services',
+            'Patient in Hospice',
             'Other',
         ];
 
@@ -720,6 +720,8 @@ class NotesController extends Controller
 
         $input = $request->allSafe();
 
+        $patient = User::findOrFail($patientId);
+
         $noteId = ! empty($input['note_id'])
             ? $input['note_id']
             : null;
@@ -728,7 +730,11 @@ class NotesController extends Controller
         if ( ! isset($input['author_id'])) {
             $input['author_id'] = auth()->id();
         }
-        $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
+
+        $input['performed_at'] = Carbon::parse(
+            $input['performed_at'],
+            $patient->timezone
+        )->setTimezone(config('app.timezone'))->toDateTimeString();
 
         if ($noteId) {
             $note = Note::find($noteId);

@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\InvalidArgumentException;
 use App\Http\Requests\CreateLegacyBhiConsentDecision;
 use App\Note;
+use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Support\Facades\Cache;
@@ -33,14 +34,15 @@ class LegacyBhiConsentController extends Controller
         if ( ! in_array($type, [Patient::BHI_REJECTION_NOTE_TYPE, Patient::BHI_CONSENT_NOTE_TYPE])) {
             throw new InvalidArgumentException("`${type}` is not a valid type for a legacy BHI consent note type");
         }
+        $consenderName = auth()->user()->display_name;
 
         $body = Patient::BHI_CONSENT_NOTE_TYPE == $type
-            ? 'The patient consented to receiving BHI services.'
-            : 'The patient did not consent to receiving BHI services.';
+            ? "The patient consented to receiving BHI services. \n 'Consented action taken by: $consenderName'"
+            : "The patient did not consent to receiving BHI services. \n 'Not consented action taken by: $consenderName'";
 
         return Note::create([
             'patient_id'   => $patientId,
-            'author_id'    => 948, //clh patient support
+            'author_id'    => 948, //This user is CLH patient support
             'body'         => $body,
             'type'         => $type,
             'performed_at' => Carbon::now()->toDateTimeString(),
@@ -48,15 +50,45 @@ class LegacyBhiConsentController extends Controller
     }
 
     /**
-     * When the User clicks `Not Now` we want to hide the banner for 24 hours.
+     * @param $patientId
      *
+     * @return mixed|null
+     */
+    private function getNextCallDate($patientId)
+    {
+        $nextCall = SchedulerService::getNextScheduledCall($patientId, false);
+
+        return null !== $nextCall ? $nextCall->scheduled_date : null;
+    }
+
+    /**
+     * When the User clicks `Not Now` we want to hide the banner till next scheduled call.
+     * If next Scheduled call is null will show banner again tomorrow.
+     *
+     * @param $nextScheduledCallDate
+     *
+     * @return int
+     */
+    private function remainingTimeToShowBhiBannerAgain($nextScheduledCallDate)
+    {
+        $now      = Carbon::now();
+        $tomorrow = $now->copy()->addDay()->startOfDay();
+
+        return null !== $nextScheduledCallDate
+            ? Carbon::parse($nextScheduledCallDate)->diffInSeconds($now)
+            : $tomorrow->diffInSeconds($now);
+    }
+
+    /**
      * @param $patientId
      */
     private function storeNotNowResponse($patientId)
     {
-        $key     = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
-        $minutes = intval(Carbon::now()->secondsUntilEndOfDay() / 60);
+        $key                   = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
+        $nextScheduledCallDate = $this->getNextCallDate($patientId);
 
-        Cache::put($key, true, $minutes);
+        $remainingTimeToShowBhiBannerAgainInSec = $this->remainingTimeToShowBhiBannerAgain($nextScheduledCallDate);
+
+        Cache::put($key, true, $remainingTimeToShowBhiBannerAgainInSec);
     }
 }

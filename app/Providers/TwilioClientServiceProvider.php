@@ -12,11 +12,18 @@ use Illuminate\Support\ServiceProvider;
 
 class TwilioClientServiceProvider extends ServiceProvider
 {
+    protected $defer = true;
+
     /**
      * Bootstrap the application services.
      */
     public function boot()
     {
+    }
+
+    public function provides()
+    {
+        return [TwilioClientable::class];
     }
 
     /**
