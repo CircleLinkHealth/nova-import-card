@@ -51,7 +51,7 @@ class InvoiceReviewController extends Controller
             ->where('nurse_info_id', $nurseInfoId)
             ->firstOrFail();
 
-        return $this->invoice($request, $invoice);
+        return $this->invoice($request, $invoice, []);
     }
 
     /**
@@ -114,7 +114,9 @@ class InvoiceReviewController extends Controller
             ->ofNurses(auth()->id())
             ->firstOrNew([]);
 
-        return $this->invoice($request, $invoice);
+        $invoiceDataWithDisputes = $this->attachDisputes->putDisputesToTimePerDay($invoice);
+
+        return $this->invoice($request, $invoice, $invoiceDataWithDisputes);
     }
 
     /**
@@ -128,7 +130,7 @@ class InvoiceReviewController extends Controller
             ->with(['dispute.resolver'])
             ->firstOrFail();
 
-        return $this->invoice($request, $invoice);
+        return $this->invoice($request, $invoice, []);
     }
 
     private function canBeDisputed(NurseInvoice $invoice, Carbon $deadline)
@@ -140,12 +142,12 @@ class InvoiceReviewController extends Controller
         return null === $invoice->dispute && ! $invoice->is_nurse_approved && Carbon::now()->lte($deadline) && Carbon::now()->gte($invoice->month_year->copy()->addMonth());
     }
 
-    private function invoice(Request $request, NurseInvoice $invoice)
+    private function invoice(Request $request, NurseInvoice $invoice, array $invoiceDataWithDisputes)
     {
-        $auth                    = auth()->user();
-        $invoiceDataWithDisputes = $this->attachDisputes->putDisputesToTimePerDay($invoice);
-        $deadline                = new NurseInvoiceDisputeDeadline($invoice->month_year ?? Carbon::now()->subMonth());
-        $invoiceData             = $invoiceDataWithDisputes ?? [];
+        $auth = auth()->user();
+
+        $deadline    = new NurseInvoiceDisputeDeadline($invoice->month_year ?? Carbon::now()->subMonth());
+        $invoiceData = $invoiceDataWithDisputes ?? [];
 
         $args = array_merge(
             [

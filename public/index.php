@@ -4,6 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Constants;
+
 define('LARAVEL_START', microtime(true));
 
 /*
@@ -124,5 +126,8 @@ if (config('responsecache.enabled') && ! $request->isMethodCacheable()) {
 //   ]);
 
 $response->send();
+
+//Flush viewing patient after we send response
+$flushed = session()->pull(Constants::VIEWING_PATIENT);
 
 $kernel->terminate($request, $response);
