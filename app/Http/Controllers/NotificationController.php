@@ -40,8 +40,9 @@ class NotificationController extends Controller
      * @return JsonResponse
      */
     public function index()
-    {//figure out how to keep the unread notifications count(UI) since we are loading only 5.
-        $notifications = DatabaseNotification::whereNotifiableId(auth()->id())->orderByDesc('id')->take(5)->get();
+    {
+        $notifications               = DatabaseNotification::whereNotifiableId(auth()->id())->orderByDesc('id')->take(5)->get();
+        $allUnreadNotificationsCount = DatabaseNotification::whereNotifiableId(auth()->id())->where('read_at', null)->count();
 
         $notificationsWithElapsedTime = $notifications->map(function ($notification) {
             $createdDateTime = Carbon::parse($notification->created_at);
@@ -50,7 +51,10 @@ class NotificationController extends Controller
             return $notification;
         });
 
-        return response()->json($notificationsWithElapsedTime);
+        return response()->json([
+            'notifications' => $notificationsWithElapsedTime,
+            'totalCount'    => $allUnreadNotificationsCount,
+        ]);
     }
 
     /**

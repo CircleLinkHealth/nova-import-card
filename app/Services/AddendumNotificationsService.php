@@ -6,11 +6,8 @@
 
 namespace App\Services;
 
-use App\Events\AddendumPusher;
 use App\Notifications\AddendumCreated;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
 
 class AddendumNotificationsService

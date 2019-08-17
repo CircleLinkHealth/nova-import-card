@@ -1,17 +1,8 @@
-<style>
-    .note-addendum {
-        padding: 15px;
-        border: 1px solid #eee;
-        margin: 15px 0 30px 0;
-        background-color: #ebf1f5;
-        border-left: #5cbfde 25px solid;
-    }
-</style>
-
-<div class="note-addendum">
+<div>
     <p class="text-left">{{$addendum->body}}</p>
 
     <p class="text-right" style="padding-top: 2%;">
         <sub>Authored by <em>{{$addendum->author->getFullName()}}, <b>{{ $addendum->created_at->format('m/d/Y h:iA T') }}</b></em></sub>
     </p>
 </div>
+

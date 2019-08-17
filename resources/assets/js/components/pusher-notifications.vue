@@ -50,6 +50,7 @@
                 senderName: '',
                 component: '',
                 isClicked: false,
+                notificationsFromDbCount: [],
             }
         },
         computed: {
@@ -60,7 +61,7 @@
             countUnreadNotifications() {
                 // NotificationsFromPusher is always unread - it doesnt have property: "read_at"
                 const notificationsFromPusher = this.notificationsFromPusher.length;
-                const count = this.notificationsFromDb.filter(q => q.read_at === null).length;
+                const count = this.notificationsFromDbCount[0];
                 const sum = count + notificationsFromPusher;
                 this.count = sum;
                 return sum;
@@ -106,7 +107,8 @@
             axios.get('/notifications')
                 .then(response => {
                         const notificationsFromDb = response.data;
-                        this.notificationsFromDb.push(...notificationsFromDb)
+                        this.notificationsFromDb.push(...notificationsFromDb.notifications);
+                        this.notificationsFromDbCount.push(notificationsFromDb.totalCount);
                     }
                 );
 
