@@ -76,9 +76,10 @@
                 const getSenderName = notification.data.sender_name;
                 const getNotificationSubject = notification.data.subject;
                 const getPatientName = notification.data.patient_name;
+                const getNotificationElapsedTime = notification.elapsed_time;
 
                 return `<strong>${getSenderName}</strong> ${getNotificationSubject}<strong> ${getPatientName}</strong>
-                        <span style="float: right;padding-top: 4%; color: #90949c">Time Here</span>`;
+                        <span style="float: right;padding-top: 4%; color: #90949c">${getNotificationElapsedTime}</span>`;
 
             },
 
@@ -109,33 +110,13 @@
                     }
                 );
 
-            // const userId = 13244;
-            // window.Echo.private('App.User.' + userId)
-            //     .notification((notification) => {
-            //         console.log(notification);
-            //     });
-            //
-            // window.Echo.private('App.User.' + 13251)
-            //     .notification((notification) => {
-            //         console.log(notification);
-            //     });
-            //
-            // window.Echo.private('users.' + 13251)
-            //     .notification((notification) => {
-            //         console.log(notification);
-            //     });
-            // window.Echo.private('users.' + 13244)
-            //     .notification((notification) => {
-            //         console.log(notification);
-            //     });
-            // Real Time Notifications
-            window.Echo.private('notifications.' + 13251).listen('AddendumCreatedEvent', ({dataToPusher}) => {
-                axios.get(`/notifications/${dataToPusher.notificationId}`)
-                    .then(response => {
+            window.Echo.private('App.User.' + this.authUserId)
+                .notification((notification) => {
+                    axios.get(`/notifications/${notification.id}`).then(response => {
                             this.notificationsFromPusher.push(response.data)
                         }
                     );
-            })
+                });
         }
     }
 

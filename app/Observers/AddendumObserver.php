@@ -6,9 +6,10 @@
 
 namespace App\Observers;
 
-use App\Events\AddendumCreatedEvent;
 use App\Models\Addendum;
+use App\Note;
 use App\Notifications\AddendumCreated;
+use Illuminate\Support\Facades\Notification;
 
 class AddendumObserver
 {
@@ -19,6 +20,9 @@ class AddendumObserver
      */
     public function created(Addendum $addendum)
     {
-        AddendumCreatedEvent::dispatch(new AddendumCreated($addendum));
+        if (is_a($addendum->addendumable, Note::class)) {
+            $noteAuthorUser = $addendum->addendumable->author;
+            Notification::send($noteAuthorUser, new AddendumCreated($addendum));
+        }
     }
 }

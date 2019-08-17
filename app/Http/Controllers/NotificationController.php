@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\PusherNotificationService;
+use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\JsonResponse;
@@ -42,7 +43,14 @@ class NotificationController extends Controller
     {//figure out how to keep the unread notifications count(UI) since we are loading only 5.
         $notifications = DatabaseNotification::whereNotifiableId(auth()->id())->orderByDesc('id')->take(5)->get();
 
-        return response()->json($notifications);
+        $notificationsWithElapsedTime = $notifications->map(function ($notification) {
+            $createdDateTime = Carbon::parse($notification->created_at);
+            $notification['elapsed_time'] = $this->notificationElapsedTime($createdDateTime);
+
+            return $notification;
+        });
+
+        return response()->json($notificationsWithElapsedTime);
     }
 
     /**
@@ -55,14 +63,27 @@ class NotificationController extends Controller
     }
 
     /**
+     * @param Carbon $createdDateTime
+     *
+     * @return string
+     */
+    public function notificationElapsedTime(Carbon $createdDateTime)
+    {
+        return $createdDateTime->diffForHumans(Carbon::parse(now()));
+    }
+
+    /**
      * @param $id
      *
      * @return JsonResponse
      */
     public function show($id)
     {
-        $notification = DatabaseNotification::findOrFail($id);
+        $notification    = DatabaseNotification::findOrFail($id);
+        $createdDateTime = Carbon::parse($notification->created_at);
+        //add elapsed_time to array
+        $notification['elapsed_time'] = $this->notificationElapsedTime($createdDateTime);
 
-        return response()->json($notification->toArray());
+        return response()->json($notification);
     }
 }

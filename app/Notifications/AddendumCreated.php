@@ -10,13 +10,14 @@ use App\Http\Controllers\NotificationController;
 use App\Models\Addendum;
 use App\Note;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 
-class AddendumCreated extends Notification
+class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQueue
 {
     use Queueable;
     public $addendum;
@@ -113,16 +114,6 @@ class AddendumCreated extends Notification
     public function toBroadcast($notifiable)
     {
         return new BroadcastMessage([
-            'sender_id'       => auth()->id(),
-            'receiver_id'     => $notifiable->id,
-            'patient_name'    => $this->getPatientName(),
-            'note_id'         => $this->getNoteId(),
-            'attachment_id'   => $this->getAttachment()->id,
-            'redirect_link'   => $this->redirectLink(),
-            'attachment_type' => Addendum::class,
-            'description'     => 'Addendum',
-            'subject'         => 'has created an addendum for',
-            'sender_name'     => auth()->user()->display_name,
         ]);
     }
 
@@ -150,6 +141,6 @@ class AddendumCreated extends Notification
      */
     public function via($notifiable)
     {
-        return ['database'];
+        return ['database', 'broadcast'];
     }
 }
