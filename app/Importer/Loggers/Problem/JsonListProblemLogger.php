@@ -38,9 +38,9 @@ class JsonListProblemLogger implements Logger
         return [];
     }
 
-    public function shouldHandle($problemsString)
+    public function shouldHandle($problems)
     {
-        $check = is_json($problemsString);
+        $check = is_json($problems);
 
 //        if ($check === false) {
 //            throw new \Exception("The string contains invalid json. String: `$problemsString`");
