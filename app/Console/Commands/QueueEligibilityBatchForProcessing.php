@@ -14,6 +14,7 @@ use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
+use App\Services\AthenaAPI\DetermineEnrollmentEligibility as AthenaDetermineEnrollmentEligibility;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use App\Services\GoogleDrive;
@@ -188,11 +189,23 @@ class QueueEligibilityBatchForProcessing extends Command
 
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        //If the Athena batch has not patients, mark it as complete
-        if ( ! TargetPatient::whereBatchId($batch->id)->exists()) {
-            $batch->status = 3;
-            $batch->save();
+        $athenaService  = app(AthenaDetermineEnrollmentEligibility::class);
+        $query          = TargetPatient::whereBatchId($batch->id)->whereStatus(TargetPatient::STATUS_TO_PROCESS);
+        $targetPatients = $query->chunkById(100, function ($targetPatients) use (&$athenaService) {
+            foreach ($targetPatients as $patient) {
+                $athenaService->determineEnrollmentEligibility($patient);
+            }
+        });
+
+        // Mark batch as processed by default
+        $batch->status = 3;
+
+        if ($query->exists()) {
+            // Mark batch as processing if there are patients to precess in DB
+            $batch->status = 1;
         }
+
+        $batch->save();
 
         return $batch;
     }
