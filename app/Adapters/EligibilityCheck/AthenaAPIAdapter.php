@@ -71,7 +71,12 @@ class AthenaAPIAdapter
         $this->eligiblePatientList = $check->getPatientList();
 
         if (empty($this->eligibilityJob->data)) {
-            $this->eligibilityJob->data = $patient;
+            $this->eligibilityJob->data = [
+                'problems' => $patient->map(function ($p) {
+                    return $p->toArray();
+                }),
+                'insurances' => $patient->get('insurances'),
+            ];
             $this->eligibilityJob->save();
         }
 
