@@ -37,6 +37,17 @@ class NursePerformanceRepController extends Controller
      *
      * @return string
      */
+    public function caseLoad($reportPerDay)
+    {
+        return array_key_exists('uniquePatientsAssignedForMonth', $reportPerDay)
+            ? $reportPerDay['uniquePatientsAssignedForMonth'] : 'N/A';
+    }
+
+    /**
+     * @param $reportPerDay
+     *
+     * @return string
+     */
     public function caseLoadComplete($reportPerDay)
     {
         return array_key_exists('caseLoadComplete', $reportPerDay)
@@ -197,6 +208,7 @@ class NursePerformanceRepController extends Controller
                 $nurseDailyData[$n]['unsuccessful']              = $reportPerDay['unsuccessful'];
                 $nurseDailyData[$n]['completionRate']            = $this->completionRate($reportPerDay);
                 $nurseDailyData[$n]['efficiencyIndex']           = $this->efficiencyIndex($reportPerDay);
+                $nurseDailyData[$n]['caseLoad']                  = $this->caseLoad($reportPerDay);
                 $nurseDailyData[$n]['caseLoadComplete']          = $this->caseLoadComplete($reportPerDay);
                 $nurseDailyData[$n]['caseLoadNeededToComplete']  = $this->caseLoadNeededToComplete($reportPerDay);
                 $nurseDailyData[$n]['projectedHoursLeftInMonth'] = $this->projectedHoursLeftInMonth($reportPerDay);

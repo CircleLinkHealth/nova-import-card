@@ -310,17 +310,21 @@ class Calls
      * Get all department ids for a practice.
      *
      * @param $practiceId
+     * @param bool $showAllDepartments
+     *
+     * @throws \Exception
      *
      * @return mixed
      */
-    public function getDepartmentIds($practiceId)
+    public function getDepartmentIds($practiceId, $showAllDepartments = true)
     {
         $this->initApiConnection();
 
         $this->api->setPracticeId($practiceId);
 
         $response = $this->api->GET('departments', [
-            'practiceid' => $practiceId,
+            'practiceid'         => $practiceId,
+            'showalldepartments' => $showAllDepartments,
         ]);
 
         return $this->response($response);

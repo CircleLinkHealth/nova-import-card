@@ -51,6 +51,13 @@ use CircleLinkHealth\Customer\Entities\User;
  */
 class TargetPatient extends BaseModel
 {
+    const STATUS_CONSENTED  = 'consented';
+    const STATUS_ELIGIBLE   = 'eligible';
+    const STATUS_ENROLLED   = 'enrolled';
+    const STATUS_ERROR      = 'error';
+    const STATUS_INELIGIBLE = 'ineligible';
+    const STATUS_TO_PROCESS = 'to_process';
+
     protected $guarded = [];
 
     public function ehr()

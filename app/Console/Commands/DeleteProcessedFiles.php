@@ -44,6 +44,9 @@ class DeleteProcessedFiles extends Command
         foreach (ProcessedFile::get() as $file) {
             $path = str_replace($ccdaPath, '', $file->path);
 
+            if ( ! $path) {
+                continue;
+            }
             if (\Storage::disk('ccdas')->exists($path)) {
                 $deleted = \Storage::disk('ccdas')->delete($path);
 
