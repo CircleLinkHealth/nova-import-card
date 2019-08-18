@@ -47,7 +47,7 @@ class AthenaAPIAdapter
 
         $patient = collect(
             [
-                'problems'   => $this->problemsAndInsurances->getProblemCodes(),
+                'problems'   => $this->problemsAndInsurances->getProblemForEligibilityProcessing(),
                 'insurances' => $this->problemsAndInsurances->getInsurancesForEligibilityCheck(),
             ]
         );
@@ -69,6 +69,11 @@ class AthenaAPIAdapter
 
         $this->eligibilityJob      = $check->getEligibilityJob();
         $this->eligiblePatientList = $check->getPatientList();
+
+        if (empty($this->eligibilityJob->data)) {
+            $this->eligibilityJob->data = $patient;
+            $this->eligibilityJob->save();
+        }
 
         return $this->eligiblePatientList->count() > 0;
     }
