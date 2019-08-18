@@ -595,9 +595,7 @@ class WelcomeCallListGenerator
             'map_icd_9_to_cpm_problems',
             60,
             function () {
-                $snomedToIcdMap = $this->getSnomedToIcdMap();
-
-                return $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD9);
+                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::ICD9);
             }
         );
 
@@ -605,9 +603,7 @@ class WelcomeCallListGenerator
             'map_icd_10_to_cpm_problems',
             60,
             function () {
-                $snomedToIcdMap = $this->getSnomedToIcdMap();
-
-                return $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD10);
+                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::ICD10);
             }
         );
 
@@ -615,9 +611,7 @@ class WelcomeCallListGenerator
             'map_snomed_to_cpm_problems',
             60,
             function () {
-                $snomedToIcdMap = $this->getSnomedToIcdMap();
-
-                return $snomedToIcdMap->pluck('cpm_problem_id', Constants::SNOMED);
+                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::SNOMED);
             }
         );
 
