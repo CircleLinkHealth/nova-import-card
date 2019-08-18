@@ -60,6 +60,11 @@ class TargetPatient extends BaseModel
 
     protected $guarded = [];
 
+    public function batch()
+    {
+        return $this->belongsTo(EligibilityBatch::class, 'batch_id');
+    }
+
     public function ehr()
     {
         return $this->belongsTo(Ehr::class, 'ehr_id');

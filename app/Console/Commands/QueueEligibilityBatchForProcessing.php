@@ -191,7 +191,7 @@ class QueueEligibilityBatchForProcessing extends Command
     {
         $athenaService  = app(AthenaDetermineEnrollmentEligibility::class);
         $query          = TargetPatient::whereBatchId($batch->id)->whereStatus(TargetPatient::STATUS_TO_PROCESS);
-        $targetPatients = $query->chunkById(100, function ($targetPatients) use (&$athenaService) {
+        $targetPatients = $query->with('batch')->chunkById(100, function ($targetPatients) use (&$athenaService) {
             foreach ($targetPatients as $patient) {
                 $athenaService->determineEnrollmentEligibility($patient);
             }

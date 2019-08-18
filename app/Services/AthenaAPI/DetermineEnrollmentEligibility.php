@@ -7,7 +7,6 @@
 namespace App\Services\AthenaAPI;
 
 use App\Adapters\EligibilityCheck\AthenaAPIAdapter;
-use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
 use App\TargetPatient;
@@ -28,17 +27,17 @@ class DetermineEnrollmentEligibility
 
     public function determineEnrollmentEligibility(TargetPatient $targetPatient)
     {
+        $targetPatient->loadMissing(['batch']);
         $patientInfo = $this->getPatientProblemsAndInsurances(
             $targetPatient->ehr_patient_id,
             $targetPatient->ehr_practice_id,
             $targetPatient->ehr_department_id
         );
 
-        $batch   = EligibilityBatch::find($this->argument('batchId'));
         $adapter = new AthenaAPIAdapter(
             $patientInfo,
-            new EligibilityJob(['batch_id' => $batch->id]),
-            $batch
+            new EligibilityJob(['batch_id' => $targetPatient->batch->id]),
+            $targetPatient->batch
         );
         $isEligible = $adapter->isEligible();
 
@@ -93,7 +92,7 @@ class DetermineEnrollmentEligibility
                 'home_phone'  => $demos['homephone'],
                 'cell_phone'  => $demos['mobilephone'] ?? null,
                 'practice_id' => $practice->id,
-                'batch_id'    => $this->argument('batchId') ?? null,
+                'batch_id'    => $targetPatient->batch->id ?? null,
 
                 'status' => Enrollee::TO_CALL,
 
