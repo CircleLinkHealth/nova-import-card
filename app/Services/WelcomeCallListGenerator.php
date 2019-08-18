@@ -837,7 +837,7 @@ class WelcomeCallListGenerator
 
                     $this->setEligibilityJobStatus(
                         3,
-                        ['problems' => 'Patient has less than 2 ccm conditions'],
+                        ['problems' => 'Patient has less than 2 ccm conditions', 'qualifyingCcmProblems' => $qualifyingCcmProblems, 'qualifyingBhiProblems' => $qualifyingBhiProblems],
                         EligibilityJob::INELIGIBLE,
                         'problems'
                     );
