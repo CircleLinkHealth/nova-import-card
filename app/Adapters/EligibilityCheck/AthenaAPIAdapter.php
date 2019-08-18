@@ -72,7 +72,7 @@ class AthenaAPIAdapter
 
         if (empty($this->eligibilityJob->data)) {
             $this->eligibilityJob->data = [
-                'problems' => $patient->map(function ($p) {
+                'problems' => collect($patient->get('problems'))->map(function ($p) {
                     return $p->toArray();
                 }),
                 'insurances' => $patient->get('insurances'),
