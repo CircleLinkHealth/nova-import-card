@@ -441,10 +441,8 @@ class ProviderReportService
      */
     public static function checkInputValueIsNotEmptyArray($answers, $errorDescription)
     {
-        if (!empty($answers)) {
-            return $answers;
-        } else {
-            return self::throwExceptionEmptyAnswer($errorDescription);
+        if (empty($answers)) {
+            self::throwExceptionEmptyAnswer($errorDescription);
         }
 
     }
