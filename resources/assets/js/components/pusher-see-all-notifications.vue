@@ -3,7 +3,7 @@
         <div class="title"><h2>YOUR NOTIFICATIONS</h2></div>
         <div class="list-group list-group-flush notifications">
             <div v-for="notification in notifications">
-                <a href="#" class="list-group-item list-group-item-action"
+                <a class="list-group-item list-group-item-action"
                    :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
                    @click="redirectAndMarkAsRead(notification)"
                    v-html="showAll(notification)">
