@@ -412,18 +412,20 @@ class ProviderReportService
      * @param $validAnswers
      * @param $answers
      * @param $errorMessage
+     * @return bool
      * @throws Exception
      */
     public static function validateOptionalAnswers($validAnswers, $answers, $errorMessage)
     {
         foreach ($validAnswers as $key => $isOptional) {
-            if ($isOptional === false) {
-                foreach ($answers[$key] as $answer) {
-                    if (is_string($answer) && empty($answer)) {
-                        self::throwExceptionEmptyAnswer($errorMessage);
-                    } elseif (is_array($answer)) {
-                        $isValidArray = !empty(self::checkInputValueIsNotEmptyArray($answer, $errorMessage));
-                    }
+            if ($isOptional) {
+               continue;
+            }
+            foreach ($answers[$key] as $answer) {
+                if (is_string($answer) && empty($answer)) {
+                    self::throwExceptionEmptyAnswer($errorMessage);
+                } elseif (is_array($answer)) {
+                  return !empty(self::checkInputValueIsNotEmptyArray($answer, $errorMessage));
                 }
             }
         }
