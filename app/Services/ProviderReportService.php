@@ -425,7 +425,7 @@ class ProviderReportService
                 if (is_string($answer) && empty($answer)) {
                     self::throwExceptionEmptyAnswer($errorMessage);
                 } elseif (is_array($answer)) {
-                  return !empty(self::checkInputValueIsNotEmptyArray($answer, $errorMessage));
+                   !empty(self::checkInputValueIsNotEmptyArray($answer, $errorMessage));
                 }
             }
         }
