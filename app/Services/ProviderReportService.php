@@ -427,11 +427,10 @@ class ProviderReportService
                     self::throwExceptionEmptyAnswer($errorMessage);
                 }
                 if (is_array($answer) && !empty(self::checkInputValueIsNotEmptyArray($answer, $errorMessage))) {
-                    continue;
+                    return true;
                 }
             }
         }
-        return true;
     }
 
     /**
