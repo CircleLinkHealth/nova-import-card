@@ -47,6 +47,7 @@ class DetermineTargetPatientEligibility extends Command
     public function handle()
     {
         TargetPatient::where('status', '=', 'to_process')
+            ->with('batch')
             ->get()
             ->each(function ($patient) {
                 $this->service->determineEnrollmentEligibility($patient);

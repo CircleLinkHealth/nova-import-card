@@ -39,7 +39,8 @@ class ArrayProblemLogger implements Logger
         foreach ($problems as $prob) {
             if ( ! is_array($prob)) {
                 \Log::error('NOT AN ARRAY:'.json_encode($problems));
-                continue;
+
+                return false;
             }
 
             if ( ! array_keys_exist([

@@ -189,13 +189,25 @@ class QueueEligibilityBatchForProcessing extends Command
 
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        $athenaService  = app(AthenaDetermineEnrollmentEligibility::class);
-        $query          = TargetPatient::whereBatchId($batch->id)->whereStatus(TargetPatient::STATUS_TO_PROCESS);
-        $targetPatients = $query->chunkById(100, function ($targetPatients) use (&$athenaService) {
-            foreach ($targetPatients as $patient) {
-                $athenaService->determineEnrollmentEligibility($patient);
-            }
-        });
+        $athenaService = app(AthenaDetermineEnrollmentEligibility::class);
+        $query         = TargetPatient::whereBatchId($batch->id)->whereStatus(TargetPatient::STATUS_TO_PROCESS);
+        try {
+            $targetPatients = $query->with('batch')->chunkById(100, function ($targetPatients) use (&$athenaService, $batch) {
+                //Processing
+                $batch->status = 1;
+                $batch->save();
+
+                foreach ($targetPatients as $patient) {
+                    $athenaService->determineEnrollmentEligibility($patient);
+                }
+            });
+        } catch (\Exception $exception) {
+            //error
+            $batch->status = 2;
+            $batch->save();
+
+            throw $exception;
+        }
 
         // Mark batch as processed by default
         $batch->status = 3;

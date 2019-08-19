@@ -34,13 +34,13 @@ class ProblemsAndInsurances
     /**
      * @return array
      */
-    public function getProblemCodes()
+    public function getProblemForEligibilityProcessing()
     {
-        $codes = [];
+        $problems = [];
 
         foreach ($this->getProblems() as $problem) {
             if ( ! array_key_exists('events', $problem)) {
-                $codes[] = \App\Services\Eligibility\Entities\Problem::create(['code' => $problem['code']]);
+                $problems[] = \App\Services\Eligibility\Entities\Problem::create(['code' => $problem['code'], 'code_system_name' => $problem['codeset'], 'name' => $problem['name']]);
 
                 continue;
             }
@@ -55,14 +55,14 @@ class ProblemsAndInsurances
                         continue;
                     }
 
-                    $codes[] = \App\Services\Eligibility\Entities\Problem::create(['code' => $diagnosis['code']]);
+                    $problems[] = \App\Services\Eligibility\Entities\Problem::create(['code' => $diagnosis['code'], 'code_system_name' => $diagnosis['codeset'], 'name' => $diagnosis['name']]);
 
                     continue 3;
                 }
             }
         }
 
-        return $codes;
+        return $problems;
     }
 
     /**
