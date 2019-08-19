@@ -94,11 +94,11 @@ class LGHDetermineCcdaEnrollmentEligibility implements ShouldQueue
 
         $list = (new WelcomeCallListGenerator(
             collect([$patient]),
+            $lgh,
             false,
             $filterInsurance,
             true,
             true,
-            $lgh,
             Ccda::class,
             $this->ccda->id
         ));

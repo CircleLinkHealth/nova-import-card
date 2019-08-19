@@ -10,6 +10,7 @@ use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Services\WelcomeCallListGenerator;
 use App\ValueObjects\Athena\ProblemsAndInsurances;
+use CircleLinkHealth\Customer\Entities\Practice;
 
 class AthenaAPIAdapter
 {
@@ -41,7 +42,7 @@ class AthenaAPIAdapter
         return $this->eligiblePatientList;
     }
 
-    public function isEligible()
+    public function isEligible(Practice $practice)
     {
         $patientList = collect();
 
@@ -56,11 +57,11 @@ class AthenaAPIAdapter
 
         $check = new WelcomeCallListGenerator(
             $patientList,
+            $practice,
             false,
             true,
             true,
             false,
-            null,
             null,
             null,
             $this->eligibilityBatch,

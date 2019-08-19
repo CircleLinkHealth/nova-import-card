@@ -168,11 +168,11 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
         $list = (new WelcomeCallListGenerator(
             collect([$patient]),
+            $this->practice,
             $this->filterLastEncounter,
             $this->filterInsurance,
             $this->filterProblems,
             true,
-            $this->practice,
             Ccda::class,
             $this->ccda->id,
             $this->batch,

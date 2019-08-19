@@ -90,11 +90,11 @@ class ProcessSinglePatientEligibility implements ShouldQueue
         if (0 == $this->eligibilityJob->status) {
             new WelcomeCallListGenerator(
                 $this->patient,
+                $this->practice,
                 $this->filterLastEncounter,
                 $this->filterInsurance,
                 $this->filterProblems,
                 true,
-                $this->practice,
                 null,
                 null,
                 $this->batch,

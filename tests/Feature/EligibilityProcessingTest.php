@@ -42,11 +42,11 @@ class EligibilityProcessingTest extends TestCase
 
         $list = (new WelcomeCallListGenerator(
             collect([0 => $data]),
+            $practice,
             false,
             true,
             true,
             true,
-            $practice,
             null,
             null,
             $batch,

@@ -34,12 +34,14 @@ class DetermineEnrollmentEligibility
             $targetPatient->ehr_department_id
         );
 
+        $practice = $this->practiceFromExternalId($targetPatient->ehr_practice_id);
+
         $adapter = new AthenaAPIAdapter(
             $patientInfo,
             new EligibilityJob(['batch_id' => $targetPatient->batch->id]),
             $targetPatient->batch
         );
-        $isEligible = $adapter->isEligible();
+        $isEligible = $adapter->isEligible($practice);
 
         $job                               = $adapter->getEligibilityJob();
         $targetPatient->eligibility_job_id = $job->id;
@@ -63,23 +65,10 @@ class DetermineEnrollmentEligibility
         }
 
         if ($demos['homephone'] or $demos['mobilephone']) {
-            $targetPatient->status = 'eligible';
+            $targetPatient->status = TargetPatient::STATUS_ELIGIBLE;
         } else {
-            $targetPatient->status      = 'error';
+            $targetPatient->status      = TargetPatient::STATUS_ERROR;
             $targetPatient->description = 'Homephone or mobile phone must be provided';
-        }
-
-        $practice = Practice::where(
-            'external_id',
-            '=',
-            $targetPatient->ehr_practice_id
-        )->first();
-
-        if ( ! $practice) {
-            throw new \Exception(
-                "Practice with AthenaId {$targetPatient->ehr_practice_id} was not found.",
-                500
-            );
         }
 
         $insurances = $patientInfo->getInsurances();
@@ -222,5 +211,14 @@ class DetermineEnrollmentEligibility
         $problemsAndInsurance->setInsurances($insurancesResponse['insurances']);
 
         return $problemsAndInsurance;
+    }
+
+    private function practiceFromExternalId($ehrPracticeId): Practice
+    {
+        return Practice::where(
+            'external_id',
+            '=',
+            $ehrPracticeId
+        )->firstOrFail();
     }
 }

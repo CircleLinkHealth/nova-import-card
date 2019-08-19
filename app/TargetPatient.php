@@ -58,7 +58,18 @@ class TargetPatient extends BaseModel
     const STATUS_INELIGIBLE = 'ineligible';
     const STATUS_TO_PROCESS = 'to_process';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'batch_id',
+        'eligibility_job_id',
+        'ehr_id',
+        'user_id',
+        'enrollee_id',
+        'ehr_patient_id',
+        'ehr_practice_id',
+        'ehr_department_id',
+        'status',
+        'description',
+    ];
 
     public function batch()
     {
