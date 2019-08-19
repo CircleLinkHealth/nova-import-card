@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.109.5",
+            "version": "3.109.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "62c85d4675a10bb2d046ed65f3da8471277b78eb"
+                "reference": "c129c2120943340cb102ab1a1c7c76d03c00bcc4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/62c85d4675a10bb2d046ed65f3da8471277b78eb",
-                "reference": "62c85d4675a10bb2d046ed65f3da8471277b78eb",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c129c2120943340cb102ab1a1c7c76d03c00bcc4",
+                "reference": "c129c2120943340cb102ab1a1c7c76d03c00bcc4",
                 "shasum": ""
             },
             "require": {
@@ -495,7 +495,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-08-15T18:21:32+00:00"
+            "time": "2019-08-16T18:13:56+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -658,7 +658,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "9b7436c0b82388fa058aa9a93993fd9ce33040f6"
+                "reference": "6232dd0cf676ac0535b1686b3f373aca98be99f5"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-08-14T17:53:30+00:00"
+            "time": "2019-08-19T10:47:27+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -966,16 +966,16 @@
         },
         {
             "name": "dillingham/nova-button",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dillingham/nova-button.git",
-                "reference": "d7547cc787bb24e7bb19b7f045fc39715724372a"
+                "reference": "ffb0cd340a16e7c47b6201cacccfdd1352376cc9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dillingham/nova-button/zipball/d7547cc787bb24e7bb19b7f045fc39715724372a",
-                "reference": "d7547cc787bb24e7bb19b7f045fc39715724372a",
+                "url": "https://api.github.com/repos/dillingham/nova-button/zipball/ffb0cd340a16e7c47b6201cacccfdd1352376cc9",
+                "reference": "ffb0cd340a16e7c47b6201cacccfdd1352376cc9",
                 "shasum": ""
             },
             "type": "library",
@@ -1002,7 +1002,7 @@
                 }
             ],
             "description": "Nova button package",
-            "time": "2019-04-18T11:59:41+00:00"
+            "time": "2019-08-18T17:20:16+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1985,16 +1985,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.109",
+            "version": "v0.110",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "1e1e05ed1320573f9c3c364ea87302abba748874"
+                "reference": "9d9e0a4e180cf09a52ab04535ca4f669031f8c54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/1e1e05ed1320573f9c3c364ea87302abba748874",
-                "reference": "1e1e05ed1320573f9c3c364ea87302abba748874",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/9d9e0a4e180cf09a52ab04535ca4f669031f8c54",
+                "reference": "9d9e0a4e180cf09a52ab04535ca4f669031f8c54",
                 "shasum": ""
             },
             "require": {
@@ -2018,20 +2018,20 @@
             "keywords": [
                 "google"
             ],
-            "time": "2019-08-10T00:23:38+00:00"
+            "time": "2019-08-17T00:23:23+00:00"
         },
         {
             "name": "google/auth",
-            "version": "v1.5.1",
+            "version": "v1.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "0f75e20e7392e863f5550ed2c2d3d50af21710fb"
+                "reference": "2ee962e5df3e9427fda859f1b0515d6d62c4afa5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/0f75e20e7392e863f5550ed2c2d3d50af21710fb",
-                "reference": "0f75e20e7392e863f5550ed2c2d3d50af21710fb",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/2ee962e5df3e9427fda859f1b0515d6d62c4afa5",
+                "reference": "2ee962e5df3e9427fda859f1b0515d6d62c4afa5",
                 "shasum": ""
             },
             "require": {
@@ -2069,7 +2069,7 @@
                 "google",
                 "oauth2"
             ],
-            "time": "2019-04-16T18:48:28+00:00"
+            "time": "2019-07-22T21:01:31+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -5528,16 +5528,16 @@
         },
         {
             "name": "phpoffice/phpspreadsheet",
-            "version": "1.8.2",
+            "version": "1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-                "reference": "0c1346a1956347590b7db09533966307d20cb7cc"
+                "reference": "8dea03eaf60a349b6097e4bcad11f894668280df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/0c1346a1956347590b7db09533966307d20cb7cc",
-                "reference": "0c1346a1956347590b7db09533966307d20cb7cc",
+                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/8dea03eaf60a349b6097e4bcad11f894668280df",
+                "reference": "8dea03eaf60a349b6097e4bcad11f894668280df",
                 "shasum": ""
             },
             "require": {
@@ -5556,17 +5556,16 @@
                 "ext-zlib": "*",
                 "markbaker/complex": "^1.4",
                 "markbaker/matrix": "^1.1",
-                "php": "^5.6|^7.0",
+                "php": "^7.1",
                 "psr/simple-cache": "^1.0"
             },
             "require-dev": {
-                "doctrine/instantiator": "^1.0.0",
                 "dompdf/dompdf": "^0.8.0",
                 "friendsofphp/php-cs-fixer": "@stable",
                 "jpgraph/jpgraph": "^4.0",
                 "mpdf/mpdf": "^7.0.0",
                 "phpcompatibility/php-compatibility": "^8.0",
-                "phpunit/phpunit": "^5.7",
+                "phpunit/phpunit": "^7.5",
                 "squizlabs/php_codesniffer": "^3.3",
                 "tecnickcom/tcpdf": "^6.2"
             },
@@ -5588,12 +5587,6 @@
             ],
             "authors": [
                 {
-                    "name": "Erik Tilt"
-                },
-                {
-                    "name": "Adrien Crivelli"
-                },
-                {
                     "name": "Maarten Balliauw",
                     "homepage": "https://blog.maartenballiauw.be"
                 },
@@ -5604,6 +5597,12 @@
                 {
                     "name": "Franck Lefevre",
                     "homepage": "https://rootslabs.net"
+                },
+                {
+                    "name": "Erik Tilt"
+                },
+                {
+                    "name": "Adrien Crivelli"
                 }
             ],
             "description": "PHPSpreadsheet - Read, Create and Write Spreadsheet documents in PHP - Spreadsheet engine",
@@ -5618,7 +5617,7 @@
                 "xls",
                 "xlsx"
             ],
-            "time": "2019-07-08T21:21:25+00:00"
+            "time": "2019-08-17T22:24:35+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
