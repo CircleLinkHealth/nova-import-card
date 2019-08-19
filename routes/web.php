@@ -2415,7 +2415,7 @@ Route::get(
 )->middleware(['auth', 'role:administrator']);
 
 Route::get('notifications/{id}', [
-    'uses' => 'NotificationController@show',
+    'uses' => 'NotificationController@showPusherNotification',
     'as'   => 'notifications.show',
 ])->middleware('permission:provider.read,note.read');
 
@@ -2428,4 +2428,9 @@ Route::post('/redirect-mark-read/{receiverId}/{attachmentId}', [
     'uses' => 'NotificationController@markNotificationAsRead',
     'as'   => 'notification.redirect',
 ]);
+
+Route::get('see-all-notifications', [
+    'uses' => 'NotificationController@seeAllNotifications',
+    'as'   => 'notifications.seeAll',
+])->middleware('permission:provider.read,note.read');
 

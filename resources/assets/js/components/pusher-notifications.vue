@@ -1,6 +1,7 @@
 <template>
     <div>
         <span v-show="shouldShowCount" class="badge badge-secondary">{{count}}</span>
+        <loader v-show="waiting"></loader>
         <div v-if="!isClicked">
             <div class="dropdown-menu">
                 <div class="dropdown-header">
@@ -16,7 +17,7 @@
                     </div>
                 </div>
                 <div class="dropdown-footer"
-                     @click="showAll(notifications)">
+                     @click="seeAll()">
                     <a>
                         See All
                     </a>
@@ -29,12 +30,14 @@
 
 
 <script>
-    import PusherSeeAllNotifications from './pusher-see-all-notifications.vue';
+    // import PusherSeeAllNotifications from './pusher-see-all-notifications';
+    import LoaderComponent from './loader'
 
     export default {
         name: "pusher-notifications",
         components: {
-            'pusher-see-all-notifications': PusherSeeAllNotifications,
+            // 'pusher-see-all-notifications': PusherSeeAllNotifications,
+            'loader': LoaderComponent,
         },
         props: [
             'user'
@@ -51,11 +54,12 @@
                 component: '',
                 isClicked: false,
                 notificationsFromDbCount: [],
+                waiting: false,
             }
         },
         computed: {
             shouldShowCount() {
-                return this.countUnreadNotifications !== 0;
+                return this.countUnreadNotifications !== 0 && this.waiting !== true;
             },
 
             countUnreadNotifications() {
@@ -68,7 +72,7 @@
             },
 
             notifications() {
-                return this.notificationsFromDb.concat(this.notificationsFromPusher);
+                return this.notificationsFromPusher.concat(this.notificationsFromDb);
             },
 
         },
@@ -96,19 +100,20 @@
                 window.location.href = notification.data.redirect_link;
             },
 
-            showAll(notifications) {
-                // this.isClicked = true;
-                // this.component = 'pusher-see-all-notifications';
+            seeAll() {
+                window.location.href = '/see-all-notifications'
             },
 
         },
 
         created() {
+            this.waiting = true;
             axios.get('/notifications')
                 .then(response => {
                         const notificationsFromDb = response.data;
                         this.notificationsFromDb.push(...notificationsFromDb.notifications);
                         this.notificationsFromDbCount.push(notificationsFromDb.totalCount);
+                        this.waiting = false;
                     }
                 );
 
@@ -166,14 +171,6 @@
         border-bottom: 1px solid #90949c;
         cursor: pointer;
     }
-
-    .sex {
-        overflow: visible;
-        position: absolute;
-        height: 1000px;
-        width: 1000px;
-    }
-
     .badge-secondary {
         display: inline;
         background: #e46745;
@@ -224,5 +221,12 @@
     .senderName {
         font-weight: bold;
         color: #000;
+    }
+
+    .loader {
+        width: 14px;
+        height: 14px;
+        border: 5px solid #e46745;
+        border-top: 5px solid #555;
     }
 </style>

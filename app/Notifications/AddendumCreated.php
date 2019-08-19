@@ -9,6 +9,7 @@ namespace App\Notifications;
 use App\Http\Controllers\NotificationController;
 use App\Models\Addendum;
 use App\Note;
+use App\Services\NotificationService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -66,7 +67,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     {
         $patientId = $this->getPatientId();
 
-        return NotificationController::getPatientName($patientId);
+        return NotificationService::getPatientName($patientId);
     }
 
     /**
@@ -106,6 +107,8 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
 
     /**
      * Get the broadcastable representation of the notification.
+     *
+     * Returns by default -  ONLY the notification id & the notification type
      *
      * @param mixed $notifiable
      *

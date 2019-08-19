@@ -6,11 +6,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\PusherNotificationService;
-use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\DatabaseNotification;
-use CircleLinkHealth\Customer\Entities\User;
+use App\Services\NotificationService;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 
 class NotificationController extends Controller
 {
@@ -19,21 +18,11 @@ class NotificationController extends Controller
     /**
      * NotificationController constructor.
      *
-     * @param PusherNotificationService $pusherNotificationService
+     * @param NotificationService $notificationService
      */
-    public function __construct(PusherNotificationService $pusherNotificationService)
+    public function __construct(NotificationService $notificationService)
     {
-        $this->service = $pusherNotificationService;
-    }
-
-    /**
-     * @param $patientId
-     *
-     * @return mixed|string
-     */
-    public static function getPatientName($patientId)
-    {
-        return User::find($patientId)->display_name;
+        $this->service = $notificationService;
     }
 
     /**
@@ -41,15 +30,9 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        $notifications               = DatabaseNotification::whereNotifiableId(auth()->id())->orderByDesc('id')->take(5)->get();
-        $allUnreadNotificationsCount = DatabaseNotification::whereNotifiableId(auth()->id())->where('read_at', null)->count();
-
-        $notificationsWithElapsedTime = $notifications->map(function ($notification) {
-            $createdDateTime = Carbon::parse($notification->created_at);
-            $notification['elapsed_time'] = $this->notificationElapsedTime($createdDateTime);
-
-            return $notification;
-        });
+        $notifications                = $this->service->getDropdownNotifications();
+        $allUnreadNotificationsCount  = $this->service->getDropdownNotificationsCount();
+        $notificationsWithElapsedTime = $this->service->prepareNotifications($notifications);
 
         return response()->json([
             'notifications' => $notificationsWithElapsedTime,
@@ -63,17 +46,19 @@ class NotificationController extends Controller
      */
     public function markNotificationAsRead($receiverId, $attachmentId)
     {
-        $this->service->markNotificationAsRead($receiverId, $attachmentId);
+        $this->service->markAsRead($receiverId, $attachmentId);
     }
 
     /**
-     * @param Carbon $createdDateTime
-     *
-     * @return string
+     * @return Factory|View
      */
-    public function notificationElapsedTime(Carbon $createdDateTime)
+    public function seeAllNotifications()
     {
-        return $createdDateTime->diffForHumans(Carbon::parse(now()));
+        $user              = auth()->user();
+        $userNotifications = $user->notifications;
+        $notifications     = $this->service->prepareNotifications($userNotifications);
+        //@todo: pagination needed
+        return view('notifications.seeAllNotifications', compact('notifications'));
     }
 
     /**
@@ -81,12 +66,11 @@ class NotificationController extends Controller
      *
      * @return JsonResponse
      */
-    public function show($id)
+    public function showPusherNotification($id)
     {
-        $notification    = DatabaseNotification::findOrFail($id);
-        $createdDateTime = Carbon::parse($notification->created_at);
-        //add elapsed_time to array
-        $notification['elapsed_time'] = $this->notificationElapsedTime($createdDateTime);
+        $notification    = $this->service->getPusherNotificationData($id);
+        $createdDateTime = $this->service->notificationCreatedAt($notification);
+        $this->service->addElapsedTime($notification, $createdDateTime);
 
         return response()->json($notification);
     }
