@@ -15,7 +15,6 @@ use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
-use App\Console\Commands\EmailRNDailyReportToDeprecate;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
@@ -116,9 +115,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(GetCcds::class)
             ->dailyAt('03:00')->onOneServer();
-
-        $schedule->command(EmailRNDailyReportToDeprecate::class)
-            ->dailyAt('07:00')->onOneServer();
 
         $schedule->command(EmailRNDailyReport::class)
             ->dailyAt('07:05')->onOneServer();
