@@ -36,7 +36,6 @@ use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
-use CircleLinkHealth\ResponseCache\Commands\Clear;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -46,7 +45,6 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Clear::class,
     ];
 
     /**
