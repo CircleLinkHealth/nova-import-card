@@ -423,27 +423,10 @@ class ProviderReportService
                 continue;
             }
             foreach ($answers[$key] as $answer) {
-                if (is_string($answer) && empty($answer)) {
+                if ((is_string($answer) && empty($answer)) || (is_array($answer) && empty($answer))) {
                     self::throwExceptionEmptyAnswer($errorMessage);
-                }
-                if (is_array($answer)) {
-                    self::checkInputValueIsNotEmptyArray($answer, $errorMessage);
                 }
             }
         }
-    }
-
-    /**
-     * @param $answers
-     * @param $errorDescription
-     * @return mixed
-     * @throws Exception
-     */
-    public static function checkInputValueIsNotEmptyArray($answers, $errorDescription)
-    {
-        if (empty($answers)) {
-            self::throwExceptionEmptyAnswer($errorDescription);
-        }
-
     }
 }
