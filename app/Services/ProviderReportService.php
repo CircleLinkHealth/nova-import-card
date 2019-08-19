@@ -10,6 +10,7 @@ class ProviderReportService
 {
     const YES = 'Yes';
     const NO = 'No';
+
     /**
      * @param $report
      * @return \Illuminate\Support\Collection
@@ -419,16 +420,18 @@ class ProviderReportService
     {
         foreach ($validAnswers as $key => $isOptional) {
             if ($isOptional) {
-               continue;
+                continue;
             }
             foreach ($answers[$key] as $answer) {
                 if (is_string($answer) && empty($answer)) {
                     self::throwExceptionEmptyAnswer($errorMessage);
-                } elseif (is_array($answer)) {
-                   !empty(self::checkInputValueIsNotEmptyArray($answer, $errorMessage));
+                }
+                if (is_array($answer) && !empty(self::checkInputValueIsNotEmptyArray($answer, $errorMessage))) {
+                    continue;
                 }
             }
         }
+        return true;
     }
 
     /**
