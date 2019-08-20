@@ -91,7 +91,7 @@ class SurveyInvitationLink extends Notification
         $line2 = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), self::EMAIL_LINE_2);
 
         return (new MailMessage)
-            ->from("support@circlelinkhealth.com", "CirleLink Health")
+            ->from("support@circlelinkhealth.com", "CircleLink Health")
             ->subject($subject)
             ->greeting(self::EMAIL_GREETING)
             ->line($line1)
