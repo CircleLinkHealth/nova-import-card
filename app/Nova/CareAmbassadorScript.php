@@ -10,7 +10,7 @@ use App\TrixField;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
-use Laravel\Nova\Fields\Trix;
+use Waynestate\Nova\CKEditor;
 
 class CareAmbassadorScript extends Resource
 {
@@ -79,7 +79,8 @@ class CareAmbassadorScript extends Resource
                     'es' => 'Spanish',
                 ])->displayUsingLabels(),
 
-            Trix::make('Body'),
+            CKEditor::make('Body', 'body')
+                ->hideFromIndex(),
         ];
     }
 
