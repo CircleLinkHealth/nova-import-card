@@ -41,7 +41,7 @@ class DetermineEnrollmentEligibility
             new EligibilityJob(['batch_id' => $targetPatient->batch->id]),
             $targetPatient->batch
         );
-        $isEligible = $adapter->isEligible($practice);
+        $isEligible = $adapter->isEligible($practice, $targetPatient->ehr_patient_id);
 
         $job                               = $adapter->getEligibilityJob();
         $targetPatient->eligibility_job_id = $job->id;
