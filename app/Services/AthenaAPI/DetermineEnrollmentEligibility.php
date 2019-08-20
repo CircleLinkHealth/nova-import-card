@@ -47,7 +47,7 @@ class DetermineEnrollmentEligibility
         $targetPatient->eligibility_job_id = $job->id;
 
         if ( ! $isEligible) {
-            $targetPatient->status = 'ineligible';
+            $targetPatient->status = TargetPatient::STATUS_INELIGIBLE;
             $targetPatient->save();
 
             return false;
@@ -108,15 +108,13 @@ class DetermineEnrollmentEligibility
             ]);
 
             $targetPatient->enrollee_id = $enrollee->id;
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Database\QueryException $e) {
             //check if this is a mysql exception for unique key constraint
-            if ($e instanceof \Illuminate\Database\QueryException) {
-                $errorCode = $e->errorInfo[1];
-                if (1062 == $errorCode) {
-                    //do nothing
+            $errorCode = $e->errorInfo[1];
+            if (1062 == $errorCode) {
+                //do nothing
                     //we don't actually want to terminate the program if we detect duplicates
                     //we just don't wanna add the row again
-                }
             }
         }
 
