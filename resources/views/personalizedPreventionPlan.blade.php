@@ -1,5 +1,4 @@
 @extends('layouts.surveysMaster')
-
 <?php
 function getStringValue($val, $default = '')
 {
@@ -28,19 +27,18 @@ function getStringValue($val, $default = '')
 }
 ?>
 @section('content')
-   {{-- <link href="{{asset('css/PersonalizedPreventionPlan.css')}}" rel="stylesheet">--}}
     <div class="container report">
         <div class="report-title">
             <h3>Patient Info</h3>
             <hr>
         </div>
         <div>
-{{--            Patient Name: <span style="color: #50b2e2">{{$patient->display_name}}</span> <br>--}}
-{{--            Date of Birth: <strong>{{$patient->patientInfo->birth_date}}</strong><br>--}}
-{{--            Age: <strong>{{getStringValue($patientPppData->answers_for_eval['age'])}}</strong> <br>--}}
-{{--            Address: <strong>{{$patient->address}}</strong> <br>--}}
-{{--            City, State, Zip: <strong>{{$patient->city}}, {{$patient->state}}, {{$patient->zip}}</strong> <br>--}}
-{{--            Provider: <strong>{{$patient->getBillingProviderName()}}</strong>--}}
+            Patient Name: <span style="color: #50b2e2">{{$patient->display_name}}</span> <br>
+            Date of Birth: <strong>{{$patient->patientInfo->birth_date}}</strong><br>
+            Age: <strong>{{getStringValue($patientPppData->answers_for_eval['age'])}}</strong> <br>
+            Address: <strong>{{$patient->address}}</strong> <br>
+            City, State, Zip: <strong>{{$patient->city}}, {{$patient->state}}, {{$patient->zip}}</strong> <br>
+            Provider: <strong>{{$patient->getBillingProviderName()}}</strong>
         </div>
         <div class="report-title">
             <br>
@@ -58,7 +56,7 @@ function getStringValue($val, $default = '')
         </div>
         <br>
         <div class="suggested-list">
-            <div class="report-title">
+            <div class="report-title col-md-6">
                 <h3>Suggested CheckList</h3>
             </div>
             <div class="side-title col-md-6">
@@ -116,12 +114,17 @@ function getStringValue($val, $default = '')
                                 <br>
                                 @if (is_array($recommendations['recommendation_body']))
                                     @foreach($recommendations['recommendation_body'] as $recBodyItem)
-                                        <div style="font-weight: 400"><i>{{$recBodyItem}}</i>
-                                        </div>
+                                        <ul>
+                                            <li style="font-weight: 400; margin-left: 7%;"><i>{{$recBodyItem}}</i>
+                                            </li>
+                                        </ul>
                                     @endforeach
                                 @else
-                                    <div style="font-weight: 400"><i>{{$recommendations['recommendation_body']}}</i>
-                                    </div>
+                                    <ul>
+                                        <li style="font-weight: 400; margin-left: 7%;">
+                                            <i>{{$recommendations['recommendation_body']}}</i>
+                                        </li>
+                                    </ul>
                                 @endif
                                 <br>
                             </div>
@@ -134,7 +137,8 @@ function getStringValue($val, $default = '')
 
 @endsection
 
-<style>
+<style type="text/css" media="all">
+
     .section-title {
         font-family: Poppins;
         background-color: #50b2e2;
@@ -210,20 +214,14 @@ function getStringValue($val, $default = '')
     }
 
     .side-title {
-        top: 5%;
-        float: right;
-        /*These work in pure HTML but NOT when in PDF also some other styles behave the same way when in pdf*/
-        /*padding-left: 3%;*/
-        /*padding-top: 1%;*/
+        padding-top: 1%;
     }
 
     .suggested-list-body {
         font-weight: 500;
     }
 
-    .image{
+    .image {
         margin-right: 1px;
     }
-
-
 </style>

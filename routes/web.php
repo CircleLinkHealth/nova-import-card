@@ -102,7 +102,6 @@ Route::group([
         'prefix' => 'vitals',
         'middleware' => ['permission:vitals-survey-complete'],
     ], function () {
-
         Route::get('{patientId}', [
             'uses' => 'VitalsSurveyController@getCurrentSurvey',
             'as'   => 'survey.vitals',
@@ -145,3 +144,7 @@ Route::group([
 
 Route::post('twilio/sms/status', 'TwilioController@smsStatusCallback')
      ->name('twilio.sms.status');
+
+
+
+Route::get('/sex', 'PersonalizedPreventionPlanController@getPppDataForUser');

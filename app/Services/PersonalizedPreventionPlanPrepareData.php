@@ -170,9 +170,11 @@ class PersonalizedPreventionPlanPrepareData
         $recommendationTasks = collect();
         foreach ($recommendationsData['recommendation_tasks'] as $key => $tasks) {
             $recommendationTasks[$key] = $tasks;
+
         }
 
         $personalizedHealthAdvices = $recommendationTasks->map(function ($recommendation) {
+
             $tasks = array_slice($recommendation, 2);
             $tableData = [];
             foreach ($tasks as $task) {
