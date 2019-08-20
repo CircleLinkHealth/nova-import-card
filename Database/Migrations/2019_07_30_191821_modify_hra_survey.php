@@ -32,13 +32,15 @@ class ModifyHraSurvey extends Migration
             return;
         }
 
-        $existsInQuestionTypesAnswer = DB::table('question_types_answers')->where('question_type_id', '=', $qType->id)->exists();
+        $questionTypesAnswer = 'question_types_answers';
+
+        $existsInQuestionTypesAnswer = DB::table($questionTypesAnswer)->where('question_type_id', '=', $qType->id)->exists();
 
         if (1 === $existsInQuestionTypesAnswer) {
             return;
         }
 
-        DB::table('question_types_answers')->insert([
+        DB::table($questionTypesAnswer)->insert([
             'question_type_id' => $qType->id,
             'value'            => null,
             'options'          => [
