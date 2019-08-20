@@ -33,6 +33,7 @@ class PersonalizedPreventionPlanPrepareData
     {
         $nutritionRecommendations = [
             $title = PersonalizedPreventionPlanPrepareData::NUTRITION_TITLE,
+            $image = 'fas fa-carrot',
             $fruitVeggies = $this->fruitVeggies($patientPppData, $title),
             $wholeGrain = $this->wholeGrain($patientPppData, $title),
             $fattyFriedFoods = $this->fattyFriedFoods($patientPppData, $title),
@@ -41,6 +42,7 @@ class PersonalizedPreventionPlanPrepareData
 
         $smokingRecommendations = [
             $title = PersonalizedPreventionPlanPrepareData::TOBACCO_TITLE,
+            $image = 'fas fa-smoking',
             $currentSmoker = $this->currentSmoker($patientPppData, $title),
             $currentSmokerAge = $this->currentSmokerMale($patientPppData, $title),
             $formerSmoker = $this->formerSmoker($patientPppData, $title),
@@ -48,59 +50,70 @@ class PersonalizedPreventionPlanPrepareData
 
         $alcoholRecommendations = [
             $title = PersonalizedPreventionPlanPrepareData::ALCOHOL_TITLE,
+            $image = 'fas fa-wine-glass-alt',
             $alcoholUse = $this->alcoholUse($patientPppData, $title),
         ];
 
         $recreationalDrugsRecommendations = [
             $title = PersonalizedPreventionPlanPrepareData::DRUGS_TITLE,
+            $image = 'fas fa-cannabis',
             $recreationalDrugs = $this->recreationalDrugs($patientPppData, $title),
         ];
 
         $physicalActivity = [
             $title = PersonalizedPreventionPlanPrepareData::PHYSICAL_TITLE,
+            $image = 'fas fa-dumbbell',
             $physicalActivity = $this->physicalActivity($patientPppData, $title),
         ];
 
         $weightBmi = [
             $title = PersonalizedPreventionPlanPrepareData::WEIGHT_BMI_TITLE,
+            $image = 'fas fa-weight',
             $weightBmiUnderweight = $this->weightBmiUnderweight($patientPppData, $title),
             $weightBmiOverweight = $this->weightBmiOverweight($patientPppData, $title),
         ];
 
         $sexualPractices = [
             $title = PersonalizedPreventionPlanPrepareData::SEXUAL_TITLE,
+            $image = 'fas fa-kiss-wink-heart',
             $unprotectedSex = $this->unprotectedSex($patientPppData, $title),
             $womanOfReproductiveAge = $this->womanOfReproductiveAge($patientPppData, $title),
         ];
 
         $emotionalHealth = [
             $title = PersonalizedPreventionPlanPrepareData::EMOTIONAL_TITLE,
+            $image = 'far fa-smile-beam',
             $depression = $this->depression($patientPppData, $title),
         ];
 
         $fallRisk = [
             $title = PersonalizedPreventionPlanPrepareData::FALL_RISK_TITLE,
+            $image = 'fas fa-band-aid',
             $patientHasFallen = $this->patientHasFallen($patientPppData, $title),
         ];
 
         $hearingImpairment = [
             $title = PersonalizedPreventionPlanPrepareData::HEARING_TITLE,
+            $image = 'fas fa-volume-up',
             $patientHasHearingImper = $this->hearingImpairment($patientPppData, $title),
         ];
 
         $cognitiveImpairment = [
             $title = PersonalizedPreventionPlanPrepareData::COGNITIVE_TITLE,
+            $image = 'fas fa-brain',
             $mildCognitiveImpairment = $this->mildCognitiveImpairment($patientPppData, $title),
             $modToSevNeurocognitiveImpairment = $this->modToSevNeurocognitiveImpairment($patientPppData, $title),
         ];
 
         $adl = [
             $title = PersonalizedPreventionPlanPrepareData::ADL_TITLE,
+            $image = 'fas fa-hand-spock',
             $adlWithNoHelp = $this->adlWithNoHelp($patientPppData, $title),
         ];
 
         $immunizationsVaccines = [
             $title = PersonalizedPreventionPlanPrepareData::VACCINES_TITLE,
+            $image = 'fas fa-syringe',
             $fluInfluenza = $this->fluInfluenza($patientPppData, $title),
             $tetanusDiphtheria = $this->tetanusDiphtheria($patientPppData, $title),
             $chickenPox = $this->chickenPoxVaricella($patientPppData, $title),
@@ -110,8 +123,10 @@ class PersonalizedPreventionPlanPrepareData
             $shingles = $this->shingles($patientPppData, $title),
             $pneumococcalVaccine = $this->pneumococcalVaccine($patientPppData, $title),
         ];
+
         $screenings = [
             $title = PersonalizedPreventionPlanPrepareData::SCREENINGS_TITLE,
+            $image = 'fas fa-tasks',
             $breastCancerMammogram = $this->breastCancerMammogram($patientPppData, $title),
             $cervicalCancerYoung = $this->cervicalCancerYoung($patientPppData, $title),
             $cervicalCancerElder = $this->cervicalCancerElder($patientPppData, $title),
@@ -123,6 +138,7 @@ class PersonalizedPreventionPlanPrepareData
 
         $otherMisc = [
             $title = PersonalizedPreventionPlanPrepareData::OTHER_TITLE,
+            $image = 'fas fa-lightbulb',
             $osteoporosis = $this->osteoporosis($patientPppData, $title),
             $glaukoma = $this->glaukoma($patientPppData, $title),
             $diabetes = $this->diabetes($patientPppData, $title),
@@ -157,7 +173,7 @@ class PersonalizedPreventionPlanPrepareData
         }
 
         $personalizedHealthAdvices = $recommendationTasks->map(function ($recommendation) {
-            $tasks = array_slice($recommendation, 1);
+            $tasks = array_slice($recommendation, 2);
             $tableData = [];
             foreach ($tasks as $task) {
                 if (!empty($task['report_table_data'])) {
@@ -167,6 +183,7 @@ class PersonalizedPreventionPlanPrepareData
 
             return [
                 'title' => $recommendation[0],
+                'image' => $recommendation[1],
                 'tasks' => $tasks,
                 'table_data' => $tableData,
             ];
