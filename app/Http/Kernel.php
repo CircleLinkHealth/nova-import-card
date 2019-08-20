@@ -12,14 +12,13 @@ use App\Http\Middleware\CheckCarePlanMode;
 use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\CheckOnboardingInvite;
 use App\Http\Middleware\CheckWebSocketServer;
+use App\Http\Middleware\DummyPlaceholder;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\LogoutIfAccessDisabled;
 use App\Http\Middleware\PatientProgramSecurity;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\VerifyCsrfToken;
-use CircleLinkHealth\ResponseCache\Middlewares\CacheResponse;
-use CircleLinkHealth\ResponseCache\Middlewares\DoNotCacheResponse;
 use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
@@ -100,7 +99,7 @@ class Kernel extends HttpKernel
         'role'                   => CerberusRole::class,
         'verify.invite'          => CheckOnboardingInvite::class,
         'check.careplan.mode'    => CheckCarePlanMode::class,
-        'doNotCacheResponse'     => DoNotCacheResponse::class,
-        'cacheResponse'          => CacheResponse::class,
+        'doNotCacheResponse'     => DummyPlaceholder::class,
+        'cacheResponse'          => DummyPlaceholder::class,
     ];
 }
