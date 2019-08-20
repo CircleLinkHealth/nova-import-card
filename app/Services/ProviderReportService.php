@@ -4,27 +4,37 @@
 namespace App\Services;
 
 
+use Exception;
+
 class ProviderReportService
 {
+    const YES = 'Yes';
+    const NO = 'No';
+
+    /**
+     * @param $report
+     * @return \Illuminate\Support\Collection
+     * @throws Exception
+     */
     public function formatReportDataForView($report)
     {
-        $demographicData['age']    = $this->getStringValue($report->demographic_data['age'], 'N/A');
-        $demographicData['race']   = ucwords(strtolower($this->getStringValue($report->demographic_data['race'],
-            'N/A')));
-        $demographicData['gender'] = strtolower($this->getStringValue($report->demographic_data['gender'], 'N/A'));
-        $demographicData['health'] = strtolower($this->getStringValue($report->demographic_data['health'], 'N/A'));
+        $demographicData['age'] = $this->getStringValue($report->demographic_data['age'], 'N/A');
+        $demographicData['race'] = ucwords(strtolower($this->checkInputValueIsNotEmptyString($report->demographic_data['race'],
+            'race')));
+        $demographicData['gender'] = strtolower($this->checkInputValueIsNotEmptyString($report->demographic_data['gender'], 'gender'));
+        $demographicData['health'] = strtolower($this->checkInputValueIsNotEmptyString($report->demographic_data['health'], 'health'));
 
         $allergyHistory = [];
-        if ( ! empty($report->allergy_history)) {
+        if (!empty($report->allergy_history)) {
             foreach ($report->allergy_history as $allergy) {
                 $allergyHistory[] = strtolower($allergy['name']);
             }
         }
 
         $medicalHistoryConditions = [];
-        if ( ! empty($report->medical_history['conditions'])) {
+        if (!empty($report->medical_history['conditions'])) {
             foreach ($report->medical_history['conditions'] as $condition) {
-                $conditionData              = [
+                $conditionData = [
                     'name' => ucwords(strtolower($condition['name'])),
                     'type' => $condition['type']
                         ? ucwords(strtolower($condition['type']))
@@ -35,21 +45,21 @@ class ProviderReportService
         }
 
         $medicalHistoryOther = [];
-        if ( ! empty($report->medical_history['other_conditions'])) {
+        if (!empty($report->medical_history['other_conditions'])) {
             foreach ($report->medical_history['other_conditions'] as $condition) {
-                if ( ! empty($condition) && ! empty($condition['name'])) {
+                if (!empty($condition) && !empty($condition['name'])) {
                     $medicalHistoryOther[] = ucwords(strtolower($condition['name']));
                 }
             }
         }
 
         $medicationHistory = [];
-        if ( ! empty($report->medication_history)) {
+        if (!empty($report->medication_history)) {
             foreach ($report->medication_history as $medication) {
-                if ( ! empty($medication)) {
+                if (!empty($medication)) {
                     $medicationData = [
-                        'dose'      => $medication['dose'],
-                        'drug'      => ucwords(strtolower($medication['drug'])),
+                        'dose' => $medication['dose'],
+                        'drug' => ucwords(strtolower($medication['drug'])),
                         'frequency' => strtolower($medication['frequency']),
                     ];
 
@@ -59,11 +69,11 @@ class ProviderReportService
         }
 
         $familyConditions = [];
-        if ( ! empty($report->family_medical_history)) {
+        if (!empty($report->family_medical_history)) {
             foreach ($report->family_medical_history as $condition) {
-                if ( ! empty($condition) && ! empty($condition['name'])) {
-                    $conditionData      = [
-                        'name'   => ucwords(strtolower($condition['name'])),
+                if (!empty($condition) && !empty($condition['name'])) {
+                    $conditionData = [
+                        'name' => ucwords(strtolower($condition['name'])),
                         'family' => strtolower(implode(', ', $condition['family'])),
                     ];
                     $familyConditions[] = $conditionData;
@@ -71,50 +81,63 @@ class ProviderReportService
             }
         }
 
-        $immunizationsReceived    = [];
+        $immunizationsReceived = [];
         $immunizationsNotReceived = [];
-        if ( ! empty($report->immunization_history)) {
-            foreach ($report->immunization_history as $immunization => $received) {
-                if (strtolower($received) === 'yes') {
-                    $immunizationsReceived[] = $immunization;
-                } else {
-                    $immunizationsNotReceived[] = $immunization;
-                }
+        if (!empty($report->immunization_history)) {
+            foreach ($report->immunization_history as $immunization => $answer) {
+                $received = $this->checkInputValueIsNotEmptyString($answer, $immunization);
+                strtolower($received) === 'yes' ? $immunizationsReceived[] = $immunization : $immunizationsNotReceived[] = $immunization;
             }
         }
 
         $screenings = [];
-        if ( ! empty($report->screenings)) {
-            if ( ! empty($report->screenings['breast_cancer'] && $report->screenings['breast_cancer'] !== '10+ years ago/Never/Unsure')) {
-                $screenings['Breast cancer'] = " (Mammogram): Had " . $report->screenings['breast_cancer'] . '.';
+        if (!empty($report->screenings)) {
+
+            $breastCancer = self::checkInputValueIsNotEmptyString($report->screenings['breast_cancer'], 'breast_cancer');
+            if ($breastCancer !== '10+ years ago/Never/Unsure') {
+                $screenings['Breast cancer'] = " (Mammogram): Had " . $breastCancer . '.';
             }
-            if ( ! empty($report->screenings['cervical_cancer'] && $report->screenings['cervical_cancer'] !== '10+ years ago/Never/Unsure')) {
-                $screenings['Cervical cancer'] = " (Pap smear): Had " . $report->screenings['cervical_cancer'] . '.';
+
+            $cervicalCancer = self::checkInputValueIsNotEmptyString($report->screenings['cervical_cancer'], 'cervical_cancer');
+            if ($cervicalCancer !== '10+ years ago/Never/Unsure') {
+                $screenings['Cervical cancer'] = " (Pap smear): Had " . $cervicalCancer . '.';
             }
-            if ( ! empty($report->screenings['colorectal_cancer'] && $report->screenings['colorectal_cancer'] !== '10+ years ago/Never/Unsure')) {
-                $screenings['Colorectal cancer'] = " (e.g. Fecal Occult Blood Test (FOBT), Fecal Immunohistochemistry Test (FIT) Sigmoidoscopy, Colonoscopy): Had " . $report->screenings['colorectal_cancer'] . '.';
+
+            $colorectalCancer = self::checkInputValueIsNotEmptyString($report->screenings['colorectal_cancer'], 'colorectal_cancer');
+            if ($colorectalCancer !== '10+ years ago/Never/Unsure') {
+                $screenings['Colorectal cancer'] = " (e.g. Fecal Occult Blood Test (FOBT), Fecal Immunohistochemistry Test (FIT) Sigmoidoscopy, Colonoscopy): Had " . $colorectalCancer . '.';
             }
-            if ( ! empty($report->screenings['skin_cancer'] && $report->screenings['skin_cancer'] !== '10+ years ago/Never/Unsure')) {
-                $screenings['Skin cancer'] = ": Had " . $report->screenings['skin_cancer'] . '.';
+
+            $skinCancer = self::checkInputValueIsNotEmptyString($report->screenings['skin_cancer'], 'skin_cancer');
+            if ($skinCancer !== '10+ years ago/Never/Unsure') {
+                $screenings['Skin cancer'] = ": Had " . $skinCancer . '.';
             }
-            if ( ! empty($report->screenings['prostate_cancer'] && $report->screenings['prostate_cancer'] !== '10+ years ago/Never/Unsure')) {
-                $screenings['Prostate cancer'] = " (Prostate screening Test): Had " . $report->screenings['prostate_cancer'] . '.';
+
+            $prostateCancer = self::checkInputValueIsNotEmptyString($report->screenings['prostate_cancer'], 'prostate_cancer');
+            if ($prostateCancer !== '10+ years ago/Never/Unsure') {
+                $screenings['Prostate cancer'] = " (Prostate screening Test): Had " . $prostateCancer . '.';
             }
-            if ( ! empty($report->screenings['glaucoma'] && $report->screenings['glaucoma'] !== '10+ years ago/Never/Unsure')) {
-                $screenings['Glaucoma'] = ": Had " . $report->screenings['glaucoma'] . '.';
+
+            $glaucoma = self::checkInputValueIsNotEmptyString($report->screenings['glaucoma'], 'glaucoma');
+            if ($glaucoma !== '10+ years ago/Never/Unsure') {
+                $screenings['Glaucoma'] = ": Had " . $glaucoma . '.';
             }
-            if ( ! empty($report->screenings['osteoporosis'] && $report->screenings['osteoporosis'] !== '10+ years ago/Never/Unsure')) {
-                $screenings['Osteoporosis'] = " (Bone Density Test): Had " . $report->screenings['osteoporosis'] . '.';
+
+            $osteoporosis = self::checkInputValueIsNotEmptyString($report->screenings['osteoporosis'], 'osteoporosis');
+            if ($osteoporosis !== '10+ years ago/Never/Unsure') {
+                $screenings['Osteoporosis'] = " (Bone Density Test): Had " . $osteoporosis . '.';
             }
-            if ( ! empty($report->screenings['violence'] && $report->screenings['violence'] !== '10+ years ago/Never/Unsure')) {
-                $screenings['Intimate Partner Violence/Domestic Violence'] = ": Had " . $report->screenings['violence'] . '.';
+
+            $violence = self::checkInputValueIsNotEmptyString($report->screenings['violence'], 'violence');
+            if ($violence !== '10+ years ago/Never/Unsure') {
+                $screenings['Intimate Partner Violence/Domestic Violence'] = ": Had " . $violence . '.';
             }
         }
 
         $mentalState = [];
-        if ( ! empty($report->mental_state['depression_score']) || $report->mental_state['depression_score'] === 0) {
+        if (!empty($report->mental_state['depression_score']) || $report->mental_state['depression_score'] === 0) {
             $mentalState['score'] = $report->mental_state['depression_score'];
-            $diagnosis            = 'no depression';
+            $diagnosis = 'no depression';
             if ($report->mental_state['depression_score'] > 2) {
                 $diagnosis = 'potential depression - further testing may be required';
             }
@@ -123,38 +146,38 @@ class ProviderReportService
 
         $vitals = [];
 
-        if ( ! empty($report->vitals['blood_pressure'])) {
-            $vitals['blood_pressure']['first_metric']  = (int)$report->vitals['blood_pressure']['first_metric'] !== 0
+        if (!empty($report->vitals['blood_pressure'])) {
+            $vitals['blood_pressure']['first_metric'] = (int)$report->vitals['blood_pressure']['first_metric'] !== 0
                 ? $report->vitals['blood_pressure']['first_metric']
                 : 'N/A';
             $vitals['blood_pressure']['second_metric'] = (int)$report->vitals['blood_pressure']['second_metric'] !== 0
                 ? $report->vitals['blood_pressure']['second_metric']
                 : 'N/A';
         }
-        if ( ! empty($report->vitals['bmi'])) {
+        if (!empty($report->vitals['bmi'])) {
 
             $bmiVal = $this->getStringValue($report->vitals['bmi']);
 
             $vitals['bmi'] = $bmiVal;
             if ((float)$bmiVal < 18.5) {
-                $vitals['bmi_diagnosis']  = 'low';
+                $vitals['bmi_diagnosis'] = 'low';
                 $vitals['body_diagnosis'] = 'underweight';
             } elseif ((float)$bmiVal > 25) {
-                $vitals['bmi_diagnosis']  = 'high';
+                $vitals['bmi_diagnosis'] = 'high';
                 $vitals['body_diagnosis'] = (float)$bmiVal < 30
                     ? 'obese'
                     : 'overweight';
             } else {
-                $vitals['bmi_diagnosis']  = 'normal';
+                $vitals['bmi_diagnosis'] = 'normal';
                 $vitals['body_diagnosis'] = 'normal';
             }
         } else {
-            $vitals['bmi']           = 'N/A';
+            $vitals['bmi'] = 'N/A';
             $vitals['bmi_diagnosis'] = 'N/A';
         }
 
 
-        $vitals['height']['feet']   = (int)$report->vitals['height']['feet'] !== 0
+        $vitals['height']['feet'] = (int)$report->vitals['height']['feet'] !== 0
             ? $report->vitals['height']['feet']
             : 'N/A';
         $vitals['height']['inches'] = (int)$report->vitals['height']['inches'] !== 0
@@ -166,44 +189,43 @@ class ProviderReportService
 
 
         $diet = [];
-        if ( ! empty($report->diet)) {
-            $diet['fried_fatty']       = $this->getStringValue($report->diet['fried_fatty']);
-            $diet['grain_fiber']       = $this->getStringValue($report->diet['grain_fiber']);
-            $diet['sugary_beverages']  = $this->getStringValue($report->diet['sugary_beverages']);
-            $diet['fruits_vegetables'] = $this->getStringValue($report->diet['fruits_vegetables']);
-            if ( ! empty($report->diet['change_in_diet'])) {
+        if (!empty($report->diet)) {
+            $diet['fried_fatty'] = $this->checkInputValueIsNotEmptyString($report->diet['fried_fatty'], 'fried_fatty');
+            $diet['grain_fiber'] = $this->checkInputValueIsNotEmptyString($report->diet['grain_fiber'], 'grain_fiber');
+            $diet['sugary_beverages'] = $this->checkInputValueIsNotEmptyString($report->diet['sugary_beverages'], 'sugary_beverages');
+            $diet['fruits_vegetables'] = $this->checkInputValueIsNotEmptyString($report->diet['fruits_vegetables'], 'fruits_vegetables');
+            $changeInDiet = self::checkInputValueIsNotEmptyString($report->diet['change_in_diet'], 'change_in_diet');
+            $change = $changeInDiet;
 
-                $change = $this->getStringValue($report->diet['change_in_diet']);
+            $diet['have_changed_diet'] = strtolower($change) === 'yes'
+                ? 'have'
+                : 'have not';
 
-                $diet['have_changed_diet'] = strtolower($change) === 'yes'
-                    ? 'have'
-                    : 'have not';
-            }
         }
 
-        $functionalCapacity                                 = [];
-        $functionalCapacity['has_fallen']                   = strtolower($this->getStringValue($report->functional_capacity['has_fallen'])) === 'yes'
+        $functionalCapacity = [];
+        $functionalCapacity['has_fallen'] = strtolower($this->checkInputValueIsNotEmptyString($report->functional_capacity['has_fallen'], 'has_fallen')) === 'yes'
             ? 'has'
             : 'has not';
-        $functionalCapacity['have_assistance']              = strtolower($this->getStringValue($report->functional_capacity['have_assistance'])) === 'yes'
+        $functionalCapacity['have_assistance'] = strtolower($this->getStringValue($report->functional_capacity['have_assistance'])) === 'yes'
             ? 'do'
             : 'do not';
-        $functionalCapacity['hearing_difficulty']           = strtolower($this->getStringValue($report->functional_capacity['hearing_difficulty'])) === 'yes'
+        $functionalCapacity['hearing_difficulty'] = strtolower($this->checkInputValueIsNotEmptyString($report->functional_capacity['hearing_difficulty'], 'hearing_difficulty')) === 'yes'
             ? 'has'
             : (strtolower($this->getStringValue($report->functional_capacity['hearing_difficulty'])) === 'sometimes'
                 ? 'sometimes has'
                 : 'does not have');
-        $functionalCapacity['mci_cognitive']['clock']       = $report->functional_capacity['mci_cognitive']['clock'] == 2
+        $functionalCapacity['mci_cognitive']['clock'] = $report->functional_capacity['mci_cognitive']['clock'] == 2
             ? 'able'
             : 'unable';
         $functionalCapacity['mci_cognitive']['word_recall'] = $report->functional_capacity['mci_cognitive']['word_recall'];
-        $functionalCapacity['mci_cognitive']['total']       = $report->functional_capacity['mci_cognitive']['total'];
-        $functionalCapacity['mci_cognitive']['diagnosis']   = $report->functional_capacity['mci_cognitive']['total'] > 3
+        $functionalCapacity['mci_cognitive']['total'] = $report->functional_capacity['mci_cognitive']['total'];
+        $functionalCapacity['mci_cognitive']['diagnosis'] = $report->functional_capacity['mci_cognitive']['total'] > 3
             ? 'no cognitive impairment'
             : ($report->functional_capacity['mci_cognitive']['total'] == 3
                 ? 'mild cognitive impairment'
                 : 'dementia');
-        if ( ! empty($report->functional_capacity['needs_help_for_tasks'])) {
+        if (!empty($report->functional_capacity['needs_help_for_tasks'])) {
             foreach ($report->functional_capacity['needs_help_for_tasks'] as $task) {
                 $functionalCapacity['needs_help_for_tasks'][] = strtolower($task['name']);
             }
@@ -212,19 +234,19 @@ class ProviderReportService
         }
 
         $currentProviders = [];
-        if ( ! empty($report->current_providers)) {
+        if (!empty($report->current_providers)) {
             foreach ($report->current_providers as $provider) {
-                $providerData       = [
-                    'provider_name' => ! empty($provider['provider_name'])
+                $providerData = [
+                    'provider_name' => !empty($provider['provider_name'])
                         ? ucwords(strtolower($provider['provider_name']))
                         : 'N/A',
-                    'location'      => ! empty($provider['location'])
+                    'location' => !empty($provider['location'])
                         ? ucwords(strtolower($provider['location']))
                         : 'N/A',
-                    'specialty'     => ! empty($provider['specialty'])
+                    'specialty' => !empty($provider['specialty'])
                         ? ucwords(strtolower($provider['specialty']))
                         : 'N/A',
-                    'phone_number'  => ! empty($provider['phone_number'])
+                    'phone_number' => !empty($provider['phone_number'])
                         ? $provider['phone_number']
                         : 'N/A',
                 ];
@@ -232,9 +254,9 @@ class ProviderReportService
             }
         }
 
-        $advancedCarePlanning                  = [];
-        $advancedCarePlanning['living_will']   = strtolower($this->getStringValue($report->advanced_care_planning['living_will']));
-        $advancedCarePlanning['has_attorney']  = strtolower($this->getStringValue($report->advanced_care_planning['has_attorney'])) === 'yes'
+        $advancedCarePlanning = [];
+        $advancedCarePlanning['living_will'] = strtolower($this->checkInputValueIsNotEmptyString($report->advanced_care_planning['living_will'], 'living_will'));
+        $advancedCarePlanning['has_attorney'] = strtolower($this->checkInputValueIsNotEmptyString($report->advanced_care_planning['has_attorney'], 'has_attonery')) === 'yes'
             ? 'has'
             : 'does not have';
         $advancedCarePlanning['existing_copy'] = strtolower($this->getStringValue($report->advanced_care_planning['existing_copy'])) === 'yes'
@@ -243,26 +265,26 @@ class ProviderReportService
 
 
         return collect([
-            'reason_for_visit'           => $report->reason_for_visit,
-            'demographic_data'           => $demographicData,
-            'allergy_history'            => $allergyHistory,
-            'medical_history'            => $medicalHistoryConditions,
-            'medical_history_other'      => $medicalHistoryOther,
-            'medication_history'         => $medicationHistory,
-            'family_medical_history'     => $familyConditions,
-            'immunizations_received'     => $immunizationsReceived,
+            'reason_for_visit' => $report->reason_for_visit,
+            'demographic_data' => $demographicData,
+            'allergy_history' => $allergyHistory,
+            'medical_history' => $medicalHistoryConditions,
+            'medical_history_other' => $medicalHistoryOther,
+            'medication_history' => $medicationHistory,
+            'family_medical_history' => $familyConditions,
+            'immunizations_received' => $immunizationsReceived,
             'immunizations_not_received' => $immunizationsNotReceived,
-            'screenings'                 => $screenings,
-            'mental_state'               => $mentalState,
-            'vitals'                     => $vitals,
-            'diet'                       => $diet,
-            'social_factors'             => $report->social_factors,
-            'sexual_activity'            => $report->sexual_activity,
-            'exercise_activity_levels'   => $report->exercise_activity_levels,
-            'functional_capacity'        => $functionalCapacity,
-            'current_providers'          => $currentProviders,
-            'advanced_care_planning'     => $advancedCarePlanning,
-            'specific_patient_requests'  => $this->getStringValue($report->specific_patient_requests),
+            'screenings' => $screenings,
+            'mental_state' => $mentalState,
+            'vitals' => $vitals,
+            'diet' => $diet,
+            'social_factors' => self::validateInputsOfDependentQuestions($report->social_factors, 'social_factors'),
+            'sexual_activity' => self::validateInputsOfDependentQuestions($report->sexual_activity, 'sexual_activity'),
+            'exercise_activity_levels' => self::checkInputValueIsNotEmptyString($report->exercise_activity_levels, 'exercise_activity_levels'),
+            'functional_capacity' => $functionalCapacity,
+            'current_providers' => $currentProviders,
+            'advanced_care_planning' => $advancedCarePlanning,
+            'specific_patient_requests' => $this->getStringValue($report->specific_patient_requests),
         ]);
     }
 
@@ -293,4 +315,118 @@ class ProviderReportService
         return $val;
     }
 
+    /**
+     * @param $answer
+     * @param $errorDescription
+     * @return string
+     * @throws Exception
+     */
+    public static function checkInputValueIsNotEmptyString($answer, string $errorDescription)
+    {
+        $value = !is_array($answer) ? $answer : self::getStringValue($answer);
+
+        if ($value !== '') {
+            return $value;
+        } else {
+            return self::throwExceptionEmptyAnswer($errorDescription);
+        }
+    }
+
+    /**
+     * @param string $errorDescription
+     * @return string
+     * @throws Exception
+     */
+    public static function throwExceptionEmptyAnswer(string $errorDescription)
+    {
+        $fileName = ProviderReportService::class;
+        throw new Exception("Empty answer in: $errorDescription in $fileName");
+    }
+
+    /**
+     * @param $answers
+     * @param string $errorMessage
+     * @return mixed
+     * @throws Exception
+     */
+    public static function validateInputsOfDependentQuestions(array $answers, string $errorMessage)
+    {
+        $keys = array_keys($answers);
+        $validAnswers = collect($keys)->mapWithKeys(function ($key) use ($answers, $errorMessage) {
+            $firstAnswerForEachDependentQuestion = self::resolveOrGetFirstAnswers($answers, $key, $errorMessage);
+            return self::analyzeFirstAnswersAndTakeAction($firstAnswerForEachDependentQuestion, $key, $errorMessage);
+        });
+        self::validateOptionalAnswers($validAnswers, $answers, $errorMessage);
+//if no exception is catched
+        return $answers;
+    }
+
+    /**
+     * If (array) && has items (string) && first answer of this group of questions is NO then it will return the answers.
+     * If (array) && has items (string) && first answer is YES then will check each answer if NOT empty and it will return answers.
+     * Else if (array) and has item (array) then return the value of the first item of each item (array)
+     *
+     * @param $answers
+     * @param $key
+     * @param $errorMessage
+     * @return mixed|string
+     * @throws Exception
+     */
+    public static function resolveOrGetFirstAnswers($answers, $key, $errorMessage)
+    {
+        $firstElem = reset($answers);
+        $firstElemIsString = is_string($firstElem);
+        if ($firstElemIsString && $firstElem === self::NO) {
+            return $answers;
+        } elseIf ($firstElemIsString && $firstElem === self::YES) {
+            if (empty($answers[$key])) {
+                self::throwExceptionEmptyAnswer($errorMessage);
+            }
+            return $answers;
+        }
+        return reset($answers[$key]);
+    }
+
+    /**
+     *
+     *  If first Answer of this group (eg Q11) is YES then it will set Q11a,Q11b etc. to optional = false
+     *  Meaning they will be checked.
+     *
+     * @param $firstAnswerForEachDependentQuestion
+     * @param $key
+     * @param $errorMessage
+     * @return array|string
+     * @throws Exception
+     */
+    public static function analyzeFirstAnswersAndTakeAction($firstAnswerForEachDependentQuestion, $key, $errorMessage)
+    {
+        if (empty($firstAnswerForEachDependentQuestion)) {
+            self::throwExceptionEmptyAnswer($errorMessage);
+        }
+        return $firstAnswerForEachDependentQuestion !== self::YES ? [$key => true] : [$key => false];
+    }
+
+    /**
+     * If first answers of Group Questions is YES then we need to check the related (optional) questions inputs.
+     * If first answer is NO then the related questions inputs are expected to be null, so it wont check them.
+     *
+     * @param $validAnswers
+     * @param $answers
+     * @param $errorMessage
+     * @return bool
+     * @throws Exception
+     */
+    public static function validateOptionalAnswers($validAnswers, $answers, $errorMessage)
+    {
+        foreach ($validAnswers as $key => $isOptional) {
+            if ($isOptional) {
+                continue;
+            }
+            foreach ($answers[$key] as $answer) {
+                if ((is_string($answer) && empty($answer)) || (is_array($answer) && empty($answer))) {
+                    self::throwExceptionEmptyAnswer($errorMessage);
+                }
+            }
+        }
+    }
 }

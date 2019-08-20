@@ -52,6 +52,7 @@ class GeneratePatientReportsJob implements ShouldQueue
      * Execute the job.
      *
      * @return void
+     * @throws \Exception
      */
     public function handle()
     {
@@ -161,9 +162,14 @@ class GeneratePatientReportsJob implements ShouldQueue
         }
     }
 
+    /**
+     * @param $providerReport
+     * @param $patient
+     * @return bool
+     * @throws \Exception
+     */
     private function createAndUploadPdfProviderReport($providerReport, $patient)
     {
-
         $providerReportFormattedData = (new ProviderReportService())->formatReportDataForView($providerReport);
 
         $pdf = App::make('dompdf.wrapper');

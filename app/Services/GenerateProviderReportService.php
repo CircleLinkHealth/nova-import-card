@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Survey;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 class GenerateProviderReportService
 {
@@ -42,6 +43,11 @@ class GenerateProviderReportService
     }
 
     //make possible to edit data on existing report
+
+    /**
+     * @return Model
+     * @throws \Exception
+     */
     public function generateData()
     {
 
@@ -138,7 +144,6 @@ class GenerateProviderReportService
 
     private function getImmunizationHistory()
     {
-
         $immunizationHistory = [];
 
         $immunizationHistory['Influenza']                = $this->answerForHraQuestionWithOrder(26);
@@ -170,6 +175,10 @@ class GenerateProviderReportService
         return $screenings;
     }
 
+    /**
+     * @return array
+     * @throws \Exception
+     */
     private function getMentalState()
     {
         //see values for phq2
@@ -184,7 +193,7 @@ class GenerateProviderReportService
         $answer2 = $this->answerForHraQuestionWithOrder(22, '2');
 
         return [
-            'depression_score' => $phq2scores[strtolower($answer1)] + $phq2scores[strtolower($answer2)],
+            'depression_score' => $phq2scores[strtolower(ProviderReportService::checkInputValueIsNotEmptyString($answer1, '22.1'))] + $phq2scores[strtolower(ProviderReportService::checkInputValueIsNotEmptyString($answer2, '22.2'))],
         ];
     }
 
