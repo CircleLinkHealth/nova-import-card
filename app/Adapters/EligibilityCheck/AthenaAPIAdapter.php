@@ -59,7 +59,7 @@ class AthenaAPIAdapter
             $patientList,
             $practice,
             false,
-            true,
+            false,
             true,
             false,
             null,
