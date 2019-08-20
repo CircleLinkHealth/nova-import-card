@@ -1,35 +1,46 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 
 class ModifyHraSurvey extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        /** @var \App\SurveyQuestion $sQuestion */
-        $sQuestion = \App\SurveyQuestion::where('order', '=', 46)
-                                        ->first();
+        $sQuestion = DB::table('survey_questions')->where('order', '=', 46)->first();
 
         if ( ! $sQuestion) {
             return;
         }
 
-        $qType = \App\QuestionType::where('question_id', '=', $sQuestion->question_id)->first();
+        $qType = DB::table('question_types')->where('question_id', '=', $sQuestion->question_id)->first();
 
-        if (!$qType) {
+        if ( ! $qType) {
             return;
         }
 
-        if (\App\QuestionTypesAnswer::where('question_type_id', '=', $qType->id)->exists()) {
-            return;
-        };
+        $questionTypesAnswer = 'question_types_answers';
 
-        \App\QuestionTypesAnswer::create([
+        $existsInQuestionTypesAnswer = DB::table($questionTypesAnswer)->where('question_type_id', '=', $qType->id)->exists();
+
+        if (1 === $existsInQuestionTypesAnswer) {
+            return;
+        }
+
+        DB::table($questionTypesAnswer)->insert([
             'question_type_id' => $qType->id,
             'value'            => null,
             'options'          => [
@@ -39,16 +50,5 @@ class ModifyHraSurvey extends Migration
                 'key'            => 'value',
             ],
         ]);
-
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
     }
 }
