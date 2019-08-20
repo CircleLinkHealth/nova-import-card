@@ -194,6 +194,7 @@ class GeneratePatientReportsJob implements ShouldQueue
         $personalizedHealthAdvices = (new PersonalizedPreventionPlanPrepareData())->prepareRecommendations($ppp);
 
         $pdf = App::make('dompdf.wrapper');
+
         $pdf->loadView('personalizedPreventionPlan', [
             'patientPppData' => $ppp,
             'patient' => $patient,
