@@ -15,6 +15,7 @@ use Aws\S3\S3Client;
 $keys = [
     'emr-direct-production-conc-key.pem' => __DIR__.'/../resources/certificates/emr-production-conc-keys.pem',
     'phiCertDirectRootCA.pem'            => __DIR__.'/../resources/certificates/phiCertDirectRootCA.pem',
+    gethostname().'.env'                 => __DIR__.'/../.env',
 ];
 
 //keys need to be stored here
@@ -35,12 +36,15 @@ try {
     $s3Client = new S3Client($args);
 
     foreach ($keys as $s3Key => $localPath) {
+        echo "Putting $keys in $localPath";
         $result = $s3Client->getObject([
             'Bucket' => $args['bucket'],
             'Key'    => $s3Key,
             'SaveAs' => $localPath,
         ]);
     }
+
+    echo 'Assets copied from S3.';
 } catch (S3Exception $e) {
     echo $e->getMessage()."\n";
 }

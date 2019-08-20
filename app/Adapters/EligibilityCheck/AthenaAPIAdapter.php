@@ -42,7 +42,7 @@ class AthenaAPIAdapter
         return $this->eligiblePatientList;
     }
 
-    public function isEligible(Practice $practice)
+    public function isEligible(Practice $practice, $patientId)
     {
         $patientList = collect();
 
@@ -77,6 +77,7 @@ class AthenaAPIAdapter
                     return $p->toArray();
                 }),
                 'insurances' => $patient->get('insurances'),
+                'patient_id' => $patientId,
             ];
             $this->eligibilityJob->save();
         }
