@@ -311,7 +311,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "eadbacc5fc55b55225020dddc0961fd179e9f604"
+                "reference": "fd08fa1a7afcdda414b2669d7b9cb0d0872171ea"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -340,7 +340,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-07-08T14:44:56+00:00"
+            "time": "2019-08-08T13:21:04+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -348,7 +348,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "fcbe1543e41747fa7042f48fb0f99ad9d426641f"
+                "reference": "53838ff3c9bb5d8be7b76729fcfb45365376449e"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -381,7 +381,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-08-02T11:31:11+00:00"
+            "time": "2019-08-20T09:33:59+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -389,7 +389,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "28ecce828d9ef1dec1cb42bba86a7a02eb331ee7"
+                "reference": "3d3728485ecb39af1185236d070d5996535a4475"
             },
             "require": {
                 "illuminate/contracts": "^5.0",
@@ -416,7 +416,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-07-05T16:15:33+00:00"
+            "time": "2019-08-08T12:42:49+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
