@@ -154,11 +154,11 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 
                 $list = (new WelcomeCallListGenerator(
                     collect([0 => $p]),
+                    $phxPractice,
                     false,
                     true,
                     true,
                     true,
-                    $phxPractice,
                     null,
                     null,
                     $this->batch,

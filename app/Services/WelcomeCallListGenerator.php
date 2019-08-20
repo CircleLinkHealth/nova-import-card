@@ -82,6 +82,11 @@ class WelcomeCallListGenerator
     private $eligibilityJob;
 
     /**
+     * @var Practice
+     */
+    private $practice;
+
+    /**
      * WelcomeCallListGenerator constructor.
      *
      * @param Collection                                        $patientList
@@ -99,11 +104,11 @@ class WelcomeCallListGenerator
      */
     public function __construct(
         Collection $patientList,
+        Practice $practice,
         $filterLastEncounter = true,
         $filterInsurance = true,
         $filterProblems = true,
         $createEnrollees = true,
-        Practice $practice = null,
         $medicalRecordType = null,
         $medicalRecordId = null,
         EligibilityBatch $batch = null,
