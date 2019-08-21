@@ -22,7 +22,7 @@ class EligibilityBatchObserver
 
     public function saved(EligibilityBatch $eligibilityBatch)
     {
-        if ($eligibilityBatch->isDirty('status') && 3 == $eligibilityBatch->getStatus()) {
+        if ($eligibilityBatch->isDirty('status') && 3 == $eligibilityBatch->getStatus() && $eligibilityBatch->hasJobs()) {
             $practice = Practice::findOrFail($eligibilityBatch->practice_id);
             $link     = route('eligibility.batch.show', [$eligibilityBatch->id]);
 

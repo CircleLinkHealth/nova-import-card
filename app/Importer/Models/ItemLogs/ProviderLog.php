@@ -82,8 +82,7 @@ use App\Traits\Relationships\BelongsToVendor;
 class ProviderLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog
 {
     use BelongsToCcda;
-    use
-        BelongsToVendor;
+    use BelongsToVendor;
 
     protected $fillable = [
         'location_id',

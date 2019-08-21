@@ -8,6 +8,7 @@ namespace App;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Ehr;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -59,6 +60,7 @@ class TargetPatient extends BaseModel
     const STATUS_TO_PROCESS = 'to_process';
 
     protected $fillable = [
+        'practice_id',
         'batch_id',
         'eligibility_job_id',
         'ehr_id',
@@ -84,6 +86,22 @@ class TargetPatient extends BaseModel
     public function enrollee()
     {
         return $this->belongsTo(Enrollee::class, 'enrollee_id');
+    }
+
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
+    }
+
+    public function setStatusFromEligibilityJob(EligibilityJob $check)
+    {
+        if ($check->isIneligible()) {
+            $this->status = self::STATUS_INELIGIBLE;
+        } elseif ($check->isEligible() || $check->wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()) {
+            $this->status = self::STATUS_ELIGIBLE;
+        } elseif ($check->isAlreadyEnrolled()) {
+            $this->status = self::STATUS_ENROLLED;
+        }
     }
 
     public function user()

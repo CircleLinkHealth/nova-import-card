@@ -6,9 +6,8 @@
 
 namespace App\Services\AthenaAPI;
 
-use App\Adapters\EligibilityCheck\AthenaAPIAdapter;
-use App\EligibilityJob;
-use App\Enrollee;
+use App\Jobs\CheckCcdaEnrollmentEligibility;
+use App\Models\MedicalRecords\Ccda;
 use App\TargetPatient;
 use App\ValueObjects\Athena\ProblemsAndInsurances;
 use Carbon\Carbon;
@@ -27,100 +26,18 @@ class DetermineEnrollmentEligibility
 
     public function determineEnrollmentEligibility(TargetPatient $targetPatient)
     {
-        $targetPatient->loadMissing(['batch']);
-        $patientInfo = $this->getPatientProblemsAndInsurances(
-            $targetPatient->ehr_patient_id,
-            $targetPatient->ehr_practice_id,
-            $targetPatient->ehr_department_id
-        );
+        $targetPatient->loadMissing(['batch', 'practice']);
 
-        $practice = $this->practiceFromExternalId($targetPatient->ehr_practice_id);
+        $ccda = $this->createCcdaFromAthena($targetPatient);
 
-        $adapter = new AthenaAPIAdapter(
-            $patientInfo,
-            new EligibilityJob(['batch_id' => $targetPatient->batch->id]),
-            $targetPatient->batch
-        );
-        $isEligible = $adapter->isEligible($practice, $targetPatient->ehr_patient_id);
+        $job   = new CheckCcdaEnrollmentEligibility($ccda, $targetPatient->practice, $targetPatient->batch);
+        $check = $job->handle();
 
-        $job                               = $adapter->getEligibilityJob();
-        $targetPatient->eligibility_job_id = $job->id;
+        $targetPatient->eligibility_job_id = $check->getEligibilityJob()->id;
 
-        if ( ! $isEligible) {
-            $targetPatient->status = TargetPatient::STATUS_INELIGIBLE;
-            $targetPatient->save();
-
-            return false;
-        }
-
-        $demos = $this->getDemographics(
-            $targetPatient->ehr_patient_id,
-            $targetPatient->ehr_practice_id
-        );
-
-        try {
-            $demos = $demos[0];
-        } catch (\Exception $e) {
-            throw new \Exception('Get Demographics api call failed.', 500, $e);
-        }
-
-        if ($demos['homephone'] or $demos['mobilephone']) {
-            $targetPatient->status = TargetPatient::STATUS_ELIGIBLE;
-        } else {
-            $targetPatient->status      = TargetPatient::STATUS_ERROR;
-            $targetPatient->description = 'Homephone or mobile phone must be provided';
-        }
-
-        $insurances = $patientInfo->getInsurances();
-
-        try {
-            $enrollee = Enrollee::create([
-                //required
-                'first_name'  => $demos['firstname'],
-                'last_name'   => $demos['lastname'],
-                'home_phone'  => $demos['homephone'],
-                'cell_phone'  => $demos['mobilephone'] ?? null,
-                'practice_id' => $practice->id,
-                'batch_id'    => $targetPatient->batch->id ?? null,
-
-                'status' => Enrollee::TO_CALL,
-
-                //notRequired
-                'address'   => $demos['address1'] ?? null,
-                'address_2' => $demos['address2'] ?? null,
-                'dob'       => $demos['dob'],
-                'state'     => $demos['state'],
-                'city'      => $demos['city'] ?? null,
-                'zip'       => $demos['zip'] ?? null,
-
-                'primary_insurance' => array_key_exists(0, $insurances)
-                    ? $insurances[0]['insurancetype'] ?? $insurances[0]['insuranceplanname']
-                    : '',
-                'secondary_insurance' => array_key_exists(1, $insurances)
-                    ? $insurances[1]['insurancetype'] ?? $insurances[1]['insuranceplanname']
-                    : '',
-                'tertiary_insurance' => array_key_exists(2, $insurances)
-                    ? $insurances[2]['insurancetype'] ?? $insurances[2]['insuranceplanname']
-                    : '',
-
-                'cpm_problem_1' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_1'),
-                'cpm_problem_2' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_2'),
-            ]);
-
-            $targetPatient->enrollee_id = $enrollee->id;
-        } catch (\Illuminate\Database\QueryException $e) {
-            //check if this is a mysql exception for unique key constraint
-            $errorCode = $e->errorInfo[1];
-            if (1062 == $errorCode) {
-                //do nothing
-                    //we don't actually want to terminate the program if we detect duplicates
-                    //we just don't wanna add the row again
-            }
-        }
+        $targetPatient->setStatusFromEligibilityJob($check->getEligibilityJob());
 
         $targetPatient->save();
-
-        return $enrollee ?? null;
     }
 
     public function getDemographics($patientId, $practiceId)
@@ -174,6 +91,7 @@ class DetermineEnrollmentEligibility
                 }
 
                 $target = TargetPatient::updateOrCreate([
+                    'practice_id'       => Practice::where('external_id', $ehrPracticeId)->value('id'),
                     'ehr_id'            => $this->athenaEhrId,
                     'ehr_patient_id'    => $ehrPatientId,
                     'ehr_practice_id'   => $ehrPracticeId,
@@ -209,6 +127,38 @@ class DetermineEnrollmentEligibility
         $problemsAndInsurance->setInsurances($insurancesResponse['insurances']);
 
         return $problemsAndInsurance;
+    }
+
+    /**
+     * @param TargetPatient $targetPatient
+     *
+     * @throws \Exception
+     *
+     * @return \App\Importer\MedicalRecordEloquent|Ccda|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     */
+    private function createCcdaFromAthena(TargetPatient $targetPatient)
+    {
+        $athenaApi = app(Calls::class);
+
+        $ccdaExternal = $athenaApi->getCcd(
+            $targetPatient->ehr_patient_id,
+            $targetPatient->ehr_practice_id,
+            $targetPatient->ehr_department_id
+        );
+
+        if ( ! isset($ccdaExternal[0])) {
+            throw new \Exception('Could not retrieve CCD from Athena for '.TargetPatient::class.':'.$targetPatient->id);
+        }
+
+        return Ccda::create([
+            'practice_id' => $targetPatient->practice_id,
+            'vendor_id'   => 1,
+            'xml'         => $ccdaExternal[0]['ccda'],
+            'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
+            'source'      => Ccda::ATHENA_API,
+            'imported'    => false,
+            'batch_id'    => $targetPatient->batch_id,
+        ]);
     }
 
     private function practiceFromExternalId($ehrPracticeId): Practice

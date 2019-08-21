@@ -47,8 +47,8 @@ class AutoPullEnrolleesFromAthena extends Command
 
         $this->options = [
             'filterProblems'      => true,
-            'filterInsurance'     => true,
-            'filterLastEncounter' => true,
+            'filterInsurance'     => false,
+            'filterLastEncounter' => false,
         ];
     }
 

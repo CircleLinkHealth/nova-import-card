@@ -628,7 +628,7 @@ class ProcessEligibilityService
                 ->getFileStream($driveFileName, $driveFolder);
         } catch (\Exception $e) {
             \Log::info("EXCEPTION `{$e->getMessage()}`");
-            $batch->status = 2;
+            $batch->status = EligibilityBatch::STATUSES['error'];
             $batch->save();
 
             return null;
