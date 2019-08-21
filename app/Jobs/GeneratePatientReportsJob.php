@@ -201,7 +201,6 @@ class GeneratePatientReportsJob implements ShouldQueue
             'personalizedHealthAdvices' => $personalizedHealthAdvices,
         ]);
 
-
         $path = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toDateTimeString()}.pdf");
 
         $saved = file_put_contents($path, $pdf->output());
