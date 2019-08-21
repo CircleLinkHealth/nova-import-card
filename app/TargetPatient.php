@@ -60,6 +60,7 @@ class TargetPatient extends BaseModel
     const STATUS_TO_PROCESS = 'to_process';
 
     protected $fillable = [
+        'practice_id',
         'batch_id',
         'eligibility_job_id',
         'ehr_id',
@@ -87,12 +88,13 @@ class TargetPatient extends BaseModel
         return $this->belongsTo(Enrollee::class, 'enrollee_id');
     }
 
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-    
-    public function practice(){
-        return $this->belongsTo(Practice::class);
     }
 }

@@ -6,7 +6,6 @@
 
 namespace App\Services\AthenaAPI;
 
-use App\Enrollee;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\TargetPatient;
@@ -30,8 +29,8 @@ class DetermineEnrollmentEligibility
         $targetPatient->loadMissing(['batch', 'practice']);
 
         $ccda = $this->createCcdaFromAthena($targetPatient);
-        
-        $job = new CheckCcdaEnrollmentEligibility($ccda, $targetPatient->practice, $targetPatient->batch);
+
+        $job   = new CheckCcdaEnrollmentEligibility($ccda, $targetPatient->practice, $targetPatient->batch);
         $check = $job->handle();
 
         $targetPatient->eligibility_job_id = $check->getEligibilityJob()->id;
@@ -96,6 +95,7 @@ class DetermineEnrollmentEligibility
                 }
 
                 $target = TargetPatient::updateOrCreate([
+                    'practice_id'       => Practice::where('external_id', $ehrPracticeId)->value('id'),
                     'ehr_id'            => $this->athenaEhrId,
                     'ehr_patient_id'    => $ehrPatientId,
                     'ehr_practice_id'   => $ehrPracticeId,
@@ -159,9 +159,9 @@ class DetermineEnrollmentEligibility
             'vendor_id'   => 1,
             'xml'         => $ccdaExternal[0]['ccda'],
             'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-            'source' => Ccda::ATHENA_API,
-            'imported' => false,
-            'batch_id' => $targetPatient->batch_id
+            'source'      => Ccda::ATHENA_API,
+            'imported'    => false,
+            'batch_id'    => $targetPatient->batch_id,
         ]);
     }
 
