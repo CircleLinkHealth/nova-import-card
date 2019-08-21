@@ -93,6 +93,17 @@ class TargetPatient extends BaseModel
         return $this->belongsTo(Practice::class);
     }
 
+    public function setStatusFromEligibilityJob(EligibilityJob $check)
+    {
+        if ($check->isIneligible()) {
+            $this->status = self::STATUS_INELIGIBLE;
+        } elseif ($check->isEligible() || $check->wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()) {
+            $this->status = self::STATUS_ELIGIBLE;
+        } elseif ($check->isAlreadyEnrolled()) {
+            $this->status = self::STATUS_ENROLLED;
+        }
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

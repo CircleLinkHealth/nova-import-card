@@ -184,6 +184,21 @@ class EligibilityJob extends BaseModel
         return null;
     }
 
+    public function isAlreadyEnrolled()
+    {
+        return self::ENROLLED == $this->status;
+    }
+
+    public function isEligible()
+    {
+        return self::ELIGIBLE == $this->status;
+    }
+
+    public function isIneligible()
+    {
+        return self::INELIGIBLE == $this->status;
+    }
+
     /**
      * Putting this here for conveniece.
      * It is NOT safe to use as $batch may not exist. Should we make processing without a batch possible?
@@ -215,12 +230,9 @@ class EligibilityJob extends BaseModel
     {
         return $builder->where('outcome', '=', self::ELIGIBLE);
     }
-    
-    public function isEligible() {
-        return self::ELIGIBLE == $this->status;
-    }
-    
-    public function isIneligible() {
-        return self::INELIGIBLE == $this->status;
+
+    public function wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()
+    {
+        return self::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH == $this->status;
     }
 }

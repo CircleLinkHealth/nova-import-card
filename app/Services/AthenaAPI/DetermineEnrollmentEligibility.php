@@ -35,11 +35,7 @@ class DetermineEnrollmentEligibility
 
         $targetPatient->eligibility_job_id = $check->getEligibilityJob()->id;
 
-        if ($check->getEligibilityJob()->isIneligible()) {
-            $targetPatient->status = TargetPatient::STATUS_INELIGIBLE;
-        } elseif ($check->getEligibilityJob()->isEligible()) {
-            $targetPatient->status = TargetPatient::STATUS_ELIGIBLE;
-        }
+        $targetPatient->setStatusFromEligibilityJob($check->getEligibilityJob());
 
         $targetPatient->save();
     }
