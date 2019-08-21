@@ -507,7 +507,7 @@ class PersonalizedPreventionPlanPrepareData
         $cognitiveAssessment['cognitive_assessment'] = $this->getStringValue($patientPppData->answers_for_eval,
             'cognitive_assessment');
 
-        if ($cognitiveAssessment['cognitive_assessment'] !== '3') {
+        if ($cognitiveAssessment['cognitive_assessment'] !== '3' && $cognitiveAssessment['cognitive_assessment'] !== '4' && $cognitiveAssessment['cognitive_assessment'] !== '5') {
             return $this->getTaskRecommendations($title, $index);
         }
 
