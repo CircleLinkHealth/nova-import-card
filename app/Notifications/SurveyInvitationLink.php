@@ -17,14 +17,16 @@ class SurveyInvitationLink extends Notification
     const SMS_TEXT_FOR_KNOWN_APPOINTMENT_DATE_TIME = "Hello! Dr. {primaryPhysicianLastName} requests you complete this wellness survey before your scheduled appointment on {date}[“mm/dd/yy”] at {time}[hh:mm am/pm].";
     const SMS_TEXT_FOR_KNOWN_APPOINTMENT_DATE_ONLY = "Hello! Dr. {primaryPhysicianLastName} requests you complete this wellness survey before your scheduled appointment on {date}[“mm/dd/yy”].";
     const SMS_TEXT_FOR_UNKNOWN_APPOINTMENT_DATE = "Hello! Dr. {primaryPhysicianLastName} at {practiceName} requests you complete this health survey as soon as you can. Please call {clhNumber} if you have any questions.";
+    const SMS_TEXT_FOR_UNKNOWN_APPOINTMENT_DATE_NO_PHYSICIAN = "Hello! {practiceName} practice requests you complete this health survey as soon as you can. Please call {clhNumber} if you have any questions.";
 
     const SMS_TEXT_FOR_VITALS = "Hello! Dr. {primaryPhysicianLastName} at {practiceName} requests you complete this health survey as soon as you can. Please call {clhNumber} if you have any questions.";
 
-
     const EMAIL_SUBJECT = "Annual Wellness Survey - {primaryPhysicianLastName} at {practiceName}";
+    const EMAIL_SUBJECT_NO_PHYSICIAN = "Annual Wellness Survey - {practiceName}";
     const EMAIL_GREETING = "Hello!";
     const EMAIL_ACTION = "Open Survey";
     const EMAIL_LINE_1 = "Dr. {primaryPhysicianLastName} at {practiceName} requests you complete this health survey as soon as you can.";
+    const EMAIL_LINE_1_NO_PHYSICIAN = "{practiceName} practice requests you complete this health survey as soon as you can.";
     const EMAIL_LINE_2 = "Please call {clhNumber} if you have any questions.";
 
     /**
@@ -74,19 +76,26 @@ class SurveyInvitationLink extends Notification
      */
     public function toMail(NotifiableUser $notifiableUser)
     {
-        $providerLastName = $notifiableUser->user->billingProviderUser()->last_name;
-        $practiceName     = $notifiableUser->user->primaryPractice->display_name;
-
         //todo: check if we have known appointment and select appropriate SMS message
         //todo: use $surveyName to decide the body of the message
 
-        $subject = Str::replaceFirst("{primaryPhysicianLastName}", $providerLastName,
-            self::EMAIL_SUBJECT);
-        $subject = Str::replaceFirst("{practiceName}", $practiceName, $subject);
+        $practiceName     = $notifiableUser->user->primaryPractice->display_name;
+        $provider = $notifiableUser->user->billingProviderUser();
+        if ($provider) {
+            $providerLastName = $provider->last_name;
 
-        $line1 = Str::replaceFirst("{primaryPhysicianLastName}", $providerLastName,
-            self::EMAIL_LINE_1);
-        $line1 = Str::replaceFirst("{practiceName}", $practiceName, $line1);
+            $subject = Str::replaceFirst("{primaryPhysicianLastName}", $providerLastName,
+                self::EMAIL_SUBJECT);
+            $subject = Str::replaceFirst("{practiceName}", $practiceName, $subject);
+
+            $line1 = Str::replaceFirst("{primaryPhysicianLastName}", $providerLastName,
+                self::EMAIL_LINE_1);
+            $line1 = Str::replaceFirst("{practiceName}", $practiceName, $line1);
+        }
+        else {
+            $subject = Str::replaceFirst("{practiceName}", $practiceName, self::EMAIL_SUBJECT_NO_PHYSICIAN);
+            $line1 = Str::replaceFirst("{practiceName}", $practiceName, self::EMAIL_LINE_1_NO_PHYSICIAN);
+        }
 
         $line2 = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), self::EMAIL_LINE_2);
 
@@ -106,17 +115,26 @@ class SurveyInvitationLink extends Notification
      */
     public function toTwilio(NotifiableUser $notifiableUser)
     {
-        $providerLastName = $notifiableUser->user->billingProviderUser()->last_name;
-        $practiceName     = $notifiableUser->user->primaryPractice->display_name;
-
         //todo: check if we have known appointment and select appropriate SMS message
         //todo: use $surveyName to decide the body of the message
 
-        $text = Str::replaceFirst("{primaryPhysicianLastName}", $providerLastName,
-            self::SMS_TEXT_FOR_UNKNOWN_APPOINTMENT_DATE);
-        $text = Str::replaceFirst("{practiceName}", $practiceName, $text);
-        $text = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), $text);
-        $text = $text . "\n" . $this->url;
+        $practiceName     = $notifiableUser->user->primaryPractice->display_name;
+        $provider = $notifiableUser->user->billingProviderUser();
+
+        if ($provider) {
+            $providerLastName = $provider->last_name;
+
+            $text = Str::replaceFirst("{primaryPhysicianLastName}", $providerLastName,
+                self::SMS_TEXT_FOR_UNKNOWN_APPOINTMENT_DATE);
+            $text = Str::replaceFirst("{practiceName}", $practiceName, $text);
+            $text = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), $text);
+            $text = $text . "\n" . $this->url;
+        }
+        else {
+            $text = Str::replaceFirst("{practiceName}", $practiceName, self::SMS_TEXT_FOR_UNKNOWN_APPOINTMENT_DATE);
+            $text = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), $text);
+            $text = $text . "\n" . $this->url;
+        }
 
         return (new TwilioSmsMessage())
             ->content($text);
