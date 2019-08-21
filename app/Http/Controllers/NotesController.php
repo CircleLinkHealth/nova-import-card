@@ -479,7 +479,7 @@ class NotesController extends Controller
 
             $note = $this->service->editNote($note, $input);
         } else {
-            $note = Note::create($input);
+            $note = $this->service->editNote(new Note($input), $input);
         }
 
         event(new NoteFinalSaved($note, [
