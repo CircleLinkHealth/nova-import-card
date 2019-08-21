@@ -96,7 +96,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereDirectMailMessageId($value)
  */
-class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable, EligibilityCheckable
+class Ccda extends MedicalRecordEloquent implements HasMedia, EligibilityCheckable
 {
     use BelongsToPatientUser;
     use HasMediaTrait;
@@ -112,12 +112,12 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable, Eli
     const SFTP_DROPBOX = 'sftp_dropbox';
     const UPLOADED     = 'uploaded';
 
+    protected $attributes = [
+        'imported' => false,
+    ];
+
     protected $dates = [
         'date',
-    ];
-    
-    protected $attributes = [
-        'imported' => false
     ];
 
     protected $fillable = [
@@ -188,7 +188,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable, Eli
         unset($attributes['xml']);
 
         $ccda = static::query()->create($attributes);
-        
+
         \Storage::disk('storage')->put("ccda-{$ccda->id}.xml", $xml);
         $ccda->addMedia(storage_path("ccda-{$ccda->id}.xml"))->toMediaCollection('ccd');
 
@@ -201,7 +201,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable, Eli
     public function createEligibilityJobFromMedicalRecord(): EligibilityJob
     {
         $adapter = new CcdaToEligibilityJobAdapter($this, $this->practice, $this->batch);
-        
+
         return $adapter->adapt();
     }
 
