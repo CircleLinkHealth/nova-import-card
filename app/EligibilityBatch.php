@@ -6,6 +6,7 @@
 
 namespace App;
 
+use App\Jobs\ProcessSinglePatientEligibility;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -243,6 +244,22 @@ class EligibilityBatch extends BaseModel
     public function practice()
     {
         return $this->belongsTo(Practice::class);
+    }
+
+    public function processPendingJobs($pageSize = 100, $onQueue = 'low')
+    {
+        $this->eligibilityJobs()
+            ->where('status', '=', 0)
+            ->inRandomOrder()
+            ->take($pageSize)
+            ->get()
+            ->each(function ($job) use ($onQueue) {
+                          ProcessSinglePatientEligibility::dispatch(
+                              $job,
+                              $this,
+                              $this->practice
+                          )->onQueue($onQueue);
+                      });
     }
 
     public function shouldFilterInsurance()
