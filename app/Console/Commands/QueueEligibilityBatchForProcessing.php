@@ -120,7 +120,7 @@ class QueueEligibilityBatchForProcessing extends Command
                 ->getFileStream($driveFileName, $driveFolder);
         } catch (\Exception $e) {
             \Log::debug("EXCEPTION `{$e->getMessage()}`");
-            $batch->status = 2;
+            $batch->status = EligibilityBatch::STATUSES['error'];
             $batch->save();
 
             return null;
@@ -193,7 +193,7 @@ class QueueEligibilityBatchForProcessing extends Command
         $query          = TargetPatient::whereBatchId($batch->id)->whereStatus(TargetPatient::STATUS_TO_PROCESS);
         $targetPatients = $query->with('batch')->chunkById(100, function ($targetPatients) use (&$athenaService, $batch) {
             //Processing
-            $batch->status = 1;
+            $batch->status = EligibilityBatch::STATUSES['processing'];
             $batch->save();
 
             foreach ($targetPatients as $targetPatient) {
@@ -203,10 +203,6 @@ class QueueEligibilityBatchForProcessing extends Command
                     $targetPatient->status = TargetPatient::STATUS_ERROR;
                     $targetPatient->save();
 
-                    //error
-                    $batch->status = 2;
-                    $batch->save();
-
                     throw $exception;
                 }
             }
@@ -215,11 +211,11 @@ class QueueEligibilityBatchForProcessing extends Command
         $batch->processPendingJobs(200);
 
         // Mark batch as processed by default
-        $batch->status = 3;
+        $batch->status = EligibilityBatch::STATUSES['complete'];
 
         if ($query->exists() || EligibilityJob::whereBatchId($batch->id)->where('status', '<', 2)->exists()) {
             // Mark batch as processing if there are patients to precess in DB
-            $batch->status = 1;
+            $batch->status = EligibilityBatch::STATUSES['processing'];
         }
 
         $batch->save();
