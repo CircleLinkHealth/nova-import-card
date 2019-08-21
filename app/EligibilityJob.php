@@ -161,6 +161,11 @@ class EligibilityJob extends BaseModel
         return $this->belongsTo(EligibilityBatch::class, 'batch_id');
     }
 
+    public function eligibilityJob()
+    {
+        return $this->belongsTo(EligibilityJob::class);
+    }
+
     public function enrollee()
     {
         return $this->hasOne(Enrollee::class);
@@ -186,17 +191,17 @@ class EligibilityJob extends BaseModel
 
     public function isAlreadyEnrolled()
     {
-        return self::ENROLLED == $this->status;
+        return self::ENROLLED == $this->outcome;
     }
 
     public function isEligible()
     {
-        return self::ELIGIBLE == $this->status;
+        return self::ELIGIBLE == $this->outcome;
     }
 
     public function isIneligible()
     {
-        return self::INELIGIBLE == $this->status;
+        return self::INELIGIBLE == $this->outcome;
     }
 
     /**
@@ -233,6 +238,6 @@ class EligibilityJob extends BaseModel
 
     public function wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()
     {
-        return self::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH == $this->status;
+        return self::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH == $this->outcome;
     }
 }
