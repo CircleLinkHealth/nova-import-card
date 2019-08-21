@@ -325,8 +325,7 @@
             },
             canScrollDown() {
                 return this.stage === "survey"
-                    && this.currentQuestionIndex < this.totalQuestions
-                    && this.latestQuestionAnsweredIndex >= this.currentQuestionIndex;
+                    && this.currentQuestionIndex < this.questions.length;
             },
             progressPercentage() {
                 return 100 * (this.progress) / this.totalQuestions;
@@ -358,7 +357,7 @@
                 this.error = null;
 
                 const prevQuestionIndex = this.getPreviousQuestionIndex(this.currentQuestionIndex);
-                this.scrollToQuestion(this.questions[this.currentQuestionIndex].id)
+                this.scrollToQuestion(this.questions[prevQuestionIndex].id)
                     .then(() => {
                         this.currentQuestionIndex = prevQuestionIndex;
                         this.actionsDisabled = false;
@@ -366,7 +365,7 @@
             },
 
             scrollDown() {
-                if ((this.latestQuestionAnsweredIndex < this.currentQuestionIndex) || this.actionsDisabled) {
+                if ((this.questions.length <= this.currentQuestionIndex) || this.actionsDisabled) {
                     return;
                 }
 
@@ -375,7 +374,7 @@
                 this.error = null;
 
                 const nextQuestionIndex = this.getNextQuestionIndex(this.currentQuestionIndex);
-                this.scrollToQuestion(this.questions[this.currentQuestionIndex].id)
+                this.scrollToQuestion(this.questions[nextQuestionIndex].id)
                     .then(() => {
                         this.currentQuestionIndex = nextQuestionIndex;
                         this.actionsDisabled = false;
