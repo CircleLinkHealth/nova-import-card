@@ -18,6 +18,8 @@ class AddPracticeIdFkToTargetPatients extends Migration
     public function down()
     {
         Schema::table('target_patients', function (Blueprint $table) {
+            $table->dropForeign(['practice_id']);
+            $table->dropColumn('practice_id');
         });
     }
 

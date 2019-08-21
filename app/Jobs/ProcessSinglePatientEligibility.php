@@ -8,7 +8,7 @@ namespace App\Jobs;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
-use App\Services\WelcomeCallListGenerator;
+use App\Services\EligibilityCheck;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -88,17 +88,14 @@ class ProcessSinglePatientEligibility implements ShouldQueue
     {
         //Only process if EligibilityJob status is 0 (not_started)
         if (0 == $this->eligibilityJob->status) {
-            new WelcomeCallListGenerator(
-                $this->patient,
+            new EligibilityCheck(
+                $this->eligibilityJob,
                 $this->practice,
+                $this->batch,
                 $this->filterLastEncounter,
                 $this->filterInsurance,
                 $this->filterProblems,
-                true,
-                null,
-                null,
-                $this->batch,
-                $this->eligibilityJob
+                true
             );
         }
     }

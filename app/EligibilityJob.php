@@ -6,7 +6,7 @@
 
 namespace App;
 
-use App\Services\WelcomeCallListGenerator;
+use App\Services\EligibilityCheck;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -196,26 +196,31 @@ class EligibilityJob extends BaseModel
      *
      * @throws \Exception
      *
-     * @return WelcomeCallListGenerator
+     * @return EligibilityCheck
      */
     public function process($filterLastEncounter, $filterInsurance, $filterProblems)
     {
-        return new WelcomeCallListGenerator(
-            collect([$this->data]),
+        return new EligibilityCheck(
+            $this,
             $this->batch->practice,
+            $this->batch,
             $filterLastEncounter,
             $filterInsurance,
             $filterProblems,
-            true,
-            null,
-            null,
-            $this->batch,
-            $this
+            true
         );
     }
 
     public function scopeEligible($builder)
     {
         return $builder->where('outcome', '=', self::ELIGIBLE);
+    }
+    
+    public function isEligible() {
+        return self::ELIGIBLE == $this->status;
+    }
+    
+    public function isIneligible() {
+        return self::INELIGIBLE == $this->status;
     }
 }

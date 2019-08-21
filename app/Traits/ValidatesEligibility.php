@@ -66,6 +66,9 @@ trait ValidatesEligibility
         if (array_key_exists('patient_id', $row)) {
             $row['mrn'] = $row['patient_id'];
         }
+        if (array_key_exists('patient_id', $row)) {
+            $row['mrn'] = $row['patient_id'];
+        }
         if (array_key_exists('date_of_birth', $row)) {
             $row['dob'] = $row['date_of_birth'];
         }

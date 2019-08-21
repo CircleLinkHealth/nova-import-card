@@ -24,7 +24,10 @@ class ProblemsAndInsurances
         $insurances = [];
 
         foreach ($this->insurances as $insurance) {
-            $insurance['type'] = $insurance['insurancetype'] ?? $insurance['insuranceplanname'];
+            $type = $insurance['insurancetype'] ?? '';
+            $name = $insurance['insuranceplanname'] ?? '';
+            
+            $insurance['type'] = $insurance['insurancetype'].': '. $insurance['insuranceplanname'];
             $insurances[]      = $insurance;
         }
 
