@@ -144,7 +144,3 @@ Route::group([
 
 Route::post('twilio/sms/status', 'TwilioController@smsStatusCallback')
      ->name('twilio.sms.status');
-
-
-
-Route::get('/sex', 'PersonalizedPreventionPlanController@getPppDataForUser');
