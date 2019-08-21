@@ -6,33 +6,9 @@
 
 namespace App\ValueObjects\Athena;
 
-class ProblemsAndInsurances
+class Problems
 {
-    private $insurances;
     private $problems;
-
-    /**
-     * @return mixed
-     */
-    public function getInsurances()
-    {
-        return $this->insurances;
-    }
-
-    public function getInsurancesForEligibilityCheck()
-    {
-        $insurances = [];
-
-        foreach ($this->insurances as $insurance) {
-            $type = $insurance['insurancetype'] ?? '';
-            $name = $insurance['insuranceplanname'] ?? '';
-            
-            $insurance['type'] = $insurance['insurancetype'].': '. $insurance['insuranceplanname'];
-            $insurances[]      = $insurance;
-        }
-
-        return $insurances;
-    }
 
     /**
      * @return array
@@ -74,14 +50,6 @@ class ProblemsAndInsurances
     public function getProblems()
     {
         return $this->problems;
-    }
-
-    /**
-     * @param mixed $insurances
-     */
-    public function setInsurances($insurances)
-    {
-        $this->insurances = $insurances;
     }
 
     /**

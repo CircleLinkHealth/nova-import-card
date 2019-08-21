@@ -76,8 +76,10 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
      */
     private function determineEligibility()
     {
+        $job = $this->ccda->createEligibilityJobFromMedicalRecord();
+
         $check = (new EligibilityCheck(
-            $this->ccda->createEligibilityJobFromMedicalRecord(),
+            $job,
             $this->practice,
             $this->batch,
             $this->filterLastEncounter,
@@ -85,7 +87,7 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             $this->filterProblems,
             true
         ));
-    
+
         if ($check->getEligibilityJob()->isEligible()) {
             $this->ccda->status = Ccda::ELIGIBLE;
         } else {

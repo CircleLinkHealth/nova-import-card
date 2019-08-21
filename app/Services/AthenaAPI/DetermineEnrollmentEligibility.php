@@ -9,7 +9,8 @@ namespace App\Services\AthenaAPI;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\TargetPatient;
-use App\ValueObjects\Athena\ProblemsAndInsurances;
+use App\ValueObjects\Athena\Insurances;
+use App\ValueObjects\Athena\Problems;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 
@@ -110,23 +111,31 @@ class DetermineEnrollmentEligibility
         }
     }
 
+    public function getPatientInsurances($patientId, $practiceId, $departmentId)
+    {
+        $insurancesResponse = $this->api->getPatientInsurances($patientId, $practiceId, $departmentId);
+
+        $insurances = new Insurances();
+        $insurances->setInsurances($insurancesResponse['insurances']);
+
+        return $insurances;
+    }
+
     /**
      * @param $patientId
      * @param $practiceId
      * @param $departmentId
      *
-     * @return ProblemsAndInsurances
+     * @return Problems
      */
-    public function getPatientProblemsAndInsurances($patientId, $practiceId, $departmentId)
+    public function getPatientProblems($patientId, $practiceId, $departmentId)
     {
-        $problemsResponse   = $this->api->getPatientProblems($patientId, $practiceId, $departmentId);
-        $insurancesResponse = $this->api->getPatientInsurances($patientId, $practiceId, $departmentId);
+        $problemsResponse = $this->api->getPatientProblems($patientId, $practiceId, $departmentId);
 
-        $problemsAndInsurance = new ProblemsAndInsurances();
-        $problemsAndInsurance->setProblems($problemsResponse['problems']);
-        $problemsAndInsurance->setInsurances($insurancesResponse['insurances']);
+        $problems = new Problems();
+        $problems->setProblems($problemsResponse['problems']);
 
-        return $problemsAndInsurance;
+        return $problems;
     }
 
     /**
