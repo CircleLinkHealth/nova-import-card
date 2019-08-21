@@ -34,18 +34,20 @@ class DetermineEnrollmentEligibility
             $targetPatient->ehr_department_id
         );
 
+        $practice = $this->practiceFromExternalId($targetPatient->ehr_practice_id);
+
         $adapter = new AthenaAPIAdapter(
             $patientInfo,
             new EligibilityJob(['batch_id' => $targetPatient->batch->id]),
             $targetPatient->batch
         );
-        $isEligible = $adapter->isEligible();
+        $isEligible = $adapter->isEligible($practice, $targetPatient->ehr_patient_id);
 
         $job                               = $adapter->getEligibilityJob();
         $targetPatient->eligibility_job_id = $job->id;
 
         if ( ! $isEligible) {
-            $targetPatient->status = 'ineligible';
+            $targetPatient->status = TargetPatient::STATUS_INELIGIBLE;
             $targetPatient->save();
 
             return false;
@@ -63,23 +65,10 @@ class DetermineEnrollmentEligibility
         }
 
         if ($demos['homephone'] or $demos['mobilephone']) {
-            $targetPatient->status = 'eligible';
+            $targetPatient->status = TargetPatient::STATUS_ELIGIBLE;
         } else {
-            $targetPatient->status      = 'error';
+            $targetPatient->status      = TargetPatient::STATUS_ERROR;
             $targetPatient->description = 'Homephone or mobile phone must be provided';
-        }
-
-        $practice = Practice::where(
-            'external_id',
-            '=',
-            $targetPatient->ehr_practice_id
-        )->first();
-
-        if ( ! $practice) {
-            throw new \Exception(
-                "Practice with AthenaId {$targetPatient->ehr_practice_id} was not found.",
-                500
-            );
         }
 
         $insurances = $patientInfo->getInsurances();
@@ -119,15 +108,13 @@ class DetermineEnrollmentEligibility
             ]);
 
             $targetPatient->enrollee_id = $enrollee->id;
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Database\QueryException $e) {
             //check if this is a mysql exception for unique key constraint
-            if ($e instanceof \Illuminate\Database\QueryException) {
-                $errorCode = $e->errorInfo[1];
-                if (1062 == $errorCode) {
-                    //do nothing
+            $errorCode = $e->errorInfo[1];
+            if (1062 == $errorCode) {
+                //do nothing
                     //we don't actually want to terminate the program if we detect duplicates
                     //we just don't wanna add the row again
-                }
             }
         }
 
@@ -222,5 +209,14 @@ class DetermineEnrollmentEligibility
         $problemsAndInsurance->setInsurances($insurancesResponse['insurances']);
 
         return $problemsAndInsurance;
+    }
+
+    private function practiceFromExternalId($ehrPracticeId): Practice
+    {
+        return Practice::where(
+            'external_id',
+            '=',
+            $ehrPracticeId
+        )->firstOrFail();
     }
 }

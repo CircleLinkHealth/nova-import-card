@@ -202,11 +202,11 @@ class EligibilityJob extends BaseModel
     {
         return new WelcomeCallListGenerator(
             collect([$this->data]),
+            $this->batch->practice,
             $filterLastEncounter,
             $filterInsurance,
             $filterProblems,
             true,
-            $this->batch->practice,
             null,
             null,
             $this->batch,
