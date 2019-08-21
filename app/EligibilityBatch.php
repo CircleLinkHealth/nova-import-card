@@ -245,6 +245,21 @@ class EligibilityBatch extends BaseModel
         return $this->belongsTo(Practice::class);
     }
 
+    public function shouldFilterInsurance()
+    {
+        return array_key_exists('filterLastEncounter', $this->options) ? (bool) $this->options['filterLastEncounter'] : false;
+    }
+
+    public function shouldFilterLastEncounter()
+    {
+        return array_key_exists('filterInsurance', $this->options) ? (bool) $this->options['filterInsurance'] : false;
+    }
+
+    public function shouldFilterProblems()
+    {
+        return array_key_exists('filterProblems', $this->options) ? (bool) $this->options['filterProblems'] : true;
+    }
+
     /**
      * @return bool
      */

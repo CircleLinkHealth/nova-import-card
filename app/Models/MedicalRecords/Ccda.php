@@ -6,12 +6,17 @@
 
 namespace App\Models\MedicalRecords;
 
+use App\Adapters\EligibilityCheck\CcdaToEligibilityJobAdapter;
+use App\Contracts\EligibilityCheckable;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\DirectMailMessage;
+use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\Traits\Relationships\BelongsToPatientUser;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -93,7 +98,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereDirectMailMessageId($value)
  */
-class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
+class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable, EligibilityCheckable
 {
     use BelongsToPatientUser;
     use HasMediaTrait;
@@ -120,6 +125,10 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
     protected $dates = [
         'date',
     ];
+    
+    protected $attributes = [
+        'imported' => false
+    ];
 
     protected $fillable = [
         'direct_mail_message_id',
@@ -139,6 +148,11 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         'xml',
         'status',
     ];
+
+    public function batch()
+    {
+        return $this->belongsTo(EligibilityBatch::class);
+    }
 
     public function bluebuttonJson()
     {
@@ -167,6 +181,13 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         return $this->hasOne(CcdaRequest::class);
     }
 
+    /**
+     * Store Ccda and store xml as Media.
+     *
+     * @param array $attributes
+     *
+     * @return Ccda|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|MedicalRecordEloquent
+     */
     public static function create($attributes = [])
     {
         if ( ! array_key_exists('xml', $attributes)) {
@@ -177,11 +198,21 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         unset($attributes['xml']);
 
         $ccda = static::query()->create($attributes);
-
+        
         \Storage::disk('storage')->put("ccda-{$ccda->id}.xml", $xml);
         $ccda->addMedia(storage_path("ccda-{$ccda->id}.xml"))->toMediaCollection('ccd');
 
         return $ccda;
+    }
+
+    /**
+     * @return \App\EligibilityJob
+     */
+    public function createEligibilityJobFromMedicalRecord(): EligibilityJob
+    {
+        $adapter = new CcdaToEligibilityJobAdapter($this, $this->practice, $this->batch);
+        
+        return $adapter->adapt();
     }
 
     public function directMessage()
@@ -226,6 +257,11 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         return ImportedMedicalRecord::where('medical_record_type', '=', Ccda::class)
             ->where('medical_record_id', '=', $this->id)
             ->first();
+    }
+
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
     }
 
     public function qaSummary()

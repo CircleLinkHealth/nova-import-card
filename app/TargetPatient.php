@@ -8,6 +8,7 @@ namespace App;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Ehr;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -89,5 +90,9 @@ class TargetPatient extends BaseModel
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    
+    public function practice(){
+        return $this->belongsTo(Practice::class);
     }
 }
