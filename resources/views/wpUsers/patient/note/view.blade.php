@@ -5,6 +5,10 @@
 
 @section('content')
     @push('styles')
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+              integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+              crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:500&display=swap" rel="stylesheet">
         <style type="text/css">
             div.inline {
                 float: left;
@@ -14,12 +18,30 @@
                 clear: both;
             }
 
+            .edgy-button {
+                border-radius: 3px;
+            }
+
             blockquote {
                 padding: 10px 20px;
                 margin: 10px 0 20px;
                 font-size: 17.5px;
                 border-left: 5px solid #50b2e2;
                 line-height: 24px;
+            }
+            body {
+                font-family: 'Roboto', sans-serif !important;
+            }
+            b {
+                font-weight: bolder;
+            }
+
+            .meta-tags {
+                line-height: 1.2;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                margin-right: 10px;
+                display: table-cell;
             }
         </style>
     @endpush
@@ -106,14 +128,17 @@
                             <div class="row">
                                 <div class="new-note-item">
                                     <div class="form-group">
+                                        <div class="col-sm-12 form-group">
+
+                                        </div>
                                         <div class="col-sm-12">
                                             @foreach($meta as $tag)
-                                                <h5>
-                                                    <div class="label label-{{$tag->severity}}"
+                                                <div style=" display: inline">
+                                                    <div class="label label-{{$tag->severity}} meta-tags"
                                                          @isset($tag->tooltip) data-tooltip="{{$tag->tooltip}}" @endisset>
                                                         {{ucwords($tag->title)}}
                                                     </div>
-                                                </h5>
+                                                </div>
                                             @endforeach
                                             @if(is_array($hasReaders))
                                                 @foreach($hasReaders as $key => $value)
@@ -143,18 +168,7 @@
                     <div class="form-block col-md-12">
                         <div class="row">
                             <div class="new-note-item">
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <input type="hidden" name="meta[1][meta_key]" value="comment">
-                                        <label for="meta[1][meta_value]">
-                                            Full Note
-                                        </label>
-                                        <textarea id="note" class="form-control" rows="10"
-                                                  name="meta[1][meta_value]"
-                                                  readonly>{{trim($note['comment'])}}</textarea> <br/>
-                                    </div>
-                                </div>
-
+                                <!-- Send To CareTeam -->
                                 <div class="form-block col-md-12">
                                     <div class="row">
                                         <div class="new-note-item">
@@ -162,23 +176,28 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Full Note -->
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <input type="hidden" name="meta[1][meta_key]" value="comment">
+                                        <i class="fas fa-book" style="font-size:12px; margin-right: 10px"></i>
+                                        <label for="meta[1][meta_value]">
+                                            <span style="color: #50b2e2">{{$author->getFullName()}}</span> wrote a note
+                                            on <span style="color: lightgrey">{{$note['created_at']}}</span>
+                                        </label>
+                                        <textarea id="note" class="form-control" rows="10"
+                                                  name="meta[1][meta_value]"
+                                                  readonly>{{trim($note['comment'])}}</textarea> <br/>
+                                    </div>
+                                </div>
+
                                 <div class="form-group col-sm-4">
                                     <input type="hidden" name="patient_id" value="{{$patient->id}}">
                                     <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
                                     <input type="hidden" name="noteId" value="{{$note['id']}}">
                                     <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
                                     <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
-                                </div>
-                                <div class="form-item form-item-spacing text-center">
-                                    <div>
-                                        <div class="col-sm-12">
-                                            <input type="hidden" value="new_activity"/>
-                                            <button id="update" name="submitAction" type="submit" value="new_activity"
-                                                    class="btn btn-primary btn-lg form-item--button form-item-spacing">
-                                                Return / Send
-                                            </button>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 @push('scripts')
