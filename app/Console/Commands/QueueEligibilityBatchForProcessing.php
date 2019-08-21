@@ -95,7 +95,7 @@ class QueueEligibilityBatchForProcessing extends Command
      */
     private function afterProcessingHook($batch)
     {
-        if ($batch->isCompleted()) {
+        if ($batch->isCompleted() && $batch->hasJobs()) {
             $this->processEligibilityService
                 ->notifySlack($batch);
         }
