@@ -194,7 +194,7 @@ class EligibilityBatch extends BaseModel
      */
     public function hasJobs(): bool
     {
-        return $this->eligibilityJobs()->count() > 0;
+        return $this->eligibilityJobs()->exists();
     }
 
     public function incrementDuplicateCount()
@@ -254,12 +254,12 @@ class EligibilityBatch extends BaseModel
             ->take($pageSize)
             ->get()
             ->each(function ($job) use ($onQueue) {
-                          ProcessSinglePatientEligibility::dispatch(
+                ProcessSinglePatientEligibility::dispatch(
                               $job,
                               $this,
                               $this->practice
                           )->onQueue($onQueue);
-                      });
+            });
     }
 
     public function shouldFilterInsurance()
