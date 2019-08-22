@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "5c786475366cc436d4f2f01d15adfffc",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.109.6",
+            "version": "3.110.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c129c2120943340cb102ab1a1c7c76d03c00bcc4"
+                "reference": "39094b2d8e0424184fe9f12f5359d62ce8849b9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c129c2120943340cb102ab1a1c7c76d03c00bcc4",
-                "reference": "c129c2120943340cb102ab1a1c7c76d03c00bcc4",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/39094b2d8e0424184fe9f12f5359d62ce8849b9d",
+                "reference": "39094b2d8e0424184fe9f12f5359d62ce8849b9d",
                 "shasum": ""
             },
             "require": {
@@ -495,7 +495,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-08-16T18:13:56+00:00"
+            "time": "2019-08-21T18:23:39+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -658,7 +658,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "6232dd0cf676ac0535b1686b3f373aca98be99f5"
+                "reference": "45a1f1f99b486c963d0f77bf5e133c9365562b81"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-08-19T10:47:27+00:00"
+            "time": "2019-08-22T07:52:14+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -3395,17 +3395,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v2.0.11",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "055b382736bf2726754e8dcd674b4a0101ab6ac9"
+                "reference": "37d1da0fcae7cd46296597ac80f6cc9ea60367b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-055b382736bf2726754e8dcd674b4a0101ab6ac9-zip-bcb2d5.zip",
-                "reference": "055b382736bf2726754e8dcd674b4a0101ab6ac9",
-                "shasum": "a0dde4bca15de2b3f06aa62043728ce485283a4d"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-37d1da0fcae7cd46296597ac80f6cc9ea60367b5-zip-d81688.zip",
+                "reference": "37d1da0fcae7cd46296597ac80f6cc9ea60367b5",
+                "shasum": "eb28754ccfadd2f1bfaa852b53b97e02e87301fe"
             },
             "require": {
                 "cakephp/chronos": "^1.0",
@@ -3461,20 +3461,20 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2019-08-13T17:17:17+00:00"
+            "time": "2019-08-20T19:26:49+00:00"
         },
         {
             "name": "laravel/passport",
-            "version": "v7.3.5",
+            "version": "v7.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/passport.git",
-                "reference": "57937b08dc8e444b4756782a5ba172b5ba54d4f5"
+                "reference": "4460bd1fb5d913d75e547caf02a5a19c6d77794d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/passport/zipball/57937b08dc8e444b4756782a5ba172b5ba54d4f5",
-                "reference": "57937b08dc8e444b4756782a5ba172b5ba54d4f5",
+                "url": "https://api.github.com/repos/laravel/passport/zipball/4460bd1fb5d913d75e547caf02a5a19c6d77794d",
+                "reference": "4460bd1fb5d913d75e547caf02a5a19c6d77794d",
                 "shasum": ""
             },
             "require": {
@@ -3485,6 +3485,7 @@
                 "illuminate/console": "~5.6.0|~5.7.0|~5.8.0|^6.0",
                 "illuminate/container": "~5.6.0|~5.7.0|~5.8.0|^6.0",
                 "illuminate/contracts": "~5.6.0|~5.7.0|~5.8.0|^6.0",
+                "illuminate/cookie": "~5.6.0|~5.7.0|~5.8.0|^6.0",
                 "illuminate/database": "~5.6.0|~5.7.0|~5.8.0|^6.0",
                 "illuminate/encryption": "~5.6.0|~5.7.0|~5.8.0|^6.0",
                 "illuminate/http": "~5.6.0|~5.7.0|~5.8.0|^6.0",
@@ -3531,7 +3532,7 @@
                 "oauth",
                 "passport"
             ],
-            "time": "2019-08-06T18:10:19+00:00"
+            "time": "2019-08-20T18:10:43+00:00"
         },
         {
             "name": "laravel/scout",
@@ -4638,23 +4639,23 @@
         },
         {
             "name": "mindscape/raygun4php",
-            "version": "v1.8.3",
+            "version": "v1.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/MindscapeHQ/raygun4php.git",
-                "reference": "5a917d01c45b250f5ccd8bca451dbee6ae6fb16a"
+                "reference": "7f841d251f5985817cec93e131bb334561c03338"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MindscapeHQ/raygun4php/zipball/5a917d01c45b250f5ccd8bca451dbee6ae6fb16a",
-                "reference": "5a917d01c45b250f5ccd8bca451dbee6ae6fb16a",
+                "url": "https://api.github.com/repos/MindscapeHQ/raygun4php/zipball/7f841d251f5985817cec93e131bb334561c03338",
+                "reference": "7f841d251f5985817cec93e131bb334561c03338",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "3.7.*"
+                "phpunit/phpunit": "^4.8.16"
             },
             "suggest": {
                 "ext-curl": "*"
@@ -4684,7 +4685,7 @@
                 "logging",
                 "raygun"
             ],
-            "time": "2019-02-21T23:25:31+00:00"
+            "time": "2019-03-07T01:23:01+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -9044,22 +9045,22 @@
     "packages-dev": [
         {
             "name": "barryvdh/laravel-debugbar",
-            "version": "v3.2.4",
+            "version": "v3.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-debugbar.git",
-                "reference": "2d195779ea4f809f69764a795e2ec371dbb76a96"
+                "reference": "bf19d9362d0efd1e97c67a76f13f8085953bbbbd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/2d195779ea4f809f69764a795e2ec371dbb76a96",
-                "reference": "2d195779ea4f809f69764a795e2ec371dbb76a96",
+                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/bf19d9362d0efd1e97c67a76f13f8085953bbbbd",
+                "reference": "bf19d9362d0efd1e97c67a76f13f8085953bbbbd",
                 "shasum": ""
             },
             "require": {
-                "illuminate/routing": "5.5.x|5.6.x|5.7.x|5.8.x",
-                "illuminate/session": "5.5.x|5.6.x|5.7.x|5.8.x",
-                "illuminate/support": "5.5.x|5.6.x|5.7.x|5.8.x",
+                "illuminate/routing": "^5.5|^6",
+                "illuminate/session": "^5.5|^6",
+                "illuminate/support": "^5.5|^6",
                 "maximebf/debugbar": "~1.15.0",
                 "php": ">=7.0",
                 "symfony/debug": "^3|^4",
@@ -9108,7 +9109,7 @@
                 "profiler",
                 "webprofiler"
             ],
-            "time": "2019-03-25T09:39:08+00:00"
+            "time": "2019-08-22T07:52:30+00:00"
         },
         {
             "name": "barryvdh/laravel-ide-helper",
@@ -9266,9 +9267,9 @@
             "authors": [
                 {
                     "name": "Brian",
+                    "role": "Lead",
                     "email": "scaturrob@gmail.com",
-                    "homepage": "http://brianscaturro.com",
-                    "role": "Lead"
+                    "homepage": "http://brianscaturro.com"
                 }
             ],
             "description": "A dependable php environment",
@@ -9322,9 +9323,9 @@
             "authors": [
                 {
                     "name": "Brian Scaturro",
+                    "role": "Lead",
                     "email": "scaturrob@gmail.com",
-                    "homepage": "http://brianscaturro.com",
-                    "role": "Lead"
+                    "homepage": "http://brianscaturro.com"
                 }
             ],
             "description": "Parallel testing for PHP",
@@ -10714,9 +10715,9 @@
             "authors": [
                 {
                     "name": "Nicolas Widart",
+                    "role": "Developer",
                     "email": "n.widart@gmail.com",
-                    "homepage": "https://nicolaswidart.com",
-                    "role": "Developer"
+                    "homepage": "https://nicolaswidart.com"
                 }
             ],
             "description": "Laravel Module management",
@@ -10941,18 +10942,18 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 },
                 {
                     "name": "Sebastian Heuer",
-                    "email": "sebastian@phpeople.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpeople.de"
                 },
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Component for reading phar.io manifest information from a PHP Archive (PHAR)",
@@ -10988,18 +10989,18 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 },
                 {
                     "name": "Sebastian Heuer",
-                    "email": "sebastian@phpeople.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpeople.de"
                 },
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Library for handling version information and constraints",
@@ -11321,8 +11322,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "lead"
+                    "role": "lead",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Library that provides collection, processing, and rendering functionality for PHP code coverage information.",
@@ -11372,8 +11373,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "lead"
+                    "role": "lead",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "FilterIterator implementation that filters files based on a list of suffixes.",
@@ -11414,8 +11415,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "lead"
+                    "role": "lead",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Simple template engine.",
@@ -11463,8 +11464,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "lead"
+                    "role": "lead",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Utility class for timing",
@@ -11525,16 +11526,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.14",
+            "version": "7.5.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "2834789aeb9ac182ad69bfdf9ae91856a59945ff"
+                "reference": "d79c053d972856b8b941bb233e39dc521a5093f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2834789aeb9ac182ad69bfdf9ae91856a59945ff",
-                "reference": "2834789aeb9ac182ad69bfdf9ae91856a59945ff",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d79c053d972856b8b941bb233e39dc521a5093f0",
+                "reference": "d79c053d972856b8b941bb233e39dc521a5093f0",
                 "shasum": ""
             },
             "require": {
@@ -11605,7 +11606,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-07-15T06:24:08+00:00"
+            "time": "2019-08-21T07:05:16+00:00"
         },
         {
             "name": "react/event-loop",
@@ -12253,8 +12254,8 @@
             "authors": [
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "lead"
+                    "role": "lead",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
@@ -12775,8 +12776,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
@@ -13067,7 +13068,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.2.0",
+        "php": ">=5.4.0",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",
