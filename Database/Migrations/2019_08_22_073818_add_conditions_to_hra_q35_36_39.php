@@ -55,6 +55,16 @@ class AddConditionsToHraQ353639 extends Migration
             ]
         );
 
+        $dataConditionsForCase42 = json_encode(
+            [
+                [
+                    'operator'                         => 'greater_than',
+                    'related_question_order_number'    => 2,
+                    'related_question_expected_answer' => '44',
+                ],
+            ]
+        );
+
         // $hraQuestionOrder35
         DB::table($table)->updateOrInsert(
             ['body' => 'When was the last time you had a Breast Cancer Screening (Mammogram)?'],
@@ -76,6 +86,14 @@ class AddConditionsToHraQ353639 extends Migration
             ['body' => 'When was the last time you had a Prostate Cancer Screening (Prostate specific antigen (PSA))?'],
             [
                 'conditions' => $dataConditionsForCase39,
+            ]
+        );
+
+        //$hraQuestionOrder42 - cpm-1447
+        DB::table($table)->updateOrInsert(
+            ['body' => 'When was the last time you had an Intimate Partner Violence/Domestic Violence Screening?'],
+            [
+                'conditions' => $dataConditionsForCase42,
             ]
         );
     }
