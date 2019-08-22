@@ -133,7 +133,7 @@ class SurveyService
         //save and then dispatch the event
         $instance->pivot->save();
 
-        if ($isComplete) {
+        if ($isComplete || $instance->pivot->status === SurveyInstance::COMPLETED) {
             event(new SurveyInstancePivotSaved($instance));
         }
 
