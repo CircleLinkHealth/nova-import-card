@@ -49,8 +49,8 @@ class EnrollmentDirectorController extends Controller
         $toCall       = Enrollee::TO_CALL;
         $softDeclined = Enrollee::SOFT_REJECTED;
 
-        //using this to create an extra binding for each number
-        // - otherwise if we pass the imploded array as a string,
+        //using this to create an extra binding for each number,
+        //otherwise if we pass the imploded array as a string,
         // it will cast it as an integer, taking only the 1st id of the comma-delimited array
         $bindings = array_merge(
             [$request->input('ambassadorId'), $softDeclined, $toCall],
