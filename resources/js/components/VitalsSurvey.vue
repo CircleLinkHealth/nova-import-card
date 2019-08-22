@@ -312,12 +312,12 @@
         },
         computed: {
             canScrollUp() {
-                return this.currentQuestionIndex > 0;
+                return (this.stage === "survey" || this.stage === "complete")
+                    && this.currentQuestionIndex > 0;
             },
             canScrollDown() {
                 return this.stage === "survey"
-                    && this.currentQuestionIndex < this.totalQuestionWithSubQuestions
-                    && this.latestQuestionAnsweredIndex >= this.currentQuestionIndex;
+                    && this.currentQuestionIndex < this.questions.length;
             },
             progressPercentage() {
                 return 100 * (this.progress) / this.totalQuestions;
@@ -334,21 +334,146 @@
             },
 
             scrollUp() {
-                if (this.currentQuestionIndex === 0) {
+                if (this.currentQuestionIndex === 0 || this.actionsDisabled) {
                     return;
                 }
 
+                this.actionsDisabled = true;
+
                 this.error = null;
-                this.currentQuestionIndex = this.currentQuestionIndex - 1;
+
+                const prevQuestionIndex = this.getPreviousQuestionIndex(this.currentQuestionIndex);
+                this.scrollToQuestion(this.questions[prevQuestionIndex].id)
+                    .then(() => {
+                        this.currentQuestionIndex = prevQuestionIndex;
+                        this.actionsDisabled = false;
+                    });
             },
 
             scrollDown() {
-                if (this.latestQuestionAnsweredIndex < this.currentQuestionIndex) {
+                if ((this.questions.length <= this.currentQuestionIndex) || this.actionsDisabled) {
                     return;
                 }
 
+                this.actionsDisabled = true;
+
                 this.error = null;
-                this.currentQuestionIndex = this.currentQuestionIndex + 1;
+
+                const nextQuestionIndex = this.getNextQuestionIndex(this.currentQuestionIndex);
+                this.scrollToQuestion(this.questions[nextQuestionIndex].id)
+                    .then(() => {
+                        this.currentQuestionIndex = nextQuestionIndex;
+                        this.actionsDisabled = false;
+                    });
+
+            },
+
+            scrollToQuestion(questionId) {
+                return new Promise((resolve) => {
+                    const surveyContainer = $('.survey-container');
+                    const currentQuestionOffset = $(`#${questionId}`).offset().top;
+
+                    let scrollTo = 0;
+                    if (currentQuestionOffset < 0) {
+                        scrollTo = surveyContainer.scrollTop() + currentQuestionOffset;
+                    }
+                    else {
+                        scrollTo = currentQuestionOffset
+                    }
+
+                    surveyContainer.scrollTo(
+                        scrollTo,
+                        500,
+                        {
+                            onAfter: () => {
+                                resolve();
+                            }
+                        });
+                });
+            },
+
+            getPreviousQuestionIndex(index) {
+                const newIndex = index - 1;
+                const prevQuestion = this.questions[newIndex];
+                if (!prevQuestion) {
+                    return 0;
+                }
+
+                if (prevQuestion.disabled) {
+                    return this.getPreviousQuestionIndex(index - 1);
+                }
+
+                //if we reach here, it means we have not faced this question yet in this session
+                //it might still be disabled though -> think completing questions then refreshing the page
+                //need to check if there are certain conditions that have to be met before showing this question
+                let canGoToPrev = true;
+                if (prevQuestion.conditions && prevQuestion.conditions.length) {
+                    for (let i = 0; i < prevQuestion.conditions.length; i++) {
+                        const q = prevQuestion.conditions[0];
+                        const questions = this.getQuestionsOfOrder(q.related_question_order_number);
+                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                            canGoToPrev = false;
+                            break;
+                        }
+                        //if no expected answer, we look for any answer, if any
+                        else if (typeof q.related_question_expected_answer === "undefined") {
+                            if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
+                                canGoToPrev = false;
+                            }
+                            else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                                canGoToPrev = false;
+                            }
+                            else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
+                                canGoToPrev = false;
+                            }
+
+                            if (!canGoToPrev) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                return canGoToPrev ? newIndex : this.getPreviousQuestionIndex(index - 1);
+            },
+
+            getNextQuestionIndex(index) {
+                const newIndex = index + 1;
+                const nextQuestion = this.questions[newIndex];
+                if (!nextQuestion) {
+                    return (this.questions.length - 1);
+                }
+
+                //if we reach here, it means we have not faced this question yet in this session
+                //it might still be disabled though -> think completing questions then refreshing the page
+                //need to check if there are certain conditions that have to be met before showing this question
+                let canGoToNext = true;
+                if (nextQuestion.conditions && nextQuestion.conditions.length) {
+                    for (let i = 0; i < nextQuestion.conditions.length; i++) {
+                        const q = nextQuestion.conditions[0];
+                        const questions = this.getQuestionsOfOrder(q.related_question_order_number);
+                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                            canGoToNext = false;
+                            break;
+                        }
+                        //if no expected answer, we look for any answer, if any
+                        else if (typeof q.related_question_expected_answer === "undefined") {
+                            if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
+                                canGoToNext = false;
+                            }
+                            else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                                canGoToNext = false;
+                            }
+                            else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
+                                canGoToNext = false;
+                            }
+
+                            if (!canGoToNext) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                return canGoToNext ? newIndex : this.getNextQuestionIndex(index + 1);
             },
 
             isSubQuestion(question) {

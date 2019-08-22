@@ -177,13 +177,20 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'order'                => 4,
-                'question_body'        => "What is the patient's body mass index (BMI)?",
-                'question_type'        => QuestionType::NUMBER,
-                'question_type_answer' => [
-                    [
-                        'options' => [
-                            'placeholder' => 'ex. 25',
+                'order'         => 4,
+                'question_body' => "What is the patient's body mass index (BMI)?",
+                'question_type' => QuestionType::NUMBER,
+                'conditions'    => [
+                    'is_auto_generated' => true,
+                    'generate_func'     => 'bmi_func',
+                    'generated_from'    => [
+                        [
+                            'order' => 2,
+                            'type'  => 'mass',
+                        ],
+                        [
+                            'order' => 3,
+                            'type'  => 'height',
                         ],
                     ],
                 ],
@@ -191,11 +198,9 @@ class SurveySeeder extends Seeder
             [
                 'order'                 => 5,
                 'sub_order'             => 'a',
-                'question_body'         => 'Word Recall (1 point for each word spontaneously recalled without cueing) 
-                http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf',
+                'question_body'         => 'Word Recall (1 point for each word spontaneously recalled without cueing)',
                 'question_type'         => QuestionType::RADIO,
-                //we have to see about (c) and inserting the link
-                'question_group'        => 'Based off of the Mini-Cog(c) assessment, how did your patient score? (insert link)',
+                'question_group'        => 'Based off of the Mini-Cog(c) assessment, how did your patient score? http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf',
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 0,
@@ -216,7 +221,7 @@ class SurveySeeder extends Seeder
                 'sub_order'             => 'b',
                 'question_body'         => 'Clock Draw (Normal clock = 2 points. A normal clock has all numbers placed in the cor-rect sequence and approximately correct position (e.g., 12, 3, 6 and 9 are in anchor positions) with no missing or duplicate numbers. Hands are point-ing to the 11 and 2 (11:10). Hand length is not scored.Inability or refusal to draw a clock (abnormal) = 0 points.)',
                 'question_type'         => QuestionType::RADIO,
-                'question_group'        => 'Based off of the Mini-Cog(c) assessment, how did your patient score? (insert link)',
+                'question_group'        => 'Based off of the Mini-Cog(c) assessment, how did your patient score? http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf',
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 0,
@@ -244,7 +249,7 @@ class SurveySeeder extends Seeder
                         ],
                     ],
                 ],
-                'question_group'        => 'Based off of the Mini-Cog(c) assessment, how did your patient score? (insert link)',
+                'question_group'        => 'Based off of the Mini-Cog(c) assessment, how did your patient score? http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf',
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 0,
