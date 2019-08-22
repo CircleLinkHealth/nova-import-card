@@ -58,7 +58,6 @@ class CsvEligibilityValidationTest extends TestCase
 
         $jobs->map(function ($job) use ($batch) {
             (new ProcessSinglePatientEligibility(
-                collect([$job->data]),
                 $job,
                 $batch,
                 $batch->practice
@@ -102,7 +101,6 @@ class CsvEligibilityValidationTest extends TestCase
 
         $jobs->map(function ($job) use ($batch) {
             (new ProcessSinglePatientEligibility(
-                collect([$job->data]),
                 $job,
                 $batch,
                 $batch->practice
