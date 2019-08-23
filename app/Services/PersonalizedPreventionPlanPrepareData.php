@@ -772,7 +772,7 @@ class PersonalizedPreventionPlanPrepareData
             && $screenings['prostate_cancer_screening'] === '10+ years ago/Never/Unsure') {
             $prostateCancer = $this->getTaskRecommendations($title, $index);
         } elseif ($screenings['sex'] === 'Male'
-            && $screenings['race'] === 'African American/Black'
+            && $screenings['race'] === 'Black/African-Ameri.'
             && $screenings['prostate_cancer_screening'] === '10+ years ago/Never/Unsure') {
             $prostateCancer = $this->getTaskRecommendations($title, $index);
         } elseif ($screenings['sex'] === 'Male' && $prostateCancerSelected === true) {

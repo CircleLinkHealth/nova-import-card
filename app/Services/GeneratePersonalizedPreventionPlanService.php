@@ -95,7 +95,7 @@ class GeneratePersonalizedPreventionPlanService
             'cognitive_assessment'           => $this->answerForVitalsQuestionWithOrder(5, 'a'),
             /*vitals*/
             /*HRA*/
-            'race'                           => $this->answerForHraQuestionWithOrder(1),
+            'race'                           => $this->answerForHraQuestionWithOrder(1, 'a'),
             'age'                            => $this->answerForHraQuestionWithOrder(2),
             'sex'                            => $this->answerForHraQuestionWithOrder(4),
             'fruit_veggies'                  => $this->answerForHraQuestionWithOrder(6),
