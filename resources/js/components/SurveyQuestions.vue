@@ -571,9 +571,38 @@
                 let canGoToPrev = true;
                 if (prevQuestion.conditions && prevQuestion.conditions.length) {
                     for (let i = 0; i < prevQuestion.conditions.length; i++) {
-                        const q = prevQuestion.conditions[0];
-                        const questions = this.getQuestionsOfOrder(q.related_question_order_number);
-                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                        const q = prevQuestion.conditions;
+                        const prevQuestConditions = q[i];
+
+                        //we are evaluating only the first condition.related_question_order_number
+                        //For now is OK since we are depending only on ONE related Question
+                        const questions = this.getQuestionsOfOrder(prevQuestConditions.related_question_order_number);
+
+                        //If conditions needs to be compared against to "gte" or "lte"
+                        if (prevQuestConditions.hasOwnProperty('operator')) {
+                            if (prevQuestConditions.operator === 'greater_than') {
+                                //Again we use only the first Question of the related Questions, which is OK for now.
+                                if (questions[0].answer.value.value >= prevQuestConditions.related_question_expected_answer) {
+                                    canGoToPrev = false;
+                                    break;
+                                }
+                                canGoToPrev = true;
+                                break;
+                            }
+
+                            if (prevQuestConditions.operator === 'less_than') {
+                                if (questions[0].answer.value.value <= prevQuestConditions.related_question_expected_answer) {
+                                    canGoToPrev = false;
+                                    break;
+                                }
+                                canGoToPrev = true;
+                                break;
+                            }
+                        }
+                        //default comparison
+                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === questions[0].answer.value.value);
+
+                        if (!expectedAnswersEqualsValue.includes(true)) {
                             canGoToPrev = false;
                             break;
                         }
@@ -609,9 +638,37 @@
                 let canGoToNext = true;
                 if (nextQuestion.conditions && nextQuestion.conditions.length) {
                     for (let i = 0; i < nextQuestion.conditions.length; i++) {
-                        const q = nextQuestion.conditions[0];
-                        const questions = this.getQuestionsOfOrder(q.related_question_order_number);
-                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                        const q = nextQuestion.conditions;
+                        const nextQuestConditions = q[i];
+                        //we are evaluating only the first condition.related_question_order_number
+                        //For now is OK since we are depending only on ONE related Question
+                        const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
+
+                        //If conditions needs to be compared against to "gte" or "lte"
+                        if (nextQuestConditions.hasOwnProperty('operator')) {
+                            if (nextQuestConditions.operator === 'greater_than') {
+                                //Again we use only the first Question of the related Questions, which is OK for now.
+                                if (questions[0].answer.value.value >= nextQuestConditions.related_question_expected_answer) {
+                                    canGoToNext = false;
+                                    break;
+                                }
+                                canGoToNext = true;
+                                break;
+                            }
+
+                            if (nextQuestConditions.operator === 'less_than') {
+                                if (questions[0].answer.value.value <= nextQuestConditions.related_question_expected_answer) {
+                                    canGoToNext = false;
+                                    break;
+                                }
+                                canGoToNext = true;
+                                break;
+                            }
+                        }
+                        //default comparison
+                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === questions[0].answer.value.value);
+
+                        if (!expectedAnswersEqualsValue.includes(true)) {
                             canGoToNext = false;
                             break;
                         }
@@ -645,13 +702,18 @@
                 if (nextQuestion.conditions && nextQuestion.conditions.length) {
                     let shouldDisable = false;
                     for (let i = 0; i < nextQuestion.conditions.length; i++) {
-                        const q = nextQuestion.conditions[0];
-                        const questions = this.getQuestionsOfOrder(q.related_question_order_number);
+                        const q = nextQuestion.conditions;
+                        const nextQuestConditions = q[i];
+
+                        //we are evaluating only the first condition.related_question_order_number
+                        //For now is OK since we are depending only on ONE related Question
+                        const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
 
                         //If conditions needs to be compared against to "gte" or "lte"
-                        if (q.hasOwnProperty('operator')) {
-                            if (q.operator === 'greater_than') {
-                                if (questions[0].answer.value.value >= q.related_question_expected_answer) {
+                        if (nextQuestConditions.hasOwnProperty('operator')) {
+                            if (nextQuestConditions.operator === 'greater_than') {
+                                //Again we use only the first Question of the related Questions, which is OK for now.
+                                if (questions[0].answer.value.value >= nextQuestConditions.related_question_expected_answer) {
                                     shouldDisable = true;
                                     break;
                                 }
@@ -659,8 +721,8 @@
                                 break;
                             }
 
-                            if (q.operator === 'less_than') {
-                                if (questions[0].answer.value.value <= q.related_question_expected_answer) {
+                            if (nextQuestConditions.operator === 'less_than') {
+                                if (questions[0].answer.value.value <= nextQuestConditions.related_question_expected_answer) {
                                     shouldDisable = true;
                                     break;
                                 }
@@ -669,7 +731,9 @@
                             }
                         }
                         //default comparison
-                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === questions[0].answer.value.value);
+
+                        if (!expectedAnswersEqualsValue.includes(true)) {
                             shouldDisable = true;
                             break;
                         }
