@@ -1849,6 +1849,10 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'NursePerformanceRepController@nurseMetricsPerformanceData',
         'as'   => 'admin.reports.nurse.performance.data',
     ])->middleware('permission:nurseReport.read');
+    Route::get('reports/nurse/weekly/excel', [
+        'uses' => 'NursePerformanceRepController@nurseMetricsPerformanceExcel',
+        'as'   => 'admin.reports.nurse.performance.excel',
+    ])->middleware('permission:nurseReport.read');
     Route::get('reports/nurse/weekly', [
         'uses' => 'NursePerformanceRepController@nurseMetricsDashboard',
         'as'   => 'admin.reports.nurse.metrics',
