@@ -5,8 +5,7 @@
             <!--Original Formatted Value from NurseInvoice-->
             <span :class="{strike: strikethroughTime || shouldSetStrikeThroughNow}">
            {{this.formattedTime}}
-            <loader v-show="loader"></loader>
-       </span>
+            </span>
 
             <!--Requested Time From nurse-->
             <span v-show="showTillRefresh"
@@ -24,7 +23,7 @@
                 <i v-else-if="showDisputeStatus === 'pending' && !isInvalidated"
                    class="glyphicon glyphicon-option-horizontal"></i>
         </span>
-
+            <span style="float: right;"><loader v-show="loader" class="loader"></loader></span>
             <!--Edit Btn-->
             <span v-show="!isInvalidated && editButtonActive && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleEdit()"
@@ -346,28 +345,35 @@
         text-decoration: line-through;
         color: skyblue;
     }
-    .glyphicon-pencil{
+
+    .glyphicon-pencil {
         float: right;
         margin-right: 5%;
     }
 
-    .glyphicon-erase{
+    .glyphicon-erase {
         float: right;
         margin-right: 5%;
     }
-    .glyphicon-option-horizontal{
+
+    .glyphicon-option-horizontal {
         color: rgb(0, 191, 255);
         margin-right: 1%;
     }
 
-    .glyphicon-remove-sign{
+    .glyphicon-remove-sign {
         margin-right: 1%;
         color: #ff0000;
     }
 
-    .glyphicon-ok-circle{
+    .glyphicon-ok-circle {
         margin-right: 1%;
         color: #008000;
+    }
+
+    .loader {
+        width: 17px;
+        height: 17px;
     }
 
 </style>
