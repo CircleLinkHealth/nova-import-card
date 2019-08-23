@@ -18,14 +18,11 @@
             <!--Status glyphicons-->
             <span v-if="showDisputeStatus !== false"
                   class="dispute-requested-time">
-                <i v-if="showDisputeStatus === 'approved' && !isInvalidated" class="glyphicon glyphicon-ok-circle"
-                   style="color: #008000;"></i>
+                <i v-if="showDisputeStatus === 'approved' && !isInvalidated" class="glyphicon glyphicon-ok-circle"></i>
                 <i v-else-if="showDisputeStatus === 'rejected' && !isInvalidated"
-                   class="glyphicon glyphicon-remove-sign"
-                   style="color: #ff0000;"></i>
+                   class="glyphicon glyphicon-remove-sign"></i>
                 <i v-else-if="showDisputeStatus === 'pending' && !isInvalidated"
-                   class="glyphicon glyphicon-option-horizontal"
-                   style="color: #00bfff;"></i>
+                   class="glyphicon glyphicon-option-horizontal"></i>
         </span>
 
             <!--Edit Btn-->
@@ -148,7 +145,7 @@
 
             validateTime() {
                 const inputValue = this.liveRequestedTime;
-                const formatRule = inputValue.match('(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9])');
+                const formatRule = inputValue.match('([0-9]|1[0-9]|2[0-3])(:[0-5][0-9])');
 
                 if (this.liveRequestedTime.length === 0) {
                     return true;
@@ -312,7 +309,7 @@
 
     .text-box {
         max-width: 24%;
-
+        margin-left: -13%;
     }
 
     .validation {
@@ -348,6 +345,29 @@
     .invalidated {
         text-decoration: line-through;
         color: skyblue;
+    }
+    .glyphicon-pencil{
+        float: right;
+        margin-right: 5%;
+    }
+
+    .glyphicon-erase{
+        float: right;
+        margin-right: 5%;
+    }
+    .glyphicon-option-horizontal{
+        color: rgb(0, 191, 255);
+        margin-right: 1%;
+    }
+
+    .glyphicon-remove-sign{
+        margin-right: 1%;
+        color: #ff0000;
+    }
+
+    .glyphicon-ok-circle{
+        margin-right: 1%;
+        color: #008000;
     }
 
 </style>
