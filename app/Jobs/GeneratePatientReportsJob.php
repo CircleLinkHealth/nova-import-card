@@ -173,8 +173,7 @@ class GeneratePatientReportsJob implements ShouldQueue
         $providerReportFormattedData = (new ProviderReportService())->formatReportDataForView($providerReport);
 
         $pdf = App::make('dompdf.wrapper');
-        $pdf->loadView('providerReport.report', ['reportData' => $providerReportFormattedData, 'patient' => $patient]);
-
+        $pdf->loadView('providerReport.report', ['reportData' => $providerReportFormattedData, 'patient' => $patient, 'isPdf' => true]);
 
         $path = storage_path("provider_report_{$patient->id}_{$this->currentDate->toDateTimeString()}.pdf");
 
@@ -199,6 +198,7 @@ class GeneratePatientReportsJob implements ShouldQueue
             'patientPppData' => $ppp,
             'patient' => $patient,
             'personalizedHealthAdvices' => $personalizedHealthAdvices,
+            'isPdf' => true
         ]);
 
         $path = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toDateTimeString()}.pdf");
