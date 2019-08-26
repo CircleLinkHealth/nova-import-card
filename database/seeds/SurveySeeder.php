@@ -281,7 +281,7 @@ class SurveySeeder extends Seeder
             [
                 'order'                 => 1,
                 'sub_order'             => 'a',
-                'question_group'        => 'What is your race and ethnicity',
+                'question_group'        => 'What is your race and ethnicity?',
                 'question_body'         => 'What is your race?',
                 'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
@@ -298,7 +298,7 @@ class SurveySeeder extends Seeder
             [
                 'order'                 => 1,
                 'sub_order'             => 'b',
-                'question_group'        => 'What is your race and ethnicity',
+                'question_group'        => 'What is your race and ethnicity?',
                 'question_body'         => 'Are you hispanic or Latino?',
                 'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [

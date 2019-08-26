@@ -34,7 +34,7 @@ class SurveyInstance extends BaseModel
                         'last_question_answered_id',
                         'status',
                         'start_date',
-                        'completed_at'
+                        'completed_at',
                     ])
                     ->withTimestamps();
     }
@@ -42,10 +42,13 @@ class SurveyInstance extends BaseModel
     public function questions()
     {
         return $this->belongsToMany(Question::class, 'survey_questions', 'survey_instance_id',
-            'question_id')->withPivot([
-            'order',
-            'sub_order',
-        ]);
+            'question_id')
+                    ->withPivot([
+                        'order',
+                        'sub_order',
+                    ])
+                    ->orderBy('pivot_order')
+                    ->orderBy('pivot_sub_order');
     }
 
     public function scopeCurrent($query)
