@@ -14,10 +14,10 @@ return [
     |
     */
 
-    'filename' => '_ide_helper',
+    'filename' => 'storage/_ide_helper',
     'format'   => 'php',
 
-    'meta_filename' => '.phpstorm.meta.php',
+    'meta_filename' => 'storage/.phpstorm.meta.php',
 
     /*
     |--------------------------------------------------------------------------
