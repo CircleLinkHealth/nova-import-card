@@ -39,7 +39,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection $activities
  * @property \CircleLinkHealth\Customer\Entities\User                                                    $logger
  * @property \CircleLinkHealth\Customer\Entities\User                                                    $patient
- *
  * @method static \Illuminate\Database\Eloquent\Builder|PageTimer createdThisMonth($field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|PageTimer createdOn(Carbon $date, $field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|PageTimer createdToday($field = 'created_at')
@@ -75,10 +74,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|PageTimer withTrashed()
  * @method static \Illuminate\Database\Query\Builder|PageTimer withoutTrashed()
  * @mixin \Eloquent
- *
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity                               $activity
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer
  *     createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer
