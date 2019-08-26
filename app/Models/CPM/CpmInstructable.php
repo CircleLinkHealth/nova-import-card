@@ -32,6 +32,8 @@ namespace App\Models\CPM;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable whereCpmInstructionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable whereInstructableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable whereInstructableType($value)
+ *
+ * @property \App\Models\CPM\CpmProblem[]|\Illuminate\Database\Eloquent\Collection $cpmProblem
  */
 class CpmInstructable extends \CircleLinkHealth\Core\Entities\BaseModel
 {

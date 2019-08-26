@@ -57,6 +57,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereIsBehavioral($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereWeight($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem withIcd10Codes()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem withLatestCpmInstruction()
  */
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {

@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.110.0",
+            "version": "3.110.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "39094b2d8e0424184fe9f12f5359d62ce8849b9d"
+                "reference": "b39e6c8c3082f0f1f6672a6bd2aba92cfc38da9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/39094b2d8e0424184fe9f12f5359d62ce8849b9d",
-                "reference": "39094b2d8e0424184fe9f12f5359d62ce8849b9d",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b39e6c8c3082f0f1f6672a6bd2aba92cfc38da9a",
+                "reference": "b39e6c8c3082f0f1f6672a6bd2aba92cfc38da9a",
                 "shasum": ""
             },
             "require": {
@@ -495,7 +495,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-08-21T18:23:39+00:00"
+            "time": "2019-08-23T18:12:25+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -621,7 +621,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "fd08fa1a7afcdda414b2669d7b9cb0d0872171ea"
+                "reference": "3c28dba355650dd0617b5aa81416ea3c8efe88c3"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -650,7 +650,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-08-08T13:21:04+00:00"
+            "time": "2019-08-26T12:02:10+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -658,7 +658,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "45a1f1f99b486c963d0f77bf5e133c9365562b81"
+                "reference": "1727a3013f43d2ceb1c9f4696fd941e4c0c7168d"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-08-22T07:52:14+00:00"
+            "time": "2019-08-26T12:03:15+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -734,7 +734,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "2adba23a855aae04c45b3d938063eb474eb8abf3"
+                "reference": "0e29f9e6e79ef2cd031dd4bff9e9aaa52a607b21"
             },
             "require": {
                 "circlelinkhealth/customer": "dev-master"
@@ -759,7 +759,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-06-29T22:05:39+00:00"
+            "time": "2019-08-26T12:02:09+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",
@@ -767,7 +767,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "dc0dbd63629c21214a7b2a970f42bc7213c3f0ba"
+                "reference": "1454f017c9e554e679f12fdc672048d3f0377793"
             },
             "require": {
                 "authy/php": "^3.0",
@@ -794,7 +794,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-07-11T05:42:07+00:00"
+            "time": "2019-08-26T12:02:09+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -966,16 +966,16 @@
         },
         {
             "name": "dillingham/nova-button",
-            "version": "1.0.6",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dillingham/nova-button.git",
-                "reference": "ffb0cd340a16e7c47b6201cacccfdd1352376cc9"
+                "reference": "73fd921bda13a37517f5deb7af0f51ec5db51f5a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dillingham/nova-button/zipball/ffb0cd340a16e7c47b6201cacccfdd1352376cc9",
-                "reference": "ffb0cd340a16e7c47b6201cacccfdd1352376cc9",
+                "url": "https://api.github.com/repos/dillingham/nova-button/zipball/73fd921bda13a37517f5deb7af0f51ec5db51f5a",
+                "reference": "73fd921bda13a37517f5deb7af0f51ec5db51f5a",
                 "shasum": ""
             },
             "type": "library",
@@ -1002,7 +1002,7 @@
                 }
             ],
             "description": "Nova button package",
-            "time": "2019-08-18T17:20:16+00:00"
+            "time": "2019-08-23T03:43:44+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1926,16 +1926,16 @@
         },
         {
             "name": "google/apiclient",
-            "version": "v2.2.3",
+            "version": "v2.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "4bfd3edc21cceaf45fc216a4196e1993cf7a89eb"
+                "reference": "d6c7563bdf88d6a0719ea63e21c74dc86032364e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/4bfd3edc21cceaf45fc216a4196e1993cf7a89eb",
-                "reference": "4bfd3edc21cceaf45fc216a4196e1993cf7a89eb",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/d6c7563bdf88d6a0719ea63e21c74dc86032364e",
+                "reference": "d6c7563bdf88d6a0719ea63e21c74dc86032364e",
                 "shasum": ""
             },
             "require": {
@@ -1950,6 +1950,8 @@
             },
             "require-dev": {
                 "cache/filesystem-adapter": "^0.3.2",
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
+                "phpcompatibility/php-compatibility": "^9.2",
                 "phpunit/phpunit": "~4.8.36",
                 "squizlabs/php_codesniffer": "~2.3",
                 "symfony/css-selector": "~2.1",
@@ -1981,20 +1983,20 @@
             "keywords": [
                 "google"
             ],
-            "time": "2019-05-21T18:06:55+00:00"
+            "time": "2019-08-19T18:09:46+00:00"
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.110",
+            "version": "v0.111",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "9d9e0a4e180cf09a52ab04535ca4f669031f8c54"
+                "reference": "3bdb4e5be7fe49f8737f7b3a8a3a32ca68ff8f97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/9d9e0a4e180cf09a52ab04535ca4f669031f8c54",
-                "reference": "9d9e0a4e180cf09a52ab04535ca4f669031f8c54",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/3bdb4e5be7fe49f8737f7b3a8a3a32ca68ff8f97",
+                "reference": "3bdb4e5be7fe49f8737f7b3a8a3a32ca68ff8f97",
                 "shasum": ""
             },
             "require": {
@@ -2018,7 +2020,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2019-08-17T00:23:23+00:00"
+            "time": "2019-08-25T00:23:03+00:00"
         },
         {
             "name": "google/auth",
@@ -3395,17 +3397,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v2.1.0",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "37d1da0fcae7cd46296597ac80f6cc9ea60367b5"
+                "reference": "1a3788eeba04c3627b772ab0a35bcb26b1f928d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-37d1da0fcae7cd46296597ac80f6cc9ea60367b5-zip-d81688.zip",
-                "reference": "37d1da0fcae7cd46296597ac80f6cc9ea60367b5",
-                "shasum": "eb28754ccfadd2f1bfaa852b53b97e02e87301fe"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-1a3788eeba04c3627b772ab0a35bcb26b1f928d9-zip-74981f.zip",
+                "reference": "1a3788eeba04c3627b772ab0a35bcb26b1f928d9",
+                "shasum": "646fcce580ccbff631cc0e470617b8b52c2d26ad"
             },
             "require": {
                 "cakephp/chronos": "^1.0",
@@ -3426,7 +3428,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0-dev"
+                    "dev-master": "2.1-dev"
                 },
                 "laravel": {
                     "providers": [
@@ -3461,7 +3463,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2019-08-20T19:26:49+00:00"
+            "time": "2019-08-22T20:07:38+00:00"
         },
         {
             "name": "laravel/passport",
@@ -3894,16 +3896,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.53",
+            "version": "1.0.55",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "08e12b7628f035600634a5e76d95b5eb66cea674"
+                "reference": "33c91155537c6dc899eacdc54a13ac6303f156e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/08e12b7628f035600634a5e76d95b5eb66cea674",
-                "reference": "08e12b7628f035600634a5e76d95b5eb66cea674",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/33c91155537c6dc899eacdc54a13ac6303f156e6",
+                "reference": "33c91155537c6dc899eacdc54a13ac6303f156e6",
                 "shasum": ""
             },
             "require": {
@@ -3974,7 +3976,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2019-06-18T20:09:29+00:00"
+            "time": "2019-08-24T11:17:19+00:00"
         },
         {
             "name": "league/flysystem-aws-s3-v3",
@@ -8651,7 +8653,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/revisionable.git",
-                "reference": "7c3fde76b35df8afcdc4adbac0b9895801bbe9f5"
+                "reference": "1b1aefc2aff0404db632cc2dbf17525943a0cf82"
             },
             "require": {
                 "illuminate/support": "~4.0|~5.0|~5.1",
@@ -8699,7 +8701,7 @@
                 "source": "https://github.com/VentureCraft/revisionable"
             },
             "abandoned": true,
-            "time": "2019-06-11T11:57:51+00:00"
+            "time": "2019-08-26T12:02:09+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -9045,16 +9047,16 @@
     "packages-dev": [
         {
             "name": "barryvdh/laravel-debugbar",
-            "version": "v3.2.6",
+            "version": "v3.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-debugbar.git",
-                "reference": "bf19d9362d0efd1e97c67a76f13f8085953bbbbd"
+                "reference": "8794e7a3b7f3a0e7222bcd088f5f44b2b6ff8e61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/bf19d9362d0efd1e97c67a76f13f8085953bbbbd",
-                "reference": "bf19d9362d0efd1e97c67a76f13f8085953bbbbd",
+                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/8794e7a3b7f3a0e7222bcd088f5f44b2b6ff8e61",
+                "reference": "8794e7a3b7f3a0e7222bcd088f5f44b2b6ff8e61",
                 "shasum": ""
             },
             "require": {
@@ -9109,7 +9111,7 @@
                 "profiler",
                 "webprofiler"
             ],
-            "time": "2019-08-22T07:52:30+00:00"
+            "time": "2019-08-22T14:29:54+00:00"
         },
         {
             "name": "barryvdh/laravel-ide-helper",
@@ -12308,16 +12310,16 @@
         },
         {
             "name": "spatie/phpunit-watcher",
-            "version": "1.11.0",
+            "version": "1.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/phpunit-watcher.git",
-                "reference": "dc227698a4168ec77486452e5886d64e21080411"
+                "reference": "31b4494364f0dcccc4356c021ba43da98bc1975c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/phpunit-watcher/zipball/dc227698a4168ec77486452e5886d64e21080411",
-                "reference": "dc227698a4168ec77486452e5886d64e21080411",
+                "url": "https://api.github.com/repos/spatie/phpunit-watcher/zipball/31b4494364f0dcccc4356c021ba43da98bc1975c",
+                "reference": "31b4494364f0dcccc4356c021ba43da98bc1975c",
                 "shasum": ""
             },
             "require": {
@@ -12359,7 +12361,7 @@
                 "phpunit-watcher",
                 "spatie"
             ],
-            "time": "2019-07-22T13:06:46+00:00"
+            "time": "2019-08-22T23:22:31+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
@@ -12414,16 +12416,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.23.5",
+            "version": "v3.23.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "ac5a1c071885de363964fa19fd2b871dab2a5e65"
+                "reference": "5e454feb332edeac712f69c7ecb5937512acc2fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/ac5a1c071885de363964fa19fd2b871dab2a5e65",
-                "reference": "ac5a1c071885de363964fa19fd2b871dab2a5e65",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/5e454feb332edeac712f69c7ecb5937512acc2fc",
+                "reference": "5e454feb332edeac712f69c7ecb5937512acc2fc",
                 "shasum": ""
             },
             "type": "library",
@@ -12467,7 +12469,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2019-08-10T08:29:11+00:00"
+            "time": "2019-08-24T02:30:24+00:00"
         },
         {
             "name": "symfony/dom-crawler",
@@ -12785,16 +12787,16 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "1.4.0",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozart/assert.git",
-                "reference": "83e253c8e0be5b0257b881e1827274667c5c17a9"
+                "reference": "88e6d84706d09a236046d686bbea96f07b3a34f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/83e253c8e0be5b0257b881e1827274667c5c17a9",
-                "reference": "83e253c8e0be5b0257b881e1827274667c5c17a9",
+                "url": "https://api.github.com/repos/webmozart/assert/zipball/88e6d84706d09a236046d686bbea96f07b3a34f4",
+                "reference": "88e6d84706d09a236046d686bbea96f07b3a34f4",
                 "shasum": ""
             },
             "require": {
@@ -12802,8 +12804,7 @@
                 "symfony/polyfill-ctype": "^1.8"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.6",
-                "sebastian/version": "^1.0.1"
+                "phpunit/phpunit": "^4.8.36 || ^7.5.13"
             },
             "type": "library",
             "extra": {
@@ -12832,7 +12833,7 @@
                 "check",
                 "validate"
             ],
-            "time": "2018-12-25T11:19:39+00:00"
+            "time": "2019-08-24T08:43:50+00:00"
         },
         {
             "name": "xethron/laravel-4-generators",

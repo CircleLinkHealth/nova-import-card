@@ -255,9 +255,9 @@ class EligibilityBatch extends BaseModel
             ->get()
             ->each(function ($job) use ($onQueue) {
                 ProcessSinglePatientEligibility::dispatch(
-                              $job,
-                              $this,
-                              $this->practice
+                    $job,
+                    $this,
+                    $this->practice
                           )->onQueue($onQueue);
             });
     }

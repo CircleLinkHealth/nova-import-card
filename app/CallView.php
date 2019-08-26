@@ -74,6 +74,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereTimezone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereType($value)
  * @mixin \Eloquent
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereCcmStatus($value)
  */
 class CallView extends Model
 {
