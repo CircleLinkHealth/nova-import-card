@@ -49,6 +49,12 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUserId($value)
  * @mixin \Eloquent
+ *
+ * @property int                                          $practice_id
+ * @property \App\EligibilityBatch|null                   $batch
+ * @property \CircleLinkHealth\Customer\Entities\Practice $practice
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
  */
 class TargetPatient extends BaseModel
 {

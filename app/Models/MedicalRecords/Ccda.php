@@ -95,6 +95,9 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereDirectMailMessageId($value)
+ *
+ * @property \App\EligibilityBatch|null                        $batch
+ * @property \CircleLinkHealth\Customer\Entities\Practice|null $practice
  */
 class Ccda extends MedicalRecordEloquent implements HasMedia, EligibilityCheckable
 {

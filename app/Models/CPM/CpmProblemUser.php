@@ -31,6 +31,8 @@ namespace App\Models\CPM;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser wherePatientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereUpdatedAt($value)
+ *
+ * @property \App\Models\CPM\CpmProblem $problem
  */
 class CpmProblemUser extends \CircleLinkHealth\Core\Entities\BaseModel
 {

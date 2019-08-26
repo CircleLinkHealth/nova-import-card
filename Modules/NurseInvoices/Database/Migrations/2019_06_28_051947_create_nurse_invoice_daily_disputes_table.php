@@ -4,8 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Modules\NurseInvoices\Database\Migrations;
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -38,8 +36,8 @@ class CreateNurseInvoiceDailyDisputesTable extends Migration
             $table->foreign('invoice_id')
                 ->references('id')
                 ->on('nurse_invoices')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 }
