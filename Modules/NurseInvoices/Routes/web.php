@@ -37,7 +37,7 @@ Route::prefix('nurseinvoices')->middleware(['auth'])->group(function () {
         ]);
     });
 
-    Route::get('nurse/{nurse_info_id}/invoice/{invoice_id?}', [
+    Route::get('nurse/{nurse_user_id}/invoice/{invoice_id?}', [
         'uses' => 'InvoiceReviewController@adminShow',
         'as'   => 'nurseinvoices.admin.show',
     ]);

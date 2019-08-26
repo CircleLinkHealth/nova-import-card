@@ -39,19 +39,19 @@ class InvoiceReviewController extends Controller
 
     /**
      * @param AdminShowNurseInvoice $request
-     * @param $nurseInfoId
+     * @param $nurseUserId
      * @param $invoiceId
      *
      * @return Factory|View
      */
-    public function adminShow(AdminShowNurseInvoice $request, $nurseInfoId, $invoiceId)
+    public function adminShow(AdminShowNurseInvoice $request, $nurseUserId, $invoiceId)
     {
         $invoice = NurseInvoice::where('id', $invoiceId)
             ->with(['dispute.resolver'])
-            ->where('nurse_info_id', $nurseInfoId)
+            ->ofNurses($nurseUserId)
             ->firstOrFail();
 
-        return $this->invoice($request, $invoice, []);
+        return $this->invoice($request, $nurseUserId, $invoice, []);
     }
 
     /**
@@ -116,7 +116,7 @@ class InvoiceReviewController extends Controller
 
         $invoiceDataWithDisputes = $this->attachDisputes->putDisputesToTimePerDay($invoice);
 
-        return $this->invoice($request, $invoice, $invoiceDataWithDisputes);
+        return $this->invoice($request, auth()->id(), $invoice, $invoiceDataWithDisputes);
     }
 
     /**
@@ -130,7 +130,7 @@ class InvoiceReviewController extends Controller
             ->with(['dispute.resolver'])
             ->firstOrFail();
 
-        return $this->invoice($request, $invoice, []);
+        return $this->invoice($request, auth()->id(), $invoice, []);
     }
 
     private function canBeDisputed(NurseInvoice $invoice, Carbon $deadline)
@@ -142,7 +142,12 @@ class InvoiceReviewController extends Controller
         return null === $invoice->dispute && ! $invoice->is_nurse_approved && Carbon::now()->lte($deadline) && Carbon::now()->gte($invoice->month_year->copy()->addMonth());
     }
 
-    private function invoice(Request $request, NurseInvoice $invoice, array $invoiceDataWithDisputes)
+    private function getNurseInvoiceMap(int $nurseUserId)
+    {
+        return NurseInvoice::ofNurses($nurseUserId)->pluck('month_year', 'id');
+    }
+
+    private function invoice(Request $request, int $nurseUserId, NurseInvoice $invoice, array $invoiceDataWithDisputes)
     {
         $auth = auth()->user();
 
@@ -157,7 +162,7 @@ class InvoiceReviewController extends Controller
                 'shouldShowDisputeForm'  => $auth->isAdmin() ? false : $this->canBeDisputed($invoice, $deadline->deadline()),
                 'disputeDeadline'        => $deadline->deadline()->setTimezone($auth->timezone),
                 'disputeDeadlineWarning' => $deadline->warning(),
-                'monthInvoiceMap'        => NurseInvoice::where('nurse_info_id', $invoice->nurse_info_id)->pluck('month_year', 'id'),
+                'monthInvoiceMap'        => $this->getNurseInvoiceMap($nurseUserId),
             ],
             $invoiceData
         );
