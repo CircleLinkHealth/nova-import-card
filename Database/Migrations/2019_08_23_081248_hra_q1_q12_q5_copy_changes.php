@@ -11,13 +11,6 @@ class HraQ1Q12Q5CopyChanges extends Migration
      */
     public function up()
     {
-        //TODO:
-
-        // search and replace for all question type answers that were changed (Q1, Q12, Q15)
-        // Q1:
-        // add new question sub_order b to q1
-        // find all places where q1 is read
-
         $questionTypes        = "question_types";
         $questionTypesAnswers = "question_types_answers";
         $questionsTable       = "questions";
@@ -47,9 +40,12 @@ class HraQ1Q12Q5CopyChanges extends Migration
           ->update(['value' => 'Native Hawaiian']);
 
         // Q1 split to a and b
+        $toDeleteId = DB::table($questionTypesAnswers)
+                        ->where('value', 'Hispanic or Latino Origin or Descent')
+                        ->first()->id;
+
         DB::table($questionTypesAnswers)
-          ->delete()
-          ->where('value', 'Hispanic or Latino Origin or Descent');
+          ->delete($toDeleteId);
 
         DB::table($questionGroups)
           ->insert(['body' => 'What is your race and ethnicity']);
@@ -75,7 +71,7 @@ class HraQ1Q12Q5CopyChanges extends Migration
               'survey_id'         => $hraSurveyId,
               'body'              => 'Are you Hispanic or Latino?',
               'optional'          => 0,
-              'conditions'        => '',
+              'conditions'        => null,
               'question_group_id' => $questionGroupId,
           ]);
 
@@ -105,10 +101,18 @@ class HraQ1Q12Q5CopyChanges extends Migration
         $yesNoQuestion = ['yes_or_no_question' => true];
 
         DB::table($questionTypesAnswers)
-          ->insert(['question_type_id' => $newQuestionTypeId, 'value' => 'Yes', 'options' => json_encode($yesNoQuestion)]);
+          ->insert([
+              'question_type_id' => $newQuestionTypeId,
+              'value'            => 'Yes',
+              'options'          => json_encode($yesNoQuestion),
+          ]);
 
         DB::table($questionTypesAnswers)
-          ->insert(['question_type_id' => $newQuestionTypeId, 'value' => 'No', 'options' => json_encode($yesNoQuestion)]);
+          ->insert([
+              'question_type_id' => $newQuestionTypeId,
+              'value'            => 'No',
+              'options'          => json_encode($yesNoQuestion),
+          ]);
 
         // Q12
         DB::table($questionTypesAnswers)
