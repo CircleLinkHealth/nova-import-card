@@ -23,7 +23,8 @@ class EnroleeData extends Resource
      *
      * @var string
      */
-    public static $group    = Constants::NOVA_GROUP_ENROLLMENT;
+    public static $group = Constants::NOVA_GROUP_ENROLLMENT;
+
     public static $importer = EnroleeDataImporter::class;
 
     /**
