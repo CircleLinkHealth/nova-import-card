@@ -93,12 +93,12 @@ class ProviderReportService
         $screenings = [];
         if (!empty($report->screenings)) {
 
-            $breastCancer = self::checkInputValueIsNotEmptyString($report->screenings['breast_cancer'], 'breast_cancer');
+            $breastCancer = $this->getStringValue($report->screenings['breast_cancer']);
             if ($breastCancer !== '10+ years ago/Never/Unsure') {
                 $screenings['Breast cancer'] = " (Mammogram): Had " . $breastCancer . '.';
             }
 
-            $cervicalCancer = self::checkInputValueIsNotEmptyString($report->screenings['cervical_cancer'], 'cervical_cancer');
+            $cervicalCancer = $this->getStringValue($report->screenings['cervical_cancer']);
             if ($cervicalCancer !== '10+ years ago/Never/Unsure') {
                 $screenings['Cervical cancer'] = " (Pap smear): Had " . $cervicalCancer . '.';
             }
@@ -113,7 +113,7 @@ class ProviderReportService
                 $screenings['Skin cancer'] = ": Had " . $skinCancer . '.';
             }
 
-            $prostateCancer = self::checkInputValueIsNotEmptyString($report->screenings['prostate_cancer'], 'prostate_cancer');
+            $prostateCancer = $this->getStringValue($report->screenings['prostate_cancer'], 'prostate_cancer');
             if ($prostateCancer !== '10+ years ago/Never/Unsure') {
                 $screenings['Prostate cancer'] = " (Prostate screening Test): Had " . $prostateCancer . '.';
             }
