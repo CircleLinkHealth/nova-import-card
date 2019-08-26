@@ -24,7 +24,6 @@ namespace CircleLinkHealth\Customer\Entities;
  * @property \CircleLinkHealth\Customer\Entities\User      $author
  * @property \CircleLinkHealth\Customer\Entities\User      $patient
  * @property \CircleLinkHealth\Customer\Entities\User|null $provider
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereComment($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereCreatedAt($value)
@@ -38,9 +37,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereWasCompleted($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Appointment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Appointment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Appointment query()

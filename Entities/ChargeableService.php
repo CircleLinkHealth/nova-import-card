@@ -21,7 +21,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property Practice[]|\Illuminate\Database\Eloquent\Collection $practices
  * @property User[]|\Illuminate\Database\Eloquent\Collection $providers
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|ChargeableService newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ChargeableService newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ChargeableService query()

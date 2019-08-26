@@ -20,7 +20,6 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @property \Carbon\Carbon|null                                   $updated_at
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity|null $activity
  * @property \CircleLinkHealth\Customer\Entities\Nurse             $nurse
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereActivityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereCcmType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereCreatedAt($value)
@@ -29,9 +28,7 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereNurseId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog query()

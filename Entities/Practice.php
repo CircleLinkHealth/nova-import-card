@@ -58,7 +58,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \App\CPRulesPCP[]|\Illuminate\Database\Eloquent\Collection $pcp
  * @property \CircleLinkHealth\Customer\Entities\Settings[]|\Illuminate\Database\Eloquent\Collection $settings
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $users
- *
  * @method static \Illuminate\Database\Eloquent\Builder|Practice active()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|Practice onlyTrashed()
@@ -88,7 +87,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|Practice withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Practice withoutTrashed()
  * @mixin \Eloquent
- *
  * @property int|null $saas_account_id
  * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $careAmbassadorLogs
  * @property \App\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices
@@ -100,7 +98,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     $notifications
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null $saasAccount
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice activeBillable()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     authUserCanAccess($softwareOnly = false)

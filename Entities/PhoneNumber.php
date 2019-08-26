@@ -22,7 +22,6 @@ use App\CLH\Helpers\StringManipulation;
  * @property string                                   $updated_at
  * @property string|null                              $deleted_at
  * @property \CircleLinkHealth\Customer\Entities\User $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereExtension($value)
@@ -34,10 +33,8 @@ use App\CLH\Helpers\StringManipulation;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereUserId($value)
  * @mixin \Eloquent
- *
  * @property string                                                                         $number_with_dashes
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PhoneNumber newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PhoneNumber newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PhoneNumber query()

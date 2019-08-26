@@ -68,7 +68,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \CircleLinkHealth\Customer\Entities\PatientContactWindow[]|\Illuminate\Database\Eloquent\Collection $contactWindows
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                      $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User                                                            $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient enrolled()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient hasFamily()
@@ -121,12 +120,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Patient withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Patient withoutTrashed()
  * @mixin \Eloquent
- *
  * @property \Illuminate\Support\Carbon|null                   $paused_letter_printed_at
  * @property \Illuminate\Support\Carbon|null                   $date_unreachable
  * @property mixed                                             $last_call_status
  * @property \CircleLinkHealth\Customer\Entities\Location|null $location
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient byStatus($fromDate, $toDate)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient ccmStatus($status, $operator = '=')
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient filter(\App\Filters\QueryFilters $filters)
@@ -135,6 +132,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient query()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereDateUnreachable($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient wherePausedLetterPrintedAt($value)
+ * @property string|null $withdrawn_reason
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient enrolledOrPaused()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereWithdrawnReason($value)
  */
 class Patient extends BaseModel
 {

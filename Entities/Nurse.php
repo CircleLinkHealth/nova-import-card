@@ -38,7 +38,6 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @property \CircleLinkHealth\Customer\Entities\User                                                          $user
  * @property \CircleLinkHealth\Customer\Entities\NurseContactWindow[]|\Illuminate\Database\Eloquent\Collection $windows
  * @property \CircleLinkHealth\Customer\Entities\WorkHours[]|\Illuminate\Database\Eloquent\Collection          $workhourables
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereBillingType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereHighRate($value)
@@ -52,14 +51,19 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereUserId($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse
  *     filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse query()
+ * @property int $is_demo
+ * @property int $pay_interval
+ * @property int $is_variable_rate
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice[] $invoices
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsDemo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsVariableRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse wherePayInterval($value)
  */
 class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 {

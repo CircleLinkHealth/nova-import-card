@@ -34,7 +34,6 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @property int                                         $total_time
  * @property \CircleLinkHealth\Customer\Entities\User    $actor
  * @property \CircleLinkHealth\Customer\Entities\Patient $patient_info
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary getCurrent()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary getForMonth(\Carbon\Carbon $month)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereActorId($value)
@@ -53,7 +52,6 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereRejected($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property string|null                                                                    $closed_ccm_status
  * @property int|null                                                                       $problem_1
  * @property int|null                                                                       $problem_2
@@ -65,7 +63,6 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @property \App\ChargeableService[]|\Illuminate\Database\Eloquent\Collection              $chargeableServices
  * @property \CircleLinkHealth\Customer\Entities\User                                       $patient
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary hasServiceCode($code)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary newQuery()

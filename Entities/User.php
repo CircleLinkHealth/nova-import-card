@@ -206,7 +206,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Role[]|\Illuminate\Database\Eloquent\Collection $roles
  * @property mixed $email_address
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection $ucp
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User exceptType($type)
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User hasBillingProvider($billing_provider_id)
@@ -247,7 +246,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\User withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
  * @mixin \Eloquent
- *
  * @property int|null $saas_account_id
  * @property int $skip_browser_checks Skip compatible browser checks when the user logs in
  * @property string|null $last_session_id
@@ -277,7 +275,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Permission[]|\Illuminate\Database\Eloquent\Collection $perms
  * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null $saasAccount
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     filter(\App\Filters\QueryFilters $filters)
@@ -296,6 +293,11 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     whereSaasAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     whereSkipBrowserChecks($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmMiscUser[] $cpmMiscUserPivot
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\NurseInvoices\Entities\Dispute[] $disputes
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra[] $nurseBonuses
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\PatientAWVSummary[] $patientAWVSummaries
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofActiveBillablePractice()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
