@@ -23,7 +23,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Illuminate\Support\Carbon|null                                                $updated_at
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User|null                                  $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TwoFA\Entities\AuthyUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TwoFA\Entities\AuthyUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TwoFA\Entities\AuthyUser query()
