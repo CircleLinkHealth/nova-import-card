@@ -277,19 +277,44 @@ class SurveySeeder extends Seeder
     private function hraQuestionData(): Collection
     {
         return collect([
+
             [
                 'order'                 => 1,
+                'sub_order'             => 'a',
+                'question_group'        => 'What is your race and ethnicity?',
                 'question_body'         => 'What is your race?',
                 'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
-                    ['type_answer_body' => 'African American/Black'],
+                    ['type_answer_body' => 'Black/African-Ameri.'],
                     ['type_answer_body' => 'Asian'],
-                    ['type_answer_body' => 'Caucasian/White'],
-                    ['type_answer_body' => 'Hispanic or Latino Origin or Descent'],
+                    ['type_answer_body' => 'White'],
                     ['type_answer_body' => 'Indian'],
-                    ['type_answer_body' => 'Native American or Alaskan Native'],
-                    ['type_answer_body' => 'Native Hawaiian or other Pacific Islander'],
+                    ['type_answer_body' => 'Native Ameri./Alaskan'],
+                    ['type_answer_body' => 'Native Hawaiian'],
                     ['type_answer_body' => 'Other'],
+                ],
+            ],
+
+            [
+                'order'                 => 1,
+                'sub_order'             => 'b',
+                'question_group'        => 'What is your race and ethnicity?',
+                'question_body'         => 'Are you hispanic or Latino?',
+                'question_type'         => QuestionType::RADIO,
+                'question_type_answers' => [
+                    [
+                        'type_answer_body' => 'Yes',
+                        'options'          => [
+                            //yes or no answers have smaller boxes
+                            'yes_or_no_question' => true,
+                        ],
+                    ],
+                    [
+                        'type_answer_body' => 'No',
+                        'options'          => [
+                            'yes_or_no_question' => true,
+                        ],
+                    ],
                 ],
             ],
             [
@@ -592,7 +617,7 @@ class SurveySeeder extends Seeder
                         'type_answer_body' => 'No',
                     ],
                     [
-                        'type_answer_body' => 'Yes, but i am now sober',
+                        'type_answer_body' => 'I used to, but now I am sober',
                     ],
                 ],
             ],
@@ -747,7 +772,7 @@ class SurveySeeder extends Seeder
             [
                 'order'                 => 15,
                 'sub_order'             => 'b',
-                'question_body'         => 'Are you practicing safe sex?',
+                'question_body'         => 'Do you practice safe sex by using condoms or dental dams?',
                 'optional'              => true,
                 'conditions'            => [
                     [
