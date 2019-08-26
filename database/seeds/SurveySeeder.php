@@ -299,7 +299,7 @@ class SurveySeeder extends Seeder
                 'order'                 => 1,
                 'sub_order'             => 'b',
                 'question_group'        => 'What is your race and ethnicity',
-                'question_body'         => 'Are you hispanic or Latino',
+                'question_body'         => 'Are you hispanic or Latino?',
                 'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
                     [
@@ -617,7 +617,7 @@ class SurveySeeder extends Seeder
                         'type_answer_body' => 'No',
                     ],
                     [
-                        'type_answer_body' => 'Yes, but i am now sober',
+                        'type_answer_body' => 'I used to, but now I am sober',
                     ],
                 ],
             ],
@@ -772,7 +772,7 @@ class SurveySeeder extends Seeder
             [
                 'order'                 => 15,
                 'sub_order'             => 'b',
-                'question_body'         => 'Are you practicing safe sex?',
+                'question_body'         => 'Do you practice safe sex by using condoms or dental dams?',
                 'optional'              => true,
                 'conditions'            => [
                     [
