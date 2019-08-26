@@ -1,5 +1,4 @@
 @extends('layouts.surveysMaster')
-
 <?php
 function getStringValue($val, $default = '')
 {
@@ -28,7 +27,6 @@ function getStringValue($val, $default = '')
 }
 ?>
 @section('content')
-    <link href="{{asset('css/PersonalizedPreventionPlan.css')}}" rel="stylesheet">
     <div class="container report">
         <div class="report-title">
             <h3>Patient Info</h3>
@@ -58,7 +56,7 @@ function getStringValue($val, $default = '')
         </div>
         <br>
         <div class="suggested-list">
-            <div class="report-title">
+            <div class="report-title col-md-6">
                 <h3>Suggested CheckList</h3>
             </div>
             <div class="side-title col-md-6">
@@ -104,7 +102,7 @@ function getStringValue($val, $default = '')
                     @if(array_filter($tasks['tasks']))
                         <br>
                         <div class="recommendation-title">
-                            <span>{{$tasks['title']}}</span>
+                            <span class="image"><i class="{{$tasks['image']}}"></i></span> {{$tasks['title']}}
                         </div>
                     @endif
                     <br>
@@ -116,12 +114,17 @@ function getStringValue($val, $default = '')
                                 <br>
                                 @if (is_array($recommendations['recommendation_body']))
                                     @foreach($recommendations['recommendation_body'] as $recBodyItem)
-                                        <div style="font-weight: 400"><i>{{$recBodyItem}}</i>
-                                        </div>
+                                        <ul>
+                                            <li style="font-weight: 400; margin-left: 7%;"><i>{{$recBodyItem}}</i>
+                                            </li>
+                                        </ul>
                                     @endforeach
                                 @else
-                                    <div style="font-weight: 400"><i>{{$recommendations['recommendation_body']}}</i>
-                                    </div>
+                                    <ul>
+                                        <li style="font-weight: 400; margin-left: 7%;">
+                                            <i>{{$recommendations['recommendation_body']}}</i>
+                                        </li>
+                                    </ul>
                                 @endif
                                 <br>
                             </div>
@@ -134,3 +137,91 @@ function getStringValue($val, $default = '')
 
 @endsection
 
+<style type="text/css" media="all">
+
+    .section-title {
+        font-family: Poppins;
+        background-color: #50b2e2;
+        font-size: 20px;
+        font-weight: 600;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1.1px;
+        padding-left: 25px;
+        padding-top: 10px;
+        padding-bottom: 5px;
+        color: #ffffff;
+    }
+
+    .section-body {
+        font-family: Poppins;
+        padding-top: 20px;
+    }
+
+    .health-advice-title {
+        font-family: Poppins;
+        font-size: 24px;
+        font-weight: 600;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1.3px;
+        color: #1a1a1a;
+    }
+
+    .report {
+        font-family: Poppins;
+        padding-left: 5%;
+        padding-right: 5%;
+        padding-top: 5%;
+        padding-bottom: 5%;
+    }
+
+    .recommendation-title {
+        font-family: Poppins;
+        font-size: 18px;
+        font-weight: 600;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: 1px;
+        color: #ffffff;
+        padding-top: 1%;
+        padding-bottom: 1%;
+        padding-left: 1%;
+        background-color: #50b2e2;
+    }
+
+    .table.table td, table.table th {
+        padding-top: 0.4rem;
+        padding-bottom: 0.2rem;
+        align-content: center;
+    }
+
+    .table.table thead th {
+        padding-left: 1%;
+        width: 250px;
+
+    }
+
+    .suggested-list {
+        display: flex;
+    }
+
+    .report-title {
+
+    }
+
+    .side-title {
+        padding-top: 1%;
+    }
+
+    .suggested-list-body {
+        font-weight: 500;
+    }
+
+    .image {
+        margin-right: 1px;
+    }
+</style>
