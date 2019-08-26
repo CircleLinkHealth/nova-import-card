@@ -36,6 +36,7 @@ class CreateNurseInvoiceDailyDisputesTable extends Migration
             $table->foreign('invoice_id')
                 ->references('id')
                 ->on('nurse_invoices')
+                ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
     }
