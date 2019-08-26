@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\PersonalizedPreventionPlan;
 use App\Services\PersonalizedPreventionPlanPrepareData;
-use Illuminate\Http\Request;
 
 class PersonalizedPreventionPlanController extends Controller
 {
@@ -15,24 +14,13 @@ class PersonalizedPreventionPlanController extends Controller
         $this->service = $service;
     }
 
-    public function getPppDataForUser(Request $request, $userId)
+    public function getPppDataForUser($userId)
     {
-        //Will the provider review & edit the PPP and then send it or it will be sent automatically?
-        $patientPppData = PersonalizedPreventionPlan::where('patient_id', $userId)
-                                                    ->with('patient.patientInfo')
-                                                    ->first();
+        $patientPppData = PersonalizedPreventionPlan::where('user_id', '=', $userId)
+                                                    ->with('patient')
+                                                    ->firstOrFail();
 
-        if ( ! $patientPppData) {
-            return redirect()
-                ->withErrors(["message" => "Could not find report for user id[$userId]"])
-                ->back();
-        }
         $patient = $patientPppData->patient;
-        if ( ! $patient) {
-            return redirect()
-                ->withErrors(["message" => "There was an error"])
-                ->back();
-        }
 
         $personalizedHealthAdvices = $this->service->prepareRecommendations($patientPppData);
 

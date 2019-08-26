@@ -102,7 +102,6 @@ Route::group([
         'prefix' => 'vitals',
         'middleware' => ['permission:vitals-survey-complete'],
     ], function () {
-
         Route::get('{patientId}', [
             'uses' => 'VitalsSurveyController@getCurrentSurvey',
             'as'   => 'survey.vitals',
@@ -137,7 +136,8 @@ Route::group([
     'middleware' => ['auth'],
 ], function () {
 
-    Route::get('/provider-report/{userId}', 'ProviderReportController@getProviderReport')->name('provider-report');
+    Route::get('/provider-report/{userId}', 'ProviderReportController@getProviderReport')
+         ->name('provider-report');
 
     Route::get('get-ppp-data/{userId}', 'PersonalizedPreventionPlanController@getPppDataForUser')
          ->name('getPppDataForUser');
