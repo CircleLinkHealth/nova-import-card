@@ -21,7 +21,6 @@ namespace CircleLinkHealth\Core\Entities;
  * @property \Illuminate\Support\Carbon|null               $updated_at
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $attachment
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $notifiable
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification hasAttachmentType($type)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification hasNotifiableType($type)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\DatabaseNotification newModelQuery()
