@@ -72,12 +72,18 @@
                                 <p><strong>Send Assessment Link to Provider via:</strong></p>
                             </div>
                             <div class="col-md-12  panel-section">
-                                <button class="col-md-6 btn btn-method btn-s">
+                                <a
+                                        class="col-md-6 btn btn-method btn-s"
+                                        target="_blank"
+                                        :href="getAwvSendSmsForm('hra')">
                                     SMS
-                                </button>
-                                <button class="col-md-6 btn btn-method btn-s">
+                                </a>
+                                <a
+                                        class="col-md-6 btn btn-method btn-s"
+                                        target="_blank"
+                                        :href="getAwvSendEmailForm('hra')">
                                     Email
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -115,12 +121,18 @@
                                 <p><strong>Send Assessment Link to Provider via:</strong></p>
                             </div>
                             <div class="col-md-12  panel-section">
-                                <button class="col-md-6 btn btn-method btn-s">
+                                <a
+                                   class="col-md-6 btn btn-method btn-s"
+                                   target="_blank"
+                                   :href="getAwvSendSmsForm('vitals')">
                                     SMS
-                                </button>
-                                <button class="col-md-6 btn btn-method btn-s">
+                                </a>
+                                <a
+                                   class="col-md-6 btn btn-method btn-s"
+                                   target="_blank"
+                                   :href="getAwvSendEmailForm('vitals')">
                                     Email
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -326,6 +338,14 @@
 
             getViewVitalsSurveyUrl() {
                 return this.getAwvUrl(`survey/vitals/${this.patient.id}`);
+            },
+
+            getAwvSendSmsForm(survey){
+                return getAwvUrl(`${patient.id}/` + survey + `/sms/send-assessment-link`);
+            },
+
+            getAwvSendEmailForm(survey){
+                return getAwvUrl(`${patient.id}/` + survey + `/email/send-assessment-link`);
             },
 
             getButtonTextFromStatus(status) {
