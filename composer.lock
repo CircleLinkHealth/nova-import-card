@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c786475366cc436d4f2f01d15adfffc",
+    "content-hash": "24380ad1c86e4336c0859b1bfc8572c6",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -2875,6 +2875,47 @@
                 "security"
             ],
             "time": "2018-09-03T09:48:16+00:00"
+        },
+        {
+            "name": "jubeki/nova-card-linkable",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Jubeki/Nova-Card-Linkable.git",
+                "reference": "2de82012ec71de4f731695da9f89bab7586dda38"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Jubeki/Nova-Card-Linkable/zipball/2de82012ec71de4f731695da9f89bab7586dda38",
+                "reference": "2de82012ec71de4f731695da9f89bab7586dda38",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jubeki\\Nova\\Cards\\Linkable\\CardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jubeki\\Nova\\Cards\\Linkable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova card, which has a link",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-03-04T15:17:41+00:00"
         },
         {
             "name": "julien-c/iso3166",
