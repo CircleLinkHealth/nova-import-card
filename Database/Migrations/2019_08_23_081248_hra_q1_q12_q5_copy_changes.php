@@ -63,13 +63,13 @@ class HraQ1Q12Q5CopyChanges extends Migration
 
         DB::table($questionGroups)
           ->insert([
-              'body'       => 'What is your race and ethnicity',
+              'body'       => 'What is your race and ethnicity?',
               'created_at' => $now,
               'updated_at' => $now,
           ]);
 
         $questionGroupId = DB::table($questionGroups)
-                             ->where('body', 'What is your race and ethnicity')
+                             ->where('body', 'What is your race and ethnicity?')
                              ->first()->id;
 
         $oldQuestionId = DB::table($questionsTable)
@@ -120,7 +120,12 @@ class HraQ1Q12Q5CopyChanges extends Migration
           ]);
 
         DB::table($questionTypes)
-          ->insert(['question_id' => $newQuestionId, 'type' => 'radio']);
+          ->insert([
+              'question_id' => $newQuestionId,
+              'type'        => 'radio',
+              'created_at'         => $now,
+              'updated_at'         => $now,
+          ]);
 
         $newQuestionTypeId = DB::table($questionTypes)
                                ->where('question_id', $newQuestionId)
@@ -171,6 +176,143 @@ class HraQ1Q12Q5CopyChanges extends Migration
      */
     public function down()
     {
-        //
+        $questionTypes        = "question_types";
+        $questionTypesAnswers = "question_types_answers";
+        $questionsTable       = "questions";
+        $questionGroups       = "question_groups";
+        $surveysTable         = "surveys";
+        $surveyQuestionsTable = "survey_questions";
+
+        $hraSurveyId = DB::table($surveysTable)
+                         ->where('name', 'HRA')
+                         ->first()->id;
+
+        $now = Carbon\Carbon::now();
+
+        // Q1
+        DB::table($questionTypesAnswers)
+          ->where('value', 'Black/African-Ameri.')
+          ->update([
+              'value'      => 'African American/Black',
+              'updated_at' => $now,
+          ]);
+
+        DB::table($questionTypesAnswers)
+          ->where('value', 'White')
+          ->update([
+              'value'      => 'Caucasian/White',
+              'updated_at' => $now,
+          ]);
+
+        DB::table($questionTypesAnswers)
+          ->where('value', 'Native Ameri./Alaskan')
+          ->update([
+              'value'      => 'Native American or Alaskan Native',
+              'updated_at' => $now,
+          ]);
+
+        DB::table($questionTypesAnswers)
+          ->where('value', 'Native Hawaiian')
+          ->update([
+              'value'      => 'Native Hawaiian or other Pacific Islander',
+              'updated_at' => $now,
+          ]);
+
+        // Q1 split to a and b
+        $qTypeId = DB::table($questionTypesAnswers)
+                     ->where('value', 'Native Hawaiian or other Pacific Islander')
+                     ->first()->id;
+
+        DB::table($questionTypesAnswers)
+          ->insert([
+              'question_type_id' => $qTypeId,
+              'value'            => 'Hispanic or Latino Origin or Descent',
+              'options'          => null,
+              'created_at'       => $now,
+              'updated_at'       => $now,
+          ]);
+
+        $toDeleteId = DB::table($questionGroups)
+                        ->where('body', 'What is your race and ethnicity')
+                        ->first()->id;
+
+        DB::table($questionGroups)
+          ->delete($toDeleteId);
+
+        $oldQuestionId = DB::table($questionsTable)
+                           ->where('body', 'What is your race?')
+                           ->first()->id;
+
+        DB::table($questionsTable)
+          ->where('id', $oldQuestionId)
+          ->update([
+              'question_group_id' => null,
+              'updated_at'        => $now,
+          ]);
+
+        DB::table($surveyQuestionsTable)
+          ->where('question_id', $oldQuestionId)
+          ->update([
+              'sub_order'  => null,
+              'updated_at' => $now,
+          ]);
+
+        $newQuestionId = DB::table($questionsTable)
+                           ->where('body', 'Are you Hispanic or Latino?')
+                           ->first()->id;
+
+        DB::table($questionsTable)
+          ->delete($newQuestionId);
+
+
+        $surveyInstanceId = DB::table($surveyQuestionsTable)
+                              ->where('question_id', $oldQuestionId)
+                              ->first()->survey_instance_id;
+
+        $toDeleteId3 = DB::table($surveyQuestionsTable)
+                         ->where('question_id', $newQuestionId)
+                         ->first()->id;
+
+        DB::table($surveyQuestionsTable)
+          ->delete($toDeleteId3);
+
+        $newQuestionTypeId = DB::table($questionTypes)
+                               ->where('question_id', $newQuestionId)
+                               ->first()->id;
+
+        $typeAnswer1 = DB::table($questionTypesAnswers)
+                         ->where('question_type_id', $newQuestionTypeId)
+                         ->where('value', 'Yes')
+                         ->first()->id;
+
+        $typeAnswer2 = DB::table($questionTypesAnswers)
+                         ->where('question_type_id', $newQuestionTypeId)
+                         ->where('value', 'No')
+                         ->first()->id;
+
+        DB::table($questionTypesAnswers)
+          ->delete($typeAnswer1);
+
+        DB::table($questionTypesAnswers)
+          ->delete($typeAnswer2);
+
+        DB::table($questionTypes)
+          ->delete($newQuestionTypeId);
+
+        // Q12
+        DB::table($questionTypesAnswers)
+          ->where('value', 'I used to, but now I am sober')
+          ->update([
+              'value'      => 'Yes, but i am now sober',
+              'updated_at' => $now,
+          ]);
+
+        // Q15
+        DB::table($questionsTable)
+          ->where('body', 'Do you practice safe sex by using condoms or dental dams?')
+          ->update([
+              'body'       => 'Are you practicing safe sex?',
+              'updated_at' => $now,
+          ]);
     }
 }
