@@ -1392,6 +1392,20 @@ class SurveySeeder extends Seeder
                 'order'                 => 35,
                 'question_body'         => 'When was the last time you had a Breast Cancer Screening (Mammogram)?',
                 'question_type'         => QuestionType::RADIO,
+                'conditions'            => [
+                    [
+                        'related_question_order_number'    => 4,
+                        'related_question_expected_answer' => 'Female',
+                    ],
+                    [
+                        'related_question_order_number'    => 4,
+                        'related_question_expected_answer' => 'Transgender',
+                    ],
+                    [
+                        'related_question_order_number'    => 4,
+                        'related_question_expected_answer' => 'Other',
+                    ],
+                ],
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'In the last year',
@@ -1414,6 +1428,20 @@ class SurveySeeder extends Seeder
                 'order'                 => 36,
                 'question_body'         => 'When was the last time you had a Cervical cancer Screening (Pap Smear)?',
                 'question_type'         => QuestionType::RADIO,
+                'conditions'            => [
+                    [
+                        'related_question_order_number'    => 4,
+                        'related_question_expected_answer' => 'Female',
+                    ],
+                    [
+                        'related_question_order_number'    => 4,
+                        'related_question_expected_answer' => 'Transgender',
+                    ],
+                    [
+                        'related_question_order_number'    => 4,
+                        'related_question_expected_answer' => 'Other',
+                    ],
+                ],
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'In the last year',
@@ -1480,6 +1508,20 @@ class SurveySeeder extends Seeder
                 'order'                 => 39,
                 'question_body'         => 'When was the last time you had a Prostate Cancer Screening (Prostate specific antigen (PSA))?',
                 'question_type'         => QuestionType::RADIO,
+                'conditions'            => [
+                    [
+                        'related_question_order_number'    => 4,
+                        'related_question_expected_answer' => 'Male',
+                    ],
+                    [
+                        'related_question_order_number'    => 4,
+                        'related_question_expected_answer' => 'Transgender',
+                    ],
+                    [
+                        'related_question_order_number'    => 4,
+                        'related_question_expected_answer' => 'Other',
+                    ],
+                ],
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'In the last year',

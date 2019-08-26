@@ -17,18 +17,14 @@ class ProviderReportController extends Controller
 
     public function getProviderReport(Request $request, $userId)
     {
-        //Placeholder code to test. We should get patient id, report id OR date OR hra instance id + vitals instance id. Will create request class when we know for sure.
-        $report = ProviderReport::with('patient.patientInfo')->first();
+        $report = ProviderReport::with('patient.patientInfo')
+                                ->where('user_id', '=', $userId)
+                                ->firstOrFail();
 
-        if ( ! $report) {
-            //with message
-            return redirect()->back();
-        }
         $patient = $report->patient;
 
         if ( ! $patient) {
-            //bad data
-            return redirect()->back();
+            throw new \Exception("missing patient from report");
         }
 
         $reportData = $this->service->formatReportDataForView($report);

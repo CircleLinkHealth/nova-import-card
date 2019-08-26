@@ -92,7 +92,7 @@ class GeneratePersonalizedPreventionPlanService
             'weight'                         => $this->answerForVitalsQuestionWithOrder(2),
             'height'                         => $this->answerForVitalsQuestionWithOrder(3),
             'bmi'                            => $this->answerForVitalsQuestionWithOrder(4),
-            'cognitive_assessment'           => $this->answerForVitalsQuestionWithOrder(5, 'a'),
+            'cognitive_assessment'           => $this->answerForVitalsQuestionWithOrder(5, 'c'),
             /*vitals*/
             /*HRA*/
             'race'                           => $this->answerForHraQuestionWithOrder(1, 'a'),

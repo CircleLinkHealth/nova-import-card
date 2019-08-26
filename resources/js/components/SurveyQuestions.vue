@@ -90,73 +90,73 @@
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
                             <question-type-text
-                                :question="question"
-                                :is-active="currentQuestionIndex === index"
-                                :is-subquestion="isSubQuestion(question)"
-                                :on-done-func="postAnswerAndGoToNext"
-                                :is-last-question="isLastQuestion(question)"
-                                :waiting="waiting"
-                                :read-only="readOnlyMode"
-                                v-if="question.type.type === 'text'">
+                                    :question="question"
+                                    :is-active="currentQuestionIndex === index"
+                                    :is-subquestion="isSubQuestion(question)"
+                                    :on-done-func="postAnswerAndGoToNext"
+                                    :is-last-question="isLastQuestion(question)"
+                                    :waiting="waiting"
+                                    :read-only="readOnlyMode"
+                                    v-if="question.type.type === 'text'">
                             </question-type-text>
 
                             <question-type-checkbox
-                                :question="question"
-                                :is-active="currentQuestionIndex === index"
-                                :is-subquestion="isSubQuestion(question)"
-                                :get-all-questions-func="getAllQuestions"
-                                :on-done-func="postAnswerAndGoToNext"
-                                :is-last-question="isLastQuestion(question)"
-                                :waiting="waiting"
-                                :read-only="readOnlyMode"
-                                v-if="question.type.type === 'checkbox'">
+                                    :question="question"
+                                    :is-active="currentQuestionIndex === index"
+                                    :is-subquestion="isSubQuestion(question)"
+                                    :get-all-questions-func="getAllQuestions"
+                                    :on-done-func="postAnswerAndGoToNext"
+                                    :is-last-question="isLastQuestion(question)"
+                                    :waiting="waiting"
+                                    :read-only="readOnlyMode"
+                                    v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
                             <question-type-muti-select
-                                :question="question"
-                                :is-active="currentQuestionIndex === index"
-                                :is-subquestion="isSubQuestion(question)"
-                                :get-all-questions-func="getAllQuestions"
-                                :on-done-func="postAnswerAndGoToNext"
-                                :is-last-question="isLastQuestion(question)"
-                                :waiting="waiting"
-                                :read-only="readOnlyMode"
-                                v-if="question.type.type === 'multi_select'">
+                                    :question="question"
+                                    :is-active="currentQuestionIndex === index"
+                                    :is-subquestion="isSubQuestion(question)"
+                                    :get-all-questions-func="getAllQuestions"
+                                    :on-done-func="postAnswerAndGoToNext"
+                                    :is-last-question="isLastQuestion(question)"
+                                    :waiting="waiting"
+                                    :read-only="readOnlyMode"
+                                    v-if="question.type.type === 'multi_select'">
                             </question-type-muti-select>
 
                             <question-type-range
-                                :read-only="readOnlyMode"
-                                v-if="question.type.type === 'range'">
+                                    :read-only="readOnlyMode"
+                                    v-if="question.type.type === 'range'">
                             </question-type-range>
 
                             <question-type-number
-                                :question="question"
-                                :is-active="currentQuestionIndex === index"
-                                :is-subquestion="isSubQuestion(question)"
-                                :get-all-questions-func="getAllQuestions"
-                                :on-done-func="postAnswerAndGoToNext"
-                                :is-last-question="isLastQuestion(question)"
-                                :waiting="waiting"
-                                :read-only="readOnlyMode"
-                                v-if="question.type.type === 'number'">
+                                    :question="question"
+                                    :is-active="currentQuestionIndex === index"
+                                    :is-subquestion="isSubQuestion(question)"
+                                    :get-all-questions-func="getAllQuestions"
+                                    :on-done-func="postAnswerAndGoToNext"
+                                    :is-last-question="isLastQuestion(question)"
+                                    :waiting="waiting"
+                                    :read-only="readOnlyMode"
+                                    v-if="question.type.type === 'number'">
                             </question-type-number>
 
                             <question-type-radio
-                                :question="question"
-                                :is-active="currentQuestionIndex === index"
-                                :is-subquestion="isSubQuestion(question)"
-                                :style-horizontal="false"
-                                :get-all-questions-func="getAllQuestions"
-                                :on-done-func="postAnswerAndGoToNext"
-                                :is-last-question="isLastQuestion(question)"
-                                :waiting="waiting"
-                                :read-only="readOnlyMode"
-                                v-if="question.type.type === 'radio'">
+                                    :question="question"
+                                    :is-active="currentQuestionIndex === index"
+                                    :is-subquestion="isSubQuestion(question)"
+                                    :style-horizontal="false"
+                                    :get-all-questions-func="getAllQuestions"
+                                    :on-done-func="postAnswerAndGoToNext"
+                                    :is-last-question="isLastQuestion(question)"
+                                    :waiting="waiting"
+                                    :read-only="readOnlyMode"
+                                    v-if="question.type.type === 'radio'">
                             </question-type-radio>
 
                             <question-type-date
-                                :read-only="readOnlyMode"
-                                v-if="question.type.type === 'date'">
+                                    :read-only="readOnlyMode"
+                                    v-if="question.type.type === 'date'">
                             </question-type-date>
                         </div>
                     </div>
@@ -212,16 +212,16 @@
                         <div class="col text-right">
 
                             <mdb-btn
-                                color="primary"
-                                @click="scrollDown"
-                                :disabled="!canScrollDown">
+                                    color="primary"
+                                    @click="scrollDown"
+                                    :disabled="!canScrollDown">
                                 <i class="fas fa-angle-down"></i>
                             </mdb-btn>
 
                             <mdb-btn
-                                color="primary"
-                                @click="scrollUp"
-                                :disabled="!canScrollUp">
+                                    color="primary"
+                                    @click="scrollUp"
+                                    :disabled="!canScrollUp">
                                 <i class="fas fa-angle-up"></i>
                             </mdb-btn>
 
@@ -538,13 +538,11 @@
 
                         if (error.response && error.response.status === 404) {
                             this.error = "Not Found [404]";
-                        }
-                        else if (error.response && error.response.status === 419) {
+                        } else if (error.response && error.response.status === 419) {
                             this.error = "Not Authenticated [419]";
                             //reload the page which will redirect to login
                             window.location.reload();
-                        }
-                        else if (error.response && error.response.data) {
+                        } else if (error.response && error.response.data) {
                             const errors = [error.response.data.message];
                             Object.keys(error.response.data.errors || []).forEach(e => {
                                 errors.push(error.response.data.errors[e]);
@@ -573,9 +571,38 @@
                 let canGoToPrev = true;
                 if (prevQuestion.conditions && prevQuestion.conditions.length) {
                     for (let i = 0; i < prevQuestion.conditions.length; i++) {
-                        const q = prevQuestion.conditions[0];
-                        const questions = this.getQuestionsOfOrder(q.related_question_order_number);
-                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                        const q = prevQuestion.conditions;
+                        const prevQuestConditions = q[i];
+
+                        //we are evaluating only the first condition.related_question_order_number
+                        //For now is OK since we are depending only on ONE related Question
+                        const questions = this.getQuestionsOfOrder(prevQuestConditions.related_question_order_number);
+
+                        //If conditions needs to be compared against to "gte" or "lte"
+                        if (prevQuestConditions.hasOwnProperty('operator')) {
+                            if (prevQuestConditions.operator === 'greater_than') {
+                                //Again we use only the first Question of the related Questions, which is OK for now.
+                                if (questions[0].answer.value.value >= prevQuestConditions.related_question_expected_answer) {
+                                    canGoToPrev = false;
+                                    break;
+                                }
+                                canGoToPrev = true;
+                                break;
+                            }
+
+                            if (prevQuestConditions.operator === 'less_than') {
+                                if (questions[0].answer.value.value <= prevQuestConditions.related_question_expected_answer) {
+                                    canGoToPrev = false;
+                                    break;
+                                }
+                                canGoToPrev = true;
+                                break;
+                            }
+                        }
+                        //default comparison
+                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === questions[0].answer.value.value);
+
+                        if (!expectedAnswersEqualsValue.includes(true)) {
                             canGoToPrev = false;
                             break;
                         }
@@ -583,11 +610,9 @@
                         else if (typeof q.related_question_expected_answer === "undefined") {
                             if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
                                 canGoToPrev = false;
-                            }
-                            else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                            } else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
                                 canGoToPrev = false;
-                            }
-                            else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
+                            } else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
                                 canGoToPrev = false;
                             }
 
@@ -613,9 +638,37 @@
                 let canGoToNext = true;
                 if (nextQuestion.conditions && nextQuestion.conditions.length) {
                     for (let i = 0; i < nextQuestion.conditions.length; i++) {
-                        const q = nextQuestion.conditions[0];
-                        const questions = this.getQuestionsOfOrder(q.related_question_order_number);
-                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                        const q = nextQuestion.conditions;
+                        const nextQuestConditions = q[i];
+                        //we are evaluating only the first condition.related_question_order_number
+                        //For now is OK since we are depending only on ONE related Question
+                        const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
+
+                        //If conditions needs to be compared against to "gte" or "lte"
+                        if (nextQuestConditions.hasOwnProperty('operator')) {
+                            if (nextQuestConditions.operator === 'greater_than') {
+                                //Again we use only the first Question of the related Questions, which is OK for now.
+                                if (questions[0].answer.value.value >= nextQuestConditions.related_question_expected_answer) {
+                                    canGoToNext = false;
+                                    break;
+                                }
+                                canGoToNext = true;
+                                break;
+                            }
+
+                            if (nextQuestConditions.operator === 'less_than') {
+                                if (questions[0].answer.value.value <= nextQuestConditions.related_question_expected_answer) {
+                                    canGoToNext = false;
+                                    break;
+                                }
+                                canGoToNext = true;
+                                break;
+                            }
+                        }
+                        //default comparison
+                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === questions[0].answer.value.value);
+
+                        if (!expectedAnswersEqualsValue.includes(true)) {
                             canGoToNext = false;
                             break;
                         }
@@ -623,11 +676,9 @@
                         else if (typeof q.related_question_expected_answer === "undefined") {
                             if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
                                 canGoToNext = false;
-                            }
-                            else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                            } else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
                                 canGoToNext = false;
-                            }
-                            else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
+                            } else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
                                 canGoToNext = false;
                             }
 
@@ -651,9 +702,38 @@
                 if (nextQuestion.conditions && nextQuestion.conditions.length) {
                     let shouldDisable = false;
                     for (let i = 0; i < nextQuestion.conditions.length; i++) {
-                        const q = nextQuestion.conditions[0];
-                        const questions = this.getQuestionsOfOrder(q.related_question_order_number);
-                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                        const q = nextQuestion.conditions;
+                        const nextQuestConditions = q[i];
+
+                        //we are evaluating only the first condition.related_question_order_number
+                        //For now is OK since we are depending only on ONE related Question
+                        const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
+
+                        //If conditions needs to be compared against to "gte" or "lte"
+                        if (nextQuestConditions.hasOwnProperty('operator')) {
+                            if (nextQuestConditions.operator === 'greater_than') {
+                                //Again we use only the first Question of the related Questions, which is OK for now.
+                                if (questions[0].answer.value.value >= nextQuestConditions.related_question_expected_answer) {
+                                    shouldDisable = true;
+                                    break;
+                                }
+                                shouldDisable = false;
+                                break;
+                            }
+
+                            if (nextQuestConditions.operator === 'less_than') {
+                                if (questions[0].answer.value.value <= nextQuestConditions.related_question_expected_answer) {
+                                    shouldDisable = true;
+                                    break;
+                                }
+                                shouldDisable = false;
+                                break;
+                            }
+                        }
+                        //default comparison
+                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === questions[0].answer.value.value);
+
+                        if (!expectedAnswersEqualsValue.includes(true)) {
                             shouldDisable = true;
                             break;
                         }
@@ -661,11 +741,9 @@
                         else if (typeof q.related_question_expected_answer === "undefined") {
                             if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
                                 shouldDisable = true;
-                            }
-                            else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                            } else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
                                 shouldDisable = true;
-                            }
-                            else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
+                            } else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
                                 shouldDisable = true;
                             }
 
@@ -691,8 +769,7 @@
                     let scrollTo = 0;
                     if (currentQuestionOffset < 0) {
                         scrollTo = surveyContainer.scrollTop() + currentQuestionOffset;
-                    }
-                    else {
+                    } else {
                         scrollTo = currentQuestionOffset
                     }
 
@@ -758,8 +835,7 @@
                             this.readOnlyMode = !this.readOnlyMode;
                             this.actionsDisabled = false;
                         });
-                }
-                else {
+                } else {
                     this.readOnlyMode = !this.readOnlyMode;
                     this.actionsDisabled = false;
                 }
