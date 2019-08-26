@@ -22,22 +22,36 @@ class HraQ1Q12Q5CopyChanges extends Migration
                          ->where('name', 'HRA')
                          ->first()->id;
 
+        $now = Carbon\Carbon::now();
+
         // Q1
         DB::table($questionTypesAnswers)
           ->where('value', 'African American/Black')
-          ->update(['value' => 'Black/African-Ameri.']);
+          ->update([
+              'value'      => 'Black/African-Ameri.',
+              'updated_at' => $now,
+          ]);
 
         DB::table($questionTypesAnswers)
           ->where('value', 'Caucasian/White')
-          ->update(['value' => 'White']);
+          ->update([
+              'value'      => 'White',
+              'updated_at' => $now,
+          ]);
 
         DB::table($questionTypesAnswers)
           ->where('value', 'Native American or Alaskan Native')
-          ->update(['value' => 'Native Ameri./Alaskan']);
+          ->update([
+              'value'      => 'Native Ameri./Alaskan',
+              'updated_at' => $now,
+          ]);
 
         DB::table($questionTypesAnswers)
           ->where('value', 'Native Hawaiian or other Pacific Islander')
-          ->update(['value' => 'Native Hawaiian']);
+          ->update([
+              'value'      => 'Native Hawaiian',
+              'updated_at' => $now,
+          ]);
 
         // Q1 split to a and b
         $toDeleteId = DB::table($questionTypesAnswers)
@@ -48,7 +62,11 @@ class HraQ1Q12Q5CopyChanges extends Migration
           ->delete($toDeleteId);
 
         DB::table($questionGroups)
-          ->insert(['body' => 'What is your race and ethnicity']);
+          ->insert([
+              'body'       => 'What is your race and ethnicity',
+              'created_at' => $now,
+              'updated_at' => $now,
+          ]);
 
         $questionGroupId = DB::table($questionGroups)
                              ->where('body', 'What is your race and ethnicity')
@@ -60,11 +78,17 @@ class HraQ1Q12Q5CopyChanges extends Migration
 
         DB::table($questionsTable)
           ->where('id', $oldQuestionId)
-          ->update(['question_group_id' => $questionGroupId]);
+          ->update([
+              'question_group_id' => $questionGroupId,
+              'updated_at'        => $now,
+          ]);
 
         DB::table($surveyQuestionsTable)
           ->where('question_id', $oldQuestionId)
-          ->update(['sub_order' => 'a']);
+          ->update([
+              'sub_order'  => 'a',
+              'updated_at' => $now,
+          ]);
 
         DB::table($questionsTable)
           ->insert([
@@ -73,6 +97,8 @@ class HraQ1Q12Q5CopyChanges extends Migration
               'optional'          => 0,
               'conditions'        => null,
               'question_group_id' => $questionGroupId,
+              'created_at'        => $now,
+              'updated_at'        => $now,
           ]);
 
         $newQuestionId = DB::table($questionsTable)
@@ -89,6 +115,8 @@ class HraQ1Q12Q5CopyChanges extends Migration
               'question_id'        => $newQuestionId,
               'order'              => 1,
               'sub_order'          => 'b',
+              'created_at'         => $now,
+              'updated_at'         => $now,
           ]);
 
         DB::table($questionTypes)
@@ -105,6 +133,8 @@ class HraQ1Q12Q5CopyChanges extends Migration
               'question_type_id' => $newQuestionTypeId,
               'value'            => 'Yes',
               'options'          => json_encode($yesNoQuestion),
+              'created_at'       => $now,
+              'updated_at'       => $now,
           ]);
 
         DB::table($questionTypesAnswers)
@@ -112,17 +142,25 @@ class HraQ1Q12Q5CopyChanges extends Migration
               'question_type_id' => $newQuestionTypeId,
               'value'            => 'No',
               'options'          => json_encode($yesNoQuestion),
+              'created_at'       => $now,
+              'updated_at'       => $now,
           ]);
 
         // Q12
         DB::table($questionTypesAnswers)
           ->where('value', 'Yes, but i am now sober')
-          ->update(['value' => 'I used to, but now I am sober']);
+          ->update([
+              'value'      => 'I used to, but now I am sober',
+              'updated_at' => $now,
+          ]);
 
         // Q15
         DB::table($questionsTable)
           ->where('body', 'Are you practicing safe sex?')
-          ->update(['body' => 'Do you practice safe sex by using condoms or dental dams?']);
+          ->update([
+              'body'       => 'Do you practice safe sex by using condoms or dental dams?',
+              'updated_at' => $now,
+          ]);
 
     }
 
