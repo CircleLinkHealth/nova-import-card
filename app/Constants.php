@@ -41,6 +41,7 @@ class Constants
 
     //Groups for Nova Resources
     const NOVA_GROUP_CARE_COACHES = 'Care Coaches';
+    const NOVA_GROUP_ENROLLMENT   = 'Enrollment';
     const NOVA_GROUP_NBI          = 'NBI';
 
     const PRACTICE_STAFF_ROLE_NAMES     = ['provider', 'office_admin', 'med_assistant', 'registered-nurse', 'specialist'];
