@@ -341,11 +341,11 @@
             },
 
             getAwvSendSmsForm(survey){
-                return getAwvUrl(`${patient.id}/` + survey + `/sms/send-assessment-link`);
+                return this.getAwvUrl(`manage-patients/${this.patient.id}/` + survey + `/sms/send-assessment-link`);
             },
 
             getAwvSendEmailForm(survey){
-                return getAwvUrl(`${patient.id}/` + survey + `/email/send-assessment-link`);
+                return this.getAwvUrl(`manage-patients/${this.patient.id}/` + survey + `/email/send-assessment-link`);
             },
 
             getButtonTextFromStatus(status) {
