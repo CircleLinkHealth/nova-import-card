@@ -3,7 +3,7 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">Send Assessment Link for {{patientName}}</div>
+                    <div class="card-header">Send {{getSurveyName()}} Assessment Link for {{patientName}}</div>
 
                     <div class="card-body">
 
@@ -14,11 +14,11 @@
                         </div>
 
                         <p>
-                            Clicking below to send via {{via}}
+                            Click below to send via {{getChannelName()}}.
                         </p>
                         <p>
-                            <mdb-btn @click="enrollUser" :disabled="waiting || success">
-                                Select
+                            <mdb-btn @click="inputChannelDetails()" :disabled="waiting || success">
+                                Select Recipient
                             </mdb-btn>
                         </p>
                         <p>
@@ -34,6 +34,7 @@
                 </div>
             </div>
         </div>
+        <send-link-modal v-if="sendLinkModalOptions.show" :options="sendLinkModalOptions" :only-email="onlyEmail()" :only-sms="onlySms()"></send-link-modal>
     </div>
 </template>
 
@@ -43,36 +44,60 @@
     import {library} from '@fortawesome/fontawesome-svg-core';
     import {faSpinner} from '@fortawesome/free-solid-svg-icons';
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+    import SendLinkModal from './SendLinkModal';
 
     library.add(faSpinner);
 
     export default {
-        name: "EnrollUser",
-        components: {mdbBtn, mdbAlert, FontAwesomeIcon},
-        props: ['patientName', 'patientId', 'surveyName', 'via'],
+        name: "SendAssessmentLink",
+        components: {mdbBtn, mdbAlert, FontAwesomeIcon, SendLinkModal},
+        props: ['patientName', 'patientId', 'surveyName', 'channel'],
         data() {
             return {
+                sendLinkModalOptions: {
+                    debug: this.debug,
+                    show: false,
+                    survey: null,
+                    patientId: null,
+                    onDone: null,
+                },
                 waiting: false,
                 success: false,
                 error: null,
             }
         },
         methods: {
-            enrollUser() {
-                this.waiting = true;
-                this.success = false;
-                this.error = null;
-                axios
-                    .post(`/manage-patients/${this.patientId}/enroll`)
-                    .then(response => {
-                    this.waiting = false;
-                this.success = true;
-            })
-            .catch(err => {
-                    this.waiting = false;
-                this.success = false;
-                this.handleError(err);
-            });
+            inputChannelDetails() {
+                this.sendLinkModalOptions.patientId = this.patientId;
+                this.sendLinkModalOptions.survey = this.surveyName;
+                this.sendLinkModalOptions.show = true;
+                this.sendLinkModalOptions.onDone = () => {
+                    this.sendLinkModalOptions.show = false;
+                }
+            },
+
+            onlySms(){
+              return this.channel == 'sms';
+            },
+
+            onlyEmail(){
+                return this.channel == 'email';
+            },
+
+            getSurveyName(){
+                if (this.surveyName == 'hra'){
+                    return 'HRA';
+                }else{
+                    return 'Vitals';
+                }
+            },
+
+            getChannelName(){
+                if (this.channel == 'sms'){
+                    return 'SMS';
+                }{
+                    return 'Email'
+                }
             },
 
             handleError(error) {

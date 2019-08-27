@@ -4,6 +4,6 @@
             :patient-id="{{json_encode($patientId)}}"
             :patient-name="{{json_encode($patientName)}}"
             :survey-name="{{json_encode($surveyName)}}"
-            :via="{{json_encode($via)}}"
+            :channel="{{json_encode($channel)}}"
     ></send-assessment-link>
 @endsection

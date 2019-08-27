@@ -109,7 +109,7 @@ class InvitationLinksController extends Controller
         return response()->json(['message' => 'success']);
     }
 
-    public function showSendAssessmentLinkForm(Request $request, $userId, $surveyName, $via)
+    public function showSendAssessmentLinkForm(Request $request, $userId, $surveyName, $channel)
     {
         $patient = User::findOrFail($userId);
 
@@ -117,7 +117,7 @@ class InvitationLinksController extends Controller
             'patientId'   => $patient->id,
             'patientName' => $patient->display_name,
             'surveyName'  => $surveyName,
-            'via'         => $via,
+            'channel'         => $channel,
         ]);
     }
 

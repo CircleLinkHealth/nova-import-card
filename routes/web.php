@@ -70,7 +70,7 @@ Route::group([
         'as'   => 'patient.enroll',
     ]);
 
-    Route::get('{userId}/{surveyName}/{via}/send-assessment-link', [
+    Route::get('{userId}/{surveyName}/{channel}/send-assessment-link', [
             'uses' => 'InvitationLinksController@showSendAssessmentLinkForm',
             'as'   => 'patient.assessment-link-form'
         ]
