@@ -59,6 +59,7 @@ class CpmBiometricService implements CpmModel
                 'id'      => $biometric->id,
                 'type'    => $biometric->type,
                 'name'    => $biometric->name,
+                'unit'    => $biometric->unit,
                 'info'    => $info,
                 'enabled' => (bool) $info,
             ];
