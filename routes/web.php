@@ -69,6 +69,12 @@ Route::group([
         'uses' => 'InvitationLinksController@enrollUser',
         'as'   => 'patient.enroll',
     ]);
+
+    Route::get('{userId}/{surveyName}/{via}/send-assessment-link', [
+            'uses' => 'InvitationLinksController@showSendAssessmentLinkForm',
+            'as'   => 'patient.assessment-link-form'
+        ]
+    );
 });
 
 Route::group([

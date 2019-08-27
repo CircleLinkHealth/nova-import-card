@@ -26,6 +26,7 @@ import VitalsSurveyWelcome from './components/VitalsSurveyWelcome';
 import SurveyQuestions from './components/SurveyQuestions';
 import PatientList from './components/PatientList';
 import EnrollUser from './components/EnrollUser';
+import SendAssessmentLink from './components/SendAssessmentLink';
 
 Vue.component('survey-questions', SurveyQuestions);
 Vue.component('vitals-survey', VitalsSurvey);
@@ -33,6 +34,7 @@ Vue.component('vitals-survey-not-authorized', VitalsSurveyNotAuthorized);
 Vue.component('vitals-survey-welcome', VitalsSurveyWelcome);
 Vue.component('patient-list', PatientList);
 Vue.component('enroll-user', EnrollUser);
+Vue.component('send-assessment-link', SendAssessmentLink);
 
 import { ClientTable, ServerTable } from 'vue-tables-2';
 Vue.use(ClientTable, {}, false);
