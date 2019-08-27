@@ -79,6 +79,7 @@
                                             Appointment Date:
                                         </label>
                                         <v-datepicker name="date" class="selectpickerX form-control" format="MM-dd-yyyy"
+                                                      id="appointment-date"
                                                       placeholder="MM-DD-YYYY" pattern="\d{2}\-\d{2}-\d{4}\"
                                                       required></v-datepicker>
                                     </div>
@@ -136,4 +137,12 @@
         </div>
         <div class="col-sm-12" style="padding: 100px"></div>
     </div>
+
+    @push("scripts")
+        <script>
+            $(function() {
+                $('#appointment-date').attr('autocomplete', 'off')
+            });
+        </script>
+    @endpush
 @endsection
