@@ -17,7 +17,7 @@
                     Reminder: Do not send links to the Vitals Questionnaire to patients!
                 </mdb-alert>
 
-                <div class="row text-center">
+                <div class="row text-center" v-show="!(onlySms || onlyEmail)">
                     <div class="col-md-6">
                         <mdb-btn outline="success" :disabled="waiting" @click.native="selectEmail">Email</mdb-btn>
                     </div>
@@ -148,7 +148,7 @@
             mdbAlert,
             mdbInput
         },
-        props: ['options'],
+        props: ['options', 'onlySms', 'onlyEmail'],
         data() {
             return {
                 patientId: null,
@@ -171,6 +171,14 @@
             if (!this.isVitals) {
                 this.getPatientContactInfo();
             }
+
+            if (this.onlySms) {
+                this.selectSMS();
+            }
+            else if (this.onlyEmail) {
+                this.selectEmail();
+            }
+
         },
         methods: {
             getPatientContactInfo() {
