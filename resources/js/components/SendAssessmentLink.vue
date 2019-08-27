@@ -51,7 +51,7 @@
     export default {
         name: "SendAssessmentLink",
         components: {mdbBtn, mdbAlert, FontAwesomeIcon, SendLinkModal},
-        props: ['patientName', 'patientId', 'surveyName', 'channel'],
+        props: ['patientName', 'patientId', 'surveyName', 'channel', 'debug'],
         data() {
             return {
                 sendLinkModalOptions: {
@@ -60,6 +60,7 @@
                     survey: null,
                     patientId: null,
                     onDone: null,
+                    success: null,
                 },
                 waiting: false,
                 success: false,
@@ -74,18 +75,21 @@
                 this.sendLinkModalOptions.onDone = () => {
                     this.sendLinkModalOptions.show = false;
                 }
+                this.sendLinkModalOptions.success = () => {
+                    this.success = true;
+                }
             },
 
             onlySms(){
-              return this.channel == 'sms';
+              return this.channel === 'sms';
             },
 
             onlyEmail(){
-                return this.channel == 'email';
+                return this.channel === 'email';
             },
 
             getSurveyName(){
-                if (this.surveyName == 'hra'){
+                if (this.surveyName === 'hra'){
                     return 'HRA';
                 }else{
                     return 'Vitals';
@@ -93,40 +97,12 @@
             },
 
             getChannelName(){
-                if (this.channel == 'sms'){
+                if (this.channel === 'sms'){
                     return 'SMS';
-                }{
+                }else{
                     return 'Email'
                 }
             },
-
-            handleError(error) {
-                console.log(error);
-                if (error.response && error.response.status === 504) {
-                    this.error = "Server took too long to respond. Please try again.";
-                }
-                else if (error.response && error.response.status === 500) {
-                    this.error = "There was an error with our servers. Please contact CLH support.";
-                    console.error(error.response.data);
-                }
-                else if (error.response && error.response.status === 404) {
-                    this.error = "Not Found [404]";
-                }
-                else if (error.response && error.response.status === 419) {
-                    this.error = "Not Authenticated [419]";
-                    //reload the page which will redirect to login
-                    window.location.reload();
-                }
-                else if (error.response && error.response.data) {
-                    const errors = [error.response.data.error];
-                    Object.keys(error.response.data.errors || []).forEach(e => {
-                        errors.push(error.response.data.errors[e]);
-                });
-                    this.error = errors.join('<br/>');
-                } else {
-                    this.error = error.message;
-                }
-            }
         },
         mounted() {
 
