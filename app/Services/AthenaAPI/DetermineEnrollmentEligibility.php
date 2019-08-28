@@ -6,11 +6,10 @@
 
 namespace App\Services\AthenaAPI;
 
-use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\Checkables\AthenaPatient;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 
 class DetermineEnrollmentEligibility
 {
@@ -18,33 +17,20 @@ class DetermineEnrollmentEligibility
 
     protected $athenaEhrId = 2;
 
-    public function __construct(Calls $api)
+    public function __construct(AthenaApiImplementation $api)
     {
         $this->api = $api;
     }
 
     /**
-     * @param TargetPatient $athenaPatient
+     * @param $ehrPracticeId
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @param bool   $offset
+     * @param null   $batchId
+     *
+     * @throws \Exception
      */
-    public function determineEnrollmentEligibility(AthenaPatient $athenaPatient)
-    {
-        $athenaPatient->loadMissing(['batch', 'practice']);
-
-        $job   = new CheckCcdaEnrollmentEligibility($athenaPatient->getMedicalRecord(), $athenaPatient->practice, $athenaPatient->batch);
-        $check = $job->handle();
-
-        $athenaPatient->eligibility_job_id = $check->getEligibilityJob()->id;
-
-        $athenaPatient->setStatusFromEligibilityJob($check->getEligibilityJob());
-
-        $athenaPatient->save();
-    }
-
-    public function getDemographics($patientId, $practiceId)
-    {
-        return $this->api->getDemographics($patientId, $practiceId);
-    }
-
     public function getPatientIdFromAppointments(
         $ehrPracticeId,
         Carbon $startDate,
