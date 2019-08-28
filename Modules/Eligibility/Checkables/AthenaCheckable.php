@@ -6,17 +6,17 @@
 
 namespace CircleLinkHealth\Eligibility\Checkables;
 
-use App\Adapters\EligibilityCheck\AthenaCcdaAndApiToEligibilityJobAdapterAdapterDecorator;
+use App\Adapters\EligibilityCheck\AddInsurancesFromAthena;
 use App\Adapters\EligibilityCheck\CcdaToEligibilityJobAdapter;
-use App\Contracts\EligibilityCheckable;
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Models\MedicalRecords\Ccda;
 use App\TargetPatient;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Contracts\Checkable;
 
-class AthenaPatient implements EligibilityCheckable
+class AthenaCheckable implements Checkable
 {
     /**
      * @var EligibilityBatch
@@ -56,10 +56,14 @@ class AthenaPatient implements EligibilityCheckable
     public function createAndProcessEligibilityJobFromMedicalRecord(): EligibilityJob
     {
         if ( ! $this->eligibilityJob) {
-            $this->eligibilityJob = (new AthenaCcdaAndApiToEligibilityJobAdapterAdapterDecorator(
+            //We are decorating existing Ccda adapter to add insurace we will get from Athena API
+            $decoratedAdapter = new AddInsurancesFromAthena(
                 new CcdaToEligibilityJobAdapter($this->ccda, $this->practice, $this->batch),
                 $this->getTargetPatient()
-            ))->adaptToEligibilityJob()->process();
+            );
+
+            $this->eligibilityJob = $decoratedAdapter->adaptToEligibilityJob()
+                ->process();
         }
 
         return $this->eligibilityJob;

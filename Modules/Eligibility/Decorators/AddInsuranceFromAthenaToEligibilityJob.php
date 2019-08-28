@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Eligibility\EligibilityJobDecorators;
+namespace CircleLinkHealth\Eligibility\Decorators;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\EligibilityJob;

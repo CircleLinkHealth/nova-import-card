@@ -112,7 +112,7 @@ class TargetPatient extends BaseModel
 
         return tap(
             app(\AthenaEligibilityCheckableFactory::class)
-                ->makeAthenaPatientFromApi($this)
+                ->makeAthenaEligibilityCheckable($this)
                 ->createAndProcessEligibilityJobFromMedicalRecord(),
             function (EligibilityJob $eligibilityJob) {
                 $this->setStatusFromEligibilityJob($eligibilityJob);

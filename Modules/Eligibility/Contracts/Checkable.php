@@ -4,17 +4,18 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Contracts;
+namespace CircleLinkHealth\Eligibility\Contracts;
 
+use App\Contracts\HasMedicalRecord;
 use App\EligibilityJob;
 use App\TargetPatient;
 
 /**
  * Medical Records which can be checked for Eligibility can implement this contract.
  *
- * Interface EligibilityCheckable
+ * Interface Checkable
  */
-interface EligibilityCheckable extends HasMedicalRecord
+interface Checkable extends HasMedicalRecord
 {
     /**
      * @return EligibilityJob

@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Eligibility\Commands;
+namespace CircleLinkHealth\Eligibility\Tasks;
 
 use App\Models\MedicalRecords\Ccda;
 use App\TargetPatient;

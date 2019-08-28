@@ -9,10 +9,10 @@ namespace App\Adapters\EligibilityCheck;
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\EligibilityJob;
 use App\TargetPatient;
-use CircleLinkHealth\Eligibility\EligibilityJobDecorators\AddInsuranceFromAthenaToEligibilityJob;
+use CircleLinkHealth\Eligibility\Decorators\AddInsuranceFromAthenaToEligibilityJob;
 use Illuminate\Support\Collection;
 
-class AthenaCcdaAndApiToEligibilityJobAdapterAdapterDecorator implements EligibilityCheckAdapter
+class AddInsurancesFromAthena implements EligibilityCheckAdapter
 {
     /**
      * @var EligibilityCheckAdapter
@@ -28,7 +28,7 @@ class AthenaCcdaAndApiToEligibilityJobAdapterAdapterDecorator implements Eligibi
     private $insuranceCollection;
 
     /**
-     * AthenaCcdaAndApiToEligibilityJobAdapterAdapterDecorator constructor.
+     * AddInsurancesFromAthena constructor.
      *
      * @param EligibilityCheckAdapter $adapter
      * @param TargetPatient           $targetPatient
@@ -48,7 +48,7 @@ class AthenaCcdaAndApiToEligibilityJobAdapterAdapterDecorator implements Eligibi
     {
         $base = $this->adapter->adaptToEligibilityJob();
 
-        return app(AddInsuranceFromAthenaToEligibilityJob::class)->addInsurancesFromAthena($base, $this->targetPatient);
+        return app(AddInsuranceFromAthenaToEligibilityJob::class)->addInsurancesFromAthena($base, $this->targetPatient, $this->targetPatient->ccda);
     }
 
     /**
