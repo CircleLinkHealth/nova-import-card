@@ -166,8 +166,21 @@ class SurveyInvitationLinksService
     public static function getSurveyIdFromSignedUrl(string $url)
     {
         $parsed = parse_url($url);
-        $path   = explode('/', $parsed['path']);
+
+        //http://awv.clh.test/auth/login-survey/326/3
+        $path = explode('/', $parsed['path']);
 
         return end($path);
+    }
+
+    public static function getPatientIdFromSignedUrl(string $url)
+    {
+        $parsed = parse_url($url);
+
+        //http://awv.clh.test/auth/login-survey/326/3
+        $path  = explode('/', $parsed['path']);
+        $count = sizeof($path);
+
+        return $path[$count - 2];
     }
 }
