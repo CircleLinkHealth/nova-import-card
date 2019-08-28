@@ -7,9 +7,10 @@
 use App\Models\MedicalRecords\Ccda;
 use App\TargetPatient;
 use CircleLinkHealth\Eligibility\Checkables\AthenaPatient;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 
 /**
- * This class encapsulates the logic for creating EligibilityCheckables for AthenaApi patients.
+ * This class encapsulates the logic for creating EligibilityCheckables for AthenaApiImplementation patients.
  *
  * @see App\Contracts\EligibilityCheckable
  *
@@ -17,6 +18,16 @@ use CircleLinkHealth\Eligibility\Checkables\AthenaPatient;
  */
 class AthenaEligibilityCheckableFactory
 {
+    /**
+     * @var AthenaApiImplementation
+     */
+    protected $athenaApi;
+
+    public function __construct(AthenaApiImplementation $athenaApi)
+    {
+        $this->athenaApi = $athenaApi;
+    }
+
     /**
      * @param TargetPatient $targetPatient
      *
@@ -40,7 +51,7 @@ class AthenaEligibilityCheckableFactory
      */
     private function createCcdaFromAthenaApi(TargetPatient $targetPatient)
     {
-        $ccdaExternal = app('athena.api')->getCcd(
+        $ccdaExternal = $this->athenaApi->getCcd(
             $targetPatient->ehr_patient_id,
             $targetPatient->ehr_practice_id,
             $targetPatient->ehr_department_id

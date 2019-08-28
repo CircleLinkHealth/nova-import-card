@@ -8,8 +8,9 @@ namespace App\Services\AthenaAPI;
 
 use App\ValueObjects\Athena\Patient;
 use App\ValueObjects\Athena\Problem;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 
-class Calls
+class Calls implements AthenaApiImplementation
 {
     /**
      * @var Connection
