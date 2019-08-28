@@ -7,7 +7,7 @@
                 <div class="col-md-12 select-title" :class="{active: select.active}">
                     {{select.key}}
                 </div>
-                <div class="col-md-12 select-dropdown min-height-300" :class="{active: select.active}">
+                <div class="col-md-12 select-dropdown" :class="{active: select.active}" @click="positionOnTop">
                     <vue-select multiple @input="function (val) {onOptionSelected(select, val)}"
                                 :value="select.selected"
                                 :close-on-select="false"
@@ -135,6 +135,20 @@
                 else {
                     //todo
                 }
+            },
+
+            positionOnTop(e) {
+                const elem = $(e.currentTarget);
+                const offset = elem.offset();
+                const top = offset.top + elem.height();
+                const left = offset.left;
+                const width = elem.width();
+
+                const target = $('ul[role="listbox"]');
+                target.css('position', 'fixed');
+                target.css('top', `${top}px`);
+                target.css('left', `${left}px`);
+                target.css('width', `${width}px`);
             }
 
         },
@@ -175,9 +189,5 @@
 
     .select-title.active {
         color: #1a1a1a;
-    }
-
-    .min-height-300 {
-        min-height: 300px;
     }
 </style>
