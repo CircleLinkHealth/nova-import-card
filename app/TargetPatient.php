@@ -6,6 +6,7 @@
 
 namespace App;
 
+use App\Traits\Relationships\BelongsToCcda;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -52,6 +53,8 @@ use CircleLinkHealth\Customer\Entities\User;
  */
 class TargetPatient extends BaseModel
 {
+    use BelongsToCcda;
+
     const STATUS_CONSENTED  = 'consented';
     const STATUS_ELIGIBLE   = 'eligible';
     const STATUS_ENROLLED   = 'enrolled';
@@ -60,6 +63,7 @@ class TargetPatient extends BaseModel
     const STATUS_TO_PROCESS = 'to_process';
 
     protected $fillable = [
+        'ccda_id',
         'practice_id',
         'batch_id',
         'eligibility_job_id',
