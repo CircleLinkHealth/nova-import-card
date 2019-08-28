@@ -574,7 +574,11 @@ class SurveySeeder extends Seeder
                         'type_answer_body' => '1',
                     ],
                     [
-                        'type_answer_body' => 'Other',
+                        'options' => [
+                            'placeholder'               => 'Other',
+                            'answer_type'               => 'text',
+                            'allow_single_custom_input' => true,
+                        ],
                     ],
                 ],
             ],
