@@ -40,7 +40,7 @@
         <div class="col-md-12">
             <div v-for="status in patientAWVStatuses">
                 <div class="col-md-3">
-                    <div class="panel panel-primary">
+                    <div class="panel panel-primary shadow">
                         <div class="panel-heading">
                             <h4>Wellness Survey</h4>
                         </div>
@@ -89,7 +89,7 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="panel panel-primary">
+                    <div class="panel panel-primary shadow">
                         <div class="panel-heading">
                             <h4>Vitals</h4>
                         </div>
@@ -531,6 +531,10 @@
 
     .dropzone .dz-preview .dz-error-message {
         margin-top: 55px;
+    }
+
+    .shadow {
+        box-shadow:         1px 1px 1px 1px #ccc;
     }
 
 </style>
