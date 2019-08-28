@@ -9,7 +9,7 @@ namespace Tests\Feature;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Services\CCD\ProcessEligibilityService;
-use App\Services\EligibilityCheck;
+use App\Services\EligibilityChecker;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
 
@@ -40,7 +40,7 @@ class EligibilityProcessingTest extends TestCase
             'data'     => $data,
         ]);
 
-        $list = (new EligibilityCheck(
+        $list = (new EligibilityChecker(
             $job,
             $practice,
             $batch,

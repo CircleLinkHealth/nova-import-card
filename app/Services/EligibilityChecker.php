@@ -26,7 +26,7 @@ use Validator;
 /**
  * @property null medicalRecordType
  */
-class EligibilityCheck
+class EligibilityChecker
 {
     use ValidatesEligibility;
 
@@ -217,7 +217,7 @@ class EligibilityCheck
     /**
      * Removes Patients whose last encounter was before Feb. 1st, 2016 from the list.
      *
-     * @return EligibilityCheck
+     * @return bool
      */
     protected function validateLastEncounter(): bool
     {

@@ -6,7 +6,7 @@
 
 namespace App;
 
-use App\Services\EligibilityCheck;
+use App\Services\EligibilityChecker;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -216,11 +216,11 @@ class EligibilityJob extends BaseModel
      *
      * @throws \Exception
      *
-     * @return EligibilityCheck
+     * @return EligibilityChecker
      */
     public function process($filterLastEncounter, $filterInsurance, $filterProblems)
     {
-        return new EligibilityCheck(
+        return new EligibilityChecker(
             $this,
             $this->batch->practice,
             $this->batch,
