@@ -28,6 +28,10 @@ class AddPracticeIdFkToTargetPatients extends Migration
      */
     public function up()
     {
+        if (Schema::hasColumn('target_patients', 'practice_id')) {
+            return;
+        }
+
         Schema::table('target_patients', function (Blueprint $table) {
             $table->unsignedInteger('practice_id')->after('id');
         });

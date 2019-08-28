@@ -25,7 +25,7 @@ class AddJsonFieldToInsurancePolicy extends Migration
     public function up()
     {
         Schema::table('insurance_logs', function (Blueprint $table) {
-            $table->json('raw')->after('import');
+            $table->json('raw')->after('import')->nullable();
         });
     }
 }
