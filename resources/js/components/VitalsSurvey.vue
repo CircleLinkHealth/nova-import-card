@@ -60,7 +60,7 @@
                             {{getQuestionGroupTitle(question)}}
                         </div>
 
-                        <br>
+                        <br v-if="shouldShowQuestionGroupTitle(question)">
 
                         <div class="questions-title">
                             {{getQuestionTitle(question)}}
