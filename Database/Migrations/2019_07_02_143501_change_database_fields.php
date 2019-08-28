@@ -14,12 +14,15 @@ class ChangeDatabaseFields extends Migration
     public function up()
     {
         Schema::table('survey_instances', function (Blueprint $table) {
+            $columns = [];
             if (Schema::hasColumn('survey_instances', 'start_date')) {
-                $table->dropColumn('start_date');
+                $columns[] = 'start_date';
             }
             if (Schema::hasColumn('survey_instances', 'end_date')) {
-                $table->dropColumn('end_date');
+                $columns[] = 'end_date';
             }
+            
+            $table->dropColumn($columns);
         });
 
         Schema::table('users_surveys', function (Blueprint $table){
