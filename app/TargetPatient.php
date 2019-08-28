@@ -110,9 +110,14 @@ class TargetPatient extends BaseModel
             throw new \Exception('A batch is necessary to process a target patient.');
         }
 
-        return tap(app(\AthenaEligibilityCheckableFactory::class)->makeAthenaPatientFromApi($this)->createAndProcessEligibilityJobFromMedicalRecord(), function (EligibilityJob $eligibilityJob) {
-            $this->setStatusFromEligibilityJob($eligibilityJob);
-        });
+        return tap(
+            app(\AthenaEligibilityCheckableFactory::class)
+                ->makeAthenaPatientFromApi($this)
+                ->createAndProcessEligibilityJobFromMedicalRecord(),
+            function (EligibilityJob $eligibilityJob) {
+                $this->setStatusFromEligibilityJob($eligibilityJob);
+            }
+        );
     }
 
     public function setStatusFromEligibilityJob(EligibilityJob $eligibilityJob)

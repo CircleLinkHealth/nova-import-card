@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Eligibility\EligibilityJobDecorators;
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\EligibilityJob;
 use App\Importer\Models\ItemLogs\InsuranceLog;
+use App\Models\MedicalRecords\Ccda;
 use App\TargetPatient;
 use App\ValueObjects\Athena\Insurances;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -21,7 +22,7 @@ class AddInsuranceFromAthenaToEligibilityJob
      */
     protected $athenaApiImplementation;
     /**
-     * @var
+     * @var Collection
      */
     private $insuranceCollection;
 
@@ -33,12 +34,15 @@ class AddInsuranceFromAthenaToEligibilityJob
     /**
      * @param EligibilityJob $eligibilityJob
      * @param TargetPatient  $targetPatient
+     * @param Ccda           $ccda
+     *
+     * @throws \Exception
      *
      * @return EligibilityJob
      */
-    public function addInsurancesFromAthena(EligibilityJob $eligibilityJob, TargetPatient $targetPatient)
+    public function addInsurancesFromAthena(EligibilityJob $eligibilityJob, TargetPatient $targetPatient, Ccda $ccda)
     {
-        $insurancesLogs = $this->getAndStoreInsuranceFromAthenaApi($targetPatient);
+        $insurancesLogs = $this->getAndStoreInsuranceFromAthenaApi($targetPatient, $ccda);
 
         $insurances = new Insurances();
         $insurances->setInsurances($insurancesLogs);
@@ -57,9 +61,9 @@ class AddInsuranceFromAthenaToEligibilityJob
      *
      * @throws \Exception
      *
-     * @return Collection
+     * @return Insurances
      */
-    private function getAndStoreInsuranceFromAthenaApi(TargetPatient $targetPatient)
+    private function getAndStoreInsuranceFromAthenaApi(TargetPatient $targetPatient, Ccda $ccda)
     {
         $insurances = $this->getPatientInsurances(
             $targetPatient->ehr_patient_id,
@@ -67,7 +71,9 @@ class AddInsuranceFromAthenaToEligibilityJob
             $targetPatient->ehr_department_id
         );
 
-        return $this->storeInsuranceFromAthenaApi($insurances, $targetPatient->ccda);
+        return tap($insurances, function (Insurances $insurances) use ($ccda) {
+            $this->storeInsuranceFromAthenaApi($insurances, $ccda);
+        });
     }
 
     /**

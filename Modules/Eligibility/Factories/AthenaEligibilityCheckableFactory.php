@@ -4,15 +4,16 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Models\MedicalRecords\Ccda;
+use App\Contracts\EligibilityCheckable;
 use App\TargetPatient;
 use CircleLinkHealth\Eligibility\Checkables\AthenaPatient;
+use CircleLinkHealth\Eligibility\Commands\CreateCcdaFromAthenaApi;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 
 /**
- * This class encapsulates the logic for creating EligibilityCheckables for AthenaApiImplementation patients.
+ * This class encapsulates the logic for creating an EligibilityCheckable for AthenaApiImplementation patients.
  *
- * @see App\Contracts\EligibilityCheckable
+ * @see EligibilityCheckable
  *
  * Class AthenaEligibilityCheckableFactory
  */
@@ -38,41 +39,9 @@ class AthenaEligibilityCheckableFactory
         $ccda = $targetPatient->ccda;
 
         if ( ! $ccda) {
-            $ccda = $this->createCcdaFromAthenaApi($targetPatient);
+            $ccda = new CreateCcdaFromAthenaApi($targetPatient);
         }
 
         return new AthenaPatient($ccda, $targetPatient->practice, $targetPatient->batch, $targetPatient);
-    }
-
-    /**
-     * @param TargetPatient $targetPatient
-     *
-     * @return \App\Importer\MedicalRecordEloquent|bool|Ccda|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
-     */
-    private function createCcdaFromAthenaApi(TargetPatient $targetPatient)
-    {
-        $ccdaExternal = $this->athenaApi->getCcd(
-            $targetPatient->ehr_patient_id,
-            $targetPatient->ehr_practice_id,
-            $targetPatient->ehr_department_id
-        );
-
-        if ( ! isset($ccdaExternal[0])) {
-            \Log::error('Could not retrieve CCD from Athena for '.TargetPatient::class.':'.$targetPatient->id);
-
-            return false;
-        }
-
-        return Ccda::create(
-            [
-                'practice_id' => $targetPatient->practice_id,
-                'vendor_id'   => 1,
-                'xml'         => $ccdaExternal[0]['ccda'],
-                'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-                'source'      => Ccda::ATHENA_API,
-                'imported'    => false,
-                'batch_id'    => $targetPatient->batch_id,
-            ]
-        );
     }
 }
