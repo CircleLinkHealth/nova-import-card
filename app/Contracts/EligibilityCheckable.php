@@ -6,7 +6,6 @@
 
 namespace App\Contracts;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\EligibilityJob;
 use App\TargetPatient;
 
@@ -18,16 +17,16 @@ use App\TargetPatient;
 interface EligibilityCheckable extends HasMedicalRecord
 {
     /**
-     * @param MedicalRecord $medicalRecord
-     *
      * @return EligibilityJob
      */
-    public function createEligibilityJobFromMedicalRecord(): EligibilityJob;
+    public function createAndProcessEligibilityJobFromMedicalRecord(): EligibilityJob;
+
+    public function getEligibilityJob(): EligibilityJob;
 
     /**
      * This Model holds the data we need to make a request to an EHR API to get patient data.
      *
      * @return TargetPatient
      */
-    public function targetPatient(): TargetPatient;
+    public function getTargetPatient(): TargetPatient;
 }
