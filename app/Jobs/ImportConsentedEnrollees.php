@@ -10,7 +10,6 @@ use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
 use App\Models\MedicalRecords\Ccda;
-use App\Services\AthenaAPI\Calls;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\MedicalRecords\ImportService;
 use App\ValueObjects\BlueButtonMedicalRecord\MedicalRecord;
@@ -200,7 +199,7 @@ class ImportConsentedEnrollees implements ShouldQueue
             'Click here to Create and a CarePlan and review.'
         );
 
-        $athenaApi = app(Calls::class);
+        $athenaApi = app(\CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation::class);
 
         $ccdaExternal = $athenaApi->getCcd(
             $enrollee->targetPatient->ehr_patient_id,

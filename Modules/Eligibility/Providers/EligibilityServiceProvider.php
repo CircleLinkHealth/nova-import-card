@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Providers;
 
 use App\Services\AthenaAPI\Calls;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
 
@@ -50,7 +51,7 @@ class EligibilityServiceProvider extends ServiceProvider
     {
         $this->app->register(RouteServiceProvider::class);
 
-        $this->app->singleton('athena.api', function () {
+        $this->app->singleton(AthenaApiImplementation::class, function () {
             return new Calls();
         });
     }
