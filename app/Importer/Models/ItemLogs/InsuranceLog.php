@@ -50,8 +50,11 @@ use App\Traits\Relationships\BelongsToVendor;
 class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use BelongsToCcda;
-    use
-        BelongsToVendor;
+    use BelongsToVendor;
+
+    protected $casts = [
+        'raw' => 'array',
+    ];
 
     protected $fillable = [
         'medical_record_id',
@@ -62,6 +65,7 @@ class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
         'relation',
         'subscriber',
         'import',
+        'raw',
     ];
 
     public function importedItem()
