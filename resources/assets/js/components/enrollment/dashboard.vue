@@ -375,7 +375,7 @@
 
                         <div v-show="utc_requested_callback" class="col s6 m12 select-custom">
                             <label for="utc_callback" class="label">Patient Requests Callback On:</label>
-                            <input type="date" name="utc_callback" id="utc_callback">
+                            <input name="utc_callback" id="utc_callback">
                         </div>
 
                     </div>
@@ -706,7 +706,7 @@
                 M.Modal.init($('#consented'));
                 M.Modal.init($('#utc'), {
                     onOpenEnd: function () {
-                        M.Datepicker.init($('#soft_decline_callback'), {
+                        M.Datepicker.init($('#utc_callback'), {
                             container: 'body',
                             format: 'yyyy-mm-dd'
                         })
