@@ -1,26 +1,33 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 8/21/19
- * Time: 3:06 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Contracts;
 
-
+use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\EligibilityJob;
+use App\TargetPatient;
 
 /**
- * Medical Records which can be checked for Eligibility can implement this contract
+ * Medical Records which can be checked for Eligibility can implement this contract.
  *
  * Interface EligibilityCheckable
- * @package App\Contracts
  */
-interface EligibilityCheckable
+interface EligibilityCheckable extends HasMedicalRecord
 {
     /**
-     * @return \App\EligibilityJob
+     * @param MedicalRecord $medicalRecord
+     *
+     * @return EligibilityJob
      */
     public function createEligibilityJobFromMedicalRecord(): EligibilityJob;
+
+    /**
+     * This Model holds the data we need to make a request to an EHR API to get patient data.
+     *
+     * @return TargetPatient
+     */
+    public function targetPatient(): TargetPatient;
 }
