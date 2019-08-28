@@ -147,27 +147,27 @@
             <!--</div>-->
             <div v-if="careDocs['PPP']">
                 <div v-for="doc in careDocs['PPP']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'PPP'"></care-document-box>
+                    <care-document-box :doc="doc" :type="'PPP'" :patient="patient"></care-document-box>
                 </div>
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'PPP'"></care-document-box>
+                    <care-document-box :type="'PPP'"  :patient="patient"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Provider Report']">
                 <div v-for="doc in careDocs['Provider Report']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'Provider Report'"></care-document-box>
+                    <care-document-box :doc="doc" :type="'Provider Report'" :patient="patient"></care-document-box>
                 </div>
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'Provider Report'"></care-document-box>
+                    <care-document-box :type="'Provider Report'"  :patient="patient"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Lab Results']">
                 <div v-for="doc in careDocs['Lab Results']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'Lab Results'"></care-document-box>
+                    <care-document-box :doc="doc" :type="'Lab Results'" :patient="patient"></care-document-box>
                 </div>
             </div>
         </div>

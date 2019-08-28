@@ -23,13 +23,13 @@
                 <p><strong>Send document via:</strong></p>
             </div>
             <div class="col-md-12  panel-section" style="margin-top: 9px">
-                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc}">
+                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc}"  @click="openSendModal('direct')">
                     DIRECT
                 </button>
-                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc}">
+                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc}"  @click="openSendModal('fax')">
                     Fax
                 </button>
-                <button title="(Secure Link)"class="col-md-4 btn btn-method btn-width-60  btn-xs" v-bind:class="{'isDisabled': !doc}" @click="sendCareDocument('email')">
+                <button title="(Secure Link)"class="col-md-4 btn btn-method btn-width-60  btn-xs" v-bind:class="{'isDisabled': !doc}" @click="openSendModal('email')">
                     Email
                 </button>
             </div>
@@ -45,21 +45,24 @@
             </template>
             <template slot="body">
                 <div class="col-md-12 form-group">
-                    <div class="col-md-12 row">
-                        <p><strong>Enter {{getInputName()}}:</strong></p>
+                    <div class="col-md-6 row">
+                        <p><strong>Enter {{this.inputName}}:</strong></p>
                     </div>
-                </div>
-                <!--ALLOW FAX-->
-                <div class="col-md-12 form-group">
-                    <div class="col-md-12 row">
-                        <input type="email" v-model="this.formData.email" name="email" required>
+                    <div class="col-md-6 row">
+                        <loader style="text-align: center" v-if="loading"/>
                     </div>
                 </div>
                 <div class="col-md-12 form-group">
                     <div class="col-md-12 row">
-                        <button type="submit" class="btn btn-primary btn-large">Send</button>
+                        <input :type="this.inputType" v-model="addressOrFax" required>
                     </div>
                 </div>
+                <div class="col-md-12 form-group">
+                    <div class="col-md-12 row">
+                        <button type="submit"  @click="sendCareDocument()" class="btn btn-primary btn-large">Send</button>
+                    </div>
+                </div>
+
             </template>
             <template slot="footer">
             </template>
@@ -70,26 +73,29 @@
 <script>
     import {rootUrl} from '../../../../app.config.js'
     import modal from '../../../shared/modal.vue'
+    import Errors from "../../../src/Errors";
+    import Loader from '../../../../components/loader.vue';
+
+    let self;
 
     export default {
         name: "care-document-box",
         components: {
             'modal': modal,
+            'loader': Loader,
         },
         data() {
             return {
                 loading: false,
                 showSendModal: false,
-                csrfToken: document.head.querySelector('meta[name="csrf-token"]').content,
-                csrfHeader: {
-                    'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]').content
-                },
-                formData: {
-                    'year': '',
-                    'patient_id': '',
-                    'email': '',
-                },
-                channel: ''
+                addressOrFax: '',
+                channel: '',
+                inputName: '',
+                inputType: '',
+                errors: new Errors(),
+                showBanner: false,
+                bannerText: '',
+                bannerType: 'info',
             }
         },
         props: {
@@ -100,6 +106,10 @@
             doc: {
                 type: Object,
                 required: false
+            },
+            patient: {
+                type: Object,
+                required: true
             }
         },
         computed: {
@@ -124,7 +134,7 @@
                 const query = {
                     file: this.doc
                 };
-                return rootUrl('/view-care-document/' + this.$parent.patient.id + '/' + this.doc.id);
+                return rootUrl('/view-care-document/' + this.patient.id + '/' + this.doc.id);
             },
             downloadApi() {
                 if (! this.doc){
@@ -133,27 +143,56 @@
                 const query = {
                     file: this.doc
                 };
-                return rootUrl('/download-care-document/' + this.$parent.patient.id + '/' + this.doc.id);
+                return rootUrl('/download-care-document/' + this.patient.id + '/' + this.doc.id);
             },
-            sendCareDocument(channel) {
+            openSendModal(channel) {
+                switch (channel) {
+                    case "email":
+                        this.inputType = 'email';
+                        this.inputName = 'email address';
+                        break;
+
+                    case "direct":
+                        this.inputType = 'email';
+                        this.inputName = 'DIRECT mail address';
+                        break;
+
+                    case "fax":
+                        this.inputType = 'tel';
+                        this.inputName = 'fax number';
+                        break;
+                }
+
                 this.channel = channel
                 this.showSendModal = true
             },
-            getInputName(){
-                switch (this.channel) {
-                    case "email":
-                        return "email address";
+            sendCareDocument(){
+                this.loading = true;
 
-                    case "direct":
-                        return "DIRECT mail address";
+                return this.axios
+                    .post(rootUrl('/send-care-doc/' + this.patient.id + '/' + this.doc.id + '/' + this.channel + '/' + this.addressOrFax))
+                    .then(response => {
+                        this.loading = false;
+                        this.showSendModal = false;
+                        console.log(response);
+                    })
+                    .catch(err => {
+                        this.loading = false;
+                        let errors = err.response.data.errors ? err.response.data.errors : [];
 
-                    case "fax":
-                        return "fax number";
-                }
+                        this.errors.setErrors(errors);
+                        console.log(errors);
+                        self.bannerText = err.response.data.message;
+                        self.bannerType = 'danger';
+                        self.showBanner = true;
 
-                return this.channel;
+                    });
             }
-        }
+        },
+        mounted() {
+            self = this;
+        },
+
     }
 </script>
 
