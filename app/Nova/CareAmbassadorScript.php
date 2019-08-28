@@ -6,6 +6,7 @@
 
 namespace App\Nova;
 
+use App\Constants;
 use App\TrixField;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
@@ -14,6 +15,12 @@ use Waynestate\Nova\CKEditor;
 
 class CareAmbassadorScript extends Resource
 {
+    /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = Constants::NOVA_GROUP_ENROLLMENT;
     /**
      * The model the resource corresponds to.
      *
