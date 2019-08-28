@@ -87,9 +87,9 @@ class EligibilityChecker
      * @throws \Exception
      */
     public function __construct(
-        EligibilityJob $eligibilityJob,
+        EligibilityJob &$eligibilityJob,
         Practice $practice,
-        EligibilityBatch $batch,
+        EligibilityBatch &$batch,
         $filterLastEncounter = false,
         $filterInsurance = false,
         $filterProblems = true,

@@ -205,10 +205,23 @@ class EligibilityJob extends BaseModel
     }
 
     /**
-     * Putting this here for conveniece.
-     * It is NOT safe to use as $batch may not exist. Should we make processing without a batch possible?
+     * Process Eligibility With Batch Options.
      *
-     * @todo: figure out above, buy beer
+     * @throws \Exception
+     *
+     * @return EligibilityChecker
+     */
+    public function process()
+    {
+        if ( ! $this->batch) {
+            throw new \Exception('A batch is necessary to process an eligibility job.');
+        }
+
+        return $this->processWithOptions($this->batch->shouldFilterLastEncounter(), $this->batch->shouldFilterInsurance(), $this->batch->shouldFilterProblems());
+    }
+
+    /**
+     * Process eligibility with given options.
      *
      * @param $filterLastEncounter
      * @param $filterInsurance
@@ -218,8 +231,12 @@ class EligibilityJob extends BaseModel
      *
      * @return EligibilityChecker
      */
-    public function process($filterLastEncounter, $filterInsurance, $filterProblems)
+    public function processWithOptions(bool $filterLastEncounter = false, bool $filterInsurance = false, bool $filterProblems = true)
     {
+        if ( ! $this->batch) {
+            throw new \Exception('A batch is necessary to process an eligibility job.');
+        }
+
         return new EligibilityChecker(
             $this,
             $this->batch->practice,
