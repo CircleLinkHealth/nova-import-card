@@ -3,7 +3,7 @@
         <div @mouseover="mouseOver" @mouseleave="mouseLeave">
 
             <!--Original Formatted Value from NurseInvoice-->
-            <span :class="{strike: strikethroughTime || shouldSetStrikeThroughNow}">
+            <span>
            {{this.formattedTime}}
             </span>
 
@@ -107,7 +107,7 @@
                 liveRequestedTime: '',
                 requestedTimeFromDb: this.invoiceData.suggestedTime,
                 userDisputedTime: false,
-                strikethroughTime: false,
+                // strikethroughTime: false,
                 strikethroughSuggestedTime: false,
                 showTillRefresh: true,
                 loader: false,
