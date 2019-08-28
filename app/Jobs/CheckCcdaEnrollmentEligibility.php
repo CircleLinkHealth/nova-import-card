@@ -7,8 +7,9 @@
 namespace App\Jobs;
 
 use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Models\MedicalRecords\Ccda;
-use App\Services\EligibilityCheck;
+use App\Services\EligibilityChecker;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -66,19 +67,17 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             return null;
         }
 
-        return $this->determineEligibility();
+        return $this->determineEligibility($this->ccda->createEligibilityJobFromMedicalRecord());
     }
 
     /**
      * @throws \Exception
      *
-     * @return EligibilityCheck
+     * @return EligibilityChecker
      */
-    private function determineEligibility()
+    private function determineEligibility(EligibilityJob $job)
     {
-        $job = $this->ccda->createEligibilityJobFromMedicalRecord();
-
-        $check = (new EligibilityCheck(
+        $check = (new EligibilityChecker(
             $job,
             $this->practice,
             $this->batch,

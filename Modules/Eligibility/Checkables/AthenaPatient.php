@@ -53,7 +53,7 @@ class AthenaPatient implements EligibilityCheckable
      *
      * @return \App\EligibilityJob
      */
-    public function createEligibilityJobFromMedicalRecord(): EligibilityJob
+    public function createAndProcessEligibilityJobFromMedicalRecord(): EligibilityJob
     {
         if ( ! $this->eligibilityJob) {
             $this->eligibilityJob = (new AthenaCcdaAndApiToEligibilityJobAdapterAdapterDecorator(new CcdaToEligibilityJobAdapter($this->ccda, $this->practice, $this->batch), $this->getTargetPatient()))->adaptToEligibilityJob();
