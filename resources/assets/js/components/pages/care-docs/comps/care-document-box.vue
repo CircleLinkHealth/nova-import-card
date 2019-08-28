@@ -22,12 +22,15 @@
             <div class="col-md-12  panel-section"  style="margin-top: 15px">
                 <p><strong>Send document via:</strong></p>
             </div>
-            <div class="col-md-12  panel-section">
-                <button class="col-md-6 btn btn-method btn-s" v-bind:class="{'isDisabled': !doc}">
-                    DIRECT Msg
+            <div class="col-md-12  panel-section" style="margin-top: 9px">
+                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc}">
+                    DIRECT
                 </button>
-                <button class="col-md-6 btn btn-method btn-s" v-bind:class="{'isDisabled': !doc}">
-                    Secure Link
+                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc}">
+                    Fax
+                </button>
+                <button title="(Secure Link)"class="col-md-4 btn btn-method btn-width-60  btn-xs" v-bind:class="{'isDisabled': !doc}">
+                    Email
                 </button>
             </div>
             <div class="col-md-12 panel-section">
@@ -123,9 +126,14 @@
 
     .btn-method{
         border-color: #5cc0dd;
-        width: 100px;
         max-height: 30px;
         margin: 2px;
+    }
+
+    .btn-width-60{
+        width: 65px;
+        min-width: 65px !important;
+        height: 30px;
     }
 
     .isDisabled {

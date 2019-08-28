@@ -68,18 +68,18 @@
                                 <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
                                 <!--</div>-->
                             </div>
-                            <div class="col-md-12  panel-section" style="margin-top: 10px">
+                            <div class="col-md-12" style="margin-top: 6px">
                                 <p><strong>Send Assessment Link to Provider via:</strong></p>
                             </div>
                             <div class="col-md-12  panel-section">
                                 <a
-                                        class="col-md-6 btn btn-method btn-s"
+                                        class="col-md-6 btn btn-method btn-width-100 btn-s"
                                         target="_blank"
                                         :href="getAwvSendSmsForm('hra')">
                                     SMS
                                 </a>
                                 <a
-                                        class="col-md-6 btn btn-method btn-s"
+                                        class="col-md-6 btn btn-method btn-width-100 btn-s"
                                         target="_blank"
                                         :href="getAwvSendEmailForm('hra')">
                                     Email
@@ -117,18 +117,18 @@
                                 <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
                                 <!--</div>-->
                             </div>
-                            <div class="col-md-12  panel-section" style="margin-top: 10px">
+                            <div class="col-md-12" style="margin-top: 6px">
                                 <p><strong>Send Assessment Link to Provider via:</strong></p>
                             </div>
                             <div class="col-md-12  panel-section">
                                 <a
-                                   class="col-md-6 btn btn-method btn-s"
+                                   class="col-md-6 btn btn-method btn-width-100 btn-s"
                                    target="_blank"
                                    :href="getAwvSendSmsForm('vitals')">
                                     SMS
                                 </a>
                                 <a
-                                   class="col-md-6 btn btn-method btn-s"
+                                   class="col-md-6 btn btn-width-100 btn-method btn-s"
                                    target="_blank"
                                    :href="getAwvSendEmailForm('vitals')">
                                     Email
@@ -467,9 +467,12 @@
 
     .btn-method {
         border-color: #5cc0dd;
-        width: 100px;
         max-height: 30px;
         margin: 2px;
+    }
+
+    .btn-width-100{
+        width: 100px;
     }
 
     .modal-upload-care-doc .loader {
