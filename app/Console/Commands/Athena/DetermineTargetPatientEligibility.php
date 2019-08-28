@@ -6,7 +6,6 @@
 
 namespace App\Console\Commands\Athena;
 
-use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
 use App\TargetPatient;
 use Illuminate\Console\Command;
 
@@ -25,20 +24,6 @@ class DetermineTargetPatientEligibility extends Command
      */
     protected $signature = 'athena:DetermineTargetPatientEligibility {batchId? : The Eligibility Batch Id}';
 
-    private $service;
-
-    /**
-     * Create a new command instance.
-     *
-     * @param DetermineEnrollmentEligibility $athenaApi
-     */
-    public function __construct(DetermineEnrollmentEligibility $athenaApi)
-    {
-        parent::__construct();
-
-        $this->service = $athenaApi;
-    }
-
     /**
      * Execute the console command.
      *
@@ -49,8 +34,8 @@ class DetermineTargetPatientEligibility extends Command
         TargetPatient::where('status', '=', 'to_process')
             ->with('batch')
             ->get()
-            ->each(function ($patient) {
-                $this->service->determineEnrollmentEligibility($patient);
+            ->each(function (TargetPatient $targetPatient) {
+                $targetPatient->processEligibility();
             });
     }
 }
