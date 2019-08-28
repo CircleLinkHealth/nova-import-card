@@ -40,13 +40,20 @@ function formatTime($time)
         <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
         <script>
             $(document).ready(function () {
-
                 const table = $('#cpmEditableTable');
                 table.DataTable({
                     "order": [],
-                    "iDisplayLength": 100,
+                    // "iDisplayLength": 100,
                     scrollX: true,
-                    fixedHeader: true
+                    fixedHeader: true,
+                    dom: '<"wrapper"flipt>',
+                    bPaginate: false,
+                });
+
+                $('.filter-select').change(function () {
+                    table.column($(this).data('column'))
+                        .search($(this).val())
+                        .draw();
                 });
 
                 function addClickListener() {
@@ -87,51 +94,51 @@ function formatTime($time)
 
                     <div class="">
 
-                        @if(isset($draftNotes) && $draftNotes->isNotEmpty())
-                            <div class="row text-center">
-                                <div class="col-md-12">
-                                    <h4>
-                                        Please <strong>save</strong> or <strong>delete</strong> the following note
-                                        drafts:
-                                    </h4>
-                                </div>
-                                <div class="col-md-8 col-md-offset-2">
-                                    <table class="display dataTable no-footer">
-                                        <thead>
-                                        <tr>
-                                            <th>
-                                                Patient ID
-                                            </th>
-                                            <th>
-                                                Date Created
-                                            </th>
-                                            <th>
+                        {{--                        @if(isset($draftNotes) && $draftNotes->isNotEmpty())--}}
+                        {{--                            <div class="row text-center">--}}
+                        {{--                                <div class="col-md-12">--}}
+                        {{--                                    <h4>--}}
+                        {{--                                        Please <strong>save</strong> or <strong>delete</strong> the following note--}}
+                        {{--                                        drafts:--}}
+                        {{--                                    </h4>--}}
+                        {{--                                </div>--}}
+                        {{--                                <div class="col-md-8 col-md-offset-2">--}}
+                        {{--                                    <table class="display dataTable no-footer">--}}
+                        {{--                                        <thead>--}}
+                        {{--                                        <tr>--}}
+                        {{--                                            <th>--}}
+                        {{--                                                Patient ID--}}
+                        {{--                                            </th>--}}
+                        {{--                                            <th>--}}
+                        {{--                                                Date Created--}}
+                        {{--                                            </th>--}}
+                        {{--                                            <th>--}}
 
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach($draftNotes as $key => $note)
-                                            <tr>
-                                                <td>
-                                                    {{$note->patient_id}}
-                                                </td>
-                                                <td>
-                                                    {{$note->performed_at->toDateString()}}
-                                                </td>
-                                                <td>
-                                                    <a href="{{$note->editLink()}}"
-                                                       style="color: blue; text-transform: uppercase; font-weight: 600">
-                                                        Approve/Delete
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        @endif
+                        {{--                                            </th>--}}
+                        {{--                                        </tr>--}}
+                        {{--                                        </thead>--}}
+                        {{--                                        <tbody>--}}
+                        {{--                                        @foreach($draftNotes as $key => $note)--}}
+                        {{--                                            <tr>--}}
+                        {{--                                                <td>--}}
+                        {{--                                                    {{$note->patient_id}}--}}
+                        {{--                                                </td>--}}
+                        {{--                                                <td>--}}
+                        {{--                                                    {{$note->performed_at->toDateString()}}--}}
+                        {{--                                                </td>--}}
+                        {{--                                                <td>--}}
+                        {{--                                                    <a href="{{$note->editLink()}}"--}}
+                        {{--                                                       style="color: blue; text-transform: uppercase; font-weight: 600">--}}
+                        {{--                                                        Approve/Delete--}}
+                        {{--                                                    </a>--}}
+                        {{--                                                </td>--}}
+                        {{--                                            </tr>--}}
+                        {{--                                        @endforeach--}}
+                        {{--                                        </tbody>--}}
+                        {{--                                    </table>--}}
+                        {{--                                </div>--}}
+                        {{--                            </div>--}}
+                        {{--                        @endif--}}
 
                         <br/>
                         <br/>
@@ -148,24 +155,39 @@ function formatTime($time)
                                         <div id="filters" class="" style="margin:0;">
                                             <div class="form-group">
                                                 <div id="dtBox"></div>
-                                                <label for="date" class="col-sm-1 control-label">Date: </label>
+                                                <label for="date" class="col-sm-1 control-label"
+                                                       style="margin-left: -5%">Date: </label>
                                                 <div class="col-sm-4">
-                                                    <input id="date" class="form-control pull-right" name="date"
+                                                    <input id="date" class="form-control" name="date"
+                                                           style="width: 32%;"
                                                            type="text"
                                                            placeholder="yyyy-mm-dd"
                                                            value="{{ (old('date') ? old('date') : ($dateFilter ? $dateFilter : '')) }}"
                                                            data-field="date" data-format="yyyy-mm-dd"/><span
                                                             class="help-block">{{ $errors->first('date') }}</span>
                                                 </div>
+
+                                                {{--                                                <label for="filter-select" class="col-sm-1 control-label"--}}
+                                                {{--                                                       style="margin-left: -24%">Status: </label>--}}
+                                                {{--                                                <div class="col-sm-4" style="margin-left: -16%;">--}}
+                                                {{--                                                    <select id="filter-select" data-column="8" class="form-control filter-select">--}}
+                                                {{--                                                        <option>Choose</option>--}}
+                                                {{--                                                        @foreach($calls as $call)--}}
+                                                {{--                                                            <option value="{{$call->status}}">{{$call->status}}</option>--}}
+                                                {{--                                                        @endforeach--}}
+                                                {{--                                                    </select>--}}
+                                                {{--                                                </div>--}}
+
                                                 <label for="filterStatus"
-                                                       class="col-sm-1 control-label">Status: </label>
-                                                <div class="col-sm-4">
-                                                    {!! Form::select('filterStatus', array('all' => 'All', 'scheduled' => 'Scheduled', 'reached' => 'Reached'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}
+                                                       class="col-sm-1 control-label"
+                                                       style="margin-left: -24%;">Status: </label>
+                                                <div class="col-sm-4" style="margin-left: -16%;">
+                                                    {!! Form::select('filterStatus', array('all' => 'See All', 'scheduled' => 'Scheduled', 'reached' => 'Completed'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:32%;']) !!}
                                                 </div>
                                                 <div class="col-sm-2">
 
                                                 </div>
-                                                <div class="col-sm-2">
+                                                <div class="col-sm-2" style="margin-left: -33%">
                                                     <button type="submit" class="btn btn-primary">
                                                         <i class="glyphicon glyphicon-sort"></i> Apply Filter
                                                     </button>
@@ -176,169 +198,186 @@ function formatTime($time)
                                     </div>
                                 </div>
                                 <div class="">
-                                    <div class="">
-                                        @include('errors.errors')
-                                        @include('errors.messages')
+                                    @include('errors.errors')
+                                    @include('errors.messages')
+                                    @push('styles')
+                                        <style>
+                                            .table tbody > tr > td.vert-align {
+                                                vertical-align: middle;
+                                            }
 
-                                        <h3>Scheduled Activities</h3>
-                                        @push('styles')
-                                            <style>
-                                                .table tbody > tr > td.vert-align {
-                                                    vertical-align: middle;
-                                                }
+                                            #cpmEditableTable tbody > tr > td {
+                                                white-space: nowrap;
+                                            }
 
-                                                #cpmEditableTable tbody > tr > td {
-                                                    white-space: nowrap;
+                                            div.dataTables_filter {
+                                                margin-top: -4%;
+                                            }
+
+                                            div.dataTables_filter label {
+                                                display: flex;
+                                            }
+
+                                            th, td {
+                                                white-space: nowrap;
+                                            }
+
+                                        </style>
+                                    @endpush
+                                    <table style="" id="cpmEditableTable" class="display" width="100%"
+                                           cellspacing="0">
+                                        <thead>
+                                        <tr>
+                                            <th>Task</th>
+                                            <th>Patient</th>
+                                            <th>Activity</br>Date</th>
+                                            <th>Activity<br>Time Start</th>
+                                            <th>Activity<br>Time End</th>
+                                            <th>Time</br>Zone</th>
+                                            <th>Last<br>Date called</th>
+                                            <th>CCM<br>Time to date</th>
+                                            {{--                                                <th>BHI Time to date</th>--}}
+                                            {{--                                            <th>Status</th>--}}
+                                            <th># Calls<br>to date</th>
+                                            <th>Provider</th>
+                                            <th>Practice</th>
+                                            {{--<th></th>--}}
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @if (count($calls) > 0)
+                                            @foreach($calls as $key => $call)
+                                                <?php
+                                                $curTime = \Carbon\Carbon::now();
+                                                $curDate = $curTime->toDateString();
+                                                $curTime = $curTime->toTimeString();
+                                                $rowBg   = '';
+                                                $boldRow = '';
+                                                if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime) {
+                                                    $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                 }
-                                            </style>
-                                        @endpush
-                                        <table style="" id="cpmEditableTable" class="display" width="100%"
-                                               cellspacing="0">
-                                            <thead>
-                                            <tr>
-                                                <th>Task</th>
-                                                <th>Patient</th>
-                                                <th>Activity Date</th>
-                                                <th>Activity Time Start</th>
-                                                <th>Activity Time End</th>
-                                                <th>Time Zone</th>
-                                                <th>Last Date called</th>
-                                                <th>CCM Time to date</th>
-                                                <th>BHI Time to date</th>
-                                                <th># Calls to date</th>
-                                                <th>Provider</th>
-                                                <th>Practice</th>
-                                                {{--<th></th>--}}
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            @if (count($calls) > 0)
-                                                @foreach($calls as $key => $call)
-                                                    <?php
-                                                    $curTime = \Carbon\Carbon::now();
-                                                    $curDate = $curTime->toDateString();
-                                                    $curTime = $curTime->toTimeString();
-                                                    $rowBg   = '';
-                                                    $boldRow = '';
-                                                    if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime) {
-                                                        $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
-                                                    }
-                                                    if ('Call Back' === $call->type) {
-                                                        $boldRow = 'bold-row';
-                                                    }
-                                                    ?>
-                                                    <tr class="{{$boldRow}}" style="{{ $rowBg }}">
-                                                        <td class="vert-align" style="text-align:center">
-                                                            @if(empty($call->type) || $call->type === 'call')
-                                                                <i class="fas fa-phone"></i>
-                                                            @elseif ($call->type === 'Call Back')
-                                                                <i class="fas fa-phone"></i> Back
-                                                            @else
-                                                                <span>{{$call->type}}</span>
-                                                            @endif
-                                                            @if(!empty($call->attempt_note))
-                                                                <button type="button"
-                                                                        class="btn btn-xs btn-info glyphicon glyphicon-envelope"
-                                                                        data-toggle="modal"
-                                                                        data-target="#attemptNoteCall{{ $call->id }}"></button>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            <a href="{{ route('patient.careplan.print', array('patient' => $call->patient_id)) }}"
-                                                               class="patientNameLink" call-id="{{ $call->id }}"
-                                                               style="text-decoration:underline;font-weight:bold;"
-                                                               data-template='<div class="tooltip" style="text-align:left" role="tooltip"><div class="arrow"></div><div class="tooltip-inner" style="text-align:left"></div></div>'
-                                                               data-toggle="tooltip"
-                                                               data-container="body"
-                                                               data-placement="right"
-                                                               data-html="true"
-                                                               title="{{$call->preferredCallDaysToExpandedString()}}">
-                                                                {{ $call->patient }}
-                                                            </a>
-                                                        </td>
-                                                        <td class="{{ \Carbon\Carbon::parse($call->scheduled_date)->lessThan(\Carbon\Carbon::today()) ? 'red' : '' }}">
-                                                            {{ presentDate($call->scheduled_date, false) }}
-                                                        </td>
-                                                        <td>{{ $call->call_time_start }}</td>
-                                                        <td>{{ $call->call_time_end }}</td>
-                                                        <td>
-                                                            @if($call->timezone)
-                                                                <?php
-                                                                $dateTime = new DateTime();
-                                                                $dateTime->setTimeZone(new DateTimeZone($call->timezone));
-                                                                echo '<span style="font-weight:bold;color:green;">'.$dateTime->format('T').'</a>';
-                                                                ?>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            {{ presentDate($call->last_call) }}
-                                                        </td>
-                                                        <td>
-                                                            @if( isset($call->ccm_time))
-                                                                {{ formatTime($call->ccm_time) }}
-                                                            @else
-                                                                <em style="color:red;">-</em>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            @if( isset($call->bhi_time))
-                                                                {{ formatTime($call->bhi_time) }}
-                                                            @else
-                                                                <em style="color:red;">-</em>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            {{$call->no_of_calls ?? 0}}
-                                                            (
-                                                            <span style="color:green;">
+                                                if ('Call Back' === $call->type) {
+                                                    $boldRow = 'bold-row';
+                                                }
+                                                ?>
+                                                <tr class="{{$boldRow}}" style="{{ $rowBg }}">
+                                                    <td class="vert-align" style="text-align:center">
+                                                        @if(empty($call->type) || $call->type === 'call')
+                                                            <i class="fas fa-phone"></i>
+                                                        @elseif ($call->type === 'Call Back')
+                                                            <i class="fas fa-phone"></i> Back
+                                                        @else
+                                                            <span>{{$call->type}}</span>
+                                                        @endif
+                                                        @if(!empty($call->attempt_note))
+                                                            <button type="button"
+                                                                    class="btn btn-xs btn-info glyphicon glyphicon-envelope"
+                                                                    data-toggle="modal"
+                                                                    data-target="#attemptNoteCall{{ $call->id }}"></button>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ route('patient.careplan.print', array('patient' => $call->patient_id)) }}"
+                                                           class="patientNameLink" call-id="{{ $call->id }}"
+                                                           style="font-weight:bold;"
+                                                           data-template='<div class="tooltip" style="text-align:left" role="tooltip"><div class="arrow"></div><div class="tooltip-inner" style="text-align:left"></div></div>'
+                                                           data-toggle="tooltip"
+                                                           data-container="body"
+                                                           data-placement="right"
+                                                           data-html="true"
+                                                           title="{{$call->preferredCallDaysToExpandedString()}}">
+                                                            {{ $call->patient }}
+                                                        </a>
+                                                    </td>
+                                                    <td class="{{ \Carbon\Carbon::parse($call->scheduled_date)->lessThan(\Carbon\Carbon::today()) ? 'red' : '' }}">
+                                                        {{ presentDate($call->scheduled_date, false) }}
+                                                    </td>
+                                                    <td>{{ $call->call_time_start }}</td>
+                                                    <td>{{ $call->call_time_end }}</td>
+                                                    <td>
+                                                        @if($call->timezone)
+                                                            <?php
+                                                            $dateTime = new DateTime();
+                                                            $dateTime->setTimeZone(new DateTimeZone($call->timezone));
+                                                            echo '<span style="font-weight:bold;color:green;">'.$dateTime->format('T').'</a>';
+                                                            ?>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        {{ presentDate($call->last_call) }}
+                                                    </td>
+                                                    <td>
+                                                        @if( isset($call->ccm_time))
+                                                            {{ formatTime($call->ccm_time) }}
+                                                        @else
+                                                            <em style="color:red;">-</em>
+                                                        @endif
+                                                    </td>
+                                                    {{--                                                        <td>--}}
+                                                    {{--                                                            @if( isset($call->bhi_time))--}}
+                                                    {{--                                                                {{ formatTime($call->bhi_time) }}--}}
+                                                    {{--                                                            @else--}}
+                                                    {{--                                                                <em style="color:red;">-</em>--}}
+                                                    {{--                                                            @endif--}}
+                                                    {{--                                                        </td>--}}
+
+                                                    {{--                                                    <td>--}}
+                                                    {{--                                                        {{$call->status}}--}}
+                                                    {{--                                                    </td>--}}
+
+                                                    <td>
+                                                        {{$call->no_of_calls ?? 0}}
+                                                        (
+                                                        <span style="color:green;">
                                                             {{$call->no_of_successful_calls ?? 0}}
                                                             </span>
-                                                            )
-                                                        </td>
-                                                        <td>
-                                                            {{$call->billing_provider}}
-                                                        </td>
-                                                        <td>
-                                                            @if(!empty($call->practice))
-                                                                {{ $call->practice }}
-                                                            @else
-                                                                <em style="color:red;">n/a</em>
-                                                            @endif
-                                                        </td>
-                                                        {{--<td class="text-right vert-align">--}}
-                                                        {{--@if($call->status == 'reached')--}}
+                                                        )
+                                                    </td>
 
-                                                        {{--@elseif($call->status == 'scheduled')--}}
-                                                        {{--<a href="{{ route('patientCallList.index', array('id' => $call->id, 'action' => 'unassign')) }}"--}}
-                                                        {{--class="btn btn-danger btn-xs"><i--}}
-                                                        {{--class="glyphicon glyphicon-remove"></i>--}}
-                                                        {{--Unassign</a>--}}
-                                                        {{--@endif--}}
-                                                        {{--</td>--}}
-                                                    </tr>
-                                                @endforeach
-                                            @else
-                                                {{-- DataTables automatically provides a `No data available in table` message --}}
-                                                {{--  <tr>
-                                                    <td colspan="11">No calls found</td>
-                                                </tr>  --}}
-                                            @endif
-                                            </tbody>
-                                        </table>
-                                        </form>
-                                        <?php //$calls->links()?>
-                                    </div>
+                                                    <td>
+                                                        {{$call->billing_provider}}
+                                                    </td>
+                                                    <td>
+                                                        @if(!empty($call->practice))
+                                                            {{ $call->practice }}
+                                                        @else
+                                                            <em style="color:red;">n/a</em>
+                                                        @endif
+                                                    </td>
+                                                    {{--<td class="text-right vert-align">--}}
+                                                    {{--@if($call->status == 'reached')--}}
+
+                                                    {{--@elseif($call->status == 'scheduled')--}}
+                                                    {{--<a href="{{ route('patientCallList.index', array('id' => $call->id, 'action' => 'unassign')) }}"--}}
+                                                    {{--class="btn btn-danger btn-xs"><i--}}
+                                                    {{--class="glyphicon glyphicon-remove"></i>--}}
+                                                    {{--Unassign</a>--}}
+                                                    {{--@endif--}}
+                                                    {{--</td>--}}
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            {{-- DataTables automatically provides a `No data available in table` message --}}
+                                            {{--  <tr>
+                                                <td colspan="11">No calls found</td>
+                                            </tr>  --}}
+                                        @endif
+                                        </tbody>
+                                    </table>
+                                    </form>
+                                    <?php //$calls->links()?>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div>
+                </div>
+                <div>
 
 
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- call attempt_note modals -->
