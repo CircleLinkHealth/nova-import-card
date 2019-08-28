@@ -103,6 +103,11 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
         return $this->billingProviderIdPrediction;
     }
 
+    public function getId(): ?int
+    {
+        return $this->id ?? null;
+    }
+
     /**
      * @return mixed
      */
@@ -117,6 +122,11 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     public function getPracticeIdPrediction()
     {
         return $this->practiceIdPrediction;
+    }
+
+    public function getType(): ?string
+    {
+        return get_class($this);
     }
 
     /**
