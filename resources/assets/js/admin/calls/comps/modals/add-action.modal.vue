@@ -976,7 +976,6 @@
         margin-left: -2px;
         color: #000;
     }
-
     .v-select .open-indicator {
         visibility: visible;
     }
