@@ -29,14 +29,14 @@ class RejectNursePatientsFromBillingForMonth extends Migration
     {
         $patientIds = User::ofType('participant')
             ->whereHas('inboundCalls', function ($calls) {
-                              $calls->whereHas('outboundUser', function ($user) {
-                                  $user->ofType('care-center')
-                                      ->where('first_name', '=', 'Rachel')
-                                      ->where('last_name', '=', 'Walker');
-                              })
-                                  ->ofMonth(Carbon::now()->startOfMonth())
-                                  ->where('status', '=', 'reached');
-                          })
+                $calls->whereHas('outboundUser', function ($user) {
+                    $user->ofType('care-center')
+                        ->where('first_name', '=', 'Rachel')
+                        ->where('last_name', '=', 'Walker');
+                })
+                    ->ofMonth(Carbon::now()->startOfMonth())
+                    ->where('status', '=', 'reached');
+            })
             ->pluck('id')
             ->all();
 
