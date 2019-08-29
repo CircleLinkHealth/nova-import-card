@@ -35,15 +35,15 @@ class AddInsuranceFromAthenaToEligibilityJobTest extends TestCase
         $decorator = new \CircleLinkHealth\Eligibility\Decorators\AddInsuranceFromAthenaToEligibilityJob($athena);
 
         //Setup
-        $eligibilityJob = factory(EligibilityJob::class)->create();
-        $targetPatient  = new TargetPatient();
-        $ccda           = new Ccda();
+        $eligibilityJobInitialState = factory(EligibilityJob::class)->create();
+        $targetPatient              = new TargetPatient();
+        $ccda                       = new Ccda();
 
         //Conduct Test
-        $eligibilityJob = $decorator->addInsurancesFromAthena($eligibilityJob, $targetPatient, $ccda);
+        $eligibilityJob = $decorator->addInsurancesFromAthena($eligibilityJobInitialState, $targetPatient, $ccda);
 
         //Assert
         $this->assertInstanceOf(EligibilityJob::class, $eligibilityJob);
-        $this->assertEquals($successfulApiResponse, $eligibilityJob->data['insurances']);
+        $this->assertEquals($successfulApiResponse['insurances'], $eligibilityJob->data['insurances']);
     }
 }
