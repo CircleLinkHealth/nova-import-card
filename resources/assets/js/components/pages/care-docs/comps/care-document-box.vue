@@ -45,12 +45,15 @@
             </template>
             <template slot="body">
                 <div class="col-md-12 form-group">
-                    <div class="col-md-6 row">
+                    <div class="col-md-10 row">
                         <p><strong>Enter {{this.inputName}}:</strong></p>
                     </div>
-                    <div class="col-md-6 row">
+                    <div class="col-md-2 row">
                         <loader style="text-align: center" v-if="loading"/>
                     </div>
+                </div>
+                <div class="col-md-12">
+                    <div v-if="showBanner" :class="bannerClass">{{this.errors.errors}}</div>
                 </div>
                 <div class="col-md-12 form-group">
                     <div class="col-md-12 row">
@@ -124,7 +127,10 @@
                 var day = date.getDate().toString();
                 day = day.length > 1 ? day : '0' + day;
                 return year + '-' + month + '-' + day;
-            }
+            },
+            bannerClass() {
+                return 'alert alert-' + this.bannerType;
+            },
         },
         methods: {
             viewApi() {
@@ -179,9 +185,7 @@
                     .catch(err => {
                         this.loading = false;
                         let errors = err.response.data.errors ? err.response.data.errors : [];
-
                         this.errors.setErrors(errors);
-                        console.log(errors);
                         self.bannerText = err.response.data.message;
                         self.bannerType = 'danger';
                         self.showBanner = true;

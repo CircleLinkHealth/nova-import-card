@@ -7,11 +7,13 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\SendCareDocument;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PatientCareDocumentsController extends Controller
 {
@@ -35,8 +37,8 @@ class PatientCareDocumentsController extends Controller
     {
         $patientAWVStatuses = PatientAWVSurveyInstanceStatus::where('patient_id', $patientId)
             ->when( ! $showPast, function ($query) {
-                                                                $query->where('year', Carbon::now()->year);
-                                                            })
+                $query->where('year', Carbon::now()->year);
+            })
             ->get();
 
         $files = Media::where('collection_name', 'patient-care-documents')
@@ -45,19 +47,19 @@ class PatientCareDocumentsController extends Controller
             ->get()
             ->sortByDesc('created_at')
             ->mapToGroups(function ($item, $key) {
-                          $docType = $item->getCustomProperty('doc_type');
+                $docType = $item->getCustomProperty('doc_type');
 
-                          return [$docType => $item];
-                      })
+                return [$docType => $item];
+            })
             ->reject(function ($value, $key) {
-                          return ! $key;
-                      })
+                return ! $key;
+            })
             //get the latest file from each category
             ->unless('true' == $showPast, function ($files) {
-                          return $files->map(function ($typeGroup) {
-                              return collect([$typeGroup->first()]);
-                          });
-                      });
+                return $files->map(function ($typeGroup) {
+                    return collect([$typeGroup->first()]);
+                });
+            });
 
         return response()->json([
             'files'              => $files->toArray(),
@@ -69,10 +71,47 @@ class PatientCareDocumentsController extends Controller
     {
         $media = $this->getMediaItemById($patientId, $mediaId);
 
-        if ('email' == $channel) {
-            //validate email
+        if ( ! $media) {
+            return response()->json(
+                'Something went wrong. Media not found.',
+                400
+            );
+        }
 
-            //send notification
+        //may not need parient id in route
+        $patient = User::find($patientId);
+
+        if ( ! $patient) {
+            return response()->json(
+                'Something went wrong. Patient not found.',
+                400
+            );
+        }
+
+        if ('email' == $channel) {
+            $validator = Validator::make([
+                'email' => $addressOrFax,
+            ], [
+                'email' => 'required|email',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(
+                    'Invalid email address.',
+                    400
+                );
+            }
+
+            $notifiableUser = User::whereEmail($addressOrFax)->first();
+
+            if ( ! $notifiableUser) {
+                $notifiableUser = (new User())->forceFill([
+                    'name'  => 'Notifiable User',
+                    'email' => $addressOrFax,
+                ]);
+            }
+
+            $notifiableUser->notify(new SendCareDocument($media, $patient, 'mail'));
 
             //notification contains url with patientId, report type (from media), and year (from media created at), create endpoint to handle in AWV
 
