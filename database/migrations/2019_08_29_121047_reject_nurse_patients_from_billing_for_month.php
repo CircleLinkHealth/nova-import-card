@@ -8,8 +8,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class RejectNursePatientsFromBillingForMonth extends Migration
 {
@@ -18,8 +16,6 @@ class RejectNursePatientsFromBillingForMonth extends Migration
      */
     public function down()
     {
-        Schema::table('billing_for_month', function (Blueprint $table) {
-        });
     }
 
     /**
