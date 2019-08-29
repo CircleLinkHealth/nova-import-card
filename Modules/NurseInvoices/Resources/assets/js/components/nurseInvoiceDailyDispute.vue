@@ -107,7 +107,6 @@
                 liveRequestedTime: '',
                 requestedTimeFromDb: this.invoiceData.suggestedTime,
                 userDisputedTime: false,
-                // strikethroughTime: false,
                 strikethroughSuggestedTime: false,
                 showTillRefresh: true,
                 loader: false,
@@ -140,11 +139,6 @@
             showDeleteBtn() {
                 return !!this.deleteButtonActive && (this.userDisputedTime || this.requestedTimeIsVisible)
 
-            },
-
-            shouldSetStrikeThroughNow() {
-                return this.showTillRefresh && (this.requestedTimeFromDb === undefined && this.strikethroughTime
-                    || this.requestedTimeFromDb !== undefined && !this.strikethroughTime);
             },
 
             validateTime() {
@@ -199,7 +193,7 @@
                 })
                     .then((resposne) => {
                         this.userDisputedTime = false;
-                        this.strikethroughTime = false;
+
                         this.showTillRefresh = false;
                         this.requestedTimeFromDb = undefined;
                         this.liveRequestedTime = '';
@@ -240,7 +234,6 @@
                     .then((response) => {
                         this.deleteButtonActive = true;
                         this.userDisputedTime = true;
-                        this.strikethroughTime = true;
                         this.showTillRefresh = true;
                         this.editButtonActive = false;
                         this.showDisputeBox = false;
