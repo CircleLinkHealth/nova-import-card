@@ -65,8 +65,9 @@ class EligibilityBatchController extends Controller
             InsuranceLog::whereMedicalRecordType(Ccda::class)
                 ->whereNotNull('raw')
                 ->join('target_patients', 'target_patients.ccda_id', '=', 'insurance_logs.medical_record_id')
-                ->chunkById(500, function (Collection $joinResult) use ($handle, &$firstIteration, &$headers) {
-                    $joinResult->each(function ($row) use ($handle, &$firstIteration, &$headers) {
+                ->where('target_patients.batch_id', $batch->id)
+                ->chunkById(500, function (Collection $joinResults) use ($handle, &$firstIteration, &$headers) {
+                    $joinResults->each(function ($row) use ($handle, &$firstIteration, &$headers) {
                         $rawApiResponse = $row->raw;
 
                         if (array_key_exists('copays', $rawApiResponse)) {
@@ -122,8 +123,9 @@ class EligibilityBatchController extends Controller
             InsuranceLog::whereMedicalRecordType(Ccda::class)
                 ->whereNotNull('raw')
                 ->join('target_patients', 'target_patients.ccda_id', '=', 'insurance_logs.medical_record_id')
-                ->chunkById(500, function (Collection $joinResult) use ($handle, &$firstIteration, &$headers) {
-                    $joinResult->each(function ($row) use ($handle, &$firstIteration, &$headers) {
+                ->where('target_patients.batch_id', $batch->id)
+                ->chunkById(500, function (Collection $joinResults) use ($handle, &$firstIteration, &$headers) {
+                    $joinResults->each(function ($row) use ($handle, &$firstIteration, &$headers) {
                         $rawApiResponse = $row->raw;
 
                         $data = [
