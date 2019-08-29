@@ -4,6 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+namespace CircleLinkHealth\Eligibility\Factories;
+
+use App\Exceptions\AthenaApi\CcdaWasNotFetchedFromAthenaApi;
 use App\TargetPatient;
 use CircleLinkHealth\Eligibility\Checkables\AthenaCheckable;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -41,7 +44,12 @@ class AthenaEligibilityCheckableFactory
         $ccda = $targetPatient->ccda;
 
         if ( ! $ccda) {
-            $ccda = app(CreateCcdaFromAthenaApi::class)->handle($targetPatient);
+            try {
+                $ccda = app(CreateCcdaFromAthenaApi::class)->handle($targetPatient);
+            } catch (CcdaWasNotFetchedFromAthenaApi $e) {
+                $targetPatient->setStatusFromException($e);
+                $targetPatient->save();
+            }
         }
 
         return new AthenaCheckable($ccda, $targetPatient->practice, $targetPatient->batch, $targetPatient);

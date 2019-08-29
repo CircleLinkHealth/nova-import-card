@@ -8,6 +8,20 @@ namespace CircleLinkHealth\Eligibility\Tests\Fakers;
 
 class AthenaApiResponses
 {
+    public static function failGetCcd()
+    {
+        return [];
+    }
+
+    public static function getCcd()
+    {
+        return [
+            [
+                'ccda' => file_get_contents(storage_path('ccdas/Samples/demo.xml')),
+            ],
+        ];
+    }
+
     public static function getPatientInsurances()
     {
         return [

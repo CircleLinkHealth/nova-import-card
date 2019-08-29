@@ -11,6 +11,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 
 /**
  * App\TargetPatient.
@@ -111,7 +112,7 @@ class TargetPatient extends BaseModel
         }
 
         return tap(
-            app(\AthenaEligibilityCheckableFactory::class)
+            app(AthenaEligibilityCheckableFactory::class)
                 ->makeAthenaEligibilityCheckable($this)
                 ->createAndProcessEligibilityJobFromMedicalRecord(),
             function (EligibilityJob $eligibilityJob) {
@@ -129,6 +130,12 @@ class TargetPatient extends BaseModel
         } elseif ($eligibilityJob->isAlreadyEnrolled()) {
             $this->status = self::STATUS_ENROLLED;
         }
+    }
+
+    public function setStatusFromException(\Exception $e)
+    {
+        $this->status      = TargetPatient::STATUS_ERROR;
+        $this->description = $e->getMessage();
     }
 
     public function user()

@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Tasks;
 
+use App\Exceptions\AthenaApi\CcdaWasNotFetchedFromAthenaApi;
 use App\Models\MedicalRecords\Ccda;
 use App\TargetPatient;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -27,7 +28,7 @@ class CreateCcdaFromAthenaApi
      *
      * @return \App\Importer\MedicalRecordEloquent|bool|Ccda|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
      */
-    public function handle(TargetPatient $targetPatient)
+    public function handle(TargetPatient &$targetPatient)
     {
         if ($targetPatient->ccda) {
             return $targetPatient->ccda;
@@ -40,21 +41,25 @@ class CreateCcdaFromAthenaApi
         );
 
         if ( ! isset($ccdaExternal[0])) {
-            \Log::error('Could not retrieve CCD from Athena for '.TargetPatient::class.':'.$targetPatient->id);
-
-            return false;
+            throw new CcdaWasNotFetchedFromAthenaApi($targetPatient);
         }
 
-        return Ccda::create(
-            [
-                'practice_id' => $targetPatient->practice_id,
-                'vendor_id'   => 1,
-                'xml'         => $ccdaExternal[0]['ccda'],
-                'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-                'source'      => Ccda::ATHENA_API,
-                'imported'    => false,
-                'batch_id'    => $targetPatient->batch_id,
-            ]
+        return tap(
+            Ccda::create(
+                [
+                    'practice_id' => $targetPatient->practice_id,
+                    'vendor_id'   => 1,
+                    'xml'         => $ccdaExternal[0]['ccda'],
+                    'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
+                    'source'      => Ccda::ATHENA_API,
+                    'imported'    => false,
+                    'batch_id'    => $targetPatient->batch_id,
+                ]
+            ),
+            function (Ccda $ccda) use (&$targetPatient) {
+                $targetPatient->ccda_id = $ccda->id;
+                $targetPatient->save();
+            }
         );
     }
 }

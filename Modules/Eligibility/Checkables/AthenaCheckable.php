@@ -61,7 +61,8 @@ class AthenaCheckable implements Checkable
             //result, add insurance from AthenaAPI to it and store it.
             $decoratedAdapter = new AddInsurancesFromAthena(
                 new CcdaToEligibilityJobAdapter($this->ccda, $this->practice, $this->batch),
-                $this->getTargetPatient()
+                $this->getTargetPatient(),
+                $this->ccda
             );
 
             $this->eligibilityJob = $decoratedAdapter->adaptToEligibilityJob()
