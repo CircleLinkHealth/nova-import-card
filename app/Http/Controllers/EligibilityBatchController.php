@@ -53,7 +53,7 @@ class EligibilityBatchController extends Controller
     {
         ini_set('max_execution_time', 300);
 
-        $fileName = 'batch_id_'.$batch->id.'_athena_insurance_'.Carbon::now()->toAtomString();
+        $fileName = 'batch_id_'.$batch->id.'_athena_insurance_copays'.Carbon::now()->toAtomString();
 
         $response = new StreamedResponse(function () use ($batch) {
             // Open output stream
@@ -63,8 +63,9 @@ class EligibilityBatchController extends Controller
             $headers = [];
 
             InsuranceLog::whereMedicalRecordType(Ccda::class)
+                ->whereNotNull('raw')
                 ->join('target_patients', 'target_patients.ccda_id', '=', 'insurance_logs.medical_record_id')
-                ->chunkById(100, function (Collection $joinResult) use ($handle, &$firstIteration, &$headers) {
+                ->chunkById(500, function (Collection $joinResult) use ($handle, &$firstIteration, &$headers) {
                     $joinResult->each(function ($row) use ($handle, &$firstIteration, &$headers) {
                         $rawApiResponse = $row->raw;
 
@@ -109,7 +110,7 @@ class EligibilityBatchController extends Controller
     {
         ini_set('max_execution_time', 300);
 
-        $fileName = 'batch_id_'.$batch->id.'_athena_insurance_'.Carbon::now()->toAtomString();
+        $fileName = 'batch_id_'.$batch->id.'_athena_insurance_info'.Carbon::now()->toAtomString();
 
         $response = new StreamedResponse(function () use ($batch) {
 //            // Open output stream
@@ -119,8 +120,9 @@ class EligibilityBatchController extends Controller
             $headers = [];
 
             InsuranceLog::whereMedicalRecordType(Ccda::class)
+                ->whereNotNull('raw')
                 ->join('target_patients', 'target_patients.ccda_id', '=', 'insurance_logs.medical_record_id')
-                ->chunkById(100, function (Collection $joinResult) use ($handle, &$firstIteration, &$headers) {
+                ->chunkById(500, function (Collection $joinResult) use ($handle, &$firstIteration, &$headers) {
                     $joinResult->each(function ($row) use ($handle, &$firstIteration, &$headers) {
                         $rawApiResponse = $row->raw;
 
