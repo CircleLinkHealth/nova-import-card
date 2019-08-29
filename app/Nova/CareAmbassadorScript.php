@@ -87,6 +87,19 @@ class CareAmbassadorScript extends Resource
                 ])->displayUsingLabels(),
 
             CKEditor::make('Body', 'body')
+                ->options([
+                    'height'  => 500,
+                    'toolbar' => [
+                        ['Undo', 'Redo', '-', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat', '-', 'HorizontalRule', 'SpecialChar', 'PageBreak'],
+                        ['Bold', 'Italic', 'Underline', 'Strike'],
+                        ['TextColor', 'BGColor', '-', 'RemoveFormat'],
+                        '/',
+                        ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'],
+                        ['JustifyLeft', 'JustifyCenter', 'JustifyRight'],
+                        ['Link', 'Unlink', 'Anchor'],
+                        ['Format', 'FontSize'],
+                    ],
+                ])
                 ->hideFromIndex(),
         ];
     }
