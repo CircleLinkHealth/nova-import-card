@@ -72,17 +72,17 @@ class EligibilityCheck
      * @var Practice
      */
     private $practice;
-    
+
     /**
      * EligibilityCheck constructor.
      *
-     * @param EligibilityJob $eligibilityJob
-     * @param Practice $practice
+     * @param EligibilityJob   $eligibilityJob
+     * @param Practice         $practice
      * @param EligibilityBatch $batch
-     * @param bool $filterLastEncounter
-     * @param bool $filterInsurance
-     * @param bool $filterProblems
-     * @param bool $createEnrollees
+     * @param bool             $filterLastEncounter
+     * @param bool             $filterInsurance
+     * @param bool             $filterProblems
+     * @param bool             $createEnrollees
      *
      * @throws \Exception
      */
@@ -114,12 +114,11 @@ class EligibilityCheck
 
             if ($isValid) {
                 $this->eligibilityJob->status = EligibilityJob::ELIGIBLE;
-    
+
                 if ($this->createEnrollees) {
                     $this->createEnrollee();
                 }
             }
-    
         } catch (\Exception $e) {
             if ($this->eligibilityJob) {
                 $this->setEligibilityJobStatusFromException($e);
@@ -147,245 +146,6 @@ class EligibilityCheck
                 throw new \Exception("Eligibility processing exception: {$e->getMessage()}");
             }
         }
-    }
-    
-    /**
-     * @param $patient
-     *
-     * @return bool
-     * @throws \Exception
-     */
-    private function createEnrollee():bool
-    {
-        $args = $this->eligibilityJob->data;
-
-        if (is_a($args, Collection::class)) {
-            $args = $args->all();
-        }
-        
-        if (!is_array($args)) throw new \Exception('$args is expected to be an array. '.EligibilityJob::class.':'.$this->eligibilityJob->id);
-
-        if (isset($args['insurance_plans']) || isset($args['insurance_plan'])) {
-            $args = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($args);
-        }
-
-        if (array_key_exists('preferred_provider', $args)) {
-            $args['referring_provider_name'] = $args['preferred_provider'];
-        }
-
-        if (array_key_exists('language', $args)) {
-            $args['lang'] = $args['language'];
-        }
-
-        $args['status'] = Enrollee::TO_CALL;
-
-//            if (isset($args['cell_phone'])) {
-//                $args['status'] = Enrollee::TO_SMS;
-//            }
-
-        if (array_key_exists('id', $args)) {
-            unset($args['id']);
-        }
-
-        if ($this->eligibilityJob) {
-            $args['eligibility_job_id'] = $this->eligibilityJob->id;
-        }
-
-        if (array_key_exists('postal_code', $args) && ! array_key_exists('zip', $args)) {
-            $args['zip'] = $args['postal_code'];
-        }
-
-        if (array_key_exists('problems_string', $args)) {
-            $args['problems'] = $args['problems_string'];
-        }
-
-        if (is_array($args['problems'])) {
-            $args['problems'] = json_encode($args['problems']);
-        }
-
-        if (array_key_exists('insurances', $args) && ! array_key_exists('primary_insurance', $args)) {
-            $insurances = is_array($args['insurances'])
-                ? collect($args['insurances'])
-                : $args['insurances'];
-
-            $args['primary_insurance']   = $insurances[0]['type'] ?? '';
-            $args['secondary_insurance'] = $insurances[1]['type'] ?? '';
-            $args['tertiary_insurance']  = $insurances[2]['type'] ?? '';
-        }
-
-        $args['practice_id'] = $this->practice->id;
-        $args['provider_id'] = $this->practice->user_id;
-
-        if (empty($args['email'])) {
-            $args['email'] = 'noEmail@noEmail.com';
-        }
-
-        $args['address']   = $args['street'] ?? $args['address_line_1'] ?? '';
-        $args['address_2'] = $args['street2'] ?? $args['address_line_2'] ?? '';
-
-        $lastEncounter = $args['last_encounter'] ?? $args['last_visit'] ?? null;
-
-        if ($lastEncounter) {
-            $validator = Validator::make(
-                [
-                    'last_encounter' => $lastEncounter,
-                ],
-                [
-                    'last_encounter' => 'required|filled|date',
-                ]
-            );
-
-            if ($validator->fails()) {
-                $args['last_encounter'] = null;
-            } else {
-                $args['last_encounter'] = Carbon::parse($lastEncounter);
-            }
-        }
-
-        $args['batch_id'] = $this->batch->id;
-        $args['mrn']      = $args['mrn'] ?? $args['mrn_number'] ?? $args['patient_id'];
-
-        $args['dob'] = $args['dob'] ?? $args['date_of_birth'] ?? $args['birth_date'];
-
-        $enrolleeExists = Enrollee::where(
-            [
-                [
-                    'practice_id',
-                    '=',
-                    $args['practice_id'],
-                ],
-                [
-                    'first_name',
-                    '=',
-                    $args['first_name'],
-                ],
-                [
-                    'last_name',
-                    '=',
-                    $args['last_name'],
-                ],
-                [
-                    'dob',
-                    '=',
-                    $args['dob'],
-                ],
-            ]
-        )->orWhere(
-            [
-                [
-                    'practice_id',
-                    '=',
-                    $args['practice_id'],
-                ],
-                [
-                    'mrn',
-                    '=',
-                    $args['mrn'],
-                ],
-            ]
-        )->first();
-
-        $enrolledPatientExists = User::withTrashed()
-            ->where(
-                function ($u) use ($args) {
-                    $u->whereProgramId($args['practice_id'])
-                        ->whereHas(
-                            'patientInfo',
-                            function ($q) use ($args) {
-                                $q->withTrashed()->whereMrnNumber($args['mrn']);
-                            }
-                                               );
-                }
-                                     )->orWhere(
-                                         function ($u) use ($args) {
-                                             $u->where(
-                                                 [
-                                                     [
-                                                         'program_id',
-                                                         '=',
-                                                         $args['practice_id'],
-                                                     ],
-                                                     [
-                                                         'first_name',
-                                                         '=',
-                                                         $args['first_name'],
-                                                     ],
-                                                     [
-                                                         'last_name',
-                                                         '=',
-                                                         $args['last_name'],
-                                                     ],
-                                                 ]
-                    )->whereHas(
-                        'patientInfo',
-                        function ($q) use ($args) {
-                            $q->withTrashed()->whereBirthDate($args['dob']);
-                        }
-                    );
-                                         }
-            )->first();
-
-        $duplicateMySqlError = false;
-        $errorMsg            = null;
-
-        if ($enrolledPatientExists) {
-            $this->setEligibilityJobStatus(
-                3,
-                [
-                    'duplicate' => 'This patient already has a careplan. '.route(
-                        'patient.careplan.print',
-                        [$enrolledPatientExists->id]
-                        ),
-                ],
-                EligibilityJob::ENROLLED
-            );
-
-            return false;
-        }
-        if ($enrolleeExists && optional($this->batch)->shouldSafeReprocess()) {
-            $updated         = $enrolleeExists->update($args);
-            $this->enrollee = $enrolleeExists->fresh();
-
-            return true;
-        }
-
-        try {
-            $this->enrollee = Enrollee::create($args);
-        } catch (\Illuminate\Database\QueryException $e) {
-            $errorCode = $e->errorInfo[1];
-            if (1062 == $errorCode) {
-                $duplicateMySqlError = true;
-                $errorMsg            = $e->getMessage();
-            } else {
-                throw $e;
-            }
-        }
-
-        if ($enrolleeExists) {
-            $batchInfo = $enrolleeExists->batch_id
-                ? " in batch {$enrolleeExists->batch_id}"
-                : '';
-            $this->setEligibilityJobStatus(
-                3,
-                ['eligible-also-in-previous-batch' => "This patient has already been processed and found to be eligible${batchInfo}. Eligible Patient Id: {$enrolleeExists->id}"],
-                EligibilityJob::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH
-            );
-
-            return false;
-        }
-
-        if ($duplicateMySqlError) {
-            $this->setEligibilityJobStatus(
-                3,
-                ['duplicate' => "Seems like the Enrollee already exists. Error caused: ${errorMsg}."],
-                EligibilityJob::DUPLICATE
-            );
-
-            return true;
-        }
-        $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
-
-        return true;
     }
 
     public function getEligibilityJob()
@@ -477,9 +237,9 @@ class EligibilityCheck
 
         if ( ! isset($lastEncounter) || 'null' == strtolower($lastEncounter)) {
             $this->setEligibilityJobStatus(
-                    3,
-                    ['last_encounter' => 'Last encounter field not found, or is null.'],
-                    EligibilityJob::INELIGIBLE
+                3,
+                ['last_encounter' => 'Last encounter field not found, or is null.'],
+                EligibilityJob::INELIGIBLE
                 );
 
             return false;
@@ -600,7 +360,7 @@ class EligibilityCheck
                 return $cpmProblems->where('is_behavioral', '=', true)->pluck('id');
             }
         );
-    
+
         $eligibilityJobData = $this->eligibilityJob->data;
 
         $eligibilityJobData['ccm_condition_1'] = '';
@@ -608,7 +368,7 @@ class EligibilityCheck
         $eligibilityJobData['cpm_problem_1']   = '';
         $eligibilityJobData['cpm_problem_2']   = '';
 
-        $problems = $eligibilityJobData['problems'] ?? $eligibilityJobData['problems_string'];
+        $problems = $eligibilityJobData['problems'] ?? $eligibilityJobData['problems_string'] ?? null;
 
         if (empty($problems)) {
             $this->setEligibilityJobStatus(
@@ -816,7 +576,7 @@ class EligibilityCheck
 
         $eligibilityJobData['cpm_problem_1'] = $qualifyingCcmProblemsCpmIdStack[0];
         $eligibilityJobData['cpm_problem_2'] = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
-    
+
         $this->eligibilityJob->data = $eligibilityJobData;
 
         return true;
@@ -830,7 +590,8 @@ class EligibilityCheck
     protected function validateStructureAndData()
     {
         $invalidStructure = false;
-    
+        $jsonErrors       = '';
+
         if (EligibilityBatch::TYPE_ONE_CSV == $this->batch->type && $this->eligibilityJob) {
             $csvPatientList = new CsvPatientList(collect([$this->eligibilityJob->data]));
             $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
@@ -842,6 +603,7 @@ class EligibilityCheck
             }
             $errors = array_merge($this->validateRow($this->eligibilityJob->data)->errors()->keys(), $errors);
             $this->saveErrorsOnEligibilityJob($this->eligibilityJob, collect($errors));
+            $jsonErrors = json_encode($errors);
         }
 
         if ((EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE == $this->batch->type) && $this->eligibilityJob) {
@@ -853,15 +615,16 @@ class EligibilityCheck
             }
             $errors = array_merge($this->validateRow($this->eligibilityJob->data)->errors()->keys(), $errors);
             $this->saveErrorsOnEligibilityJob($this->eligibilityJob, collect($errors));
+            $jsonErrors = $structureErrors->toJson();
         }
 
         if ($invalidStructure) {
             //if there are structure errors we stop the process because create enrollees fails from missing arguements
             $e = new InvalidStructureException(
-                "Record with eligibility job id: {$this->eligibilityJob->id} has invalid structure. Errors:".$structureErrors->toJson(),
+                "Record with eligibility job id: {$this->eligibilityJob->id} has invalid structure. Errors:".$jsonErrors,
                 422
             );
-            
+
             $this->setEligibilityJobStatusFromException($e);
         }
     }
@@ -869,6 +632,247 @@ class EligibilityCheck
     private function adaptClhFormatInsurancePlansToPrimaryAndSecondary($record)
     {
         return (new JsonMedicalRecordInsurancePlansAdapter())->adapt($record);
+    }
+
+    /**
+     * @param $patient
+     *
+     * @throws \Exception
+     *
+     * @return bool
+     */
+    private function createEnrollee(): bool
+    {
+        $args = $this->eligibilityJob->data;
+
+        if (is_a($args, Collection::class)) {
+            $args = $args->all();
+        }
+
+        if ( ! is_array($args)) {
+            throw new \Exception('$args is expected to be an array. '.EligibilityJob::class.':'.$this->eligibilityJob->id);
+        }
+        if (isset($args['insurance_plans']) || isset($args['insurance_plan'])) {
+            $args = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($args);
+        }
+
+        if (array_key_exists('preferred_provider', $args)) {
+            $args['referring_provider_name'] = $args['preferred_provider'];
+        }
+
+        if (array_key_exists('language', $args)) {
+            $args['lang'] = $args['language'];
+        }
+
+        $args['status'] = Enrollee::TO_CALL;
+
+//            if (isset($args['cell_phone'])) {
+//                $args['status'] = Enrollee::TO_SMS;
+//            }
+
+        if (array_key_exists('id', $args)) {
+            unset($args['id']);
+        }
+
+        if ($this->eligibilityJob) {
+            $args['eligibility_job_id'] = $this->eligibilityJob->id;
+        }
+
+        if (array_key_exists('postal_code', $args) && ! array_key_exists('zip', $args)) {
+            $args['zip'] = $args['postal_code'];
+        }
+
+        if (array_key_exists('problems_string', $args)) {
+            $args['problems'] = $args['problems_string'];
+        }
+
+        if (is_array($args['problems'])) {
+            $args['problems'] = json_encode($args['problems']);
+        }
+
+        if (array_key_exists('insurances', $args) && ! array_key_exists('primary_insurance', $args)) {
+            $insurances = is_array($args['insurances'])
+                ? collect($args['insurances'])
+                : $args['insurances'];
+
+            $args['primary_insurance']   = $insurances[0]['type'] ?? '';
+            $args['secondary_insurance'] = $insurances[1]['type'] ?? '';
+            $args['tertiary_insurance']  = $insurances[2]['type'] ?? '';
+        }
+
+        $args['practice_id'] = $this->practice->id;
+        $args['provider_id'] = $this->practice->user_id;
+
+        if (empty($args['email'])) {
+            $args['email'] = 'noEmail@noEmail.com';
+        }
+
+        $args['address']   = $args['street'] ?? $args['address_line_1'] ?? '';
+        $args['address_2'] = $args['street2'] ?? $args['address_line_2'] ?? '';
+
+        $lastEncounter = $args['last_encounter'] ?? $args['last_visit'] ?? null;
+
+        if ($lastEncounter) {
+            $validator = Validator::make(
+                [
+                    'last_encounter' => $lastEncounter,
+                ],
+                [
+                    'last_encounter' => 'required|filled|date',
+                ]
+            );
+
+            if ($validator->fails()) {
+                $args['last_encounter'] = null;
+            } else {
+                $args['last_encounter'] = Carbon::parse($lastEncounter);
+            }
+        }
+
+        $args['batch_id'] = $this->batch->id;
+        $args['mrn']      = $args['mrn'] ?? $args['mrn_number'] ?? $args['patient_id'];
+
+        $args['dob'] = $args['dob'] ?? $args['date_of_birth'] ?? $args['birth_date'];
+
+        $enrolleeExists = Enrollee::where(
+            [
+                [
+                    'practice_id',
+                    '=',
+                    $args['practice_id'],
+                ],
+                [
+                    'first_name',
+                    '=',
+                    $args['first_name'],
+                ],
+                [
+                    'last_name',
+                    '=',
+                    $args['last_name'],
+                ],
+                [
+                    'dob',
+                    '=',
+                    $args['dob'],
+                ],
+            ]
+        )->orWhere(
+            [
+                [
+                    'practice_id',
+                    '=',
+                    $args['practice_id'],
+                ],
+                [
+                    'mrn',
+                    '=',
+                    $args['mrn'],
+                ],
+            ]
+        )->first();
+
+        $enrolledPatientExists = User::withTrashed()
+            ->where(
+                function ($u) use ($args) {
+                    $u->whereProgramId($args['practice_id'])
+                        ->whereHas(
+                            'patientInfo',
+                            function ($q) use ($args) {
+                                $q->withTrashed()->whereMrnNumber($args['mrn']);
+                            }
+                                               );
+                }
+                                     )->orWhere(
+                                         function ($u) use ($args) {
+                                             $u->where(
+                                                 [
+                                                     [
+                                                         'program_id',
+                                                         '=',
+                                                         $args['practice_id'],
+                                                     ],
+                                                     [
+                                                         'first_name',
+                                                         '=',
+                                                         $args['first_name'],
+                                                     ],
+                                                     [
+                                                         'last_name',
+                                                         '=',
+                                                         $args['last_name'],
+                                                     ],
+                                                 ]
+                    )->whereHas(
+                        'patientInfo',
+                        function ($q) use ($args) {
+                            $q->withTrashed()->whereBirthDate($args['dob']);
+                        }
+                    );
+                                         }
+            )->first();
+
+        $duplicateMySqlError = false;
+        $errorMsg            = null;
+
+        if ($enrolledPatientExists) {
+            $this->setEligibilityJobStatus(
+                3,
+                [
+                    'duplicate' => 'This patient already has a careplan. '.route(
+                        'patient.careplan.print',
+                        [$enrolledPatientExists->id]
+                        ),
+                ],
+                EligibilityJob::ENROLLED
+            );
+
+            return false;
+        }
+        if ($enrolleeExists && optional($this->batch)->shouldSafeReprocess()) {
+            $updated        = $enrolleeExists->update($args);
+            $this->enrollee = $enrolleeExists->fresh();
+
+            return true;
+        }
+
+        try {
+            $this->enrollee = Enrollee::create($args);
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            if (1062 == $errorCode) {
+                $duplicateMySqlError = true;
+                $errorMsg            = $e->getMessage();
+            } else {
+                throw $e;
+            }
+        }
+
+        if ($enrolleeExists) {
+            $batchInfo = $enrolleeExists->batch_id
+                ? " in batch {$enrolleeExists->batch_id}"
+                : '';
+            $this->setEligibilityJobStatus(
+                3,
+                ['eligible-also-in-previous-batch' => "This patient has already been processed and found to be eligible${batchInfo}. Eligible Patient Id: {$enrolleeExists->id}"],
+                EligibilityJob::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH
+            );
+
+            return false;
+        }
+
+        if ($duplicateMySqlError) {
+            $this->setEligibilityJobStatus(
+                3,
+                ['duplicate' => "Seems like the Enrollee already exists. Error caused: ${errorMsg}."],
+                EligibilityJob::DUPLICATE
+            );
+
+            return true;
+        }
+        $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
+
+        return true;
     }
 
     private function getSnomedToIcdMap()
