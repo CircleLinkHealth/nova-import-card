@@ -113,15 +113,14 @@
                                 </v-select>
                             </td>
                             <td>
-                                <br>
                              <span>  <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
                                         style="color: #000;"
                                         title="Tick to schedule as:'As soon as possible'">
                                     <label for="asap_check" class="asap_label">ASAP</label>
                                 </a>
-                                <input type="checkbox" id="asap_check" style=" float: right;margin-top: -19%;">
+                                <input type="checkbox" id="asap_check" style=" float: right;margin-top: -14%;">
 
-                                <input class="form-control height-40" type="date" name="scheduled_date" style="margin-top: -10%;"
+                                <input class="form-control height-40" type="date" name="scheduled_date"
                                        v-model="action.data.date"
                                        :disabled="action.disabled" required/> </span>
                             </td>
@@ -802,7 +801,7 @@
         table-layout: fixed;
         margin-left: -10px;
         border-collapse: separate;
-        border-spacing:0 13px;
+        border-spacing:0 16px;
     }
 
     /* Table with a Practices column */
@@ -988,12 +987,8 @@
     }
 
     .asap_label{
-        margin-left: 69%;
+        margin-left: 58%;
         position: absolute;
-        margin-top: -20%;
-    }
-
-    .table {
-
+        margin-top: -16%;
     }
 </style>
