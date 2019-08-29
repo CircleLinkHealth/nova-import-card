@@ -1,15 +1,15 @@
 <template>
     <div class="container main-container">
 
-        <div class="top-left-fixed">
-            <a :href="getPatientsListUrl()">
+        <div class="top-left-fixed" v-if="adminMode">
+            <mdb-btn class="btn-toggle-edit" color="primary" @click="goBack">
                 <font-awesome-icon icon="chevron-circle-left" size="3x"/>
-            </a>
+            </mdb-btn>
         </div>
 
-        <div class="top-right-fixed">
-            <mdb-btn :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
-                {{readOnlyMode ? 'Switch to Edit Mode' : 'Switch to Read Only Mode'}}
+        <div class="top-right-fixed" v-if="adminMode">
+            <mdb-btn class="btn-toggle-edit" :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
+                <font-awesome-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
             </mdb-btn>
         </div>
 
@@ -162,7 +162,7 @@
                     </div>
                 </div>
                 <!-- add an empty div, so we can animate scroll up even if we are on last question -->
-                <div style="height: 600px"></div>
+                <div v-if="!readOnlyMode" style="height: 600px"></div>
             </template>
             <template v-else>
                 <div class="card-body">
@@ -269,10 +269,17 @@
     import questionTypeDate from "./questionTypeDate";
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
     import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faChevronCircleLeft} from '@fortawesome/free-solid-svg-icons';
+    import {
+        faChevronCircleDown,
+        faChevronCircleLeft,
+        faEye,
+        faPencilAlt,
+        faPhoneAlt,
+        faTimes
+    } from '@fortawesome/free-solid-svg-icons';
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
-    library.add(faChevronCircleLeft);
+    library.add(faChevronCircleLeft, faChevronCircleDown, faPencilAlt, faEye, faPhoneAlt, faTimes);
 
     export default {
         props: ['data', 'adminMode'],
@@ -657,6 +664,10 @@
                     .appendTo('#logout-form');
 
                 $('#logout-form').submit();
+            },
+
+            goBack() {
+                window.location.pathname = this.getPatientsListUrl();
             }
 
         },

@@ -402,6 +402,42 @@ When progress text and bar are in one line (col-sm screens)
     transition: opacity 0.5s linear;
 }
 
+.question-scroll-container {
+    color: $primary-color;
+    text-align: center;
+}
+
+.question-scroll {
+    padding: 0;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    background: url("../images/scroll-button.svg");
+}
+
+.fa-chevron-circle-down, .fa-phone-alt, .fa-times {
+    color: #ffffff;
+}
+
+.call-assistance {
+    position: fixed;
+}
+
+.call-btn-round {
+    margin-left: 40px;
+    margin-right: 0 !important;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.btn-toggle-edit {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    padding: 0;
+}
+
 .watermark {
     opacity: 0.1;
     transition: opacity 0.5s linear;
