@@ -10,12 +10,14 @@ use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
 use App\Exports\FromArray;
+use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Models\CPM\CpmProblem;
 use App\Models\MedicalRecords\Ccda;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordEligibilityJobToCsvAdapter;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -45,6 +47,145 @@ class EligibilityBatchController extends Controller
     public function csvCreate()
     {
         return view('eligibilityBatch.methods.single-csv');
+    }
+
+    public function downloadAthenaApiInsuranceCopaysCsv(EligibilityBatch $batch)
+    {
+        ini_set('max_execution_time', 300);
+
+        $fileName = 'batch_id_'.$batch->id.'_athena_insurance_'.Carbon::now()->toAtomString();
+
+        $response = new StreamedResponse(function () use ($batch) {
+            // Open output stream
+            $handle = fopen('php://output', 'w');
+
+            $firstIteration = true;
+            $headers = [];
+
+            InsuranceLog::whereMedicalRecordType(Ccda::class)
+                ->join('target_patients', 'target_patients.ccda_id', '=', 'insurance_logs.medical_record_id')
+                ->chunkById(100, function (Collection $joinResult) use ($handle, &$firstIteration, &$headers) {
+                    $joinResult->each(function ($row) use ($handle, &$firstIteration, &$headers) {
+                        $rawApiResponse = $row->raw;
+
+                        if (array_key_exists('copays', $rawApiResponse)) {
+                            foreach ($rawApiResponse['copays'] as $copay) {
+                                $data = [
+                                    'key_ccda_id'            => $row->ccda_id ?? 'N/A',
+                                    'key_eligibility_job_id' => $row->eligibility_job_id ?? 'N/A',
+                                    'key_enrollee_id'        => $row->enrollee_id ?? 'N/A',
+                                    'key_ehr_patient_id'     => $row->ehr_patient_id ?? 'N/A',
+                                    'key_insurance_log_id'   => $row->id ?? 'N/A',
+
+                                    'copayamount' => $copay['copayamount'] ?? 'N/A',
+                                    'copaytype'   => $copay['copaytype'] ?? 'N/A',
+                                ];
+
+                                if ($firstIteration) {
+                                    $headers = array_keys($data);
+                                    // Add CSV headers
+                                    fputcsv($handle, $headers);
+
+                                    $firstIteration = false;
+                                }
+                                // Add a new row with data
+                                fputcsv($handle, $data);
+                            }
+                        }
+                    });
+                }, 'insurance_logs.id');
+
+            // Close the output stream
+            fclose($handle);
+        }, 200, [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="'.$fileName.'.csv"',
+        ]);
+
+        return $response;
+    }
+
+    public function downloadAthenaApiInsuranceInfoCsv(EligibilityBatch $batch)
+    {
+        ini_set('max_execution_time', 300);
+
+        $fileName = 'batch_id_'.$batch->id.'_athena_insurance_'.Carbon::now()->toAtomString();
+
+        $response = new StreamedResponse(function () use ($batch) {
+//            // Open output stream
+            $handle = fopen('php://output', 'w');
+
+            $firstIteration = true;
+            $headers = [];
+
+            InsuranceLog::whereMedicalRecordType(Ccda::class)
+                ->join('target_patients', 'target_patients.ccda_id', '=', 'insurance_logs.medical_record_id')
+                ->chunkById(100, function (Collection $joinResult) use ($handle, &$firstIteration, &$headers) {
+                    $joinResult->each(function ($row) use ($handle, &$firstIteration, &$headers) {
+                        $rawApiResponse = $row->raw;
+
+                        $data = [
+                            'key_ccda_id'            => $row->ccda_id ?? 'N/A',
+                            'key_eligibility_job_id' => $row->eligibility_job_id ?? 'N/A',
+                            'key_enrollee_id'        => $row->enrollee_id ?? 'N/A',
+                            'key_ehr_patient_id'     => $row->ehr_patient_id ?? 'N/A',
+
+                            'insurancepolicyholdercountrycode'    => $rawApiResponse['insurancepolicyholdercountrycode'] ?? 'N/A',
+                            'sequencenumber'                      => $rawApiResponse['sequencenumber'] ?? 'N/A',
+                            'insurancepolicyholderlastname'       => $rawApiResponse['insurancepolicyholderlastname'] ?? 'N/A',
+                            'insuredentitytypeid'                 => $rawApiResponse['insuredentitytypeid'] ?? 'N/A',
+                            'insuranceidnumber'                   => $rawApiResponse['insuranceidnumber'] ?? 'N/A',
+                            'insurancepolicyholderstate'          => $rawApiResponse['insurancepolicyholderstate'] ?? 'N/A',
+                            'insurancepolicyholderzip'            => $rawApiResponse['insurancepolicyholderzip'] ?? 'N/A',
+                            'insurancepolicyholderdob'            => $rawApiResponse['insurancepolicyholderdob'] ?? 'N/A',
+                            'issuedate'                           => $rawApiResponse['issuedate'] ?? 'N/A',
+                            'relationshiptoinsured'               => $rawApiResponse['relationshiptoinsured'] ?? 'N/A',
+                            'eligibilitystatus'                   => $rawApiResponse['eligibilitystatus'] ?? 'N/A',
+                            'policynumber'                        => $rawApiResponse['policynumber'] ?? 'N/A',
+                            'insurancepolicyholderaddress1'       => $rawApiResponse['insurancepolicyholderaddress1'] ?? 'N/A',
+                            'insurancepackageaddress1'            => $rawApiResponse['insurancepackageaddress1'] ?? 'N/A',
+                            'insurancepolicyholdersex'            => $rawApiResponse['insurancepolicyholdersex'] ?? 'N/A',
+                            'eligibilityreason'                   => $rawApiResponse['eligibilityreason'] ?? 'N/A',
+                            'ircname'                             => $rawApiResponse['ircname'] ?? 'N/A',
+                            'insuranceplanname'                   => $rawApiResponse['insuranceplanname'] ?? 'N/A',
+                            'insurancetype'                       => $rawApiResponse['insurancetype'] ?? 'N/A',
+                            'insurancephone'                      => $rawApiResponse['insurancephone'] ?? 'N/A',
+                            'insurancepackagestate'               => $rawApiResponse['insurancepackagestate'] ?? 'N/A',
+                            'insurancepackagecity'                => $rawApiResponse['insurancepackagecity'] ?? 'N/A',
+                            'relationshiptoinsuredid'             => $rawApiResponse['relationshiptoinsuredid'] ?? 'N/A',
+                            'insuranceid'                         => $rawApiResponse['insuranceid'] ?? 'N/A',
+                            'insurancepolicyholder'               => $rawApiResponse['insurancepolicyholder'] ?? 'N/A',
+                            'eligibilitylastchecked'              => $rawApiResponse['eligibilitylastchecked'] ?? 'N/A',
+                            'insurancepolicyholdermiddlename'     => $rawApiResponse['insurancepolicyholdermiddlename'] ?? 'N/A',
+                            'insurancepolicyholderfirstname'      => $rawApiResponse['insurancepolicyholderfirstname'] ?? 'N/A',
+                            'insurancepackageid'                  => $rawApiResponse['insurancepackageid'] ?? 'N/A',
+                            'insurancepolicyholdercountryiso3166' => $rawApiResponse['insurancepolicyholdercountryiso3166'] ?? 'N/A',
+                            'insuranceplandisplayname'            => $rawApiResponse['insuranceplandisplayname'] ?? 'N/A',
+                            'eligibilitymessage'                  => $rawApiResponse['eligibilitymessage'] ?? 'N/A',
+                            'insurancepolicyholdercity'           => $rawApiResponse['insurancepolicyholdercity'] ?? 'N/A',
+                            'insurancepackagezip'                 => $rawApiResponse['insurancepackagezip'] ?? 'N/A',
+                        ];
+
+                        if ($firstIteration) {
+                            $headers = array_keys($data);
+                            // Add CSV headers
+                            fputcsv($handle, $headers);
+
+                            $firstIteration = false;
+                        }
+                        // Add a new row with data
+                        fputcsv($handle, $data);
+                    });
+                }, 'insurance_logs.id');
+
+            // Close the output stream
+            fclose($handle);
+        }, 200, [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="'.$fileName.'.csv"',
+        ]);
+
+        return $response;
     }
 
     public function downloadBatchLogCsv(EligibilityBatch $batch)
@@ -401,6 +542,14 @@ class EligibilityBatchController extends Controller
 
         $enrolleesExist = (bool) Enrollee::whereBatchId($batch->id)->whereNull('user_id')->exists();
 
+        $athenaInsurancesExist = false;
+
+        if (EligibilityBatch::ATHENA_API == $batch->type) {
+            $athenaInsurancesExist = InsuranceLog::whereMedicalRecordType(Ccda::class)
+                ->whereNotNull('raw')
+                ->join('target_patients', 'target_patients.ccda_id', '=', 'insurance_logs.medical_record_id')->exists();
+        }
+
         return view('eligibilityBatch.show', compact([
             'batch',
             'enrolleesExist',
@@ -411,6 +560,7 @@ class EligibilityBatchController extends Controller
             'duplicates',
             'initiatorUser',
             'validationStats',
+            'athenaInsurancesExist',
         ]));
     }
 }

@@ -1186,6 +1186,16 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'eligibility.download.eligible',
                 ])->middleware('permission:enrollee.read');
 
+                Route::get('supplemental-insurance-info-csv', [
+                    'uses' => 'EligibilityBatchController@downloadAthenaApiInsuranceInfoCsv',
+                    'as'   => 'eligibility.download.supplemental_insurance_info',
+                ])->middleware('permission:enrollee.read');
+
+                Route::get('insurance-copays-csv', [
+                    'uses' => 'EligibilityBatchController@downloadAthenaApiInsuranceCopaysCsv',
+                    'as'   => 'eligibility.download.copays',
+                ])->middleware('permission:enrollee.read');
+
                 Route::get('/reprocess', [
                     'uses' => 'EligibilityBatchController@getReprocess',
                     'as'   => 'get.eligibility.reprocess',

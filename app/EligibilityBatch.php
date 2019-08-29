@@ -142,6 +142,26 @@ class EligibilityBatch extends BaseModel
         }
     }
 
+    public function getType()
+    {
+        switch ($this->type) {
+            case self::ATHENA_API:
+                return 'Athena';
+                break;
+            case self::TYPE_ONE_CSV:
+                return 'CSV';
+                break;
+            case self::TYPE_GOOGLE_DRIVE_CCDS:
+                return 'CCDs in GoogleDrive';
+                break;
+            case self::CLH_MEDICAL_RECORD_TEMPLATE:
+                return 'CLH Template';
+                break;
+            default:
+                return '';
+        }
+    }
+
     public function getValidationStats()
     {
         $structure = EligibilityJob::where('batch_id', $this->id)
@@ -255,9 +275,9 @@ class EligibilityBatch extends BaseModel
             ->get()
             ->each(function ($job) use ($onQueue) {
                 ProcessSinglePatientEligibility::dispatch(
-                              $job,
-                              $this,
-                              $this->practice
+                    $job,
+                    $this,
+                    $this->practice
                           )->onQueue($onQueue);
             });
     }
