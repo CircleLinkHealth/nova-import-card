@@ -2,14 +2,14 @@
     <div class="container main-container">
 
         <div class="top-left-fixed" v-if="adminMode">
-            <a :href="getPatientsListUrl()">
+            <mdb-btn class="btn-toggle-edit" color="primary" @click="goBack">
                 <font-awesome-icon icon="chevron-circle-left" size="3x"/>
-            </a>
+            </mdb-btn>
         </div>
 
         <div class="top-right-fixed" v-if="adminMode">
-            <mdb-btn :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
-                {{readOnlyMode ? 'Switch to Edit Mode' : 'Switch to Read Only Mode'}}
+            <mdb-btn class="btn-toggle-edit" :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
+                <font-awesome-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
             </mdb-btn>
         </div>
 
@@ -90,82 +90,91 @@
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
                             <question-type-text
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :is-subquestion="isSubQuestion(question)"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :is-last-question="isLastQuestion(question)"
-                                    :waiting="waiting"
-                                    :read-only="readOnlyMode"
-                                    v-if="question.type.type === 'text'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'text'">
                             </question-type-text>
 
                             <question-type-checkbox
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :is-subquestion="isSubQuestion(question)"
-                                    :get-all-questions-func="getAllQuestions"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :is-last-question="isLastQuestion(question)"
-                                    :waiting="waiting"
-                                    :read-only="readOnlyMode"
-                                    v-if="question.type.type === 'checkbox'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'checkbox'">
                             </question-type-checkbox>
 
                             <question-type-muti-select
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :is-subquestion="isSubQuestion(question)"
-                                    :get-all-questions-func="getAllQuestions"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :is-last-question="isLastQuestion(question)"
-                                    :waiting="waiting"
-                                    :read-only="readOnlyMode"
-                                    v-if="question.type.type === 'multi_select'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'multi_select'">
                             </question-type-muti-select>
 
                             <question-type-range
-                                    :read-only="readOnlyMode"
-                                    v-if="question.type.type === 'range'">
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'range'">
                             </question-type-range>
 
                             <question-type-number
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :is-subquestion="isSubQuestion(question)"
-                                    :get-all-questions-func="getAllQuestions"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :is-last-question="isLastQuestion(question)"
-                                    :waiting="waiting"
-                                    :read-only="readOnlyMode"
-                                    v-if="question.type.type === 'number'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'number'">
                             </question-type-number>
 
                             <question-type-radio
-                                    :question="question"
-                                    :is-active="currentQuestionIndex === index"
-                                    :is-subquestion="isSubQuestion(question)"
-                                    :style-horizontal="false"
-                                    :get-all-questions-func="getAllQuestions"
-                                    :on-done-func="postAnswerAndGoToNext"
-                                    :is-last-question="isLastQuestion(question)"
-                                    :waiting="waiting"
-                                    :read-only="readOnlyMode"
-                                    v-if="question.type.type === 'radio'">
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'radio'">
                             </question-type-radio>
 
                             <question-type-date
-                                    :read-only="readOnlyMode"
-                                    v-if="question.type.type === 'date'">
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'date'">
                             </question-type-date>
                         </div>
                     </div>
                     <div class="error" v-if="error">
                         <span v-html="error"></span>
                     </div>
+
+                    <div v-if="!readOnlyMode && currentQuestionIndex === index" class="question-scroll-container"
+                         style="display: none;">
+                        <div>Scroll</div>
+                        <mdb-btn color="primary" class="question-scroll" @click="scrollQuestionToBottom">
+                            &nbsp;
+                        </mdb-btn>
+                    </div>
+
                 </div>
                 <!-- add an empty div, so we can animate scroll up even if we are on last question -->
-                <div style="height: 600px"></div>
+                <div v-if="!readOnlyMode" style="height: 600px"></div>
             </template>
         </div>
         <div class="call-assistance">
@@ -212,16 +221,16 @@
                         <div class="col text-right">
 
                             <mdb-btn
-                                    color="primary"
-                                    @click="scrollDown"
-                                    :disabled="!canScrollDown">
+                                color="primary"
+                                @click="scrollDown"
+                                :disabled="!canScrollDown">
                                 <i class="fas fa-angle-down"></i>
                             </mdb-btn>
 
                             <mdb-btn
-                                    color="primary"
-                                    @click="scrollUp"
-                                    :disabled="!canScrollUp">
+                                color="primary"
+                                @click="scrollUp"
+                                :disabled="!canScrollUp">
                                 <i class="fas fa-angle-up"></i>
                             </mdb-btn>
 
@@ -247,10 +256,17 @@
     import $ from "jquery";
 
     import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faChevronCircleLeft, faPhoneAlt, faTimes} from '@fortawesome/free-solid-svg-icons';
+    import {
+        faChevronCircleDown,
+        faChevronCircleLeft,
+        faEye,
+        faPencilAlt,
+        faPhoneAlt,
+        faTimes
+    } from '@fortawesome/free-solid-svg-icons';
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
-    library.add(faChevronCircleLeft, faPhoneAlt, faTimes);
+    library.add(faChevronCircleLeft, faChevronCircleDown, faPhoneAlt, faTimes, faPencilAlt, faEye);
 
     export default {
         props: ['surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'debug'],
@@ -778,6 +794,7 @@
                         500,
                         {
                             onAfter: () => {
+                                setTimeout(() => this.setQuestionScrollVisibility(), 200);
                                 resolve();
                             }
                         });
@@ -851,6 +868,47 @@
                     }
                     $('.call-assistance').offset({top: btnOffset.top - modalOffset, left: btnOffset.left});
                 }
+            },
+
+            scrollQuestionToBottom() {
+                $('.question-scroll-container').fadeOut();
+                const elem = $('.question.active');
+                elem.scrollTo(elem[0].scrollHeight, 500, {
+                    onAfter: () => {
+
+                    }
+                });
+            },
+
+            setQuestionScrollVisibility() {
+
+                const qScroll = $('.question-scroll-container');
+                qScroll.css('position', 'fixed');
+
+                if (this.readOnlyMode) {
+                    qScroll.hide();
+                    return;
+                }
+
+                const elem = $('.question.active')[0];
+
+                if (elem.scrollHeight > (elem.offsetHeight + elem.scrollTop)) {
+                    const navbar = $('.bottom-navbar');
+                    const leftOffset = navbar.offset().left + navbar.width() - 110;
+                    qScroll.css('left', `${leftOffset}px`);
+
+                    const topOffset = $('body').height() - 220;
+                    qScroll.css('top', `${topOffset}px`);
+
+                    qScroll.fadeIn();
+                }
+                else {
+                    qScroll.hide();
+                }
+            },
+
+            goBack() {
+                window.location.pathname = this.getPatientsListUrl();
             }
         },
         mounted() {
@@ -916,22 +974,3 @@
 
     }
 </script>
-
-<style lang="scss" scoped>
-
-    .call-assistance {
-        position: fixed;
-    }
-
-    .call-btn-round {
-        margin-left: 40px;
-        margin-right: 0 !important;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-    }
-
-    .fa-phone-alt, .fa-times {
-        color: #ffffff;
-    }
-</style>
