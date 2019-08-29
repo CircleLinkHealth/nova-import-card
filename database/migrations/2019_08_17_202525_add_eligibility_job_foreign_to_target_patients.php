@@ -24,6 +24,9 @@ class AddEligibilityJobForeignToTargetPatients extends Migration
      */
     public function up()
     {
+        if (Schema::hasColumn('target_patients', 'eligibility_job_id')) {
+            return;
+        }
         Schema::table('target_patients', function (Blueprint $table) {
             //Changing column eligibility_job_id type from text to int using the laravel way was failing locally, possibly due to the fact this table has an enum type column. Not sure though.
             //the error message was "Unknown database type enum requested, Doctrine\DBAL\Platforms\MySQL57Platform may not support it. "
