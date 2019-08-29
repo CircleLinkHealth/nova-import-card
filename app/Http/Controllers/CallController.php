@@ -383,6 +383,7 @@ class CallController extends Controller
             'attempt_note'    => '',
             'is_manual'       => 'required|boolean',
             'family_override' => '',
+            'asap'            => '',
         ]);
 
         if ($validation->fails()) {
@@ -434,11 +435,11 @@ class CallController extends Controller
         }
 
         if ( ! $isFamilyOverride
-             && $this->hasAlreadyFamilyCallAtDifferentTime(
-                 $patient->patientInfo,
-                 $input['scheduled_date'],
-                 $input['window_start'],
-                 $input['window_end']
+            && $this->hasAlreadyFamilyCallAtDifferentTime(
+                $patient->patientInfo,
+                $input['scheduled_date'],
+                $input['window_start'],
+                $input['window_end']
             )) {
             return [
                 'errors' => ['patient belongs to family and the family has a call at different time'],
@@ -524,10 +525,17 @@ class CallController extends Controller
             : null;
         $call->inbound_cpm_id = $user->id;
 
-        //make sure we are sending the dates correctly formatted
-        $call->scheduled_date = $scheduledDate->format('Y-m-d');
-        $call->window_start   = $windowStart->format('H:i');
-        $call->window_end     = $windowEnd->format('H:i');
+        $call->asap = boolval($input['asap']);
+        if (true === $call->asap) {
+            $call->scheduled_date = $scheduledDate->format('Y-m-d');
+            $call->window_start   = 'ASAP';
+            $call->window_end     = 'N/A';
+        } else {
+            //make sure we are sending the dates correctly formatted
+            $call->scheduled_date = $scheduledDate->format('Y-m-d');
+            $call->window_start   = $windowStart->format('H:i');
+            $call->window_end     = $windowEnd->format('H:i');
+        }
 
         $call->attempt_note    = $input['attempt_note'];
         $call->note_id         = null;

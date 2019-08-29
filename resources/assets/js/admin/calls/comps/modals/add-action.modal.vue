@@ -113,16 +113,21 @@
                                 </v-select>
                             </td>
                             <td>
-                             <span>  <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
-                                        style="color: #000;"
-                                        title="Tick to schedule as:'As soon as possible'">
-                                    <label for="asap_check" class="asap_label">ASAP</label>
+                                <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
+                                   style="color: #000;"
+                                   title="Tick to schedule as:'As soon as possible'">
+                                    <span class="asap_label" style="font-weight: bold">ASAP</span>
+                                    <input v-model="action.data.asapChecked"
+                                           type="checkbox"
+                                           name="asap_check"
+                                           style=" float: right;margin-top: -14%;"
+                                           :disabled="action.disabled">
                                 </a>
-                                <input type="checkbox" id="asap_check" style=" float: right;margin-top: -14%;">
+
 
                                 <input class="form-control height-40" type="date" name="scheduled_date"
                                        v-model="action.data.date"
-                                       :disabled="action.disabled" required/> </span>
+                                       :disabled="action.disabled" required/>
                             </td>
                             <td>
                                 <input class="form-control height-40" type="time" name="window_start"
@@ -218,7 +223,8 @@
         endTime: '17:00',
         text: null,
         isManual: 0,
-        familyOverride: 0
+        familyOverride: 0,
+        asapChecked: 0
     };
 
     function getNewAction() {
@@ -595,6 +601,7 @@
                             window_end: data.endTime,
                             attempt_note: data.text,
                             is_manual: data.isManual,
+                            asap: data.asapChecked,
                             family_override: data.familyOverride
                         };
                     });
@@ -801,7 +808,7 @@
         table-layout: fixed;
         margin-left: -10px;
         border-collapse: separate;
-        border-spacing:0 16px;
+        border-spacing: 0 16px;
     }
 
     /* Table with a Practices column */
@@ -986,7 +993,7 @@
         display: inline-block;
     }
 
-    .asap_label{
+    .asap_label {
         margin-left: 58%;
         position: absolute;
         margin-top: -16%;
