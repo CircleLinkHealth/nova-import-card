@@ -8,13 +8,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class RemoveInvoiceIdTable extends Migration
+class AddJsonFieldToInsurancePolicy extends Migration
 {
     /**
      * Reverse the migrations.
      */
     public function down()
     {
+        Schema::table('insurance_logs', function (Blueprint $table) {
+        });
     }
 
     /**
@@ -22,11 +24,8 @@ class RemoveInvoiceIdTable extends Migration
      */
     public function up()
     {
-        Schema::table('disputes', function (Blueprint $table) {
-            if ( ! isUnitTestingEnv()) {
-                $table->dropForeign(['invoice_id']);
-            }
-            $table->dropColumn('invoice_id');
+        Schema::table('insurance_logs', function (Blueprint $table) {
+            $table->json('raw')->after('import')->nullable();
         });
     }
 }
