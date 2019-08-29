@@ -49,6 +49,6 @@ class CareplanRepository
 
             return $carePlans->first();
         }
-        throw new Exception('careplans with user_id "'.$userId.'" not found');
+        throw new \Exception('careplans with user_id "'.$userId.'" not found');
     }
 }

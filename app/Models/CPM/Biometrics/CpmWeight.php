@@ -61,7 +61,8 @@ class CpmWeight extends \CircleLinkHealth\Core\Entities\BaseModel implements Bio
 
     public function getUserValues(User $user)
     {
-        $biometric = $this->wherePatientId($user->id)->first();
+        $user->loadMissing('cpmWeight');
+        $biometric = $user->cpmWeight;
 
         return $biometric
             ? [

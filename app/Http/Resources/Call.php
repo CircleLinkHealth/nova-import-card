@@ -58,8 +58,8 @@ class Call extends Resource
             'is_manual'       => $this->is_manual,
             'sort_day'        => $this->sort_day ?? null,
 
-            'inbound_user'  => User::make($this->whenLoaded('inboundUser')),
-            'outbound_user' => User::make($this->whenLoaded('outboundUser')),
+            'inbound_user'  => UserResource::make($this->whenLoaded('inboundUser')),
+            'outbound_user' => UserResource::make($this->whenLoaded('outboundUser')),
             'note'          => Note::make($this->whenLoaded('note')),
         ];
     }

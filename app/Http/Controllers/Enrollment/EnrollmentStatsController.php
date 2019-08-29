@@ -140,7 +140,7 @@ class EnrollmentStatsController extends Controller
 
             $data[$ambassador->id]['name'] = User::find($ambassadorUser)->getFullName();
 
-            $data[$ambassador->id]['total_hours'] = secondsToHHMM($base->sum('total_time_in_system'));
+            $data[$ambassador->id]['total_hours'] = secondsToHMS($base->sum('total_time_in_system'));
 
             $data[$ambassador->id]['no_enrolled']         = $base->sum('no_enrolled');
             $data[$ambassador->id]['mins_per_enrollment'] = (0 != $base->sum('no_enrolled'))
@@ -200,12 +200,12 @@ class EnrollmentStatsController extends Controller
             $end   = Carbon::now()->endOfDay()->toDateTimeString();
         }
 
-        $practices = DB::table('enrollees')->distinct('practice_id')->pluck('practice_id');
+        $practices = DB::table('enrollees')->distinct('practice_id')->pluck('practice_id')->filter();
 
         $data = [];
 
         foreach ($practices as $practiceId) {
-            $practice = Practice::find($practiceId);
+            $practice = Practice::findOrFail($practiceId);
 
             $data[$practice->id]['name'] = $practice->display_name;
 
@@ -249,7 +249,7 @@ class EnrollmentStatsController extends Controller
                     ->where('last_attempt_at', '<=', $end)
                     ->sum('total_time_spent');
 
-            $data[$practice->id]['labor_hours'] = secondsToHHMM($total_time);
+            $data[$practice->id]['labor_hours'] = secondsToHMS($total_time);
 
             $enrollers = Enrollee::select(DB::raw('care_ambassador_user_id, sum(total_time_spent) as total'))
                 ->where('practice_id', $practice->id)
@@ -260,11 +260,14 @@ class EnrollmentStatsController extends Controller
             $data[$practice->id]['total_cost'] = 0;
 
             foreach ($enrollers as $enrollerId => $time) {
-                if ( ! $enrollerId) {
+                if (empty($enrollerId)) {
                     continue;
                 }
 
                 $enroller = CareAmbassador::where('user_id', $enrollerId)->first();
+                if ( ! $enroller) {
+                    continue;
+                }
                 $data[$practice->id]['total_cost'] += number_format($enroller->hourly_rate * $time / 3600, 2);
             }
 

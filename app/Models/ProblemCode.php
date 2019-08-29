@@ -52,6 +52,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ProblemCode extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use SoftDeletes;
+    const ICD10_CODE = '2.16.840.1.113883.6.3';
+
+    const ICD9_CODE   = '2.16.840.1.113883.6.103';
+    const SNOMED_CODE = '2.16.840.1.113883.6.96';
 
     public $fillable = [
         'problem_code_system_id',
@@ -60,27 +64,23 @@ class ProblemCode extends \CircleLinkHealth\Core\Entities\BaseModel
         'code_system_oid',
         'code',
     ];
-    public $ICD10_CODE = '2.16.840.1.113883.6.3';
-    public $ICD9_CODE  = '2.16.840.1.113883.6.103';
-
-    public $SNOMED_CODE = '2.16.840.1.113883.6.96';
 
     public function isIcd10()
     {
-        return '2.16.840.1.113883.6.3' == $this->code_system_oid
-            || str_contains(strtolower($this->code_system_name), ['10']);
+        return '2.16.840.1.113883.6.3'                                                                    == $this->code_system_oid
+            || str_contains(strtolower($this->code_system_name), ['10']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::ICD10_NAME];
     }
 
     public function isIcd9()
     {
-        return '2.16.840.1.113883.6.103' == $this->code_system_oid
-            || str_contains(strtolower($this->code_system_name), ['9']);
+        return '2.16.840.1.113883.6.103'                                                                 == $this->code_system_oid
+            || str_contains(strtolower($this->code_system_name), ['9']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::ICD9_NAME];
     }
 
     public function isSnomed()
     {
-        return '2.16.840.1.113883.6.96' == $this->code_system_oid
-            || str_contains(strtolower($this->code_system_name), ['snomed']);
+        return '2.16.840.1.113883.6.96'                                                                       == $this->code_system_oid
+            || str_contains(strtolower($this->code_system_name), ['snomed']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::SNOMED_NAME];
     }
 
     public function problem()
@@ -91,11 +91,14 @@ class ProblemCode extends \CircleLinkHealth\Core\Entities\BaseModel
     public function resolve()
     {
         if ($this->isSnomed()) {
-            $this->code_system_oid = $this->SNOMED_CODE;
+            $this->code_system_oid  = self::SNOMED_CODE;
+            $this->code_system_name = \App\Constants::SNOMED_NAME;
         } elseif ($this->isIcd9()) {
-            $this->code_system_oid = $this->ICD9_CODE;
+            $this->code_system_oid  = self::ICD9_CODE;
+            $this->code_system_name = \App\Constants::ICD9_NAME;
         } elseif ($this->isIcd10()) {
-            $this->code_system_oid = $this->ICD10_CODE;
+            $this->code_system_oid  = self::ICD10_CODE;
+            $this->code_system_name = \App\Constants::ICD10_NAME;
         }
 
         return $this;

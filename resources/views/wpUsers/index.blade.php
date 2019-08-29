@@ -209,7 +209,7 @@
                                     <option value="Changed Insurance">Changed Insurance</option>
                                     <option value="Dialysis / End-Stage Renal Disease">Dialysis / End-Stage Renal Disease</option>
                                     <option value="Expired">Expired</option>
-                                    <option value="Home Health Services">Home Health Services</option>
+                                    <option value="Patient in Hospice">Patient in Hospice</option>
                                     <option value="Other">Other</option>
                                 </select>
                             </div>

@@ -37,16 +37,18 @@ class EnrolleesController extends Controller
     {
         $ids = collect(explode(',', $request->input('enrollee_ids')))->map(function ($id) {
             return trim($id);
-        })->filter()->unique()->values()->all();
+        })->filter()->unique()->values();
 
-        ImportConsentedEnrollees::dispatch($ids)->onQueue('low');
+        $ids->each(function ($id) {
+            ImportConsentedEnrollees::dispatch([$id])->onQueue('low');
+        });
 
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 
         return [
             'message' => "A job has been scheduled. Imported CCDs should start showing up in ${url} in 5-10 minutes. Importing ".implode(
                 ',',
-                $ids
+                $ids->all()
             ),
             'type' => 'success',
         ];

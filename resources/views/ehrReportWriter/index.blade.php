@@ -2,12 +2,17 @@
 @section('content')
 
     <div class="container">
+        @if(auth()->user()->isAdmin())
+            <div class="col-md-12">
+                <a class="btn btn-info" href="{{route('admin.dashboard')}}">Return to Admin UI</a>
+            </div>
+        @endif
         <div class="col-md-12">
             <h3>Hi, {{auth()->user()->display_name}}!</h3>
             <p>This tool will ensure that the data is in the appropriate format to be ingested by CLH.</p>
         </div>
         <div class="col-md-12">
-            <a class="btn btn-info" href="{{optional(auth()->user()->ehrReportWriterInfo)->getFolderUrl()}}" target="_blank">Show Google Drive Folder</a>
+            <a class="btn btn-info" href="{{route('report-writer.google-drive')}}" target="_blank">Show Google Drive Folder</a>
         </div>
 
         <div class="col-md-12" style="margin: 15px">

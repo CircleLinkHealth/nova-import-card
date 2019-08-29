@@ -6,6 +6,7 @@
 
 namespace App;
 
+use App\Jobs\ProcessSinglePatientEligibility;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -193,7 +194,7 @@ class EligibilityBatch extends BaseModel
      */
     public function hasJobs(): bool
     {
-        return $this->eligibilityJobs()->count() > 0;
+        return $this->eligibilityJobs()->exists();
     }
 
     public function incrementDuplicateCount()
@@ -243,6 +244,37 @@ class EligibilityBatch extends BaseModel
     public function practice()
     {
         return $this->belongsTo(Practice::class);
+    }
+
+    public function processPendingJobs($pageSize = 100, $onQueue = 'low')
+    {
+        $this->eligibilityJobs()
+            ->where('status', '=', 0)
+            ->inRandomOrder()
+            ->take($pageSize)
+            ->get()
+            ->each(function ($job) use ($onQueue) {
+                ProcessSinglePatientEligibility::dispatch(
+                    $job,
+                    $this,
+                    $this->practice
+                          )->onQueue($onQueue);
+            });
+    }
+
+    public function shouldFilterInsurance()
+    {
+        return array_key_exists('filterLastEncounter', $this->options) ? (bool) $this->options['filterLastEncounter'] : false;
+    }
+
+    public function shouldFilterLastEncounter()
+    {
+        return array_key_exists('filterInsurance', $this->options) ? (bool) $this->options['filterInsurance'] : false;
+    }
+
+    public function shouldFilterProblems()
+    {
+        return array_key_exists('filterProblems', $this->options) ? (bool) $this->options['filterProblems'] : true;
     }
 
     /**

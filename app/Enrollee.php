@@ -6,7 +6,7 @@
 
 namespace App;
 
-use App\Facades\StringManipulation;
+use App\CLH\Helpers\StringManipulation;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
@@ -143,6 +143,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCareAmbassadorUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereEligibilityJobId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSoftRejectedCallback($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereRequestedCallback($value)
  */
 class Enrollee extends BaseModel
 {
@@ -305,7 +306,7 @@ class Enrollee extends BaseModel
      */
     public function getCellPhoneAttribute($cellPhone)
     {
-        return StringManipulation::formatPhoneNumber($cellPhone);
+        return (new StringManipulation())->formatPhoneNumber($cellPhone);
     }
 
     /**
@@ -315,7 +316,7 @@ class Enrollee extends BaseModel
      */
     public function getCellPhoneE164Attribute()
     {
-        return StringManipulation::formatPhoneNumberE164($this->cell_phone);
+        return (new StringManipulation())->formatPhoneNumberE164($this->cell_phone);
     }
 
     /**
@@ -327,7 +328,7 @@ class Enrollee extends BaseModel
      */
     public function getHomePhoneAttribute($homePhone)
     {
-        return StringManipulation::formatPhoneNumber($homePhone);
+        return (new StringManipulation())->formatPhoneNumber($homePhone);
     }
 
     /**
@@ -337,7 +338,7 @@ class Enrollee extends BaseModel
      */
     public function getHomePhoneE164Attribute()
     {
-        return StringManipulation::formatPhoneNumberE164($this->home_phone);
+        return (new StringManipulation())->formatPhoneNumberE164($this->home_phone);
     }
 
     public function getImportedMedicalRecord()
@@ -356,7 +357,7 @@ class Enrollee extends BaseModel
      */
     public function getOtherPhoneAttribute($otherPhone)
     {
-        return StringManipulation::formatPhoneNumber($otherPhone);
+        return (new StringManipulation())->formatPhoneNumber($otherPhone);
     }
 
     /**
@@ -366,7 +367,7 @@ class Enrollee extends BaseModel
      */
     public function getOtherPhoneE164Attribute()
     {
-        return StringManipulation::formatPhoneNumberE164($this->other_phone);
+        return (new StringManipulation())->formatPhoneNumberE164($this->other_phone);
     }
 
     public function getPracticeNameAttribute()
@@ -383,7 +384,7 @@ class Enrollee extends BaseModel
      */
     public function getPrimaryPhoneAttribute($primaryPhone)
     {
-        return StringManipulation::formatPhoneNumber($primaryPhone);
+        return (new StringManipulation())->formatPhoneNumber($primaryPhone);
     }
 
     /**
@@ -393,7 +394,7 @@ class Enrollee extends BaseModel
      */
     public function getPrimaryPhoneE164Attribute()
     {
-        return StringManipulation::formatPhoneNumberE164($this->primary_phone);
+        return (new StringManipulation())->formatPhoneNumberE164($this->primary_phone);
     }
 
     public function getProviderFullNameAttribute()
@@ -494,7 +495,7 @@ class Enrollee extends BaseModel
      */
     public function setCellPhoneAttribute($homePhone)
     {
-        $this->attributes['cell_phone'] = StringManipulation::formatPhoneNumberE164($homePhone);
+        $this->attributes['cell_phone'] = (new StringManipulation())->formatPhoneNumberE164($homePhone);
     }
 
     /**
@@ -516,7 +517,7 @@ class Enrollee extends BaseModel
      */
     public function setHomePhoneAttribute($homePhone)
     {
-        $this->attributes['home_phone'] = StringManipulation::formatPhoneNumberE164($homePhone);
+        $this->attributes['home_phone'] = (new StringManipulation())->formatPhoneNumberE164($homePhone);
     }
 
     /**
@@ -526,7 +527,7 @@ class Enrollee extends BaseModel
      */
     public function setOtherPhoneAttribute($homePhone)
     {
-        $this->attributes['other_phone'] = StringManipulation::formatPhoneNumberE164($homePhone);
+        $this->attributes['other_phone'] = (new StringManipulation())->formatPhoneNumberE164($homePhone);
     }
 
     /**
@@ -536,7 +537,7 @@ class Enrollee extends BaseModel
      */
     public function setPrimaryPhoneNumberAttribute($primaryPhone)
     {
-        $this->attributes['primary_phone'] = StringManipulation::formatPhoneNumber($primaryPhone);
+        $this->attributes['primary_phone'] = (new StringManipulation())->formatPhoneNumber($primaryPhone);
     }
 
     public function targetPatient()

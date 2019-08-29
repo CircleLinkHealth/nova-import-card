@@ -53,9 +53,6 @@
                                             #Called
                                         </th>
                                         <th>
-                                            Total Time for Range
-                                        </th>
-                                        <th>
                                             Calls/Hour
                                         </th>
                                         <th>
@@ -114,7 +111,6 @@
                         {data: 'total_hours', name: 'total_hours'},
                         {data: 'no_enrolled', name: 'no_enrolled'},
                         {data: 'total_calls', name: 'total_calls'},
-                        {data: 'total_hours', name: 'total_hours'},
                         {data: 'calls_per_hour', name: 'calls_per_hour'},
                         {data: 'mins_per_enrollment', name: 'mins_per_enrollment'},
                         {data: 'conversion', name: 'conversion'},

@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Enrollment;
 use App\CareAmbassadorLog;
 use App\Enrollee;
 use App\Http\Controllers\Controller;
+use App\TrixField;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -141,6 +142,8 @@ class EnrollmentCenterController extends Controller
             [
                 'enrollee' => $enrollee,
                 'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
+                'script'   => TrixField::careAmbassador($enrollee->lang)->first(),
+                'provider' => $enrollee->provider,
             ]
         );
     }

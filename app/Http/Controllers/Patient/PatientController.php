@@ -19,12 +19,10 @@ use Illuminate\Support\Facades\Auth;
 class PatientController extends Controller
 {
     private $formatter;
-    private $pdfService;
 
-    public function __construct(ReportFormatter $formatter, PdfService $pdfService)
+    public function __construct(ReportFormatter $formatter)
     {
-        $this->formatter  = $formatter;
-        $this->pdfService = $pdfService;
+        $this->formatter = $formatter;
     }
 
     public function patientAjaxSearch(Request $request)
@@ -155,6 +153,7 @@ class PatientController extends Controller
         $patientsPendingApproval        = [];
         $showPatientsPendingApprovalBox = false;
 
+        /** @var User $user */
         $user = auth()->user();
 
         if ($user->isCareCoach() && $user->nurseInfo) {
@@ -215,12 +214,12 @@ class PatientController extends Controller
         return view('wpUsers.patient.listing');
     }
 
-    public function showPatientListingPdf()
+    public function showPatientListingPdf(PdfService $pdfService)
     {
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');
         $fileName         = $storageDirectory.$datetimePrefix.'-patient-list.pdf';
-        $file             = $this->pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
+        $file             = $pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
             'patients' => $this->formatter->patients(),
         ], null, [
             'orientation'  => 'Landscape',

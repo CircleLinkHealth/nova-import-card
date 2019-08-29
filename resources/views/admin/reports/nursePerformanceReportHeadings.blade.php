@@ -13,6 +13,7 @@
         <th>Projected Hrs. Left In Month</th>
         <th>Hrs Committed Rest of Month</th>
         <th>Hrs Deficit or Surplus</th>
+        <th>Case Load</th>
         <th>% Case Load Complete</th>
 </tr>
 

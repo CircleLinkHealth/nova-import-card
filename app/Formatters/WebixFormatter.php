@@ -7,16 +7,14 @@
 namespace App\Formatters;
 
 use App\Contracts\ReportFormatter;
-use App\Models\CCD\Allergy;
-use App\Models\CCD\Medication;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
 use App\Note;
 use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
 use App\Services\ReportsService;
+use App\ValueObjects\PatientCareplanRelations;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Appointment;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
@@ -222,24 +220,21 @@ class WebixFormatter implements ReportFormatter
         return $formatted_notes;
     }
 
-    public function formatDataForViewPrintCareplanReport($users)
+    public function formatDataForViewPrintCareplanReport($user)
     {
         $careplanReport    = [];
-        $cpmProblemService = (new \App\Services\CPM\CpmProblemService(
-            new \App\Repositories\CpmProblemRepository(app()),
-            new \App\Repositories\UserRepositoryEloquent(app())
-        ));
+        $cpmProblemService = app(\App\Services\CPM\CpmProblemService::class);
 
-        foreach ($users as $user) {
-            $careplanReport[$user->id] = [
-                'symptoms'    => $user->cpmSymptoms()->get()->pluck('name')->all(),
-                'problem'     => $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all(),
-                'problems'    => $cpmProblemService->getProblemsWithInstructionsForUser($user),
-                'lifestyle'   => $user->cpmLifestyles()->get()->pluck('name')->all(),
-                'biometrics'  => $user->cpmBiometrics()->get()->pluck('name')->all(),
-                'medications' => $user->cpmMedicationGroups()->get()->pluck('name')->all(),
-            ];
-        }
+        $user->loadMissing(PatientCareplanRelations::get());
+
+        $careplanReport[$user->id] = [
+            'symptoms'    => $user->cpmSymptoms->pluck('name')->all(),
+            'problem'     => $user->cpmProblems->sortBy('name')->pluck('name')->all(),
+            'problems'    => $cpmProblemService->getProblemsWithInstructionsForUser($user),
+            'lifestyle'   => $user->cpmLifestyles->pluck('name')->all(),
+            'biometrics'  => $user->cpmBiometrics->pluck('name')->all(),
+            'medications' => $user->cpmMedicationGroups->pluck('name')->all(),
+        ];
 
         $other_problems = (new ReportsService())->getInstructionsforOtherProblems($user);
 
@@ -343,42 +338,20 @@ class WebixFormatter implements ReportFormatter
                 $metric
                 );
             $careplanReport[$user->id]['bio_data'][$metric]['verb'] = $biometric_values['verb'];
-        }//dd($careplanReport[$user->id]['bio_data']);
-
-        array_reverse($careplanReport[$user->id]['bio_data']);
+        }
 
         //Medications List
-        $careplanReport[$user->id]['taking_meds'] = 'No instructions at this time';
-        $medicationList                           = $user->cpmMiscs->where('name', CpmMisc::MEDICATION_LIST)->all();
-        if ( ! empty($medicationList)) {
-            $meds = Medication::where('patient_id', '=', $user->id)->orderBy('name')->get();
-            if ($meds->count() > 0) {
-                $i                                        = 0;
-                $careplanReport[$user->id]['taking_meds'] = [];
-                foreach ($meds as $med) {
-                    empty($med->name)
-                        ? $medText = ''
-                        : $medText = ''.$med->name;
-
-                    if ( ! empty($med->sig)) {
-                        $medText .= '<br /><span style="font-style:italic;">- '.$med->sig.'</span>';
-                    }
-                    $careplanReport[$user->id]['taking_meds'][] = $medText;
-                    ++$i;
-                }
-            }
-        }
+        $careplanReport[$user->id]['taking_meds'] = $this->sectionTakingMeds($user->ccdMedications);
 
         //Allergies
         $careplanReport[$user->id]['allergies'] = 'No instructions at this time';
 
-        $allergies = Allergy::where('patient_id', '=', $user->id)
-            ->orderBy('allergen_name')
-            ->get()
+        $allergies = $user->ccdAllergies
+            ->sortBy('allergen_name')
             ->unique('allergen_name')
             ->values();
 
-        if ($allergies->count() > 0) {
+        if ($allergies->isNotEmpty()) {
             $careplanReport[$user->id]['allergies'] = '';
             $i                                      = 0;
             foreach ($allergies as $allergy) {
@@ -393,9 +366,11 @@ class WebixFormatter implements ReportFormatter
             }
         }
 
+        $miscService = app(CpmMiscService::class);
+
         //Social Services
-        if ($user->cpmMiscs->where('name', CpmMisc::SOCIAL_SERVICES)->first()) {
-            $careplanReport[$user->id]['social'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
+        if ($user->cpmMiscUserPivot->where('cpmMisc.name', CpmMisc::SOCIAL_SERVICES)->first()) {
+            $careplanReport[$user->id]['social'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::SOCIAL_SERVICES
             );
@@ -404,8 +379,8 @@ class WebixFormatter implements ReportFormatter
         }
 
         //Other
-        if ($user->cpmMiscs->where('name', CpmMisc::OTHER)->first()) {
-            $careplanReport[$user->id]['other'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
+        if ($user->cpmMiscUserPivot->where('cpmMisc.name', CpmMisc::OTHER)->first()) {
+            $careplanReport[$user->id]['other'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::OTHER
             );
@@ -417,14 +392,13 @@ class WebixFormatter implements ReportFormatter
 
         //Appointments
         //Upcoming
-        $upcoming = Appointment
-            ::wherePatientId($user->id)
-                ->where('date', '>', Carbon::now()->toDateString())
-                ->orderBy('date')
-                ->take(3)->get();
+        $upcoming = $user->appointments
+            ->where('date', '>', Carbon::now()->toDateString())
+            ->sortBy('date')
+            ->take(3);
 
         foreach ($upcoming as $appt) {
-            $provider = User::find($appt->provider_id);
+            $provider = $appt->provider;
 
             $phone     = null;
             $specialty = null;
@@ -462,14 +436,13 @@ class WebixFormatter implements ReportFormatter
         }
 
         //past
-        $past = Appointment
-            ::wherePatientId($user->id)
-                ->where('date', '<', Carbon::now()->toDateString())
-                ->orderBy('date', 'desc')
-                ->take(3)->get();
+        $past = $user->appointments
+            ->where('date', '<', Carbon::now()->toDateString())
+            ->sortByDesc('date')
+            ->take(3);
 
         foreach ($past as $appt) {
-            $provider = User::find($appt->provider_id);
+            $provider = $appt->provider;
 
             if ( ! $provider) {
                 continue;
@@ -510,7 +483,6 @@ class WebixFormatter implements ReportFormatter
             $careplanReport[$user->id]['appointments']['past'] = $formattedPastAppointment;
         }
 
-//        array_reverse($biometrics)
         return $careplanReport;
     }
 
@@ -682,5 +654,21 @@ class WebixFormatter implements ReportFormatter
         }
 
         return $patientData;
+    }
+
+    private function sectionTakingMeds(iterable $medications)
+    {
+        foreach ($medications as $med) {
+            $medText = empty($med->name)
+                ? ''
+                : $med->name;
+
+            if ( ! empty($med->sig)) {
+                $medText .= '<br /><span style="font-style:italic;">- '.$med->sig.'</span>';
+            }
+            $result[] = $medText;
+        }
+
+        return $result ?? 'No instructions at this time';
     }
 }

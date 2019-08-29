@@ -57,6 +57,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereIsBehavioral($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereWeight($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem withIcd10Codes()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem withLatestCpmInstruction()
  */
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -157,6 +159,20 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     public function problemImports()
     {
         return $this->hasMany(ProblemImport::class);
+    }
+
+    public function scopeWithIcd10Codes($builder)
+    {
+        return $builder->with(['snomedMaps' => function ($q) {
+            return $q->whereNotNull('icd_10_name')->where('icd_10_name', '!=', '')->distinct('icd_10_name')->groupBy('icd_10_name');
+        }]);
+    }
+
+    public function scopeWithLatestCpmInstruction($builder)
+    {
+        return $builder->with(['cpmInstructions' => function ($q) {
+            return $q->latest();
+        }]);
     }
 
     public function snomedMaps()

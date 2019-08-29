@@ -16,6 +16,8 @@ use Sparclex\NovaImportCard\NovaImportCard;
 
 class NBIPatientData extends Resource
 {
+    public static $group = \App\Constants::NOVA_GROUP_NBI;
+
     public static $importer = NBIPatientDataImporter::class;
 
     /**
@@ -125,7 +127,7 @@ class NBIPatientData extends Resource
      */
     public static function label()
     {
-        return 'NBI Supplemental Data';
+        return 'Supplemental Data';
     }
 
     /**

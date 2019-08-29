@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CPM\CpmMisc;
 use App\Services\CPM\CpmMiscService;
 
 class MiscController extends Controller
@@ -25,7 +26,7 @@ class MiscController extends Controller
      */
     public function index()
     {
-        return response()->json($this->miscService->repo()->misc());
+        return response()->json(CpmMisc::get());
     }
 
     public function patients($id)
@@ -35,7 +36,7 @@ class MiscController extends Controller
 
     public function show($id)
     {
-        return response()->json($this->miscService->repo()->misc($id));
+        return response()->json(CpmMisc::find($id));
     }
 
     public function test()

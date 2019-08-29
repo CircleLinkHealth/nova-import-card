@@ -8,11 +8,11 @@ namespace App\Http;
 
 use App\Http\Middleware\ACL\ProviderDashboardACL;
 use App\Http\Middleware\AddResponseOriginal;
-use App\Http\Middleware\AprimaCcdApiAuthAdapter;
 use App\Http\Middleware\CheckCarePlanMode;
 use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\CheckOnboardingInvite;
 use App\Http\Middleware\CheckWebSocketServer;
+use App\Http\Middleware\DummyPlaceholder;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\LogoutIfAccessDisabled;
 use App\Http\Middleware\PatientProgramSecurity;
@@ -34,8 +34,6 @@ use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
 use Michalisantoniou6\Cerberus\Middleware\CerberusAbility;
 use Michalisantoniou6\Cerberus\Middleware\CerberusPermission;
 use Michalisantoniou6\Cerberus\Middleware\CerberusRole;
-use Spatie\ResponseCache\Middlewares\CacheResponse;
-use Spatie\ResponseCache\Middlewares\DoNotCacheResponse;
 
 class Kernel extends HttpKernel
 {
@@ -93,16 +91,15 @@ class Kernel extends HttpKernel
         'throttle'   => ThrottleRequests::class,
 
         //CLH Middleware
-        'ability'                    => CerberusAbility::class,
-        'aprima.ccdapi.auth.adapter' => AprimaCcdApiAuthAdapter::class,
-        'permission'                 => CerberusPermission::class,
-        'patientProgramSecurity'     => PatientProgramSecurity::class,
-        'checkWebSocketServer'       => CheckWebSocketServer::class,
-        'providerDashboardACL'       => ProviderDashboardACL::class,
-        'role'                       => CerberusRole::class,
-        'verify.invite'              => CheckOnboardingInvite::class,
-        'check.careplan.mode'        => CheckCarePlanMode::class,
-        'doNotCacheResponse'         => DoNotCacheResponse::class,
-        'cacheResponse'              => CacheResponse::class,
+        'ability'                => CerberusAbility::class,
+        'permission'             => CerberusPermission::class,
+        'patientProgramSecurity' => PatientProgramSecurity::class,
+        'checkWebSocketServer'   => CheckWebSocketServer::class,
+        'providerDashboardACL'   => ProviderDashboardACL::class,
+        'role'                   => CerberusRole::class,
+        'verify.invite'          => CheckOnboardingInvite::class,
+        'check.careplan.mode'    => CheckCarePlanMode::class,
+        'doNotCacheResponse'     => DummyPlaceholder::class,
+        'cacheResponse'          => DummyPlaceholder::class,
     ];
 }

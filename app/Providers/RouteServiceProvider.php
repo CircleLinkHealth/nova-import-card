@@ -33,7 +33,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map()
     {
-        $this->mapApiRoutes();
+        //No need to load since we don't use
+        //add routes/api.php file if enabling
+//        $this->mapApiRoutes();
 
         $this->mapWebRoutes();
     }

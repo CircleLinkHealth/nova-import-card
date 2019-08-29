@@ -7,7 +7,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
@@ -20,23 +22,23 @@ class PatientCareDocumentsController extends Controller
 
     public function downloadCareDocument($id, $mediaId)
     {
-        $mediaItem = Media::where('collection_name', 'patient-care-documents')
-            ->where('model_id', $id)
-            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
-            ->find($mediaId);
+        $mediaItem = $this->getMediaItemById($id, $mediaId);
 
         if ( ! $mediaItem) {
             throw new \Exception('Media for Patient does not exist.', 500);
         }
 
-        return response($mediaItem->getFile(), 200, [
-            'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$mediaItem->name.'"',
-        ]);
+        return $this->downloadMedia($mediaItem);
     }
 
     public function getCareDocuments(Request $request, $patientId, $showPast = false)
     {
+        $patientAWVStatuses = PatientAWVSurveyInstanceStatus::where('patient_id', $patientId)
+            ->when( ! $showPast, function ($query) {
+                $query->where('year', Carbon::now()->year);
+            })
+            ->get();
+
         $files = Media::where('collection_name', 'patient-care-documents')
             ->where('model_id', $patientId)
             ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
@@ -57,7 +59,10 @@ class PatientCareDocumentsController extends Controller
                 });
             });
 
-        return response()->json($files->toArray());
+        return response()->json([
+            'files'              => $files->toArray(),
+            'patientAWVStatuses' => $patientAWVStatuses->toArray(),
+        ]);
     }
 
     public function sendAssessmentLink()
@@ -88,5 +93,27 @@ class PatientCareDocumentsController extends Controller
         }
 
         return response()->json([]);
+    }
+
+    public function viewCareDocument($id, $mediaId)
+    {
+        $mediaItem = $this->getMediaItemById($id, $mediaId);
+
+        if ( ! $mediaItem) {
+            throw new \Exception('Media for Patient does not exist.', 500);
+        }
+
+        return response($mediaItem->getFile(), 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$mediaItem->name.'"',
+        ]);
+    }
+
+    private function getMediaItemById($modelId, $mediaId)
+    {
+        return Media::where('collection_name', 'patient-care-documents')
+            ->where('model_id', $modelId)
+            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->find($mediaId);
     }
 }

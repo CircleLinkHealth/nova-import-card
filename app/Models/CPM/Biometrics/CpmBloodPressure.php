@@ -90,7 +90,8 @@ class CpmBloodPressure extends \CircleLinkHealth\Core\Entities\BaseModel impleme
 
     public function getUserValues(User $user)
     {
-        $biometric = $this->wherePatientId($user->id)->first();
+        $user->loadMissing('cpmBloodPressure');
+        $biometric = $user->cpmBloodPressure;
 
         return $biometric
             ? [

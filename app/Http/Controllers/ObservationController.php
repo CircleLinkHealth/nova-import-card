@@ -120,26 +120,10 @@ class ObservationController extends Controller
     {
         $observationService = new ObservationService();
         $msgCPRules         = new MsgCPRules();
-        if ('mobi' == $request->header('Client')) {
-            // get and validate current user
-            \JWTAuth::setIdentifier('id');
-            $wpUser = \JWTAuth::parseToken()->authenticate();
-            if ( ! $wpUser) {
-                return response()->json(['error' => 'invalid_credentials'], 401);
-            }
-            $params                  = $request->input();
-            $params['user_id']       = $wpUser->id;
-            $params['source']        = 'manual_input';
-            $params['isStartingObs'] = 'N';
-        } else {
-            if ('ui' == $request->header('Client')) { // WP Site
-                $input = json_decode(Crypt::decrypt($request->input('data')), true);
-            } else {
-                $input = $request->all();
-            }
-        }
 
-        if (( ! $request->header('Client')) || 'ui' == $request->header('Client')) {
+        $input = $request->all();
+
+        if (( ! $request->header('Client'))) {
             $wpUser = User::find($input['userId']);
             if ( ! $wpUser) {
                 return response()->json(['error' => 'invalid_credentials'], 401);

@@ -13,6 +13,7 @@ use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Raygun\PsrLogger\RaygunLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -144,6 +145,13 @@ class CallController extends Controller
         ]);
 
         if ($validation->fails()) {
+            /** @var RaygunLogger $raygunLogger */
+            $raygunLogger = app('raygun.logger');
+            if ($raygunLogger) {
+                //request will be sent to raygun
+                $raygunLogger->error('Could not schedule call for patient');
+            }
+
             return redirect()
                 ->route('patient.note.index', [
                     'patientId' => $patientId,

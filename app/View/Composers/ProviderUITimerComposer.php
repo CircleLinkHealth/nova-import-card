@@ -69,7 +69,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 $monthlyBhiTime = $patient->formattedTime($bhi_time);
 
                 //also, do NOT show BHI switch if user's primary practice is not being charged for CPT 99484
-                $noBhiSwitch = $noBhiSwitch || ! optional($patient->primaryPractice()->first())->hasServiceCode('CPT 99484');
+                $noBhiSwitch = $noBhiSwitch || ! optional($patient->primaryPractice)->hasServiceCode('CPT 99484');
             } elseif (isset($patient) || ! empty($patient) && is_a($patient, Patient::class)) {
                 $patientId = $patient->user_id;
                 $patientProgramId = $patient->user->program_id;
@@ -78,7 +78,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 $monthlyTime = $patient->user->formattedTime($ccm_time);
                 $monthlyBhiTime = $patient->user->formattedTime($bhi_time);
                 //also, do NOT show BHI switch if user's primary practice is not being charged for CPT 99484
-                $noBhiSwitch = $noBhiSwitch || ! optional($patient->user->primaryPractice()->first())->hasServiceCode('CPT 99484');
+                $noBhiSwitch = $noBhiSwitch || ! optional($patient->user->primaryPractice)->hasServiceCode('CPT 99484');
             } else {
                 $monthlyTime = '';
                 $monthlyBhiTime = '';

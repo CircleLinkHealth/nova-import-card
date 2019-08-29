@@ -37,6 +37,11 @@ fi
 # laravel needs these to run, and git does not clone empty folders
 mkdir -p $RELEASE/storage/framework/{framework,sessions,views,cache}
 
+# Fetch sensitive keys from secure S3
+php .deploybot/FetchKeysFromS3.php
+
+composer dump-autoload --no-dev --classmap-authoritative --no-scripts
+
 # Run migrations
 php artisan migrate --force
 

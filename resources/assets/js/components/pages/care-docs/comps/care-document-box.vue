@@ -5,23 +5,33 @@
         </div>
         <div class="panel-body">
             <div class="col-md-12  panel-section" style="margin-top: 20px">
+                <div v-if="doc" class="">
+                    <button class="btn btn-success  col-md-6 btn-m">Available</button>
+                </div>
+                <div class="" v-else>
+                    <button class="btn col-md-6 btn-default btn-m">Unavailable</button></div>
                 <div class="col-md-6">
+                    <a  v-bind:class="{'isDisabled': !doc}" style="float: right" :href="viewApi()" target="_blank">View</a>
+                </div>
+            </div>
+            <div>
+                <div class="col-md-6" style="margin-top: 5px">
                     {{this.docDate}}
                 </div>
-                <div class="col-md-6">
-                    <a style="float: right" :href="viewApi()" target="_blank">View</a>
-                </div>
             </div>
-            <div class="col-md-12  panel-section"  style="margin-top: 40px">
-                <p><strong>Send Assessment Link to Provider via:</strong></p>
+            <div class="col-md-12  panel-section"  style="margin-top: 15px">
+                <p><strong>Send document via:</strong></p>
             </div>
             <div class="col-md-12  panel-section">
-                <button class="col-md-6 btn btn-method btn-s">
-                    SMS
+                <button class="col-md-6 btn btn-method btn-s" v-bind:class="{'isDisabled': !doc}">
+                    DIRECT Msg
                 </button>
-                <button class="col-md-6 btn btn-method btn-s">
-                    Email
+                <button class="col-md-6 btn btn-method btn-s" v-bind:class="{'isDisabled': !doc}">
+                    Secure Link
                 </button>
+            </div>
+            <div class="col-md-12 panel-section">
+                <a  v-bind:class="{'isDisabled': !doc}" :href="downloadApi()">Download</a>
             </div>
         </div>
     </div>
@@ -39,11 +49,14 @@
             },
             doc: {
                 type: Object,
-                required: true
+                required: false
             }
         },
         computed: {
             docDate () {
+                if (! this.doc){
+                    return null;
+                }
                 var date = new Date (this.doc.created_at);
                 var year = date.getFullYear();
                 var month = (1 + date.getMonth()).toString();
@@ -55,6 +68,18 @@
         },
         methods: {
             viewApi() {
+                if (! this.doc){
+                    return null;
+                }
+                const query = {
+                    file: this.doc
+                };
+                return rootUrl('/view-care-document/' + this.$parent.patient.id + '/' + this.doc.id);
+            },
+            downloadApi() {
+                if (! this.doc){
+                    return null;
+                }
                 const query = {
                     file: this.doc
                 };
@@ -77,6 +102,7 @@
         background-color: #5cc0dd;
         border-color:  #5cc0dd;
         font-family: Roboto;
+        padding-left: 20px;
     }
 
 
@@ -100,5 +126,12 @@
         width: 100px;
         max-height: 30px;
         margin: 2px;
+    }
+
+    .isDisabled {
+        color: currentColor;
+        cursor: not-allowed;
+        opacity: 0.5;
+        text-decoration: none;
     }
 </style>

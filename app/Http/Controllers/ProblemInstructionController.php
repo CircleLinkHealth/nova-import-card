@@ -193,11 +193,6 @@ class ProblemInstructionController extends Controller
         }
     }
 
-    public function search($term)
-    {
-        return $this->error('not implemented yet');
-    }
-
     /** creates a cpm-instruction */
     public function store(Request $request)
     {

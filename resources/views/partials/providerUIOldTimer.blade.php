@@ -22,7 +22,6 @@
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
 <?php
-use Carbon\Carbon;
 
 if ( ! isset($activity)) {
     $activity = 'Undefined';
@@ -123,7 +122,7 @@ if (isset($patient) && ! empty($patient) && is_a($patient, \CircleLinkHealth\Cus
                         "providerId": '<?php echo Auth::user()->id; ?>',
                         "totalTime": Math.ceil(totalTime / 1000),
                         "programId": '<?php echo $patientProgramId; ?>',
-                        "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>',
+                        "startTime": '<?php echo \Carbon\Carbon::now()->subSeconds(8)->toDateTimeString(); ?>',
                         "urlFull": '<?php echo Request::url(); ?>',
                         "urlShort": '<?php echo $urlShort; ?>',
                         "ipAddr": '<?php echo $ipAddr; ?>',
@@ -137,7 +136,7 @@ if (isset($patient) && ! empty($patient) && is_a($patient, \CircleLinkHealth\Cus
                                 "duration": Math.ceil(totalTime / 1000),
                                 "url": '<?php echo Request::url(); ?>',
                                 "url_short": '<?php echo $urlShort; ?>',
-                                "start_time": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>'
+                                "start_time": '<?php echo \Carbon\Carbon::now()->subSeconds(8)->toDateTimeString(); ?>'
                             }
                         ]
                     };

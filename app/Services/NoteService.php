@@ -17,7 +17,6 @@ use App\View\MetaTag;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
-use Exception;
 use Illuminate\Support\Facades\URL;
 
 class NoteService
@@ -40,10 +39,10 @@ class NoteService
     {
         if ($userId && $authorId && ($body || 'Biometrics' == $type)) {
             if ( ! $this->userRepo->exists($userId)) {
-                throw new Exception('user with id "'.$userId.'" does not exist');
+                throw new \Exception('user with id "'.$userId.'" does not exist');
             }
             if ('Biometrics' != $type && ! $this->userRepo->exists($authorId)) {
-                throw new Exception('user with id "'.$authorId.'" does not exist');
+                throw new \Exception('user with id "'.$authorId.'" does not exist');
             }
             if ('Biometrics' != $type) {
                 $note                       = new Note();
@@ -63,7 +62,7 @@ class NoteService
                 $body
             ));
         }
-        throw new Exception('invalid parameters');
+        throw new \Exception('invalid parameters');
     }
 
     public function createAssessmentNote(CareplanAssessment $assessment)
@@ -141,14 +140,14 @@ class NoteService
     ) {
         if ( ! $type) {
             if ( ! $id) {
-                throw new Exception('$id is required');
+                throw new \Exception('$id is required');
             }
             $note = Note::find($id);
             if ($note->patient_id != $userId) {
-                throw new Exception('Note with id "'.$id.'" does not belong to patient with id "'.$userId.'"');
+                throw new \Exception('Note with id "'.$id.'" does not belong to patient with id "'.$userId.'"');
             }
             if ($note->author_id != $authorId) {
-                throw new Exception('Attempt to edit note blocked because note does not belong to author');
+                throw new \Exception('Attempt to edit note blocked because note does not belong to author');
             }
             $note                       = new Note();
             $note->id                   = $id;
@@ -368,14 +367,7 @@ class NoteService
             ->get()
             ->markAsRead();
     }
-
-    public function patientBiometricNotes($userId)
-    {
-        $assessments = $this->assessmentRepo->assessments($userId)->where('key_treatment', '!=', 'null');
-
-        return $assessments->map([$this, 'createNoteFromAssessment']);
-    }
-
+    
     public function patientNotes($userId, NoteFilters $filters)
     {
         return $this->noteRepo->patientNotes($userId, $filters);

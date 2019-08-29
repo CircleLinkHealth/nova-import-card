@@ -6,6 +6,7 @@
 
 namespace App\Nova;
 
+use App\Constants;
 use App\Enrollee;
 use App\Nova\Importers\EnroleeData as EnroleeDataImporter;
 use Illuminate\Http\Request;
@@ -17,6 +18,13 @@ use Sparclex\NovaImportCard\NovaImportCard;
 
 class EnroleeData extends Resource
 {
+    /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = Constants::NOVA_GROUP_ENROLLMENT;
+
     public static $importer = EnroleeDataImporter::class;
 
     /**
@@ -143,7 +151,7 @@ class EnroleeData extends Resource
      */
     public static function label()
     {
-        return 'Patients To Enroll';
+        return 'Patients To Enroll - Create';
     }
 
     /**

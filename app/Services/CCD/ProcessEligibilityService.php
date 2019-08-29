@@ -97,7 +97,7 @@ class ProcessEligibilityService
             $patientListCsvFilePath,
             function ($row) use ($batch) {
                 $csvPatientList = new CsvPatientList(collect([$row]));
-                $isValid = $csvPatientList->guessValidator();
+                $isValid = $csvPatientList->guessValidatorAndValidate();
 
                 if ( ! $isValid) {
                     return [
@@ -627,8 +627,8 @@ class ProcessEligibilityService
             $stream = $driveHandler
                 ->getFileStream($driveFileName, $driveFolder);
         } catch (\Exception $e) {
-            \Log::debug("EXCEPTION `{$e->getMessage()}`");
-            $batch->status = 2;
+            \Log::info("EXCEPTION `{$e->getMessage()}`");
+            $batch->status = EligibilityBatch::STATUSES['error'];
             $batch->save();
 
             return null;
@@ -645,7 +645,7 @@ class ProcessEligibilityService
         }
 
         try {
-            \Log::debug("BEGIN creating eligibility jobs from json file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
+            \Log::info("BEGIN creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
 
             $iterator = read_file_using_generator($pathToFile);
 
@@ -664,7 +664,24 @@ class ProcessEligibilityService
                 }
                 $row = [];
                 foreach (str_getcsv($iteration) as $key => $field) {
-                    $row[$headers[$key]] = $field;
+                    try {
+                        if (array_key_exists($key, $headers)) {
+                            $headerName = $headers[$key];
+                        }
+
+                        if (isset($headerName)) {
+                            $row[$headerName] = $field;
+                        }
+                    } catch (\Exception $exception) {
+                        //This may generate lots of logs.
+                        //Saving it for when we deploy lognda @todo
+//                        \Log::channel('logdna')->error($exception->getMessage(), [
+//                            'trace' => $exception->getTrace(),
+//                            'batch_id_tag' => "batch_id:$batch->id",
+//                        ]);
+
+                        continue;
+                    }
                 }
                 $row    = array_filter($row);
                 $data[] = $row;
@@ -699,15 +716,15 @@ class ProcessEligibilityService
                 $patient['eligibility_job_id'] = $job->id;
             }
 
-            \Log::debug("FINISH creating eligibility jobs from json file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
+            \Log::info("FINISH creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
 
             $mem = format_bytes(memory_get_peak_usage());
 
-            \Log::debug("BEGIN deleting `${fileName}`");
+            \Log::info("BEGIN deleting `${fileName}`");
             $deleted = $localDisk->delete($fileName);
-            \Log::debug("FINISH deleting `${fileName}`");
+            \Log::info("FINISH deleting `${fileName}`");
 
-            \Log::debug("memory_get_peak_usage: ${mem}");
+            \Log::info("memory_get_peak_usage: ${mem}");
 
             $options                        = $batch->options;
             $options['patientList']         = $data->toArray();
@@ -722,11 +739,11 @@ class ProcessEligibilityService
 
             return $patientList;
         } catch (\Exception $e) {
-            \Log::debug("EXCEPTION `{$e->getMessage()}`");
+            \Log::info("EXCEPTION `{$e->getMessage()}`");
 
-            \Log::debug("BEGIN deleting `${fileName}`");
+            \Log::info("BEGIN deleting `${fileName}`");
             $deleted = $localDisk->delete($fileName);
-            \Log::debug("FINISH deleting `${fileName}`");
+            \Log::info("FINISH deleting `${fileName}`");
 
             throw $e;
         }

@@ -13,6 +13,7 @@ use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Rules\HasAtLeast2CcmOr1BhiProblems;
+use App\Rules\HasValidNbiMrn;
 use App\Services\CareplanService;
 use App\Services\PdfService;
 use App\Traits\PdfReportTrait;
@@ -318,7 +319,7 @@ class CarePlan extends BaseModel implements PdfReport
         $reportFormatter = app(ReportFormatter::class);
         $careplanService = app(CareplanService::class);
 
-        $careplan = $reportFormatter->formatDataForViewPrintCareplanReport([$this->patient]);
+        $careplan = $reportFormatter->formatDataForViewPrintCareplanReport($this->patient);
         $careplan = $careplan[$this->patient->id];
 
         if (empty($careplan)) {
@@ -378,7 +379,7 @@ class CarePlan extends BaseModel implements PdfReport
                 'conditions'      => [new HasAtLeast2CcmOr1BhiProblems()],
                 'phoneNumber'     => 'required|phone:AUTO,US',
                 'dob'             => 'required|date',
-                'mrn'             => 'required',
+                'mrn'             => ['required', new HasValidNbiMrn($patient)],
                 'name'            => 'required',
                 'billingProvider' => 'required|numeric',
             ]

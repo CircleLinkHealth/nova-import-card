@@ -10,12 +10,14 @@ use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
+use App\Notifications\NBISupplementaryDataNotFound;
 use App\Notifications\NoteForwarded;
 use App\Notifications\ResetPassword;
 use App\Notifications\WeeklyPracticeReport;
 use App\Notifications\WeeklyProviderReport;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Notifications\Channels\DatabaseChannel;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\SetupTestCustomerTrait;
@@ -24,8 +26,7 @@ use Tests\TestCase;
 class NotificationsTest extends TestCase
 {
     use CarePlanHelpers;
-    use
-        SetupTestCustomerTrait;
+    use SetupTestCustomerTrait;
 
     protected $channels;
 
@@ -172,6 +173,16 @@ class NotificationsTest extends TestCase
         Notification::assertSentTo(
             [$this->provider],
             WeeklyProviderReport::class
+        );
+
+        $newUser = (new User())->forceFill([
+            'name'  => 'Test User',
+            'email' => 'email@example.com',
+        ]);
+        $newUser->notify(new NBISupplementaryDataNotFound($this->patient));
+        Notification::assertSentTo(
+            [$newUser],
+            NBISupplementaryDataNotFound::class
         );
     }
 }

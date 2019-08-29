@@ -310,17 +310,21 @@ class Calls
      * Get all department ids for a practice.
      *
      * @param $practiceId
+     * @param bool $showAllDepartments
+     *
+     * @throws \Exception
      *
      * @return mixed
      */
-    public function getDepartmentIds($practiceId)
+    public function getDepartmentIds($practiceId, $showAllDepartments = true)
     {
         $this->initApiConnection();
 
         $this->api->setPracticeId($practiceId);
 
         $response = $this->api->GET('departments', [
-            'practiceid' => $practiceId,
+            'practiceid'         => $practiceId,
+            'showalldepartments' => $showAllDepartments,
         ]);
 
         return $this->response($response);
@@ -431,14 +435,16 @@ class Calls
      * @param $practiceId
      * @param $departmentId
      *
-     * @return mixed
+     * @throws \Exception
      */
     public function getPatientInsurances($patientId, $practiceId, $departmentId)
     {
         $this->initApiConnection();
 
         $response = $this->api->GET("${practiceId}/patients/${patientId}/insurances", [
-            'departmentid' => $departmentId,
+            'departmentid'  => $departmentId,
+            'showfullssn'   => false,
+            'showcancelled' => false,
         ]);
 
         return $this->response($response);
@@ -643,7 +649,7 @@ class Calls
         $this->initApiConnection();
 
         //check for errors
-        if (isset($response['error'])) {
+        if (is_array($response) && array_key_exists('error', $response)) {
             \Log::alert(__METHOD__.__LINE__.'Response logged below '.PHP_EOL);
 
             \Log::error(\GuzzleHttp\json_encode($response));

@@ -7,23 +7,21 @@
 namespace App\Services\CCD;
 
 use App\Repositories\CcdAllergyRepository;
-use App\Repositories\UserRepositoryEloquent;
+use CircleLinkHealth\Customer\Entities\User;
 
 class CcdAllergyService
 {
     private $allergyRepo;
-    private $userRepo;
 
-    public function __construct(CcdAllergyRepository $allergyRepo, UserRepositoryEloquent $userRepo)
+    public function __construct(CcdAllergyRepository $allergyRepo)
     {
         $this->allergyRepo = $allergyRepo;
-        $this->userRepo    = $userRepo;
     }
 
     public function addPatientAllergy($userId, $name)
     {
-        if ( ! $this->repo()->patientAllergyExists($userId, $name)) {
-            return $this->setupAllergy($this->repo()->addPatientAllergy($userId, $name));
+        if ( ! $this->allergyRepo->patientAllergyExists($userId, $name)) {
+            return $this->setupAllergy($this->allergyRepo->addPatientAllergy($userId, $name));
         }
 
         return null;
@@ -31,7 +29,7 @@ class CcdAllergyService
 
     public function allergies()
     {
-        $allergies = $this->repo()->allergies();
+        $allergies = $this->allergyRepo->allergies();
         $allergies->getCollection()->transform(function ($value) {
             return $this->setupAllergy($value);
         });
@@ -41,7 +39,7 @@ class CcdAllergyService
 
     public function allergy($id)
     {
-        $allergy = $this->repo()->model()->find($id);
+        $allergy = $this->allergyRepo->model()->find($id);
         if ($allergy) {
             return $this->setupAllergy($allergy);
         }
@@ -51,14 +49,26 @@ class CcdAllergyService
 
     public function deletePatientAllergy($userId, $allergyId)
     {
-        return $this->repo()->deletePatientAllergy($userId, $allergyId);
+        return $this->allergyRepo->deletePatientAllergy($userId, $allergyId);
     }
 
     public function patientAllergies($userId)
     {
-        return $this->repo()->patientAllergies($userId)
-            ->unique('allergen_name')
-            ->values()
+        $relQuery = [
+            'ccdAllergies' => function($q){
+                return $q->distinct('allergen_name');
+            },
+        ];
+        
+        if (is_a($userId, User::class)) {
+            $user = $userId;
+        
+            $user->loadMissing($relQuery);
+        } else {
+            $user = User::with($relQuery)->findOrFail($userId);
+        }
+        
+        return $user->ccdAllergies
             ->map(function ($a) {
                 return [
                     'id'         => $a->id,
@@ -69,14 +79,9 @@ class CcdAllergyService
             });
     }
 
-    public function repo()
-    {
-        return $this->allergyRepo;
-    }
-
     public function searchAllergies($terms)
     {
-        return $this->repo()->searchAllergies($terms)->map(function ($a) {
+        return $this->allergyRepo->searchAllergies($terms)->map(function ($a) {
             return $this->setupAllergy($a);
         });
     }
@@ -84,17 +89,12 @@ class CcdAllergyService
     public function setupAllergy($a)
     {
         if ($a) {
-            $allergy = [
+            return [
                 'id'         => $a->id,
                 'name'       => $a->allergen_name,
                 'created_at' => $a->created_at->format('c'),
                 'updated_at' => $a->updated_at->format('c'),
-                'patients'   => $this->repo()->patientIds($a->allergen_name)->map(function ($patient) {
-                    return $patient->patient_id;
-                }),
             ];
-
-            return $allergy;
         }
 
         return null;

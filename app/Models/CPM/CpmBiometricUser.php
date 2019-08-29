@@ -47,7 +47,8 @@ use CircleLinkHealth\Customer\Entities\User;
  */
 class CpmBiometricUser extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    protected $table = 'cpm_biometrics_users';
+    protected $guarded = [];
+    protected $table   = 'cpm_biometrics_users';
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne

@@ -8,16 +8,15 @@ namespace App\Http\Controllers\Provider;
 
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
-use App\Contracts\Repositories\PracticeRepository;
-use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateInvitedUserAccount;
 use App\Services\OnboardingService;
 use CircleLinkHealth\Customer\Entities\Invite;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
-use Prettus\Validator\Exceptions\ValidatorException;
+use Illuminate\Validation\ValidationException;
 
 class OnboardingController extends Controller
 {
@@ -29,50 +28,22 @@ class OnboardingController extends Controller
     protected $invite;
 
     /**
-     * @var InviteRepository
-     */
-    protected $invites;
-
-    /**
-     * @var LocationRepository
-     */
-    protected $locations;
-
-    /**
      * @var OnboardingService
      */
     protected $onboardingService;
-
-    /**
-     * @var PracticeRepository
-     */
-    protected $practices;
-
-    /**
-     * @var UserRepository
-     */
-    protected $users;
 
     /**
      * OnboardingController constructor.
      *
      * @param InviteRepository   $inviteRepository
      * @param LocationRepository $locationRepository
-     * @param PracticeRepository $practiceRepository
-     * @param UserRepository     $userRepository
+     * @param OnboardingService  $onboardingService
+     * @param Request            $request
      */
     public function __construct(
-        InviteRepository $inviteRepository,
-        LocationRepository $locationRepository,
-        PracticeRepository $practiceRepository,
-        UserRepository $userRepository,
         OnboardingService $onboardingService,
         Request $request
     ) {
-        $this->invites           = $inviteRepository;
-        $this->locations         = $locationRepository;
-        $this->practices         = $practiceRepository;
-        $this->users             = $userRepository;
         $this->onboardingService = $onboardingService;
 
         if ($request->route('code')) {
@@ -110,11 +81,7 @@ class OnboardingController extends Controller
         $practiceSlug,
         $leadId
     ) {
-        $primaryPractice = $this->practices
-            ->skipPresenter()
-            ->findWhere([
-                'name' => $practiceSlug,
-            ])->first();
+        $primaryPractice = $this->findPracticeByName($practiceSlug);
 
         if ( ! $primaryPractice) {
             return response('Practice not found', 404);
@@ -158,11 +125,7 @@ class OnboardingController extends Controller
      */
     public function getCreateStaff($practiceSlug)
     {
-        $primaryPractice = $this->practices
-            ->skipPresenter()
-            ->findWhere([
-                'name' => $practiceSlug,
-            ])->first();
+        $primaryPractice = $this->findPracticeByName($practiceSlug);
 
         if ( ! $primaryPractice) {
             return response('Practice not found', 404);
@@ -210,11 +173,7 @@ class OnboardingController extends Controller
         Request $request,
         $leadId
     ) {
-        $primaryPractice = $this->practices
-            ->skipPresenter()
-            ->findWhere([
-                'user_id' => $leadId,
-            ])->first();
+        $primaryPractice = Practice::where('user_id', $leadId)->first();
 
         $this->onboardingService->postStoreLocations($primaryPractice, $request);
 
@@ -239,23 +198,23 @@ class OnboardingController extends Controller
     ) {
         $input = $request->input();
 
-        $lead = User::find($leadId);
+        $lead = User::findOrFail($leadId);
 
         try {
-            $practice = $this->practices
-                ->skipPresenter()
-                ->create([
-                    'name'           => str_slug($input['name']),
-                    'user_id'        => $lead->id,
-                    'display_name'   => $input['name'],
-                    'federal_tax_id' => $input['federal_tax_id'],
-                    'active'         => 1,
-                    'term_days'      => 30,
-                ]);
-        } catch (ValidatorException $e) {
+            $this->validate($request, ['name' => 'required|unique:practices,name']);
+
+            $practice = Practice::create([
+                'name'           => str_slug($input['name']),
+                'user_id'        => $lead->id,
+                'display_name'   => $input['name'],
+                'federal_tax_id' => $input['federal_tax_id'],
+                'active'         => 1,
+                'term_days'      => 30,
+            ]);
+        } catch (ValidationException $e) {
             return redirect()
                 ->back()
-                ->withErrors($e->getMessageBag()->getMessages())
+                ->withErrors($e->errors())
                 ->withInput();
         }
 
@@ -284,7 +243,16 @@ class OnboardingController extends Controller
 
         //Create the User
         try {
-            $user = $this->users->skipPresenter()->create([
+            $this->validate($request, [
+                [
+                    'email'      => 'required|email|unique:users,email',
+                    'first_name' => 'required',
+                    'last_name'  => 'required',
+                    'password'   => 'required|min:8',
+                ],
+            ]);
+
+            $user = new User([
                 'email'          => $input['email'],
                 'first_name'     => $input['firstName'],
                 'last_name'      => $input['lastName'],
@@ -296,11 +264,11 @@ class OnboardingController extends Controller
 
             $user->password = bcrypt($user->password);
             $user->save();
-        } catch (ValidatorException $e) {
+        } catch (ValidationException $e) {
             return redirect()
                 ->back()
                 ->withInput($input)
-                ->withErrors($e->getMessageBag()->getMessages());
+                ->withErrors($e->errors());
         }
 
         //Attach role
@@ -339,16 +307,17 @@ class OnboardingController extends Controller
         Request $request,
         $practiceSlug
     ) {
-        $primaryPractice = $this->practices
-            ->skipPresenter()
-            ->findWhere([
-                'name' => $practiceSlug,
-            ])->first();
+        $primaryPractice = $this->findPracticeByName($practiceSlug);
 
         $this->onboardingService->postStoreStaff($primaryPractice, $request);
 
 //        $implementationLead->notify(new ImplementationLeadWelcome($primaryPractice));
 
         return view('provider.onboarding.welcome');
+    }
+
+    private function findPracticeByName($practiceSlug)
+    {
+        return Practice::where('name', $practiceSlug)->first();
     }
 }

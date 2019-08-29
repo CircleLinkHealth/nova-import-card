@@ -66,10 +66,11 @@ class CareplanAssessment extends \CircleLinkHealth\Core\Entities\BaseModel
         return $this->belongsTo(User::class, 'provider_approver_id');
     }
 
-    public function carePlan()
-    {
-        return $this->belongsTo(CarePlan::class, 'careplan_id', 'user_id');
-    }
+//    DO NOT UNCOMMENT OUT. THIS IS ACTUALLY STORING USER IDS.
+//    public function carePlan()
+//    {
+//        return $this->belongsTo(CarePlan::class, 'careplan_id', 'user_id');
+//    }
 
     public function note()
     {

@@ -82,6 +82,7 @@
 
                         <br><br>
 
+                            <div class="row">
                         <div class="col-md-4">
                             <h4>Counts</h4>
 
@@ -100,22 +101,6 @@
                                 <br>
                                 Not processed: <span id="unprocessed">{{ $unprocessed }}</span>
                             @endif
-
-                            <br><br>
-
-                            <h4>Processing Options</h4>
-
-                            @forelse($batch->options as $k => $option)
-                                {{--file paths are too long and mess up the view--}}
-                                @if($k == "filePath") @continue
-                                @endif
-                                @if(!is_array($option))
-                                    <b>{{snakeToSentenceCase(snake_case($k))}}</b>
-                                    : @if(is_bool($option)) {{!!$option ? 'Yes' : 'No'}} @else {{$option}} @endif<br>
-                                @endif
-                            @empty
-                                <p>No options found.</p>
-                            @endforelse
                         </div>
 
                         <div class="col-md-8">
@@ -144,6 +129,27 @@
                                 @endforeach
                             @endif
                         </div>
+                        </div>
+
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h4>Processing Options</h4>
+
+                                    @forelse($batch->options as $k => $option)
+                                        {{--file paths are too long and mess up the view--}}
+                                        @if($k == "filePath") @continue
+                                        @endif
+                                        @if(!is_array($option))
+                                            <b>{{snakeToSentenceCase(snake_case($k))}}</b>
+                                            : @if(is_bool($option)) {{!!$option ? 'Yes' : 'No'}} @else {{$option}} @endif<br>
+                                        @endif
+                                    @empty
+                                        <p>No options found.</p>
+                                    @endforelse
+                                </div>
+                            </div>
+
+
 
                         <script>
                             function notifyReportWriter() {

@@ -10,6 +10,32 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 
+/**
+ * CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra.
+ *
+ * @property int                                                                            $id
+ * @property int                                                                            $user_id
+ * @property \Illuminate\Support\Carbon|null                                                $date
+ * @property string|null                                                                    $unit
+ * @property int|null                                                                       $value
+ * @property \Illuminate\Support\Carbon|null                                                $created_at
+ * @property \Illuminate\Support\Carbon|null                                                $updated_at
+ * @property \CircleLinkHealth\Customer\Entities\Nurse                                      $nurse
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \CircleLinkHealth\Customer\Entities\User                                       $user
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra whereUnit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra whereValue($value)
+ * @mixin \Eloquent
+ */
 class NurseInvoiceExtra extends BaseModel
 {
     protected $casts = [

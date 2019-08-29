@@ -46,16 +46,6 @@ class CpmLifestyleUserRepository
         return (bool) $this->model()->where(['patient_id' => $userId, 'cpm_lifestyle_id' => $lifestyleId])->first();
     }
 
-    public function patientLifestyles($userId)
-    {
-        return $this->model()->where(['patient_id' => $userId])->with(['cpmLifestyle', 'cpmInstruction'])->get()->map(function ($u) {
-            $lifestyle = $u->cpmLifestyle;
-            $lifestyle['instruction'] = $u->cpmInstruction;
-
-            return $u->cpmLifestyle;
-        });
-    }
-
     public function removeLifestyleFromPatient($lifestyleId, $userId)
     {
         $this->model()->where(['patient_id' => $userId, 'cpm_lifestyle_id' => $lifestyleId])->delete();

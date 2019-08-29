@@ -187,7 +187,7 @@ class PatientCareplanController extends Controller
                 return response()->json("User with id: {$user->id}, does not have a billing provider");
             }
 
-            $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$user]);
+            $careplan = $this->formatter->formatDataForViewPrintCareplanReport($user);
             $careplan = $careplan[$user_id];
             if (empty($careplan)) {
                 return false;
@@ -368,7 +368,7 @@ class PatientCareplanController extends Controller
             'Changed Insurance',
             'Dialysis / End-Stage Renal Disease',
             'Expired',
-            'Home Health Services',
+            'Patient in Hospice',
             'Other',
         ];
 
