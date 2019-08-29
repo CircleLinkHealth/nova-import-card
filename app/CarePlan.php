@@ -188,7 +188,7 @@ class CarePlan extends BaseModel implements PdfReport
                     function ($q) {
                         $q->whereStatus('draft');
                     }
-                                    )
+                )
                 ->count();
         } else {
             if ($user->hasRole(['provider'])) {
@@ -199,13 +199,13 @@ class CarePlan extends BaseModel implements PdfReport
                         function ($q) {
                             $q->whereStatus(CarePlan::QA_APPROVED);
                         }
-                                        )
+                    )
                     ->whereHas(
                         'patientInfo',
                         function ($q) {
                             $q->whereCcmStatus(Patient::ENROLLED);
                         }
-                                        )
+                    )
                     ->whereHas(
                         'careTeamMembers',
                         function ($q) use (
@@ -214,7 +214,7 @@ class CarePlan extends BaseModel implements PdfReport
                             $q->where('member_user_id', '=', $user->id)
                                 ->where('type', '=', CarePerson::BILLING_PROVIDER);
                         }
-                                        )
+                    )
                     ->count();
             }
         }

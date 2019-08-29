@@ -146,7 +146,7 @@ class NurseInvoice extends Model implements HasMedia, Pdfable
                 'footer-right'  => 'Page [page] of [toPage]',
                 'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now()->format(
                     'H:iA'
-                    ),
+                ),
                 'footer-font-size' => '6',
             ]
         );
