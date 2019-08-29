@@ -22,20 +22,27 @@ class AddInsuranceFromAthenaToEligibilityJobTest extends TestCase
      */
     public function test_it_adds_insurance_from_athena()
     {
-        $successfulApiResponse = AthenaApiResponses::getPatientInsurances();
         //Mock
-        $athena = \Mockery::mock(\CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation::class);
-        $athena->shouldReceive('getPatientInsurances')->once()->andReturn($successfulApiResponse);
+        $successfulApiResponse = AthenaApiResponses::getPatientInsurances();
 
-        //Test
+        //I want to mock AthenaApiImplementation
+        $athena = \Mockery::mock(\CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation::class);
+        //Here is what should happen
+        $athena->shouldReceive('getPatientInsurances')
+            ->once()
+            ->andReturn($successfulApiResponse);
+        //I will inject my mock in my class using DependencyInjection (DI)
+        $decorator = new \CircleLinkHealth\Eligibility\Decorators\AddInsuranceFromAthenaToEligibilityJob($athena);
+
+        //Setup
         $eligibilityJob = factory(EligibilityJob::class)->create();
         $targetPatient  = new TargetPatient();
         $ccda           = new Ccda();
-        $decorator      = new \CircleLinkHealth\Eligibility\Decorators\AddInsuranceFromAthenaToEligibilityJob($athena);
 
-        //Assert
+        //Conduct Test
         $eligibilityJob = $decorator->addInsurancesFromAthena($eligibilityJob, $targetPatient, $ccda);
 
+        //Assert
         $this->assertInstanceOf(EligibilityJob::class, $eligibilityJob);
         $this->assertEquals($successfulApiResponse, $eligibilityJob->data['insurances']);
     }
