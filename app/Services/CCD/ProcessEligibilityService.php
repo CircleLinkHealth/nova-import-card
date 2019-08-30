@@ -664,7 +664,24 @@ class ProcessEligibilityService
                 }
                 $row = [];
                 foreach (str_getcsv($iteration) as $key => $field) {
-                    $row[$headers[$key]] = $field;
+                    try {
+                        if (array_key_exists($key, $headers)) {
+                            $headerName = $headers[$key];
+                        }
+
+                        if (isset($headerName)) {
+                            $row[$headerName] = $field;
+                        }
+                    } catch (\Exception $exception) {
+                        //This may generate lots of logs.
+                        //Saving it for when we deploy lognda @todo
+//                        \Log::channel('logdna')->error($exception->getMessage(), [
+//                            'trace' => $exception->getTrace(),
+//                            'batch_id_tag' => "batch_id:$batch->id",
+//                        ]);
+
+                        continue;
+                    }
                 }
                 $row    = array_filter($row);
                 $data[] = $row;
