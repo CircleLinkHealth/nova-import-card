@@ -72,7 +72,8 @@ class GeneratePersonalizedPreventionPlanService
             ->personalizedPreventionPlan()
             ->updateOrCreate(
                 [
-                    'user_id' => $this->patient->id,
+                    'hra_instance_id'  => $this->hraInstance->id,
+                    'vitals_instance_id'  => $this->vitalsInstance->id,
                 ],
                 [
                     'hra_answers'      => $this->hraAnswers,

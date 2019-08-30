@@ -142,10 +142,10 @@ Route::group([
     'middleware' => ['auth'],
 ], function () {
 
-    Route::get('/provider-report/{userId}', 'ProviderReportController@getProviderReport')
+    Route::get('/provider-report/{userId}/{year?}', 'ProviderReportController@getProviderReport')
          ->name('provider-report');
 
-    Route::get('get-ppp-data/{userId}', 'PersonalizedPreventionPlanController@getPppDataForUser')
+    Route::get('get-ppp-data/{userId}/{year?}', 'PersonalizedPreventionPlanController@getPppDataForUser')
          ->name('getPppDataForUser');
 });
 

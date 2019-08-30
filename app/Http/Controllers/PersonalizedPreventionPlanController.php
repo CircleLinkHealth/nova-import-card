@@ -14,7 +14,7 @@ class PersonalizedPreventionPlanController extends Controller
         $this->service = $service;
     }
 
-    public function getPppDataForUser($userId)
+    public function getPppDataForUser($userId, $year = null)
     {
         $patientPppData = PersonalizedPreventionPlan::where('user_id', '=', $userId)
                                                     ->with('patient')

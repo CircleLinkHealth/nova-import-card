@@ -66,4 +66,20 @@ class PatientController extends Controller
             'email'         => $user->email,
         ]);
     }
+
+    public function getPatientReport($patienId, $reportType, $year){
+
+        //find survey instance where from year
+        if ($reportType == 'ppp'){
+            //get ppp report id from year
+        }
+
+        if ($reportType == 'providerReport'){
+            //get provider report from year
+        }
+
+        //exception not found - throw 404
+        return 'something user friendly';
+
+    }
 }
