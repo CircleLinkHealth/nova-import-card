@@ -351,7 +351,7 @@ class ProviderReportService
     public static function checkEachItemIfNotEmptyOf($arrayOfValues, $errorMessage)
     {
         return array_filter($arrayOfValues, function ($values) use ($errorMessage) {
-            if ($values === 'N/A' || empty($values)) {
+            if ($values === 'N/A' || self::filterAnswer($values)) {
                 self::throwExceptionEmptyAnswer($errorMessage);
             }
             return $values;
@@ -395,7 +395,7 @@ class ProviderReportService
         if ($firstElemIsString && $firstElem === self::NO) {
             return $answers;
         } elseIf ($firstElemIsString && $firstElem === self::YES) {
-            if (empty($answers[$key])) {
+            if (self::filterAnswer($answers[$key])) {
                 self::throwExceptionEmptyAnswer($errorMessage);
             }
             return $answers;
@@ -416,7 +416,7 @@ class ProviderReportService
      */
     public static function analyzeFirstAnswersAndTakeAction($firstAnswerForEachDependentQuestion, $key, $errorMessage)
     {
-        if (empty($firstAnswerForEachDependentQuestion)) {
+        if (self::filterAnswer($firstAnswerForEachDependentQuestion)) {
             self::throwExceptionEmptyAnswer($errorMessage);
         }
         return $firstAnswerForEachDependentQuestion !== self::YES ? [$key => true] : [$key => false];
