@@ -424,12 +424,12 @@ class ProviderReportService
 
     /**
      * If first answers of Group Questions is YES then we need to check the related (optional) questions inputs.
-     * If first answer is NO then the related questions inputs are expected to be null, so it wont check them.
+     * If first answer is NO then the related questions inputs are expected to be empty, so it wont check them.
      *
      * @param $validAnswers
      * @param $answers
      * @param $errorMessage
-     * @return bool
+     * @return void
      * @throws Exception
      */
     public static function validateOptionalAnswers($validAnswers, $answers, $errorMessage)
@@ -439,10 +439,21 @@ class ProviderReportService
                 continue;
             }
             foreach ($answers[$key] as $answer) {
-                if ((is_string($answer) && empty($answer)) || (is_array($answer) && empty($answer))) {
+                if ((is_string($answer) && self::filterAnswer($answer)) || (is_array($answer) && self::filterAnswer($answer))) {
                     self::throwExceptionEmptyAnswer($errorMessage);
                 }
             }
         }
+    }
+
+    /**
+     * if the result of this function === true THEN will throw exception from: validateOptionalAnswers()
+     *
+     * @param $var
+     * @return bool
+     */
+    public static function filterAnswer($var)
+    {
+        return ($var === '' || $var === [] || $var === null);
     }
 }
