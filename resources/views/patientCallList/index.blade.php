@@ -34,6 +34,16 @@ function formatTime($time)
                 letter-spacing: 1px;
             }
 
+            div.dataTables_wrapper div.dataTables_filter label {
+                margin-top: 2%;
+            }
+
+            div.dataTables_wrapper div.dataTables_filter input {
+                height: 25px;
+                width: 300px;
+                margin-top: -2%;
+            }
+
         </style>
     @endpush
     @push('scripts')
@@ -42,19 +52,19 @@ function formatTime($time)
             $(document).ready(function () {
                 const table = $('#cpmEditableTable');
                 table.DataTable({
-                    "order": [],
-                    // "iDisplayLength": 100,
+                    order: [[3, "desc"]],
+                    processing: true,
                     scrollX: true,
                     fixedHeader: true,
                     dom: '<"wrapper"flipt>',
                     bPaginate: false,
                 });
 
-                $('.filter-select').change(function () {
-                    table.column($(this).data('column'))
-                        .search($(this).val())
-                        .draw();
-                });
+                // $('#filter-select').change(function () {
+                //     table.column($(this).data('column'))
+                //         .search($(this).val())
+                //         .draw();
+                // });
 
                 function addClickListener() {
                     const row = $('.patientNameLink');
@@ -94,54 +104,15 @@ function formatTime($time)
 
                     <div class="">
 
-                        {{--                        @if(isset($draftNotes) && $draftNotes->isNotEmpty())--}}
-                        {{--                            <div class="row text-center">--}}
-                        {{--                                <div class="col-md-12">--}}
-                        {{--                                    <h4>--}}
-                        {{--                                        Please <strong>save</strong> or <strong>delete</strong> the following note--}}
-                        {{--                                        drafts:--}}
-                        {{--                                    </h4>--}}
-                        {{--                                </div>--}}
-                        {{--                                <div class="col-md-8 col-md-offset-2">--}}
-                        {{--                                    <table class="display dataTable no-footer">--}}
-                        {{--                                        <thead>--}}
-                        {{--                                        <tr>--}}
-                        {{--                                            <th>--}}
-                        {{--                                                Patient ID--}}
-                        {{--                                            </th>--}}
-                        {{--                                            <th>--}}
-                        {{--                                                Date Created--}}
-                        {{--                                            </th>--}}
-                        {{--                                            <th>--}}
-
-                        {{--                                            </th>--}}
-                        {{--                                        </tr>--}}
-                        {{--                                        </thead>--}}
-                        {{--                                        <tbody>--}}
-                        {{--                                        @foreach($draftNotes as $key => $note)--}}
-                        {{--                                            <tr>--}}
-                        {{--                                                <td>--}}
-                        {{--                                                    {{$note->patient_id}}--}}
-                        {{--                                                </td>--}}
-                        {{--                                                <td>--}}
-                        {{--                                                    {{$note->performed_at->toDateString()}}--}}
-                        {{--                                                </td>--}}
-                        {{--                                                <td>--}}
-                        {{--                                                    <a href="{{$note->editLink()}}"--}}
-                        {{--                                                       style="color: blue; text-transform: uppercase; font-weight: 600">--}}
-                        {{--                                                        Approve/Delete--}}
-                        {{--                                                    </a>--}}
-                        {{--                                                </td>--}}
-                        {{--                                            </tr>--}}
-                        {{--                                        @endforeach--}}
-                        {{--                                        </tbody>--}}
-                        {{--                                    </table>--}}
-                        {{--                                </div>--}}
-                        {{--                            </div>--}}
-                        {{--                        @endif--}}
-
                         <br/>
                         <br/>
+
+                        {{--                        <select data-column="2" class="form-control filter-select">--}}
+                        {{--                            <option value="">SEX</option>--}}
+                        {{--                            @foreach($calls as $call)--}}
+                        {{--                                <option value="{{$call->patient}}">{{$call->patient}}</option>--}}
+                        {{--                            @endforeach--}}
+                        {{--                        </select>--}}
 
                         <div class="row">
                             <div class="col-md-12">
@@ -155,40 +126,25 @@ function formatTime($time)
                                         <div id="filters" class="" style="margin:0;">
                                             <div class="form-group">
                                                 <div id="dtBox"></div>
-                                                <label for="date" class="col-sm-1 control-label"
-                                                       style="margin-left: -5%">Date: </label>
-                                                <div class="col-sm-4">
-                                                    <input id="date" class="form-control" name="date"
-                                                           style="width: 32%;"
-                                                           type="text"
-                                                           placeholder="yyyy-mm-dd"
-                                                           value="{{ (old('date') ? old('date') : ($dateFilter ? $dateFilter : '')) }}"
-                                                           data-field="date" data-format="yyyy-mm-dd"/><span
-                                                            class="help-block">{{ $errors->first('date') }}</span>
-                                                </div>
 
-                                                {{--                                                <label for="filter-select" class="col-sm-1 control-label"--}}
-                                                {{--                                                       style="margin-left: -24%">Status: </label>--}}
-                                                {{--                                                <div class="col-sm-4" style="margin-left: -16%;">--}}
-                                                {{--                                                    <select id="filter-select" data-column="8" class="form-control filter-select">--}}
-                                                {{--                                                        <option>Choose</option>--}}
-                                                {{--                                                        @foreach($calls as $call)--}}
-                                                {{--                                                            <option value="{{$call->status}}">{{$call->status}}</option>--}}
-                                                {{--                                                        @endforeach--}}
-                                                {{--                                                    </select>--}}
-                                                {{--                                                </div>--}}
+                                                <label for="filterPriority"
+                                                       class="col-sm-1 control-label" style="margin-left: -2%;">Activities: </label>
+                                                <div class="col-sm-4">
+                                                    {!! Form::select('filterPriority', array('all' => 'See All', 'priority' => 'Priority'), $filterPriority, ['class' => 'form-control select-picker', 'style'=>'margin-left:-4%; width: 30%']) !!}
+                                                </div>
 
                                                 <label for="filterStatus"
                                                        class="col-sm-1 control-label"
                                                        style="margin-left: -24%;">Status: </label>
-                                                <div class="col-sm-4" style="margin-left: -16%;">
-                                                    {!! Form::select('filterStatus', array('all' => 'See All', 'scheduled' => 'Scheduled', 'reached' => 'Completed'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:32%;']) !!}
+                                                <div class="col-sm-4">
+                                                    {!! Form::select('filterStatus', array('all' => 'See All', 'scheduled' => 'Scheduled', 'reached' => 'Completed'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']) !!}
                                                 </div>
                                                 <div class="col-sm-2">
 
                                                 </div>
-                                                <div class="col-sm-2" style="margin-left: -33%">
-                                                    <button type="submit" class="btn btn-primary">
+                                                <div class="col-sm-2" style="margin-left: -46%">
+                                                    <button type="submit" class="btn btn-primary"
+                                                            style="background: #50b2e2">
                                                         <i class="glyphicon glyphicon-sort"></i> Apply Filter
                                                     </button>
                                                 </div>
@@ -230,21 +186,19 @@ function formatTime($time)
                                         <tr>
                                             <th>Task</th>
                                             <th>Patient</th>
-                                            <th>Activity</br>Date</th>
+                                            <th>Activity<br>Date</th>
                                             <th>Activity<br>Time Start</th>
                                             <th>Activity<br>Time End</th>
-                                            <th>Time</br>Zone</th>
+                                            <th>Time<br>Zone</th>
                                             <th>Last<br>Date called</th>
                                             <th>CCM<br>Time to date</th>
-                                            {{--                                                <th>BHI Time to date</th>--}}
-                                            {{--                                            <th>Status</th>--}}
                                             <th># Calls<br>to date</th>
                                             <th>Provider</th>
                                             <th>Practice</th>
-                                            {{--<th></th>--}}
                                         </tr>
                                         </thead>
                                         <tbody>
+
                                         @if (count($calls) > 0)
                                             @foreach($calls as $key => $call)
                                                 <?php
@@ -256,7 +210,7 @@ function formatTime($time)
                                                 if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime) {
                                                     $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                 }
-                                                if ('Call Back' === $call->type) {
+                                                if ('Call Back' === $call->type || 'ASAP' === $call->call_time_start) {
                                                     $boldRow = 'bold-row';
                                                 }
                                                 ?>
@@ -313,17 +267,7 @@ function formatTime($time)
                                                             <em style="color:red;">-</em>
                                                         @endif
                                                     </td>
-                                                    {{--                                                        <td>--}}
-                                                    {{--                                                            @if( isset($call->bhi_time))--}}
-                                                    {{--                                                                {{ formatTime($call->bhi_time) }}--}}
-                                                    {{--                                                            @else--}}
-                                                    {{--                                                                <em style="color:red;">-</em>--}}
-                                                    {{--                                                            @endif--}}
-                                                    {{--                                                        </td>--}}
 
-                                                    {{--                                                    <td>--}}
-                                                    {{--                                                        {{$call->status}}--}}
-                                                    {{--                                                    </td>--}}
 
                                                     <td>
                                                         {{$call->no_of_calls ?? 0}}
