@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 
 class PatientCallListController extends Controller
 {
+    const ASAP = 'ASAP';
+
     /**
      * Show the form for creating a new resource.
      *
@@ -31,7 +33,6 @@ class PatientCallListController extends Controller
     {
         $nurseId = \Auth::user()->id;
         $date    = Carbon::parse(now())->copy()->toDateString();
-        $asap    = 'ASAP';
 
         $draftNotes = $noteService->getUserDraftNotes($nurseId);
 
@@ -53,8 +54,9 @@ class PatientCallListController extends Controller
 
         if ('all' !== $filterPriority) {
             $calls->where('scheduled_date', '=', $date)
-                ->orWhere('call_time_start', '=', $asap);
+                ->orWhere('call_time_start', '=', self::ASAP);
         }
+
         $calls->orderByRaw('FIELD(type, "Call Back") desc, scheduled_date asc, call_time_start asc, call_time_end asc');
 
         $calls = $calls->get();
