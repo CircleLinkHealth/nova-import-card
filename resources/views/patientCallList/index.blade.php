@@ -44,6 +44,14 @@ function formatTime($time)
                 margin-top: -2%;
             }
 
+            .dataTables_wrapper .dataTables_paginate {
+                visibility: hidden;
+            }
+
+            .dataTables_wrapper .dataTables_length label {
+                padding-top: 10%;
+            }
+
         </style>
     @endpush
     @push('scripts')
@@ -56,8 +64,11 @@ function formatTime($time)
                     processing: true,
                     scrollX: true,
                     fixedHeader: true,
-                    dom: '<"wrapper"flipt>',
-                    bPaginate: false,
+                    dom: '<"top"fi>rt<"bottom"flp><"clear">',
+                    pageLength: 10,
+
+
+
                 });
 
                 // $('#filter-select').change(function () {
@@ -118,15 +129,13 @@ function formatTime($time)
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-sm-3">
-                                        {{--<h1>Patient Call List</h1>--}}
-                                        {{--<p>My assigned calls</p>--}}
+
                                     </div>
                                     <div class="col-sm-12">
                                         {!! Form::open(array('url' => route('patientCallList.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                                         <div id="filters" class="" style="margin:0;">
                                             <div class="form-group">
                                                 <div id="dtBox"></div>
-
                                                 <label for="filterPriority"
                                                        class="col-sm-1 control-label" style="margin-left: -2%;">Activities: </label>
                                                 <div class="col-sm-4">
