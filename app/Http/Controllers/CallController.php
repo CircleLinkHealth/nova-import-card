@@ -524,19 +524,11 @@ class CallController extends Controller
             ? $input['sub_type']
             : null;
         $call->inbound_cpm_id = $user->id;
-
-        $call->asap = boolval($input['asap']);
-        if (true === $call->asap) {
-            $call->scheduled_date = $scheduledDate->format('Y-m-d');
-            $call->window_start   = 'ASAP';
-            $call->window_end     = 'N/A';
-        } else {
-            //make sure we are sending the dates correctly formatted
-            $call->scheduled_date = $scheduledDate->format('Y-m-d');
-            $call->window_start   = $windowStart->format('H:i');
-            $call->window_end     = $windowEnd->format('H:i');
-        }
-
+        $call->asap           = boolval($input['asap']);
+        //make sure we are sending the dates correctly formatted
+        $call->scheduled_date  = $scheduledDate->format('Y-m-d');
+        $call->window_start    = $windowStart->format('H:i');
+        $call->window_end      = $windowEnd->format('H:i');
         $call->attempt_note    = $input['attempt_note'];
         $call->note_id         = null;
         $call->is_cpm_outbound = 1;

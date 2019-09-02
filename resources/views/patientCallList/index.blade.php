@@ -68,7 +68,6 @@ function formatTime($time)
                     pageLength: 10,
 
 
-
                 });
 
                 // $('#filter-select').change(function () {
@@ -219,7 +218,7 @@ function formatTime($time)
                                                 if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime) {
                                                     $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                 }
-                                                if ('Call Back' === $call->type || 'ASAP' === $call->call_time_start) {
+                                                if ('Call Back' === $call->type || $call->asap) {
                                                     $boldRow = 'bold-row';
                                                 }
                                                 ?>
@@ -255,8 +254,14 @@ function formatTime($time)
                                                     <td class="{{ \Carbon\Carbon::parse($call->scheduled_date)->lessThan(\Carbon\Carbon::today()) ? 'red' : '' }}">
                                                         {{ presentDate($call->scheduled_date, false) }}
                                                     </td>
-                                                    <td>{{ $call->call_time_start }}</td>
-                                                    <td>{{ $call->call_time_end }}</td>
+                                                    @if($call->asap === 1)
+                                                        <td>{{ 'ASAP' }}</td>
+                                                        <td>{{ 'N/A' }}</td>
+                                                    @else
+                                                        <td>{{ $call->call_time_start }}</td>
+                                                        <td>{{ $call->call_time_end }}</td>
+                                                    @endif
+
                                                     <td>
                                                         @if($call->timezone)
                                                             <?php
