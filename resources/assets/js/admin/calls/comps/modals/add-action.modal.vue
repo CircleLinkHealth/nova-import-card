@@ -122,8 +122,7 @@
                                            type="checkbox"
                                            name="asap_check"
                                            style=" float: right;margin-top: -14%;"
-                                           :disabled="action.disabled"
-                                           @click="disableTimeInputs(index)">
+                                           :disabled="action.disabled">
                                 </a>
 
 
@@ -132,14 +131,14 @@
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <input id="time_start" class="form-control height-40" type="time" name="window_start"
+                                <input id="window_start" class="form-control height-40" type="time" name="window_start"
                                        v-model="action.data.startTime"
-                                       :disabled="action.disabled" required/>
+                                       :disabled="action.data.asapChecked || action.disabled" required/>
                             </td>
                             <td>
-                                <input id="time_end" class="form-control height-40" type="time" name="window_end"
+                                <input id="window_end" class="form-control height-40" type="time" name="window_end"
                                        v-model="action.data.endTime"
-                                       :disabled="action.disabled" required/>
+                                       :disabled="action.data.asapChecked || action.disabled" required/>
                             </td>
                             <td>
                                 <input type="checkbox" id="is_manual"
@@ -324,17 +323,7 @@
             },
         },
 
-        methods: { //@todo:disable per index.
-            disableTimeInputs(index) {
-                var checkBox = document.getElementById("asap");
-                if (checkBox.checked === true) {
-                    document.getElementById('time_start').disabled = true;
-                    document.getElementById('time_end').disabled = true;
-                } else {
-                    document.getElementById('time_start').disabled = false;
-                    document.getElementById('time_end').disabled = false;
-                }
-            },
+        methods: {
             setNursesForSelect(actionIndex) {
                 this.actions[actionIndex].nursesForSelect = [
                     UNASSIGNED_VALUE,
