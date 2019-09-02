@@ -6,6 +6,9 @@
 
 namespace App\Notifications;
 
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -17,22 +20,24 @@ class SendCareDocument extends Notification
     private $channels = ['database'];
     private $media;
     private $patient;
+    private $reportType;
 
     /**
      * Create a new notification instance.
      *
      * @param mixed $media
      * @param mixed $patient
-     * @param mixed $channel
+     * @param mixed $channels
      */
-    public function __construct($media, $patient, $channel)
+    public function __construct(Media $media, User $patient, $channels = ['mail'])
     {
         $this->media = $media;
 
+        $this->reportType = $this->media->getCustomProperty('doc_type');
+
         $this->patient = $patient;
 
-        //fix implementation
-        $this->channels[] = $channel;
+        $this->channels = array_merge($this->channels, $channels);
     }
 
     /**
@@ -63,13 +68,19 @@ class SendCareDocument extends Notification
     {
         $awvUrl = config('services.awv.url');
 
-        $url = 'awv url + patient Id + report type from media + year to get report';
+        $reportTypeForUrl = $this->getSanitizedReportType();
 
+        $year = ! is_a($this->media->created_at, 'Carbon\Carbon')
+            ? Carbon::parse($this->media->created_at)->year
+            : $this->media->year;
+
+        $url = $awvUrl."/get-patient-report/{$this->patient->id}/{$reportTypeForUrl}/{$year}";
+
+        //todo: add more details to message?
         return (new MailMessage())
-            ->subject('subject')
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', $url)
-            ->line('Thank you for using our application!');
+            ->subject("Secure Link to Patient {$this->reportType}")
+            ->line("Click at link below to see patient {$this->reportType}")
+            ->action('Go to report', $url);
     }
 
     /**
@@ -82,5 +93,20 @@ class SendCareDocument extends Notification
     public function via($notifiable)
     {
         return $this->channels;
+    }
+
+    private function getSanitizedReportType()
+    {
+        $type = $this->reportType;
+
+        if ('PPP' == $type) {
+            return 'ppp';
+        }
+
+        if ('Provider Report' == $type) {
+            return 'provider-report';
+        }
+
+        throw new \Exception('Invalid Report Type', 500);
     }
 }

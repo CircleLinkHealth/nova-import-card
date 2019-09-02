@@ -22,6 +22,16 @@ class PatientCareDocumentsController extends Controller
      */
     const TEN_MB = 10485760;
 
+    /*
+     * Available reports that User can see as view-generated in AWV as of yet.
+     *
+     * @var array
+     * */
+    private $availableReportsForSending = [
+        'PPP',
+        'Provider Report',
+    ];
+
     public function downloadCareDocument($id, $mediaId)
     {
         $mediaItem = $this->getMediaItemById($id, $mediaId);
@@ -78,7 +88,13 @@ class PatientCareDocumentsController extends Controller
             );
         }
 
-        //may not need parient id in route
+        if ( ! in_array($media->getCustomProperty('doc_type'), $this->availableReportsForSending)) {
+            return response()->json(
+                'This has not yet been implemented.',
+                400
+            );
+        }
+
         $patient = User::find($patientId);
 
         if ( ! $patient) {
@@ -105,15 +121,18 @@ class PatientCareDocumentsController extends Controller
             $notifiableUser = User::whereEmail($addressOrFax)->first();
 
             if ( ! $notifiableUser) {
-                $notifiableUser = (new User())->forceFill([
-                    'name'  => 'Notifiable User',
-                    'email' => $addressOrFax,
-                ]);
+                return response()->json(
+                    'Could not find User with that email.',
+                    400
+                );
+                //Fails because of non-existent id. Don't know if we want to be saving dummy users or just use dummy id.
+//                $notifiableUser = (new User())->forceFill([
+//                    'name'  => 'Notifiable User',
+//                    'email' => $addressOrFax,
+//                ]);
             }
 
-            $notifiableUser->notify(new SendCareDocument($media, $patient, 'mail'));
-
-            //notification contains url with patientId, report type (from media), and year (from media created at), create endpoint to handle in AWV
+            $notifiableUser->notify(new SendCareDocument($media, $patient, ['mail']));
 
             return response()->json(
                 'Document sent successfully!',
