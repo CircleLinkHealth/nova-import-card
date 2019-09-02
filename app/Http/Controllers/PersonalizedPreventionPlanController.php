@@ -39,6 +39,6 @@ class PersonalizedPreventionPlanController extends Controller
 
         $personalizedHealthAdvices = $this->service->prepareRecommendations($ppp);
 
-        return view('personalizedPreventionPlan', compact('personalizedHealthAdvices', 'patient', 'patientPppData'));
+        return view('personalizedPreventionPlan', compact('personalizedHealthAdvices', 'patient', 'ppp'));
     }
 }
