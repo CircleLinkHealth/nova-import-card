@@ -69,17 +69,23 @@ class PatientController extends Controller
 
     public function getPatientReport($patienId, $reportType, $year){
 
-        //find survey instance where from year
         if ($reportType == 'ppp'){
-            //get ppp report id from year
+            return redirect()->route('get-ppp-report', [
+                'userId' => $patienId,
+                'year'   => $year
+
+            ]);
         }
 
-        if ($reportType == 'providerReport'){
-            //get provider report from year
+        if ($reportType == 'provider-report'){
+            return redirect()->route('get-provider-report', [
+                'userId' => $patienId,
+                'year'   => $year
+
+            ]);
         }
 
-        //exception not found - throw 404
-        return 'something user friendly';
+        throw new \Exception("Report type : [$reportType] does not exist.");
 
     }
 }

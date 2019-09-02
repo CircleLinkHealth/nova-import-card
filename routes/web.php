@@ -142,11 +142,19 @@ Route::group([
     'middleware' => ['auth'],
 ], function () {
 
-    Route::get('/provider-report/{userId}/{year?}', 'ProviderReportController@getProviderReport')
-         ->name('provider-report');
+    Route::get('get-patient-report/{userId}/{reportType}/{year}', [
+        'uses' => 'PatientController@getPatientReport',
+        'as'   => 'patient.get-report',
+    ]);
 
-    Route::get('get-ppp-data/{userId}/{year?}', 'PersonalizedPreventionPlanController@getPppDataForUser')
-         ->name('getPppDataForUser');
+    Route::get('/provider-report/{userId}/{year?}', 'ProviderReportController@getProviderReport')
+         ->name('get-provider-report');
+
+    Route::get('get-ppp-data/{userId}/{year?}', 'PersonalizedPreventionPlanController@getPppForUser')
+         ->name('get-ppp-report');
+
+
+
 });
 
 Route::post('twilio/sms/status', 'TwilioController@smsStatusCallback')

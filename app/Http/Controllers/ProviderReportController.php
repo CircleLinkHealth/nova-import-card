@@ -24,7 +24,7 @@ class ProviderReportController extends Controller
         }
 
         $patient = User::with([
-            'patient.patientInfo',
+            'patientInfo',
             'providerReports' => function ($report) use ($year) {
                 $report->forYear($year);
             },
