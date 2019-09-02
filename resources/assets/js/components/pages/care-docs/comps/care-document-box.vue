@@ -40,7 +40,7 @@
         <modal v-show="showSendModal" name="send-care-doc" class="modal-send-care-doc" :no-title="true"
                :no-footer="true">
             <template slot="header">
-                <button type="button" class="close" @click="showSendModal = false">×</button>
+                <button type="button" class="close" @click="closeSendModal()">×</button>
                 <h3 class="modal-title">Send Care Document</h3>
             </template>
             <template slot="body">
@@ -53,11 +53,11 @@
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <div v-if="showBanner" :class="bannerClass">{{this.errors.errors}}</div>
+                    <div v-if="showBanner" :class="bannerClass">{{this.errors}}</div>
                 </div>
                 <div class="col-md-12 form-group">
                     <div class="col-md-12 row">
-                        <input :type="this.inputType" v-model="addressOrFax" required>
+                        <input id="addressOrFax" :type="this.inputType" v-model="addressOrFax" required>
                     </div>
                 </div>
                 <div class="col-md-12 form-group">
@@ -76,7 +76,6 @@
 <script>
     import {rootUrl} from '../../../../app.config.js'
     import modal from '../../../shared/modal.vue'
-    import Errors from "../../../src/Errors";
     import Loader from '../../../../components/loader.vue';
 
     let self;
@@ -95,7 +94,7 @@
                 channel: '',
                 inputName: '',
                 inputType: '',
-                errors: new Errors(),
+                errors: '',
                 showBanner: false,
                 bannerText: '',
                 bannerType: 'info',
@@ -184,13 +183,22 @@
                     })
                     .catch(err => {
                         this.loading = false;
-                        let errors = err.response.data.errors ? err.response.data.errors : [];
-                        this.errors.setErrors(errors);
-                        self.bannerText = err.response.data.message;
-                        self.bannerType = 'danger';
-                        self.showBanner = true;
-
+                        let errors = err.response.data ? err.response.data : [];
+                        this.errors =  errors;
+                        this.bannerType = 'danger';
+                        this.bannerText = errors;
+                        this.showBanner = true;
                     });
+            },
+            closeSendModal(){
+                // document.getElementById("addressOrFax").value = '';
+                this.showSendModal = false;
+                this.addressOrFax = '';
+                this.errors =  '';
+                this.bannerType = '';
+                this.bannerText = '';
+                this.showBanner = false;
+
             }
         },
         mounted() {
