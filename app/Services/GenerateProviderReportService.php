@@ -42,8 +42,6 @@ class GenerateProviderReportService
 
     }
 
-    //make possible to edit data on existing report
-
     /**
      * @return Model
      * @throws \Exception
@@ -54,8 +52,6 @@ class GenerateProviderReportService
         $summary = $this->patient->patientAWVSummaries->first();
 
         if ( ! $summary) {
-//            Log::error('Patient needs AWV summary for a provider report to be generated');
-//            return false;
 
             $summary = $this->patient->patientAWVSummaries()->create([
                 'month_year'       => Carbon::now()->startOfMonth(),
@@ -69,7 +65,7 @@ class GenerateProviderReportService
             $reasonForVisit = 'Initial';
         }
 
-        $report = $this->patient->providerReports()->updateOrCreate(
+        return $this->patient->providerReports()->updateOrCreate(
             [
                 'hra_instance_id'    => $this->hraInstance->id,
                 'vitals_instance_id' => $this->vitalsInstance->id,
@@ -95,7 +91,6 @@ class GenerateProviderReportService
             ]
         );
 
-        return $report;
     }
 
 

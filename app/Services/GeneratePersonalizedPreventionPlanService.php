@@ -68,7 +68,7 @@ class GeneratePersonalizedPreventionPlanService
 
     public function generateData()
     {
-        $patientPppData = $this->patient
+        return $this->patient
             ->personalizedPreventionPlan()
             ->updateOrCreate(
                 [
@@ -82,7 +82,6 @@ class GeneratePersonalizedPreventionPlanService
                 ]
             );
 
-        return $patientPppData;
     }
 
     private function getAnswersToEvaluate()
