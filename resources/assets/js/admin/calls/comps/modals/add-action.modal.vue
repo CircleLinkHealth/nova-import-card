@@ -113,10 +113,10 @@
                                 </v-select>
                             </td>
                             <td>
+                                <span class="asap_label" style="font-weight: bold">ASAP</span>
                                 <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
                                    style="color: #000;"
                                    title="Tick to schedule as:'As soon as possible'">
-                                    <span class="asap_label" style="font-weight: bold">ASAP</span>
                                     <input v-model="action.data.asapChecked"
                                            id="asap"
                                            type="checkbox"
