@@ -78,7 +78,7 @@ class SendCareDocument extends Notification
 
         //todo: add more details to message?
         return (new MailMessage())
-            ->subject("Secure Link to Patient {$this->reportType}")
+            ->subject("Patient {$this->reportType} - {$this->patient->getPrimaryPracticeName()}")
             ->line("Click at link below to see patient {$this->reportType}")
             ->action('Go to report', $url);
     }
