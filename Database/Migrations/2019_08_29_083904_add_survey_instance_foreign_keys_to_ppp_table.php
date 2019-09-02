@@ -13,8 +13,17 @@ class AddSurveyInstanceForeignKeysToPppTable extends Migration
      */
     public function up()
     {
-        Schema::table('ppp', function (Blueprint $table) {
-            //
+        Schema::table('personalized_prevention_plan', function (Blueprint $table) {
+            $table->unsignedInteger('hra_instance_id')->after('user_id')->nullable();
+            $table->unsignedInteger('vitals_instance_id')->after('user_id')->nullable();
+
+            $table->foreign('hra_instance_id')
+                ->references('id')->on('survey_instances')
+                ->onDelete('set null');
+
+            $table->foreign('vitals_instance_id')
+                  ->references('id')->on('survey_instances')
+                  ->onDelete('set null');
         });
     }
 
@@ -25,8 +34,15 @@ class AddSurveyInstanceForeignKeysToPppTable extends Migration
      */
     public function down()
     {
-        Schema::table('ppp', function (Blueprint $table) {
-            //
+        Schema::table('personalized_prevention_plan', function (Blueprint $table) {
+
+            $table->dropForeign(['hra_instance_id']);
+            $table->dropForeign(['vitals_instance_id']);
+
+            $table->dropColumn('hra_instance_id');
+            $table->dropColumn('vitals_instance_id');
+
         });
     }
+
 }
