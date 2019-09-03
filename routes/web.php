@@ -437,6 +437,11 @@ Route::group(['middleware' => 'auth'], function () {
         'API\PatientCareDocumentsController@uploadCareDocuments'
     );
 
+    Route::post(
+        'send-care-doc/{patient_id}/{media_id}/{channel}/{address_or_fax}',
+        'API\PatientCareDocumentsController@sendCareDocument'
+    );
+
     Route::get('care-docs/{patient_id}/{show_past?}', [
         'uses' => 'API\PatientCareDocumentsController@getCareDocuments',
         'as'   => 'get.care-docs',
