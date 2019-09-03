@@ -253,7 +253,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     $activitiesAsProvider
  * @property \CircleLinkHealth\TwoFA\Entities\AuthyUser $authyUser
  * @property \App\CareplanAssessment $carePlanAssessment
- * @property \App\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
  * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection
  *     $clinicalEmergencyContactLocations

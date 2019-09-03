@@ -89,7 +89,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @mixin \Eloquent
  * @property int|null $saas_account_id
  * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $careAmbassadorLogs
- * @property \App\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices
  * @property \App\EnrolleeCustomFilter[]|\Illuminate\Database\Eloquent\Collection $enrolleeCustomFilters
  * @property \App\PracticeEnrollmentTips $enrollmentTips
  * @property string $number_with_dashes
