@@ -11645,6 +11645,10 @@ body,
   color: #1a1a1a;
 }
 
+.margin-bottom-10 {
+  margin-bottom: 10px;
+}
+
 @media (min-width: 519px) {
   .questions-title {
     font-size: 24px;

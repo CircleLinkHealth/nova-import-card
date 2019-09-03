@@ -62,11 +62,9 @@
 
                         <br v-if="shouldShowQuestionGroupTitle(question)">
 
-                        <div class="questions-title">
+                        <div class="questions-title margin-bottom-10">
                             {{getQuestionTitle(question)}}
                         </div>
-
-                        <br>
 
                         <!--Questions Answer Type-->
                         <div class="question-answer-type">
