@@ -168,7 +168,7 @@
                 /{{$reportData['vitals']['blood_pressure']['second_metric']}} mmHg <br>
                 <strong>Height: </strong> {{$reportData['vitals']['height']['feet']}}
                 feet, {{$reportData['vitals']['height']['inches']}} inches <br>
-                <strong>Weight: </strong> {{$reportData['vitals']['weight']}} kg (lbs?) <br>
+                <strong>Weight: </strong> {{$reportData['vitals']['weight']}} lbs <br>
                 <strong>BMI: </strong> {{$reportData['vitals']['bmi']}} kg/m2 <br>
                 As the patient has a {{$reportData['vitals']['bmi_diagnosis']}} BMI of {{$reportData['vitals']['bmi']}},
                 they are considered {{$reportData['vitals']['body_diagnosis']}}.
