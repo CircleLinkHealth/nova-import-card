@@ -437,6 +437,11 @@ Route::group(['middleware' => 'auth'], function () {
         'API\PatientCareDocumentsController@uploadCareDocuments'
     );
 
+    Route::post(
+        'send-care-doc/{patient_id}/{media_id}/{channel}/{address_or_fax}',
+        'API\PatientCareDocumentsController@sendCareDocument'
+    );
+
     Route::get('care-docs/{patient_id}/{show_past?}', [
         'uses' => 'API\PatientCareDocumentsController@getCareDocuments',
         'as'   => 'get.care-docs',
@@ -1052,6 +1057,16 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/eligible-csv', [
                     'uses' => 'EligibilityBatchController@downloadEligibleCsv',
                     'as'   => 'eligibility.download.eligible',
+                ])->middleware('permission:enrollee.read');
+
+                Route::get('supplemental-insurance-info-csv', [
+                    'uses' => 'EligibilityBatchController@downloadAthenaApiInsuranceInfoCsv',
+                    'as'   => 'eligibility.download.supplemental_insurance_info',
+                ])->middleware('permission:enrollee.read');
+
+                Route::get('insurance-copays-csv', [
+                    'uses' => 'EligibilityBatchController@downloadAthenaApiInsuranceCopaysCsv',
+                    'as'   => 'eligibility.download.copays',
                 ])->middleware('permission:enrollee.read');
 
                 Route::get('/reprocess', [
