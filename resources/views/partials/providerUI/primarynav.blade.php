@@ -40,8 +40,8 @@ $user = auth()->user();
             color: #fff;
         }
 
-        .background-white {
-
+        .search-bar {
+            width: 90%;
         }
     </style>
 @endpush
@@ -62,7 +62,7 @@ $user = auth()->user();
             <span class="icon-bar" style="background-color:white"></span>
         </button>
 
-        <div class="" id="search-bar-container">
+        <div class="search-bar" id="search-bar-container">
             @include('partials.search')
         </div>
 

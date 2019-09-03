@@ -56,6 +56,11 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\Practice $practice
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
+ *
+ * @property int|null                             $ccda_id
+ * @property \App\Models\MedicalRecords\Ccda|null $ccda
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
  */
 class TargetPatient extends BaseModel
 {
