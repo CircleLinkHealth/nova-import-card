@@ -27,14 +27,14 @@ class MarkNursePatientsAsRejected extends Migration
 
         $patientIds = User::ofType('participant')
             ->whereHas('inboundCalls', function ($calls) use ($month) {
-                              $calls->whereHas('outboundUser', function ($user) use ($month) {
-                                  $user->ofType('care-center')
-                                      ->where('first_name', '=', 'Rachel')
-                                      ->where('last_name', '=', 'Walker');
-                              })
-                                  ->ofMonth($month)
-                                  ->where('status', '=', 'reached');
-                          })
+                $calls->whereHas('outboundUser', function ($user) use ($month) {
+                    $user->ofType('care-center')
+                        ->where('first_name', '=', 'Rachel')
+                        ->where('last_name', '=', 'Walker');
+                })
+                    ->ofMonth($month)
+                    ->where('status', '=', 'reached');
+            })
             ->pluck('id')
             ->all();
 
