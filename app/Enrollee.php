@@ -441,7 +441,7 @@ class Enrollee extends BaseModel
                     $q->where('status', '=', 'soft_rejected')
                         ->where('requested_callback', '<=', Carbon::now()->toDateString());
                 }
-                     );
+            );
     }
 
     public function scopeToSMS($query)
