@@ -59,16 +59,12 @@ jobs:
     - run: cp .env.circleci .env
     #    - run: php artisan migrate --force
 
-    # run tests with phpunit or paratest
-    #    - run: ./vendor/bin/phpunit --testsuite=Unit
-    #- run: ./vendor/bin/codecept build
-    #        - run: ./vendor/bin/codecept run --xml result.xml
-#    - run: ./vendor/bin/paratest ./tests/Unit --verbose=1 --stop-on-failure --colors --runner SqliteRunner -p16
-    - run: ./vendor/phpunit/phpunit/phpunit
-#    - store_test_results:
-#        path: tests/_output
-#    - store_artifacts:
-#        path: tests/_output
+    # run tests with paratest
+    - run: ./vendor/bin/paratest ./tests/Unit --verbose=1 --stop-on-failure --colors --runner SqliteRunner -p8
+    - store_test_results:
+        path: tests/_output
+    - store_artifacts:
+        path: tests/_output
     - run:
         name: Add a version to the build
         command: |

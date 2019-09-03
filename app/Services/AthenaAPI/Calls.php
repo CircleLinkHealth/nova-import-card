@@ -544,11 +544,7 @@ class Calls implements AthenaApiImplementation
 
     public function initApiConnection()
     {
-        $this->key     = config('services.athena.key');
-        $this->secret  = config('services.athena.secret');
-        $this->version = config('services.athena.version');
-
-        $this->api = new Connection($this->version, $this->key, $this->secret);
+        $this->api = app(AthenaApiImplementation::class);
     }
 
     /**
