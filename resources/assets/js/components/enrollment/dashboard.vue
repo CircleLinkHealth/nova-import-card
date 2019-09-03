@@ -140,7 +140,7 @@
                                 <li>
                                     <a class="waves-effect waves-light btn modal-trigger" href="#utc"
                                        style="background: #ecb70e">
-                                        No Answer
+                                        Unavailable
                                     </a>
                                 </li>
                                 <li>
@@ -216,24 +216,32 @@
                     </blockquote>
                     <div class="row">
                         <div class="col s6 m4 select-custom">
-                            <input name="preferred_phone" type="radio" id="home_radio" value="home"
-                                   :checked="home_phone != ''"/>
                             <label for="home_radio"
-                                   :class="{valid: home_is_valid, invalid: home_is_invalid}">{{home_phone_label}}</label>
+                                   :class="{valid: home_is_valid, invalid: home_is_invalid}">
+                                <input class="with-gap" name="preferred_phone" type="radio" id="home_radio" value="home"
+                                       :checked="home_phone != ''"/>
+                                <span>{{home_phone_label}}</span>
+
+                            </label>
                             <input class="input-field" name="home_phone" id="home_phone" v-model="home_phone"/>
                         </div>
                         <div class="col s6 m4 select-custom">
-                            <input name="preferred_phone" type="radio" id="cell_radio" value="cell"
-                                   :checked="home_phone == '' && cell_phone != ''"/>
+
                             <label for="cell_radio"
-                                   :class="{valid: cell_is_valid, invalid: cell_is_invalid}">{{cell_phone_label}}</label>
+                                   :class="{valid: cell_is_valid, invalid: cell_is_invalid}">
+                                <input class="with-gap" name="preferred_phone" type="radio" id="cell_radio" value="cell"
+                                       :checked="home_phone == '' && cell_phone != ''"/>
+                                <span>{{cell_phone_label}}</span></label>
                             <input class="input-field" name="cell_phone" id="cell_phone" v-model="cell_phone"/>
                         </div>
                         <div class="col s6 m4 select-custom">
-                            <input name="preferred_phone" type="radio" id="other_radio" value="other"
-                                   :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
+
                             <label for="other_radio"
-                                   :class="{valid: other_is_valid, invalid: other_is_invalid}">{{other_phone_label}}</label>
+                                   :class="{valid: other_is_valid, invalid: other_is_invalid}">
+                                <input class="with-gap" name="preferred_phone" type="radio" id="other_radio" value="other"
+                                       :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
+                                <span>{{other_phone_label}}</span>
+                            </label>
                             <input class="input-field" name="other_phone" id="other_phone" v-model="other_phone"/>
                         </div>
                     </div>
@@ -375,7 +383,7 @@
 
                         <div v-show="utc_requested_callback" class="col s6 m12 select-custom">
                             <label for="utc_callback" class="label">Patient Requests Callback On:</label>
-                            <input type="date" name="utc_callback" id="utc_callback">
+                            <input name="utc_callback" id="utc_callback">
                         </div>
 
                     </div>
@@ -426,7 +434,7 @@
 
                         <div v-if="isSoftDecline" class="col s6 m12 select-custom">
                             <label for="soft_decline_callback" class="label">Patient Requests Callback On:</label>
-                            <input type="date" name="soft_decline_callback" id="soft_decline_callback">
+                            <input name="soft_decline_callback" id="soft_decline_callback">
                             <input type="hidden" name="status" value="soft_rejected">
                         </div>
                         <div v-else>
@@ -706,7 +714,7 @@
                 M.Modal.init($('#consented'));
                 M.Modal.init($('#utc'), {
                     onOpenEnd: function () {
-                        M.Datepicker.init($('#soft_decline_callback'), {
+                        M.Datepicker.init($('#utc_callback'), {
                             container: 'body',
                             format: 'yyyy-mm-dd'
                         })

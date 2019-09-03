@@ -527,6 +527,7 @@
                                                                  value="{{ !empty($note) ? $note->body : '' }}"
                                                                  name="body" :required="true"></persistent-textarea>
                                             <br>
+                                            <span>Authored by: {{$author_name}}</span>
                                         </div>
                                     </div>
 
