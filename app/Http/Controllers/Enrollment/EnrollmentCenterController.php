@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Enrollment;
 use App\CareAmbassadorLog;
 use App\Enrollee;
 use App\Http\Controllers\Controller;
+use App\Jobs\ImportConsentedEnrollees;
 use App\TrixField;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -78,6 +79,8 @@ class EnrollmentCenterController extends Controller
         $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
 
         $enrollee->save();
+
+        ImportConsentedEnrollees::dispatch([$enrollee->id], $enrollee->batch);
 
         return redirect()->route('enrollment-center.dashboard');
     }
