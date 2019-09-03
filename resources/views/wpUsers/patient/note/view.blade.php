@@ -29,9 +29,11 @@
                 border-left: 5px solid #50b2e2;
                 line-height: 24px;
             }
+
             body {
                 font-family: 'Roboto', sans-serif !important;
             }
+
             b {
                 font-weight: bolder;
             }

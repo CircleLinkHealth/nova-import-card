@@ -177,7 +177,7 @@ class EnroleeStatus extends Resource
      */
     public static function label()
     {
-        return 'Patients To Enroll - Update Information';
+        return 'Patients - Update Information';
     }
 
     /**

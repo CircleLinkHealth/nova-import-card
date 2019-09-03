@@ -1136,6 +1136,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'EnrollmentDirectorController@addEnrolleeCustomFilter',
                 'as'   => 'ca-director.add-enrollee-custom-filter',
             ]);
+
+            Route::get('/create-test-enrollees', [
+                'uses' => 'EnrollmentDirectorController@runCreateEnrolleesSeeder',
+                'as'   => 'ca-director.create-test-enrollees',
+            ]);
         });
 
         Route::group(['prefix' => 'enrollees'], function () {
