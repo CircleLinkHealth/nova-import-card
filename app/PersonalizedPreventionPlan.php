@@ -7,7 +7,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 class PersonalizedPreventionPlan extends BaseModel
 {
     protected $fillable = [
-        'patient_id',
+        'user_id',
         'hra_answers',
         'vitals_answers',
         'answers_for_eval',
@@ -24,6 +24,6 @@ class PersonalizedPreventionPlan extends BaseModel
 
     public function patient()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
