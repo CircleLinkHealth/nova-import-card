@@ -147,12 +147,17 @@ class InvoiceReviewController extends Controller
         return NurseInvoice::ofNurses($nurseUserId)->pluck('month_year', 'id');
     }
 
-    private function invoice(Request $request, int $nurseUserId, NurseInvoice $invoice, array $invoiceDataWithDisputes)
+    private function invoice(Request $request, int $nurseUserId, NurseInvoice $invoice, $invoiceDataWithDisputes = [])
     {
         $auth = auth()->user();
 
-        $deadline    = new NurseInvoiceDisputeDeadline($invoice->month_year ?? Carbon::now()->subMonth());
-        $invoiceData = $invoiceDataWithDisputes ?? [];
+        $deadline = new NurseInvoiceDisputeDeadline($invoice->month_year ?? Carbon::now()->subMonth());
+
+        if ( ! empty($invoiceDataWithDisputes)) {
+            $invoiceData = $invoiceDataWithDisputes;
+        } else {
+            $invoiceData = $invoice->invoice_data ?? [];
+        }
 
         $args = array_merge(
             [
