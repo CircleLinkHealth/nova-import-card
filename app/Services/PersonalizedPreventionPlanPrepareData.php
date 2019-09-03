@@ -207,7 +207,7 @@ class PersonalizedPreventionPlanPrepareData
 
     private function getStringValue($coll, $key, $default = 'N/A')
     {
-        if (!$coll || empty($coll)) {
+        if (!$coll || ProviderReportService::filterAnswer($coll)) {
             return $default;
         }
 
@@ -234,7 +234,7 @@ class PersonalizedPreventionPlanPrepareData
         $wholeGrain = [];
 
         $nutritionData['whole_grain'] = $this->getStringValue($patientPppData->answers_for_eval, 'whole_grain');
-        $nutritionData['multipleQuestion16'] = !empty($patientPppData->answers_for_eval['multipleQuestion16'])
+        $nutritionData['multipleQuestion16'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
             ? $patientPppData->answers_for_eval['multipleQuestion16']
             : 'N/A';
 
@@ -642,12 +642,12 @@ class PersonalizedPreventionPlanPrepareData
     {
         $index = 0;
 
-        $screenings['breast_cancer_screening'] = !empty($patientPppData->answers_for_eval['breast_cancer_screening'])
+        $screenings['breast_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['breast_cancer_screening'])
             ? $patientPppData->answers_for_eval['breast_cancer_screening']
             : 'N/A';
         $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
         $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
-        $screenings['family_conditions'] = !empty($patientPppData->answers_for_eval['family_conditions'])
+        $screenings['family_conditions'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['family_conditions'])
             ? $patientPppData->answers_for_eval['family_conditions']
             : 'N/A';
 
@@ -677,7 +677,7 @@ class PersonalizedPreventionPlanPrepareData
         $index = 1;
         $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
         $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
-        $screenings['cervical_cancer_screening'] = !empty($patientPppData->answers_for_eval['cervical_cancer_screening'])
+        $screenings['cervical_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['cervical_cancer_screening'])
             ? $patientPppData->answers_for_eval['cervical_cancer_screening']
             : 'N/A';
 
@@ -701,7 +701,7 @@ class PersonalizedPreventionPlanPrepareData
         $index = 2;
         $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
         $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
-        $screenings['cervical_cancer_screening'] = !empty($patientPppData->answers_for_eval['cervical_cancer_screening'])
+        $screenings['cervical_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['cervical_cancer_screening'])
             ? $patientPppData->answers_for_eval['cervical_cancer_screening']
             : 'N/A';
 
@@ -726,10 +726,10 @@ class PersonalizedPreventionPlanPrepareData
         $screenings['race'] = $this->getStringValue($patientPppData->answers_for_eval, 'race');
         $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
         $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
-        $screenings['prostate_cancer_screening'] = !empty($patientPppData->answers_for_eval['prostate_cancer_screening'])
+        $screenings['prostate_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['prostate_cancer_screening'])
             ? $patientPppData->answers_for_eval['prostate_cancer_screening']
             : 'N/A';
-        $screenings['multipleQuestion16'] = !empty($patientPppData->answers_for_eval['multipleQuestion16'])
+        $screenings['multipleQuestion16'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
             ? $patientPppData->answers_for_eval['multipleQuestion16']
             : 'N/A';
 
@@ -756,10 +756,10 @@ class PersonalizedPreventionPlanPrepareData
     {
         $index = 4;
         $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
-        $screenings['colorectal_cancer_screening'] = !empty($patientPppData->answers_for_eval['colorectal_cancer_screening'])
+        $screenings['colorectal_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['colorectal_cancer_screening'])
             ? $patientPppData->answers_for_eval['colorectal_cancer_screening']
             : 'N/A';
-        $screenings['family_conditions'] = !empty($patientPppData->answers_for_eval['family_conditions'])
+        $screenings['family_conditions'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['family_conditions'])
             ? $patientPppData->answers_for_eval['family_conditions']
             : 'N/A';
 
@@ -781,15 +781,15 @@ class PersonalizedPreventionPlanPrepareData
     public function skinCancer($patientPppData, $title)
     {
         $index = 5;
-        $screenings['multipleQuestion16'] = !empty($patientPppData->answers_for_eval['multipleQuestion16'])
+        $screenings['multipleQuestion16'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
             ? $patientPppData->answers_for_eval['multipleQuestion16']
             : 'N/A';
 
-        $screenings['family_conditions'] = !empty($patientPppData->answers_for_eval['family_conditions'])
+        $screenings['family_conditions'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['family_conditions'])
             ? $patientPppData->answers_for_eval['family_conditions']
             : 'N/A';
 
-        $screenings['family_members_with_condition'] = !empty($patientPppData->answers_for_eval['family_members_with_condition'])
+        $screenings['family_members_with_condition'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['family_members_with_condition'])
             ? $patientPppData->answers_for_eval['family_members_with_condition']
             : 'N/A';
 
@@ -920,11 +920,11 @@ class PersonalizedPreventionPlanPrepareData
     public function cholesterolDyslipidemia($patientPppData, $title)
     {
         $index = 3;
-        $screenings['blood_pressure'] = !empty($patientPppData->answers_for_eval['blood_pressure'])
+        $screenings['blood_pressure'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['blood_pressure'])
             ? $patientPppData->answers_for_eval['blood_pressure']
             : 'N/A';
         $screenings['bmi'] = $this->getStringValue($patientPppData->answers_for_eval, 'bmi');
-        $screenings['multipleQuestion16'] = !empty($patientPppData->answers_for_eval['multipleQuestion16'])
+        $screenings['multipleQuestion16'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
             ? $patientPppData->answers_for_eval['multipleQuestion16']
             : 'N/A';
         $screenings['current_smoker'] = $this->getStringValue($patientPppData->answers_for_eval, 'current_smoker');
