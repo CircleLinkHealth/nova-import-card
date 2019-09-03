@@ -152,13 +152,13 @@ END ASC, attempt_count ASC");
         return response()->json([], 200);
     }
 
-    public function runCreateEnrolleesSeeder()
+    public function runCreateEnrolleesSeeder(Request $request)
     {
         if ( ! isProductionEnv()) {
-            Artisan::call('db:seed --class=EnrolleesSeeder');
+            Artisan::call('db:seed', ['--class' => 'EnrolleesSeeder']);
         }
 
-        return redirect()->back();
+        return 'Test Patients have been created. Please close this window.';
     }
 
     public function unassignCareAmbassadorFromEnrollees(UpdateMultipleEnrollees $request)

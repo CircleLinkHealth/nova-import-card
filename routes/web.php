@@ -1122,7 +1122,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'ca-director.add-enrollee-custom-filter',
             ]);
 
-            Route::post('/create-test-enrollees', [
+            Route::get('/create-test-enrollees', [
                 'uses' => 'EnrollmentDirectorController@runCreateEnrolleesSeeder',
                 'as'   => 'ca-director.create-test-enrollees',
             ]);
