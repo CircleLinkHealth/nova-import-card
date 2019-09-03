@@ -10,6 +10,7 @@ use App\Constants;
 use App\Enrollee;
 use App\Nova\Importers\EnroleeData as EnroleeDataImporter;
 use Illuminate\Http\Request;
+use Jubeki\Nova\Cards\Linkable\Linkable;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
@@ -79,8 +80,16 @@ class EnroleeData extends Resource
      */
     public function cards(Request $request)
     {
+        $linkable = ! isProductionEnv() ?
+            (new Linkable())
+                ->title('Create Test Patients')
+                ->url(route('ca-director.create-test-enrollees'))
+                ->subtitle('(Creates 100 patients)')
+                : '';
+
         return [
             new NovaImportCard(self::class),
+            $linkable,
         ];
     }
 
@@ -151,7 +160,7 @@ class EnroleeData extends Resource
      */
     public static function label()
     {
-        return 'Patients To Enroll - Create';
+        return 'Patients - Create';
     }
 
     /**

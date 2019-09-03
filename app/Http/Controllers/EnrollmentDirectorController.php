@@ -16,6 +16,7 @@ use App\Http\Requests\UpdateMultipleEnrollees;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class EnrollmentDirectorController extends Controller
@@ -149,6 +150,15 @@ END ASC, attempt_count ASC");
         Enrollee::whereIn('id', $request->input('enrolleeIds'))->update(['status' => Enrollee::INELIGIBLE]);
 
         return response()->json([], 200);
+    }
+
+    public function runCreateEnrolleesSeeder()
+    {
+        if ( ! isProductionEnv()) {
+            Artisan::call('db:seed --class=EnrolleesSeeder');
+        }
+
+        return redirect()->back();
     }
 
     public function unassignCareAmbassadorFromEnrollees(UpdateMultipleEnrollees $request)
