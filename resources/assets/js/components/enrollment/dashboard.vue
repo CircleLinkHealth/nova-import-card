@@ -383,7 +383,7 @@
 
                         <div v-show="utc_requested_callback" class="col s6 m12 select-custom">
                             <label for="utc_callback" class="label">Patient Requests Callback On:</label>
-                            <input type="date" name="utc_callback" id="utc_callback">
+                            <input name="utc_callback" id="utc_callback">
                         </div>
 
                     </div>
@@ -434,7 +434,7 @@
 
                         <div v-if="isSoftDecline" class="col s6 m12 select-custom">
                             <label for="soft_decline_callback" class="label">Patient Requests Callback On:</label>
-                            <input type="date" name="soft_decline_callback" id="soft_decline_callback">
+                            <input name="soft_decline_callback" id="soft_decline_callback">
                             <input type="hidden" name="status" value="soft_rejected">
                         </div>
                         <div v-else>
@@ -714,7 +714,7 @@
                 M.Modal.init($('#consented'));
                 M.Modal.init($('#utc'), {
                     onOpenEnd: function () {
-                        M.Datepicker.init($('#soft_decline_callback'), {
+                        M.Datepicker.init($('#utc_callback'), {
                             container: 'body',
                             format: 'yyyy-mm-dd'
                         })
