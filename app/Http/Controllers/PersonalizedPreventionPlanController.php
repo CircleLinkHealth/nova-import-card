@@ -22,6 +22,10 @@ class PersonalizedPreventionPlanController extends Controller
 
         $patient = $patientPppData->patient;
 
+        if ( ! $patient) {
+            throw new \Exception("missing patient from report");
+        }
+
         $personalizedHealthAdvices = $this->service->prepareRecommendations($patientPppData);
 
         return view('personalizedPreventionPlan', compact('personalizedHealthAdvices', 'patient', 'patientPppData'));

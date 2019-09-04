@@ -657,8 +657,8 @@ class PersonalizedPreventionPlanPrepareData
         if ($screenings['sex'] === 'Female' && '50' < $screenings['age'] && $screenings['age'] < '74') {
             return $this->getTaskRecommendations($title, $index);
 
-        } elseIf ($screenings['breast_cancer_screening'] !== 'In the last 2-3 years'
-            || $screenings['breast_cancer_screening'] !== 'In the last year'
+        } elseIf (!($screenings['breast_cancer_screening'] === 'In the last 2-3 years'
+            || $screenings['breast_cancer_screening'] === 'In the last year')
             && $screenings['sex'] === 'Female'
             && $breastCancerSelected === true) {
             return $this->getTaskRecommendations($title, $index);
