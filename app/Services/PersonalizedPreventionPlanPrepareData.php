@@ -376,8 +376,8 @@ class PersonalizedPreventionPlanPrepareData
 
         $physicalActivity['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
 
-        if (($physicalActivity['physical_activity'] === 'Never' && $physicalActivity['age'] < '65')
-            || ($physicalActivity['physical_activity'] === '<3 times a week' && $physicalActivity['age'] < '65')) {
+        if ($physicalActivity['age'] < '65' && ($physicalActivity['physical_activity'] === 'Never'
+                || $physicalActivity['physical_activity'] === '<3 times a week')){
 
             return $this->getTaskRecommendations($title, $index);
         };
@@ -602,8 +602,8 @@ class PersonalizedPreventionPlanPrepareData
             'human_papillomavirus');
         $vaccines['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
 
-        if ($vaccines['age'] <= '26'
-            && ($vaccines['human_papillomavirus'] === 'No' || $vaccines['human_papillomavirus'] === 'Unsure')) {
+        if (($vaccines['age'] <= '26'
+            && $vaccines['human_papillomavirus'] === 'No' || $vaccines['human_papillomavirus'] === 'Unsure')) {
             return $this->getTaskRecommendations($title, $index);
         }
 
@@ -616,7 +616,7 @@ class PersonalizedPreventionPlanPrepareData
         $vaccines['shingles'] = $this->getStringValue($patientPppData->answers_for_eval, 'shingles');
         $vaccines['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
 
-        if (($vaccines['age'] > '50' && $vaccines['shingles'] === 'No' || $vaccines['shingles'] === 'Unsure')) {
+        if ($vaccines['age'] > '50' && ($vaccines['shingles'] === 'No' || $vaccines['shingles'] === 'Unsure')) {
             return $this->getTaskRecommendations($title, $index);
         }
 
