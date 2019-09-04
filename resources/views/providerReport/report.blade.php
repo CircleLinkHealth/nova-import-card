@@ -30,7 +30,12 @@
             </div>
             <div class="section-body">
                 The patient is a {{$reportData['demographic_data']['age']}} year
-                old {{$reportData['demographic_data']['race']}} who
+                old
+                @if($reportData['demographic_data']['ethnicity'] === 'No')
+                    non
+                @endif
+                hispanic/latino
+                {{$reportData['demographic_data']['race']}} who
                 identifies as {{$reportData['demographic_data']['gender']}}.
                 In general, the patient has self-assessed their health as {{$reportData['demographic_data']['health']}}.
             </div>

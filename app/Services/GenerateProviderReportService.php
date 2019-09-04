@@ -109,6 +109,8 @@ class GenerateProviderReportService
 
         $demographicData['race'] = $this->answerForHraQuestionWithOrder(1, 'a');
 
+        $demographicData['ethnicity'] = $this->answerForHraQuestionWithOrder(1, 'b');
+
         $demographicData['health'] = $this->answerForHraQuestionWithOrder(5);
 
         return $demographicData;

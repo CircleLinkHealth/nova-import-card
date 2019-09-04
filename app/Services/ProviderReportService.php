@@ -21,6 +21,8 @@ class ProviderReportService
         $demographicData['age'] = $this->getStringValue($report->demographic_data['age'], 'N/A');
         $demographicData['race'] = ucwords(strtolower($this->checkInputValueIsNotEmpty($report->demographic_data['race'],
             'race')));
+        $demographicData['ethnicity'] = ucwords(strtolower($this->checkInputValueIsNotEmpty($report->demographic_data['ethnicity'],
+            'ethnicity')));
         $demographicData['gender'] = strtolower($this->checkInputValueIsNotEmpty($report->demographic_data['gender'], 'gender'));
         $demographicData['health'] = strtolower($this->checkInputValueIsNotEmpty($report->demographic_data['health'], 'health'));
 
