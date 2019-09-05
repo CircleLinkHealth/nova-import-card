@@ -283,7 +283,7 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:patient.read,careplan.read,call.read');
             */
 
-            Route::get('download/{media_id}/{user_id}', [
+            Route::get('download/{media_id}/{user_id}/{practice_id}', [
                 'uses' => 'DownloadController@downloadMediaFromSignedUrl',
                 'as'   => 'download.media.from.signed.url',
             ])->middleware('signed');
