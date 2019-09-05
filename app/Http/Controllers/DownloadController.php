@@ -6,12 +6,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DownloadMediaWithSignedRequest;
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
-use Spatie\MediaLibrary\Models\Media;
 
 class DownloadController extends Controller
 {
+    public function downloadMediaFromSignedUrl(DownloadMediaWithSignedRequest $request)
+    {
+        return $this->downloadMedia(Media::findOrFail($request->route('media_id')));
+    }
+
     /**
      * Returns file requested to download.
      *
@@ -60,9 +66,13 @@ class DownloadController extends Controller
 
         $fileName = str_replace('/', '', strrchr($filePath, '/'));
 
-        return response()->download($path, $fileName, [
-            'Content-Length: '.filesize($path),
-        ]);
+        return response()->download(
+            $path,
+            $fileName,
+            [
+                'Content-Length: '.filesize($path),
+            ]
+        );
     }
 
     public function mediaFileExists($filePath)

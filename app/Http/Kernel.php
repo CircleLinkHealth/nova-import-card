@@ -90,6 +90,7 @@ class Kernel extends HttpKernel
         'bindings'   => SubstituteBindings::class,
         'can'        => Authorize::class,
         'guest'      => RedirectIfAuthenticated::class,
+        'signed'     => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle'   => ThrottleRequests::class,
 
         //CLH Middleware

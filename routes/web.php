@@ -283,6 +283,11 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:patient.read,careplan.read,call.read');
             */
 
+            Route::get('download/{media_id}/{user_id}/{practice_id}', [
+                'uses' => 'DownloadController@downloadMediaFromSignedUrl',
+                'as'   => 'download.media.from.signed.url',
+            ])->middleware('signed');
+
             Route::get('without-scheduled-activities', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledActivities',
                 'as'   => 'patients.without-scheduled-activities',
