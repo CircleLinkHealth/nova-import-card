@@ -6,7 +6,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DownloadMediaWithSignedRequest;
 use App\Services\GoogleDrive;
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -41,6 +43,11 @@ class DownloadController extends Controller
         $export   = $service->files->export($file['basename'], $mimeType);
 
         return response($export->getBody(), 200, $export->getHeaders());
+    }
+
+    public function downloadMediaFromSignedUrl(DownloadMediaWithSignedRequest $request)
+    {
+        return $this->downloadMedia(Media::findOrFail($request->route('media_id')));
     }
 
     /**
