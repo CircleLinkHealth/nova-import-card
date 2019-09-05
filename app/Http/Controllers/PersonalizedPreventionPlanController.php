@@ -31,14 +31,14 @@ class PersonalizedPreventionPlanController extends Controller
         ])
                        ->findOrFail($userId);
 
-        $ppp = $patient->personalizedPreventionPlan->first();
+        $patientPppData = $patient->personalizedPreventionPlan->first();
 
-        if (! $ppp){
+        if (! $patientPppData){
             throw new \Exception("This patient does not have a PPP for {$year}.");
         }
 
-        $personalizedHealthAdvices = $this->service->prepareRecommendations($ppp);
+        $personalizedHealthAdvices = $this->service->prepareRecommendations($patientPppData);
 
-        return view('personalizedPreventionPlan', compact('personalizedHealthAdvices', 'patient', 'ppp'));
+        return view('personalizedPreventionPlan', compact('personalizedHealthAdvices', 'patient', 'patientPppData'));
     }
 }
