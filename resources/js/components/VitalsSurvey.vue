@@ -327,8 +327,12 @@
 
                 let nextHasAnswer = false;
                 if (canProceed) {
-                    const nextQuestion = this.getNextQuestion(this.currentQuestionIndex);
-                    nextHasAnswer = typeof nextQuestion.answer !== "undefined";
+                    const nextQuestionIndex = this.getNextQuestionIndex(this.currentQuestionIndex);
+                    if (nextQuestionIndex !== this.currentQuestionIndex) {
+                        const nextQuestion = this.questions[nextQuestionIndex];
+                        nextHasAnswer = typeof nextQuestion !== "undefined" && typeof nextQuestion.answer !== "undefined";
+                    }
+
                 }
 
                 return nextHasAnswer;

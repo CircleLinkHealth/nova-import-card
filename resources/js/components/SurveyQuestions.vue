@@ -345,7 +345,7 @@
                 let nextHasAnswer = false;
                 if (canProceed) {
                     const nextQuestion = this.getNextQuestion(this.currentQuestionIndex);
-                    nextHasAnswer = typeof nextQuestion.answer !== "undefined";
+                    nextHasAnswer = nextQuestion != null && typeof nextQuestion.answer !== "undefined";
                 }
 
                 return nextHasAnswer;
