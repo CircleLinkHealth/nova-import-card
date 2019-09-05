@@ -10,7 +10,7 @@
                     <div class="col-md-12 active">
                         <label v-if="singleTitle" class="label">{{singleTitle}}</label><br>
                         <input type="text"
-                               class="text-field"
+                               class="text-field margin-bottom-10"
                                v-model="inputHasText[index]"
                                :placeholder="placeholder"/>
                     </div>
@@ -24,12 +24,7 @@
                             {{extraFieldButtonName.remove_extra_answer_text}}
                         </div>
                     </div>
-
-                    <br/>
-                    <br/>
                 </div>
-
-                <br/>
 
                 <!--add single input fields button-->
                 <div class="row no-gutters" v-if="canAddInputFields">

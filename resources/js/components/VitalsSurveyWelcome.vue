@@ -17,11 +17,11 @@
                         office, please hand over your phone to the clinician so they can enter your information.
                     </div>
                     <div class="survey-sub-welcome-text" v-if="isProviderLoggedIn">
-                        <b>If you're the provider</b>, please click below to input {{patientName}} Vitals
+                        <b>If you're the provider/staff</b>, please click below to input {{patientName}} Vitals
                         information.
                     </div>
                     <div class="survey-sub-welcome-text" v-else>
-                        <b>If you're the provider</b>, please click Login below to input {{patientName}} Vitals
+                        <b>If you're the provider/staff</b>, please click Login below to input {{patientName}} Vitals
                         information.
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                         Proceed to enter {{patientName}}'s Vitals
                     </mdb-btn>
                     <mdb-btn v-else color="primary" class="btn-login" @click="logout">
-                        Provider Login for {{patientName}}'s Vitals
+                        Login to enter {{patientName}}'s Vitals
                     </mdb-btn>
 
                     <form id="logout-form" action="/logout" method="POST" style="display: none;">

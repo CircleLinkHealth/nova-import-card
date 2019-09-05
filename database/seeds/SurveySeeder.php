@@ -288,7 +288,6 @@ class SurveySeeder extends Seeder
                     ['type_answer_body' => 'Black/African-Ameri.'],
                     ['type_answer_body' => 'Asian'],
                     ['type_answer_body' => 'White'],
-                    ['type_answer_body' => 'Indian'],
                     ['type_answer_body' => 'Native Ameri./Alaskan'],
                     ['type_answer_body' => 'Native Hawaiian'],
                     ['type_answer_body' => 'Other'],
@@ -574,7 +573,11 @@ class SurveySeeder extends Seeder
                         'type_answer_body' => '1',
                     ],
                     [
-                        'type_answer_body' => 'Other',
+                        'options' => [
+                            'placeholder'               => 'Other',
+                            'answer_type'               => 'text',
+                            'allow_single_custom_input' => true,
+                        ],
                     ],
                 ],
             ],

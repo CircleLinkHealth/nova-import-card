@@ -16,11 +16,11 @@
 
     <!-- Styles -->
 
-    @if (isset($isPdf) && $isPdf)
-        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    @else
+{{--    @if (isset($isPdf) && $isPdf)--}}
+{{--        <link href="{{ asset('css/app.css') }}" rel="stylesheet">--}}
+{{--    @else--}}
         <link href="{{ mix('css/app.css') }}" rel="stylesheet">
-    @endif
+{{--    @endif--}}
 
     @stack('styles')
 
