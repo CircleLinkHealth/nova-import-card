@@ -11,7 +11,7 @@
 </p>
 
 <ul>
-    <li><b>Attendance rate<span style="color: red;">*</span>:</b>&nbsp{{$attendanceRate}}%</li>
+    <li><b>Attendance rate<span style="color: red;">*</span>:</b>&nbsp;{{$attendanceRate}}%</li>
     <li><b>Calls Completion rate<span style="color: red;">**</span>:</b>&nbsp;{{$callsCompletionRate}}%</li>
     <li><b>Efficiency Index (70 - 100 is goal, higher better)<span style="color: red;">***</span>:</b>&nbsp;{{$efficiencyIndex}}</li>
     <li><b>Total time in system on {{$date->englishDayOfWeek}} ({{$date->format('m/d')}}
