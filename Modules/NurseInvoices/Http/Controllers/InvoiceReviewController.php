@@ -47,11 +47,13 @@ class InvoiceReviewController extends Controller
     public function adminShow(AdminShowNurseInvoice $request, $nurseUserId, $invoiceId)
     {
         $invoice = NurseInvoice::where('id', $invoiceId)
-            ->with(['dispute.resolver'])
+            ->with(['dispute.resolver', 'dailyDisputes'])
             ->ofNurses($nurseUserId)
             ->firstOrFail();
 
-        return $this->invoice($request, $nurseUserId, $invoice, []);
+        $invoiceDataWithDisputes = $this->attachDisputes->putDisputesToTimePerDay($invoice);
+
+        return $this->invoice($request, $nurseUserId, $invoice, $invoiceDataWithDisputes);
     }
 
     /**
@@ -70,6 +72,17 @@ class InvoiceReviewController extends Controller
         $invoice->save();
 
         return $this->ok();
+    }
+
+    /**
+     * @param $nurseUserId
+     * @param $auth
+     *
+     * @return bool
+     */
+    public function checkUserIfAuthToDispute($nurseUserId, $auth)
+    {
+        return $nurseUserId === $auth->id ? true : false;
     }
 
     /**
@@ -147,6 +160,14 @@ class InvoiceReviewController extends Controller
         return NurseInvoice::ofNurses($nurseUserId)->pluck('month_year', 'id');
     }
 
+    /**
+     * @param Request      $request
+     * @param int          $nurseUserId
+     * @param NurseInvoice $invoice
+     * @param array        $invoiceDataWithDisputes
+     *
+     * @return Factory|View
+     */
     private function invoice(Request $request, int $nurseUserId, NurseInvoice $invoice, $invoiceDataWithDisputes = [])
     {
         $auth = auth()->user();
@@ -175,7 +196,9 @@ class InvoiceReviewController extends Controller
         if ('web' === $request->input('view')) {
             return view('nurseinvoices::invoice-v3', array_merge($args, ['isPdf' => true]));
         }
+        //We want to disable "daily dispute functionality" for admins who view invoice from superadmin page.
+        $isUserAuthToDailyDispute = $this->checkUserIfAuthToDispute($nurseUserId, $auth);
 
-        return view('nurseinvoices::reviewInvoice', $args);
+        return view('nurseinvoices::reviewInvoice', $args)->with(['isUserAuthToDailyDispute' => $isUserAuthToDailyDispute]);
     }
 }
