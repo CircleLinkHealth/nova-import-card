@@ -57,13 +57,28 @@ class ProviderReport extends BaseModel
 
     public function hraSurveyInstance()
     {
-        //todo: add where?
         return $this->hasOne(SurveyInstance::class, 'id', 'hra_instance_id');
     }
 
     public function vitalsSurveyInstance()
     {
-        //todo: add where?
         return $this->hasOne(SurveyInstance::class, 'id', 'vitals_instance_id');
     }
+
+    public function scopeForYear($query, $year)
+    {
+
+        if (is_a($year, 'Carbon\Carbon')) {
+            $year = $year->year;
+        }
+
+        return $query->whereHas('hraSurveyInstance', function ($hra) use ($year) {
+            $hra->where('year', $year);
+        })
+                     ->whereHas('vitalsSurveyInstance', function ($vitals) use ($year) {
+                         $vitals->where('year', $year);
+                     });
+    }
+
+
 }

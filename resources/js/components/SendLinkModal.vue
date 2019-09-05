@@ -285,7 +285,12 @@
                 axios.post(url, req)
                     .then(resp => {
                         this.waiting = false;
+                        if (typeof this.options.success !== 'undefined'){
+                            //this is for send assessmen link component, so we trigger the success alert
+                            this.options.success();
+                        }
                         this.options.onDone();
+
                     })
                     .catch(error => {
                         this.waiting = false;

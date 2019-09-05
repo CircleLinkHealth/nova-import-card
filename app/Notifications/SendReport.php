@@ -79,9 +79,8 @@ class SendReport extends Notification
             ->view(
                 'notifications.email',
                 [
-                    'greeting'        => "Please click below button to see the AWV {$this->type} for patient: {$this->patient->getFullName()}",
+                    'greeting'        => "Please click below button to see the AWV {$this->type} for patient with id: {$this->patient->id}",
                     'actionText'      => 'View Report',
-                    //to add parameters to route
                     'actionUrl'       => $this->getActionUrl(),
                     'introLines'      => [],
                     'outroLines'      => [],
@@ -90,7 +89,7 @@ class SendReport extends Notification
                 ]
             )
             ->from("no-reply@${slugSaasAccountName}.com", $saasAccountName)
-            ->subject('AWV Provider Report');
+            ->subject("Patient AWV report: {$this->type}");
 
 
         return $mail;
@@ -112,9 +111,9 @@ class SendReport extends Notification
     private function getActionUrl(){
 
         if ($this->type == 'PPP'){
-            return route('getPppDataForUser', ['userId' => $this->patient->id]);
+            return route('get-ppp-report', ['userId' => $this->patient->id]);
         }else{
-            return route('provider-report', ['userId' => $this->patient->id]);
+            return route('get-provider-report', ['userId' => $this->patient->id]);
         }
 
 

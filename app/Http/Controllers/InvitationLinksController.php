@@ -73,18 +73,20 @@ class InvitationLinksController extends Controller
         return response()->json(['message' => 'success']);
     }
 
-    public function showEnrollUserForm(Request $request, $userId) {
+    public function showEnrollUserForm(Request $request, $userId)
+    {
 
         $patient = User::findOrFail($userId);
 
         return view('enrollUser', [
-            'patientId' => $patient->id,
+            'patientId'   => $patient->id,
             'patientName' => $patient->display_name,
         ]);
     }
 
 
-    public function enrollUser(Request $request, $userId) {
+    public function enrollUser(Request $request, $userId)
+    {
 
         try {
 
@@ -100,14 +102,24 @@ class InvitationLinksController extends Controller
                 ->firstOrFail();
 
             $this->service->enrolUser($user, $forYear);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
 
         return response()->json(['message' => 'success']);
     }
 
+    public function showSendAssessmentLinkForm(Request $request, $userId, $surveyName, $channel)
+    {
+        $patient = User::findOrFail($userId);
+
+        return view('sendAssessmentLink', [
+            'patientId'   => $patient->id,
+            'patientName' => $patient->display_name,
+            'surveyName'  => $surveyName,
+            'channel'         => $channel,
+        ]);
+    }
 
     /**
      * @param SendSurveyLinkRequest $request
