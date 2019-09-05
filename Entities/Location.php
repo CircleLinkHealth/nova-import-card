@@ -70,6 +70,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location query()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location whereClinicalEscalationPhone($value)
+ * @property-read int|null $clinical_emergency_contact_count
+ * @property-read int|null $emr_direct_count
+ * @property-read int|null $notifications_count
+ * @property-read int|null $providers_count
+ * @property-read int|null $revision_history_count
+ * @property-read int|null $user_count
  */
 class Location extends \CircleLinkHealth\Core\Entities\BaseModel
 {

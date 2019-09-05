@@ -75,6 +75,9 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereProblem1($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereProblem2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereTotalTime($value)
+ * @property-read int|null $billable_problems_count
+ * @property-read int|null $chargeable_services_count
+ * @property-read int|null $revision_history_count
  */
 class PatientMonthlySummary extends BaseModel
 {

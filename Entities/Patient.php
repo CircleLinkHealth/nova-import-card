@@ -135,6 +135,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $withdrawn_reason
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient enrolledOrPaused()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereWithdrawnReason($value)
+ * @property-read int|null $contact_windows_count
+ * @property-read int|null $revision_history_count
  */
 class Patient extends BaseModel
 {

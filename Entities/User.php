@@ -298,6 +298,55 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra[] $nurseBonuses
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\PatientAWVSummary[] $patientAWVSummaries
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofActiveBillablePractice()
+ * @property-read int|null $activities_count
+ * @property-read int|null $activities_as_provider_count
+ * @property-read int|null $appointments_count
+ * @property-read int|null $care_items_count
+ * @property-read int|null $care_team_members_count
+ * @property-read int|null $ccd_allergies_count
+ * @property-read int|null $ccd_insurance_policies_count
+ * @property-read int|null $ccd_medications_count
+ * @property-read int|null $ccd_problems_count
+ * @property-read int|null $ccdas_count
+ * @property-read int|null $chargeable_services_count
+ * @property-read int|null $clients_count
+ * @property-read int|null $clinical_emergency_contact_locations_count
+ * @property-read int|null $comment_count
+ * @property-read int|null $cpm_biometrics_count
+ * @property-read int|null $cpm_lifestyles_count
+ * @property-read int|null $cpm_medication_groups_count
+ * @property-read int|null $cpm_misc_user_pivot_count
+ * @property-read int|null $cpm_miscs_count
+ * @property-read int|null $cpm_problems_count
+ * @property-read int|null $cpm_symptoms_count
+ * @property-read int|null $disputes_count
+ * @property-read int|null $emr_direct_count
+ * @property-read int|null $foreign_id_count
+ * @property-read int|null $forward_alerts_to_count
+ * @property-read int|null $forwarded_alerts_by_count
+ * @property-read int|null $forwarded_care_plan_approval_emails_by_count
+ * @property-read int|null $inbound_activities_count
+ * @property-read int|null $inbound_calls_count
+ * @property-read int|null $inbound_messages_count
+ * @property-read int|null $locations_count
+ * @property-read int|null $media_count
+ * @property-read int|null $notes_count
+ * @property-read int|null $notifications_count
+ * @property-read int|null $nurse_bonuses_count
+ * @property-read int|null $observations_count
+ * @property-read int|null $outbound_calls_count
+ * @property-read int|null $outbound_messages_count
+ * @property-read int|null $page_timers_as_provider_count
+ * @property-read int|null $patient_a_w_v_summaries_count
+ * @property-read int|null $patient_activities_count
+ * @property-read int|null $patient_demographics_count
+ * @property-read int|null $patient_summaries_count
+ * @property-read int|null $perms_count
+ * @property-read int|null $phone_numbers_count
+ * @property-read int|null $revision_history_count
+ * @property-read int|null $roles_count
+ * @property-read int|null $tokens_count
+ * @property-read int|null $ucp_count
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {

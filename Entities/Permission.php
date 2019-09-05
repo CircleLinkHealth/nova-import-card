@@ -29,6 +29,8 @@ use Michalisantoniou6\Cerberus\CerberusPermission;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Permission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Permission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Permission query()
+ * @property-read int|null $roles_count
+ * @property-read int|null $users_count
  */
 class Permission extends CerberusPermission
 {

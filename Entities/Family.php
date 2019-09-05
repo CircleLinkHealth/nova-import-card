@@ -25,6 +25,8 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Family newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Family newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Family query()
+ * @property-read int|null $patients_count
+ * @property-read int|null $revision_history_count
  */
 class Family extends \CircleLinkHealth\Core\Entities\BaseModel
 {
