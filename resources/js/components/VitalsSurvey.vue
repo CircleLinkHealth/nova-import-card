@@ -321,8 +321,17 @@
                     && this.currentQuestionIndex > 0;
             },
             canScrollDown() {
-                return this.stage === "survey"
+
+                const canProceed = this.stage === "survey"
                     && this.currentQuestionIndex < this.questions.length;
+
+                let nextHasAnswer = false;
+                if (canProceed) {
+                    const nextQuestion = this.getNextQuestion(this.currentQuestionIndex);
+                    nextHasAnswer = typeof nextQuestion.answer !== "undefined";
+                }
+
+                return nextHasAnswer;
             },
             progressPercentage() {
                 return 100 * (this.progress) / this.totalQuestions;
