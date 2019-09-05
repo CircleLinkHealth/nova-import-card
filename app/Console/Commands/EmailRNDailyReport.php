@@ -44,6 +44,9 @@ class EmailRNDailyReport extends Command
     /**
      * Execute the console command.
      *
+     * @throws \App\Exceptions\FileNotFoundException
+     * @throws \Exception
+     *
      * @return mixed
      */
     public function handle()
