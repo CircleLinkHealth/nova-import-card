@@ -12,39 +12,66 @@ use App\Notifications\SendSignedUrlToDownloadPatientProblemsReport;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Notification;
 use Tests\Helpers\SetupTestCustomerTrait;
 use Tests\TestCase;
+use URL;
 
 class PatientProblemsReportTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
     use SetupTestCustomerTrait;
 
+    public function test__user_is_redirected_to_login_if_unauthenticated()
+    {
+        $signedLink = URL::temporarySignedRoute('download.media.from.signed.url', now()->addDays(2), [
+            'media_id'    => 1,
+            'user_id'     => 2,
+            'practice_id' => 3,
+        ]);
+
+        $this->call('get', $signedLink)
+            ->assertRedirect(url('/login'));
+    }
+
     /**
-     * The console command is essentially a way to call PatientProblemsReport from the command line.
-     * We wnat to test that it sends the notification.
+     * We want to test that given the correct input, the command will produce the report.
      *
      * @see PatientProblemsReport
      */
     public function test_console_command_sends_notification()
     {
         //setup
-        Notification::fake();
-        $customer = $this->createTestCustomerData(1);
+        $userId     = 1;
+        $practiceId = 10;
+        $mock       = \Mockery::mock(PatientProblemsReport::class);
+
+        $mock->shouldReceive('forPractice')
+            ->with($practiceId)
+            ->andReturnSelf()
+            ->shouldReceive('forUser')
+            ->with($userId)
+            ->andReturnSelf()
+            ->shouldReceive('createMedia')
+            ->andReturnSelf()
+            ->shouldReceive('notifyUser')
+            ->andReturnSelf();
+
+        $this->instance(PatientProblemsReport::class, $mock);
 
         //test
         $this->artisan(CreatePatientProblemsReportForPractice::class, [
-            'practice_id' => $customer['practice']->id,
-            'user_id'     => $customer['admin']->id,
+            'practice_id' => $practiceId,
+            'user_id'     => $userId,
         ])
             ->assertExitCode(0)
             ->expectsOutput('Command ran.');
-
-        //assert
-        $this->assertTestMediaIsAttachedToPracticeAndNotUser($customer['practice'], $customer['admin']);
-        $this->assertNotificationSent($customer['admin']);
     }
 
+    /**
+     * This tests a safeguard against trying to create a report for a user who does not have access to the practice.
+     */
     public function test_model_not_found_exception_thrown_if_user_passed_does_not_have_access_to_practice()
     {
         //setup
@@ -62,43 +89,37 @@ class PatientProblemsReportTest extends TestCase
         }
     }
 
-    public function test_other_users_from_the_same_practice_do_not_have_access_to_the_report()
+    public function test_notification_is_sent()
     {
         //setup
-        $customer = $this->createTestCustomerData(1);
+        Notification::fake();
+        $customer = $this->createTestCustomerData(5);
         $user     = $customer['provider'];
-        $user2    = $customer['admin'];
+        $practice = $customer['practice'];
         $report   = new PatientProblemsReport();
 
         //test
-        $report->forPractice($customer['practice']->id)
+        $report->forPractice($practice->id)
             ->forUser($user->id)
             ->createMedia()
             ->notifyUser();
 
-        $this->verifyUserIsRedirectedToLoginIfUnauthenticated($report->getSignedLink());
-
-        $response = $this->actingAs($user2)->call('get', $report->getSignedLink());
-
         //assert
-        $response->assertStatus(403);
-        $this->assertTestMediaIsAttachedToPracticeAndNotUser($customer['practice'], $user);
-        $this->assertNotificationSent($user);
-    }
+        $this->assertDatabaseHas('media', [
+            'model_type' => 'CircleLinkHealth\Customer\Entities\Practice',
+            'model_id'   => $practice->id,
+        ]);
 
-    /**
-     * Assert that the SendSignedUrlToDownloadPatientProblemsReport was sent to the given user.
-     *
-     * @param User $user
-     */
-    private function assertNotificationSent(User $user)
-    {
+        //A safeguard to help us remember we should never attach practice reports to users directly, as they contain too much sensitive data.
+        $this->assertDatabaseMissing('media', [
+            'model_type' => 'CircleLinkHealth\Customer\Entities\User',
+            'model_id'   => $user->id,
+        ]);
+
         Notification::assertSentTo(
             $user,
             SendSignedUrlToDownloadPatientProblemsReport::class,
             function ($notification, $channels, $notifiable) use ($user) {
-                $this->verifyUserIsRedirectedToLoginIfUnauthenticated($notification->signedLink);
-
                 $response = $this->actingAs($user)->call('get', $notification->signedLink);
 
                 $response->assertStatus(200)
@@ -111,23 +132,23 @@ class PatientProblemsReportTest extends TestCase
         );
     }
 
-    private function assertTestMediaIsAttachedToPracticeAndNotUser(Practice $practice, User $user)
+    public function test_other_users_from_the_same_practice_do_not_have_access_to_the_report()
     {
-        $this->assertDatabaseHas('media', [
-            'model_type' => 'CircleLinkHealth\Customer\Entities\Practice',
-            'model_id'   => $practice->id,
-        ]);
+        //setup
+        Notification::fake();
+        $customer = $this->createTestCustomerData(1);
+        $user     = $customer['provider'];
+        $user2    = $customer['admin'];
+        $report   = new PatientProblemsReport();
 
-        //A safeguard to help us remember we should never attach practice reports to users directly, as they contain too much sensitive data.
-        $this->assertDatabaseMissing('media', [
-            'model_type' => 'CircleLinkHealth\Customer\Entities\User',
-            'model_id'   => $user->id,
-        ]);
-    }
+        //test
+        $report->forPractice($customer['practice']->id)
+            ->forUser($user->id)
+            ->createMedia()
+            ->notifyUser();
 
-    private function verifyUserIsRedirectedToLoginIfUnauthenticated($signedLink)
-    {
-        $response = $this->call('get', $signedLink)
-            ->assertRedirect(url('/login'));
+        $this->actingAs($user2)->call('get', $report->getSignedLink())
+            //assert
+            ->assertStatus(403);
     }
 }
