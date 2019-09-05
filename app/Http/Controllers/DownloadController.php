@@ -6,26 +6,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DownloadMediaWithSignedRequest;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 
 class DownloadController extends Controller
 {
-    public function downloadMediaFromSignedUrl(Media $media, User $user)
+    public function downloadMediaFromSignedUrl(DownloadMediaWithSignedRequest $request)
     {
-        $practice = $media->model()->firstOrFail();
-
-        if ( ! $user->practice($practice)) {
-            //We are not returning 403 to not show potential attackers file exists they just can't access it.
-            abort(404);
-        }
-
-        if ( ! $media->id) {
-        }
-
-        return $this->downloadMedia($media);
+        return $this->downloadMedia(Media::findOrFail($request->route('media_id')));
     }
 
     /**

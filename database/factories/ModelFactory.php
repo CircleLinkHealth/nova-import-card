@@ -13,6 +13,7 @@ use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Invite;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 
 $factory->define(
@@ -33,6 +34,15 @@ $factory->define(
         ];
     }
 );
+
+$factory->define(Patient::class, function (Faker\Generator $faker) {
+    return [
+        'birth_date' => $faker->dateTimeBetween('-90 years', '-30 years'),
+        'ccm_status' => $faker->randomElement([Patient::ENROLLED, Patient::PAUSED, Patient::WITHDRAWN]),
+        'gender'     => $faker->randomElement(['M', 'F']),
+        'mrn_number' => $faker->randomNumber(8),
+    ];
+});
 
 $factory->define(
     \CircleLinkHealth\TimeTracking\Entities\Activity::class,
