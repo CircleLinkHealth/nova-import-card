@@ -9,6 +9,7 @@ namespace Tests\Unit;
 use App\Console\Commands\CreatePatientProblemsReportForPractice;
 use App\Exports\PatientProblemsReport;
 use App\Notifications\SendSignedUrlToDownloadPatientProblemsReport;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Notification;
@@ -40,35 +41,7 @@ class PatientProblemsReportTest extends TestCase
             ->expectsOutput('Command ran.');
 
         //assert
-        $this->assertNotificationSent($customer['admin']);
-    }
-
-    public function test_media_is_attached_to_practice_and_sent_to_user()
-    {
-        //setup
-        Notification::fake();
-        $customer = $this->createTestCustomerData(1);
-        $report   = new PatientProblemsReport();
-
-        //test
-        $report->forPractice($customer['practice']->id)
-            ->forUser($customer['admin']->id)
-            ->createMedia()
-            ->notifyUser();
-
-        //assert
-        $this->assertDatabaseHas('media', [
-            //writing as text in case we change namespace to remind us
-            'model_type' => 'CircleLinkHealth\Customer\Entities\Practice',
-            'model_id'   => $customer['practice']->id,
-        ]);
-
-        //A safeguard to help us remember we should never attach practice reports to users directly, as they contain too much sensitive data.
-        $this->assertDatabaseMissing('media', [
-            'model_type' => 'CircleLinkHealth\Customer\Entities\User',
-            'model_id'   => $customer['admin']->id,
-        ]);
-
+        $this->assertTestMediaIsAttachedToPracticeAndNotUser($customer['practice'], $customer['admin']);
         $this->assertNotificationSent($customer['admin']);
     }
 
@@ -103,18 +76,14 @@ class PatientProblemsReportTest extends TestCase
             ->createMedia()
             ->notifyUser();
 
-        $this->verify_user_is_redirected_to_login_if_unauthenticated($report->getSignedLink());
+        $this->verifyUserIsRedirectedToLoginIfUnauthenticated($report->getSignedLink());
 
         $response = $this->actingAs($user2)->call('get', $report->getSignedLink());
 
         //assert
         $response->assertStatus(403);
-    }
-
-    public function verify_user_is_redirected_to_login_if_unauthenticated($signedLink)
-    {
-        $response = $this->call('get', $signedLink)
-            ->assertRedirect(url('/login'));
+        $this->assertTestMediaIsAttachedToPracticeAndNotUser($customer['practice'], $user);
+        $this->assertNotificationSent($user);
     }
 
     /**
@@ -128,7 +97,7 @@ class PatientProblemsReportTest extends TestCase
             $user,
             SendSignedUrlToDownloadPatientProblemsReport::class,
             function ($notification, $channels, $notifiable) use ($user) {
-                $this->verify_user_is_redirected_to_login_if_unauthenticated($notification->signedLink);
+                $this->verifyUserIsRedirectedToLoginIfUnauthenticated($notification->signedLink);
 
                 $response = $this->actingAs($user)->call('get', $notification->signedLink);
 
@@ -140,5 +109,25 @@ class PatientProblemsReportTest extends TestCase
                 return (int) $notifiable->id === (int) $user->id;
             }
         );
+    }
+
+    private function assertTestMediaIsAttachedToPracticeAndNotUser(Practice $practice, User $user)
+    {
+        $this->assertDatabaseHas('media', [
+            'model_type' => 'CircleLinkHealth\Customer\Entities\Practice',
+            'model_id'   => $practice->id,
+        ]);
+
+        //A safeguard to help us remember we should never attach practice reports to users directly, as they contain too much sensitive data.
+        $this->assertDatabaseMissing('media', [
+            'model_type' => 'CircleLinkHealth\Customer\Entities\User',
+            'model_id'   => $user->id,
+        ]);
+    }
+
+    private function verifyUserIsRedirectedToLoginIfUnauthenticated($signedLink)
+    {
+        $response = $this->call('get', $signedLink)
+            ->assertRedirect(url('/login'));
     }
 }
