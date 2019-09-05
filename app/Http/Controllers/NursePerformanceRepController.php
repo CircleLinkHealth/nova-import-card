@@ -77,7 +77,7 @@ class NursePerformanceRepController extends Controller
     public function completionRate($reportPerDay)
     {
         return array_key_exists('completionRate', $reportPerDay)
-            ? (0 == $reportPerDay['completionRate'] ? 'N/A' : $reportPerDay['completionRate'])
+            ? (0 == $reportPerDay['committedHours'] ? 'N/A' : $reportPerDay['completionRate'])
             : 'N/A';
     }
 
@@ -89,7 +89,7 @@ class NursePerformanceRepController extends Controller
     public function efficiencyIndex($reportPerDay)
     {
         return array_key_exists('efficiencyIndex', $reportPerDay)
-            ? (0 == $reportPerDay['efficiencyIndex'] ? 'N/A' : $reportPerDay['efficiencyIndex'])
+            ? (0 == $reportPerDay['committedHours'] ? 'N/A' : $reportPerDay['efficiencyIndex'])
             : 'N/A';
     }
 

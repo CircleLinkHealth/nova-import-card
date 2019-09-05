@@ -99,6 +99,22 @@ class EmailRNDailyReport extends Command
                             continue;
                         }
 
+                        $attendanceRate = 0 != $reportDataForNurse['committedHours']
+                            ? (round(
+                                (float) (($reportDataForNurse['actualHours'] / $reportDataForNurse['committedHours']) * 100),
+                                2
+                            ))
+                            : 'N/A';
+
+                        $callsCompletionRate = 0 != $reportDataForNurse['scheduledCalls']
+                            ? (0 == $reportDataForNurse['committedHours']
+                                ? 'N/A'
+                                : round(
+                                    (float) (($reportDataForNurse['actualCalls'] / $reportDataForNurse['scheduledCalls']) * 100),
+                                    2
+                                ))
+                            : 0;
+
                         $totalTimeInSystemOnGivenDate = secondsToHMS($systemTime);
 
                         $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
@@ -112,7 +128,11 @@ class EmailRNDailyReport extends Command
 
                         $data = [
                             'name'                         => $nurse->getFullName(),
+                            'actualHours'                  => $reportDataForNurse['actualHours'],
+                            'committedHours'               => $reportDataForNurse['committedHours'],
                             'completionRate'               => $reportDataForNurse['completionRate'],
+                            'attendanceRate'               => $attendanceRate,
+                            'callsCompletionRate'          => $callsCompletionRate,
                             'efficiencyIndex'              => $reportDataForNurse['efficiencyIndex'],
                             'caseLoadComplete'             => $reportDataForNurse['caseLoadComplete'],
                             'caseLoadNeededToComplete'     => $reportDataForNurse['caseLoadNeededToComplete'],

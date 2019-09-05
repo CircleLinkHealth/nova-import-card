@@ -45,6 +45,9 @@ class NurseInvoicesDeferredBindingsServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(AggregatedTotalTimePerNurse::class, function ($app, array $args) {
+            if (empty($args)) {
+                return null;
+            }
             $userIds = $args[0];
             $startDate = $args[1];
             $endDate = $args[2];
