@@ -294,6 +294,7 @@
                                    aria-expanded="false">{{ Auth::user()->getFullName() }} [ID:{{ Auth::user()->id }}]<span
                                             class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
+                                    @include('partials.last-login')
                                     <li><a href="{{ route('admin.users.edit', array('id' => Auth::user()->id)) }}"
                                            class="">My Account</a></li>
                                     <li><a href="{{ url('/admin/api-clients') }}">Api Clients</a></li>
