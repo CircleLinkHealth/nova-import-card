@@ -194,6 +194,8 @@ $user = auth()->user();
                         </div>
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
 
+                            @include('partials.last-login')
+
                             @impersonating
                             <li>
                                 <a href="{{ route('impersonate.leave') }}">Leave impersonation</a>
