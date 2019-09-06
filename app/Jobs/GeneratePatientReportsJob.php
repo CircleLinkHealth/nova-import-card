@@ -173,7 +173,7 @@ class GeneratePatientReportsJob implements ShouldQueue
     {
         $providerReportFormattedData = (new ProviderReportService())->formatReportDataForView($providerReport);
 
-        $pdf = App::make('snappy.pdf.wrapper');
+        $pdf = App::make('dompdf.wrapper');
         $pdf->loadView('providerReport.report', [
             'reportData' => $providerReportFormattedData,
             'patient'    => $patient,
@@ -199,7 +199,7 @@ class GeneratePatientReportsJob implements ShouldQueue
     {
         $personalizedHealthAdvices = (new PersonalizedPreventionPlanPrepareData())->prepareRecommendations($ppp);
 
-        $pdf = App::make('snappy.pdf.wrapper');
+        $pdf = App::make('dompdf.wrapper');
         $pdf->loadView('personalizedPreventionPlan', [
             'patientPppData'            => $ppp,
             'patient'                   => $patient,
