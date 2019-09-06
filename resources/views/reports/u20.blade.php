@@ -113,7 +113,7 @@
                                             template: "<a href='<?php echo route(
     'patient.activity.providerUIIndex',
     ['patient' => '#patient_id#']
-                                            ); ?>'>#patient_name#</a>"
+); ?>'>#patient_name#</a>"
 
                                         },
                                         {
@@ -369,7 +369,7 @@
                                            }}
                                            });">
                             <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
-                                   onclick="webix.toExcel(obs_alerts_dtable);">
+                                   onclick="webix.toExcel($$(obs_alerts_dtable), {filterHTML:true});">
                         @endif
                         @if ( !Auth::guest() && Auth::user()->hasPermission(['admin-access']))
                             <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Practice'

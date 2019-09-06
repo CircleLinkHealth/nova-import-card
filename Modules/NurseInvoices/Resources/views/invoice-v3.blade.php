@@ -167,7 +167,8 @@
                         <nurse-invoice-daily-dispute
                                 :invoice-data="{{json_encode($row)}}"
                                 :invoice-id="{{$invoiceId}}"
-                                :day="{{json_encode(\Carbon\Carbon::parse($date)->copy()->toDateString())}}">
+                                :day="{{json_encode(\Carbon\Carbon::parse($date)->copy()->toDateString())}}"
+                                :is-user-auth-to-daily-dispute="{{json_encode($isUserAuthToDailyDispute)}}">
                         </nurse-invoice-daily-dispute>
                     </td>
 
