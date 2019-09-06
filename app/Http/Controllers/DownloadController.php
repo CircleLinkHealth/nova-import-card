@@ -12,7 +12,6 @@ use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Spatie\MediaLibrary\Models\Media;
 
 class DownloadController extends Controller
 {
