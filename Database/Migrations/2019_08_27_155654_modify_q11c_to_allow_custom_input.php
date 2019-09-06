@@ -15,16 +15,24 @@ class ModifyQ11cToAllowCustomInput extends Migration
         $questionTypesAnswers = "question_types_answers";
         $questionsTable       = "questions";
 
-        $qId = DB::table($questionsTable)
+        $q = DB::table($questionsTable)
                  ->where('body', 'On average, how many packs/day do or did you smoke?')
-                 ->first()->id;
+                 ->first();
 
-        $qTypeId = DB::table($questionTypes)
-                     ->where('question_id', $qId)
-                     ->first()->id;
+        if (!$q) {
+            return;
+        }
+
+        $qType = DB::table($questionTypes)
+                     ->where('question_id', $q->id)
+                     ->first();
+
+        if (!$qType) {
+            return;
+        }
 
         DB::table($questionTypesAnswers)
-          ->where('question_type_id', $qTypeId)
+          ->where('question_type_id', $qType->id)
           ->where('value', 'Other')
           ->update([
               'value'   => null,
@@ -47,16 +55,24 @@ class ModifyQ11cToAllowCustomInput extends Migration
         $questionTypesAnswers = "question_types_answers";
         $questionsTable       = "questions";
 
-        $qId = DB::table($questionsTable)
+        $q = DB::table($questionsTable)
                  ->where('body', 'On average, how many packs/day do or did you smoke?')
-                 ->first()->id;
+                 ->first();
 
-        $qTypeId = DB::table($questionTypes)
-                     ->where('question_id', $qId)
-                     ->first()->id;
+        if (!$q) {
+            return;
+        }
+
+        $qType = DB::table($questionTypes)
+                     ->where('question_id', $q->id)
+                     ->first();
+
+        if (!$qType) {
+            return;
+        }
 
         DB::table($questionTypesAnswers)
-          ->where('question_type_id', $qTypeId)
+          ->where('question_type_id', $qType->id)
           ->where('value', null)
           ->update([
               'value'   => 'Other',

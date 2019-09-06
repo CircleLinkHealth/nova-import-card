@@ -18,9 +18,15 @@ class HraQ1Q12Q5CopyChanges extends Migration
         $surveysTable         = "surveys";
         $surveyQuestionsTable = "survey_questions";
 
-        $hraSurveyId = DB::table($surveysTable)
+        $hraSurvey = DB::table($surveysTable)
                          ->where('name', 'HRA')
-                         ->first()->id;
+                         ->first();
+
+        if (!$hraSurvey) {
+            return;
+        }
+
+        $hraSurveyId = $hraSurvey->id;
 
         $now = Carbon\Carbon::now();
 
@@ -54,12 +60,14 @@ class HraQ1Q12Q5CopyChanges extends Migration
           ]);
 
         // Q1 split to a and b
-        $toDeleteId = DB::table($questionTypesAnswers)
+        $toDelete = DB::table($questionTypesAnswers)
                         ->where('value', 'Hispanic or Latino Origin or Descent')
                         ->first()->id;
 
-        DB::table($questionTypesAnswers)
-          ->delete($toDeleteId);
+        if ($toDelete) {
+            DB::table($questionTypesAnswers)
+              ->delete($toDelete->id);
+        }
 
         DB::table($questionGroups)
           ->insert([
@@ -183,9 +191,15 @@ class HraQ1Q12Q5CopyChanges extends Migration
         $surveysTable         = "surveys";
         $surveyQuestionsTable = "survey_questions";
 
-        $hraSurveyId = DB::table($surveysTable)
+        $hraSurvey = DB::table($surveysTable)
                          ->where('name', 'HRA')
-                         ->first()->id;
+                         ->first();
+
+        if (!$hraSurvey) {
+            return;
+        }
+
+        $hraSurveyId = $hraSurvey->id;
 
         $now = Carbon\Carbon::now();
 
@@ -263,7 +277,6 @@ class HraQ1Q12Q5CopyChanges extends Migration
 
         DB::table($questionsTable)
           ->delete($newQuestionId);
-
 
         $surveyInstanceId = DB::table($surveyQuestionsTable)
                               ->where('question_id', $oldQuestionId)
