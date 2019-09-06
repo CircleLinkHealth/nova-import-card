@@ -83,4 +83,7 @@
   'roboto' => array(
     'normal' => $fontDir . '/cf99a9d56c411ce3fa8a2fc49c520e74',
   ),
+  'fontawesome' => array(
+    'normal' => $fontDir . '/7c02be25cef03cc6b568660563abd90c',
+  ),
 ) ?>
