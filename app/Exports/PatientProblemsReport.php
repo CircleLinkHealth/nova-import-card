@@ -14,10 +14,11 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use URL;
 
-class PatientProblemsReport implements FromQuery, WithMapping, PracticeDataExport
+class PatientProblemsReport implements FromQuery, WithMapping, PracticeDataExport, WithHeadings
 {
     use Exportable;
     /**
@@ -116,6 +117,20 @@ class PatientProblemsReport implements FromQuery, WithMapping, PracticeDataExpor
     public function getTempStorage(): \Illuminate\Filesystem\FilesystemAdapter
     {
         return \Storage::disk('local');
+    }
+
+    /**
+     * @return array
+     */
+    public function headings(): array
+    {
+        return [
+            'Name',
+            'MRN',
+            'DOB',
+            'Condition',
+            'ICD-10',
+        ];
     }
 
     /**
