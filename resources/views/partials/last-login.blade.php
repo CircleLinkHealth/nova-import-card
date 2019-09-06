@@ -3,20 +3,22 @@
 /** @var CircleLinkHealth\Customer\Entities\User $user */
 $user      = auth()->user();
 $lastLogin = null;
+$timezone  = null;
 if ($user->last_login) {
     $dt = Carbon\Carbon::parse($user->last_login);
     if ($user->timezone) {
         $dt = $dt->setTimezone($user->timezone);
     }
     $lastLogin = $dt->toDayDateTimeString();
+    $timezone  = $dt->format('T');
 }
 ?>
 
 @empty($lastLogin)
 @else
-    <li style="margin-bottom: 5px; text-align: center;">
-        <div style="font-style: italic; font-size:small; color:grey;padding:3px;">
-            Last Login: {{$lastLogin}}
+    <li>
+        <div style="text-align: center; font-style: italic; font-size:small; color:grey; padding-left:10px; padding-right:10px; padding-bottom: 5px">
+            Last Login: {{$lastLogin}} {{$timezone}}
         </div>
     </li>
 @endempty
