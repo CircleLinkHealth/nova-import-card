@@ -4,8 +4,9 @@
 $user      = auth()->user();
 $lastLogin = null;
 $timezone  = null;
+
 $time      = null;
-if ($user->last_login) {
+if (optional($user)->last_login) {
     $dt = Carbon\Carbon::parse($user->last_login);
     if ($user->timezone) {
         $dt = $dt->setTimezone($user->timezone);
