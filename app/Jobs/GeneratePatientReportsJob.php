@@ -184,8 +184,6 @@ class GeneratePatientReportsJob implements ShouldQueue
 
         $saved = file_put_contents($path, $pdf->output());
 
-        return $saved;
-
         if ( ! $saved) {
             return false;
         }
@@ -210,8 +208,6 @@ class GeneratePatientReportsJob implements ShouldQueue
         $path = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toDateTimeString()}.pdf");
 
         $saved = file_put_contents($path, $pdf->output());
-
-        return $saved;
 
         if ( ! $saved) {
             return false;
