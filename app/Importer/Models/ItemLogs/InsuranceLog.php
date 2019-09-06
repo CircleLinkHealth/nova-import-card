@@ -7,7 +7,6 @@
 namespace App\Importer\Models\ItemLogs;
 
 use App\Models\CCD\CcdInsurancePolicy;
-use App\Traits\Relationships\BelongsToCcda;
 use App\Traits\Relationships\BelongsToVendor;
 
 /**
@@ -53,7 +52,6 @@ use App\Traits\Relationships\BelongsToVendor;
  */
 class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    use BelongsToCcda;
     use BelongsToVendor;
 
     protected $casts = [
