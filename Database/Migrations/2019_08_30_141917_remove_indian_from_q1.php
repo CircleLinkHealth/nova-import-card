@@ -14,12 +14,15 @@ class RemoveIndianFromQ1 extends Migration
     public function up()
     {
         $questionTypesAnswers = "question_types_answers";
-        $qTypeAnswerId = DB::table($questionTypesAnswers)
+        $qTypeAnswer = DB::table($questionTypesAnswers)
             ->where('value', 'Indian')
-            ->first()->id;
+            ->first();
 
-        DB::table($questionTypesAnswers)
-            ->delete($qTypeAnswerId);
+        if ($qTypeAnswer) {
+            DB::table($questionTypesAnswers)
+              ->delete($qTypeAnswer->id);
+        }
+
     }
 
     /**
@@ -33,18 +36,23 @@ class RemoveIndianFromQ1 extends Migration
         $questionTypesAnswers = "question_types_answers";
         $questionsTable       = "questions";
 
-        $qId = DB::table($questionsTable)
+        $q = DB::table($questionsTable)
                  ->where('body', 'What is your race?')
                  ->first()->id;
 
-        $qTypeId = DB::table($questionTypes)
-                     ->where('question_id', $qId)
-                     ->first()->id;
+        if ($q) {
+            $qType = DB::table($questionTypes)
+                         ->where('question_id', $q->id)
+                         ->first();
 
-        DB::table($questionTypesAnswers)
-          ->insert([
-              'question_type_id' => $qTypeId,
-              'value' => 'Indian'
-          ]);
+            if ($qType) {
+                DB::table($questionTypesAnswers)
+                  ->insert([
+                      'question_type_id' => $qType->id,
+                      'value' => 'Indian'
+                  ]);
+            }
+        }
+
     }
 }
