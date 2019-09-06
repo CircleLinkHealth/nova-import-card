@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\ProviderReport;
 use App\Services\ProviderReportService;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
 
 class ProviderReportController extends Controller
@@ -15,20 +17,27 @@ class ProviderReportController extends Controller
         $this->service = $service;
     }
 
-    public function getProviderReport(Request $request, $userId)
+    public function getProviderReport($userId, $year = null)
     {
-        $report = ProviderReport::with('patient.patientInfo')
-                                ->where('user_id', '=', $userId)
-                                ->firstOrFail();
+        if (! $year){
+            $year = Carbon::now()->year;
+        }
 
-        $patient = $report->patient;
+        $patient = User::with([
+            'patientInfo',
+            'providerReports' => function ($report) use ($year) {
+                $report->forYear($year);
+            },
+        ])
+                       ->findOrFail($userId);
 
-        if ( ! $patient) {
-            throw new \Exception("missing patient from report");
+        $report = $patient->providerReports->first();
+
+        if (! $report){
+            throw new \Exception("This patient does not have a Provider Report for {$year}.");
         }
 
         $reportData = $this->service->formatReportDataForView($report);
-
 
         return view('providerReport.report', compact(['reportData', 'patient']));
     }

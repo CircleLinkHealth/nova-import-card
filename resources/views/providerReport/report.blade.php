@@ -1,6 +1,13 @@
 @extends('layouts.surveysMaster')
 @section('content')
-    <link href="{{asset('css/providerReport.css')}}" rel="stylesheet">
+
+    @if (isset($isPdf) && $isPdf)
+        <!-- found in surveysMaster but for some reason dompdf has issues with it -->
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @endif
+
+    <link href="{{ asset('css/providerReport.css') }}" rel="stylesheet">
+
     <div class="container report">
         <div class="report-title">
             <h3>Patient Info</h3>
@@ -30,7 +37,12 @@
             </div>
             <div class="section-body">
                 The patient is a {{$reportData['demographic_data']['age']}} year
-                old {{$reportData['demographic_data']['race']}} who
+                old
+                @if($reportData['demographic_data']['ethnicity'] === 'No')
+                    non
+                @endif
+                hispanic/latino
+                {{$reportData['demographic_data']['race']}} who
                 identifies as {{$reportData['demographic_data']['gender']}}.
                 In general, the patient has self-assessed their health as {{$reportData['demographic_data']['health']}}.
             </div>

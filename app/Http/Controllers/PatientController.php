@@ -66,4 +66,26 @@ class PatientController extends Controller
             'email'         => $user->email,
         ]);
     }
+
+    public function getPatientReport($patienId, $reportType, $year){
+
+        if ($reportType == 'ppp'){
+            return redirect()->route('get-ppp-report', [
+                'userId' => $patienId,
+                'year'   => $year
+
+            ]);
+        }
+
+        if ($reportType == 'provider-report'){
+            return redirect()->route('get-provider-report', [
+                'userId' => $patienId,
+                'year'   => $year
+
+            ]);
+        }
+
+        throw new \Exception("Report type : [$reportType] does not exist.");
+
+    }
 }

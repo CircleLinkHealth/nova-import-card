@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\PersonalizedPreventionPlan;
 use App\Services\PersonalizedPreventionPlanPrepareData;
+use App\User;
+use Carbon\Carbon;
 
 class PersonalizedPreventionPlanController extends Controller
 {
@@ -14,13 +16,26 @@ class PersonalizedPreventionPlanController extends Controller
         $this->service = $service;
     }
 
-    public function getPppDataForUser($userId)
+    public function getPppForUser($userId, $year = null)
     {
-        $patientPppData = PersonalizedPreventionPlan::where('user_id', '=', $userId)
-                                                    ->with('patient')
-                                                    ->firstOrFail();
 
-        $patient = $patientPppData->patient;
+        if (! $year){
+            $year = Carbon::now()->year;
+        }
+
+        $patient = User::with([
+            'patientInfo',
+            'personalizedPreventionPlan' => function ($report) use ($year) {
+                $report->forYear($year);
+            },
+        ])
+                       ->findOrFail($userId);
+
+        $patientPppData = $patient->personalizedPreventionPlan->first();
+
+        if (! $patientPppData){
+            throw new \Exception("This patient does not have a PPP for {$year}.");
+        }
 
         $personalizedHealthAdvices = $this->service->prepareRecommendations($patientPppData);
 

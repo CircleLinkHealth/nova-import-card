@@ -68,11 +68,12 @@ class GeneratePersonalizedPreventionPlanService
 
     public function generateData()
     {
-        $patientPppData = $this->patient
+        return $this->patient
             ->personalizedPreventionPlan()
             ->updateOrCreate(
                 [
-                    'user_id' => $this->patient->id,
+                    'hra_instance_id'  => $this->hraInstance->id,
+                    'vitals_instance_id'  => $this->vitalsInstance->id,
                 ],
                 [
                     'hra_answers'      => $this->hraAnswers,
@@ -81,7 +82,6 @@ class GeneratePersonalizedPreventionPlanService
                 ]
             );
 
-        return $patientPppData;
     }
 
     private function getAnswersToEvaluate()

@@ -27,6 +27,12 @@ function getStringValue($val, $default = '')
 }
 ?>
 @section('content')
+
+    @if (isset($isPdf) && $isPdf)
+        <!-- found in surveysMaster but for some reason dompdf has issues with it -->
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @endif
+
     <div class="container report">
         <div class="report-title">
             <h3>Patient Info</h3>

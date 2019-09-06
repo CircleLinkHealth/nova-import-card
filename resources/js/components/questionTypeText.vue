@@ -12,6 +12,7 @@
                         <input type="text"
                                class="text-field margin-bottom-10"
                                v-model="inputHasText[index]"
+                               :disabled="readOnly"
                                :placeholder="placeholder"/>
                     </div>
                     <!--remove input fields button-->
@@ -27,7 +28,7 @@
                 </div>
 
                 <!--add single input fields button-->
-                <div class="row no-gutters" v-if="canAddInputFields">
+                <div class="row no-gutters" v-if="!readOnly && canAddInputFields">
                     <div v-for="extraFieldButtonName in extraFieldButtonNames"
                          class="col-md-12">
                     <span class="button-text-only"

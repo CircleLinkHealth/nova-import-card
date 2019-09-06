@@ -321,8 +321,21 @@
                     && this.currentQuestionIndex > 0;
             },
             canScrollDown() {
-                return this.stage === "survey"
+
+                const canProceed = this.stage === "survey"
                     && this.currentQuestionIndex < this.questions.length;
+
+                let nextHasAnswer = false;
+                if (canProceed) {
+                    const nextQuestionIndex = this.getNextQuestionIndex(this.currentQuestionIndex);
+                    if (nextQuestionIndex !== this.currentQuestionIndex) {
+                        const nextQuestion = this.questions[nextQuestionIndex];
+                        nextHasAnswer = typeof nextQuestion !== "undefined" && typeof nextQuestion.answer !== "undefined";
+                    }
+
+                }
+
+                return nextHasAnswer;
             },
             progressPercentage() {
                 return 100 * (this.progress) / this.totalQuestions;

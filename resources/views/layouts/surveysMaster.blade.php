@@ -15,12 +15,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
 
     <!-- Styles -->
-
-{{--    @if (isset($isPdf) && $isPdf)--}}
-{{--        <link href="{{ asset('css/app.css') }}" rel="stylesheet">--}}
-{{--    @else--}}
-        <link href="{{ mix('css/app.css') }}" rel="stylesheet">
-{{--    @endif--}}
+    <link href="{{ mix('css/app.css') }}" rel="stylesheet" type="text/css" media="all">
 
     @stack('styles')
 
@@ -32,13 +27,7 @@
 
 </div>
 
-@if (isset($isPdf) && $isPdf)
-    <script src="{{ asset('js/app.js') }}"></script>
-@else
-    {{--<script src="{{mix('js/manifest.js')}}"></script>--}}
-    {{--<script src="{{mix('js/vendor.js')}}"></script>--}}
-    <script src="{{ mix('js/app.js') }}"></script>
-@endif
+<script src="{{ mix('js/app.js') }}"></script>
 
 @stack('scripts')
 
