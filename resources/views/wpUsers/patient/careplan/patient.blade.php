@@ -398,7 +398,6 @@ $user_info = [];
                                                             onReasonChange();
                                                         } else {
                                                             $('#withdrawn-reason').addClass('hidden');
-                                                            document.getElementById("withdrawn_reason").value = null;
                                                             $('#withdrawn-reason-other').addClass('hidden');
                                                         }
 
