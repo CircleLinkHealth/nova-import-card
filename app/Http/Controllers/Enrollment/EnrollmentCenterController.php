@@ -44,6 +44,15 @@ class EnrollmentCenterController extends Controller
             case 'other':
                 $enrollee->setPrimaryPhoneNumberAttribute($request->input('other_phone'));
                 break;
+            case 'agent':
+                $enrollee->setPrimaryPhoneNumberAttribute($request->input('agent_phone'));
+                $enrollee->agent_details = [
+                    'phone'        => $request->input('agent_phone'),
+                    'name'         => $request->input('agent_name'),
+                    'email'        => $request->input('agent_email'),
+                    'relationship' => $request->input('agent_relationship'),
+                ];
+                break;
             default:
                 $enrollee->setPrimaryPhoneNumberAttribute($request->input('home_phone'));
         }

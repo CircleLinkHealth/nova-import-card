@@ -213,6 +213,11 @@ class Enrollee extends BaseModel
         'tertiary_insurance',
         'has_copay',
         'email',
+        'agent_details',
+    ];
+
+    protected $casts = [
+        'agent_details' => 'array',
     ];
 
     protected $dates = [
@@ -283,6 +288,9 @@ class Enrollee extends BaseModel
         'cpm_problem_2',
 
         'requested_callback',
+
+        //contains array of agent details, similar to patient_info fields
+        'agent_details',
     ];
 
     protected $table = 'enrollees';
