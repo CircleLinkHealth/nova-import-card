@@ -86,4 +86,7 @@
   'fontawesome' => array(
     'normal' => $fontDir . '/7c02be25cef03cc6b568660563abd90c',
   ),
+  'poppins' => array(
+    'normal' => $fontDir . '/49174d3c9a5f3dc6d700d94412323344',
+  ),
 ) ?>
