@@ -53,7 +53,7 @@ class SendSignedUrlToDownloadPatientProblemsReport extends Notification implemen
     {
         return (new MailMessage())
             ->subject('Your report from CircleLink Health')
-            ->line('Please click View Report button below to see the report you requested from CircleLink Health.')
+            ->line('Please click the View Report button below to see the report you requested from CircleLink Health.')
             ->line('You will be redirected to CarePlan Manager, and required to login beforehand.')
             ->line('For security, the link will expire in 48 hours. If you need a new link, please contact CircleLink Health.')
             ->action('View Report', url($this->signedLink))
