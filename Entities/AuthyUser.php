@@ -36,6 +36,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TwoFA\Entities\AuthyUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TwoFA\Entities\AuthyUser whereUserId($value)
  * @mixin \Eloquent
+ * @property-read int|null $revision_history_count
  */
 class AuthyUser extends BaseModel
 {
