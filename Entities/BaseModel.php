@@ -17,6 +17,7 @@ use Venturecraft\Revisionable\RevisionableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\BaseModel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\BaseModel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Core\Entities\BaseModel query()
+ * @property-read int|null $revision_history_count
  */
 class BaseModel extends Model
 {
