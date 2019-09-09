@@ -40,6 +40,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\ActivityMeta newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\ActivityMeta newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\ActivityMeta query()
+ * @property-read int|null $revision_history_count
  */
 class ActivityMeta extends \CircleLinkHealth\Core\Entities\BaseModel
 {

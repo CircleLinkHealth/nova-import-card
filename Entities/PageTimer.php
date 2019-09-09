@@ -82,6 +82,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer query()
+ * @property-read int|null $activities_count
+ * @property-read int|null $revision_history_count
  */
 class PageTimer extends \CircleLinkHealth\Core\Entities\BaseModel
 {

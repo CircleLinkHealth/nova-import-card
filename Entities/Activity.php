@@ -77,6 +77,9 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity query()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\Activity
  *     whereIsBehavioral($value)
+ * @property-read int|null $care_rate_logs_count
+ * @property-read int|null $meta_count
+ * @property-read int|null $revision_history_count
  */
 class Activity extends BaseModel
 {
