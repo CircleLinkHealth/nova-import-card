@@ -55,7 +55,7 @@ class CpmBiometricUserRepository
             $this->addPatientBiometric($userId, $biometricId);
         }
 
-        return CpmWeight::updateOrCreate(['patient_id' => $userId], $biometric);
+        return CpmWeight::updateOrCreate(['patient_id' => $userId]);
     }
 
     public function exists($userId, $biometricId)
