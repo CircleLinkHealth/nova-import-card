@@ -527,11 +527,6 @@ class EligibilityChecker
                         }
                     }
                 }
-
-                //Stop checking if we've already found 2 ccm problems
-                if (2 == count($qualifyingCcmProblems)) {
-                    break;
-                }
             }
         }
 
