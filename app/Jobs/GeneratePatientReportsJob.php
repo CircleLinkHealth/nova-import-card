@@ -9,7 +9,6 @@ use App\Services\GenerateProviderReportService;
 use App\Services\PersonalizedPreventionPlanPrepareData;
 use App\Services\ProviderReportService;
 use App\User;
-use Barryvdh\Snappy\Facades\SnappyPdf;
 use Barryvdh\Snappy\PdfWrapper;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -179,6 +178,11 @@ class GeneratePatientReportsJob implements ShouldQueue
         $pdf = App::make('snappy.pdf.wrapper');
         $pdf->setOption('lowquality', false);
         $pdf->setOption('disable-smart-shrinking', true);
+        $pdf->setOption('margin-top', 0);
+        $pdf->setOption('margin-bottom', 0);
+        $pdf->setOption('margin-left', 0);
+        $pdf->setOption('margin-right', 0);
+
         $pdf->loadView('providerReport.report', [
             'reportData' => $providerReportFormattedData,
             'patient'    => $patient,
@@ -206,6 +210,11 @@ class GeneratePatientReportsJob implements ShouldQueue
         $pdf = App::make('snappy.pdf.wrapper');
         $pdf->setOption('lowquality', false);
         $pdf->setOption('disable-smart-shrinking', true);
+        $pdf->setOption('margin-top', 0);
+        $pdf->setOption('margin-bottom', 0);
+        $pdf->setOption('margin-left', 0);
+        $pdf->setOption('margin-right', 0);
+
         $pdf->loadView('personalizedPreventionPlan', [
             'patientPppData'            => $ppp,
             'patient'                   => $patient,
