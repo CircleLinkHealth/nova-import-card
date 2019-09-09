@@ -891,6 +891,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'biometric.create',
                     'biometric.read',
                     'biometric.update',
+                    'biometric.delete',
                     'patientProblem.read',
                     'patientProblem.update',
                     'patientProblem.create',
