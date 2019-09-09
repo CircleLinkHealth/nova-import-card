@@ -28,7 +28,7 @@ class CpmBiometricUserRepository
             $this->addPatientBiometric($userId, $biometricId);
         }
 
-        return CpmBloodPressure::updateOrCreate(['patient_id' => $userId], $biometric);
+        return CpmBloodPressure::updateOrCreate(['patient_id' => $userId]);
     }
 
     public function addPatientBloodSugar($userId, $biometricId, $biometric)
@@ -37,7 +37,7 @@ class CpmBiometricUserRepository
             $this->addPatientBiometric($userId, $biometricId);
         }
 
-        return CpmBloodSugar::updateOrCreate(['patient_id' => $userId], $biometric);
+        return CpmBloodSugar::updateOrCreate(['patient_id' => $userId]);
     }
 
     public function addPatientSmoking($userId, $biometricId, $biometric)
@@ -46,7 +46,7 @@ class CpmBiometricUserRepository
             $this->addPatientBiometric($userId, $biometricId);
         }
 
-        return CpmSmoking::updateOrCreate(['patient_id' => $userId], $biometric);
+        return CpmSmoking::updateOrCreate(['patient_id' => $userId]);
     }
 
     public function addPatientWeight($userId, $biometricId, $biometric)
