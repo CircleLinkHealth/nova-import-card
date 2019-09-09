@@ -29,7 +29,7 @@ class LogSuccessfulLogout
      */
     public function handle(Logout $event)
     {//@todo: not really sure whats happening here yet...
-        //1. Will break if user is logged in in two browsers (and has to logged out of one)
+        //1. Will not log event if user is logged in two browsers (and has to logged out of one)
         //2.In case of browser close will miss the logout event
 
         //in case of inactivity logout we dont have the $event->user
