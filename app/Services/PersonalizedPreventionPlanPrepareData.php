@@ -602,8 +602,8 @@ class PersonalizedPreventionPlanPrepareData
             'human_papillomavirus');
         $vaccines['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
 
-        if (($vaccines['age'] <= '26'
-            && $vaccines['human_papillomavirus'] === 'No' || $vaccines['human_papillomavirus'] === 'Unsure')) {
+        if ($vaccines['age'] <= '26'
+            && ($vaccines['human_papillomavirus'] === 'No' || $vaccines['human_papillomavirus'] === 'Unsure')) {
             return $this->getTaskRecommendations($title, $index);
         }
 
