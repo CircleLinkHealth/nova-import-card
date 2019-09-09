@@ -62,10 +62,10 @@ function getStringValue($val, $default = '')
         </div>
         <br>
         <div class="suggested-list">
-            <div class="report-title col-md-6">
+            <div class="report-title col-md-7 no-padding">
                 <h3>Suggested CheckList</h3>
             </div>
-            <div class="side-title col-md-6">
+            <div class="side-title col-md-5 no-padding">
                 Ask your doctor about:
             </div>
         </div>
@@ -108,7 +108,7 @@ function getStringValue($val, $default = '')
                     @if(array_filter($tasks['tasks']))
                         <br>
                         <div class="recommendation-title">
-                            <span class="image"><i class="{{$tasks['image']}}"></i></span> {{$tasks['title']}}
+                            <div class="image {{$tasks['image']}}"></div> {{$tasks['title']}}
                         </div>
                     @endif
                     <br>
@@ -193,9 +193,7 @@ function getStringValue($val, $default = '')
         line-height: normal;
         letter-spacing: 1px;
         color: #ffffff;
-        padding-top: 1%;
-        padding-bottom: 1%;
-        padding-left: 1%;
+        padding: 1% 20px;
         background-color: #50b2e2;
     }
 
@@ -228,6 +226,79 @@ function getStringValue($val, $default = '')
     }
 
     .image {
-        margin-right: 1px;
+        width: 20px;
+        height: 20px;
+        float: left;
+        margin-top: 3px;
+        margin-right: 10px;
+        background-size: contain !important;
+    }
+
+    .image.carrot {
+        background: url({{asset('/images/carrot@3x.png')}}) no-repeat;
+        margin-top: 1px;
+    }
+
+    .image.cigarette {
+        background: url({{asset('/images/cigarette@3x.png')}}) no-repeat;
+        margin-top: 11px;
+    }
+
+    .image.wine {
+        background: url({{asset('/images/wine@3x.png')}}) no-repeat;
+    }
+
+    .image.flower-3 {
+        background: url({{asset('/images/flower-3@3x.png')}}) no-repeat;
+    }
+
+    .image.shape {
+        background: url({{asset('/images/shape@3x.png')}}) no-repeat;
+    }
+
+    .image.dumbell {
+        background: url({{asset('/images/dumbell@3x.png')}}) no-repeat;
+    }
+
+    .image.weight-scale {
+        background: url({{asset('/images/weight-scale@3x.png')}}) no-repeat;
+    }
+
+    .image.hearts {
+        background: url({{asset('/images/hearts@3x.png')}}) no-repeat;
+    }
+
+    .image.happy-face {
+        background: url({{asset('/images/happy-face@3x.png')}}) no-repeat;
+    }
+
+    .image.patch {
+        background: url({{asset('/images/patch@3x.png')}}) no-repeat;
+    }
+
+    .image.volume-half {
+        background: url({{asset('/images/volume-half@3x.png')}}) no-repeat;
+        margin-top: 1px;
+    }
+
+    .image.thought-bubble {
+        background: url({{asset('/images/thought-bubble@3x.png')}}) no-repeat;
+    }
+
+    .image.raised-hand {
+        background: url({{asset('/images/raised-hand@3x.png')}}) no-repeat;
+    }
+
+    .image.syringe {
+        background: url({{asset('/images/syringe@3x.png')}}) no-repeat;
+    }
+
+    .image.clipboard-list {
+        background: url({{asset('/images/clipboard-list@3x.png')}}) no-repeat;
+    }
+
+    .image.layout-4-blocks {
+        background: url({{asset('/images/layout-4-blocks@3x.png')}}) no-repeat;
+        margin-top: 3px;
     }
 </style>

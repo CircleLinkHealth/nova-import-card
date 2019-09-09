@@ -9,6 +9,7 @@ use App\Services\GenerateProviderReportService;
 use App\Services\PersonalizedPreventionPlanPrepareData;
 use App\Services\ProviderReportService;
 use App\User;
+use Barryvdh\Snappy\PdfWrapper;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -173,7 +174,15 @@ class GeneratePatientReportsJob implements ShouldQueue
     {
         $providerReportFormattedData = (new ProviderReportService())->formatReportDataForView($providerReport);
 
-        $pdf = App::make('dompdf.wrapper');
+        /** @var PdfWrapper $pdf */
+        $pdf = App::make('snappy.pdf.wrapper');
+        $pdf->setOption('lowquality', false);
+        $pdf->setOption('disable-smart-shrinking', true);
+        $pdf->setOption('margin-top', 0);
+        $pdf->setOption('margin-bottom', 0);
+        $pdf->setOption('margin-left', 0);
+        $pdf->setOption('margin-right', 0);
+
         $pdf->loadView('providerReport.report', [
             'reportData' => $providerReportFormattedData,
             'patient'    => $patient,
@@ -197,7 +206,15 @@ class GeneratePatientReportsJob implements ShouldQueue
     {
         $personalizedHealthAdvices = (new PersonalizedPreventionPlanPrepareData())->prepareRecommendations($ppp);
 
-        $pdf = App::make('dompdf.wrapper');
+        /** @var PdfWrapper $pdf */
+        $pdf = App::make('snappy.pdf.wrapper');
+        $pdf->setOption('lowquality', false);
+        $pdf->setOption('disable-smart-shrinking', true);
+        $pdf->setOption('margin-top', 0);
+        $pdf->setOption('margin-bottom', 0);
+        $pdf->setOption('margin-left', 0);
+        $pdf->setOption('margin-right', 0);
+
         $pdf->loadView('personalizedPreventionPlan', [
             'patientPppData'            => $ppp,
             'patient'                   => $patient,
