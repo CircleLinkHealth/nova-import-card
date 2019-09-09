@@ -28,6 +28,9 @@ use App\TargetPatient;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Ehr newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Ehr newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Ehr query()
+ * @property-read int|null $practices_count
+ * @property-read int|null $revision_history_count
+ * @property-read int|null $target_patient_count
  */
 class Ehr extends \CircleLinkHealth\Core\Entities\BaseModel
 {

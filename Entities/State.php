@@ -21,6 +21,8 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\State newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\State newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\State query()
+ * @property-read int|null $nurses_count
+ * @property-read int|null $revision_history_count
  */
 class State extends \CircleLinkHealth\Core\Entities\BaseModel
 {

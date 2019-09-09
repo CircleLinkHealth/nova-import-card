@@ -27,6 +27,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\EmrDirectAddress query()
+ * @property-read int|null $revision_history_count
  */
 class EmrDirectAddress extends \CircleLinkHealth\Core\Entities\BaseModel
 {

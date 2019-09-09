@@ -32,6 +32,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseMonthlySummary newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseMonthlySummary newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseMonthlySummary query()
+ * @property-read int|null $revision_history_count
  */
 class NurseMonthlySummary extends \CircleLinkHealth\Core\Entities\BaseModel
 {

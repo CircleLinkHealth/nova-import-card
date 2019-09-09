@@ -64,6 +64,14 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsDemo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsVariableRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse wherePayInterval($value)
+ * @property-read int|null $care_rate_logs_count
+ * @property-read int|null $holidays_count
+ * @property-read int|null $invoices_count
+ * @property-read int|null $revision_history_count
+ * @property-read int|null $states_count
+ * @property-read int|null $summary_count
+ * @property-read int|null $windows_count
+ * @property-read int|null $workhourables_count
  */
 class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 {

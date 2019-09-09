@@ -31,6 +31,10 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|ChargeableService whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ChargeableService whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read int|null $patient_summaries_count
+ * @property-read int|null $practices_count
+ * @property-read int|null $providers_count
+ * @property-read int|null $revision_history_count
  */
 class ChargeableService extends BaseModel
 {

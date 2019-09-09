@@ -30,6 +30,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereUserId($value)
  * @mixin \Eloquent
+ * @property-read int|null $revision_history_count
  */
 class PracticeRoleUser extends BaseModel
 {
