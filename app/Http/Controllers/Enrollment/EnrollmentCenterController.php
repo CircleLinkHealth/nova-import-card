@@ -195,9 +195,6 @@ class EnrollmentCenterController extends Controller
         $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
 
         $enrollee->status = $status;
-        if ($request->has('soft_decline_callback')) {
-            $enrollee->requested_callback = $request->input('soft_decline_callback');
-        }
 
         $enrollee->attempt_count    = $enrollee->attempt_count + 1;
         $enrollee->last_attempt_at  = Carbon::now()->toDateTimeString();

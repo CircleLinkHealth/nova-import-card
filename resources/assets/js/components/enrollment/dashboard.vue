@@ -457,8 +457,6 @@
                         </div>
 
                         <div v-if="isSoftDecline" class="col s6 m12 select-custom">
-                            <label for="soft_decline_callback" class="label">Patient Requests Callback On:</label>
-                            <input name="soft_decline_callback" id="soft_decline_callback">
                             <input type="hidden" name="status" value="soft_rejected">
                         </div>
                         <div v-else>
@@ -609,11 +607,11 @@
             },
             agent_phone_label: function () {
 
-                if (this.other_phone == '') {
+                if (this.agent_phone == '') {
                     return 'Agent Phone Unknown...';
                 }
 
-                if (this.validatePhone(this.other_phone)) {
+                if (this.validatePhone(this.agent_phone)) {
                     return 'Agent Phone Valid!';
                 }
 
