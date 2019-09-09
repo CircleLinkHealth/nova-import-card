@@ -54,6 +54,10 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereSentToAccountantAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int|null $daily_disputes_count
+ * @property int|null $media_count
+ * @property int|null $notifications_count
  */
 class NurseInvoice extends Model implements HasMedia, Pdfable
 {

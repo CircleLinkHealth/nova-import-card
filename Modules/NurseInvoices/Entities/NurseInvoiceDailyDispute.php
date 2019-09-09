@@ -36,6 +36,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute whereSuggestedFormattedTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int|null $revision_history_count
  */
 class NurseInvoiceDailyDispute extends BaseModel
 {

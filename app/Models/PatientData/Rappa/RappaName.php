@@ -45,6 +45,8 @@ namespace App\Models\PatientData\Rappa;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaName newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaName newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaName query()
+ *
+ * @property int|null $revision_history_count
  */
 class RappaName extends \CircleLinkHealth\Core\Entities\BaseModel
 {

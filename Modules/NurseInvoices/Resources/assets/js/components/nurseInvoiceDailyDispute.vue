@@ -30,7 +30,7 @@
 
             <span style="float: right;"><loader v-show="loader" class="loader"></loader></span>
             <!--Edit Btn-->
-            <span v-show="!isInvalidated && editButtonActive && (!showDisputeStatus || showDisputeStatus === 'pending')"
+            <span v-show="!isInvalidated && editButtonActive && isUserAuthToDailyDispute && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleEdit()"
                   aria-hidden="true"
                   class="edit-button">
@@ -38,7 +38,7 @@
         </span>
 
             <!--Delete Btn-->
-            <span v-show="(showDeleteBtn && !isInvalidated && showTillRefresh)
+            <span v-show="(showDeleteBtn && !isInvalidated && isUserAuthToDailyDispute && showTillRefresh)
             && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleDelete()"
                   aria-hidden="true"
@@ -88,6 +88,7 @@
             'invoiceData',
             'invoiceId',
             'day',
+            'isUserAuthToDailyDispute'
         ],
 
         components: {

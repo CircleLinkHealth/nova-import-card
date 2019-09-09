@@ -83,6 +83,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @mixin \Eloquent
  *
  * @property \App\EligibilityJob $eligibilityJob
+ * @property int|null            $revision_history_count
  */
 class EligibilityJob extends BaseModel
 {

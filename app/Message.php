@@ -45,6 +45,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message query()
+ *
+ * @property int|null $revision_history_count
  */
 class Message extends \CircleLinkHealth\Core\Entities\BaseModel
 {
