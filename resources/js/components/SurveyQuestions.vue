@@ -600,12 +600,17 @@
                         //we are evaluating only the first condition.related_question_order_number
                         //For now is OK since we are depending only on ONE related Question
                         const questions = this.getQuestionsOfOrder(prevQuestConditions.related_question_order_number);
+                        const firstQuestion = questions[0];
+                        if (!firstQuestion.answer) {
+                            canGoToPrev = false;
+                            break;
+                        }
 
                         //If conditions needs to be compared against to "gte" or "lte"
                         if (prevQuestConditions.hasOwnProperty('operator')) {
                             if (prevQuestConditions.operator === 'greater_than') {
                                 //Again we use only the first Question of the related Questions, which is OK for now.
-                                if (questions[0].answer.value.value >= prevQuestConditions.related_question_expected_answer) {
+                                if (firstQuestion.answer.value.value >= prevQuestConditions.related_question_expected_answer) {
                                     canGoToPrev = false;
                                     break;
                                 }
@@ -614,7 +619,7 @@
                             }
 
                             if (prevQuestConditions.operator === 'less_than') {
-                                if (questions[0].answer.value.value <= prevQuestConditions.related_question_expected_answer) {
+                                if (firstQuestion.answer.value.value <= prevQuestConditions.related_question_expected_answer) {
                                     canGoToPrev = false;
                                     break;
                                 }
@@ -623,7 +628,7 @@
                             }
                         }
                         //default comparison
-                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === questions[0].answer.value.value);
+                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === firstQuestion.answer.value.value);
 
                         if (!expectedAnswersEqualsValue.includes(true)) {
                             canGoToPrev = false;
@@ -631,11 +636,11 @@
                         }
                         //if no expected answer, we look for any answer, if any
                         else if (typeof q.related_question_expected_answer === "undefined") {
-                            if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
+                            if (Array.isArray(firstQuestion.answer.value) && firstQuestion.answer.value.length === 0) {
                                 canGoToPrev = false;
-                            } else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                            } else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
                                 canGoToPrev = false;
-                            } else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
+                            } else if (firstQuestion.answer.value.value && firstQuestion.answer.value.value.length === 0) {
                                 canGoToPrev = false;
                             }
 
@@ -666,12 +671,17 @@
                         //we are evaluating only the first condition.related_question_order_number
                         //For now is OK since we are depending only on ONE related Question
                         const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
+                        const firstQuestion = questions[0];
+                        if (!firstQuestion.answer) {
+                            canGoToNext = false;
+                            break;
+                        }
 
                         //If conditions needs to be compared against to "gte" or "lte"
                         if (nextQuestConditions.hasOwnProperty('operator')) {
                             if (nextQuestConditions.operator === 'greater_than') {
                                 //Again we use only the first Question of the related Questions, which is OK for now.
-                                if (questions[0].answer.value.value >= nextQuestConditions.related_question_expected_answer) {
+                                if (firstQuestion.answer.value.value >= nextQuestConditions.related_question_expected_answer) {
                                     canGoToNext = false;
                                     break;
                                 }
@@ -680,7 +690,7 @@
                             }
 
                             if (nextQuestConditions.operator === 'less_than') {
-                                if (questions[0].answer.value.value <= nextQuestConditions.related_question_expected_answer) {
+                                if (firstQuestion.answer.value.value <= nextQuestConditions.related_question_expected_answer) {
                                     canGoToNext = false;
                                     break;
                                 }
@@ -689,7 +699,7 @@
                             }
                         }
                         //default comparison
-                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === questions[0].answer.value.value);
+                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === firstQuestion.answer.value.value);
 
                         if (!expectedAnswersEqualsValue.includes(true)) {
                             canGoToNext = false;
@@ -697,11 +707,11 @@
                         }
                         //if no expected answer, we look for any answer, if any
                         else if (typeof q.related_question_expected_answer === "undefined") {
-                            if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
+                            if (Array.isArray(firstQuestion.answer.value) && firstQuestion.answer.value.length === 0) {
                                 canGoToNext = false;
-                            } else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                            } else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
                                 canGoToNext = false;
-                            } else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
+                            } else if (firstQuestion.answer.value.value && firstQuestion.answer.value.value.length === 0) {
                                 canGoToNext = false;
                             }
 
@@ -731,12 +741,17 @@
                         //we are evaluating only the first condition.related_question_order_number
                         //For now is OK since we are depending only on ONE related Question
                         const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
+                        const firstQuestion = questions[0];
+                        if (!firstQuestion.answer) {
+                            shouldDisable = true;
+                            break;
+                        }
 
                         //If conditions needs to be compared against to "gte" or "lte"
                         if (nextQuestConditions.hasOwnProperty('operator')) {
                             if (nextQuestConditions.operator === 'greater_than') {
                                 //Again we use only the first Question of the related Questions, which is OK for now.
-                                if (questions[0].answer.value.value >= nextQuestConditions.related_question_expected_answer) {
+                                if (firstQuestion.answer.value.value >= nextQuestConditions.related_question_expected_answer) {
                                     shouldDisable = true;
                                     break;
                                 }
@@ -745,7 +760,7 @@
                             }
 
                             if (nextQuestConditions.operator === 'less_than') {
-                                if (questions[0].answer.value.value <= nextQuestConditions.related_question_expected_answer) {
+                                if (firstQuestion.answer.value.value <= nextQuestConditions.related_question_expected_answer) {
                                     shouldDisable = true;
                                     break;
                                 }
@@ -754,7 +769,7 @@
                             }
                         }
                         //default comparison
-                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === questions[0].answer.value.value);
+                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === firstQuestion.answer.value.value);
 
                         if (!expectedAnswersEqualsValue.includes(true)) {
                             shouldDisable = true;
@@ -762,11 +777,11 @@
                         }
                         //if no expected answer, we look for any answer, if any
                         else if (typeof q.related_question_expected_answer === "undefined") {
-                            if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
+                            if (Array.isArray(firstQuestion.answer.value) && firstQuestion.answer.value.length === 0) {
                                 shouldDisable = true;
-                            } else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                            } else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
                                 shouldDisable = true;
-                            } else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
+                            } else if (firstQuestion.answer.value.value && firstQuestion.answer.value.value.length === 0) {
                                 shouldDisable = true;
                             }
 

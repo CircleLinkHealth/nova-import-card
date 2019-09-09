@@ -429,19 +429,20 @@
                     for (let i = 0; i < prevQuestion.conditions.length; i++) {
                         const q = prevQuestion.conditions[0];
                         const questions = this.getQuestionsOfOrder(q.related_question_order_number);
-                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                        const firstQuestion = questions[0];
+                        if (!firstQuestion.answer || firstQuestion.answer.value.value !== q.related_question_expected_answer) {
                             canGoToPrev = false;
                             break;
                         }
                         //if no expected answer, we look for any answer, if any
                         else if (typeof q.related_question_expected_answer === "undefined") {
-                            if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
+                            if (Array.isArray(firstQuestion.answer.value) && firstQuestion.answer.value.length === 0) {
                                 canGoToPrev = false;
                             }
-                            else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                            else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
                                 canGoToPrev = false;
                             }
-                            else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
+                            else if (firstQuestion.answer.value.value && firstQuestion.answer.value.value.length === 0) {
                                 canGoToPrev = false;
                             }
 
@@ -469,19 +470,21 @@
                     for (let i = 0; i < nextQuestion.conditions.length; i++) {
                         const q = nextQuestion.conditions[0];
                         const questions = this.getQuestionsOfOrder(q.related_question_order_number);
-                        if (questions[0].answer.value.value !== q.related_question_expected_answer) {
+                        const firstQuestion = questions[0];
+
+                        if (!firstQuestion.answer || firstQuestion.answer.value.value !== q.related_question_expected_answer) {
                             canGoToNext = false;
                             break;
                         }
                         //if no expected answer, we look for any answer, if any
                         else if (typeof q.related_question_expected_answer === "undefined") {
-                            if (Array.isArray(questions[0].answer.value) && questions[0].answer.value.length === 0) {
+                            if (Array.isArray(firstQuestion.answer.value) && firstQuestion.answer.value.length === 0) {
                                 canGoToNext = false;
                             }
-                            else if (typeof questions[0].answer.value === "string" && questions[0].answer.value.length === 0) {
+                            else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
                                 canGoToNext = false;
                             }
-                            else if (questions[0].answer.value.value && questions[0].answer.value.value.length === 0) {
+                            else if (firstQuestion.answer.value.value && firstQuestion.answer.value.value.length === 0) {
                                 canGoToNext = false;
                             }
 
