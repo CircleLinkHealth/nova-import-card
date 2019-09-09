@@ -98,6 +98,15 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *
  * @property \App\EligibilityBatch|null                        $batch
  * @property \CircleLinkHealth\Customer\Entities\Practice|null $practice
+ * @property int|null                                          $allergies_count
+ * @property int|null                                          $demographics_count
+ * @property int|null                                          $demographics_imports_count
+ * @property int|null                                          $document_count
+ * @property int|null                                          $media_count
+ * @property int|null                                          $medications_count
+ * @property int|null                                          $problems_count
+ * @property int|null                                          $providers_count
+ * @property int|null                                          $revision_history_count
  */
 class Ccda extends MedicalRecordEloquent implements HasMedia, EligibilityCheckable
 {

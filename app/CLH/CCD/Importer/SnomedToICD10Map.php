@@ -25,6 +25,8 @@ namespace App\CLH\CCD\Importer;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToICD10Map newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToICD10Map newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToICD10Map query()
+ *
+ * @property int|null $revision_history_count
  */
 class SnomedToICD10Map extends \CircleLinkHealth\Core\Entities\BaseModel
 {

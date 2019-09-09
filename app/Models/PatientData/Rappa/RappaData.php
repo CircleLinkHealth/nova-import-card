@@ -33,6 +33,8 @@ namespace App\Models\PatientData\Rappa;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaData newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaData newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaData query()
+ *
+ * @property int|null $revision_history_count
  */
 class RappaData extends \CircleLinkHealth\Core\Entities\BaseModel
 {

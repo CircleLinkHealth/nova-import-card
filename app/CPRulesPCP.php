@@ -33,6 +33,10 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP query()
+ *
+ * @property int|null $items_count
+ * @property int|null $program_count
+ * @property int|null $revision_history_count
  */
 class CPRulesPCP extends \CircleLinkHealth\Core\Entities\BaseModel
 {

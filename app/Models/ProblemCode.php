@@ -48,6 +48,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereProblemCodeSystemId($value)
+ *
+ * @property int|null $revision_history_count
  */
 class ProblemCode extends \CircleLinkHealth\Core\Entities\BaseModel
 {

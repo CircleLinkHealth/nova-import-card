@@ -35,6 +35,8 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map query()
+ *
+ * @property int|null $revision_history_count
  */
 class SnomedToICD9Map extends \CircleLinkHealth\Core\Entities\BaseModel
 {

@@ -61,6 +61,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\Models\MedicalRecords\Ccda|null $ccda
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
+ *
+ * @property int|null $revision_history_count
  */
 class TargetPatient extends BaseModel
 {

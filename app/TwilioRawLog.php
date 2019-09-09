@@ -35,6 +35,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int|null $revision_history_count
  */
 class TwilioRawLog extends BaseModel
 {

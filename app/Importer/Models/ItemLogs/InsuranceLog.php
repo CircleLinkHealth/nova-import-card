@@ -49,6 +49,8 @@ use App\Traits\Relationships\BelongsToVendor;
  * @property array $raw
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereRaw($value)
+ *
+ * @property int|null $revision_history_count
  */
 class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {

@@ -28,6 +28,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeCustomFilter whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int|null $practices_count
  */
 class EnrolleeCustomFilter extends Model
 {
