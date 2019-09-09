@@ -499,6 +499,15 @@ class PatientCareplanController extends Controller
             }
         }
 
+        //moving here to cover all cases
+        if ('withdrawn' == $params->get('ccm_status')) {
+            if ('Other' == $params->get('withdrawn_reason')) {
+                $params->set('withdrawn_reason', $params->get('withdrawn_reason_other'));
+            }
+        } else {
+            $params->set('withdrawn_reason', null);
+        }
+
         if ($params->has('insurance')) {
             foreach ($params->get('insurance') as $id => $approved) {
                 if ( ! $approved) {
@@ -532,14 +541,6 @@ class PatientCareplanController extends Controller
             }
             if ($params->get('frequency')) {
                 $info->preferred_calls_per_month = $params->get('frequency');
-            }
-
-            if ('withdrawn' == $params->get('ccm_status')) {
-                if ('Other' == $params->get('withdrawn_reason')) {
-                    $params->set('withdrawn_reason', $params->get('withdrawn_reason_other'));
-                }
-            } else {
-                $params->set('withdrawn_reason', null);
             }
 
             $info->withdrawn_reason = $params->get('withdrawn_reason');
