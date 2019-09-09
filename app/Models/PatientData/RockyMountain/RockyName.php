@@ -16,6 +16,8 @@ namespace App\Models\PatientData\RockyMountain;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\RockyMountain\RockyName newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\RockyMountain\RockyName newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\RockyMountain\RockyName query()
+ *
+ * @property int|null $revision_history_count
  */
 class RockyName extends \CircleLinkHealth\Core\Entities\BaseModel
 {

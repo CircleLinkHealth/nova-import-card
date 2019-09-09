@@ -44,6 +44,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser whereCpmBiometricId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser whereCpmInstructionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometricUser wherePatientId($value)
+ *
+ * @property int|null $revision_history_count
  */
 class CpmBiometricUser extends \CircleLinkHealth\Core\Entities\BaseModel
 {

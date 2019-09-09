@@ -36,6 +36,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmWeight query()
+ *
+ * @property int|null $revision_history_count
  */
 class CpmWeight extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
 {

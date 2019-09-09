@@ -33,6 +33,8 @@ namespace App\Models\PatientData\PhoenixHeart;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem query()
+ *
+ * @property int|null $revision_history_count
  */
 class PhoenixHeartProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
