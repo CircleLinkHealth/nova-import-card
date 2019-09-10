@@ -225,11 +225,13 @@
                 this.showDisputeBox = false;
             },
             saveDispute() {
+                const defaultDisputeStatus = 'pending';
                 this.loader = true;
                 axios.post('/nurseinvoices/daily-dispute', {
                     invoiceId: this.invoiceId,
                     suggestedFormattedTime: this.liveRequestedTime,
                     disputedFormattedTime: this.formattedTime,
+                    disputeStatus: defaultDisputeStatus,
                     disputedDay: this.day,
                 })
                     .then((response) => {
@@ -238,7 +240,7 @@
                         this.showTillRefresh = true;
                         this.editButtonActive = false;
                         this.showDisputeBox = false;
-                        this.disputeStatus = 'pending';
+                        this.disputeStatus = defaultDisputeStatus;
                         this.temporaryValue = this.liveRequestedTime;
                         this.loader = false;
 
