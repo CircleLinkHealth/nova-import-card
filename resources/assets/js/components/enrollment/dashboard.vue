@@ -220,7 +220,7 @@
                                    :class="{valid: home_is_valid, invalid: home_is_invalid}">
                                 <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="home_radio" value="home"
                                        :checked="home_phone != ''"/>
-                                <span>{{home_phone_label}}</span>
+                                <span class="phone-label">{{home_phone_label}}</span>
 
                             </label>
                             <input class="input-field" name="home_phone" id="home_phone" v-model="home_phone"/>
@@ -231,7 +231,7 @@
                                    :class="{valid: cell_is_valid, invalid: cell_is_invalid}">
                                 <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="cell_radio" value="cell"
                                        :checked="home_phone == '' && cell_phone != ''"/>
-                                <span>{{cell_phone_label}}</span></label>
+                                <span class="phone-label">{{cell_phone_label}}</span></label>
                             <input class="input-field" name="cell_phone" id="cell_phone" v-model="cell_phone"/>
                         </div>
                         <div class="col s6 m3 select-custom">
@@ -239,7 +239,7 @@
                                    :class="{valid: other_is_valid, invalid: other_is_invalid}">
                                 <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="other_radio" value="other"
                                        :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
-                                <span>{{other_phone_label}}</span>
+                                <span class="phone-label">{{other_phone_label}}</span>
                             </label>
                             <input class="input-field" name="other_phone" id="other_phone" v-model="other_phone"/>
                         </div>
@@ -248,7 +248,7 @@
                                    :class="{valid: agent_is_valid, invalid: agent_is_invalid}">
                                 <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="agent_radio" value="agent"
                                        :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
-                                <span>{{agent_phone_label}}</span>
+                                <span class="phone-label">{{agent_phone_label}}</span>
                             </label>
                             <input class="input-field" name="agent_phone" id="agent_phone" v-model="agent_phone"/>
                         </div>
@@ -1033,6 +1033,10 @@
 
     .action-buttons li a {
         width: 100%;
+    }
+
+    .phone-label {
+        margin-bottom: 10px;
     }
 
 </style>
