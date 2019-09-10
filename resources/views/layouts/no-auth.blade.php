@@ -52,8 +52,7 @@
                 @include('errors.errors')
                 @include('errors.messages')
             </div>
-            <div class="main-form-container col-lg-4 col-lg-offset-4 col-sm-4 col-sm-offset-4"
-                 style="box-shadow: #28323336 2px -2px 10px;">
+            <div class="main-form-container col-lg-4 col-lg-offset-4 col-sm-4 col-sm-offset-4">
                 <div class="row">
                     <div class="main-form-title--login">
                         <div class="col-lg-12"
