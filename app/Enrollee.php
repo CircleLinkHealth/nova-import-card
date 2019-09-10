@@ -148,9 +148,9 @@ use CircleLinkHealth\Customer\Entities\User;
 class Enrollee extends BaseModel
 {
     use Filterable;
-    const AGENT_EMAIL_KEY = 'email';
 
     // Agent array keys
+    const AGENT_EMAIL_KEY        = 'email';
     const AGENT_NAME_KEY         = 'name';
     const AGENT_PHONE_KEY        = 'phone';
     const AGENT_RELATIONSHIP_KEY = 'name';
@@ -316,7 +316,7 @@ class Enrollee extends BaseModel
      */
     public function getAgentAttribute($key)
     {
-        if ( ! $this->agent_details) {
+        if (empty($this->agent_details)) {
             return null;
         }
 
