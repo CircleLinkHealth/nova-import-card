@@ -9,7 +9,7 @@
         <input type="hidden" name="token" value="{{ $token }}">
 
         <div class="form-group">
-            <label class="col-sm-12">E-Mail Address</label>
+            <label class="col-sm-12">Email</label>
             <div class="col-sm-12">
                 <input type="email" class="form-control" name="email" value="{{ old('email') }}">
             </div>
