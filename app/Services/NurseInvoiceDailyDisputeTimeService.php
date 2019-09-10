@@ -35,6 +35,7 @@ class NurseInvoiceDailyDisputeTimeService
             [
                 'suggested_formatted_time' => $suggestedFormattedTime,
                 'disputed_formatted_time'  => $input['disputedFormattedTime'],
+                'status'                   => $input['disputeStatus'],
             ]
         );
 
