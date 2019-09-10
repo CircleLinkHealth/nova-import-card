@@ -9,7 +9,8 @@
 
             <!--Requested Time From nurse-->
             <span v-if="showTillRefresh && !isInvalidated"
-                  class="dispute-requested-time">{{setRequestedValue}}</span>
+                  class="dispute-requested-time"
+                  :class="{strike: disputeStatus === 'rejected'}">{{setRequestedValue}}</span>
             <span v-else="strikethroughSuggestedTime || isInvalidated"
                   class="invalidated">
                     <span data-tooltip="Your request cannot be accepted due to already having a bonus for this day">{{setRequestedValue}}</span>
@@ -373,6 +374,11 @@
     .loader {
         width: 17px;
         height: 17px;
+    }
+
+    .strike {
+        text-decoration: line-through;
+        color: #ff0000;
     }
 
 </style>
