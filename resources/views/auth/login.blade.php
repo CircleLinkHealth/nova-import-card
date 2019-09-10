@@ -9,7 +9,7 @@
 
             <div class="col-lg-12 col-sm-10">
                 <p>
-                    <label class="col-md-12 control-label" for="email">E-mail or Username</label>
+                    <label class="col-md-12 control-label" for="email">Email or Username</label>
                     <input id="email" type="text" class="form-control" name="email"
                            value="{{ old('email') }}">
                 </p>

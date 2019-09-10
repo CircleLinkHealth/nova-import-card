@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-sm-12">
-    <form class="form-horizontal" role="form" method="POST"
+    <form role="form" method="POST"
           action="{{ url('auth/password/reset') }}" autocomplete="off">
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <input type="hidden" name="token" value="{{ $token }}">

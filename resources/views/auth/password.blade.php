@@ -1,8 +1,8 @@
 @extends('layouts.no-auth')
 
 @section('content')
-	<div class="main-form-block main-form-horizontal main-form-primary-horizontal">
-		<form class="form-horizontal" role="form" method="POST"
+	<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
+		<form class="form-horizontal" role="form" method="POST" style="padding-top: 15px;"
 			  action="{{ url('auth/password/email') }}" autocomplete="off">
 			<input type="hidden" name="_token" value="{{ csrf_token() }}">
 

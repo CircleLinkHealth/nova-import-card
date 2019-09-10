@@ -39,7 +39,7 @@
         }
 
         .main-form-block {
-            margin: 15px 20px 25px 20px;
+            padding: 0 20px 15px 20px;
         }
 
         .auth-submit-btn {
@@ -61,7 +61,7 @@
                     <div class="main-form-title--login">
                         <div class="col-lg-12"
                              style="background-color: white;margin: 0 0px 10px 0px;border-top: #50b2e1 3px solid;">
-                            <div class="col-lg-8 col-lg-offset-2">
+                            <div class="col-lg-10 col-lg-offset-1">
                                 <img class="img-responsive" src="{{ mix('img/logos/LogoHorizontal_Color.svg') }}"
                                      alt="CarePlan Manager">
                             </div>
