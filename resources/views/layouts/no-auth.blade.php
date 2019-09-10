@@ -29,13 +29,17 @@
         }
 
         .auth-pages-title {
-            margin: 5px 0;
+            margin: 15px 0;
         }
         .auth-pages-title-container {
             font-family: "Roboto Slab",Georgia,Times,"Times New Roman",serif;
             background: #50b2e2;
             color: #fff;
             text-align: center;
+        }
+
+        .main-form-block {
+            margin: 15px 20px 25px 20px;
         }
 
         .auth-submit-btn {
