@@ -256,15 +256,15 @@
                     <div v-if="preferred_phone == 'agent' " class="row">
                         <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out agent details</b></blockquote>
                         <div  class="col s6 m4">
-                            <label for="agent_name" class="label">Agent Name</label>
+                            <label for="agent_name" class="label">Other Contact's Name</label>
                             <input class="input-field" name="agent_name" id="agent_name" v-model="agent_name"/>
                         </div>
                         <div class="col s6 m4">
-                            <label for="agent_email" class="label">Agent Email</label>
+                            <label for="agent_email" class="label">Other Contact's Email</label>
                             <input class="input-field" name="agent_email" id="agent_email" v-model="agent_email"/>
                         </div>
                         <div class="col s6 m4">
-                            <label for="agent_relationship" class="label">Agent Relationship</label>
+                            <label for="agent_relationship" class="label">Other Contact's Relationship to the Patient</label>
                             <input class="input-field" name="agent_relationship" id="agent_relationship"
                                    v-model="agent_relationship"/>
                         </div>
@@ -608,14 +608,14 @@
             agent_phone_label: function () {
 
                 if (this.agent_phone == '') {
-                    return 'Agent Phone Unknown...';
+                    return 'Other Contact\'s Phone Unknown...';
                 }
 
                 if (this.validatePhone(this.agent_phone)) {
-                    return 'Agent Phone Valid!';
+                    return 'Other Contact\'s Phone Valid!';
                 }
 
-                return 'Agent Phone Invalid..'
+                return 'Other Contact\'s Phone Invalid..'
             },
             other_is_valid: function () {
                 return this.validatePhone(this.other_phone)
