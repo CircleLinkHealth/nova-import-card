@@ -191,7 +191,7 @@ class InvoiceReviewController extends Controller
     {
         $auth = auth()->user();
 
-        $deadline = $this->getDisputesDeadline($invoice->month_year);
+        $deadline = $this->getDisputesDeadline($invoice->month_year ?? Carbon::now()->subMonth());
 
         if ( ! empty($invoiceDataWithDisputes)) {
             $invoiceData = $invoiceDataWithDisputes;
