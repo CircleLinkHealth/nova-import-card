@@ -6,6 +6,8 @@
 
 namespace CircleLinkHealth\NurseInvoices\Providers;
 
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\AggregatedTotalTimePerNurse;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
@@ -46,11 +48,38 @@ class NurseInvoicesDeferredBindingsServiceProvider extends ServiceProvider
     {
         $this->app->bind(AggregatedTotalTimePerNurse::class, function ($app, array $args) {
             if (empty($args)) {
-                return null;
+                $userIds = User::ofType('care-center')
+                    ->with(
+                                   [
+                                       'nurseInfo' => function ($info) {
+                                           $info->with(
+                                               [
+                                                   'windows',
+                                                   'holidays',
+                                                   'workhourables',
+                                               ]
+                                           );
+                                       },
+                                   ]
+                               )
+                    ->whereHas(
+                                   'nurseInfo',
+                                   function ($info) {
+                                       $info->where('status', 'active')
+                                           ->when(isProductionEnv(), function ($info) {
+                                                $info->where('is_demo', false);
+                                            });
+                                   }
+                               )
+                    ->pluck('id')
+                    ->all();
+                $startDate = Carbon::yesterday()->startOfDay();
+                $endDate = Carbon::yesterday()->endOfDay();
+            } else {
+                $userIds = $args[0];
+                $startDate = $args[1];
+                $endDate = $args[2];
             }
-            $userIds = $args[0];
-            $startDate = $args[1];
-            $endDate = $args[2];
 
             return new AggregatedTotalTimePerNurse(new TotalTimeAggregator(parseIds($userIds), $startDate, $endDate));
         });
