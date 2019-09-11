@@ -54,6 +54,6 @@ class CheckLogoutEventsAndMakeStats extends Command
         } else {
             $date = Carbon::yesterday()->startOfDay()->toDateString();
         }
-        $loginLogoutEventsStats = $this->service->checkLogoutEventsForDay($date);
+        $loginLogoutEventsStats = $this->service->checkLogoutEvent($date);
     }
 }

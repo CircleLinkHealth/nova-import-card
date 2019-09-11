@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLoginLogoutEvents extends Migration
+class CreateLoginLogoutEventsTable extends Migration
 {
     /**
      * Reverse the migrations.
@@ -26,7 +26,8 @@ class CreateLoginLogoutEvents extends Migration
         Schema::create('login_logout_events', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
-            $table->string('event');
+            $table->dateTime('login_time')->nullable();
+            $table->dateTime('logout_time')->nullable();
             $table->string('ip_address');
             $table->timestamps();
         });

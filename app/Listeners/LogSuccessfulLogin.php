@@ -7,13 +7,13 @@
 namespace App\Listeners;
 
 use App\LoginLogout;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class LogSuccessfulLogin
 {
-    const LOGIN = 'login';
     /**
      * @var Request
      */
@@ -32,7 +32,7 @@ class LogSuccessfulLogin
         try {
             LoginLogout::create([
                 'user_id'    => $event->user->id,
-                'event'      => self::LOGIN,
+                'login_time' => Carbon::parse(now())->toDateTime(),
                 'ip_address' => $this->request->ip(),
             ]);
         } catch (\Exception $exception) {
