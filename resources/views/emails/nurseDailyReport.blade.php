@@ -7,7 +7,7 @@
     , {{$date->englishMonth}} {{$date->day}}, {{$date->year}}!
 </p>
 <p>
-    Yesterday you worked {{$actualHours}} hours out of {{$committedHours}} hours committed:
+    Yesterday, {{$date->format('F jS Y')}}, you worked {{$actualHours}} hours out of {{$committedHours}} hours committed:
 </p>
 
 <ul>
