@@ -37,6 +37,7 @@ class LogSuccessfulLogout
             LoginLogout::where([
                 ['user_id', $authId],
                 ['login_time', '<', Carbon::parse(now())->toDateTime()],
+                ['login_time', '>', Carbon::parse(now())->startOfDay()->toDateTime()],
             ])->get()->last()->update(['logout_time' => Carbon::parse(now())->toDateTime()]);
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
