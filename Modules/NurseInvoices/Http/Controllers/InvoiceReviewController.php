@@ -26,6 +26,10 @@ class InvoiceReviewController extends Controller
      * @var AttachDisputesToTimePerDay
      */
     private $attachDisputes;
+    /**
+     * @var NurseInvoiceDisputeDeadline
+     */
+    private $nurseInvoiceDisputeDeadline;
 
     /**
      * InvoiceReviewController constructor.
@@ -143,6 +147,12 @@ class InvoiceReviewController extends Controller
             ->with(['dispute.resolver'])
             ->firstOrFail();
 
+        $deadline = $this->getDisputesDeadline($invoice->month_year);
+
+        if ($this->canBeDisputed($invoice, $deadline->deadline())) {
+            return $this->reviewInvoice($request);
+        }
+
         return $this->invoice($request, auth()->id(), $invoice, []);
     }
 
@@ -153,6 +163,15 @@ class InvoiceReviewController extends Controller
         }
 
         return null === $invoice->dispute && ! $invoice->is_nurse_approved && Carbon::now()->lte($deadline) && Carbon::now()->gte($invoice->month_year->copy()->addMonth());
+    }
+
+    private function getDisputesDeadline(Carbon $date)
+    {
+        if ( ! $this->nurseInvoiceDisputeDeadline) {
+            $this->nurseInvoiceDisputeDeadline = new NurseInvoiceDisputeDeadline($date);
+        }
+
+        return $this->nurseInvoiceDisputeDeadline;
     }
 
     private function getNurseInvoiceMap(int $nurseUserId)
@@ -172,7 +191,7 @@ class InvoiceReviewController extends Controller
     {
         $auth = auth()->user();
 
-        $deadline = new NurseInvoiceDisputeDeadline($invoice->month_year ?? Carbon::now()->subMonth());
+        $deadline = $this->getDisputesDeadline($invoice->month_year);
 
         if ( ! empty($invoiceDataWithDisputes)) {
             $invoiceData = $invoiceDataWithDisputes;
@@ -193,6 +212,7 @@ class InvoiceReviewController extends Controller
             $invoiceData
         );
 
+        //This is when viewing a to-be-rendered-as-pdf Report in html
         if ('web' === $request->input('view')) {
             return view('nurseinvoices::invoice-v3', array_merge($args, ['isPdf' => true]));
         }
