@@ -118,7 +118,7 @@ class InvoiceReviewController extends Controller
      */
     public function reviewInvoice(Request $request)
     {
-        $startDate = Carbon::now()->startOfMonth()->subMonth();
+        $startDate = Carbon::now()->startOfMonth();
 
         $invoice = NurseInvoice::where('month_year', $startDate)
             ->with(
@@ -162,7 +162,7 @@ class InvoiceReviewController extends Controller
             return false;
         }
 
-        return null === $invoice->dispute && ! $invoice->is_nurse_approved && Carbon::now()->lte($deadline) && Carbon::now()->gte($invoice->month_year->copy()->addMonth());
+        return null === $invoice->dispute && ! $invoice->is_nurse_approved && Carbon::now()->lte($deadline) && Carbon::now()->gte($invoice->month_year->copy()->startOfMonth());
     }
 
     private function getDisputesDeadline(Carbon $date)
