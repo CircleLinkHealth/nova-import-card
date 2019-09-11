@@ -40,7 +40,7 @@ mkdir -p $RELEASE/storage/framework/{framework,sessions,views,cache}
 # Fetch sensitive keys from secure S3
 php .deploybot/FetchKeysFromS3.php
 
-composer dump-autoload --classmap-authoritative
+composer dump-autoload --no-dev --classmap-authoritative --no-scripts
 
 # Run migrations
 php artisan migrate --force

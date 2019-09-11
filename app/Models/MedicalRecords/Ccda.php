@@ -20,8 +20,6 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Prettus\Repository\Contracts\Transformable;
-use Prettus\Repository\Traits\TransformableTrait;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -97,37 +95,41 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereDirectMailMessageId($value)
+ *
+ * @property \App\EligibilityBatch|null                        $batch
+ * @property \CircleLinkHealth\Customer\Entities\Practice|null $practice
+ * @property int|null                                          $allergies_count
+ * @property int|null                                          $demographics_count
+ * @property int|null                                          $demographics_imports_count
+ * @property int|null                                          $document_count
+ * @property int|null                                          $media_count
+ * @property int|null                                          $medications_count
+ * @property int|null                                          $problems_count
+ * @property int|null                                          $providers_count
+ * @property int|null                                          $revision_history_count
  */
-class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable, EligibilityCheckable
+class Ccda extends MedicalRecordEloquent implements HasMedia, EligibilityCheckable
 {
     use BelongsToPatientUser;
     use HasMediaTrait;
     use SoftDeletes;
-    use TransformableTrait;
     const API = 'api';
 
     //define sources here
     const ATHENA_API = 'athena_api';
 
-    const EMAIL_DOMAIN_TO_VENDOR_MAP = [
-        //Carolina Medical Associates
-        '@direct.novanthealth.org'        => 10,
-        '@test.directproject.net'         => 14,
-        '@direct.welltrackone.com'        => 14,
-        '@treatrelease.direct.aprima.com' => 1,
-    ];
     const EMR_DIRECT   = 'emr_direct';
     const GOOGLE_DRIVE = 'google_drive';
     const IMPORTER     = 'importer';
     const SFTP_DROPBOX = 'sftp_dropbox';
     const UPLOADED     = 'uploaded';
 
+    protected $attributes = [
+        'imported' => false,
+    ];
+
     protected $dates = [
         'date',
-    ];
-    
-    protected $attributes = [
-        'imported' => false
     ];
 
     protected $fillable = [
@@ -198,7 +200,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable, Eli
         unset($attributes['xml']);
 
         $ccda = static::query()->create($attributes);
-        
+
         \Storage::disk('storage')->put("ccda-{$ccda->id}.xml", $xml);
         $ccda->addMedia(storage_path("ccda-{$ccda->id}.xml"))->toMediaCollection('ccd');
 
@@ -211,7 +213,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable, Eli
     public function createEligibilityJobFromMedicalRecord(): EligibilityJob
     {
         $adapter = new CcdaToEligibilityJobAdapter($this, $this->practice, $this->batch);
-        
+
         return $adapter->adapt();
     }
 

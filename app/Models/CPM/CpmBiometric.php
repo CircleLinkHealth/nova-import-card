@@ -39,6 +39,12 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmBiometric whereUnit($value)
+ *
+ * @property int|null $care_plan_templates_count
+ * @property int|null $cpm_instructions_count
+ * @property int|null $patient_count
+ * @property int|null $revision_history_count
+ * @property int|null $users_count
  */
 class CpmBiometric extends \CircleLinkHealth\Core\Entities\BaseModel
 {

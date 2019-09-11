@@ -29,6 +29,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProblemCodeSystem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProblemCodeSystem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProblemCodeSystem query()
+ *
+ * @property int|null $revision_history_count
  */
 class ProblemCodeSystem extends BaseModel
 {

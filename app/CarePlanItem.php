@@ -21,6 +21,9 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem query()
+ *
+ * @property int|null $children_count
+ * @property int|null $revision_history_count
  */
 class CarePlanItem extends \CircleLinkHealth\Core\Entities\BaseModel
 {

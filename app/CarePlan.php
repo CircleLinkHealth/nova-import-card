@@ -73,6 +73,10 @@ use Validator;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereFirstPrinted($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereFirstPrintedBy($value)
+ *
+ * @property int|null $notifications_count
+ * @property int|null $pdfs_count
+ * @property int|null $revision_history_count
  */
 class CarePlan extends BaseModel implements PdfReport
 {
@@ -188,7 +192,7 @@ class CarePlan extends BaseModel implements PdfReport
                     function ($q) {
                         $q->whereStatus('draft');
                     }
-                                    )
+                )
                 ->count();
         } else {
             if ($user->hasRole(['provider'])) {
@@ -199,13 +203,13 @@ class CarePlan extends BaseModel implements PdfReport
                         function ($q) {
                             $q->whereStatus(CarePlan::QA_APPROVED);
                         }
-                                        )
+                    )
                     ->whereHas(
                         'patientInfo',
                         function ($q) {
                             $q->whereCcmStatus(Patient::ENROLLED);
                         }
-                                        )
+                    )
                     ->whereHas(
                         'careTeamMembers',
                         function ($q) use (
@@ -214,7 +218,7 @@ class CarePlan extends BaseModel implements PdfReport
                             $q->where('member_user_id', '=', $user->id)
                                 ->where('type', '=', CarePerson::BILLING_PROVIDER);
                         }
-                                        )
+                    )
                     ->count();
             }
         }
@@ -319,7 +323,7 @@ class CarePlan extends BaseModel implements PdfReport
         $reportFormatter = app(ReportFormatter::class);
         $careplanService = app(CareplanService::class);
 
-        $careplan = $reportFormatter->formatDataForViewPrintCareplanReport([$this->patient]);
+        $careplan = $reportFormatter->formatDataForViewPrintCareplanReport($this->patient);
         $careplan = $careplan[$this->patient->id];
 
         if (empty($careplan)) {

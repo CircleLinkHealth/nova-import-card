@@ -27,6 +27,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProcessedFile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProcessedFile newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProcessedFile query()
+ *
+ * @property int|null $revision_history_count
  */
 class ProcessedFile extends BaseModel
 {

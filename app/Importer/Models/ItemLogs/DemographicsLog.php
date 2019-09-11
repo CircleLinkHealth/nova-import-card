@@ -87,6 +87,8 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog query()
+ *
+ * @property int|null $revision_history_count
  */
 class DemographicsLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog
 {

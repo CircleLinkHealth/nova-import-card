@@ -40,8 +40,8 @@ $user = auth()->user();
             color: #fff;
         }
 
-        .background-white {
-
+        .search-bar {
+            width: 90%;
         }
     </style>
 @endpush
@@ -49,10 +49,10 @@ $user = auth()->user();
 <nav class="navbar primary-navbar">
     <div class="container-fluid full-width margin-0">
         <a class="navbar-brand" href="{{ url('/') }}" style="border: none"><img
-                    src="{{mix('/img/ui/clh_logo_lt.png')}}"
+                    src="{{mix('/img/logos/LogoHorizontal_White.svg')}}"
                     alt="Care Plan Manager"
                     style="position:relative;top:-7px"
-                    width="50px"/></a>
+                    width="105px"/></a>
 
         <button type="button" class="navbar-toggle collapsed" style="border-color:white" data-toggle="collapse"
                 data-target="#navbar-collapse" aria-expanded="false">
@@ -62,7 +62,7 @@ $user = auth()->user();
             <span class="icon-bar" style="background-color:white"></span>
         </button>
 
-        <div class="" id="search-bar-container">
+        <div class="search-bar" id="search-bar-container">
             @include('partials.search')
         </div>
 
@@ -173,6 +173,15 @@ $user = auth()->user();
                             <li>
                                 <a href="{{route('patient.reports.u20')}}">Under 20 Minutes Report</a>
                             </li>
+                            @role('developer')
+                            <li>
+                                <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.reports.nurse.metrics') }}">
+                                    Nurse Performance Report</a>
+                            </li>
+                            @endrole
                         </ul>
                     </li>
                     <li class="dropdown">

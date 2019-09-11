@@ -1,0 +1,44 @@
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class DevelopmentServiceProvider extends ServiceProvider
+{
+    protected $defer = true;
+
+    /**
+     * Bootstrap services.
+     */
+    public function boot()
+    {
+    }
+
+    public function provides()
+    {
+        return [
+            \Orangehill\Iseed\IseedServiceProvider::class,
+            \Way\Generators\GeneratorsServiceProvider::class,
+            \Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
+            \Laravel\Dusk\DuskServiceProvider::class,
+            \JKocik\Laravel\Profiler\ServiceProvider::class,
+        ];
+    }
+
+    /**
+     * Register services.
+     */
+    public function register()
+    {
+        $this->app->register(\Orangehill\Iseed\IseedServiceProvider::class);
+        $this->app->register(\Way\Generators\GeneratorsServiceProvider::class);
+        $this->app->register(\Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
+        $this->app->register(\Laravel\Dusk\DuskServiceProvider::class);
+        $this->app->register(\JKocik\Laravel\Profiler\ServiceProvider::class);
+    }
+}

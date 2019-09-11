@@ -4,22 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Providers\AuthyServiceProvider;
-use App\Providers\DirectMailServiceProvider;
-use App\Providers\EmailArrayValidatorServiceProvider;
-use App\Providers\FaxServiceProvider;
-use App\Providers\GoogleDriveServiceProvider;
-use App\Providers\NovaServiceProvider;
-use App\Providers\ObserversServiceProvider;
-use App\Providers\TwilioClientServiceProvider;
-use App\Providers\ViewComposerServiceProvider;
-use App\Spatie\ResponseCache\ResponseCacheServiceProvider;
-use App\View\Composers\FabComposer;
-use App\View\Composers\ProviderUITimerComposer;
-use App\View\Composers\SAAS\Admin\ManageInternalUser;
-use Carbon\Carbon;
+use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
-use CircleLinkHealth\Raygun\Providers\RaygunServiceProvider;
 
 return [
     /*
@@ -193,48 +179,33 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-        // Application Service Providers...
-        RaygunServiceProvider::class,
-        ResponseCacheServiceProvider::class,
-        Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
-        Barryvdh\Snappy\ServiceProvider::class,
+        \App\Providers\RouteServiceProvider::class,
+        \App\Providers\AuthServiceProvider::class,
+        \App\Providers\CpmEventServiceProvider::class,
+        \App\Providers\ObserversServiceProvider::class,
+
+        \App\Providers\NovaServiceProvider::class,
+
+        CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
 
         App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\CpmEventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
-        FaxServiceProvider::class,
-        DirectMailServiceProvider::class,
+        App\Providers\AppDeferredServiceProvider::class,
 
-        App\Providers\UserMetaParserHelpersServiceProvider::class,
-        App\Providers\StringManipulationServiceProvider::class,
         App\Providers\HtmlToPdfServiceProvider::class,
-
-        // CPM Providers
-        \Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        App\Providers\DirectMailServiceProvider::class,
+        App\Providers\FaxServiceProvider::class,
+        App\Providers\TwilioClientServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
-        \Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
-        \Maatwebsite\Excel\ExcelServiceProvider::class,
-        Prettus\Repository\Providers\RepositoryServiceProvider::class,
-        Yajra\DataTables\DataTablesServiceProvider::class,
-        Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
-        ObserversServiceProvider::class,
-        ViewComposerServiceProvider::class,
-        ProviderUITimerComposer::class,
-        jeremykenedy\Slack\Laravel\ServiceProvider::class,
-        EmailArrayValidatorServiceProvider::class,
-        Propaganistas\LaravelPhone\PhoneServiceProvider::class,
-        Waavi\UrlShortener\UrlShortenerServiceProvider::class,
-        GoogleDriveServiceProvider::class,
-        ManageInternalUser::class,
-        FabComposer::class,
-        LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
-        AuthyServiceProvider::class,
-        PragmaRX\Health\ServiceProvider::class,
-        TwilioClientServiceProvider::class,
-        NovaServiceProvider::class,
+
+        CircleLinkHealth\ApiPatient\Providers\ApiPatientServiceProvider::class,
+
+        App\View\Composers\ProviderUITimerComposer::class,
+        App\View\Composers\FabComposer::class,
+        App\View\Composers\SAAS\Admin\ManageInternalUser::class,
+        App\Providers\EligibilityBatchViewComposerServiceProvider::class,
+
         NurseInvoicesServiceProvider::class,
+        NurseInvoicesDeferredBindingsServiceProvider::class,
     ],
 
     /*
@@ -255,7 +226,7 @@ return [
         'Auth'         => Illuminate\Support\Facades\Auth::class,
         'Blade'        => Illuminate\Support\Facades\Blade::class,
         'Cache'        => Illuminate\Support\Facades\Cache::class,
-        'Carbon'       => Carbon::class,
+        'Carbon'       => Carbon\Carbon::class,
         'Config'       => Illuminate\Support\Facades\Config::class,
         'Cookie'       => Illuminate\Support\Facades\Cookie::class,
         'Crypt'        => Illuminate\Support\Facades\Crypt::class,
@@ -286,17 +257,14 @@ return [
         'Input'     => Illuminate\Support\Facades\Input::class,
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
 
-        'DataTables'     => Yajra\DataTables\Facades\DataTables::class,
-        'Form'           => \Collective\Html\FormFacade::class,
-        'Html'           => \Collective\Html\HtmlFacade::class,
-        'Image'          => \Barryvdh\Snappy\Facades\SnappyImage::class,
-        'JWTAuth'        => \Tymon\JWTAuth\Facades\JWTAuth::class,
-        'JWTFactory'     => \Tymon\JWTAuth\Facades\JWTFactory::class,
-        'PdfMerger'      => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
-        'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
-        'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
-        'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
-        'UrlShortener'   => Waavi\UrlShortener\Facades\UrlShortener::class,
+        'DataTables'   => Yajra\DataTables\Facades\DataTables::class,
+        'Form'         => \Collective\Html\FormFacade::class,
+        'Html'         => \Collective\Html\HtmlFacade::class,
+        'Image'        => \Barryvdh\Snappy\Facades\SnappyImage::class,
+        'PdfMerger'    => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
+        'Slack'        => jeremykenedy\Slack\Laravel\Facade::class,
+        'Swagger'      => L5Swagger\L5SwaggerServiceProvider::class,
+        'UrlShortener' => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
 
     /*

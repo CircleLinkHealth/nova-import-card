@@ -9,8 +9,6 @@ namespace App\Importer\Models\ImportedItems;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Traits\Relationships\BelongsToCcda;
 use CircleLinkHealth\Customer\Entities\User;
-use Prettus\Repository\Contracts\Transformable;
-use Prettus\Repository\Traits\TransformableTrait;
 
 /**
  * App\Importer\Models\ImportedItems\DemographicsImport.
@@ -88,12 +86,12 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport query()
+ *
+ * @property int|null $revision_history_count
  */
-class DemographicsImport extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
+class DemographicsImport extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use BelongsToCcda;
-    use
-        TransformableTrait;
 
     protected $fillable = [
         'medical_record_type',

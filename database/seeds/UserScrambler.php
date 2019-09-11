@@ -6,27 +6,23 @@
 
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Foundation\Testing\WithFaker;
 
 class UserScrambler extends Seeder
 {
+    use WithFaker;
+
     public function run()
     {
-        $allUsers = User::all();
-
-        if ( ! empty($allUsers)) {
-            $u = 0;
-            foreach ($allUsers as $user) {
-                $role = $user->roles()->first();
-                if ($role && 'participant' == strtolower($role->name)) {
-                    echo PHP_EOL.PHP_EOL;
-                    echo PHP_EOL.$role->name;
-                    echo PHP_EOL.$user->id.'-'.$user->email;
-                    $user->scramble();
-                    echo PHP_EOL.$user->id.'-'.$user->email;
-                    ++$u;
-                }
+        User::whereDoesntHave('roles', function ($q) {
+            $q->where('name', '=', 'administrator');
+        })->chunk(300, function ($users) {
+            foreach ($users as $user) {
+                echo PHP_EOL.$user->id.'-'.$user->email;
+                $user->scramble();
+                echo PHP_EOL.$user->id.'-'.$user->email;
             }
-        }
+        });
 
         echo PHP_EOL.'Truncating ccdas table..';
         DB::table('ccdas')->delete();
@@ -42,5 +38,32 @@ class UserScrambler extends Seeder
         Artisan::call('db:seed', [
             '--class' => CreateTesterUsersSeeder::class,
         ]);
+    }
+
+    public function scramble(User $user)
+    {
+        $faker = $this->faker;
+
+        $user->setFirstName($faker->firstName);
+        $user->setLastName('Z-'.$faker->lastName);
+        $user->username = $faker->userName;
+        $user->password = $faker->password;
+        $user->email    = $faker->freeEmail;
+        $user->setMRN(rand());
+        $user->setGender($faker->randomElement(['F', 'M']));
+        $user->address  = $faker->address;
+        $user->address2 = $faker->secondaryAddress;
+        $user->city     = $faker->city;
+        $user->state    = $faker->stateAbbr;
+        $user->zip      = $faker->postcode;
+        $user->setPhone(formatPhoneNumberE164($faker->phoneNumber));
+        $user->setWorkPhoneNumber(formatPhoneNumberE164($faker->phoneNumber));
+        $user->setMobilePhoneNumber(formatPhoneNumberE164($faker->phoneNumber));
+        $user->setBirthDate($faker->dateTimeThisCentury->format('Y-m-d'));
+        $user->setAgentName($faker->name);
+        $user->setAgentPhone(formatPhoneNumberE164($faker->phoneNumber));
+        $user->setAgentEmail($faker->safeEmail);
+        $user->setAgentRelationship('SA');
+        $user->save();
     }
 }

@@ -43,6 +43,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pdf newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pdf newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pdf query()
+ *
+ * @property int|null $revision_history_count
  */
 class Pdf extends \CircleLinkHealth\Core\Entities\BaseModel
 {

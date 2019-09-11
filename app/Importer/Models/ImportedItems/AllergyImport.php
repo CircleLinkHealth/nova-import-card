@@ -42,6 +42,8 @@ use App\Importer\Models\ItemLogs\AllergyLog;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport query()
+ *
+ * @property int|null $revision_history_count
  */
 class AllergyImport extends \CircleLinkHealth\Core\Entities\BaseModel
 {

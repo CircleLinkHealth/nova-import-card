@@ -25,6 +25,8 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers query()
+ *
+ * @property int|null $revision_history_count
  */
 class CPRulesAnswers extends \CircleLinkHealth\Core\Entities\BaseModel
 {
