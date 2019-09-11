@@ -6,8 +6,10 @@ $lastLogin = null;
 $timezone  = null;
 
 $time      = null;
-if (optional($user)->last_login) {
-    $dt = Carbon\Carbon::parse($user->last_login);
+
+if (session('last_login')) {
+    $dt = Carbon\Carbon::parse(session('last_login'));
+
     if ($user->timezone) {
         $dt = $dt->setTimezone($user->timezone);
     }
