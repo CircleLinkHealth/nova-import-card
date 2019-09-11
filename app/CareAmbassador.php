@@ -33,6 +33,9 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador query()
+ *
+ * @property int|null $logs_count
+ * @property int|null $revision_history_count
  */
 class CareAmbassador extends \CircleLinkHealth\Core\Entities\BaseModel
 {

@@ -33,6 +33,14 @@ namespace App\Models\CPM;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction query()
+ *
+ * @property int|null $cpm_biometrics_count
+ * @property int|null $cpm_lifestyles_count
+ * @property int|null $cpm_medication_groups_count
+ * @property int|null $cpm_misc_count
+ * @property int|null $cpm_problems_count
+ * @property int|null $cpm_symptom_count
+ * @property int|null $revision_history_count
  */
 class CpmInstruction extends \CircleLinkHealth\Core\Entities\BaseModel
 {

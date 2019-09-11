@@ -35,6 +35,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int|null $revision_history_count
  */
 class TwilioConferenceCallParticipant extends BaseModel
 {

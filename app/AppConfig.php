@@ -27,6 +27,8 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig query()
+ *
+ * @property int|null $revision_history_count
  */
 class AppConfig extends \CircleLinkHealth\Core\Entities\BaseModel
 {

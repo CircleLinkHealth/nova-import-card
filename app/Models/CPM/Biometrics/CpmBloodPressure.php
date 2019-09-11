@@ -42,6 +42,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure query()
+ *
+ * @property int|null $revision_history_count
  */
 class CpmBloodPressure extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
 {

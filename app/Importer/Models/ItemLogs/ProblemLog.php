@@ -76,6 +76,9 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemLog query()
+ *
+ * @property int|null $codes_count
+ * @property int|null $revision_history_count
  */
 class ProblemLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog, Problem
 {

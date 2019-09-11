@@ -26,6 +26,8 @@ class UserLoggedOut
      */
     public function handle(Logout $event)
     {
+        session()->put('last_login', null);
+
         $user = $event->user;
         if ($user) {
             //not really needed here, but is saves the trip to redis when trying to destroy a non-existing session

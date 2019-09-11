@@ -31,6 +31,8 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup query()
+ *
+ * @property int|null $revision_history_count
  */
 class PatientSignup extends \CircleLinkHealth\Core\Entities\BaseModel
 {

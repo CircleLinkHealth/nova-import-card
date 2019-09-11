@@ -26,6 +26,10 @@ class InvoiceReviewController extends Controller
      * @var AttachDisputesToTimePerDay
      */
     private $attachDisputes;
+    /**
+     * @var NurseInvoiceDisputeDeadline
+     */
+    private $nurseInvoiceDisputeDeadline;
 
     /**
      * InvoiceReviewController constructor.
@@ -47,11 +51,13 @@ class InvoiceReviewController extends Controller
     public function adminShow(AdminShowNurseInvoice $request, $nurseUserId, $invoiceId)
     {
         $invoice = NurseInvoice::where('id', $invoiceId)
-            ->with(['dispute.resolver'])
+            ->with(['dispute.resolver', 'dailyDisputes'])
             ->ofNurses($nurseUserId)
             ->firstOrFail();
 
-        return $this->invoice($request, $nurseUserId, $invoice, []);
+        $invoiceDataWithDisputes = $this->attachDisputes->putDisputesToTimePerDay($invoice);
+
+        return $this->invoice($request, $nurseUserId, $invoice, $invoiceDataWithDisputes);
     }
 
     /**
@@ -70,6 +76,17 @@ class InvoiceReviewController extends Controller
         $invoice->save();
 
         return $this->ok();
+    }
+
+    /**
+     * @param $nurseUserId
+     * @param $auth
+     *
+     * @return bool
+     */
+    public function checkUserIfAuthToDispute($nurseUserId, $auth)
+    {
+        return $nurseUserId === $auth->id ? true : false;
     }
 
     /**
@@ -101,7 +118,7 @@ class InvoiceReviewController extends Controller
      */
     public function reviewInvoice(Request $request)
     {
-        $startDate = Carbon::now()->startOfMonth()->subMonth();
+        $startDate = Carbon::now()->startOfMonth();
 
         $invoice = NurseInvoice::where('month_year', $startDate)
             ->with(
@@ -130,6 +147,12 @@ class InvoiceReviewController extends Controller
             ->with(['dispute.resolver'])
             ->firstOrFail();
 
+        $deadline = $this->getDisputesDeadline($invoice->month_year);
+
+        if ($this->canBeDisputed($invoice, $deadline->deadline())) {
+            return $this->reviewInvoice($request);
+        }
+
         return $this->invoice($request, auth()->id(), $invoice, []);
     }
 
@@ -139,7 +162,16 @@ class InvoiceReviewController extends Controller
             return false;
         }
 
-        return null === $invoice->dispute && ! $invoice->is_nurse_approved && Carbon::now()->lte($deadline) && Carbon::now()->gte($invoice->month_year->copy()->addMonth());
+        return null === $invoice->dispute && ! $invoice->is_nurse_approved && Carbon::now()->lte($deadline) && Carbon::now()->gte($invoice->month_year->copy()->startOfMonth());
+    }
+
+    private function getDisputesDeadline(Carbon $date)
+    {
+        if ( ! $this->nurseInvoiceDisputeDeadline) {
+            $this->nurseInvoiceDisputeDeadline = new NurseInvoiceDisputeDeadline($date);
+        }
+
+        return $this->nurseInvoiceDisputeDeadline;
     }
 
     private function getNurseInvoiceMap(int $nurseUserId)
@@ -147,24 +179,32 @@ class InvoiceReviewController extends Controller
         return NurseInvoice::ofNurses($nurseUserId)->pluck('month_year', 'id');
     }
 
+    /**
+     * @param Request      $request
+     * @param int          $nurseUserId
+     * @param NurseInvoice $invoice
+     * @param array        $invoiceDataWithDisputes
+     *
+     * @return Factory|View
+     */
     private function invoice(Request $request, int $nurseUserId, NurseInvoice $invoice, $invoiceDataWithDisputes = [])
     {
         $auth = auth()->user();
 
-        $deadline = new NurseInvoiceDisputeDeadline($invoice->month_year ?? Carbon::now()->subMonth());
+        $deadline = $this->getDisputesDeadline($invoice->month_year ?? Carbon::now()->subMonth());
 
         if ( ! empty($invoiceDataWithDisputes)) {
             $invoiceData = $invoiceDataWithDisputes;
         } else {
             $invoiceData = $invoice->invoice_data ?? [];
         }
-
-        $args = array_merge(
+        $canBeDisputed = $this->canBeDisputed($invoice, $deadline->deadline());
+        $args          = array_merge(
             [
                 'invoiceId'              => $invoice->id,
                 'dispute'                => $invoice->dispute,
                 'invoice'                => $invoice,
-                'shouldShowDisputeForm'  => $auth->isAdmin() ? false : $this->canBeDisputed($invoice, $deadline->deadline()),
+                'shouldShowDisputeForm'  => $auth->isAdmin() ? false : $canBeDisputed,
                 'disputeDeadline'        => $deadline->deadline()->setTimezone($auth->timezone),
                 'disputeDeadlineWarning' => $deadline->warning(),
                 'monthInvoiceMap'        => $this->getNurseInvoiceMap($nurseUserId),
@@ -172,10 +212,13 @@ class InvoiceReviewController extends Controller
             $invoiceData
         );
 
+        //This is when viewing a to-be-rendered-as-pdf Report in html
         if ('web' === $request->input('view')) {
             return view('nurseinvoices::invoice-v3', array_merge($args, ['isPdf' => true]));
         }
+        //We want to disable "daily dispute functionality" for admins who view invoice from superadmin page.
+        $isUserAuthToDailyDispute = $this->checkUserIfAuthToDispute($nurseUserId, $auth);
 
-        return view('nurseinvoices::reviewInvoice', $args);
+        return view('nurseinvoices::reviewInvoice', $args)->with(['isUserAuthToDailyDispute' => $isUserAuthToDailyDispute, 'canBeDisputed' => $canBeDisputed]);
     }
 }

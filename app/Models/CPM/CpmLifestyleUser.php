@@ -36,6 +36,9 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser whereCpmInstructionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser whereCpmLifestyleId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser wherePatientId($value)
+ *
+ * @property int|null $cpm_instructions_count
+ * @property int|null $revision_history_count
  */
 class CpmLifestyleUser extends \CircleLinkHealth\Core\Entities\BaseModel
 {

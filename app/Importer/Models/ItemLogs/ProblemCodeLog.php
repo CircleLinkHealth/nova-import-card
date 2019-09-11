@@ -36,6 +36,8 @@ namespace App\Importer\Models\ItemLogs;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereProblemCodeSystemId($value)
+ *
+ * @property int|null $revision_history_count
  */
 class ProblemCodeLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {

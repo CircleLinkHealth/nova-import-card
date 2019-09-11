@@ -40,6 +40,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta query()
+ *
+ * @property int|null $revision_history_count
  */
 class ObservationMeta extends \CircleLinkHealth\Core\Entities\BaseModel
 {
