@@ -29,6 +29,11 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
      */
     protected $name = 'nurseinvoices:create';
 
+    public function defaultMonth()
+    {
+        return now()->startOfMonth();
+    }
+
     /**
      * Execute the console command.
      *
@@ -39,7 +44,12 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
     public function handle()
     {
         $start = $this->month()->startOfMonth();
-        $end   = $this->month()->endOfMonth();
+
+        if ($this->month()->isCurrentMonth(true)) {
+            $end = now()->subDay()->endOfDay();
+        } else {
+            $end = $this->month()->endOfMonth();
+        }
 
         $userIds = $this->usersIds();
 
