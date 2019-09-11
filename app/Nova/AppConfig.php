@@ -26,7 +26,7 @@ class AppConfig extends Resource
      * @var array
      */
     public static $search = [
-        'setting',
+        'config_key',
     ];
 
     /**
