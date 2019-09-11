@@ -179,13 +179,13 @@ class InvoiceReviewController extends Controller
         } else {
             $invoiceData = $invoice->invoice_data ?? [];
         }
-
-        $args = array_merge(
+        $canBeDisputed = $this->canBeDisputed($invoice, $deadline->deadline());
+        $args          = array_merge(
             [
                 'invoiceId'              => $invoice->id,
                 'dispute'                => $invoice->dispute,
                 'invoice'                => $invoice,
-                'shouldShowDisputeForm'  => $auth->isAdmin() ? false : $this->canBeDisputed($invoice, $deadline->deadline()),
+                'shouldShowDisputeForm'  => $auth->isAdmin() ? false : $canBeDisputed,
                 'disputeDeadline'        => $deadline->deadline()->setTimezone($auth->timezone),
                 'disputeDeadlineWarning' => $deadline->warning(),
                 'monthInvoiceMap'        => $this->getNurseInvoiceMap($nurseUserId),
@@ -199,6 +199,6 @@ class InvoiceReviewController extends Controller
         //We want to disable "daily dispute functionality" for admins who view invoice from superadmin page.
         $isUserAuthToDailyDispute = $this->checkUserIfAuthToDispute($nurseUserId, $auth);
 
-        return view('nurseinvoices::reviewInvoice', $args)->with(['isUserAuthToDailyDispute' => $isUserAuthToDailyDispute]);
+        return view('nurseinvoices::reviewInvoice', $args)->with(['isUserAuthToDailyDispute' => $isUserAuthToDailyDispute, 'canBeDisputed' => $canBeDisputed]);
     }
 }
