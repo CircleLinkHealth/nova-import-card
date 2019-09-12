@@ -7,8 +7,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\Channels\DirectMailChannel;
+use App\Notifications\Channels\FaxChannel;
 use App\Notifications\SendCareDocument;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus;
 use CircleLinkHealth\Customer\Entities\User;
@@ -47,8 +50,8 @@ class PatientCareDocumentsController extends Controller
     {
         $patientAWVStatuses = PatientAWVSurveyInstanceStatus::where('patient_id', $patientId)
             ->when( ! $showPast, function ($query) {
-                $query->where('year', Carbon::now()->year);
-            })
+                                                                $query->where('year', Carbon::now()->year);
+                                                            })
             ->get();
 
         $files = Media::where('collection_name', 'patient-care-documents')
@@ -57,19 +60,19 @@ class PatientCareDocumentsController extends Controller
             ->get()
             ->sortByDesc('created_at')
             ->mapToGroups(function ($item, $key) {
-                $docType = $item->getCustomProperty('doc_type');
+                          $docType = $item->getCustomProperty('doc_type');
 
-                return [$docType => $item];
-            })
+                          return [$docType => $item];
+                      })
             ->reject(function ($value, $key) {
-                return ! $key;
-            })
+                          return ! $key;
+                      })
             //get the latest file from each category
             ->unless('true' == $showPast, function ($files) {
-                return $files->map(function ($typeGroup) {
-                    return collect([$typeGroup->first()]);
-                });
-            });
+                          return $files->map(function ($typeGroup) {
+                              return collect([$typeGroup->first()]);
+                          });
+                      });
 
         return response()->json([
             'files'              => $files->toArray(),
@@ -104,45 +107,23 @@ class PatientCareDocumentsController extends Controller
             );
         }
 
-        if ('email' == $channel) {
-            $validator = Validator::make([
-                'email' => $addressOrFax,
-            ], [
-                'email' => 'required|email',
-            ]);
+        $channel = $this->setChannelAndValidateInput($channel, $addressOrFax);
 
-            if ($validator->fails()) {
-                return response()->json(
-                    'Invalid email address.',
-                    400
-                );
-            }
+        $notifiable = $this->getNotifiableEntity($channel, $addressOrFax);
 
-            $notifiableUser = User::whereEmail($addressOrFax)->first();
-
-            if ( ! $notifiableUser) {
-                return response()->json(
-                    'Could not find User with that email.',
-                    400
-                );
-                //Fails because of non-existent id. Don't know if we want to be saving dummy users or just use dummy id.
-//                $notifiableUser = (new User())->forceFill([
-//                    'name'  => 'Notifiable User',
-//                    'email' => $addressOrFax,
-//                ]);
-            }
-
-            $notifiableUser->notify(new SendCareDocument($media, $patient, ['mail']));
-
+        if ( ! $notifiable) {
             return response()->json(
-                'Document sent successfully!',
-                200
+                //todo: fix message to account for locations
+                'Could not find User with that email.',
+                400
             );
         }
 
+        $notifiable->notify(new SendCareDocument($media, $patient, $channel));
+
         return response()->json(
-            'This feature has not yet been implemented',
-            400
+            'Document sent successfully!',
+            200
         );
     }
 
@@ -192,5 +173,60 @@ class PatientCareDocumentsController extends Controller
             ->where('model_id', $modelId)
             ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
             ->find($mediaId);
+    }
+
+    private function getNotifiableEntity($channel, $input)
+    {
+        switch ($channel) {
+            case 'email':
+                $notifiable = User::whereEmail($input)->first();
+                break;
+            case 'direct':
+                $notifiable = User::whereHas('emrDirect', function ($emr) use ($input) {
+                    $emr->where('address', $input);
+                })->first();
+                break;
+            case 'efax':
+                $notifiable = Location::whereFax($input)->first();
+                break;
+            default:
+                $notifiable = null;
+        }
+
+        return $notifiable;
+    }
+
+    private function setChannelAndValidateInput($channel, $input)
+    {
+        switch ($channel) {
+            case 'email':
+                $channel         = ['mail'];
+                $validationRules = ['required', 'email'];
+                break;
+            case 'direct':
+                $channel         = [DirectMailChannel::class];
+                $validationRules = ['required', 'email'];
+                break;
+            case 'efax':
+                $channel         = [FaxChannel::class];
+                $validationRules = ['required', 'phone:us'];
+                break;
+            default:
+                $channel         = [];
+                $validationRules = [];
+        }
+
+        $validator = Validator::make([
+            'input' => $input,
+        ], [
+            'input' => $validationRules,
+        ]);
+
+        if ($validator->fails()) {
+            //todo: return some kind of message
+            return null;
+        }
+
+        return $channel;
     }
 }
