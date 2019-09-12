@@ -81,8 +81,6 @@
         </small>
     </h1>
 </div>
-
-
 <div class="row">
     <div class="col-md-10" data-step="2" data-intro="The top part of the invoice shows a breakdown of your pay.">
         <table class="table borderless-table-invoices table-hover">
@@ -165,8 +163,15 @@
             @foreach($timePerDay as $date => $row)
                 <tr>
                     <td><b>{{$date}}</b></td>
-
-                    <td>{{$row['formatted_time']}}</td>
+                    <td>
+                        <nurse-invoice-daily-dispute
+                                :invoice-data="{{json_encode($row)}}"
+                                :invoice-id="{{$invoiceId}}"
+                                :day="{{json_encode(\Carbon\Carbon::parse($date)->copy()->toDateString())}}"
+                                :is-user-auth-to-daily-dispute="{{json_encode($isUserAuthToDailyDispute)}}"
+                                :can-be-disputed="{{json_encode($canBeDisputed)}}">
+                        </nurse-invoice-daily-dispute>
+                    </td>
 
                     @if($variablePay)
                         <td>{{$row['towards']}}</td>

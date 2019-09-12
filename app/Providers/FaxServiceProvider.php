@@ -13,11 +13,20 @@ use Phaxio\Phaxio;
 
 class FaxServiceProvider extends ServiceProvider
 {
+    protected $defer = true;
+
     /**
      * Bootstrap the application services.
      */
     public function boot()
     {
+    }
+
+    public function provides()
+    {
+        return [
+            Efax::class,
+        ];
     }
 
     /**

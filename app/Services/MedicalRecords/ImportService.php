@@ -156,10 +156,10 @@ class ImportService
 
         $update = Ccda::whereId($ccdaId)
             ->update(
-                          [
-                              'status'   => Ccda::QA,
-                              'imported' => true,
-                          ]
+                [
+                    'status'   => Ccda::QA,
+                    'imported' => true,
+                ]
                       );
 
         $response->success = true;

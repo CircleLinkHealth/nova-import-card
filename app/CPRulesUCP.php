@@ -29,6 +29,8 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP query()
+ *
+ * @property int|null $revision_history_count
  */
 class CPRulesUCP extends \CircleLinkHealth\Core\Entities\BaseModel
 {

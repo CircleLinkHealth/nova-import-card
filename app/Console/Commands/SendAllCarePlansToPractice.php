@@ -68,7 +68,7 @@ class SendAllCarePlansToPractice extends Command
 
         $this->warn("$countSent patients sent.");
 
-        $this->table(['patient_id'], $sent->pluck('patient_id')->all());
+        $this->table(['patient_id', 'careplan_id'], $sent->all());
     }
 
     protected function getArguments()

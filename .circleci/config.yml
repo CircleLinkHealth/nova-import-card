@@ -59,7 +59,7 @@ jobs:
     - run: cp .env.circleci .env
     #    - run: php artisan migrate --force
 
-    # run tests with paratest
+      # run tests with paratest
     - run: ./vendor/bin/paratest ./tests/Unit --verbose=1 --stop-on-failure --colors --runner SqliteRunner -p8
     - store_test_results:
         path: tests/_output

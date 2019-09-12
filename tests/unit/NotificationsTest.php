@@ -26,8 +26,7 @@ use Tests\TestCase;
 class NotificationsTest extends TestCase
 {
     use CarePlanHelpers;
-    use
-        SetupTestCustomerTrait;
+    use SetupTestCustomerTrait;
 
     protected $channels;
 

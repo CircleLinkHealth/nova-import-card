@@ -93,10 +93,10 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
 
         if ( ! empty($args['mrn']) && ! empty($args['first_name']) && ! empty($args['last_name'])) {
             return PatientData::updateOrCreate(
-            [
-                'mrn' => $row['mrn'],
-            ],
-            $args
+                [
+                    'mrn' => $row['mrn'],
+                ],
+                $args
         );
         }
     }

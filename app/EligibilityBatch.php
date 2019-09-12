@@ -43,6 +43,9 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int|null $eligibility_jobs_count
+ * @property int|null $revision_history_count
  */
 class EligibilityBatch extends BaseModel
 {
@@ -278,7 +281,7 @@ class EligibilityBatch extends BaseModel
                     $job,
                     $this,
                     $this->practice
-                          )->onQueue($onQueue);
+                )->onQueue($onQueue);
             });
     }
 

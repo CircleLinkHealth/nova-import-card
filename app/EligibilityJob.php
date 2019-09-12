@@ -81,6 +81,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withoutTrashed()
  * @mixin \Eloquent
+ *
+ * @property \App\EligibilityJob $eligibilityJob
+ * @property int|null            $revision_history_count
  */
 class EligibilityJob extends BaseModel
 {

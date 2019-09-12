@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\CLH\Facades\StringManipulation;
+use App\CLH\Helpers\StringManipulation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeLocation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -22,50 +22,19 @@ class PracticeLocationsController extends Controller
      * @param int   $id
      * @param mixed $practiceId
      * @param mixed $locationId
+     * @param mixed $primaryPracticeId
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($practiceId, $locationId)
+    public function destroy($primaryPracticeId, $locationId)
     {
-        $loc = Location::find($locationId);
+        $loc = Location::wherePracticeId($primaryPracticeId)->find($locationId);
 
         if ($loc) {
             $loc->delete();
         }
 
         return response()->json($loc);
-    }
-
-    public function handleClinicalContact(array $clinicalContact, Practice $primaryPractice, Location $location)
-    {
-        //clean up other contacts
-        $location->clinicalEmergencyContact()->sync([]);
-
-        if (CarePerson::BILLING_PROVIDER == $clinicalContact['type']) {
-            return;
-        }
-
-        $clinicalContactUser = User::whereEmail($clinicalContact['email'])->first();
-
-        if ( ! $clinicalContactUser) {
-            $clinicalContactUser = User::create([
-                'program_id' => $primaryPractice->id,
-                'email'      => $clinicalContact['email'],
-                'first_name' => $clinicalContact['first_name'],
-                'last_name'  => $clinicalContact['last_name'],
-                'password'   => 'password_not_set',
-            ]);
-        }
-
-        $clinicalContactUser->attachPractice($primaryPractice, []);
-        $clinicalContactUser->attachLocation($location);
-
-        //clean up other contacts before adding the new one
-        $location->clinicalEmergencyContact()->sync([]);
-
-        $location->clinicalEmergencyContact()->attach($clinicalContactUser->id, [
-            'name' => $clinicalContact['type'],
-        ]);
     }
 
     /**
@@ -86,40 +55,6 @@ class PracticeLocationsController extends Controller
         });
 
         return response()->json($existingLocations);
-    }
-
-    public function present(Location $loc, Practice $primaryPractice)
-    {
-        $contactType = $loc->clinicalEmergencyContact->first()->pivot->name ?? null;
-        $contactUser = $loc->clinicalEmergencyContact->first() ?? null;
-
-        return [
-            'id'               => $loc->id,
-            'clinical_contact' => [
-                'email'      => optional($contactUser)->email ?? null,
-                'first_name' => optional($contactUser)->getFirstName() ?? null,
-                'last_name'  => optional($contactUser)->getLastName() ?? null,
-                'type'       => $contactType ?? 'billing_provider',
-            ],
-            'timezone'                  => $loc->timezone ?? 'America/New_York',
-            'ehr_password'              => $loc->ehr_password,
-            'city'                      => $loc->city,
-            'address_line_1'            => $loc->address_line_1,
-            'address_line_2'            => $loc->address_line_2,
-            'ehr_login'                 => $loc->ehr_login,
-            'name'                      => $loc->name,
-            'postal_code'               => $loc->postal_code,
-            'state'                     => $loc->state,
-            'validated'                 => true,
-            'phone'                     => StringManipulation::formatPhoneNumber($loc->phone),
-            'clinical_escalation_phone' => StringManipulation::formatPhoneNumber($loc->clinical_escalation_phone),
-            'fax'                       => StringManipulation::formatPhoneNumber($loc->fax),
-            'emr_direct_address'        => $loc->emr_direct_address,
-            'sameClinicalIssuesContact' => $primaryPractice->same_clinical_contact,
-            'sameEHRLogin'              => $primaryPractice->same_ehr_login,
-            'practice'                  => $primaryPractice,
-            'practice_id'               => $primaryPractice->id,
-        ];
     }
 
     /**
@@ -146,9 +81,9 @@ class PracticeLocationsController extends Controller
         ], [
             'practice_id'               => $primaryPractice['id'],
             'name'                      => $formData['name'],
-            'phone'                     => StringManipulation::formatPhoneNumberE164($formData['phone']),
-            'clinical_escalation_phone' => StringManipulation::formatPhoneNumberE164($formData['clinical_escalation_phone']),
-            'fax'                       => StringManipulation::formatPhoneNumberE164($formData['fax']),
+            'phone'                     => (new StringManipulation())->formatPhoneNumberE164($formData['phone']),
+            'clinical_escalation_phone' => (new StringManipulation())->formatPhoneNumberE164($formData['clinical_escalation_phone']),
+            'fax'                       => (new StringManipulation())->formatPhoneNumberE164($formData['fax']),
             'address_line_1'            => $formData['address_line_1'],
             'address_line_2'            => $formData['address_line_2'] ?? null,
             'city'                      => $formData['city'],
@@ -199,5 +134,71 @@ class PracticeLocationsController extends Controller
         }
 
         return response()->json($this->present($location, $primaryPractice));
+    }
+
+    private function handleClinicalContact(array $clinicalContact, Practice $primaryPractice, Location $location)
+    {
+        //clean up other contacts
+        $location->clinicalEmergencyContact()->sync([]);
+
+        if (CarePerson::BILLING_PROVIDER == $clinicalContact['type']) {
+            return;
+        }
+
+        $clinicalContactUser = User::whereEmail($clinicalContact['email'])->first();
+
+        if ( ! $clinicalContactUser) {
+            $clinicalContactUser = User::create([
+                'program_id' => $primaryPractice->id,
+                'email'      => $clinicalContact['email'],
+                'first_name' => $clinicalContact['first_name'],
+                'last_name'  => $clinicalContact['last_name'],
+                'password'   => 'password_not_set',
+            ]);
+        }
+
+        $clinicalContactUser->attachPractice($primaryPractice, []);
+        $clinicalContactUser->attachLocation($location);
+
+        //clean up other contacts before adding the new one
+        $location->clinicalEmergencyContact()->sync([]);
+
+        $location->clinicalEmergencyContact()->attach($clinicalContactUser->id, [
+            'name' => $clinicalContact['type'],
+        ]);
+    }
+
+    private function present(Location $loc, Practice $primaryPractice)
+    {
+        $contactType = $loc->clinicalEmergencyContact->first()->pivot->name ?? null;
+        $contactUser = $loc->clinicalEmergencyContact->first() ?? null;
+
+        return [
+            'id'               => $loc->id,
+            'clinical_contact' => [
+                'email'      => optional($contactUser)->email ?? null,
+                'first_name' => optional($contactUser)->getFirstName() ?? null,
+                'last_name'  => optional($contactUser)->getLastName() ?? null,
+                'type'       => $contactType ?? 'billing_provider',
+            ],
+            'timezone'                  => $loc->timezone ?? 'America/New_York',
+            'ehr_password'              => $loc->ehr_password,
+            'city'                      => $loc->city,
+            'address_line_1'            => $loc->address_line_1,
+            'address_line_2'            => $loc->address_line_2,
+            'ehr_login'                 => $loc->ehr_login,
+            'name'                      => $loc->name,
+            'postal_code'               => $loc->postal_code,
+            'state'                     => $loc->state,
+            'validated'                 => true,
+            'phone'                     => (new StringManipulation())->formatPhoneNumber($loc->phone),
+            'clinical_escalation_phone' => (new StringManipulation())->formatPhoneNumber($loc->clinical_escalation_phone),
+            'fax'                       => (new StringManipulation())->formatPhoneNumber($loc->fax),
+            'emr_direct_address'        => $loc->emr_direct_address,
+            'sameClinicalIssuesContact' => $primaryPractice->same_clinical_contact,
+            'sameEHRLogin'              => $primaryPractice->same_ehr_login,
+            'practice'                  => $primaryPractice,
+            'practice_id'               => $primaryPractice->id,
+        ];
     }
 }

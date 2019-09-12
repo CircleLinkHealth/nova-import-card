@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
         <div class="col-md-12" style="margin-top: 15px">
-            <div class="col-md-5 text-left" style="height: 30px; padding-top: 5px">
+            <div class="col-md-8 text-left" style="height: 30px; padding-top: 5px">
                 <button class="col-md-3 btn btn-secondary btn-xs pointer" v-bind:class="{'btn-info': !this.showPast}"
                         @click="showCurrentDocuments()">Current
                 </button>
@@ -12,9 +12,16 @@
                 <button class="col-md-3 btn btn-info btn-xs pointer"
                         @click="uploadCareDocument()">Upload Documents
                 </button>
+                <a v-if="!userEnrolledIntoAwv"
+                   class="col-md-2 btn btn-info btn-xs pointer"
+                   style="margin-left: 10px"
+                   target="_blank"
+                   :href="getAwvUrl(`manage-patients/${this.patient.id}/enroll`)">
+                    Enroll into AWV
+                </a>
             </div>
-            <div class="col-md-2">
-                <loader style="margin-left: 80px; text-align: center" v-if="loading"/>
+            <div class="col-md-1">
+                <loader style="text-align: center" v-if="loading"/>
             </div>
         </div>
 
@@ -25,15 +32,142 @@
         <div v-if="noDocsFound" class="col-md-12" style="padding-left: 42%">
             <div><strong>No Care Documents were found.</strong></div>
         </div>
-        <div class="col-md-12" >
+        <div class="col-md-12">
             <div v-if="showBanner" :class="bannerClass">{{this.errors.errors}}</div>
         </div>
 
 
         <div class="col-md-12">
-            <div v-for="(docs, type) in careDocs">
-                <div v-for="doc in docs" class="col-md-3">
-                    <care-document-box :doc="doc" :type="type"></care-document-box>
+            <div v-for="status in patientAWVStatuses">
+                <div class="col-md-3">
+                    <div class="panel panel-primary shadow">
+                        <div class="panel-heading">
+                            <h4>Wellness Survey</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-md-12  panel-section" style="margin-top: 20px">
+                                <div>
+                                    <button v-if="awvUrl.length === 0" class="col-md-6 btn btn-m"
+                                            disabled
+                                            :class="getButtonColorFromStatus(status.hra_status)">
+                                        {{getButtonTextFromStatus(status.hra_status)}}
+                                    </button>
+                                    <a v-else class="col-md-6 btn btn-m"
+                                       :class="getButtonColorFromStatus(status.hra_status)"
+                                       target="_blank"
+                                       :href="getViewHraSurveyUrl()">
+                                        {{getButtonTextFromStatus(status.hra_status)}}
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-12  panel-section" style="margin-top: 5px">
+                                <div class="col-md-6">
+                                    {{status.year}}
+                                </div>
+                                <!--<div class="col-md-6">-->
+                                <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
+                                <!--</div>-->
+                            </div>
+                            <div class="col-md-12" style="margin-top: 6px">
+                                <p><strong>Send Assessment Link to Provider via:</strong></p>
+                            </div>
+                            <div class="col-md-12  panel-section">
+                                <a
+                                        class="col-md-6 btn btn-method btn-width-100 btn-s"
+                                        target="_blank"
+                                        :href="getAwvSendSmsForm('hra')">
+                                    SMS
+                                </a>
+                                <a
+                                        class="col-md-6 btn btn-method btn-width-100 btn-s"
+                                        target="_blank"
+                                        :href="getAwvSendEmailForm('hra')">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="panel panel-primary shadow">
+                        <div class="panel-heading">
+                            <h4>Vitals</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-md-12  panel-section" style="margin-top: 20px">
+                                <div>
+                                    <button v-if="awvUrl.length === 0" class="col-md-6 btn btn-m"
+                                            disabled
+                                            :class="getButtonColorFromStatus(status.vitals_status)">
+                                        {{getButtonTextFromStatus(status.vitals_status)}}
+                                    </button>
+                                    <a v-else class="col-md-6 btn btn-m"
+                                       :class="getButtonColorFromStatus(status.vitals_status)"
+                                       target="_blank"
+                                       :href="getViewVitalsSurveyUrl()">
+                                        {{getButtonTextFromStatus(status.vitals_status)}}
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-12  panel-section" style="margin-top: 5px">
+                                <div class="col-md-6">
+                                    {{status.year}}
+                                </div>
+                                <!--<div class="col-md-6">-->
+                                <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
+                                <!--</div>-->
+                            </div>
+                            <div class="col-md-12" style="margin-top: 6px">
+                                <p><strong>Send Assessment Link to Provider via:</strong></p>
+                            </div>
+                            <div class="col-md-12  panel-section">
+                                <a
+                                   class="col-md-6 btn btn-method btn-width-100 btn-s"
+                                   target="_blank"
+                                   :href="getAwvSendSmsForm('vitals')">
+                                    SMS
+                                </a>
+                                <a
+                                   class="col-md-6 btn btn-width-100 btn-method btn-s"
+                                   target="_blank"
+                                   :href="getAwvSendEmailForm('vitals')">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!--<div v-for="(docs, type) in careDocs">-->
+            <!--<div v-for="doc in docs" class="col-md-3">-->
+            <!--<care-document-box :doc="doc" :type="type"></care-document-box>-->
+            <!--</div>-->
+            <!--</div>-->
+            <div v-if="careDocs['PPP']">
+                <div v-for="doc in careDocs['PPP']" class="col-md-3">
+                    <care-document-box :doc="doc" :type="'PPP'" :patient="patient"></care-document-box>
+                </div>
+            </div>
+            <div v-else>
+                <div class="col-md-3">
+                    <care-document-box :type="'PPP'"  :patient="patient"></care-document-box>
+                </div>
+            </div>
+            <div v-if="careDocs['Provider Report']">
+                <div v-for="doc in careDocs['Provider Report']" class="col-md-3">
+                    <care-document-box :doc="doc" :type="'Provider Report'" :patient="patient"></care-document-box>
+                </div>
+            </div>
+            <div v-else>
+                <div class="col-md-3">
+                    <care-document-box :type="'Provider Report'"  :patient="patient"></care-document-box>
+                </div>
+            </div>
+            <div v-if="careDocs['Lab Results']">
+                <div v-for="doc in careDocs['Lab Results']" class="col-md-3">
+                    <care-document-box :doc="doc" :type="'Lab Results'" :patient="patient"></care-document-box>
                 </div>
             </div>
         </div>
@@ -117,6 +251,7 @@
                     {label: 'Vitals', value: 'Vitals'},
                 ],
                 selectedDocumentType: null,
+                patientAWVStatuses: [],
                 careDocs: [],
                 noDocsFound: false,
                 showPast: false,
@@ -133,6 +268,10 @@
             patient: {
                 type: Object,
                 required: true,
+            },
+            awvUrl: {
+                type: String,
+                required: true
             }
         },
         mounted() {
@@ -141,6 +280,11 @@
             this.loading = true;
 
             this.getCareDocuments();
+
+            if (!this.awvUrl || this.awvUrl.length === 0) {
+                console.error('Wellness Care Docs:Missing AWV url. Please contact support.');
+            }
+
         },
         computed: {
             uploadUrl() {
@@ -148,19 +292,104 @@
             },
             bannerClass() {
                 return 'alert alert-' + this.bannerType;
+            },
+            userEnrolledIntoAwv() {
+
+                //if we do not have the awvUrl, then we cannot show the button
+                //so, just pretend that user is enrolled
+                if (!this.awvUrl || this.awvUrl.length === 0) {
+                    return true;
+                }
+
+                if (this.patientAWVStatuses.length === 0) {
+                    return false;
+                }
+
+                //assuming that first in list is the current
+                if (!this.patientAWVStatuses[0].hasOwnProperty('vitals_status') || this.patientAWVStatuses[0]['vitals_status'] == null || this.patientAWVStatuses[0]['vitals_status'].length === 0) {
+                    return false;
+                }
+
+                if (!this.patientAWVStatuses[0].hasOwnProperty('hra_status') || this.patientAWVStatuses[0]['hra_status'] == null || this.patientAWVStatuses[0]['hra_status'].length === 0) {
+                    return false;
+                }
+
+                return true;
             }
         },
         methods: {
+
+            getAwvUrl: function (path) {
+                if (!this.awvUrl) {
+                    return null;
+                }
+
+                if (this.awvUrl[this.awvUrl.length - 1] === "/") {
+                    return this.awvUrl + path;
+                }
+                else {
+                    return this.awvUrl + "/" + path;
+                }
+            },
+
+            getViewHraSurveyUrl() {
+                return this.getAwvUrl(`survey/hra/${this.patient.id}`);
+            },
+
+            getViewVitalsSurveyUrl() {
+                return this.getAwvUrl(`survey/vitals/${this.patient.id}`);
+            },
+
+            getAwvSendSmsForm(survey){
+                return this.getAwvUrl(`manage-patients/${this.patient.id}/` + survey + `/sms/send-assessment-link`);
+            },
+
+            getAwvSendEmailForm(survey){
+                return this.getAwvUrl(`manage-patients/${this.patient.id}/` + survey + `/email/send-assessment-link`);
+            },
+
+            getButtonTextFromStatus(status) {
+                switch (status) {
+                    case "pending":
+                        return "Not Started";
+
+                    case "in_progress":
+                        return "In Progress";
+
+                    case "completed":
+                        return "Completed";
+                }
+
+                return status;
+            },
+
+            getButtonColorFromStatus(status) {
+                switch (status) {
+                    case "pending":
+                        return "btn-danger";
+
+                    case "in_progress":
+                        return "btn-warning";
+
+                    case "completed":
+                        return "btn-success";
+                }
+
+                return status;
+            },
+
             uploadCareDocument() {
                 this.showUploadModal = true
             },
+
             getCareDocuments() {
                 return this.axios
                     .get(rootUrl('/care-docs/' + this.patient.id + '/' + this.showPast))
                     .then(response => {
                         this.loading = false;
-                        this.careDocs = response.data;
-                        this.noDocsFound = Object.keys(response.data).length === 0;;
+                        this.careDocs = response.data.files;
+                        this.patientAWVStatuses = response.data.patientAWVStatuses;
+                        this.noDocsFound = Object.keys(response.data).length === 0;
 
                         return this.careDocs;
                     })
@@ -208,6 +437,44 @@
 <style>
 
 
+    .panel {
+        border: 0;
+        width: 250px;
+        height: 300px;
+        border-radius: 5px;
+    }
+
+    .panel-primary > .panel-heading {
+        background-color: #5cc0dd;
+        border-color: #5cc0dd;
+        font-family: Roboto;
+        padding-left: 20px;
+    }
+
+    h4 {
+        color: #ffffff;
+    }
+
+    .panel-body {
+        padding: 5px;
+        font-family: Roboto;
+    }
+
+    .panel-section {
+        margin-bottom: 10px;
+
+    }
+
+    .btn-method {
+        border-color: #5cc0dd;
+        max-height: 30px;
+        margin: 2px;
+    }
+
+    .btn-width-100{
+        width: 100px;
+    }
+
     .modal-upload-care-doc .loader {
         position: absolute;
         right: 5px;
@@ -245,6 +512,7 @@
         text-align: center;
         color: #5cc0dd;
     }
+
     .margin-top-10 {
         margin-top: 10%;
     }
@@ -256,11 +524,17 @@
     .btn {
         min-width: 100px;
     }
+
     .vue-dropzone .dz-preview .dz-remove {
         font-size: initial;
     }
-    .dropzone .dz-preview .dz-error-message{
+
+    .dropzone .dz-preview .dz-error-message {
         margin-top: 55px;
+    }
+
+    .shadow {
+        box-shadow:         1px 1px 1px 1px #ccc;
     }
 
 </style>

@@ -6,7 +6,7 @@
 
 namespace Tests\Helpers;
 
-use App\Facades\StringManipulation;
+use App\CLH\Helpers\StringManipulation;
 use App\Models\CPM\Biometrics\CpmWeight;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -408,15 +408,15 @@ trait CarePlanHelpers
         ];
         $object->language          = $languageCollection[array_rand($languageCollection, 1)];
         $object->dob               = $faker->date();
-        $object->homePhone         = StringManipulation::formatPhoneNumber($faker->phoneNumber);
-        $object->cellPhone         = StringManipulation::formatPhoneNumber($faker->phoneNumber);
+        $object->homePhone         = (new StringManipulation())->formatPhoneNumber($faker->phoneNumber);
+        $object->cellPhone         = (new StringManipulation())->formatPhoneNumber($faker->phoneNumber);
         $object->email             = $faker->email;
         $object->streetAddress     = $faker->streetAddress;
         $object->city              = $faker->city;
         $object->state             = $faker->stateAbbr;
         $object->zip               = $faker->postcode;
         $object->agentName         = $faker->name;
-        $object->agentPhone        = StringManipulation::formatPhoneNumber($faker->phoneNumber);
+        $object->agentPhone        = (new StringManipulation())->formatPhoneNumber($faker->phoneNumber);
         $object->agentRelationship = 'Next of Kin';
         $object->agentEmail        = $faker->email;
         $object->contactMethod     = 'CCT';

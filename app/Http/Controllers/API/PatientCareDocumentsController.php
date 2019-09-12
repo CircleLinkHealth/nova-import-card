@@ -7,9 +7,13 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\SendCareDocument;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PatientCareDocumentsController extends Controller
 {
@@ -18,25 +22,35 @@ class PatientCareDocumentsController extends Controller
      */
     const TEN_MB = 10485760;
 
+    /*
+     * Available reports that User can see as view-generated in AWV as of yet.
+     *
+     * @var array
+     * */
+    private $availableReportsForSending = [
+        'PPP',
+        'Provider Report',
+    ];
+
     public function downloadCareDocument($id, $mediaId)
     {
-        $mediaItem = Media::where('collection_name', 'patient-care-documents')
-            ->where('model_id', $id)
-            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
-            ->find($mediaId);
+        $mediaItem = $this->getMediaItemById($id, $mediaId);
 
         if ( ! $mediaItem) {
             throw new \Exception('Media for Patient does not exist.', 500);
         }
 
-        return response($mediaItem->getFile(), 200, [
-            'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$mediaItem->name.'"',
-        ]);
+        return $this->downloadMedia($mediaItem);
     }
 
     public function getCareDocuments(Request $request, $patientId, $showPast = false)
     {
+        $patientAWVStatuses = PatientAWVSurveyInstanceStatus::where('patient_id', $patientId)
+            ->when( ! $showPast, function ($query) {
+                $query->where('year', Carbon::now()->year);
+            })
+            ->get();
+
         $files = Media::where('collection_name', 'patient-care-documents')
             ->where('model_id', $patientId)
             ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
@@ -57,11 +71,79 @@ class PatientCareDocumentsController extends Controller
                 });
             });
 
-        return response()->json($files->toArray());
+        return response()->json([
+            'files'              => $files->toArray(),
+            'patientAWVStatuses' => $patientAWVStatuses->toArray(),
+        ]);
     }
 
-    public function sendAssessmentLink()
+    public function sendCareDocument($patientId, $mediaId, $channel, $addressOrFax)
     {
+        $media = $this->getMediaItemById($patientId, $mediaId);
+
+        if ( ! $media) {
+            return response()->json(
+                'Something went wrong. Media not found.',
+                400
+            );
+        }
+
+        if ( ! in_array($media->getCustomProperty('doc_type'), $this->availableReportsForSending)) {
+            return response()->json(
+                'This has not yet been implemented.',
+                400
+            );
+        }
+
+        $patient = User::find($patientId);
+
+        if ( ! $patient) {
+            return response()->json(
+                'Something went wrong. Patient not found.',
+                400
+            );
+        }
+
+        if ('email' == $channel) {
+            $validator = Validator::make([
+                'email' => $addressOrFax,
+            ], [
+                'email' => 'required|email',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(
+                    'Invalid email address.',
+                    400
+                );
+            }
+
+            $notifiableUser = User::whereEmail($addressOrFax)->first();
+
+            if ( ! $notifiableUser) {
+                return response()->json(
+                    'Could not find User with that email.',
+                    400
+                );
+                //Fails because of non-existent id. Don't know if we want to be saving dummy users or just use dummy id.
+//                $notifiableUser = (new User())->forceFill([
+//                    'name'  => 'Notifiable User',
+//                    'email' => $addressOrFax,
+//                ]);
+            }
+
+            $notifiableUser->notify(new SendCareDocument($media, $patient, ['mail']));
+
+            return response()->json(
+                'Document sent successfully!',
+                200
+            );
+        }
+
+        return response()->json(
+            'This feature has not yet been implemented',
+            400
+        );
     }
 
     public function uploadCareDocuments(Request $request, $patientId)
@@ -88,5 +170,27 @@ class PatientCareDocumentsController extends Controller
         }
 
         return response()->json([]);
+    }
+
+    public function viewCareDocument($id, $mediaId)
+    {
+        $mediaItem = $this->getMediaItemById($id, $mediaId);
+
+        if ( ! $mediaItem) {
+            throw new \Exception('Media for Patient does not exist.', 500);
+        }
+
+        return response($mediaItem->getFile(), 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$mediaItem->name.'"',
+        ]);
+    }
+
+    private function getMediaItemById($modelId, $mediaId)
+    {
+        return Media::where('collection_name', 'patient-care-documents')
+            ->where('model_id', $modelId)
+            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->find($mediaId);
     }
 }

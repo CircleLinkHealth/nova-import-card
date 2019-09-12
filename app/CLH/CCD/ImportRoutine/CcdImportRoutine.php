@@ -31,6 +31,10 @@ use App\Models\CCD\CcdVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine query()
+ *
+ * @property int|null $revision_history_count
+ * @property int|null $strategies_count
+ * @property int|null $vendors_count
  */
 class CcdImportRoutine extends \CircleLinkHealth\Core\Entities\BaseModel
 {

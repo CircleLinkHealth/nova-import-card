@@ -50,6 +50,8 @@ use App\Importer\Models\ItemLogs\ProblemLog;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport query()
+ *
+ * @property int|null $revision_history_count
  */
 class ProblemImport extends \CircleLinkHealth\Core\Entities\BaseModel
 {

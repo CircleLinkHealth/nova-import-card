@@ -15,7 +15,6 @@ use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
-use App\Console\Commands\EmailRNDailyReportToDeprecate;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
@@ -31,15 +30,14 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
-use App\Spatie\ResponseCache\Commands\Clear;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
+use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Jorijn\LaravelSecurityChecker\Console\SecurityMailCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -47,7 +45,6 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Clear::class,
     ];
 
     /**
@@ -55,6 +52,10 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
+        if ( ! $this->app->runningInConsole()) {
+            return;
+        }
+
         $this->load(__DIR__.'/Commands');
 
         if ('local' == $this->app->environment()) {
@@ -71,6 +72,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        if ( ! isQueueWorkerEnv()) {
+            return;
+        }
+
         $schedule->command('horizon:snapshot')->everyFiveMinutes()->onOneServer();
 
         $schedule->command(DetermineTargetPatientEligibility::class)
@@ -100,10 +105,6 @@ class Kernel extends ConsoleKernel
             ->weekdays()
             ->at('08:00')->onOneServer();
 
-        //commenting out due to isues with google calendar
-//        $schedule->command('nurseSchedule:export')
-//                 ->hourly()->onOneServer();
-
         $schedule->command(GetAppointments::class)
             ->dailyAt('22:30')->onOneServer();
 
@@ -112,9 +113,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(GetCcds::class)
             ->dailyAt('03:00')->onOneServer();
-
-        $schedule->command(EmailRNDailyReportToDeprecate::class)
-            ->dailyAt('07:00')->onOneServer();
 
         $schedule->command(EmailRNDailyReport::class)
             ->dailyAt('07:05')->onOneServer();
@@ -139,9 +137,6 @@ class Kernel extends ConsoleKernel
 //                '--variable-time' => true,
 //            ]
 //        )->monthlyOn(1, '5:0')->onOneServer();
-
-//        $schedule->command('lgh:importInsurance')
-//            ->dailyAt('05:00')->onOneServer();
 
         $schedule->command(QueueGenerateNurseDailyReport::class)
             ->dailyAt('23:45')
@@ -183,36 +178,21 @@ class Kernel extends ConsoleKernel
 //                 ->everyThirtyMinutes()
 //                 ->withoutOverlapping()->onOneServer();
 
-        $schedule->command(SecurityMailCommand::class)->weekly()->onOneServer();
-
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
 
         $schedule->command(OverwriteNBIImportedData::class)->everyThirtyMinutes()->onOneServer();
 
         $schedule->command(OverwriteNBIPatientMRN::class)->everyThirtyMinutes()->onOneServer();
 
-        $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->monthlyOn(1, '00:30')->onOneServer();
+        $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->dailyAt('00:10')->onOneServer();
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)->monthlyOn(1, '08:30')->onOneServer();
 
         $sendReminderAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->subHours(36);
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)->monthlyOn($sendReminderAt->day, $sendReminderAt->format('H:i'))->onOneServer();
 
-//        @todo: enable after testing a bit more
-//        $lastDayToResolveDisputesAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->addDays(2);
-//        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('02:00')
-//            ->skip(function () use ($lastDayToResolveDisputesAt) {
-//                $today = Carbon::now();
-//                $disputeStartDate = $lastDayToResolveDisputesAt
-//                    ->startOfMonth()
-//                    ->startOfDay()
-//                    ->addMinutes(515); //that's 08:35
-//                $disputeEndDate = $lastDayToResolveDisputesAt;
-//
-//                if ($today->gte($disputeStartDate)
-//                && $today->lte($disputeEndDate)) {
-//                    return true;
-//                }
-//            })->onOneServer();
+        $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('08:35')->skip(function () {
+            SendResolveInvoiceDisputeReminder::shouldSkip();
+        })->onOneServer();
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30')->onOneServer();
     }
 }

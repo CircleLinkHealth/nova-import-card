@@ -109,6 +109,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereDeletedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\TabularMedicalRecord withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\TabularMedicalRecord withoutTrashed()
+ *
+ * @property int|null $allergies_count
+ * @property int|null $demographics_count
+ * @property int|null $demographics_imports_count
+ * @property int|null $document_count
+ * @property int|null $medications_count
+ * @property int|null $problems_count
+ * @property int|null $providers_count
+ * @property int|null $revision_history_count
  */
 class TabularMedicalRecord extends MedicalRecordEloquent
 {
@@ -197,7 +206,7 @@ class TabularMedicalRecord extends MedicalRecordEloquent
      */
     public function getPatient(): User
     {
-        // TODO: Implement getPatient() method.
+        // TODO: Implement show() method.
     }
 
     /**

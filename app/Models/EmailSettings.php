@@ -30,6 +30,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\EmailSettings query()
+ *
+ * @property int|null $revision_history_count
  */
 class EmailSettings extends \CircleLinkHealth\Core\Entities\BaseModel
 {

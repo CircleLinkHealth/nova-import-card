@@ -57,6 +57,20 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereIsBehavioral($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereWeight($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem withIcd10Codes()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem withLatestCpmInstruction()
+ *
+ * @property int|null $care_plan_templates_count
+ * @property int|null $cpm_biometrics_to_be_activated_count
+ * @property int|null $cpm_instructions_count
+ * @property int|null $cpm_lifestyles_to_be_activated_count
+ * @property int|null $cpm_medication_groups_to_be_activated_count
+ * @property int|null $cpm_symptoms_to_be_activated_count
+ * @property int|null $patient_count
+ * @property int|null $problem_imports_count
+ * @property int|null $revision_history_count
+ * @property int|null $snomed_maps_count
+ * @property int|null $user_count
  */
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -157,6 +171,20 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     public function problemImports()
     {
         return $this->hasMany(ProblemImport::class);
+    }
+
+    public function scopeWithIcd10Codes($builder)
+    {
+        return $builder->with(['snomedMaps' => function ($q) {
+            return $q->whereNotNull('icd_10_name')->where('icd_10_name', '!=', '')->distinct('icd_10_name')->groupBy('icd_10_name');
+        }]);
+    }
+
+    public function scopeWithLatestCpmInstruction($builder)
+    {
+        return $builder->with(['cpmInstructions' => function ($q) {
+            return $q->latest();
+        }]);
     }
 
     public function snomedMaps()

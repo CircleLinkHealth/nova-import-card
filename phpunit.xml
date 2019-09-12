@@ -31,9 +31,6 @@
         <testsuite name="Calls">
             <directory>./tests/Calls/</directory>
         </testsuite>
-        <testsuite name="Aprima_Api">
-            <directory>./tests/AprimaApi/</directory>
-        </testsuite>
         <testsuite name="Care_Plan">
             <directory>./tests/CarePlan/</directory>
         </testsuite>

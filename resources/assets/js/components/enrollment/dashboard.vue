@@ -58,6 +58,7 @@
                                 <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b> {{providerFullName}}</span></li>
                                 <li class="sidebar-demo-list"><span :title="provider_pronunciation"><b>Provider Pronunciation:</b> {{provider_pronunciation}}</span></li>
                                 <li class="sidebar-demo-list"><span :title="provider_sex"><b>Provider Sex:</b> {{provider_sex}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="providerPhone"><b>Provider Phone:</b> {{providerPhone}}</span></li>
                                 <li class="sidebar-demo-list"><span :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span></li>
                             </ul>
                         </div>
@@ -139,7 +140,7 @@
                                 <li>
                                     <a class="waves-effect waves-light btn modal-trigger" href="#utc"
                                        style="background: #ecb70e">
-                                        No Answer
+                                        Unavailable
                                     </a>
                                 </li>
                                 <li>
@@ -175,29 +176,7 @@
                 </blockquote>
 
                 <div class="enrollment-script">
-
-                    <template v-if="has_copay">
-                        <template v-if="lang === 'EN'">
-                            <copay-en :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName"
-                                      :practice-name="practice_name"></copay-en>
-                        </template>
-                        <template v-else>
-                            <copay-es :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName"
-                                      :practice-name="practice_name"></copay-es>
-                        </template>
-                    </template>
-                    <template v-else>
-                        <template v-if="lang === 'EN'">
-                            <no-copay-en :name="name" :user-full-name="userFullName"
-                                         :provider-full-name="providerFullName"
-                                         :practice-name="practice_name"></no-copay-en>
-                        </template>
-                        <template v-else>
-                            <no-copay-es :name="name" :user-full-name="userFullName"
-                                         :provider-full-name="providerFullName"
-                                         :practice-name="practice_name"></no-copay-es>
-                        </template>
-                    </template>
+                    <p v-html="care_ambassador_script"></p>
                 </div>
             </div>
 
@@ -237,24 +216,32 @@
                     </blockquote>
                     <div class="row">
                         <div class="col s6 m4 select-custom">
-                            <input name="preferred_phone" type="radio" id="home_radio" value="home"
-                                   :checked="home_phone != ''"/>
                             <label for="home_radio"
-                                   :class="{valid: home_is_valid, invalid: home_is_invalid}">{{home_phone_label}}</label>
+                                   :class="{valid: home_is_valid, invalid: home_is_invalid}">
+                                <input class="with-gap" name="preferred_phone" type="radio" id="home_radio" value="home"
+                                       :checked="home_phone != ''"/>
+                                <span>{{home_phone_label}}</span>
+
+                            </label>
                             <input class="input-field" name="home_phone" id="home_phone" v-model="home_phone"/>
                         </div>
                         <div class="col s6 m4 select-custom">
-                            <input name="preferred_phone" type="radio" id="cell_radio" value="cell"
-                                   :checked="home_phone == '' && cell_phone != ''"/>
+
                             <label for="cell_radio"
-                                   :class="{valid: cell_is_valid, invalid: cell_is_invalid}">{{cell_phone_label}}</label>
+                                   :class="{valid: cell_is_valid, invalid: cell_is_invalid}">
+                                <input class="with-gap" name="preferred_phone" type="radio" id="cell_radio" value="cell"
+                                       :checked="home_phone == '' && cell_phone != ''"/>
+                                <span>{{cell_phone_label}}</span></label>
                             <input class="input-field" name="cell_phone" id="cell_phone" v-model="cell_phone"/>
                         </div>
                         <div class="col s6 m4 select-custom">
-                            <input name="preferred_phone" type="radio" id="other_radio" value="other"
-                                   :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
+
                             <label for="other_radio"
-                                   :class="{valid: other_is_valid, invalid: other_is_invalid}">{{other_phone_label}}</label>
+                                   :class="{valid: other_is_valid, invalid: other_is_invalid}">
+                                <input class="with-gap" name="preferred_phone" type="radio" id="other_radio" value="other"
+                                       :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
+                                <span>{{other_phone_label}}</span>
+                            </label>
                             <input class="input-field" name="other_phone" id="other_phone" v-model="other_phone"/>
                         </div>
                     </div>
@@ -342,7 +329,7 @@
 
                     <input type="hidden" name="status" value="consented">
                     <input type="hidden" name="enrollee_id" :value="enrolleeId">
-                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system">
+                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                     <input type="hidden" name="time_elapsed" :value="time_elapsed">
 
                 </div>
@@ -396,7 +383,7 @@
 
                         <div v-show="utc_requested_callback" class="col s6 m12 select-custom">
                             <label for="utc_callback" class="label">Patient Requests Callback On:</label>
-                            <input type="date" name="utc_callback" id="utc_callback">
+                            <input name="utc_callback" id="utc_callback">
                         </div>
 
                     </div>
@@ -447,7 +434,7 @@
 
                         <div v-if="isSoftDecline" class="col s6 m12 select-custom">
                             <label for="soft_decline_callback" class="label">Patient Requests Callback On:</label>
-                            <input type="date" name="soft_decline_callback" id="soft_decline_callback">
+                            <input name="soft_decline_callback" id="soft_decline_callback">
                             <input type="hidden" name="status" value="soft_rejected">
                         </div>
                         <div v-else>
@@ -651,6 +638,21 @@
             },
             last_office_visit_at: function(){
                 return enrollee.last_encounter ? enrollee.last_encounter: 'N/A';
+            },
+            care_ambassador_script: function(){
+
+                if(! script){
+                    return 'Script not found.'
+                }
+                let ca_script = script.body;
+
+                let processed_script = ca_script.replace(/{doctor}/gi, providerFullName)
+                    .replace(/{patient}/gi, this.name)
+                    .replace(/{practice}/gi, this.practice_name)
+                    .replace(/{last visit}/gi, this.last_office_visit_at)
+                    .replace(/{enroller}/gi, userFullName);
+
+                return processed_script;
             }
         },
         data: function () {
@@ -658,8 +660,10 @@
                 csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 userFullName: userFullName,
                 providerFullName: providerFullName,
+                providerPhone: providerPhone,
                 hasTips: hasTips,
                 report: report,
+                script: script,
 
                 home_phone: enrollee.home_phone,
                 cell_phone: enrollee.cell_phone,
@@ -710,7 +714,7 @@
                 M.Modal.init($('#consented'));
                 M.Modal.init($('#utc'), {
                     onOpenEnd: function () {
-                        M.Datepicker.init($('#soft_decline_callback'), {
+                        M.Datepicker.init($('#utc_callback'), {
                             container: 'body',
                             format: 'yyyy-mm-dd'
                         })

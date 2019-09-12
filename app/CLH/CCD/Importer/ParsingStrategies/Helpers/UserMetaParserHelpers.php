@@ -6,7 +6,7 @@
 
 namespace App\CLH\CCD\Importer\ParsingStrategies\Helpers;
 
-use App\Facades\StringManipulation;
+use App\CLH\Helpers\StringManipulation;
 
 class UserMetaParserHelpers
 {
@@ -33,7 +33,7 @@ class UserMetaParserHelpers
                 ? $phone->type
                 : 'home';
 
-            if ( ! $number = StringManipulation::formatPhoneNumber($phone->number)) {
+            if ( ! $number = (new StringManipulation())->formatPhoneNumber($phone->number)) {
                 continue;
             }
 

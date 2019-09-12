@@ -70,6 +70,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereIsMonitored($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\Problem withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\Problem withoutTrashed()
+ *
+ * @property int|null $codes_count
+ * @property int|null $patient_summaries_count
+ * @property int|null $revision_history_count
  */
 class Problem extends \CircleLinkHealth\Core\Entities\BaseModel implements \App\Contracts\Models\CCD\Problem
 {

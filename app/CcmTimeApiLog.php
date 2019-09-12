@@ -7,8 +7,6 @@
 namespace App;
 
 use CircleLinkHealth\TimeTracking\Entities\Activity;
-use Prettus\Repository\Contracts\Transformable;
-use Prettus\Repository\Traits\TransformableTrait;
 
 /**
  * App\CcmTimeApiLog.
@@ -30,11 +28,11 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog query()
+ *
+ * @property int|null $revision_history_count
  */
-class CcmTimeApiLog extends \CircleLinkHealth\Core\Entities\BaseModel implements Transformable
+class CcmTimeApiLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    use TransformableTrait;
-
     protected $guarded = [];
 
     public function activity()
