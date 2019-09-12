@@ -11,9 +11,12 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Titasgailius\SearchRelations\SearchesRelations;
 
 class NursePatient extends Resource
 {
+    use SearchesRelations;
+
     /**
      * The logical group associated with the resource.
      *
