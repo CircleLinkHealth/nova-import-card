@@ -6,35 +6,35 @@
 
 namespace App\Console\Commands;
 
-use App\Services\CheckLogoutEventAndCreateStatsService;
+use App\Services\CalculateLoginLogoutActivityService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class CheckLogoutEventsAndMakeStats extends Command
+class CalculateLoginLogoutStats extends Command
 {
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Check if user logout event was saved to DB and make stats to compare with users latest activity';
+    protected $description = 'Calculate time between login and logout events during the day';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:checkLogoutEventAndMakeStats {forDate?}';
+    protected $signature = 'command:calculateLoginLogoutStats {forDate?}';
     /**
-     * @var CheckLogoutEventAndCreateStatsService
+     * @var CalculateLoginLogoutStats
      */
     private $service;
 
     /**
      * Create a new command instance.
      *
-     * @param CheckLogoutEventAndCreateStatsService $service
+     * @param CalculateLoginLogoutActivityService $service
      */
-    public function __construct(CheckLogoutEventAndCreateStatsService $service)
+    public function __construct(CalculateLoginLogoutActivityService $service)
     {
         parent::__construct();
         $this->service = $service;
@@ -52,8 +52,8 @@ class CheckLogoutEventsAndMakeStats extends Command
         if ($date) {
             $date = Carbon::parse($date);
         } else {
-            $date = Carbon::yesterday()->startOfDay()->toDateString();
+            $date = Carbon::yesterday()->toDateString();
         }
-        $loginLogoutEventsStats = $this->service->checkLogoutEvent($date);
+        $this->service->calculateLoginLogoutActivity($date);
     }
 }

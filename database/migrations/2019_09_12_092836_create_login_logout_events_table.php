@@ -25,11 +25,16 @@ class CreateLoginLogoutEventsTable extends Migration
     {
         Schema::create('login_logout_events', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
+            $table->unsignedInteger('user_id');
             $table->dateTime('login_time')->nullable();
             $table->dateTime('logout_time')->nullable();
             $table->string('ip_address');
+            $table->boolean('was_edited')->default(false);
             $table->timestamps();
+
+            $table->foreign('user_id')
+                ->references('provider_id')
+                ->on('lv_page_timer');
         });
     }
 }
