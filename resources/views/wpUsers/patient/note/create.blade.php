@@ -39,7 +39,7 @@
                 /*border-radius: 4px;*/
             }
 
-            .phone-session-container {
+            .phone-session-container, #tasks-container {
                 border: 1px solid #ccc;
                 border-radius: 4px;
             }
@@ -276,8 +276,8 @@
                                                     </div>
                                                 </label>
                                             </div>
-                                            <div class="col-sm-12">
-                                                <label id="task-label" style="display: none;">
+                                            <div class="col-sm-12 no-padding-left">
+                                                <label id="task-label" style="display: none; margin-bottom: 0">
                                                     <div>
                                                         <input type="checkbox"
                                                                @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
@@ -285,7 +285,7 @@
                                                                @if (!empty($call) && !empty($call->sub_type)) checked
                                                                @endif
                                                                id="task"/>
-                                                        <label for="task">
+                                                        <label for="task" style="margin-bottom: 0">
                                                             <span> </span>Associate with Task
                                                         </label>
                                                     </div>
