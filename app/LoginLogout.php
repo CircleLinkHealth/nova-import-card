@@ -21,6 +21,7 @@ class LoginLogout extends Model
         'logout_time',
         'ip_address',
         'was_edited',
+        'duration_in_sec',
     ];
 
     protected $table = 'login_logout_events';

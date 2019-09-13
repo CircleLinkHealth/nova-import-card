@@ -55,5 +55,6 @@ class CalculateLoginLogoutStats extends Command
             $date = Carbon::yesterday()->toDateString();
         }
         $this->service->calculateLoginLogoutActivity($date);
+        //@todo: report somewhere here
     }
 }
