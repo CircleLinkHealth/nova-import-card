@@ -345,7 +345,7 @@
                 let nextHasAnswer = false;
                 if (canProceed) {
                     const nextQuestion = this.getNextQuestion(this.currentQuestionIndex);
-                    nextHasAnswer = nextQuestion != null && typeof nextQuestion.answer !== "undefined";
+                    nextHasAnswer = nextQuestion != null && nextQuestion.question != null && typeof nextQuestion.question.answer !== "undefined";
                 }
 
                 return nextHasAnswer;
@@ -769,14 +769,14 @@
                             }
                         }
                         //default comparison
-                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === firstQuestion.answer.value.value);
+                        const expectedAnswersEqualsValue = q.map(c => c.related_question_expected_answer === firstQuestion.answer.value.value);
 
                         if (!expectedAnswersEqualsValue.includes(true)) {
                             shouldDisable = true;
                             break;
                         }
                         //if no expected answer, we look for any answer, if any
-                        else if (typeof q.related_question_expected_answer === "undefined") {
+                        else if (typeof nextQuestConditions.related_question_expected_answer === "undefined") {
                             if (Array.isArray(firstQuestion.answer.value) && firstQuestion.answer.value.length === 0) {
                                 shouldDisable = true;
                             } else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
