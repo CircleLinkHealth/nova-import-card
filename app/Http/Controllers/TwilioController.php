@@ -290,10 +290,9 @@ class TwilioController extends Controller
     {
         $input = $request->all();
 
-        $isProduction = isProductionEnv();
+        $isProduction = config('app.env') === 'production';
 
-        //use default From number if we are not on production
-        if ( ! $isProduction || empty($input['From']) || TwilioController::CLIENT_ANONYMOUS === $input['From']) {
+        if (empty($input['From']) || TwilioController::CLIENT_ANONYMOUS === $input['From']) {
             $input['From'] = config('services.twilio')['from'];
         }
 
@@ -440,10 +439,9 @@ class TwilioController extends Controller
 
         $input = $request->all();
 
-        $isProduction = isProductionEnv();
+        $isProduction = config('app.env') === 'production';
 
-        //use default From number if we are not on production
-        if ( ! $isProduction || empty($input['From']) || TwilioController::CLIENT_ANONYMOUS === $input['From']) {
+        if (empty($input['From']) || TwilioController::CLIENT_ANONYMOUS === $input['From']) {
             $input['From'] = config('services.twilio')['from'];
         }
 
