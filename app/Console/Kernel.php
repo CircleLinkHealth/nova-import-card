@@ -183,7 +183,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
 
         $schedule->command(CheckForMissingLogoutsAndInsert::class)->dailyAt('00:05')->onOneServer();
-        $schedule->command(CalculateLoginLogoutStats::class)->dailyAt('00:59')->onOneServer();
 
         $schedule->command(OverwriteNBIImportedData::class)->everyThirtyMinutes()->onOneServer();
 

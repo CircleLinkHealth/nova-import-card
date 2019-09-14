@@ -6,7 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\Services\CheckLogoutEventAndCreateStatsService;
+use App\Jobs\CalculateAndSaveLoginLogoutActivity;
+use App\Jobs\CheckLogoutEventAndSave;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -24,20 +25,14 @@ class CheckForMissingLogoutsAndInsert extends Command
      * @var string
      */
     protected $signature = 'command:checkForMissingLogoutsAndInsert {forDate?}';
-    /**
-     * @var CheckLogoutEventAndCreateStatsService
-     */
-    private $service;
+
 
     /**
      * Create a new command instance.
-     *
-     * @param CheckLogoutEventAndCreateStatsService $service
      */
-    public function __construct(CheckLogoutEventAndCreateStatsService $service)
+    public function __construct()
     {
         parent::__construct();
-        $this->service = $service;
     }
 
     /**
@@ -54,6 +49,11 @@ class CheckForMissingLogoutsAndInsert extends Command
         } else {
             $date = Carbon::yesterday()->toDateString();
         }
-        $this->service->checkLogoutEvent($date);
+
+        CheckLogoutEventAndSave::withChain([
+            new CalculateAndSaveLoginLogoutActivity($date)
+        ])->dispatch($date)->onQueue('low');
+
+        //@todo: notify somebody??
     }
 }
