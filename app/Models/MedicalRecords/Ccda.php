@@ -108,7 +108,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                          $providers_count
  * @property int|null                                          $revision_history_count
  */
-class Ccda extends MedicalRecordEloquent implements HasMedia, EligibilityCheckable
+class Ccda extends MedicalRecordEloquent implements HasMedia
 {
     use BelongsToPatientUser;
     use HasMediaTrait;
