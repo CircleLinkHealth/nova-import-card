@@ -15,7 +15,7 @@ class PerformanceTest extends TestCase
 {
     public function test_example()
     {
-        $nurses = User::ofType('care-center')->all();
+        $nurses = User::ofType('care-center')->get();
 
         foreach ($nurses as $nurse) {
             $activityTime = Activity::createdBy($nurse)
