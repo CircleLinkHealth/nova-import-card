@@ -12,7 +12,6 @@ use Illuminate\Auth\Events\Logout;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\Request;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
@@ -40,12 +39,10 @@ class LogSuccessfulLogoutToDB implements ShouldQueue
 
     /**
      * Execute the job.
-     *
      */
     public function handle()
     {
-        //In case of browser close will miss the logout event
-        //in case of inactivity logout we dont have the $event->user (checking on it)
+        //What if Login event === null?
         try {
             $authId = null !== $this->event->user->id ? $this->event->user->id : auth()->id();
             LoginLogout::where([

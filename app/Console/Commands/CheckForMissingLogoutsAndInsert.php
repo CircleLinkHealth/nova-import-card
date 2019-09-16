@@ -26,7 +26,6 @@ class CheckForMissingLogoutsAndInsert extends Command
      */
     protected $signature = 'command:checkForMissingLogoutsAndInsert {forDate?}';
 
-
     /**
      * Create a new command instance.
      */
@@ -51,7 +50,7 @@ class CheckForMissingLogoutsAndInsert extends Command
         }
 
         CheckLogoutEventAndSave::withChain([
-            new CalculateAndSaveLoginLogoutActivity($date)
+            new CalculateAndSaveLoginLogoutActivity($date),
         ])->dispatch($date)->onQueue('low');
 
         //@todo: notify somebody??

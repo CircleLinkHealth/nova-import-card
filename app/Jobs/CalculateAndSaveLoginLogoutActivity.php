@@ -1,18 +1,26 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
-use App\LoginLogout;
+use App\Services\LoginLogoutActivityService;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 
 class CalculateAndSaveLoginLogoutActivity implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     /**
      * @var Carbon
      */
@@ -25,27 +33,12 @@ class CalculateAndSaveLoginLogoutActivity implements ShouldQueue
      */
     public function __construct(Carbon $date)
     {
-        //
         $this->date = $date;
-    }
-
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
-    {
-        $this->calculateLoginLogoutActivity();
     }
 
     public function calculateLoginLogoutActivity()
     {
-        $yesterdaysEvents = LoginLogout::where([
-            ['created_at', '>=', Carbon::parse($this->date)->startOfDay()],
-            ['created_at', '<=', Carbon::parse($this->date)->endOfDay()],
-        ])->get();
-
+        $yesterdaysEvents = $this->getYesterdaysEvents();
         foreach ($yesterdaysEvents as $event) {
             $loginTime  = Carbon::parse($event->login_time);
             $logoutTime = Carbon::parse($event->logout_time);
@@ -53,5 +46,21 @@ class CalculateAndSaveLoginLogoutActivity implements ShouldQueue
             $event->duration_in_sec = $logoutTime->diffInSeconds($loginTime);
             $event->save();
         }
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getYesterdaysEvents()
+    {
+        return LoginLogoutActivityService::yesterdaysActivity($this->date);
+    }
+
+    /**
+     * Execute the job.
+     */
+    public function handle()
+    {
+        $this->calculateLoginLogoutActivity();
     }
 }

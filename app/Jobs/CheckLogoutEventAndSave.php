@@ -6,11 +6,10 @@
 
 namespace App\Jobs;
 
-use App\LoginLogout;
+use App\Services\LoginLogoutActivityService;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -29,46 +28,22 @@ class CheckLogoutEventAndSave implements ShouldQueue
 
     /**
      * Create a new job instance.
+     *
+     * @param Carbon                     $date
+     * @param LoginLogoutActivityService $loginLogoutActivityService
      */
     public function __construct(Carbon $date)
     {
         $this->date = $date;
     }
 
-    /**
-     * Execute the job.
-     */
-    public function handle()
-    {
-        $this->checkLogoutEvent();
-    }
-
     public function checkLogoutEvent()
     {
         $yesterdaysEvents = $this->getYesterdaysEvents();
-
         foreach ($yesterdaysEvents as $event) {
             if (null === $event->logout_time) {
                 $this->saveLogoutEvent($event);
             }
-        }
-    }
-
-    /**
-     * @param $event
-     * @param Carbon $date
-     */
-    public function saveLogoutEvent($event)
-    {
-        $endTime = $this->getEndTimeOfLatestActivityAfterLogin($event);
-
-        try {
-            $event->logout_time = $endTime;
-            $event->was_edited = true;
-            $event->save();
-        } catch (\Exception $exception) {
-            //@todo: maybe get next login time and set missing logout before that. If it is last login on table then set it to where??
-            \Log::error(`Couldnt get end_time from page_timer table, for logout event $event->id`);
         }
     }
 
@@ -82,15 +57,35 @@ class CheckLogoutEventAndSave implements ShouldQueue
     }
 
     /**
-     * @return LoginLogout[]|Builder[]|\Illuminate\Database\Eloquent\Collection|Collection
+     * @return Collection
      */
     public function getYesterdaysEvents()
     {
-        return LoginLogout::with('activities')
-            ->orderBy('created_at', 'asc')
-            ->where([
-                ['created_at', '>=', Carbon::parse($this->date)->startOfDay()],
-                ['created_at', '<=', Carbon::parse($this->date)->endOfDay()],
-            ])->get();
+        return LoginLogoutActivityService::yesterdaysActivity($this->date);
+    }
+
+    /**
+     * Execute the job.
+     */
+    public function handle()
+    {
+        $this->checkLogoutEvent();
+    }
+
+    /**
+     * @param $event
+     * @param Carbon $date
+     */
+    public function saveLogoutEvent($event)
+    {
+        $endTime = $this->getEndTimeOfLatestActivityAfterLogin($event);
+        try {
+            $event->logout_time = $endTime;
+            $event->was_edited  = true;
+            $event->save();
+        } catch (\Exception $exception) {
+            //@todo: If it is last login on table then set it to where??
+            \Log::error(`Couldnt get end_time from page_timer table, for logout event $event->id`);
+        }
     }
 }
