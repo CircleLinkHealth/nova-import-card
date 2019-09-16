@@ -49,6 +49,7 @@ class CheckLogoutEventAndSave implements ShouldQueue
 
     public function getEndTimeOfLatestActivityAfterLogin($event)
     {
+        //@todo: If it is the last activity(page_timer) for the day, then where to set the logout from?
         $latestActivityAfterLogin = $event->activities->sortBy('end_time')->where('end_time', '>=', $event->login_time)
             ->where('end_time', '<=', Carbon::parse($event->login_time)->endOfDay())
             ->first();
@@ -84,7 +85,6 @@ class CheckLogoutEventAndSave implements ShouldQueue
             $event->was_edited  = true;
             $event->save();
         } catch (\Exception $exception) {
-            //@todo: If it is last login on table then set it to where??
             \Log::error(`Couldnt get end_time from page_timer table, for logout event $event->id`);
         }
     }
