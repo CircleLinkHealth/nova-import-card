@@ -9,7 +9,8 @@
 
             <!--Requested Time From nurse-->
             <span v-if="showTillRefresh && !isInvalidated"
-                  class="dispute-requested-time">{{setRequestedValue}}</span>
+                  class="dispute-requested-time"
+                  :class="{strike: showDisputeStatus === 'rejected'}">{{setRequestedValue}}</span>
             <span v-else="strikethroughSuggestedTime || isInvalidated"
                   class="invalidated">
                     <span data-tooltip="Your request cannot be accepted due to already having a bonus for this day">{{setRequestedValue}}</span>
@@ -30,7 +31,10 @@
 
             <span style="float: right;"><loader v-show="loader" class="loader"></loader></span>
             <!--Edit Btn-->
-            <span v-show="!isInvalidated && editButtonActive && isUserAuthToDailyDispute && (!showDisputeStatus || showDisputeStatus === 'pending')"
+            <span v-show="!isInvalidated
+            && editButtonActive
+            && canBeDisputed
+            && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleEdit()"
                   aria-hidden="true"
                   class="edit-button">
@@ -38,7 +42,7 @@
         </span>
 
             <!--Delete Btn-->
-            <span v-show="(showDeleteBtn && !isInvalidated && isUserAuthToDailyDispute && showTillRefresh)
+            <span v-show="(showDeleteBtn && !isInvalidated && isUserAuthToDailyDispute && canBeDisputed && showTillRefresh)
             && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleDelete()"
                   aria-hidden="true"
@@ -88,7 +92,8 @@
             'invoiceData',
             'invoiceId',
             'day',
-            'isUserAuthToDailyDispute'
+            'isUserAuthToDailyDispute',
+            'canBeDisputed'
         ],
 
         components: {
@@ -225,11 +230,13 @@
                 this.showDisputeBox = false;
             },
             saveDispute() {
+                const defaultDisputeStatus = 'pending';
                 this.loader = true;
                 axios.post('/nurseinvoices/daily-dispute', {
                     invoiceId: this.invoiceId,
                     suggestedFormattedTime: this.liveRequestedTime,
                     disputedFormattedTime: this.formattedTime,
+                    disputeStatus: defaultDisputeStatus,
                     disputedDay: this.day,
                 })
                     .then((response) => {
@@ -238,7 +245,7 @@
                         this.showTillRefresh = true;
                         this.editButtonActive = false;
                         this.showDisputeBox = false;
-                        this.disputeStatus = 'pending';
+                        this.disputeStatus = defaultDisputeStatus;
                         this.temporaryValue = this.liveRequestedTime;
                         this.loader = false;
 
@@ -374,6 +381,11 @@
     .loader {
         width: 17px;
         height: 17px;
+    }
+
+    .strike {
+        text-decoration: line-through;
+        color: #ff0000;
     }
 
 </style>

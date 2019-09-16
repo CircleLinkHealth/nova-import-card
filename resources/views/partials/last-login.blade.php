@@ -4,12 +4,17 @@
 $user      = auth()->user();
 $lastLogin = null;
 $timezone  = null;
-if (optional($user)->last_login) {
-    $dt = Carbon\Carbon::parse($user->last_login);
+
+$time      = null;
+
+if (session('last_login')) {
+    $dt = Carbon\Carbon::parse(session('last_login'));
+
     if ($user->timezone) {
         $dt = $dt->setTimezone($user->timezone);
     }
-    $lastLogin = $dt->toDayDateTimeString();
+    $lastLogin = $dt->format('D, M j, Y');
+    $time      = $dt->toTimeString();
     $timezone  = $dt->format('T');
 }
 ?>
@@ -18,7 +23,9 @@ if (optional($user)->last_login) {
 @else
     <li>
         <div style="text-align: center; font-style: italic; font-size:small; color:grey; padding-left:10px; padding-right:10px; padding-bottom: 5px">
-            Last Login: {{$lastLogin}} {{$timezone}}
+            Last Login: {{$lastLogin}}
+            <br/>
+            {{$time}} {{$timezone}}
         </div>
     </li>
 @endempty

@@ -42,6 +42,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy query()
+ *
+ * @property int|null $revision_history_count
  */
 class Allergy extends \CircleLinkHealth\Core\Entities\BaseModel
 {

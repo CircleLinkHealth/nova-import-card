@@ -73,6 +73,10 @@ use Validator;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereFirstPrinted($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereFirstPrintedBy($value)
+ *
+ * @property int|null $notifications_count
+ * @property int|null $pdfs_count
+ * @property int|null $revision_history_count
  */
 class CarePlan extends BaseModel implements PdfReport
 {

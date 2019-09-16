@@ -54,6 +54,8 @@ use App\Models\CPM\CpmMedicationGroup;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport query()
+ *
+ * @property int|null $revision_history_count
  */
 class MedicationImport extends \CircleLinkHealth\Core\Entities\BaseModel
 {

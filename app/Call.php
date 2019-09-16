@@ -77,6 +77,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property int $asap
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAsap($value)
+ *
+ * @property int|null $revision_history_count
  */
 class Call extends BaseModel
 {

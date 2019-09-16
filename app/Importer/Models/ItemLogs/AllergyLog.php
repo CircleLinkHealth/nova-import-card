@@ -53,6 +53,8 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog query()
+ *
+ * @property int|null $revision_history_count
  */
 class AllergyLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog
 {

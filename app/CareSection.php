@@ -33,6 +33,10 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection query()
+ *
+ * @property int|null $care_plan_items_count
+ * @property int|null $care_plans_count
+ * @property int|null $revision_history_count
  */
 class CareSection extends \CircleLinkHealth\Core\Entities\BaseModel
 {
