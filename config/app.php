@@ -206,7 +206,7 @@ return [
 
         NurseInvoicesServiceProvider::class,
         NurseInvoicesDeferredBindingsServiceProvider::class,
-        EligibilityServiceProvider::class,
+        //EligibilityServiceProvider::class,
     ],
 
     /*

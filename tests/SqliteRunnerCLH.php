@@ -1,51 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Concerns;
+namespace ParaTest\Runners\PHPUnit;
 
 use Symfony\Component\Process\Process;
 
-trait MigrateAndSeedOnce
+class SqliteRunnerCLH extends SqliteRunner
 {
-    /**
-     * If true, setup has run at least once.
-     *
-     * @var bool
-     */
-    protected static $setUpHasRunOnce = false;
-
-    /**
-     * After the first run of setUp "migrate:fresh --seed".
-     */
-    protected function setUp()
+    public function __construct(array $opts = [])
     {
-        parent::setUp();
-
-        if ( ! static::$setUpHasRunOnce) {
-            $this->createDatabase();
-            static::$setUpHasRunOnce = true;
+        parent::__construct($opts);
+        try {
+            $config = include './config/database.php';
+            $this->createDatabase($config['connections']['sqlite']['database']);
+        } catch (\Exception $e) {
         }
     }
 
-    private function createDatabase()
+    private function createDatabase($dbPath)
     {
-        //fixme: do not create a new database, just copy from $dbPath (it should be created in SqliteRunnerCLH)
-        $dbPath = \Config::get('database.connections.sqlite.database');
-
         if ( ! file_exists($dbPath)) {
             touch($dbPath);
         }
-
-        if (false !== getenv('TEST_TOKEN')) {
-            $dbname = 'testdb_'.getenv('TEST_TOKEN');
-        } else {
-            $dbname = 'testdb';
-        }
-
-        chdir(base_path());
 
         $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh']);
         $seedCommand            = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed']);
