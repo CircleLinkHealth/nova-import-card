@@ -629,10 +629,6 @@
             agent_is_invalid: function () {
                 return !this.validatePhone(this.agent_phone)
             },
-            agent_radio: function (){
-                console.log(this.preferred_phone)
-                return this.preferred_phone == 'agent'
-            },
             //other phone computer vars
             home_phone_label: function () {
 
