@@ -80,7 +80,7 @@ class PatientCareDocumentsController extends Controller
         ]);
     }
 
-    public function sendCareDocument($patientId, $mediaId, $channel, $addressOrFax)
+    public function sendCareDocument($patientId, $mediaId, $channelInput, $addressOrFax)
     {
         $media = $this->getMediaItemById($patientId, $mediaId);
 
@@ -107,13 +107,13 @@ class PatientCareDocumentsController extends Controller
             );
         }
 
-        $channel = $this->setChannelAndValidateInput($channel, $addressOrFax);
+        $channel = $this->setChannelAndValidateInput($channelInput, $addressOrFax);
 
         if (is_a($channel, Validator::class)) {
             return response()->json($channel->messages(), 400);
         }
 
-        $notifiable = $this->getNotifiableEntity($channel, $addressOrFax);
+        $notifiable = $this->getNotifiableEntity($channelInput, $addressOrFax);
 
         if ( ! $notifiable) {
             return response()->json(
@@ -189,7 +189,7 @@ class PatientCareDocumentsController extends Controller
                     $emr->where('address', $input);
                 })->first();
                 break;
-            case 'efax':
+            case 'fax':
                 $notifiable = Location::whereFax($input)->first();
                 break;
             default:

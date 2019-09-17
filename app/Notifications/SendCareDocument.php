@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\ValueObjects\SimpleNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
@@ -41,6 +42,31 @@ class SendCareDocument extends Notification
     }
 
     /**
+     * Get the body of a DM.
+     *
+     * @return string
+     */
+    public function getDMBody()
+    {
+        $link = $this->getReportLink();
+
+        $message  = "Please find attached an AWV {$this->reportType} regarding one of your patients";
+        $lastLine = PHP_EOL.PHP_EOL."The web version of the report can be found at $link";
+
+        return $this->getBody($message, $lastLine);
+    }
+
+    /**
+     * Get the mail's subject.
+     *
+     * @return string
+     */
+    public function getSubject()
+    {
+        return "You have been forwarded an AWV {$this->reportType} from CarePlanManager";
+    }
+
+    /**
      * Get the array representation of the notification.
      *
      * @param mixed $notifiable
@@ -49,6 +75,7 @@ class SendCareDocument extends Notification
      */
     public function toArray($notifiable)
     {
+        //todo: make sure we save path of file if it exists so we can delete the file from storage (if direct or fax)
         return [
             'channels'   => $this->channels,
             'sender_id'  => auth()->user()->id,
@@ -58,29 +85,63 @@ class SendCareDocument extends Notification
     }
 
     /**
+     * Get a pdf representation of the note to send via DM.
+     *
+     * @param $notifiable
+     *
+     * @return bool|string
+     */
+    public function toDirectMail($notifiable)
+    {
+        if ( ! $notifiable || ! $notifiable->emr_direct_address) {
+            return false;
+        }
+
+        return (new SimpleNotification())
+            ->setBody($this->getDMBody())
+            ->setSubject($this->getSubject())
+            ->setFilePath($this->toPdf());
+    }
+
+    /**
      * Get the mail representation of the notification.
      *
      * @param mixed $notifiable
+     *
+     * @throws \Exception
      *
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
-        $awvUrl = config('services.awv.url');
-
-        $reportTypeForUrl = $this->getSanitizedReportType();
-
-        $year = ! is_a($this->media->created_at, 'Carbon\Carbon')
-            ? Carbon::parse($this->media->created_at)->year
-            : $this->media->year;
-
-        $url = $awvUrl."/get-patient-report/{$this->patient->id}/{$reportTypeForUrl}/{$year}";
-
         //todo: add more details to message?
+        $link = $this->getReportLink();
+
         return (new MailMessage())
-            ->subject("Patient {$this->reportType} - {$this->patient->getPrimaryPracticeName()}")
+            ->subject($this->getSubject())
             ->line("Click at link below to see patient {$this->reportType}")
-            ->action('Go to report', $url);
+            ->action('Go to report', $link);
+    }
+
+    /**
+     * Get a pdf representation of the note.
+     *
+     * @return string
+     */
+    public function toPdf()
+    {
+        $currentDateTime = Carbon::now();
+        $path            = storage_path("{$this->reportType}_patient_id_{$this->patient->id}_{$currentDateTime->toDateTimeString()}.pdf");
+
+        $saved = file_put_contents($path, $this->media->getFile());
+
+        if ( ! $saved) {
+            return false;
+        }
+
+        //todo:make sure we delete the file in successful notification event - maybe the path will be needed on the notification itself so the even knows -
+
+        return $path;
     }
 
     /**
@@ -93,6 +154,42 @@ class SendCareDocument extends Notification
     public function via($notifiable)
     {
         return $this->channels;
+    }
+
+    /**
+     * Factory for message body.
+     *
+     * @param $greeting
+     * @param mixed $lastLine
+     *
+     * @return string
+     */
+    private function getBody($greeting, $lastLine = '')
+    {
+        $message = $greeting.', created on '
+                   .$this->media->created_at->toFormattedDateString();
+
+        if (auth()->check()) {
+            //todo:double check if auth user is the right way to go
+            $message .= PHP_EOL.PHP_EOL.'This Report was forwarded to you by '.auth()->user()->getFullName().'.';
+        }
+
+        $message .= $lastLine;
+
+        return $message;
+    }
+
+    private function getReportLink()
+    {
+        $awvUrl = config('services.awv.url');
+
+        $reportTypeForUrl = $this->getSanitizedReportType();
+
+        $year = ! is_a($this->media->created_at, 'Carbon\Carbon')
+            ? Carbon::parse($this->media->created_at)->year
+            : $this->media->year;
+
+        return $awvUrl."/get-patient-report/{$this->patient->id}/{$reportTypeForUrl}/{$year}";
     }
 
     private function getSanitizedReportType()
