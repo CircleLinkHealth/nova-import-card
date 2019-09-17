@@ -38,6 +38,7 @@ use App\CLH\Helpers\StringManipulation;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PhoneNumber newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PhoneNumber newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PhoneNumber query()
+ * @property-read int|null $revision_history_count
  */
 class PhoneNumber extends \CircleLinkHealth\Core\Entities\BaseModel
 {

@@ -24,6 +24,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CompanyHoliday whereHolidayName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CompanyHoliday whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CompanyHoliday whereUpdatedAt($value)
+ * @property-read int|null $revision_history_count
  */
 class CompanyHoliday extends \CircleLinkHealth\Core\Entities\BaseModel
 {

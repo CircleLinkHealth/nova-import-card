@@ -71,6 +71,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings whereDmAwvReports($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings whereEfaxAwvReports($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings whereEmailAwvReports($value)
+ * @property-read int|null $revision_history_count
  */
 class Settings extends \CircleLinkHealth\Core\Entities\BaseModel
 {
