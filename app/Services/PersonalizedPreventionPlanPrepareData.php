@@ -982,9 +982,9 @@ class PersonalizedPreventionPlanPrepareData
     {
 
         $index = 4;
-        $screenings['medical_attonery'] = $this->getStringValue($patientPppData->answers_for_eval, 'medical_attonery');
+        $screenings[' medical_attorney'] = $this->getStringValue($patientPppData->answers_for_eval, 'medical_attorney');
 
-        if ($screenings['medical_attonery'] === 'No') {
+        if ($screenings[' medical_attorney'] === 'No') {
             return $this->getTaskRecommendations($title, $index);
         }
 
