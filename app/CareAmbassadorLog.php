@@ -46,6 +46,8 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog whereNoSoftRejected($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog wherePracticeId($value)
+ *
+ * @property int|null $revision_history_count
  */
 class CareAmbassadorLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {

@@ -59,6 +59,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment query()
+ *
+ * @property int|null $revision_history_count
  */
 class Comment extends \CircleLinkHealth\Core\Entities\BaseModel
 {

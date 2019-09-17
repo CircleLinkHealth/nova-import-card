@@ -105,9 +105,7 @@
                                     Activities <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
-
-                                    <li><a href="{{ route('admin.patientCallManagement.index') }}">Manage</a></li>
-                                    <li><a href="{{ route('admin.patientCallManagement.v2.index') }}">Manage V2</a></li>
+                                    <li><a href="{{ route('admin.patientCallManagement.v2.index') }}">Manage (V2)</a></li>
                                     <li><a href="{{ route('admin.families.index') }}">Families</a></li>
                                     <li><a href="{{ route('algo.mock.create') }}">
                                             Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
@@ -296,6 +294,7 @@
                                    aria-expanded="false">{{ Auth::user()->getFullName() }} [ID:{{ Auth::user()->id }}]<span
                                             class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
+                                    @include('partials.last-login')
                                     <li><a href="{{ route('admin.users.edit', array('id' => Auth::user()->id)) }}"
                                            class="">My Account</a></li>
                                     <li><a href="{{ url('/admin/api-clients') }}">Api Clients</a></li>

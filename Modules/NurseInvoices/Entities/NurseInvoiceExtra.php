@@ -35,6 +35,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra whereValue($value)
  * @mixin \Eloquent
+ *
+ * @property int|null $revision_history_count
  */
 class NurseInvoiceExtra extends BaseModel
 {

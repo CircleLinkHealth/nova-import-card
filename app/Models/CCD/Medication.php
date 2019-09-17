@@ -56,6 +56,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereActive($value)
+ *
+ * @property int|null $revision_history_count
  */
 class Medication extends \CircleLinkHealth\Core\Entities\BaseModel
 {

@@ -72,17 +72,17 @@ class EligibilityCheck
      * @var Practice
      */
     private $practice;
-    
+
     /**
      * EligibilityCheck constructor.
      *
-     * @param EligibilityJob $eligibilityJob
-     * @param Practice $practice
+     * @param EligibilityJob   $eligibilityJob
+     * @param Practice         $practice
      * @param EligibilityBatch $batch
-     * @param bool $filterLastEncounter
-     * @param bool $filterInsurance
-     * @param bool $filterProblems
-     * @param bool $createEnrollees
+     * @param bool             $filterLastEncounter
+     * @param bool             $filterInsurance
+     * @param bool             $filterProblems
+     * @param bool             $createEnrollees
      *
      * @throws \Exception
      */
@@ -114,12 +114,11 @@ class EligibilityCheck
 
             if ($isValid) {
                 $this->eligibilityJob->status = EligibilityJob::ELIGIBLE;
-    
+
                 if ($this->createEnrollees) {
                     $this->createEnrollee();
                 }
             }
-    
         } catch (\Exception $e) {
             if ($this->eligibilityJob) {
                 $this->setEligibilityJobStatusFromException($e);
@@ -148,23 +147,506 @@ class EligibilityCheck
             }
         }
     }
-    
+
+    public function getEligibilityJob()
+    {
+        return $this->eligibilityJob;
+    }
+
+    public function getEnrollee()
+    {
+        return $this->enrollee;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getPatientList(): Collection
+    {
+        return $this->patientList;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function filter()
+    {
+        $this->validateStructureAndData();
+
+        $isValid = null;
+
+        if ($this->filterProblems) {
+            $isValid = $this->validateProblems();
+        }
+
+        if ($this->filterLastEncounter && $isValid) {
+            $isValid = $this->validateLastEncounter();
+        }
+
+        if ($this->filterInsurance && $isValid) {
+            $isValid = $this->validateInsurance();
+        }
+
+        return $isValid;
+    }
+
+    protected function validateInsurance(): bool
+    {
+        if (isset($this->eligibilityJob->data['insurance_plans']) || isset($this->eligibilityJob->data['insurance_plan'])) {
+            //adapt record so that we can use validateInsuranceWithPrimarySecondaryTertiary()
+            $this->eligibilityJob->data = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($this->eligibilityJob->data);
+        }
+
+        if (isset($this->eligibilityJob->data['insurances'])) {
+            return $this->validateInsuranceWithCollection($this->eligibilityJob->data);
+        }
+        if (isset($this->eligibilityJob->data['primary_insurance']) || isset($this->eligibilityJob->data['secondary_insurance']) || isset($this->eligibilityJob->data['tertiary_insurance'])) {
+            return $this->validateInsuranceWithPrimarySecondaryTertiary($this->eligibilityJob->data);
+        }
+
+        $this->setEligibilityJobStatus(
+            3,
+            ['insurance' => 'No insurance plans found.'],
+            EligibilityJob::INELIGIBLE,
+            'insurance'
+                );
+
+        return false;
+    }
+
+    /**
+     * Removes Patients whose last encounter was before Feb. 1st, 2016 from the list.
+     *
+     * @return EligibilityCheck
+     */
+    protected function validateLastEncounter(): bool
+    {
+        //Anything past this date is valid
+        $minEligibleDate = Carbon::now()->subYear();
+
+        $possibleNames = [
+            'last_encounter',
+            'last_visit',
+        ];
+
+        foreach ($possibleNames as $n) {
+            if (isset($this->eligibilityJob->data[$n])) {
+                $lastEncounter = $this->eligibilityJob->data[$n];
+            }
+        }
+
+        if ( ! isset($lastEncounter) || 'null' == strtolower($lastEncounter)) {
+            $this->setEligibilityJobStatus(
+                3,
+                ['last_encounter' => 'Last encounter field not found, or is null.'],
+                EligibilityJob::INELIGIBLE
+                );
+
+            return false;
+        }
+
+        $validator = Validator::make(
+            [
+                'last_encounter' => $lastEncounter,
+            ],
+            [
+                'last_encounter' => 'required|filled|date',
+            ]
+        );
+
+        if ($validator->fails()) {
+            $this->setEligibilityJobStatus(
+                3,
+                [
+                    'last_encounter' => implode(
+                        ',',
+                        $validator->messages()->all()
+                                        )." value: `${lastEncounter}`",
+                ],
+                EligibilityJob::INELIGIBLE,
+                'last_encounter'
+            );
+
+            return false;
+        }
+
+        $lastEncounterDate = is_a($lastEncounter, Carbon::class)
+            ? $lastEncounter
+            : new Carbon($lastEncounter);
+
+        if ($this->eligibilityJob) {
+            $this->eligibilityJob->last_encounter = $lastEncounterDate;
+        }
+
+        if ($lastEncounterDate->lt($minEligibleDate)) {
+            $this->setEligibilityJobStatus(
+                3,
+                ['last_encounter' => "Patient last encounter `{$lastEncounterDate->toDateString()}` is more than a year ago."],
+                EligibilityJob::INELIGIBLE,
+                'last_encounter'
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function validateProblems(): bool
+    {
+        $cpmProblems = \Cache::remember(
+            'all_cpm_problems',
+            60,
+            function () {
+                return CpmProblem::all()
+                    ->transform(
+                        function ($problem) {
+                            $problem->searchKeywords = collect(
+                                explode(',', $problem->contains),
+                                [$problem->name]
+                                         )
+                                ->transform(
+                                    function ($keyword) {
+                                        return trim(strtolower($keyword));
+                                    }
+                                             )
+                                ->filter()
+                                ->unique()
+                                ->values()
+                                ->toArray();
+
+                            return $problem;
+                        }
+                                 );
+            }
+        );
+
+        $icd9Map = \Cache::remember(
+            'map_icd_9_to_cpm_problems',
+            60,
+            function () {
+                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::ICD9);
+            }
+        );
+
+        $icd10Map = \Cache::remember(
+            'map_icd_10_to_cpm_problems',
+            60,
+            function () {
+                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::ICD10);
+            }
+        );
+
+        $snomedMap = \Cache::remember(
+            'map_snomed_to_cpm_problems',
+            60,
+            function () {
+                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::SNOMED);
+            }
+        );
+
+        $cpmProblemsMap = \Cache::remember(
+            'map_name_to_cpm_problems',
+            60,
+            function () use ($cpmProblems) {
+                return $cpmProblems->pluck('name', 'id');
+            }
+        );
+
+        $allBhiProblemIds = \Cache::remember(
+            'bhi_cpm_problem_ids',
+            60,
+            function () use ($cpmProblems) {
+                return $cpmProblems->where('is_behavioral', '=', true)->pluck('id');
+            }
+        );
+
+        $eligibilityJobData = $this->eligibilityJob->data;
+
+        $eligibilityJobData['ccm_condition_1'] = '';
+        $eligibilityJobData['ccm_condition_2'] = '';
+        $eligibilityJobData['cpm_problem_1']   = '';
+        $eligibilityJobData['cpm_problem_2']   = '';
+
+        $problems = $eligibilityJobData['problems'] ?? $eligibilityJobData['problems_string'] ?? null;
+
+        if (empty($problems)) {
+            $this->setEligibilityJobStatus(
+                3,
+                ['problems' => 'Patient has 0 conditions.'],
+                EligibilityJob::INELIGIBLE,
+                'problems'
+            );
+
+            return false;
+        }
+
+        foreach (config('importer.problem_loggers') as $class) {
+            $class = app($class);
+
+            if ($class->shouldHandle($problems)) {
+                $problems = $class->handle($problems);
+                break;
+            }
+        }
+
+        $qualifyingCcmProblems = [];
+
+        //the cpm_problem_id for qualifying problems
+        $qualifyingCcmProblemsCpmIdStack = [];
+
+        $eligibleBhiProblemIds = [];
+
+        if ( ! (is_array($problems) || is_a($problems, Collection::class))) {
+            $problems = [$problems];
+        }
+
+        if ($problems) {
+            foreach ($problems as $p) {
+                if ( ! is_a($p, Problem::class)) {
+                    $e = new \Exception('This is not an object of type '.Problem::class);
+                    $this->setEligibilityJobStatusFromException($e);
+                    $this->eligibilityJob->save();
+
+                    return false;
+                }
+
+                $codeType = null;
+
+                if ($p->getCodeSystemName()) {
+                    $codeType = getProblemCodeSystemName([$p->getCodeSystemName()]);
+                }
+
+                if ( ! $codeType) {
+                    $codeType = 'all';
+                }
+
+                if ($p->getCode()) {
+                    //Reject if patientData is on dialysis
+                    //https://circlelinkhealth.atlassian.net/browse/CPM-954
+                    if ('N18.6' == $p->getCode()) {
+                        $this->ineligibleOnDialysis($eligibilityJobData);
+
+                        return false;
+                    }
+
+                    if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
+                        $cpmProblemId = $icd9Map->get($p->getCode());
+
+                        if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
+                            $qualifyingCcmProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p->getCode()}";
+                            $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
+
+                            if ($allBhiProblemIds->contains($cpmProblemId)) {
+                                $eligibleBhiProblemIds[] = $cpmProblemId;
+                            }
+
+                            continue;
+                        }
+                    }
+
+                    if (in_array($codeType, [Constants::ICD10_NAME, 'all'])) {
+                        $cpmProblemId = $icd10Map->get($p->getCode());
+
+                        if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
+                            $qualifyingCcmProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getCode()}";
+                            $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
+
+                            if ($allBhiProblemIds->contains($cpmProblemId)) {
+                                $eligibleBhiProblemIds[] = $cpmProblemId;
+                            }
+
+                            continue;
+                        }
+                    }
+
+                    if (in_array($codeType, [Constants::SNOMED_NAME, 'all'])) {
+                        $cpmProblemId = $snomedMap->get($p->getCode());
+
+                        if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
+                            $qualifyingCcmProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getCode()}";
+                            $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
+
+                            if ($allBhiProblemIds->contains($cpmProblemId)) {
+                                $eligibleBhiProblemIds[] = $cpmProblemId;
+                            }
+
+                            continue;
+                        }
+                    }
+                }
+
+                // Try to match keywords
+                if ($p->getName()) {
+                    //Reject if patientData is on dialysis
+                    //https://circlelinkhealth.atlassian.net/browse/CPM-954
+                    if (str_contains($p->getName(), ['End stage renal disease'])) {
+                        $this->ineligibleOnDialysis($eligibilityJobData);
+
+                        return false;
+                    }
+
+                    foreach ($cpmProblems->whereNotIn('id', $qualifyingCcmProblemsCpmIdStack) as $problem) {
+                        foreach ($problem->searchKeywords as $keyword) {
+                            if (empty($keyword)) {
+                                continue;
+                            }
+
+                            if (str_contains(strtolower($p->getName()), strtolower($keyword))
+                                && ! in_array($problem->id, $qualifyingCcmProblemsCpmIdStack)
+                            ) {
+                                $code = SnomedToCpmIcdMap::where('icd_9_code', '!=', '')
+                                    ->whereCpmProblemId($problem->id)
+                                    ->get()
+                                    ->sortByDesc('icd_9_avg_usage')
+                                    ->first();
+
+                                if ($code) {
+                                    if ($code->icd_9_code) {
+                                        $code = "ICD9: {$code->icd_9_code}";
+                                    }
+                                }
+
+                                if ( ! $code) {
+                                    $code = SnomedToCpmIcdMap::where('icd_10_code', '!=', '')
+                                        ->whereCpmProblemId($problem->id)
+                                        ->first();
+
+                                    if ($code) {
+                                        $code = "ICD10: {$code->icd_10_code}";
+                                    }
+                                }
+
+                                $qualifyingCcmProblems[]           = "{$problem->name}, ${code}";
+                                $qualifyingCcmProblemsCpmIdStack[] = $problem->id;
+
+                                if ((bool) $problem->is_behavioral) {
+                                    $eligibleBhiProblemIds[] = $problem->id;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        $qualifyingCcmProblems = array_unique($qualifyingCcmProblems);
+        $qualifyingBhiProblems = array_unique($eligibleBhiProblemIds);
+
+        $ccmProbCount = count($qualifyingCcmProblems);
+        $bhiProbCount = count($qualifyingBhiProblems);
+
+        if ($this->eligibilityJob) {
+            $this->eligibilityJob->bhi_problem_id   = $qualifyingBhiProblems[0] ?? null;
+            $this->eligibilityJob->ccm_problem_1_id = $qualifyingCcmProblemsCpmIdStack[0] ?? null;
+            $this->eligibilityJob->ccm_problem_2_id = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
+        }
+
+        if ($ccmProbCount < 2 && 0 == $bhiProbCount) {
+            $this->setEligibilityJobStatus(
+                3,
+                ['problems' => 'Patient has less than 2 ccm conditions', 'qualifyingCcmProblems' => $qualifyingCcmProblems, 'qualifyingBhiProblems' => $qualifyingBhiProblems],
+                EligibilityJob::INELIGIBLE,
+                'problems'
+            );
+
+            return false;
+        }
+
+        if ($ccmProbCount < 2 && $bhiProbCount > 0) {
+            if ( ! $this->practice->hasServiceCode('CPT 99484')) {
+                $this->setEligibilityJobStatus(
+                    3,
+                    ['problems' => 'Patient is BHI eligible, but practice does not support BHI. Patient has less than 2 ccm conditions.'],
+                    EligibilityJob::INELIGIBLE,
+                    'problems'
+                );
+
+                return false;
+            }
+        }
+
+        $eligibilityJobData['ccm_condition_1'] = $qualifyingCcmProblems[0];
+        $eligibilityJobData['ccm_condition_2'] = $qualifyingCcmProblems[1] ?? null;
+
+        $eligibilityJobData['cpm_problem_1'] = $qualifyingCcmProblemsCpmIdStack[0];
+        $eligibilityJobData['cpm_problem_2'] = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
+
+        $this->eligibilityJob->data = $eligibilityJobData;
+
+        return true;
+    }
+
+    /**
+     * @throws \Exception
+     *
+     * @return $this
+     */
+    protected function validateStructureAndData()
+    {
+        $invalidStructure = false;
+        $jsonErrors       = '';
+
+        if (EligibilityBatch::TYPE_ONE_CSV == $this->batch->type && $this->eligibilityJob) {
+            $csvPatientList = new CsvPatientList(collect([$this->eligibilityJob->data]));
+            $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
+
+            $errors = [];
+            if ( ! $isValid) {
+                $errors[]         = 'structure';
+                $invalidStructure = true;
+            }
+            $errors = array_merge($this->validateRow($this->eligibilityJob->data)->errors()->keys(), $errors);
+            $this->saveErrorsOnEligibilityJob($this->eligibilityJob, collect($errors));
+            $jsonErrors = json_encode($errors);
+        }
+
+        if ((EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE == $this->batch->type) && $this->eligibilityJob) {
+            $errors          = [];
+            $structureErrors = $this->validateJsonStructure($this->eligibilityJob->data)->errors();
+            if ($structureErrors->isNotEmpty()) {
+                $errors[]         = 'structure';
+                $invalidStructure = true;
+            }
+            $errors = array_merge($this->validateRow($this->eligibilityJob->data)->errors()->keys(), $errors);
+            $this->saveErrorsOnEligibilityJob($this->eligibilityJob, collect($errors));
+            $jsonErrors = $structureErrors->toJson();
+        }
+
+        if ($invalidStructure) {
+            //if there are structure errors we stop the process because create enrollees fails from missing arguements
+            $e = new InvalidStructureException(
+                "Record with eligibility job id: {$this->eligibilityJob->id} has invalid structure. Errors:".$jsonErrors,
+                422
+            );
+
+            $this->setEligibilityJobStatusFromException($e);
+        }
+    }
+
+    private function adaptClhFormatInsurancePlansToPrimaryAndSecondary($record)
+    {
+        return (new JsonMedicalRecordInsurancePlansAdapter())->adapt($record);
+    }
+
     /**
      * @param $patient
      *
-     * @return bool
      * @throws \Exception
+     *
+     * @return bool
      */
-    private function createEnrollee():bool
+    private function createEnrollee(): bool
     {
         $args = $this->eligibilityJob->data;
 
         if (is_a($args, Collection::class)) {
             $args = $args->all();
         }
-        
-        if (!is_array($args)) throw new \Exception('$args is expected to be an array. '.EligibilityJob::class.':'.$this->eligibilityJob->id);
 
+        if ( ! is_array($args)) {
+            throw new \Exception('$args is expected to be an array. '.EligibilityJob::class.':'.$this->eligibilityJob->id);
+        }
         if (isset($args['insurance_plans']) || isset($args['insurance_plan'])) {
             $args = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($args);
         }
@@ -343,7 +825,7 @@ class EligibilityCheck
             return false;
         }
         if ($enrolleeExists && optional($this->batch)->shouldSafeReprocess()) {
-            $updated         = $enrolleeExists->update($args);
+            $updated        = $enrolleeExists->update($args);
             $this->enrollee = $enrolleeExists->fresh();
 
             return true;
@@ -386,489 +868,6 @@ class EligibilityCheck
         $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
 
         return true;
-    }
-
-    public function getEligibilityJob()
-    {
-        return $this->eligibilityJob;
-    }
-
-    public function getEnrollee()
-    {
-        return $this->enrollee;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getPatientList(): Collection
-    {
-        return $this->patientList;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    protected function filter()
-    {
-        $this->validateStructureAndData();
-
-        $isValid = null;
-
-        if ($this->filterProblems) {
-            $isValid = $this->validateProblems();
-        }
-
-        if ($this->filterLastEncounter && $isValid) {
-            $isValid = $this->validateLastEncounter();
-        }
-
-        if ($this->filterInsurance && $isValid) {
-            $isValid = $this->validateInsurance();
-        }
-
-        return $isValid;
-    }
-
-    protected function validateInsurance(): bool
-    {
-        if (isset($this->eligibilityJob->data['insurance_plans']) || isset($this->eligibilityJob->data['insurance_plan'])) {
-            //adapt record so that we can use validateInsuranceWithPrimarySecondaryTertiary()
-            $this->eligibilityJob->data = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($this->eligibilityJob->data);
-        }
-
-        if (isset($this->eligibilityJob->data['insurances'])) {
-            return $this->validateInsuranceWithCollection($this->eligibilityJob->data);
-        }
-        if (isset($this->eligibilityJob->data['primary_insurance']) || isset($this->eligibilityJob->data['secondary_insurance']) || isset($this->eligibilityJob->data['tertiary_insurance'])) {
-            return $this->validateInsuranceWithPrimarySecondaryTertiary($this->eligibilityJob->data);
-        }
-
-        $this->setEligibilityJobStatus(
-            3,
-            ['insurance' => 'No insurance plans found.'],
-            EligibilityJob::INELIGIBLE,
-            'insurance'
-                );
-
-        return false;
-    }
-
-    /**
-     * Removes Patients whose last encounter was before Feb. 1st, 2016 from the list.
-     *
-     * @return EligibilityCheck
-     */
-    protected function validateLastEncounter(): bool
-    {
-        //Anything past this date is valid
-        $minEligibleDate = Carbon::now()->subYear();
-
-        $possibleNames = [
-            'last_encounter',
-            'last_visit',
-        ];
-
-        foreach ($possibleNames as $n) {
-            if (isset($this->eligibilityJob->data[$n])) {
-                $lastEncounter = $this->eligibilityJob->data[$n];
-            }
-        }
-
-        if ( ! isset($lastEncounter) || 'null' == strtolower($lastEncounter)) {
-            $this->setEligibilityJobStatus(
-                    3,
-                    ['last_encounter' => 'Last encounter field not found, or is null.'],
-                    EligibilityJob::INELIGIBLE
-                );
-
-            return false;
-        }
-
-        $validator = Validator::make(
-            [
-                'last_encounter' => $lastEncounter,
-            ],
-            [
-                'last_encounter' => 'required|filled|date',
-            ]
-        );
-
-        if ($validator->fails()) {
-            $this->setEligibilityJobStatus(
-                3,
-                [
-                    'last_encounter' => implode(
-                        ',',
-                        $validator->messages()->all()
-                                        )." value: `${lastEncounter}`",
-                ],
-                EligibilityJob::INELIGIBLE,
-                'last_encounter'
-            );
-
-            return false;
-        }
-
-        $lastEncounterDate = is_a($lastEncounter, Carbon::class)
-            ? $lastEncounter
-            : new Carbon($lastEncounter);
-
-        if ($this->eligibilityJob) {
-            $this->eligibilityJob->last_encounter = $lastEncounterDate;
-        }
-
-        if ($lastEncounterDate->lt($minEligibleDate)) {
-            $this->setEligibilityJobStatus(
-                3,
-                ['last_encounter' => "Patient last encounter `{$lastEncounterDate->toDateString()}` is more than a year ago."],
-                EligibilityJob::INELIGIBLE,
-                'last_encounter'
-            );
-
-            return false;
-        }
-
-        return true;
-    }
-
-    protected function validateProblems(): bool
-    {
-        $cpmProblems = \Cache::remember(
-            'all_cpm_problems',
-            60,
-            function () {
-                return CpmProblem::all()
-                    ->transform(
-                        function ($problem) {
-                            $problem->searchKeywords = collect(
-                                explode(',', $problem->contains),
-                                [$problem->name]
-                                         )
-                                ->transform(
-                                    function ($keyword) {
-                                        return trim(strtolower($keyword));
-                                    }
-                                             )
-                                ->filter()
-                                ->unique()
-                                ->values()
-                                ->toArray();
-
-                            return $problem;
-                        }
-                                 );
-            }
-        );
-
-        $icd9Map = \Cache::remember(
-            'map_icd_9_to_cpm_problems',
-            60,
-            function () {
-                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::ICD9);
-            }
-        );
-
-        $icd10Map = \Cache::remember(
-            'map_icd_10_to_cpm_problems',
-            60,
-            function () {
-                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::ICD10);
-            }
-        );
-
-        $snomedMap = \Cache::remember(
-            'map_snomed_to_cpm_problems',
-            60,
-            function () {
-                return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::SNOMED);
-            }
-        );
-
-        $cpmProblemsMap = \Cache::remember(
-            'map_name_to_cpm_problems',
-            60,
-            function () use ($cpmProblems) {
-                return $cpmProblems->pluck('name', 'id');
-            }
-        );
-
-        $allBhiProblemIds = \Cache::remember(
-            'bhi_cpm_problem_ids',
-            60,
-            function () use ($cpmProblems) {
-                return $cpmProblems->where('is_behavioral', '=', true)->pluck('id');
-            }
-        );
-    
-        $eligibilityJobData = $this->eligibilityJob->data;
-
-        $eligibilityJobData['ccm_condition_1'] = '';
-        $eligibilityJobData['ccm_condition_2'] = '';
-        $eligibilityJobData['cpm_problem_1']   = '';
-        $eligibilityJobData['cpm_problem_2']   = '';
-
-        $problems = $eligibilityJobData['problems'] ?? $eligibilityJobData['problems_string'];
-
-        if (empty($problems)) {
-            $this->setEligibilityJobStatus(
-                3,
-                ['problems' => 'Patient has 0 conditions.'],
-                EligibilityJob::INELIGIBLE,
-                'problems'
-            );
-
-            return false;
-        }
-
-        foreach (config('importer.problem_loggers') as $class) {
-            $class = app($class);
-
-            if ($class->shouldHandle($problems)) {
-                $problems = $class->handle($problems);
-                break;
-            }
-        }
-
-        $qualifyingCcmProblems = [];
-
-        //the cpm_problem_id for qualifying problems
-        $qualifyingCcmProblemsCpmIdStack = [];
-
-        $eligibleBhiProblemIds = [];
-
-        if ( ! (is_array($problems) || is_a($problems, Collection::class))) {
-            $problems = [$problems];
-        }
-
-        if ($problems) {
-            foreach ($problems as $p) {
-                if ( ! is_a($p, Problem::class)) {
-                    $e = new \Exception('This is not an object of type '.Problem::class);
-                    $this->setEligibilityJobStatusFromException($e);
-                    $this->eligibilityJob->save();
-
-                    return false;
-                }
-
-                $codeType = null;
-
-                if ($p->getCodeSystemName()) {
-                    $codeType = getProblemCodeSystemName([$p->getCodeSystemName()]);
-                }
-
-                if ( ! $codeType) {
-                    $codeType = 'all';
-                }
-
-                if ($p->getCode()) {
-                    //Reject if patientData is on dialysis
-                    //https://circlelinkhealth.atlassian.net/browse/CPM-954
-                    if ('N18.6' == $p->getCode()) {
-                        $this->ineligibleOnDialysis($eligibilityJobData);
-
-                        return false;
-                    }
-
-                    if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
-                        $cpmProblemId = $icd9Map->get($p->getCode());
-
-                        if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
-                            $qualifyingCcmProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p->getCode()}";
-                            $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
-
-                            if ($allBhiProblemIds->contains($cpmProblemId)) {
-                                $eligibleBhiProblemIds[] = $cpmProblemId;
-                            }
-
-                            continue;
-                        }
-                    }
-
-                    if (in_array($codeType, [Constants::ICD10_NAME, 'all'])) {
-                        $cpmProblemId = $icd10Map->get($p->getCode());
-
-                        if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
-                            $qualifyingCcmProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getCode()}";
-                            $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
-
-                            if ($allBhiProblemIds->contains($cpmProblemId)) {
-                                $eligibleBhiProblemIds[] = $cpmProblemId;
-                            }
-
-                            continue;
-                        }
-                    }
-
-                    if (in_array($codeType, [Constants::SNOMED_NAME, 'all'])) {
-                        $cpmProblemId = $snomedMap->get($p->getCode());
-
-                        if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
-                            $qualifyingCcmProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getCode()}";
-                            $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
-
-                            if ($allBhiProblemIds->contains($cpmProblemId)) {
-                                $eligibleBhiProblemIds[] = $cpmProblemId;
-                            }
-
-                            continue;
-                        }
-                    }
-                }
-
-                // Try to match keywords
-                if ($p->getName()) {
-                    //Reject if patientData is on dialysis
-                    //https://circlelinkhealth.atlassian.net/browse/CPM-954
-                    if (str_contains($p->getName(), ['End stage renal disease'])) {
-                        $this->ineligibleOnDialysis($eligibilityJobData);
-
-                        return false;
-                    }
-
-                    foreach ($cpmProblems->whereNotIn('id', $qualifyingCcmProblemsCpmIdStack) as $problem) {
-                        foreach ($problem->searchKeywords as $keyword) {
-                            if (empty($keyword)) {
-                                continue;
-                            }
-
-                            if (str_contains(strtolower($p->getName()), strtolower($keyword))
-                                && ! in_array($problem->id, $qualifyingCcmProblemsCpmIdStack)
-                            ) {
-                                $code = SnomedToCpmIcdMap::where('icd_9_code', '!=', '')
-                                    ->whereCpmProblemId($problem->id)
-                                    ->get()
-                                    ->sortByDesc('icd_9_avg_usage')
-                                    ->first();
-
-                                if ($code) {
-                                    if ($code->icd_9_code) {
-                                        $code = "ICD9: {$code->icd_9_code}";
-                                    }
-                                }
-
-                                if ( ! $code) {
-                                    $code = SnomedToCpmIcdMap::where('icd_10_code', '!=', '')
-                                        ->whereCpmProblemId($problem->id)
-                                        ->first();
-
-                                    if ($code) {
-                                        $code = "ICD10: {$code->icd_10_code}";
-                                    }
-                                }
-
-                                $qualifyingCcmProblems[]           = "{$problem->name}, ${code}";
-                                $qualifyingCcmProblemsCpmIdStack[] = $problem->id;
-
-                                if ((bool) $problem->is_behavioral) {
-                                    $eligibleBhiProblemIds[] = $problem->id;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                //Stop checking if we've already found 2 ccm problems
-                if (2 == count($qualifyingCcmProblems)) {
-                    break;
-                }
-            }
-        }
-
-        $qualifyingCcmProblems = array_unique($qualifyingCcmProblems);
-        $qualifyingBhiProblems = array_unique($eligibleBhiProblemIds);
-
-        $ccmProbCount = count($qualifyingCcmProblems);
-        $bhiProbCount = count($qualifyingBhiProblems);
-
-        if ($this->eligibilityJob) {
-            $this->eligibilityJob->bhi_problem_id   = $qualifyingBhiProblems[0] ?? null;
-            $this->eligibilityJob->ccm_problem_1_id = $qualifyingCcmProblemsCpmIdStack[0] ?? null;
-            $this->eligibilityJob->ccm_problem_2_id = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
-        }
-
-        if ($ccmProbCount < 2 && 0 == $bhiProbCount) {
-            $this->setEligibilityJobStatus(
-                3,
-                ['problems' => 'Patient has less than 2 ccm conditions', 'qualifyingCcmProblems' => $qualifyingCcmProblems, 'qualifyingBhiProblems' => $qualifyingBhiProblems],
-                EligibilityJob::INELIGIBLE,
-                'problems'
-            );
-
-            return false;
-        }
-
-        if ($ccmProbCount < 2 && $bhiProbCount > 0) {
-            if ( ! $this->practice->hasServiceCode('CPT 99484')) {
-                $this->setEligibilityJobStatus(
-                    3,
-                    ['problems' => 'Patient is BHI eligible, but practice does not support BHI. Patient has less than 2 ccm conditions.'],
-                    EligibilityJob::INELIGIBLE,
-                    'problems'
-                );
-
-                return false;
-            }
-        }
-
-        $eligibilityJobData['ccm_condition_1'] = $qualifyingCcmProblems[0];
-        $eligibilityJobData['ccm_condition_2'] = $qualifyingCcmProblems[1] ?? null;
-
-        $eligibilityJobData['cpm_problem_1'] = $qualifyingCcmProblemsCpmIdStack[0];
-        $eligibilityJobData['cpm_problem_2'] = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
-    
-        $this->eligibilityJob->data = $eligibilityJobData;
-
-        return true;
-    }
-
-    /**
-     * @throws \Exception
-     *
-     * @return $this
-     */
-    protected function validateStructureAndData()
-    {
-        $invalidStructure = false;
-    
-        if (EligibilityBatch::TYPE_ONE_CSV == $this->batch->type && $this->eligibilityJob) {
-            $csvPatientList = new CsvPatientList(collect([$this->eligibilityJob->data]));
-            $isValid        = $csvPatientList->guessValidatorAndValidate() ?? null;
-
-            $errors = [];
-            if ( ! $isValid) {
-                $errors[]         = 'structure';
-                $invalidStructure = true;
-            }
-            $errors = array_merge($this->validateRow($this->eligibilityJob->data)->errors()->keys(), $errors);
-            $this->saveErrorsOnEligibilityJob($this->eligibilityJob, collect($errors));
-        }
-
-        if ((EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE == $this->batch->type) && $this->eligibilityJob) {
-            $errors          = [];
-            $structureErrors = $this->validateJsonStructure($this->eligibilityJob->data)->errors();
-            if ($structureErrors->isNotEmpty()) {
-                $errors[]         = 'structure';
-                $invalidStructure = true;
-            }
-            $errors = array_merge($this->validateRow($this->eligibilityJob->data)->errors()->keys(), $errors);
-            $this->saveErrorsOnEligibilityJob($this->eligibilityJob, collect($errors));
-        }
-
-        if ($invalidStructure) {
-            //if there are structure errors we stop the process because create enrollees fails from missing arguements
-            $e = new InvalidStructureException(
-                "Record with eligibility job id: {$this->eligibilityJob->id} has invalid structure. Errors:".$structureErrors->toJson(),
-                422
-            );
-            
-            $this->setEligibilityJobStatusFromException($e);
-        }
-    }
-
-    private function adaptClhFormatInsurancePlansToPrimaryAndSecondary($record)
-    {
-        return (new JsonMedicalRecordInsurancePlansAdapter())->adapt($record);
     }
 
     private function getSnomedToIcdMap()

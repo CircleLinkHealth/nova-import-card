@@ -70,6 +70,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord whereDuplicateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord whereValidationChecks($value)
+ *
+ * @property int|null $allergies_count
+ * @property int|null $medications_count
+ * @property int|null $problems_count
+ * @property int|null $revision_history_count
  */
 class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel implements ImportedMedicalRecordInterface
 {

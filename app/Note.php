@@ -78,6 +78,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereSummaryType($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Note withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Note withoutTrashed()
+ *
+ * @property int|null $addendums_count
+ * @property int|null $notifications_count
+ * @property int|null $revision_history_count
  */
 class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport
 {

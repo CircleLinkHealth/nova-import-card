@@ -40,6 +40,9 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesItem query()
+ *
+ * @property int|null $meta_count
+ * @property int|null $revision_history_count
  */
 class CPRulesItem extends \CircleLinkHealth\Core\Entities\BaseModel
 {

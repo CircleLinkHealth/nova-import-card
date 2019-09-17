@@ -6,6 +6,7 @@
 
 namespace App;
 
+use App\Traits\Relationships\BelongsToCcda;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -55,9 +56,18 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\Practice $practice
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
+ *
+ * @property int|null                             $ccda_id
+ * @property \App\Models\MedicalRecords\Ccda|null $ccda
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
+ *
+ * @property int|null $revision_history_count
  */
 class TargetPatient extends BaseModel
 {
+    use BelongsToCcda;
+
     const STATUS_CONSENTED  = 'consented';
     const STATUS_ELIGIBLE   = 'eligible';
     const STATUS_ENROLLED   = 'enrolled';
@@ -66,6 +76,7 @@ class TargetPatient extends BaseModel
     const STATUS_TO_PROCESS = 'to_process';
 
     protected $fillable = [
+        'ccda_id',
         'practice_id',
         'batch_id',
         'eligibility_job_id',

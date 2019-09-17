@@ -33,6 +33,8 @@ namespace App\Models\PatientData\PhoenixHeart;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartAllergy newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartAllergy newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartAllergy query()
+ *
+ * @property int|null $revision_history_count
  */
 class PhoenixHeartAllergy extends \CircleLinkHealth\Core\Entities\BaseModel
 {

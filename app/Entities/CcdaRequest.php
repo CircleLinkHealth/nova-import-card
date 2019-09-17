@@ -40,6 +40,8 @@ use App\Models\MedicalRecords\Ccda;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest query()
+ *
+ * @property int|null $revision_history_count
  */
 class CcdaRequest extends \CircleLinkHealth\Core\Entities\BaseModel
 {

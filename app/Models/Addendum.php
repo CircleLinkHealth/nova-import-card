@@ -35,6 +35,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum query()
+ *
+ * @property int|null $revision_history_count
  */
 class Addendum extends \CircleLinkHealth\Core\Entities\BaseModel
 {

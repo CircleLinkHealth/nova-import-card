@@ -45,6 +45,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientReports query()
+ *
+ * @property int|null $revision_history_count
  */
 class PatientReports extends BaseModel
 {

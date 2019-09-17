@@ -11,35 +11,32 @@
             </div>
             <div class="col-sm-4">
                 @empty($note_channels_text)
-                    <b>This Practice has <em>Forwarded Note Notifications</em> turned off. Please notify CirleLink support.</b>
+                    <b>This Practice has <em>Forwarded Note Notifications</em> turned off. Please notify CirleLink
+                        support.</b>
                 @else
-                    <div class="col-sm-12" style="position: absolute">
-                        @empty($notifies_text)
-                            <p style="color: red;">
-                                No provider selected to receive email alerts. Use the add ("+" sign) or edit (pencil) icons in
-                                the
-                                <strong>{{link_to_route('patient.careplan.print', '"Care Team"', ['patientId' => $patient->id])}}</strong>
-                                section of
-                                the {{link_to_route('patient.careplan.print', 'View CarePlan', ['patientId' => $patient->id])}}
-                                page to
-                                add or edit providers to receive email alerts.
-                            </p>
-                        @else
+                    @empty($notifies_text)
+                        <p style="color: red;">
+                            No provider selected to receive email alerts. Use the add ("+" sign) or edit (pencil) icons
+                            in
+                            the
+                            <strong>{{link_to_route('patient.careplan.print', '"Care Team"', ['patientId' => $patient->id])}}</strong>
+                            section of
+                            the {{link_to_route('patient.careplan.print', 'View CarePlan', ['patientId' => $patient->id])}}
+                            page to
+                            add or edit providers to receive email alerts.
+                        </p>
+                    @else
 
-                            <input type="checkbox" id="notify-careteam" name="notify_careteam"
-                                   @empty($note_channels_text) disabled="disabled"
-                                   @endempty value="1">
-                            <label for="notify-careteam" style="display: inline-block;"><span></span>Provider/CareTeam
+                        <input type="checkbox" id="notify-careteam" name="notify_careteam"
+                               @empty($note_channels_text) disabled="disabled"
+                               @endempty value="1">
+                        <label for="notify-careteam" style="display: inline-block;"><span></span>Provider/CareTeam
 
-                            </label>
-                            <div class="label" data-tooltip="Notifies: {{ $notifies_text }} via {{ $note_channels_text }}">
-                                <i class="fas fa-exclamation-circle fa-lg" style="color:#50b2e2"></i>
-                            </div>
-
-                    </div>
-
-
-                @endempty
+                        </label>
+                        <div class="label" data-tooltip="Notifies: {{ $notifies_text }} via {{ $note_channels_text }}">
+                            <i class="fas fa-exclamation-circle fa-lg" style="color:#50b2e2"></i>
+                        </div>
+                    @endempty
                 @endempty
 
             </div>
@@ -65,7 +62,8 @@
             <div class="col-sm-12 no-padding-left">
                 <i class="fa fa-star" style="font-size:12px; margin-right: 8px"></i>
                 <label for="summary">
-                    Communication to Practice @if(isset($note['summary_type']) && !empty($note['summary_type']))<span style="color: #50b2e2"><b>({{$note['summary_type']}})</b></span>@endif
+                    Communication to Practice @if(isset($note['summary_type']) && !empty($note['summary_type']))<span
+                            style="color: #50b2e2"><b>({{$note['summary_type']}})</b></span>@endif
                 </label>
             </div>
             <div class="col-sm-12 no-padding-left no-padding-right">
@@ -75,7 +73,7 @@
                         <label for="fyi"><span> </span>FYI</label>
                     </div>
                     <div class="col-sm-11 no-padding-left custom-radio">
-                        <input id="to-do" type="radio" name="summary_type"  value="{{\App\Note::SUMMARY_TODO}}">
+                        <input id="to-do" type="radio" name="summary_type" value="{{\App\Note::SUMMARY_TODO}}">
                         <label for="to-do"><span> </span>To-do</label>
                         <br>
                     </div>

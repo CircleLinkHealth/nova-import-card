@@ -58,6 +58,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereRiskFactors($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereTobaccoMisuseCounseling($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereUpdatedAt($value)
+ *
+ * @property int|null $revision_history_count
  */
 class CareplanAssessment extends \CircleLinkHealth\Core\Entities\BaseModel
 {

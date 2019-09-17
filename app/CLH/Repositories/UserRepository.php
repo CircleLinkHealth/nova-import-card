@@ -21,6 +21,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Config;
+use Illuminate\Cache\TaggableStore;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Storage;
@@ -583,8 +584,10 @@ class UserRepository
      */
     private function clearRolesCache(User $user)
     {
-        $cacheKey  = 'cerberus_roles_for_user_'.$user->id;
-        $forgotten = \Cache::tags(Config::get('cerberus.role_user_site_table'))->forget($cacheKey);
+        $cacheKey = 'cerberus_roles_for_user_'.$user->id;
+        if (\Cache::getStore() instanceof TaggableStore) {
+            $forgotten = \Cache::tags(Config::get('cerberus.role_user_site_table'))->forget($cacheKey);
+        }
     }
 
     private function forceEnable2fa(AuthyUser $authyUser)

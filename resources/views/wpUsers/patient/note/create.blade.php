@@ -218,39 +218,33 @@
                                                         <b>This Practice has <em>Forwarded Note Notifications</em>
                                                             turned off. Please notify CirleLink support.</b>
                                                     @else
-                                                        <div class="col-sm-12 no-padding-left no-padding-right"
-                                                             style="position: absolute">
-                                                            @empty($notifies_text)
-                                                                <p style="color: red;">
-                                                                    No provider selected to receive email alerts. Use
-                                                                    the add ("+" sign) or edit (pencil) icons in
-                                                                    the
-                                                                    <strong>{{link_to_route('patient.careplan.print', '"Care Team"', ['patientId' => $patient->id])}}</strong>
-                                                                    section of
-                                                                    the {{link_to_route('patient.careplan.print', 'View CarePlan', ['patientId' => $patient->id])}}
-                                                                    page to
-                                                                    add or edit providers to receive email alerts.
-                                                                </p>
-                                                            @else
+                                                        @empty($notifies_text)
+                                                            <p style="color: red;">
+                                                                No provider selected to receive email alerts. Use
+                                                                the add ("+" sign) or edit (pencil) icons in
+                                                                the
+                                                                <strong>{{link_to_route('patient.careplan.print', '"Care Team"', ['patientId' => $patient->id])}}</strong>
+                                                                section of
+                                                                the {{link_to_route('patient.careplan.print', 'View CarePlan', ['patientId' => $patient->id])}}
+                                                                page to
+                                                                add or edit providers to receive email alerts.
+                                                            </p>
+                                                        @else
 
-                                                                <input type="checkbox" id="notify-careteam"
-                                                                       name="notify_careteam"
-                                                                       @empty($note_channels_text) disabled="disabled"
-                                                                       @endempty value="1">
-                                                                <label for="notify-careteam"
-                                                                       style="display: inline-block;"><span></span>Provider/CareTeam
+                                                            <input type="checkbox" id="notify-careteam"
+                                                                   name="notify_careteam"
+                                                                   @empty($note_channels_text) disabled="disabled"
+                                                                   @endempty value="1">
+                                                            <label for="notify-careteam"
+                                                                   style="display: inline-block;"><span></span>Provider/CareTeam
 
-                                                                </label>
-                                                                <div class="label"
-                                                                     data-tooltip="Notifies: {{ $notifies_text }} via {{ $note_channels_text }}">
-                                                                    <i class="fas fa-exclamation-circle fa-lg"
-                                                                       style="color:#50b2e2"></i>
-                                                                </div>
-
-                                                        </div>
-
-
-                                                    @endempty
+                                                            </label>
+                                                            <div class="label"
+                                                                 data-tooltip="Notifies: {{ $notifies_text }} via {{ $note_channels_text }}">
+                                                                <i class="fas fa-exclamation-circle fa-lg"
+                                                                   style="color:#50b2e2"></i>
+                                                            </div>
+                                                        @endempty
                                                     @endempty
 
                                                 </div>
@@ -346,7 +340,8 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            <div class="col-sm-12 call-status-radios phone-session-container" style="padding: 0">
+                                            <div class="col-sm-12 call-status-radios phone-session-container"
+                                                 style="padding: 0">
                                                 <div class="col-sm-12">
                                                     <div class="panel-group" id="accordion" style="margin-bottom: 2px">
                                                         <div id="collapseOne" class="panel-collapse collapse in"
@@ -527,6 +522,7 @@
                                                                  value="{{ !empty($note) ? $note->body : '' }}"
                                                                  name="body" :required="true"></persistent-textarea>
                                             <br>
+                                            <span>Authored by: {{$author_name}}</span>
                                         </div>
                                     </div>
 
