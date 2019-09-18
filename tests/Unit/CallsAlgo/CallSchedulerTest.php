@@ -11,13 +11,10 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class CallSchedulerTest extends TestCase
 {
-    use DatabaseTransactions;
-
     public function test_it_pauses_patient_after_5_unsuccessful_calls()
     {
         $patientInfo = factory(User::class)->create()->patientInfo()->create(['no_call_attempts_since_last_success' => 4]);

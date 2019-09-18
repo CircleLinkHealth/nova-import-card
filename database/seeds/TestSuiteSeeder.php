@@ -1,5 +1,7 @@
 <?php
 
+use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 
 class TestSuiteSeeder extends Seeder
@@ -11,6 +13,15 @@ class TestSuiteSeeder extends Seeder
      */
     public function run()
     {
+        Model::unguard();
+        
+        $this->call(CpmProblemsTableSeeder::class);
+        $this->call(AddNewDefaultCarePlanTemplate::class);
+        $this->call(RequiredRolesPermissionsSeeder::class);
+        $this->call(ChargeableServiceSeeder::class);
+        $this->call(ProblemCodeSystemsSeeder::class);
+        $this->call(SaasAccountsSeeder::class);
+        $this->call(SnomedToIcd9TestMapTableSeeder::class);
         $this->call(PracticeTableSeeder::class);
         $this->call(UserTableSeeder::class);
         $this->call(PatientSeeder::class);

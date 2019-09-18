@@ -159,7 +159,10 @@
   "autoload-dev": {
     "psr-4": {
       "Tests\\": "tests/"
-    }
+    },
+    "files": [
+      "vendor/circlelinkhealth/core/Helpers/helpers.php"
+    ]
   },
   "scripts": {
     "lint-php": [
@@ -182,20 +185,12 @@
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
       "@php artisan nova:publish"
     ],
-    "test-db-mysql": [
-      "php artisan config:clear && php artisan db:test && php artisan migrate:fresh && php artisan migrate && php artisan db:seed && php artisan db:seed --class=TestSuiteSeeder"
-    ],
-    "test-mysql": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner WrapperRunner -p8"
-    ],
     "test": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p8"
+      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p1"
     ],
-    "integration": [
-      "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner -p4"
-    ],
-    "feature": [
-      "./vendor/bin/paratest ./tests/feature --stop-on-failure --colors --runner SqliteRunner -p4"
+    "unit-tests": [
+      "php artisan --env=testing test:create-sqlite-db",
+      "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner  SqliteRunner -p10"
     ],
     "clear": [
       "php artisan clear-compiled",
