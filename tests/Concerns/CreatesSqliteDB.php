@@ -1,25 +1,29 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace ParaTest\Runners\PHPUnit;
+namespace Tests\Concerns;
 
 use Symfony\Component\Process\Process;
+use Tests\CreatesApplication;
 
-class SqliteRunnerCLH extends SqliteRunner
+trait CreatesSqliteDB
 {
-    public function __construct(array $opts = [])
+    use CreatesApplication;
+
+    public function createDB($dbNameSuffix = '')
     {
-        parent::__construct($opts);
-        try {
-            $config = include './config/database.php';
-            $this->createDatabase($config['connections']['sqlite']['database']);
-        } catch (\Exception $e) {
+        $app = $this->createApplication();
+
+        if ( ! empty($dbNameSuffix)) {
+            $dbNameSuffix = "-$dbNameSuffix";
         }
+
+        $dbname = base_path("tests/data/sqlite/test_db$dbNameSuffix.sqlite");
+
+        $this->createDatabase($dbname);
     }
 
     private function createDatabase($dbPath)
@@ -28,9 +32,8 @@ class SqliteRunnerCLH extends SqliteRunner
             touch($dbPath);
         }
 
-        $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh']);
-        $seedCommand            = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed']);
-        $testSuiteSeederCommand = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed', '--class=TestSuiteSeeder']);
+        $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh', '--env=testing']);
+        $testSuiteSeederCommand = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed', '--class=TestSuiteSeeder', '--env=testing']);
     }
 
     private function runCommand(array $command, bool $echoOutput = true)
