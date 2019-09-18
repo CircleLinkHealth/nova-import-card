@@ -91,7 +91,6 @@ trait SetupTestCustomerTrait
             'month_year' => Carbon::now()->copy()->subMonth($months->random())->startOfMonth()->toDateString(),
             'ccm_time'   => 1400,
             'approved'   => 1,
-            'actor_id'   => 1,
         ]);
 
         $patient->chargeableServices()->attach(1);

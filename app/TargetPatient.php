@@ -11,6 +11,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 
 /**
  * App\TargetPatient.
@@ -110,15 +111,44 @@ class TargetPatient extends BaseModel
         return $this->belongsTo(Practice::class);
     }
 
-    public function setStatusFromEligibilityJob(EligibilityJob $check)
+    /**
+     * @throws \Exception
+     *
+     * @return EligibilityJob
+     */
+    public function processEligibility()
     {
-        if ($check->isIneligible()) {
+        $this->loadMissing('batch');
+
+        if ( ! $this->batch) {
+            throw new \Exception('A batch is necessary to process a target patient.');
+        }
+
+        return tap(
+            app(AthenaEligibilityCheckableFactory::class)
+                ->makeAthenaEligibilityCheckable($this)
+                ->createAndProcessEligibilityJobFromMedicalRecord(),
+            function (EligibilityJob $eligibilityJob) {
+                $this->setStatusFromEligibilityJob($eligibilityJob);
+            }
+        );
+    }
+
+    public function setStatusFromEligibilityJob(EligibilityJob $eligibilityJob)
+    {
+        if ($eligibilityJob->isIneligible()) {
             $this->status = self::STATUS_INELIGIBLE;
-        } elseif ($check->isEligible() || $check->wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()) {
+        } elseif ($eligibilityJob->isEligible() || $eligibilityJob->wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()) {
             $this->status = self::STATUS_ELIGIBLE;
-        } elseif ($check->isAlreadyEnrolled()) {
+        } elseif ($eligibilityJob->isAlreadyEnrolled()) {
             $this->status = self::STATUS_ENROLLED;
         }
+    }
+
+    public function setStatusFromException(\Exception $e)
+    {
+        $this->status      = TargetPatient::STATUS_ERROR;
+        $this->description = $e->getMessage();
     }
 
     public function user()

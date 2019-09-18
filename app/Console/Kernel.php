@@ -38,6 +38,7 @@ use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Tests\Commands\CreateAndSeedSqliteDB;
 
 class Kernel extends ConsoleKernel
 {
@@ -45,6 +46,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        CreateAndSeedSqliteDB::class,
     ];
 
     /**
