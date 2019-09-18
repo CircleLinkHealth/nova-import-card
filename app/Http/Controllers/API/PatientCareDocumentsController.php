@@ -7,11 +7,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendAWVDocument;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\SendCareDocument;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus;
 use CircleLinkHealth\Customer\Entities\User;
@@ -34,6 +34,8 @@ class PatientCareDocumentsController extends Controller
         'PPP',
         'Provider Report',
     ];
+
+    private $sendChannels;
 
     public function downloadCareDocument($id, $mediaId)
     {
@@ -80,7 +82,7 @@ class PatientCareDocumentsController extends Controller
         ]);
     }
 
-    public function sendCareDocument($patientId, $mediaId, $channelInput, $addressOrFax)
+    public function sendCareDocument($patientId, $mediaId, $channel, $input)
     {
         $media = $this->getMediaItemById($patientId, $mediaId);
 
@@ -107,25 +109,16 @@ class PatientCareDocumentsController extends Controller
             );
         }
 
-        $channel = $this->setChannelAndValidateInput($channelInput, $addressOrFax);
+        $validator = $this->setChannelAndValidateInput($channel, $input);
 
-        if (is_a($channel, Validator::class)) {
-            return response()->json($channel->messages(), 400);
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 400);
         }
 
-        $notifiable = $this->getNotifiableEntity($channelInput, $addressOrFax);
-
-        if ( ! $notifiable) {
-            return response()->json(
-                'Could not find Recipient in our system.',
-                400
-            );
-        }
-
-        $notifiable->notify(new SendCareDocument($media, $patient, $channel));
+        SendAWVDocument::dispatch($media, $patient, $this->sendChannels, $input);
 
         return response()->json(
-            'Document sent successfully!',
+            '',
             200
         );
     }
@@ -178,57 +171,30 @@ class PatientCareDocumentsController extends Controller
             ->find($mediaId);
     }
 
-    private function getNotifiableEntity($channel, $input)
-    {
-        switch ($channel) {
-            case 'email':
-                $notifiable = User::whereEmail($input)->first();
-                break;
-            case 'direct':
-                $notifiable = User::whereHas('emrDirect', function ($emr) use ($input) {
-                    $emr->where('address', $input);
-                })->first();
-                break;
-            case 'fax':
-                $notifiable = Location::whereFax($input)->first();
-                break;
-            default:
-                $notifiable = null;
-        }
-
-        return $notifiable;
-    }
-
     private function setChannelAndValidateInput($channel, $input)
     {
         switch ($channel) {
             case 'email':
-                $channel         = ['mail'];
-                $validationRules = ['required', 'email'];
+                $this->sendChannels = ['mail'];
+                $validationRules    = ['required', 'email'];
                 break;
             case 'direct':
-                $channel         = [DirectMailChannel::class];
-                $validationRules = ['required', 'email'];
+                $this->sendChannels = [DirectMailChannel::class];
+                $validationRules    = ['required', 'email'];
                 break;
             case 'efax':
-                $channel         = [FaxChannel::class];
-                $validationRules = ['required', 'phone:us'];
+                $this->sendChannels = [FaxChannel::class];
+                $validationRules    = ['required', 'phone:us'];
                 break;
             default:
-                $channel         = [];
-                $validationRules = [];
+                $this->sendChannels = [];
+                $validationRules    = [];
         }
 
-        $validator = Validator::make([
+        return Validator::make([
             'input' => $input,
         ], [
             'input' => $validationRules,
         ]);
-
-        if ($validator->fails()) {
-            return $validator;
-        }
-
-        return $channel;
     }
 }

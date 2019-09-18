@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -18,7 +19,9 @@ class SendCareDocument extends Notification
 {
     use Queueable;
 
-    private $channels = ['database'];
+    private $channels = [
+        //        'database'
+    ];
     private $media;
     private $patient;
     private $reportType;
@@ -30,7 +33,7 @@ class SendCareDocument extends Notification
      * @param mixed $patient
      * @param mixed $channels
      */
-    public function __construct(Media $media, User $patient, $channels = ['mail'])
+    public function __construct(Media $media, User $patient, $channels = [])
     {
         $this->media = $media;
 
@@ -94,6 +97,8 @@ class SendCareDocument extends Notification
     public function toDirectMail($notifiable)
     {
         if ( ! $notifiable || ! $notifiable->emr_direct_address) {
+            throw new \Exception('File retrieved is not in json format.', 500);
+
             return false;
         }
 
@@ -153,6 +158,10 @@ class SendCareDocument extends Notification
      */
     public function via($notifiable)
     {
+        if (is_a($notifiable, AnonymousNotifiable::class)) {
+            return [array_key_first($notifiable->routes)];
+        }
+
         return $this->channels;
     }
 
