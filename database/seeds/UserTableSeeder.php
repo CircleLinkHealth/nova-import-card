@@ -5,6 +5,7 @@
  */
 
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -20,7 +21,7 @@ class UserTableSeeder extends Seeder
             factory(User::class, 1)->create()->each(function ($admin) use ($practice) {
                 $admin->username = 'admin';
                 $admin->email = 'admin@example.org';
-                $admin->attachPractice($practice->id, [1]);
+                $admin->attachPractice($practice->id, [Role::whereName('administrator')->value('id')]);
                 $admin->program_id = $practice->id;
                 $admin->save();
 
@@ -31,7 +32,7 @@ class UserTableSeeder extends Seeder
             factory(User::class, 1)->create()->each(function ($nurse) use ($practice) {
                 $nurse->username = 'nurse';
                 $nurse->email = 'nurse@example.org';
-                $nurse->attachPractice($practice->id, [11]);
+                $nurse->attachPractice($practice->id, [Role::whereName('care-coach')->value('id')]);
                 $nurse->program_id = $practice->id;
                 $nurse->save();
                 $nurse->nurseInfo()->create();
