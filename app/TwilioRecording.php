@@ -37,6 +37,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRecording whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRecording whereUrl($value)
  * @mixin \Eloquent
+ *
+ * @property int|null $revision_history_count
  */
 class TwilioRecording extends BaseModel
 {

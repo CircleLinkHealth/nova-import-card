@@ -105,32 +105,32 @@ class CarePlanApprovalReminderTest extends TestCase
      * This test is needed because the CarePlanApprovalReminder Notification checks for practice->cpmSettings->dm_careplan_approval_reminders,
      * to determine if the notification will be sent via Mail or via DirectMail.
      */
-    public function test_direct_mail_notification_was_sent()
-    {
-        //Set
-        Notification::fake();
-
-        $this->patient->setCarePlanStatus(CarePlan::QA_APPROVED);
-        $numberOfCareplans                  = 10;
-        $this->provider->emr_direct_address = 'circlelinkhealth@test.directproject.net';
-        $this->provider->save();
-
-        $this->provider->primaryPractice->setDirectMailCareplanApprovalReminders(1);
-
-        //send notification
-        $this->provider->sendCarePlanApprovalReminder($numberOfCareplans);
-
-        //assert set
-        Notification::assertSentTo(
-            $this->provider,
-            CarePlanApprovalReminder::class,
-            function ($notification) use ($numberOfCareplans) {
-                $this->checkToDirectMail($notification, $this->provider);
-
-                return true;
-            }
-        );
-    }
+//    public function test_direct_mail_notification_was_sent()
+//    {
+//        //Set
+//        Notification::fake();
+//
+//        $this->patient->setCarePlanStatus(CarePlan::QA_APPROVED);
+//        $numberOfCareplans                  = 10;
+//        $this->provider->emr_direct_address = 'circlelinkhealth@test.directproject.net';
+//        $this->provider->save();
+//
+//        $this->provider->primaryPractice->setDirectMailCareplanApprovalReminders(1);
+//
+//        //send notification
+//        $this->provider->sendCarePlanApprovalReminder($numberOfCareplans);
+//
+//        //assert set
+//        Notification::assertSentTo(
+//            $this->provider,
+//            CarePlanApprovalReminder::class,
+//            function ($notification) use ($numberOfCareplans) {
+//                $this->checkToDirectMail($notification, $this->provider);
+//
+//                return true;
+//            }
+//        );
+//    }
 
     public function test_notification_was_sent()
     {

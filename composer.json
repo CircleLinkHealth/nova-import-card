@@ -101,7 +101,7 @@
     "laracasts/utilities": "~2.0",
     "laravel/framework": "5.7.*",
     "laravel/horizon": "^1.4",
-    "laravel/nova": "~2.0",
+    "laravel/nova": "2.0.7",
     "laravel/scout": "^7.1",
     "laravel/tinker": "^1.0",
     "laravelcollective/html": "5.7.*",

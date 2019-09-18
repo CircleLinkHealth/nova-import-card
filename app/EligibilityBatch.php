@@ -43,6 +43,9 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int|null $eligibility_jobs_count
+ * @property int|null $revision_history_count
  */
 class EligibilityBatch extends BaseModel
 {
@@ -139,6 +142,26 @@ class EligibilityBatch extends BaseModel
             case 3:
                 return 'green';
                 break;
+        }
+    }
+
+    public function getType()
+    {
+        switch ($this->type) {
+            case self::ATHENA_API:
+                return 'Athena';
+                break;
+            case self::TYPE_ONE_CSV:
+                return 'CSV';
+                break;
+            case self::TYPE_GOOGLE_DRIVE_CCDS:
+                return 'CCDs in GoogleDrive';
+                break;
+            case self::CLH_MEDICAL_RECORD_TEMPLATE:
+                return 'CLH Template';
+                break;
+            default:
+                return '';
         }
     }
 

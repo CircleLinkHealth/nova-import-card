@@ -75,6 +75,8 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\MedicationLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\MedicationLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\MedicationLog query()
+ *
+ * @property int|null $revision_history_count
  */
 class MedicationLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog
 {

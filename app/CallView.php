@@ -76,6 +76,10 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereCcmStatus($value)
+ *
+ * @property int $asap
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereAsap($value)
  */
 class CallView extends Model
 {

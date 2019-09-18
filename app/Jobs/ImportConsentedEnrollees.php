@@ -59,18 +59,11 @@ class ImportConsentedEnrollees implements ShouldQueue
             ->with(['targetPatient', 'practice', 'eligibilityJob'])
             ->chunk(10, function ($enrollees) use ($importService, &$imported) {
                 $newImported = $enrollees->map(function ($enrollee) use ($importService) {
-                    $url = route(
-                        'import.ccd.remix',
-                        'Click here to Create and a CarePlan and review.'
-                    );
-
                     //verify it wasn't already imported
                     if ($enrollee->user_id) {
-                        return [
-                            'patient' => $enrollee->nameAndDob(),
-                            'message' => 'This patient has already been imported',
-                            'type'    => 'error',
-                        ];
+                        $this->log('This patient has already been imported', $enrollee->id);
+
+                        return;
                     }
 
                     //verify it wasn't already imported
@@ -80,18 +73,14 @@ class ImportConsentedEnrollees implements ShouldQueue
                             $enrollee->user_id = $imr->patient_id;
                             $enrollee->save();
 
-                            return [
-                                'patient' => $enrollee->nameAndDob(),
-                                'message' => 'This patient has already been imported',
-                                'type'    => 'error',
-                            ];
+                            $this->log('This patient has already been imported', $enrollee->id);
+
+                            return;
                         }
 
-                        return [
-                            'patient' => $enrollee->nameAndDob(),
-                            'message' => "The CCD was imported. ${url}",
-                            'type'    => 'success',
-                        ];
+                        $this->log('The CCD was imported.', $enrollee->id);
+
+                        return;
                     }
 
                     //import PHX
@@ -117,19 +106,13 @@ class ImportConsentedEnrollees implements ShouldQueue
                         $response = $importService->importExistingCcda($enrollee->medical_record_id);
 
                         if ($response->imr) {
-                            return [
-                                'patient' => $enrollee->nameAndDob(),
-                                'message' => "The CCD was imported. ${url}",
-                                'type'    => 'success',
-                            ];
+                            $this->log('The CCD was imported.', $enrollee->id);
+
+                            return;
                         }
                     }
 
-                    return [
-                        'patient' => $enrollee->nameAndDob(),
-                        'message' => $response->message ?? 'Sorry. Some random error occured. Please post to #qualityassurance to notify everyone to stop using the importer, and also tag Michalis to fix this asap.',
-                        'type'    => 'error',
-                    ];
+                    $this->log($response->message ?? 'Sorry. Some random error occured. Please post to #qualityassurance to notify everyone to stop using the importer, and also tag Michalis to fix this asap.', $enrollee->id);
                 });
 
                 $imported = $imported->merge($newImported);
@@ -195,11 +178,6 @@ class ImportConsentedEnrollees implements ShouldQueue
 
     private function importTargetPatient(Enrollee $enrollee)
     {
-        $url = route(
-            'import.ccd.remix',
-            'Click here to Create and a CarePlan and review.'
-        );
-
         $athenaApi = app(Calls::class);
 
         $ccdaExternal = $athenaApi->getCcd(
@@ -209,11 +187,9 @@ class ImportConsentedEnrollees implements ShouldQueue
         );
 
         if ( ! isset($ccdaExternal[0])) {
-            return [
-                'patient' => $enrollee->nameAndDob(),
-                'message' => 'Could not retrieve CCD from Athena',
-                'type'    => 'error',
-            ];
+            $this->log('Could not retrieve CCD from Athena', $enrollee->id);
+
+            return;
         }
 
         $ccda = Ccda::create([
@@ -227,10 +203,13 @@ class ImportConsentedEnrollees implements ShouldQueue
         $imported                      = $ccda->import();
         $enrollee->save();
 
-        return [
-            'patient' => $enrollee->nameAndDob(),
-            'message' => "The CCD was imported. ${url}",
-            'type'    => 'success',
-        ];
+        $this->log('The CCD was imported', $enrollee->id);
+    }
+
+    private function log($message, int $id)
+    {
+        \Log::channel('logdna')->warning($message, [
+            'enrollee_id' => $id,
+        ]);
     }
 }
