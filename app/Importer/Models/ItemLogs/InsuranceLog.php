@@ -7,7 +7,6 @@
 namespace App\Importer\Models\ItemLogs;
 
 use App\Models\CCD\CcdInsurancePolicy;
-use App\Traits\Relationships\BelongsToCcda;
 use App\Traits\Relationships\BelongsToVendor;
 
 /**
@@ -50,6 +49,8 @@ use App\Traits\Relationships\BelongsToVendor;
  * @property array|null $raw
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereRaw($value)
+ *
+ * @property int|null $revision_history_count
  */
 class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {

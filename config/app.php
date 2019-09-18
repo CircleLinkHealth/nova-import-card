@@ -191,6 +191,8 @@ return [
         App\Providers\AppServiceProvider::class,
         App\Providers\AppDeferredServiceProvider::class,
 
+        App\Providers\BroadcastServiceProvider::class,
+
         App\Providers\HtmlToPdfServiceProvider::class,
         App\Providers\DirectMailServiceProvider::class,
         App\Providers\FaxServiceProvider::class,
