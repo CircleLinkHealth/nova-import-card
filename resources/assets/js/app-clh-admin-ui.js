@@ -34,7 +34,7 @@ import EventBus from './admin/time-tracker/comps/event-bus'
 import { ClientTable, ServerTable } from 'vue-tables-2'
 
 const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
-const CallMgmtApp = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app')
+const CallMgmtApp = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app') // resources/assets/js/admin/calls/app.vue
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
 const CaDirectorPanel = () => import(/* webpackChunkName: "chunk-admin" */ './admin/ca-director/panel')
 const NurseDailyHours = () => import(/* webpackChunkName: "chunk-admin" */ './components/pages/work-schedule/daily-hours')
@@ -47,7 +47,7 @@ const PassportPersonalAccessTokensComponent = () => import(/* webpackChunkName: 
 const CpmMedicationGroupsMapsSettings = () => import(/* webpackChunkName: "chunk-admin" */ './admin/cpm-medication-groups-maps-settings')
 const NotificationsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/shared/notifications/notifications')
 const LoaderComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/loader')
-
+const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/NurseScheduleCalendar');
 
 Vue.use(ClientTable, {}, false)
 Vue.use(ServerTable, {}, false)
@@ -66,6 +66,7 @@ Vue.component('passport-personal-access-tokens', PassportPersonalAccessTokensCom
 Vue.component('cpm-medication-groups-maps-settings', CpmMedicationGroupsMapsSettings)
 Vue.component('notifications', NotificationsComponent);
 Vue.component('loader', LoaderComponent);
+Vue.component('nurse-schedule-calendar', NurseScheduleCalendar);
 
 
 

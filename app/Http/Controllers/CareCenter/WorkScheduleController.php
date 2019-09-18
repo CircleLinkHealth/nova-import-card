@@ -100,16 +100,37 @@ class WorkScheduleController extends Controller
 
     public function getAllNurseSchedules()
     {
-        $data = User::ofType('care-center')
+        $nurses = User::ofType('care-center')
             ->with('nurseInfo.windows')
             ->whereHas('nurseInfo', function ($q) {
                 $q->where('status', 'active');
             })
+            ->whereHas('nurseInfo.windows')
             ->get()
             ->sortBy('first_name');
 
-        $tzAbbr = auth()->user()->timezone_abbr ?? 'EDT';
+        $calendarData = $nurses->map(function ($nurse) {
+            return collect($nurse->nurseInfo->windows)->map(function ($window) use ($nurse) {
+                $weekMap = [
+                    1 => Carbon::parse($window->date)->startOfWeek()->toDateString(),
+                    2 => Carbon::parse($window->date)->startOfWeek()->addDay(1)->toDateString(),
+                    3 => Carbon::parse($window->date)->startOfWeek()->addDay(2)->toDateString(),
+                    4 => Carbon::parse($window->date)->startOfWeek()->addDay(3)->toDateString(),
+                    5 => Carbon::parse($window->date)->startOfWeek()->addDay(4)->toDateString(),
+                    6 => Carbon::parse($window->date)->startOfWeek()->addDay(5)->toDateString(),
+                    7 => Carbon::parse($window->date)->startOfWeek()->addDay(6)->toDateString(),
+                ];
 
+                return collect([
+                    'title' => $nurse->display_name,
+                    'start' => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
+                    'end'   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
+                ]);
+            });
+        })->flatten(1);
+
+        $tzAbbr = auth()->user()->timezone_abbr ?? 'EDT';
+        
         return view('admin.nurse.schedules.index', compact(['data', 'tzAbbr']));
     }
 
@@ -201,9 +222,9 @@ class WorkScheduleController extends Controller
                         $window->window_time_start
                     ));
             }) + Carbon::createFromFormat(
-                'H:i',
-                $request->input('window_time_end')
-            )->diffInHours(Carbon::createFromFormat(
+                    'H:i',
+                    $request->input('window_time_end')
+                )->diffInHours(Carbon::createFromFormat(
                     'H:i',
                     $request->input('window_time_start')
                 ));
