@@ -38,6 +38,7 @@ use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Tests\Commands\CreateAndSeedSqliteDB;
 
 class Kernel extends ConsoleKernel
 {
@@ -45,6 +46,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        CreateAndSeedSqliteDB::class,
     ];
 
     /**
@@ -184,7 +186,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(OverwriteNBIPatientMRN::class)->everyThirtyMinutes()->onOneServer();
 
-        $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->monthlyOn(1, '00:30')->onOneServer();
+        $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->dailyAt('00:10')->onOneServer();
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)->monthlyOn(1, '08:30')->onOneServer();
 
         $sendReminderAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->subHours(36);

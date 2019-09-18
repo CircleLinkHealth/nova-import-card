@@ -56,11 +56,11 @@ jobs:
 
     #    - run: npm run prod
     # prepare the database
-    - run: cp .env.circleci .env
+    - run: cp .env.testing .env
     #    - run: php artisan migrate --force
 
       # run tests with paratest
-    - run: ./vendor/bin/paratest ./tests/Unit --verbose=1 --stop-on-failure --colors --runner SqliteRunner -p8
+    - run: composer unit-test
     - store_test_results:
         path: tests/_output
     - store_artifacts:

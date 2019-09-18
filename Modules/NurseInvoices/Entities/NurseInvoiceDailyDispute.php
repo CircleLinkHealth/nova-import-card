@@ -41,6 +41,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  */
 class NurseInvoiceDailyDispute extends BaseModel
 {
+    const STATUS_PENDING = 'pending';
+
     protected $casts = [
         'disputed_day' => 'date',
     ];

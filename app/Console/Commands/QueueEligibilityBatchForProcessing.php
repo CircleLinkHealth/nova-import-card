@@ -14,7 +14,6 @@ use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
-use App\Services\AthenaAPI\DetermineEnrollmentEligibility as AthenaDetermineEnrollmentEligibility;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use App\Services\GoogleDrive;
@@ -189,23 +188,21 @@ class QueueEligibilityBatchForProcessing extends Command
 
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        $athenaService  = app(AthenaDetermineEnrollmentEligibility::class);
         $query          = TargetPatient::whereBatchId($batch->id)->whereStatus(TargetPatient::STATUS_TO_PROCESS);
-        $targetPatients = $query->with('batch')->chunkById(100, function ($targetPatients) use (&$athenaService, $batch) {
-            //Processing
+        $targetPatients = $query->with('batch')->chunkById(100, function (\Eloquent $targetPatients) use ($batch) {
             $batch->status = EligibilityBatch::STATUSES['processing'];
             $batch->save();
 
-            foreach ($targetPatients as $targetPatient) {
+            $targetPatients->each(function (TargetPatient $targetPatient) use ($batch) {
                 try {
-                    $athenaService->determineEnrollmentEligibility($targetPatient);
+                    $targetPatient->processEligibility();
                 } catch (\Exception $exception) {
                     $targetPatient->status = TargetPatient::STATUS_ERROR;
                     $targetPatient->save();
 
                     throw $exception;
                 }
-            }
+            });
         });
 
         $batch->processPendingJobs(200);
