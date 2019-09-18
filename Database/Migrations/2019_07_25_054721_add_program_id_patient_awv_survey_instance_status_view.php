@@ -13,6 +13,8 @@ class AddProgramIdPatientAwvSurveyInstanceStatusView extends Migration
      */
     public function up()
     {
+        if (isUnitTestingEnv()) {return;}
+    
         $viewName = 'patient_awv_survey_instance_status_view';
         \DB::statement("DROP VIEW IF EXISTS ${viewName}");
         \DB::statement("
