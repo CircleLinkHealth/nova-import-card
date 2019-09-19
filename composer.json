@@ -78,7 +78,7 @@
     "appstract/laravel-opcache": "^2.0",
     "barryvdh/laravel-snappy": "0.4.4",
     "circlelinkhealth/core": "dev-master",
-    "circlelinkhealth/customer": "dev-master",
+    "circlelinkhealth/customer": "1.0",
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/timetracking": "dev-master",
     "circlelinkhealth/twofa": "dev-master",
