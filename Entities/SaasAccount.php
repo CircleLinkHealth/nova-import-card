@@ -41,6 +41,10 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount withoutTrashed()
  * @mixin \Eloquent
+ * @property-read int|null $media_count
+ * @property-read int|null $practices_count
+ * @property-read int|null $revision_history_count
+ * @property-read int|null $users_count
  */
 class SaasAccount extends BaseModel implements HasMedia
 {

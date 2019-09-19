@@ -89,7 +89,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @mixin \Eloquent
  * @property int|null $saas_account_id
  * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $careAmbassadorLogs
- * @property \App\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices
  * @property \App\EnrolleeCustomFilter[]|\Illuminate\Database\Eloquent\Collection $enrolleeCustomFilters
  * @property \App\PracticeEnrollmentTips $enrollmentTips
  * @property string $number_with_dashes
@@ -111,6 +111,17 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice query()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     whereSaasAccountId($value)
+ * @property-read int|null $care_ambassador_logs_count
+ * @property-read int|null $careplan_count
+ * @property-read int|null $chargeable_services_count
+ * @property-read int|null $enrollee_custom_filters_count
+ * @property-read int|null $locations_count
+ * @property-read int|null $media_count
+ * @property-read int|null $notifications_count
+ * @property-read int|null $pcp_count
+ * @property-read int|null $revision_history_count
+ * @property-read int|null $settings_count
+ * @property-read int|null $users_count
  */
 class Practice extends BaseModel implements HasMedia
 {

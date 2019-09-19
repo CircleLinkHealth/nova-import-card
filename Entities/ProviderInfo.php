@@ -52,6 +52,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $pronunciation
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ProviderInfo wherePronunciation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ProviderInfo whereSex($value)
+ * @property-read int|null $revision_history_count
  */
 class ProviderInfo extends \CircleLinkHealth\Core\Entities\BaseModel
 {

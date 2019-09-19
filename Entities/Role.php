@@ -29,6 +29,8 @@ use Michalisantoniou6\Cerberus\CerberusRole;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Role query()
+ * @property-read int|null $perms_count
+ * @property-read int|null $users_count
  */
 class Role extends CerberusRole
 {

@@ -33,6 +33,7 @@ use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientContactWindow newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientContactWindow newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientContactWindow query()
+ * @property-read int|null $revision_history_count
  */
 class PatientContactWindow extends BaseModel
 {
