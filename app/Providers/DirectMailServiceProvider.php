@@ -9,6 +9,7 @@ namespace App\Providers;
 use App\Contracts\DirectMail;
 use App\Services\PhiMail\IncomingMessageHandler;
 use App\Services\PhiMail\PhiMail;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\ServiceProvider;
 
 class DirectMailServiceProvider extends ServiceProvider
@@ -35,6 +36,43 @@ class DirectMailServiceProvider extends ServiceProvider
         $this->app->bind(
             DirectMail::class,
             function () {
+                //return a fake if we are unit testing
+                //From Michalis: I put this in while trying to make CircleCI not fail. I suspect it's because tests trigger DM
+                if ($this->app->environment('testing')) {
+                    new class() implements DirectMail {
+                        /**
+                         * @return mixed
+                         */
+                        public function receive()
+                        {
+                            // TODO: Implement receive() method.
+                        }
+
+                        /**
+                         * @param $outboundRecipient
+                         * @param null                                          $binaryAttachmentFilePath
+                         * @param null                                          $binaryAttachmentFileName
+                         * @param null                                          $ccdaAttachmentPath
+                         * @param \CircleLinkHealth\Customer\Entities\User|null $patient
+                         * @param null                                          $body
+                         * @param null                                          $subject
+                         *
+                         * @return mixed
+                         */
+                        public function send(
+                            $outboundRecipient,
+                            $binaryAttachmentFilePath = null,
+                            $binaryAttachmentFileName = null,
+                            $ccdaAttachmentPath = null,
+                            User $patient = null,
+                            $body = null,
+                            $subject = null
+                        ) {
+                            // TODO: Implement send() method.
+                        }
+                    };
+                }
+
                 return new PhiMail(
                     app()->make(IncomingMessageHandler::class)
                 );

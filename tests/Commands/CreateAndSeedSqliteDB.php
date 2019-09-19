@@ -35,6 +35,6 @@ class CreateAndSeedSqliteDB extends Command
 
         $duration = round((microtime(true) - $start) * 1000);
 
-        $this->line(PHP_EOL.PHP_EOL.PHP_EOL.'Time: '.$duration);
+        $this->line(PHP_EOL.PHP_EOL.PHP_EOL."Time: {$duration}ms");
     }
 }
