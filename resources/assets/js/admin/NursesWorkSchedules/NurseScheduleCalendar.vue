@@ -21,7 +21,6 @@
         data() {
             return {
                 events: this.calendarData,
-
             }
         },
 

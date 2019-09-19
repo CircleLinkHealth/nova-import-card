@@ -98,10 +98,13 @@ class WorkScheduleController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getAllNurseSchedules()
     {
-        $nurses = User::ofType('care-center')
-            ->with('nurseInfo.windows')
+        $nurses = User::// ofType('care-center')
+        with('nurseInfo.windows')
             ->whereHas('nurseInfo', function ($q) {
                 $q->where('status', 'active');
             })
@@ -121,8 +124,12 @@ class WorkScheduleController extends Controller
                     7 => Carbon::parse($window->date)->startOfWeek()->addDay(6)->toDateString(),
                 ];
 
+                $dayInHumanLang = Carbon::parse($weekMap[$window->day_of_week])->format('l');
+
+                $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
+
                 return collect([
-                    'title' => $nurse->display_name,
+                    'title' => "$nurse->display_name: $workHoursForDay Hrs",
                     'start' => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
                     'end'   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
                 ]);
@@ -221,13 +228,13 @@ class WorkScheduleController extends Controller
                         'H:i:s',
                         $window->window_time_start
                     ));
-            }) + Carbon::createFromFormat(
+                }) + Carbon::createFromFormat(
                     'H:i',
                     $request->input('window_time_end')
                 )->diffInHours(Carbon::createFromFormat(
-                    'H:i',
-                    $request->input('window_time_start')
-                ));
+                'H:i',
+                $request->input('window_time_start')
+            ));
 
         $invalidWorkHoursNumber = false;
 
