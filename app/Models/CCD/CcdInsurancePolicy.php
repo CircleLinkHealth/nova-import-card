@@ -60,8 +60,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class CcdInsurancePolicy extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use MedicalRecordIdAndTypeTrait;
-    use
-        SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'medical_record_id',

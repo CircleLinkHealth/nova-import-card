@@ -29,8 +29,13 @@ class AddFieldsToDisputes extends Migration
                 $table->unsignedInteger('resolved_by')->after('resolved_at')->nullable();
             }
 
-            $table->unsignedInteger('disputable_id')->after('id');
-            $table->string('disputable_type')->after('id');
+            if ( ! Schema::hasColumn('disputes', 'disputable_id')) {
+                $table->unsignedInteger('disputable_id')->after('id');
+            }
+
+            if ( ! Schema::hasColumn('disputes', 'disputable_type')) {
+                $table->string('disputable_type')->after('id');
+            }
 
             $table->foreign('resolved_by')
                 ->references('id')
