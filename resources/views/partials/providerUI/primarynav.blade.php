@@ -189,7 +189,8 @@ $user = auth()->user();
                         <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
                              aria-expanded="false"><i class="glyphicon glyphicon-bell"></i> Notifications
                             <a class="inline-block">
-                                <pusher-notifications :user="{{json_encode(Auth::user())}}"></pusher-notifications>
+
+                                <pusher-notifications :user-id="{{json_encode(\Illuminate\Support\Facades\Auth::id())}}"></pusher-notifications>
                             </a>
                         </div>
                     </li>

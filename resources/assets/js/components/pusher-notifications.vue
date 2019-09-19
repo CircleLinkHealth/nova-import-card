@@ -40,14 +40,14 @@
             'loader': LoaderComponent,
         },
         props: [
-            'user'
+            'userId'
         ],
 
         data() {
             return {
                 notificationsFromPusher: [],
                 notificationsFromDb: [],
-                authUserId: this.user.id,
+                authUserId: this.userId,
                 count: '',
                 patientName: '',
                 senderName: '',
@@ -78,13 +78,13 @@
         },
         methods: {
             show(notification) {
-                const getSenderName = notification.data.sender_name;
-                const getNotificationSubject = notification.data.subject;
-                const getPatientName = notification.data.patient_name;
-                const getNotificationElapsedTime = notification.elapsed_time;
+                const senderName = notification.data.sender_name;
+                const notificationSubject = notification.data.subject;
+                const patientName = notification.data.patient_name;
+                const notificationElapsedTime = notification.elapsed_time;
 
-                return `<strong>${getSenderName}</strong> ${getNotificationSubject}<strong> ${getPatientName}</strong>
-                        <span style="float: right;padding-top: 4%; color: #90949c">${getNotificationElapsedTime}</span>`;
+                return `<strong>${senderName}</strong> ${notificationSubject}<strong> ${patientName}</strong>
+                        <span style="float: right;padding-top: 4%; color: #90949c">${notificationElapsedTime}</span>`;
 
             },
 

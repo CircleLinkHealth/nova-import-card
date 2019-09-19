@@ -10,6 +10,7 @@ use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\NoteFinalSaved;
 use App\Http\Requests\NotesReport;
+use App\Models\Addendum;
 use App\Note;
 use App\Repositories\PatientWriteRepository;
 use App\SafeRequest;
@@ -24,7 +25,6 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -217,27 +217,13 @@ class NotesController extends Controller
     }
 
     /**
-     * @param $senderId
-     *
-     * @return JsonResponse
-     */
-    public function getAddendumSenderName($senderId)
-    {
-        $senderName = User::find($senderId)->display_name;
-
-        return response()->json([
-            'senderName' => $senderName,
-        ], 200);
-    }
-
-    /**
      * @param $noteId
      *
      * @return Collection|Model|Note|Note[]|null
      */
     public function getNoteForAddendum($noteId)
     {
-        return Note::find($noteId);
+        return Note::findOrFail($noteId);
     }
 
     public function index(
@@ -711,7 +697,7 @@ class NotesController extends Controller
     public function storeAddendum(
         Request $request,
         $patientId,
-        $noteId
+        int $noteId
     ) {
         $this->validate(
             $request,
@@ -805,6 +791,20 @@ class NotesController extends Controller
             ->all();
     }
 
+//    /**
+//     * @param $senderId
+//     *
+//     * @return JsonResponse
+//     */
+//    public function getAddendumSenderName($senderId)
+//    {
+//        $senderName = User::find($senderId)->display_name;
+//
+//        return response()->json([
+//            'senderName' => $senderName,
+//        ], 200);
+//    }
+
     private function shouldPrePopulateWithMedications(User $patient)
     {
         return Practice::whereId($patient->program_id)
@@ -838,7 +838,7 @@ class NotesController extends Controller
         if (isset($input['ccm_status']) && in_array(
             $input['ccm_status'],
             [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED]
-            )) {
+        )) {
             $info->ccm_status = $input['ccm_status'];
 
             if ('withdrawn' == $input['ccm_status']) {
