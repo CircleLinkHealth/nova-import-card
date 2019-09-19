@@ -28,6 +28,13 @@ class CreateAndSeedSqliteDB extends Command
 
     public function handle()
     {
+        $this->warn('Creating and seeding test DB.'.PHP_EOL);
+        $start = microtime(true);
+
         $this->createDB();
+
+        $end = microtime(true) - $start;
+
+        $this->line(PHP_EOL.PHP_EOL.PHP_EOL.'Time: '.$end);
     }
 }
