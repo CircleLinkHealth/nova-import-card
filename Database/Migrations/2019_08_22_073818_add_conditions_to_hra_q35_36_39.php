@@ -20,6 +20,8 @@ class AddConditionsToHraQ353639 extends Migration
      */
     public function up()
     {
+        if (isUnitTestingEnv()) return;
+        
         $table                        = 'questions';
         $dataConditionsForCase35And36 = json_encode(
             [

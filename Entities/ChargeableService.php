@@ -9,7 +9,7 @@ namespace CircleLinkHealth\Customer\Entities;
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
- * App\ChargeableService.
+ * CircleLinkHealth\Customer\Entities\ChargeableService.
  *
  * @property int $id
  * @property string $code

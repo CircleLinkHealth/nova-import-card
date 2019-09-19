@@ -25,6 +25,7 @@ class CreatePatientAWVSummariesTable extends Migration
     {
         Schema::create('patient_awv_summaries', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('year');
             $table->unsignedInteger('patient_id');
             $table->date('month_year');
             $table->dateTime('initial_visit')->nullable();

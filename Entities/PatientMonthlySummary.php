@@ -60,7 +60,7 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @property \App\Models\CCD\Problem|null                                                   $billableProblem1
  * @property \App\Models\CCD\Problem|null                                                   $billableProblem2
  * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection             $billableProblems
- * @property \App\ChargeableService[]|\Illuminate\Database\Eloquent\Collection              $chargeableServices
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection              $chargeableServices
  * @property \CircleLinkHealth\Customer\Entities\User                                       $patient
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary hasServiceCode($code)

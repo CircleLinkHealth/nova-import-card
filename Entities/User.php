@@ -253,7 +253,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     $activitiesAsProvider
  * @property \CircleLinkHealth\TwoFA\Entities\AuthyUser $authyUser
  * @property \App\CareplanAssessment $carePlanAssessment
- * @property \App\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
  * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection
  *     $clinicalEmergencyContactLocations
@@ -2372,22 +2372,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 ->first();
         }
 
-        $practiceId = null;
+        $practiceId = parseIds($practice);
 
-        if (is_object($practice)) {
-            $practiceId = $practice->id;
-        }
-
-        if (is_int($practice)) {
-            $practiceId = $practice;
-        }
-
-        if (!$practiceId) {
+        if (! $practiceId) {
             return null;
         }
 
         return $this->practices()
-            ->where('program_id', '=', $practiceId)
+            ->where('program_id', '=', $practiceId[0])
             ->first();
     }
 
@@ -2824,7 +2816,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             function ($q) use ($practiceId) {
                 $q->whereIn('id', $practiceId);
             }
-        );
+        )->orWhere('program_id', $practiceId);
     }
 
     /**
