@@ -36,8 +36,12 @@ class DirectMailServiceProvider extends ServiceProvider
         $this->app->bind(
             DirectMail::class,
             function () {
-                //return a fake if we are unit testing
-                //From Michalis: I put this in while trying to make CircleCI not fail. I suspect it's because tests trigger DM
+                // Return a fake if we are unit testing.
+
+                // From Michalis:
+                // I put this in while trying to make CircleCI not fail. I suspect it's because tests trigger DM
+                // This is a just-in-case. I don't know if it will actually get hit ever.
+
                 if ($this->app->environment('testing')) {
                     new class() implements DirectMail {
                         /**
