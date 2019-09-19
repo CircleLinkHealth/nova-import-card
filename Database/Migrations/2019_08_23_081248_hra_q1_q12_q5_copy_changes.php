@@ -23,9 +23,15 @@ class HraQ1Q12Q5CopyChanges extends Migration
         $surveysTable         = 'surveys';
         $surveyQuestionsTable = 'survey_questions';
 
-        $hraSurveyId = DB::table($surveysTable)
-            ->where('name', 'HRA')
-            ->first()->id;
+        $hraSurvey = DB::table($surveysTable)
+                         ->where('name', 'HRA')
+                         ->first();
+
+        if (!$hraSurvey) {
+            return;
+        }
+
+        $hraSurveyId = $hraSurvey->id;
 
         $now = Carbon\Carbon::now();
 
@@ -59,18 +65,14 @@ class HraQ1Q12Q5CopyChanges extends Migration
             ]);
 
         // Q1 split to a and b
-        $qTypeId = DB::table($questionTypesAnswers)
-            ->where('value', 'Native Hawaiian or other Pacific Islander')
-            ->first()->id;
+        $toDelete = DB::table($questionTypesAnswers)
+                        ->where('value', 'Hispanic or Latino Origin or Descent')
+                        ->first()->id;
 
-        DB::table($questionTypesAnswers)
-            ->insert([
-                'question_type_id' => $qTypeId,
-                'value'            => 'Hispanic or Latino Origin or Descent',
-                'options'          => null,
-                'created_at'       => $now,
-                'updated_at'       => $now,
-            ]);
+        if ($toDelete) {
+            DB::table($questionTypesAnswers)
+              ->delete($toDelete->id);
+        }
 
         $toDeleteId = DB::table($questionGroups)
             ->where('body', 'What is your race and ethnicity')
@@ -170,9 +172,15 @@ class HraQ1Q12Q5CopyChanges extends Migration
         $surveysTable         = 'surveys';
         $surveyQuestionsTable = 'survey_questions';
 
-        $hraSurveyId = DB::table($surveysTable)
-            ->where('name', 'HRA')
-            ->first()->id;
+        $hraSurvey = DB::table($surveysTable)
+                         ->where('name', 'HRA')
+                         ->first();
+
+        if (!$hraSurvey) {
+            return;
+        }
+
+        $hraSurveyId = $hraSurvey->id;
 
         $now = Carbon\Carbon::now();
 
@@ -252,10 +260,6 @@ class HraQ1Q12Q5CopyChanges extends Migration
                 'created_at'        => $now,
                 'updated_at'        => $now,
             ]);
-
-        $newQuestionId = DB::table($questionsTable)
-            ->where('body', 'Are you Hispanic or Latino?')
-            ->first()->id;
 
         $surveyInstanceId = DB::table($surveyQuestionsTable)
             ->where('question_id', $oldQuestionId)
