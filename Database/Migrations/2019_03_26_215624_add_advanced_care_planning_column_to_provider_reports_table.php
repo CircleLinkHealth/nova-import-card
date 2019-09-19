@@ -14,7 +14,7 @@ class AddAdvancedCarePlanningColumnToProviderReportsTable extends Migration
     public function up()
     {
         Schema::table('provider_reports', function (Blueprint $table) {
-            $table->json('advanced_care_planning')->nullable()->default('null');
+            $table->json('advanced_care_planning')->nullable()->default('');
         });
     }
 
