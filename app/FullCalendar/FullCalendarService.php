@@ -12,6 +12,34 @@ use Illuminate\Database\Eloquent\Collection;
 
 class FullCalendarService
 {
+    const ALL_DAY = 'allDay';
+    const END     = 'end';
+    const START   = 'start';
+    const TITLE   = 'title';
+
+    /**
+     * @param Collection $nurses
+     *
+     * @return Collection|\Illuminate\Support\Collection
+     */
+    public function getHolidays(Collection $nurses)
+    {
+        return $nurses->map(function ($nurse) {
+            // @todo:make this an axios get every 6 months
+            $holidays = $nurse->nurseInfo->holidays->where('date', '>=', Carbon::parse(now())->startOfYear()->toDate());
+
+            return collect($holidays)->map(function ($holiday) use ($nurse) {
+                return collect(
+                    [
+                        self::TITLE   => "$nurse->display_name",
+                        self::START   => Carbon::parse($holiday->date)->toDateString(),
+                        self::ALL_DAY => true,
+                    ]
+                );
+            });
+        })->flatten(1);
+    }
+
     /**
      * @param $nurse
      *
@@ -23,12 +51,16 @@ class FullCalendarService
             $weekMap = dayOfWeekToDate($window);
             $dayInHumanLang = Carbon::parse($weekMap[$window->day_of_week])->format('l');
             $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
-
-            return collect([
-                'title' => "$nurse->display_name: $workHoursForDay Hrs",
-                'start' => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
-                'end'   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
-            ]);
+            // i will NOT collect holidays here yet. Will load with axios post when requested
+            return collect(
+                [
+                    'workHours' => [
+                        self::TITLE => "$nurse->display_name - $workHoursForDay Hrs",
+                        self::START => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
+                        self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
+                    ],
+                ]
+            );
         });
     }
 

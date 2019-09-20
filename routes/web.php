@@ -1282,6 +1282,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'get.admin.nurse.schedules',
         ])->middleware('permission:nurse.read');
 
+        Route::get('nurses/holidays', [
+            'uses' => 'CareCenter\WorkScheduleController@getHolidays',
+            'as'   => 'get.admin.nurse.schedules.holidays',
+        ])->middleware('permission:nurse.read');
+
         Route::get('enrollment/list', [
             'uses' => 'Enrollment\EnrollmentConsentController@makeEnrollmentReport',
             'as'   => 'patient.enroll.makeReport',
