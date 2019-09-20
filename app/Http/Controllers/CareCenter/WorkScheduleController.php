@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\CareCenter;
 
+use App\FullCalendar\FullCalendarService;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Holiday;
@@ -19,6 +20,7 @@ use Validator;
 
 class WorkScheduleController extends Controller
 {
+    protected $fullCalendarService;
     protected $holiday;
     protected $nextWeekEnd;
     protected $nextWeekStart;
@@ -26,10 +28,19 @@ class WorkScheduleController extends Controller
     protected $today;
     protected $workHours;
 
+    /**
+     * WorkScheduleController constructor.
+     *
+     * @param NurseContactWindow  $nurseContactWindow
+     * @param Holiday             $holiday
+     * @param WorkHours           $workHours
+     * @param FullCalendarService $fullCalendarService
+     */
     public function __construct(
         NurseContactWindow $nurseContactWindow,
         Holiday $holiday,
-        WorkHours $workHours
+        WorkHours $workHours,
+        FullCalendarService $fullCalendarService
     ) {
         $this->nextWeekStart = Carbon::parse('this sunday')->copy();
         $this->nextWeekEnd   = Carbon::parse('next sunday')
@@ -40,6 +51,7 @@ class WorkScheduleController extends Controller
         $this->workHours           = $workHours;
         $this->holiday             = $holiday;
         $this->today               = Carbon::today()->copy();
+        $this->fullCalendarService = $fullCalendarService;
     }
 
     public function destroy($windowId)
@@ -112,33 +124,10 @@ class WorkScheduleController extends Controller
             ->get()
             ->sortBy('first_name');
 
-        $calendarData = $nurses->map(function ($nurse) {
-            return collect($nurse->nurseInfo->windows)->map(function ($window) use ($nurse) {
-                $weekMap = [
-                    1 => Carbon::parse($window->date)->startOfWeek()->toDateString(),
-                    2 => Carbon::parse($window->date)->startOfWeek()->addDay(1)->toDateString(),
-                    3 => Carbon::parse($window->date)->startOfWeek()->addDay(2)->toDateString(),
-                    4 => Carbon::parse($window->date)->startOfWeek()->addDay(3)->toDateString(),
-                    5 => Carbon::parse($window->date)->startOfWeek()->addDay(4)->toDateString(),
-                    6 => Carbon::parse($window->date)->startOfWeek()->addDay(5)->toDateString(),
-                    7 => Carbon::parse($window->date)->startOfWeek()->addDay(6)->toDateString(),
-                ];
+        $calendarData = $this->fullCalendarService->prepareDateForCalendar($nurses);
+        $tzAbbr       = auth()->user()->timezone_abbr ?? 'EDT';
 
-                $dayInHumanLang = Carbon::parse($weekMap[$window->day_of_week])->format('l');
-
-                $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
-
-                return collect([
-                    'title' => "$nurse->display_name: $workHoursForDay Hrs",
-                    'start' => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
-                    'end'   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
-                ]);
-            });
-        })->flatten(1);
-
-        $tzAbbr = auth()->user()->timezone_abbr ?? 'EDT';
-        
-        return view('admin.nurse.schedules.index', compact(['data', 'tzAbbr']));
+        return view('admin.nurse.schedules.index', compact('calendarData'));
     }
 
     public function index()
@@ -222,19 +211,19 @@ class WorkScheduleController extends Controller
             ->get()
             ->sum(function ($window) {
                 return Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_end
-                )->diffInHours(Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_end
+                    )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
-                }) + Carbon::createFromFormat(
+            }) + Carbon::createFromFormat(
                     'H:i',
                     $request->input('window_time_end')
                 )->diffInHours(Carbon::createFromFormat(
-                'H:i',
-                $request->input('window_time_start')
-            ));
+                    'H:i',
+                    $request->input('window_time_start')
+                ));
 
         $invalidWorkHoursNumber = false;
 
