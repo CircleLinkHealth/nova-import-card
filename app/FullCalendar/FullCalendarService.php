@@ -69,7 +69,7 @@ class FullCalendarService
      *
      * @return Collection|\Illuminate\Support\Collection
      */
-    public function prepareDateForCalendar(Collection $nurses)
+    public function prepareDatesForCalendar(Collection $nurses)
     {
         return $nurses->map(function ($nurse) {
             return $this->prepareData($nurse);

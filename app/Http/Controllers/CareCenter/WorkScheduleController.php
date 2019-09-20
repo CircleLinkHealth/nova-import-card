@@ -118,7 +118,7 @@ class WorkScheduleController extends Controller
     {
         $nurses = $this->getNursesWithSchedule();
 
-        $calendarData = $this->fullCalendarService->prepareDateForCalendar($nurses);
+        $calendarData = $this->fullCalendarService->prepareDatesForCalendar($nurses);
         $tzAbbr       = auth()->user()->timezone_abbr ?? 'EDT';
 
         return view('admin.nurse.schedules.index', compact('calendarData'));
@@ -140,14 +140,18 @@ class WorkScheduleController extends Controller
 
     public function getNursesWithSchedule()
     {
-        return User::// ofType('care-center')
+        $workScheduleData = [];
+        User::// ofType('care-center')
         with('nurseInfo.windows', 'nurseInfo.holidays')
             ->whereHas('nurseInfo', function ($q) {
                 $q->where('status', 'active');
             })
             ->whereHas('nurseInfo.windows')
-            ->get() //@todo: chunk
-            ->sortBy('first_name');
+            ->chunk(100, function ($nurses) use (&$workScheduleData) {
+                $workScheduleData[] = $nurses;
+            });
+
+        return $workScheduleData[0];
     }
 
     public function index()
@@ -230,20 +234,20 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                return Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_end
-                )->diffInHours(Carbon::createFromFormat(
+                    return Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_end
+                    )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
-            }) + Carbon::createFromFormat(
-                'H:i',
-                $request->input('window_time_end')
-            )->diffInHours(Carbon::createFromFormat(
+                }) + Carbon::createFromFormat(
                     'H:i',
-                    $request->input('window_time_start')
-                ));
+                    $request->input('window_time_end')
+                )->diffInHours(Carbon::createFromFormat(
+                'H:i',
+                $request->input('window_time_start')
+            ));
 
         $invalidWorkHoursNumber = false;
 
