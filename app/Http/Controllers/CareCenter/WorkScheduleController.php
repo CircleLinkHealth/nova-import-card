@@ -15,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use Validator;
 
@@ -123,6 +124,9 @@ class WorkScheduleController extends Controller
         return view('admin.nurse.schedules.index', compact('calendarData'));
     }
 
+    /**
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|Response
+     */
     public function getHolidays()
     {
         $nurses   = $this->getNursesWithSchedule();
@@ -142,7 +146,7 @@ class WorkScheduleController extends Controller
                 $q->where('status', 'active');
             })
             ->whereHas('nurseInfo.windows')
-            ->get()
+            ->get() //@todo: chunk
             ->sortBy('first_name');
     }
 
@@ -226,20 +230,20 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                    return Carbon::createFromFormat(
+                return Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_end
                     )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
-                }) + Carbon::createFromFormat(
+            }) + Carbon::createFromFormat(
                     'H:i',
                     $request->input('window_time_end')
                 )->diffInHours(Carbon::createFromFormat(
-                'H:i',
-                $request->input('window_time_start')
-            ));
+                    'H:i',
+                    $request->input('window_time_start')
+                ));
 
         $invalidWorkHoursNumber = false;
 
