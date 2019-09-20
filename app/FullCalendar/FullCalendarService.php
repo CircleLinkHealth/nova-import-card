@@ -22,11 +22,11 @@ class FullCalendarService
      *
      * @return Collection|\Illuminate\Support\Collection
      */
-    public function getHolidays(Collection $nurses)
+    public function getUpcomingHolidays(Collection $nurses)
     {
         return $nurses->map(function ($nurse) {
-            // @todo:make this an axios get every 6 months
-            $holidays = $nurse->nurseInfo->holidays->where('date', '>=', Carbon::parse(now())->startOfYear()->toDate());
+            // @todo:make filter dropdown 1. future, 2. annual
+            $holidays = $nurse->nurseInfo->holidays->where('date', '>=', Carbon::parse(now())->startOfWeek()->toDate());
 
             return collect($holidays)->map(function ($holiday) use ($nurse) {
                 return collect(

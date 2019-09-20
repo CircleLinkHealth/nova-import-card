@@ -130,7 +130,7 @@ class WorkScheduleController extends Controller
     public function getHolidays()
     {
         $nurses   = $this->getNursesWithSchedule();
-        $holidays = $this->fullCalendarService->getHolidays($nurses)->toArray();
+        $holidays = $this->fullCalendarService->getUpcomingHolidays($nurses)->toArray();
 
         return response([
             'success'  => true,
@@ -231,16 +231,16 @@ class WorkScheduleController extends Controller
             ->get()
             ->sum(function ($window) {
                 return Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_end
-                    )->diffInHours(Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_end
+                )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
             }) + Carbon::createFromFormat(
-                    'H:i',
-                    $request->input('window_time_end')
-                )->diffInHours(Carbon::createFromFormat(
+                'H:i',
+                $request->input('window_time_end')
+            )->diffInHours(Carbon::createFromFormat(
                     'H:i',
                     $request->input('window_time_start')
                 ));
