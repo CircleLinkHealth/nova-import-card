@@ -1,6 +1,7 @@
 @extends('partials.adminUI')
 
 @section('content')
+
     <div style="position: fixed;bottom: 0;width: 100%;z-index: 100;opacity: 0.95;">
         @include('errors.errors')
     </div>
@@ -11,6 +12,7 @@
 @endsection
 
 @push('scripts')
+
     @if(session('editedNurseId'))
         <script>
             (function () {

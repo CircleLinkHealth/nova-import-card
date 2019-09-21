@@ -6,7 +6,12 @@
                 Upcoming Holidays
             </div>
             <div class="calendar">
-                <full-calendar :events="events"></full-calendar>
+                <full-calendar :events="events"
+                               :config="config"
+                               @day-click="handleDateCLick"
+                               @event-selected="handleEventCLick"
+                               @event-drop="handleEventDrop">
+                </full-calendar>
             </div>
         </div>
     </div>
@@ -16,14 +21,19 @@
     import {FullCalendar} from 'vue-full-calendar';
     import 'fullcalendar/dist/fullcalendar.css';
 
+
+    const month = 'month';
+
     export default {
         name: "NurseScheduleCalendar",
 
         props: [
             'calendarData'
         ],
+
         components: {
             'fullCalendar': FullCalendar,
+
         },
 
         data() {
@@ -31,10 +41,28 @@
                 workHours: [],
                 holidays: [],
                 showWorkHours: true,
+
+                config: {
+                    defaultView: month,
+                },
             }
         },
 
         methods: {
+            handleDateCLick(arg) {
+                console.log(arg);
+                alert(arg);
+            },
+
+            handleEventCLick(arg) {
+                console.log(arg);
+                alert(arg);
+            },
+
+            handleEventDrop(arg){
+                alert(arg);
+            },
+
             isChecked() {
                 const checkBox = document.getElementById("holidaysCheckbox");
                 const toggleData = checkBox.checked === true;
@@ -44,9 +72,10 @@
             },
 
             showHolidays(toggleData) {
-                if (toggleData === true && this.holidays.length === 0){
+                if (toggleData === true && this.holidays.length === 0) {
                     axios.get('admin/nurses/holidays')
                         .then((response => {
+                                //loader add
                                 this.showWorkHours = false;
                                 this.holidays.push(...response.data.holidays)
                             }
