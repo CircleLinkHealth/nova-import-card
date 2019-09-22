@@ -121,9 +121,9 @@ class WorkScheduleController extends Controller
         $calendarData = $this->fullCalendarService->prepareDatesForCalendar($nurses);
         $tzAbbr       = auth()->user()->timezone_abbr ?? 'EDT';
 
-        $namesForDropdown = $this->fullCalendarService->getNamesForDropdown($nurses);
+        $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
 
-        return view('admin.nurse.schedules.index', compact('calendarData', 'namesForDropdown'));
+        return view('admin.nurse.schedules.index', compact('calendarData', 'dataForDropdown'));
     }
 
     /**
@@ -236,20 +236,20 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                return Carbon::createFromFormat(
+                    return Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_end
                     )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
-            }) + Carbon::createFromFormat(
+                }) + Carbon::createFromFormat(
                     'H:i',
                     $request->input('window_time_end')
                 )->diffInHours(Carbon::createFromFormat(
-                    'H:i',
-                    $request->input('window_time_start')
-                ));
+                'H:i',
+                $request->input('window_time_start')
+            ));
 
         $invalidWorkHoursNumber = false;
 
@@ -282,8 +282,9 @@ class WorkScheduleController extends Controller
             $user = auth()->user();
 
             $window = $this->nurseContactWindows->create([
-                'nurse_info_id'     => $nurseInfoId,
-                'date'              => Carbon::now()->format('Y-m-d'),
+                'nurse_info_id' => $nurseInfoId,
+                'date'          => $request->input('date'),
+                //                'date'              => Carbon::now()->format('Y-m-d'),
                 'day_of_week'       => $request->input('day_of_week'),
                 'window_time_start' => $request->input('window_time_start'),
                 'window_time_end'   => $request->input('window_time_end'),

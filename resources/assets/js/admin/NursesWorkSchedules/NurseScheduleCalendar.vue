@@ -24,13 +24,39 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <vue-select :options="namesForDropdown">
-
+                                <vue-select :options="dataForDropdown"
+                                            v-model="nurseData">
                                 </vue-select>
+                                <div>
+                                    <vue-select :options="daysOfWeek"
+                                                v-model="dayOfWeek">
+                                    </vue-select>
+                                </div>
+                                <div>
+                                    <input v-model="hoursToWork"
+                                           type="number"
+                                           class="work-hours"
+                                           min="1" max="12"
+                                           style="max-width: 60px;"
+                                           required>
+                                </div>
+                                <div class="minimum-padding">
+                                    <input v-model="workRangeStarts"
+                                           type="time"
+                                           required
+                                           style="max-width: 120px;">
+                                </div>
+                                <div class="minimum-padding">
+                                    <input v-model="workRangeEnds"
+                                           type="time"
+                                           required
+                                           style="max-width: 120px;">
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
+                                <button type="button" class="btn btn-primary" @click="submitWorkEvent">Save changes
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -54,7 +80,7 @@
 
         props: [
             'calendarData',
-            'namesForDropdown'
+            'dataForDropdown'
         ],
 
         components: {
@@ -69,16 +95,72 @@
                 holidays: [],
                 showWorkHours: true,
                 nurses: [],
+                workEventDate: '',
+                nurseData: [],
+                dayOfWeek: '',
+                hoursToWork: '',
+                workRangeStarts: '',
+                workRangeEnds: '',
 
                 config: {
                     defaultView: month,
                 },
+
+                daysOfWeek: [
+                    {
+                        label: 'Monday',
+                        dayOfWeek: 1
+                    },
+                    {
+                        label: 'Tuesday',
+                        dayOfWeek: 2
+                    },
+                    {
+                        label: 'Wednesday',
+                        dayOfWeek: 3
+                    },
+                    {
+                        label: 'Thursday',
+                        dayOfWeek: 4
+                    },
+                    {
+                        label: 'Friday',
+                        dayOfWeek: 5
+                    },
+                    {
+                        label: 'Saturday',
+                        dayOfWeek: 6
+                    },
+                    {
+                        label: 'Sunday',
+                        dayOfWeek: 7
+                    },
+                ]
             }
         },
 
         methods: {
+            submitWorkEvent() {
+                axios.post('/care-center/work-schedule', {
+                    nurse_info_id: this.nurseData.nurseId,
+                    date:this.workEventDate,
+                    day_of_week: this.dayOfWeek.dayOfWeek,
+                    work_hours: this.hoursToWork,
+                    window_time_start: this.workRangeStarts,
+                    window_time_end: this.workRangeEnds,
+                }).then((response => {
+                        //loader add
+
+                    }
+                )).catch((error) => {
+
+                });
+            },
+
             handleDateCLick(date, jsEvent, view) {
                 const calendarDay = date.format();
+                this.workEventDate = '';
+                this.workEventDate = calendarDay;
                 $("#addWorkEvent").modal('toggle');
             },
 

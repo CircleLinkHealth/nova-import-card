@@ -14,13 +14,17 @@ class FullCalendarService
 {
     const ALL_DAY = 'allDay';
     const END     = 'end';
+    const LABEL   = 'label';
     const START   = 'start';
     const TITLE   = 'title';
 
-    public function getNamesForDropdown(Collection $nurses)
+    public function getDataForDropdown(Collection $nurses)
     {
         return $nurses->map(function ($nurse) {
-            return "$nurse->id - $nurse->display_name";
+            return [
+                'nurseId' => $nurse->nurseInfo->id,
+                'label'   => $nurse->display_name,
+            ];
         });
     }
 
