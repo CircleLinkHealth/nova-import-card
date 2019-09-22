@@ -17,6 +17,13 @@ class FullCalendarService
     const START   = 'start';
     const TITLE   = 'title';
 
+    public function getNamesForDropdown(Collection $nurses)
+    {
+        return $nurses->map(function ($nurse) {
+            return "$nurse->id - $nurse->display_name";
+        });
+    }
+
     /**
      * @param Collection $nurses
      *

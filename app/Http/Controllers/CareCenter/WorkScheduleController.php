@@ -121,7 +121,9 @@ class WorkScheduleController extends Controller
         $calendarData = $this->fullCalendarService->prepareDatesForCalendar($nurses);
         $tzAbbr       = auth()->user()->timezone_abbr ?? 'EDT';
 
-        return view('admin.nurse.schedules.index', compact('calendarData'));
+        $namesForDropdown = $this->fullCalendarService->getNamesForDropdown($nurses);
+
+        return view('admin.nurse.schedules.index', compact('calendarData', 'namesForDropdown'));
     }
 
     /**
@@ -146,7 +148,7 @@ class WorkScheduleController extends Controller
             ->whereHas('nurseInfo', function ($q) {
                 $q->where('status', 'active');
             })
-            ->whereHas('nurseInfo.windows')
+            // ->whereHas('nurseInfo.windows')
             ->chunk(100, function ($nurses) use (&$workScheduleData) {
                 $workScheduleData[] = $nurses;
             });
@@ -234,20 +236,20 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                    return Carbon::createFromFormat(
+                return Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_end
                     )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
-                }) + Carbon::createFromFormat(
+            }) + Carbon::createFromFormat(
                     'H:i',
                     $request->input('window_time_end')
                 )->diffInHours(Carbon::createFromFormat(
-                'H:i',
-                $request->input('window_time_start')
-            ));
+                    'H:i',
+                    $request->input('window_time_start')
+                ));
 
         $invalidWorkHoursNumber = false;
 
