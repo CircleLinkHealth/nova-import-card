@@ -14,7 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Notification;
+use Notification;
 
 class SendAWVDocument implements ShouldQueue
 {
@@ -59,14 +59,12 @@ class SendAWVDocument implements ShouldQueue
             if ($notifiable) {
                 $notifiable->notify(new SendCareDocument($this->media, $this->patient, $this->channels));
             } else {
-//                $newUser = (new User())->forceFill([
-//                    'name'  => 'Test User',
-//                    'email' => 'email@example.com',
-//                ]);
                 Notification::route($this->channels[0], $this->input)
                     ->notify(new SendCareDocument($this->media, $this->patient));
             }
         }
+
+        //todo: add implementation for multiple emails, delete report that is saved locally
     }
 
     private function getNotifiableEntity($channel, $input)
@@ -80,6 +78,11 @@ class SendAWVDocument implements ShouldQueue
                 $notifiable = User::whereHas('emrDirect', function ($emr) use ($input) {
                     $emr->where('address', $input);
                 })->first();
+                if ( ! $notifiable) {
+                    $notifiable = Location::whereHas('emrDirect', function ($emr) use ($input) {
+                        $emr->where('address', $input);
+                    })->first();
+                }
                 break;
             case 'fax':
                 $notifiable = Location::whereFax($input)->first();

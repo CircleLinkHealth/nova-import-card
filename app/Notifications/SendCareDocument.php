@@ -20,7 +20,7 @@ class SendCareDocument extends Notification
     use Queueable;
 
     private $channels = [
-        //        'database'
+        'database',
     ];
     private $media;
     private $patient;
@@ -80,7 +80,7 @@ class SendCareDocument extends Notification
     {
         //todo: make sure we save path of file if it exists so we can delete the file from storage (if direct or fax)
         return [
-            'channels'   => $this->channels,
+            'channels'   => $this->via($notifiable),
             'sender_id'  => auth()->user()->id,
             'patient_id' => $this->patient->id,
             'media_id'   => $this->media->id,
@@ -91,6 +91,8 @@ class SendCareDocument extends Notification
      * Get a pdf representation of the note to send via DM.
      *
      * @param $notifiable
+     *
+     * @throws \Exception
      *
      * @return bool|string
      */
@@ -106,6 +108,22 @@ class SendCareDocument extends Notification
             ->setBody($this->getDMBody())
             ->setSubject($this->getSubject())
             ->setFilePath($this->toPdf());
+    }
+
+    /**
+     * Get a pdf representation of the report to send via Fax.
+     *
+     * @param $notifiable
+     *
+     * @return bool|string
+     */
+    public function toFax($notifiable)
+    {
+        if ( ! $notifiable || ! $notifiable->fax) {
+            return false;
+        }
+
+        return $this->toPdf();
     }
 
     /**
@@ -159,7 +177,7 @@ class SendCareDocument extends Notification
     public function via($notifiable)
     {
         if (is_a($notifiable, AnonymousNotifiable::class)) {
-            return [array_key_first($notifiable->routes)];
+            return array_merge($this->channels, [array_key_first($notifiable->routes)]);
         }
 
         return $this->channels;

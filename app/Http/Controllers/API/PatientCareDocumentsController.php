@@ -182,9 +182,10 @@ class PatientCareDocumentsController extends Controller
                 $this->sendChannels = [DirectMailChannel::class];
                 $validationRules    = ['required', 'email'];
                 break;
-            case 'efax':
+            case 'fax':
                 $this->sendChannels = [FaxChannel::class];
-                $validationRules    = ['required', 'phone:us'];
+                //todo: add phone validation
+                $validationRules = ['required'];
                 break;
             default:
                 $this->sendChannels = [];
