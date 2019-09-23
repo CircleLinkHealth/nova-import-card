@@ -35,6 +35,9 @@ class AnonymousNotifiable extends \Illuminate\Notifications\AnonymousNotifiable
         return null;
     }
 
+    /**
+     * @return DatabaseNotification
+     */
     public function notifications()
     {
         return new DatabaseNotification();
