@@ -24,14 +24,17 @@
                                 </button>
                             </div>
                             <div class="modal-body">
+                                <div class="display-date">
+                                    <h4>{{workEventDate}}</h4>
+                                </div>
                                 <vue-select :options="dataForDropdown"
                                             v-model="nurseData">
                                 </vue-select>
-                                <div>
-                                    <vue-select :options="daysOfWeek"
-                                                v-model="dayOfWeek">
-                                    </vue-select>
-                                </div>
+                                <!--                                <div>-->
+                                <!--                                    <vue-select :options="daysOfWeek"-->
+                                <!--                                                v-model="dayOfWeek">-->
+                                <!--                                    </vue-select>-->
+                                <!--                                </div>-->
                                 <div>
                                     <input v-model="hoursToWork"
                                            type="number"
@@ -71,7 +74,8 @@
     import {FullCalendar} from 'vue-full-calendar';
     import 'fullcalendar/dist/fullcalendar.css';
     import VueSelect from 'vue-select';
-
+    import {mapActions} from 'vuex';
+    import {addNotification} from "../../store/actions";
 
     const month = 'month';
 
@@ -86,6 +90,7 @@
         components: {
             'fullCalendar': FullCalendar,
             'vue-select': VueSelect,
+            'addNotification': addNotification,
 
         },
 
@@ -101,6 +106,7 @@
                 hoursToWork: '',
                 workRangeStarts: '',
                 workRangeEnds: '',
+                errors:[],
 
                 config: {
                     defaultView: month,
@@ -109,51 +115,61 @@
                 daysOfWeek: [
                     {
                         label: 'Monday',
-                        dayOfWeek: 1
+                        dayOfWeek: 0
                     },
                     {
                         label: 'Tuesday',
-                        dayOfWeek: 2
+                        dayOfWeek: 1
                     },
                     {
                         label: 'Wednesday',
-                        dayOfWeek: 3
+                        dayOfWeek: 2
                     },
                     {
                         label: 'Thursday',
-                        dayOfWeek: 4
+                        dayOfWeek: 3
                     },
                     {
                         label: 'Friday',
-                        dayOfWeek: 5
+                        dayOfWeek: 4
                     },
                     {
                         label: 'Saturday',
-                        dayOfWeek: 6
+                        dayOfWeek: 5
                     },
                     {
                         label: 'Sunday',
-                        dayOfWeek: 7
+                        dayOfWeek: 6
                     },
                 ]
             }
         },
 
-        methods: {
+        methods: Object.assign(mapActions(['addNotification']),{
             submitWorkEvent() {
                 axios.post('/care-center/work-schedule', {
                     nurse_info_id: this.nurseData.nurseId,
-                    date:this.workEventDate,
+                    date: this.workEventDate,
                     day_of_week: this.dayOfWeek.dayOfWeek,
                     work_hours: this.hoursToWork,
                     window_time_start: this.workRangeStarts,
                     window_time_end: this.workRangeEnds,
                 }).then((response => {
                         //loader add
-
+                        console.log(response);
                     }
                 )).catch((error) => {
-
+                    console.log(error);
+                    if (error.response.status === 406) {
+                        console.log(error.response.data.errors);
+                        this.errors = error.response.data.errors;
+                        this.addNotification({
+                            title: "Warning!",
+                            text: this.errors,
+                            type: "danger",
+                            timeout: true
+                        });
+                    }
                 });
             },
 
@@ -193,14 +209,13 @@
                     });
                 } else this.showWorkHours = !(toggleData === true && this.holidays.length !== 0);
             },
-        },
+        }),
 
         computed: {
             events() {
                 return this.showWorkHours ? this.workHours : this.holidays;
             }
-        }
-        ,
+        },
 
         created() {
             const workHours = this.calendarData.map(q => q.workHours);

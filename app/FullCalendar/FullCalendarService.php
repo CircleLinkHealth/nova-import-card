@@ -59,8 +59,8 @@ class FullCalendarService
     public function prepareData($nurse)
     {
         return collect($nurse->nurseInfo->windows)->map(function ($window) use ($nurse) {
-            $weekMap = dayOfWeekToDate($window);
-            $dayInHumanLang = Carbon::parse($weekMap[$window->day_of_week])->format('l');
+            $weekMap = dayOfWeekToDate($window->date);
+            $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
             $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
             // i will NOT collect holidays here yet. Will load with axios post when requested
             return collect(

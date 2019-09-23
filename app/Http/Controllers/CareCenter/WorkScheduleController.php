@@ -123,7 +123,7 @@ class WorkScheduleController extends Controller
 
         $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
 
-        return view('admin.nurse.schedules.index', compact('calendarData', 'dataForDropdown'));
+        return view('admin.nurse.schedules.index', compact('calendarData', 'dataForDropdown', 'nurses'));
     }
 
     /**
@@ -131,13 +131,17 @@ class WorkScheduleController extends Controller
      */
     public function getHolidays()
     {
-        $nurses   = $this->getNursesWithSchedule();
+        $nurses = $this->getNursesWithSchedule();
+
+        if ( ! $nurses) {
+            return response()->json(['errors' => 'Nurses not found'], 400);
+        }
         $holidays = $this->fullCalendarService->getUpcomingHolidays($nurses)->toArray();
 
-        return response([
+        return response()->json([
             'success'  => true,
             'holidays' => $holidays,
-        ]);
+        ], 200);
     }
 
     public function getNursesWithSchedule()
@@ -191,17 +195,30 @@ class WorkScheduleController extends Controller
 
     public function store(Request $request)
     {
-        $isAdmin = auth()->user()->isAdmin();
+        $dataRequest = $request->all();
+        $inputDate   = $dataRequest['date'];
 
+        if ( ! array_key_exists('day_of_week', $dataRequest)) {
+            $dataRequest['day_of_week'] = Carbon::parse($inputDate)->dayOfWeek;
+            $dataRequest['date']        = Carbon::parse($inputDate)->startOfWeek()->format('Y-m-d');
+        }
+
+        if (array_key_exists('day_of_week', $dataRequest)) {
+            $dataRequest['date'] = Carbon::parse($inputDate)->startOfWeek()->format('Y-m-d');
+        }
+
+        $workScheduleData = $dataRequest;
+
+        $isAdmin     = auth()->user()->isAdmin();
         $nurseInfoId = $isAdmin
-            ? $request->input('nurse_info_id')
+            ? $workScheduleData['nurse_info_id']
             : auth()->user()->nurseInfo->id;
 
         if ( ! $nurseInfoId) {
             $nurseInfoId = auth()->user()->nurseInfo->id;
         }
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($workScheduleData, [
             'day_of_week'       => 'required',
             'window_time_start' => 'required|date_format:H:i',
             'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
@@ -216,44 +233,44 @@ class WorkScheduleController extends Controller
             [
                 'window_time_end',
                 '>=',
-                $request->input('window_time_start'),
+                $workScheduleData['window_time_start'],
             ],
             [
                 'window_time_start',
                 '<=',
-                $request->input('window_time_end'),
+                $workScheduleData['window_time_end'],
             ],
             [
                 'day_of_week',
                 '=',
-                $request->input('day_of_week'),
+                $workScheduleData['day_of_week'],
             ],
         ])->first();
 
         $hoursSum = NurseContactWindow::where([
             ['nurse_info_id', '=', $nurseInfoId],
-            ['day_of_week', '=', $request->input('day_of_week')],
+            ['day_of_week', '=', $workScheduleData['day_of_week']],
         ])
             ->get()
             ->sum(function ($window) {
-                    return Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_end
-                    )->diffInHours(Carbon::createFromFormat(
+                return Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_end
+                )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
-                }) + Carbon::createFromFormat(
-                    'H:i',
-                    $request->input('window_time_end')
-                )->diffInHours(Carbon::createFromFormat(
+            }) + Carbon::createFromFormat(
                 'H:i',
-                $request->input('window_time_start')
-            ));
+                $workScheduleData['window_time_end']
+            )->diffInHours(Carbon::createFromFormat(
+                    'H:i',
+                    $workScheduleData['window_time_start']
+                ));
 
         $invalidWorkHoursNumber = false;
 
-        if ($hoursSum < $request->input('work_hours')) {
+        if ($hoursSum < $workScheduleData['work_hours']) {
             $invalidWorkHoursNumber = true;
         }
 
@@ -272,10 +289,15 @@ class WorkScheduleController extends Controller
                 );
             }
 
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput()
-                ->with(['editedNurseId' => $nurseInfoId]);
+            return response()->json([
+                'errors'    => 'Validation Failed',
+                'validator' => $validator,
+            ], 406);
+
+//            return redirect()->back()
+//                ->withErrors($validator)
+//                ->withInput()
+//                ->with(['editedNurseId' => $nurseInfoId]);
         }
 
         if ($isAdmin) {
@@ -283,27 +305,27 @@ class WorkScheduleController extends Controller
 
             $window = $this->nurseContactWindows->create([
                 'nurse_info_id' => $nurseInfoId,
-                'date'          => $request->input('date'),
+                'date'          => $workScheduleData['date'],
                 //                'date'              => Carbon::now()->format('Y-m-d'),
-                'day_of_week'       => $request->input('day_of_week'),
-                'window_time_start' => $request->input('window_time_start'),
-                'window_time_end'   => $request->input('window_time_end'),
+                'day_of_week'       => $workScheduleData['day_of_week'],
+                'window_time_start' => $workScheduleData['window_time_start'],
+                'window_time_end'   => $workScheduleData['window_time_end'],
             ]);
 
             $nurseUser = Nurse::find($nurseInfoId)->user;
 
             $dayName      = clhDayOfWeekToDayName($window->day_of_week);
             $nurseMessage = "Admin {$user->display_name} assigned Nurse {$nurseUser->display_name} to work for";
-            $message      = "${nurseMessage} {$request->input('work_hours')} hours on ${dayName} between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
+            $message      = "${nurseMessage} {$workScheduleData['work_hours']} hours on ${dayName} between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
             sendSlackMessage('#carecoachscheduling', $message);
         } else {
             $user = auth()->user();
 
             $window = $user->nurseInfo->windows()->create([
-                'date'              => Carbon::now()->format('Y-m-d'),
-                'day_of_week'       => $request->input('day_of_week'),
-                'window_time_start' => $request->input('window_time_start'),
-                'window_time_end'   => $request->input('window_time_end'),
+                'date'              => $workScheduleData['date'],
+                'day_of_week'       => $workScheduleData['day_of_week'],
+                'window_time_start' => $workScheduleData['window_time_start'],
+                'window_time_end'   => $workScheduleData['window_time_end'],
             ]);
         }
 
@@ -311,10 +333,14 @@ class WorkScheduleController extends Controller
             'workhourable_type' => Nurse::class,
             'workhourable_id'   => $nurseInfoId,
         ], [
-            strtolower(clhDayOfWeekToDayName($request->input('day_of_week'))) => $request->input('work_hours'),
+            strtolower(clhDayOfWeekToDayName($workScheduleData['day_of_week'])) => $workScheduleData['work_hours'],
         ]);
 
-        return redirect()->back()->with(['editedNurseId' => $nurseInfoId]);
+        return response()->json([
+            'success'   => true,
+            'savedData' => $workScheduleData,
+        ], 200);
+        //   return redirect()->back()->with(['editedNurseId' => $nurseInfoId]);
     }
 
     public function storeHoliday(Request $request)

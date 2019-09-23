@@ -1499,20 +1499,20 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
 if ( ! function_exists('dayOfWeekToDayInEnglish')) {
     /**
-     * @param $window
+     * @param Carbon $date
      *
      * @return array
      */
-    function dayOfWeekToDate($window)
+    function dayOfWeekToDate(Carbon $date)
     {
         return [
-            1 => Carbon::parse($window->date)->startOfWeek()->toDateString(),
-            2 => Carbon::parse($window->date)->startOfWeek()->addDay(1)->toDateString(),
-            3 => Carbon::parse($window->date)->startOfWeek()->addDay(2)->toDateString(),
-            4 => Carbon::parse($window->date)->startOfWeek()->addDay(3)->toDateString(),
-            5 => Carbon::parse($window->date)->startOfWeek()->addDay(4)->toDateString(),
-            6 => Carbon::parse($window->date)->startOfWeek()->addDay(5)->toDateString(),
-            7 => Carbon::parse($window->date)->startOfWeek()->addDay(6)->toDateString(),
+            1 => Carbon::parse($date)->startOfWeek()->toDateString(),
+            2 => Carbon::parse($date)->startOfWeek()->addDay(1)->toDateString(),
+            3 => Carbon::parse($date)->startOfWeek()->addDay(2)->toDateString(),
+            4 => Carbon::parse($date)->startOfWeek()->addDay(3)->toDateString(),
+            5 => Carbon::parse($date)->startOfWeek()->addDay(4)->toDateString(),
+            6 => Carbon::parse($date)->startOfWeek()->addDay(5)->toDateString(),
+            7 => Carbon::parse($date)->startOfWeek()->addDay(6)->toDateString(),
         ];
     }
 }
