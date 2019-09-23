@@ -6,7 +6,10 @@
 
 namespace CircleLinkHealth\Core\Notifications\Channels;
 
+use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 class DatabaseChannel
@@ -14,7 +17,7 @@ class DatabaseChannel
     /**
      * Send the given notification.
      *
-     * @param mixed                                  $notifiable
+     * @param mixed $notifiable
      * @param \Illuminate\Notifications\Notification $notification
      *
      * @return \Illuminate\Database\Eloquent\Model
@@ -33,13 +36,17 @@ class DatabaseChannel
             $args['attachment_type'] = get_class($notification->getAttachment());
         }
 
+        if (is_a($notifiable, AnonymousNotifiable::class)) {
+            $args['notifiable_id']   = $notifiable->id;
+            $args['notifiable_type'] = AnonymousNotifiable::class;
+        }
         return $notifiable->routeNotificationFor('database')->create($args);
     }
 
     /**
      * Get the data for the notification.
      *
-     * @param mixed                                  $notifiable
+     * @param mixed $notifiable
      * @param \Illuminate\Notifications\Notification $notification
      *
      * @throws \RuntimeException
