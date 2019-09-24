@@ -54,8 +54,8 @@ jobs:
         - node_modules
         - ~/.yarn
 
-    # gonna cache this at some point
-    - run: npm run build-dev
+    - run: npm run bower_install
+    - run: npm run dev
 
     # prepare the database
     - run: cp .env.testing .env
