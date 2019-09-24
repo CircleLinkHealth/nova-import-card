@@ -43,6 +43,8 @@ class EligibilityServiceProvider extends ServiceProvider
     {
         return [
             'athena.api',
+            AthenaApiImplementation::class,
+            AthenaApiConnection::class,
         ];
     }
 
