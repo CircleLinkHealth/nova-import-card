@@ -5,9 +5,10 @@
  */
 
 use App\Models\CPM\CpmProblem;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\Role;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Seeder;
 use Tests\Helpers\UserHelpers;
 
@@ -25,9 +26,9 @@ class PatientSeeder extends Seeder
         $months      = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
         $practiceIds = Practice::activeBillable()->get()->pluck('id');
 
-        factory(User::class, 50)->create([])->each(function ($u) use ($problemIds, $practiceIds, $months) {
+        factory(User::class, 2)->create([])->each(function ($u) use ($problemIds, $practiceIds, $months) {
             $practiceId = $practiceIds->random();
-            $u->attachPractice($practiceId, [2]);
+            $u->attachPractice($practiceId, [Role::whereName('participant')->value('id')]);
             $u->program_id = $practiceId;
             $u->save();
 
