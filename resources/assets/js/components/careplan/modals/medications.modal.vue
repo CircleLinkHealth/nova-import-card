@@ -50,7 +50,7 @@
                     </form>
                 </div>
                 <div class="col-sm-12" v-if="!selectedMedication">
-                    <form @submit="addMedication" class="form-prevent-multi-submit">
+                    <form @submit="addMedication">
                         <div class="form-group">
                             <div class="top-20">
                                 <bootstrap-toggle v-model="newMedication.activeBool"
@@ -70,7 +70,7 @@
                             </div>
                             <div class="top-20 text-right">
                                 <loader v-if="loaders.addMedication"></loader>
-                                <button class="btn btn-secondary selected btn-prevent-multi-submit">Create</button>
+                                <button :disabled="actionDisabled" class="btn btn-secondary selected">Create</button>
                             </div>
                         </div>
                     </form>
@@ -105,6 +105,9 @@
             },
             groupsForSelect() {
                 return this.groups.map(group => ({label: group.name, value: group.id}))
+            },
+            actionDisabled() {
+                return this.loaders.addMedication || this.loaders.removeMedication || this.loaders.editMedication;
             }
         },
         data() {
