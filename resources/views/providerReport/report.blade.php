@@ -42,8 +42,7 @@
                     non
                 @endif
                 hispanic/latino
-                {{$reportData['demographic_data']['race']}} who
-                identifies as {{$reportData['demographic_data']['gender']}}.
+                {{lcfirst($reportData['demographic_data']['race'])}} {{$reportData['demographic_data']['gender']}}.
                 In general, the patient has self-assessed their health as {{$reportData['demographic_data']['health']}}.
             </div>
             <hr>
