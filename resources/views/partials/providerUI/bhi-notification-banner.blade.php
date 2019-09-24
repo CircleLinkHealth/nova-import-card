@@ -17,14 +17,14 @@
                     </div>
                     <hr>
                     <div class="message">
-                        DR. {{($user->billingProviderUser())->getFullName()}} would like us to spend a bit more time on
+                        DR. <strong>{{($user->billingProviderUser())->getFullName()}}</strong> would like us to spend a bit more time on
                         these
-                        calls, including covering behavioral and other health topics, and possibly looping in
+                        calls, <br>including covering behavioral and other health topics, and possibly looping in
                         specialists
                         only if needed.
                         <div class="space"></div>
-                        If you don’t have supplemental insurance, there’s an $8 additional copay.
-                        <div class="space"></div>
+                       <strong> If you don’t have supplemental insurance, there’s an $8 additional copay.</strong>
+                        <div class="space" style="margin-top: 5%"></div>
                         <strong>Did patient consent?</strong>
                         <div class="space"></div>
                     </div>
@@ -160,7 +160,7 @@
         .options {
             position: relative;
             bottom: 5%;
-            left: 29%;
+            left: 28%;
         }
 
         .custom-tooltip {
