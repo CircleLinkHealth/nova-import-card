@@ -21,6 +21,7 @@ class DatabaseChannel
      */
     public function send($notifiable, Notification $notification)
     {
+
         $args = [
             'id'      => $notification->id,
             'type'    => get_class($notification),
