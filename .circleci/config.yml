@@ -54,10 +54,11 @@ jobs:
         - node_modules
         - ~/.yarn
 
-    #    - run: npm run prod
+    - run: npm run bower_install
+    - run: npm run dev
+
     # prepare the database
     - run: cp .env.testing .env
-    #    - run: php artisan migrate --force
 
       # run tests with paratest
     - run: composer unit-test

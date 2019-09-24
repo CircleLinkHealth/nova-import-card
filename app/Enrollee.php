@@ -145,7 +145,11 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSoftRejectedCallback($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereRequestedCallback($value)
  *
- * @property int|null $revision_history_count
+ * @property int|null   $revision_history_count
+ * @property array|null $agent_details
+ * @property mixed      $agent
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAgentDetails($value)
  */
 class Enrollee extends BaseModel
 {
@@ -469,11 +473,11 @@ class Enrollee extends BaseModel
 
         return $query->where('status', self::TO_CALL)
             ->orWhere(
-                         function ($q) {
-                             $q->where('status', '=', 'soft_rejected')
-                                 ->where('requested_callback', '<=', Carbon::now()->toDateString());
-                         }
-                     );
+                function ($q) {
+                    $q->where('status', '=', 'soft_rejected')
+                        ->where('requested_callback', '<=', Carbon::now()->toDateString());
+                }
+            );
     }
 
     public function scopeToSMS($query)
