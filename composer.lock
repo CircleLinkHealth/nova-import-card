@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d8d6cd586a1b0d3d596fdfb9d5927760",
+    "content-hash": "8e2fa637618ac11c6f898c37b3a61657",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -658,7 +658,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "d8a0197e1472b115af76ec0fbdddd23050f4ca34"
+                "reference": "c98c59e5e5b88de12a82bbb6381712903a5933b9"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-09-11T13:36:40+00:00"
+            "time": "2019-09-19T12:54:33+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -13096,7 +13096,6 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/core": 20,
-        "circlelinkhealth/customer": 20,
         "circlelinkhealth/raygun": 20,
         "circlelinkhealth/timetracking": 20,
         "circlelinkhealth/twofa": 20,
@@ -13105,7 +13104,8 @@
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20,
         "venturecraft/revisionable": 20,
-        "michalisantoniou6/laravel-cerberus": 20
+        "michalisantoniou6/laravel-cerberus": 20,
+        "circlelinkhealth/customer": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

@@ -30,7 +30,7 @@ class AthenaApiCallsTest extends TestCase
     {
         parent::setUp();
 
-        $this->api = new Calls();
+        $this->api = app(\CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation::class);
 
         $this->athenaPracticeId   = 195900;
         $this->athenaDepartmentId = 1;

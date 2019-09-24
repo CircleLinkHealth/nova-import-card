@@ -7,7 +7,6 @@
 namespace App\Models\MedicalRecords;
 
 use App\Adapters\EligibilityCheck\CcdaToEligibilityJobAdapter;
-use App\Contracts\EligibilityCheckable;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\DirectMailMessage;
 use App\EligibilityBatch;
@@ -15,6 +14,7 @@ use App\EligibilityJob;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
+use App\TargetPatient;
 use App\Traits\Relationships\BelongsToPatientUser;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -108,7 +108,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                          $providers_count
  * @property int|null                                          $revision_history_count
  */
-class Ccda extends MedicalRecordEloquent implements HasMedia, EligibilityCheckable
+class Ccda extends MedicalRecordEloquent implements HasMedia
 {
     use BelongsToPatientUser;
     use HasMediaTrait;
@@ -214,7 +214,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, EligibilityCheckab
     {
         $adapter = new CcdaToEligibilityJobAdapter($this, $this->practice, $this->batch);
 
-        return $adapter->adapt();
+        return $adapter->adaptToEligibilityJob();
     }
 
     public function directMessage()
@@ -288,6 +288,14 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, EligibilityCheckab
         $this->addMedia(storage_path("ccda-{$this->id}.xml"))->toMediaCollection('ccd');
 
         return $this;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function targetPatient()
+    {
+        return $this->hasOne(TargetPatient::class);
     }
 
     protected function parseToJson($xml)
