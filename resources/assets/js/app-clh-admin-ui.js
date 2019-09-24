@@ -49,6 +49,7 @@ const NotificationsComponent = () => import(/* webpackChunkName: "chunk-admin" *
 const LoaderComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/loader')
 const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/NurseScheduleCalendar');
 
+
 Vue.use(ClientTable, {}, false)
 Vue.use(ServerTable, {}, false)
 
@@ -67,6 +68,7 @@ Vue.component('cpm-medication-groups-maps-settings', CpmMedicationGroupsMapsSett
 Vue.component('notifications', NotificationsComponent);
 Vue.component('loader', LoaderComponent);
 Vue.component('nurse-schedule-calendar', NurseScheduleCalendar);
+
 
 
 

@@ -257,16 +257,16 @@ class WorkScheduleController extends Controller
                     'H:i:s',
                     $window->window_time_end
                 )->diffInHours(Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_start
-                    ));
+                    'H:i:s',
+                    $window->window_time_start
+                ));
             }) + Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_end']
             )->diffInHours(Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_start']
-                ));
+                'H:i',
+                $workScheduleData['window_time_start']
+            ));
 
         $invalidWorkHoursNumber = false;
 
@@ -291,8 +291,8 @@ class WorkScheduleController extends Controller
 
             return response()->json([
                 'errors'    => 'Validation Failed',
-                'validator' => $validator,
-            ], 406);
+                'validator' => with($validator),
+            ], 422);
 
 //            return redirect()->back()
 //                ->withErrors($validator)

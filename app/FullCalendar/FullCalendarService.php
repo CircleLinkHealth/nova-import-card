@@ -65,10 +65,21 @@ class FullCalendarService
             // i will NOT collect holidays here yet. Will load with axios post when requested
             return collect(
                 [
+                    //                    'workHours' => [
+                    //                        self::TITLE => "$nurse->display_name - $workHoursForDay Hrs",
+                    //                        self::START => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
+                    //                        self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
+                    //                        'allDay'    => true,
+                    //                        'dow'       => [1, 2, 3, 4, 5],
+                    //                    ],
+
                     'workHours' => [
                         self::TITLE => "$nurse->display_name - $workHoursForDay Hrs",
-                        self::START => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
-                        self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
+                        self::START => "{$window->window_time_start}",
+                        //                        self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
+                        'allDay' => true,
+                        //                        'rrule'=>[],
+                        'dow' => [$window->day_of_week],
                     ],
                 ]
             );
