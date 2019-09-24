@@ -145,11 +145,21 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSoftRejectedCallback($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereRequestedCallback($value)
  *
- * @property int|null $revision_history_count
+ * @property int|null   $revision_history_count
+ * @property array|null $agent_details
+ * @property mixed      $agent
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAgentDetails($value)
  */
 class Enrollee extends BaseModel
 {
     use Filterable;
+
+    // Agent array keys
+    const AGENT_EMAIL_KEY        = 'email';
+    const AGENT_NAME_KEY         = 'name';
+    const AGENT_PHONE_KEY        = 'phone';
+    const AGENT_RELATIONSHIP_KEY = 'name';
 
     /**
      * status = consented.
@@ -215,6 +225,11 @@ class Enrollee extends BaseModel
         'tertiary_insurance',
         'has_copay',
         'email',
+        'agent_details',
+    ];
+
+    protected $casts = [
+        'agent_details' => 'array',
     ];
 
     protected $dates = [
@@ -285,6 +300,9 @@ class Enrollee extends BaseModel
         'cpm_problem_2',
 
         'requested_callback',
+
+        //contains array of agent details, similar to patient_info fields
+        'agent_details',
     ];
 
     protected $table = 'enrollees';
@@ -297,6 +315,22 @@ class Enrollee extends BaseModel
     public function eligibilityJob()
     {
         return $this->belongsTo(EligibilityJob::class);
+    }
+
+    /**
+     * @param mixed $key
+     */
+    public function getAgentAttribute($key)
+    {
+        if (empty($this->agent_details)) {
+            return null;
+        }
+
+        if ( ! array_key_exists($key, $this->agent_details)) {
+            return null;
+        }
+
+        return $this->agent_details[$key];
     }
 
     /**

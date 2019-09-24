@@ -66,8 +66,8 @@
                                         <v-datepicker name="date" class="selectpickerX form-control" format="yyyy-MM-dd"
                                                       :required="true"
                                                       placeholder="YYYY-MM-DD"
-                                                      value="{{ auth()->user()->resolveTimezoneToGMT(Carbon::parse($date)) }}"
-                                                      required></v-datepicker>
+                                                      value="{{ auth()->user()->resolveTimezoneToGMT(Carbon::parse($date)) }}">
+                                        </v-datepicker>
                                     </div>
                                 </div>
 
