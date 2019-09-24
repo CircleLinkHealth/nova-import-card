@@ -21,6 +21,7 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Queue;
+use Tests\Commands\CreateAndSeedSqliteDB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -139,7 +140,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\Yajra\DataTables\DataTablesServiceProvider::class);
 
         if ($this->app->environment('local')) {
-            DevelopmentServiceProvider::class;
+            $this->app->register(DevelopmentServiceProvider::class);
+        }
+
+        if ($this->app->environment('testing')) {
+            $this->commands([
+                CreateAndSeedSqliteDB::class,
+            ]);
         }
 
         $this->app->bind(

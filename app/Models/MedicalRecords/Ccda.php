@@ -107,6 +107,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                          $problems_count
  * @property int|null                                          $providers_count
  * @property int|null                                          $revision_history_count
+ * @property \App\TargetPatient                                $targetPatient
  */
 class Ccda extends MedicalRecordEloquent implements HasMedia
 {
