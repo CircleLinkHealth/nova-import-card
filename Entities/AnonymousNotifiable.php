@@ -23,7 +23,6 @@ class AnonymousNotifiable extends \Illuminate\Notifications\AnonymousNotifiable
         if ($name == 'id') {
             return self::ID;
         }
-
         /*
          * Structure of $this->routes is:
          * ['channel' => $value e.g. 'mail' => 'test@mail.com']
