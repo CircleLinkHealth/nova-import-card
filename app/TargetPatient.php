@@ -64,6 +64,9 @@ use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
  *
  * @property int|null $revision_history_count
+ * @property int      $department_id
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDepartmentId($value)
  */
 class TargetPatient extends BaseModel
 {
