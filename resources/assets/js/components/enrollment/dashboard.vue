@@ -414,7 +414,7 @@
 
                     <input type="hidden" name="status" value="utc">
                     <input type="hidden" name="enrollee_id" :value="enrolleeId">
-                    <input type="hidden" name="total_time_in_system" v-bind:value="total_time_in_system">
+                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                     <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
 
                 </div>
@@ -467,7 +467,7 @@
 
 
                     <input type="hidden" name="enrollee_id" :value="enrolleeId">
-                    <input type="hidden" name="total_time_in_system" v-bind:value="total_time_in_system">
+                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                     <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
 
                 </div>
