@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="calendar-menu">
-            <input id="holidaysCheckbox" type="checkbox" class="holidays-button" @click="isChecked()">
+            <input id="holidaysCheckbox" type="checkbox" class="holidays-button" @click="holidaysChecked()">
             Upcoming Holidays
         </div>
         <div class="calendar">
@@ -11,7 +11,7 @@
                            @event-selected="handleEventCLick"
                            @event-drop="handleEventDrop">
             </full-calendar>
-            <!-- Modal -->
+            <!-- Modal --- sorry couldn't make a vue component act as modal here so i dumped this here-->
             <div class="modal fade" id="addWorkEvent" tabindex="-1" role="dialog"
                  aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -26,38 +26,53 @@
                             <div class="display-date">
                                 <h4>{{workEventDate}}</h4>
                             </div>
-                            <vue-select :options="dataForDropdown"
-                                        v-model="nurseData">
-                            </vue-select>
-                            <!--                                <div>-->
-                            <!--                                    <vue-select :options="daysOfWeek"-->
-                            <!--                                                v-model="dayOfWeek">-->
-                            <!--                                    </vue-select>-->
-                            <!--                                </div>-->
-                            <div>
-                                <input v-model="hoursToWork"
-                                       type="number"
-                                       class="work-hours"
-                                       min="1" max="12"
-                                       style="max-width: 60px;"
-                                       required>
+
+                            <!--  Filter Options-->
+                            <div v-if="!clickedToViewEvent" class="filter-options">
+                                <div>
+                                    <vue-select :options="dataForDropdown"
+                                                v-model="nurseData">
+                                    </vue-select>
+                                </div>
+
+                                <div>
+                                    <input v-model="hoursToWork"
+                                           type="number"
+                                           class="work-hours"
+                                           min="1" max="12"
+                                           style="max-width: 60px;"
+                                           required>
+                                </div>
+                                <div class="minimum-padding">
+                                    <input v-model="workRangeStarts"
+                                           type="time"
+                                           style="max-width: 120px;">
+                                </div>
+                                <div class="minimum-padding">
+                                    <input v-model="workRangeEnds"
+                                           type="time"
+                                           style="max-width: 120px;">
+                                </div>
                             </div>
-                            <div class="minimum-padding">
-                                <input v-model="workRangeStarts"
-                                       type="time"
-                                       required
-                                       style="max-width: 120px;">
-                            </div>
-                            <div class="minimum-padding">
-                                <input v-model="workRangeEnds"
-                                       type="time"
-                                       required
-                                       style="max-width: 120px;">
+                            <div v-if="clickedToViewEvent" class="view-event">
+                                <div class="nurse-name">{{this.eventToViewData[0].name}} on</div>
+                                <div class="work-day">{{this.eventToViewData[0].day}} works for</div>
+                                <div class="work-hours">{{this.eventToViewData[0].workHours}} hours from</div>
+                                <div class="start-time">{{this.eventToViewData[0].start}} to</div>
+                                <div class="start-end">{{this.eventToViewData[0].end}}</div>
                             </div>
                         </div>
+                        <!-- Filters End-->
+
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" @click="submitWorkEvent">Save changes
+                            <button v-if="clickedToViewEvent"
+                                    type="button"
+                                    class="btn btn-primary"
+                                    @click="deleteEvent">Delete
+                            </button>
+                            <button v-if="!clickedToViewEvent" type="button"
+                                    class="btn btn-primary"
+                                    @click="submitWorkEvent">Save
                             </button>
                         </div>
                     </div>
@@ -74,13 +89,14 @@
     import 'fullcalendar/dist/fullcalendar.css';
     import VueSelect from 'vue-select';
     import {addNotification} from '../../store/actions';
-    import rrulePlugin from '@fullcalendar/rrule';
+    import rrule from '@fullcalendar/rrule';
+    // import Modal from '/admin/common/modal'
 
     const month = 'month';
 
     export default {
         name: "NurseScheduleCalendar",
-        plugins: [rrulePlugin],
+        plugins: [rrule],
         props: [
             'calendarData',
             'dataForDropdown'
@@ -90,6 +106,7 @@
             'fullCalendar': FullCalendar,
             'vue-select': VueSelect,
             'addNotification': addNotification,
+            // 'modal': Modal,
 
         },
 
@@ -106,6 +123,8 @@
                 workRangeStarts: '',
                 workRangeEnds: '',
                 errors: [],
+                clickedToViewEvent: false,
+                eventToViewData: [],
 
                 config: {
                     defaultView: month,
@@ -146,10 +165,26 @@
         },
 
         methods: Object.assign(mapActions(['addNotification']), {
+            deleteEvent() {
+                //pass window Id from backend
+                axios.get(`/care-center/work-schedule/destroy/${this.eventToViewData[0].windowId}`).then()
+                //post delete to : work-schedule/destroy/{id}
+            },
+
             submitWorkEvent() {
-                $("#addWorkEvent").modal('toggle');
+                const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
+
+                if (this.workRangeStarts === '') {
+                    this.workRangeStarts = '09:00'; //@todo:deal with this later
+                }
+                if (this.workRangeEnds === '') {
+                    this.workRangeEnds = '17:00';
+                }
+
+                $("#addWorkEvent").modal('toggle'); //close modal
+
                 axios.post('/care-center/work-schedule', {
-                    nurse_info_id: this.nurseData.nurseId,
+                    nurse_info_id: nurseId,
                     date: this.workEventDate,
                     day_of_week: this.dayOfWeek.dayOfWeek,
                     work_hours: this.hoursToWork,
@@ -168,30 +203,41 @@
                 ))
                     .catch((error) => {
                         if (error.response.status === 422) {
-                            console.log(error.response.data);
-                            this.errors = error.response.data.errors;
-
-                            alert(this.errors);
+                            console.log(error.response.data.validator.window_time_start);
+                            this.errors = error;
+                            alert(this.errors.response.data.validator.window_time_start);
                         }
                     });
             },
 
             handleDateCLick(date, jsEvent, view) {
-                const calendarDay = date.format();
+                console.log(date);
+                const eventDate = date.format();
                 this.workEventDate = '';
-                this.workEventDate = calendarDay;
+                this.workEventDate = eventDate;
                 $("#addWorkEvent").modal('toggle');
             },
 
+            // getEventDate(date) {
+            //     return date.format();
+            // },
+
             handleEventCLick(arg) {
-                console.log(arg);
+                this.clickedToViewEvent = true;
+                this.eventToViewData.push(arg.data);
+                this.workEventDate = '';
+                this.workEventDate = this.eventToViewData[0].date;
+                console.log(arg.data.date);
+                $("#addWorkEvent").modal('toggle');
+
+
             },
 
             handleEventDrop(arg) {
                 alert(arg);
             },
 
-            isChecked() {
+            holidaysChecked() {
                 const checkBox = document.getElementById("holidaysCheckbox");
                 const toggleData = checkBox.checked === true;
                 console.log(toggleData);
@@ -212,41 +258,28 @@
                     });
                 } else this.showWorkHours = !(toggleData === true && this.holidays.length !== 0);
             },
+
+            resetModalValues() {
+                this.clickedToViewEvent = false;
+                this.eventToViewData = [];
+                this.workEventDate = '';
+            },
         }),
 
         computed: {
             events() {
-                return [
-                    {
-                        // standard property
-                        title: 'my recurring event',
-                        // start: '2019-09-23T10:30:00',
-                        rrule: 'DTSTART:20190901T103000Z\nRRULE:FREQ=WEEKLY;INTERVAL=5;UNTIL=20220601;BYDAY=MO,FR',//9//9..23or, an object...
-                        // rrule: {
-                        //     freq: 'weekly',
-                        //     interval: 5,
-                        //     byweekday: ['mo', 'fr'],
-                        //     dtstart: '2019-09-23T10:30:00',
-                        //     until: '2012-09-23'
-                        // },
-
-                        // for specifying the end time of each instance
-                        // duration: '02:00'
-                    }
-                ]
-
-                //   return this.showWorkHours ? this.workHours : this.holidays;
-            }
+                return this.showWorkHours ? this.workHours : this.holidays;
+            },
         },
 
         created() {
             const workHours = this.calendarData.map(q => q.workHours);
             this.workHours.push(...workHours);
+        },
 
-
+        mounted() {
+            $('#addWorkEvent').on("hidden.bs.modal", this.resetModalValues)
         }
-
-
     }
 
 

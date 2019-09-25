@@ -18,6 +18,13 @@ class FullCalendarService
     const START   = 'start';
     const TITLE   = 'title';
 
+    /**
+     * @param Collection $nurses
+     *
+     * @return Collection|\Illuminate\Support\Collection
+     *
+     * note for antoni: Im sending dropdown data in a different collection cause i need all active nurses (no just the working RNs)
+     */
     public function getDataForDropdown(Collection $nurses)
     {
         return $nurses->map(function ($nurse) {
@@ -62,24 +69,31 @@ class FullCalendarService
             $weekMap = dayOfWeekToDate($window->date);
             $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
             $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
+
             // i will NOT collect holidays here yet. Will load with axios post when requested
             return collect(
                 [
-                    //                    'workHours' => [
-                    //                        self::TITLE => "$nurse->display_name - $workHoursForDay Hrs",
-                    //                        self::START => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
-                    //                        self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
-                    //                        'allDay'    => true,
-                    //                        'dow'       => [1, 2, 3, 4, 5],
-                    //                    ],
-
                     'workHours' => [
                         self::TITLE => "$nurse->display_name - $workHoursForDay Hrs",
-                        self::START => "{$window->window_time_start}",
-                        //                        self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
+                        self::START => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
+                        self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
+
+                        //                        self::START => $weekMap[$window->day_of_week],
+                        //                        self::END   => $window->window_time_end,
+
                         'allDay' => true,
-                        //                        'rrule'=>[],
-                        'dow' => [$window->day_of_week],
+                        'dow'    => [$window->day_of_week], //@todo:need to fix plugin(rrule)for this to work
+
+                        'data' => [
+                            'nurseId'   => $nurse->nurseInfo->id,
+                            'windowId'  => $window->id,
+                            'name'      => $nurse->display_name,
+                            'day'       => $dayInHumanLang,
+                            'date'      => $weekMap[$window->day_of_week],
+                            'start'     => $window->window_time_start,
+                            'end'       => $window->window_time_end,
+                            'workHours' => $workHoursForDay,
+                        ],
                     ],
                 ]
             );

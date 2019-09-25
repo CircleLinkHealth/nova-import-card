@@ -199,7 +199,7 @@ class WorkScheduleController extends Controller
         $inputDate   = $dataRequest['date'];
 
         if ( ! array_key_exists('day_of_week', $dataRequest)) {
-            $dataRequest['day_of_week'] = Carbon::parse($inputDate)->dayOfWeek;
+            $dataRequest['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
             $dataRequest['date']        = Carbon::parse($inputDate)->startOfWeek()->format('Y-m-d');
         }
 
@@ -291,7 +291,7 @@ class WorkScheduleController extends Controller
 
             return response()->json([
                 'errors'    => 'Validation Failed',
-                'validator' => with($validator),
+                'validator' => $validator->getMessageBag(),
             ], 422);
 
 //            return redirect()->back()
