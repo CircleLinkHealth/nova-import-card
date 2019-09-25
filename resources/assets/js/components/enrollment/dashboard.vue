@@ -175,7 +175,7 @@
                     </span>
                 </blockquote>
 
-                <div class="enrollment-script">
+                <div class="padding-top-5 font-size-20">
                     <p v-html="care_ambassador_script"></p>
                 </div>
             </div>
@@ -198,9 +198,8 @@
                     <h4 style="color: #47beab">Awesome! Please confirm patient details:</h4>
                     <blockquote style="border-left: 5px solid #26a69a;">
                         <span class="consented_title"><b>I.</b></span>
-
                         <b>Ask patient:</b>
-                        <div class="enrollment-script">
+                        <div class="font-size-20">
                             <template v-if="lang === 'ES'">
                                 ¿Quiere quele llamemos directamente o hay alguien más con el cual quiere quenos pongamos
                                 en
@@ -335,7 +334,7 @@
                     <blockquote style="border-left: 5px solid #26a69a;">
                         <span class="consented_title"><b>IV.</b></span>
                         <span style="color: red"><b>TELL PATIENT BEFORE HANGING UP!</b></span><br>
-                        <div class="enrollment-script">
+                        <div class="font-size-20">
                             <template v-if="lang === 'ES'">
                                 Una enfermera registrada le llamará en breve del mismo desde el cual lo estoy llamando
                                 {{practice_phone}}. Por favor, guárdelo para que acepte la llamada cuando suene el
@@ -974,9 +973,13 @@
         color: red;
     }
 
-    .enrollment-script {
-        font-size: 20px;
+
+    .padding-top-5 {
         padding-top: 5%;
+    }
+
+    .font-size-20 {
+        font-size: 20px;
     }
 
     /**
