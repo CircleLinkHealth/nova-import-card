@@ -14,7 +14,7 @@
                     <div class="card-stacked">
                         <div class="card-content">
                             <h2 class="header" style="color: #47beab">Oops!</h2>
-                            <p>We're out of patients to call, please check back later for more!</p>
+                            <p>You’re out of patients to call, please contact your administrator to request more calls.</p>
                             <p>In the meantime, enjoy this cookie.</p>
                         </div>
                     </div>

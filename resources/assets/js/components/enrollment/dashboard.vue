@@ -198,7 +198,7 @@
                     <h4 style="color: #47beab">Awesome! Please confirm patient details:</h4>
                     <blockquote style="border-left: 5px solid #26a69a;">
                         <span class="consented_title"><b>I.</b></span>
-                        <b>Ask patient:</b>
+                        <span>Ask patient:</span>
                         <div class="font-size-20">
                             <template v-if="lang === 'ES'">
                                 ¿Quiere quele llamemos directamente o hay alguien más con el cual quiere quenos pongamos
@@ -210,8 +210,7 @@
                             </template>
                         </div>
                         <br>
-                        <b>Use radio button to confirm patient's preferred phone number to receive care management
-                            calls.</b>
+                        <span>Please enter any unknown phone numbers and select the patient's preferred phone number to receive care management calls:</span>
                     </blockquote>
                     <div class="row">
                         <div class="col s6 m3 select-custom">
@@ -270,7 +269,7 @@
                     </div>
                     <div class="row">
                         <blockquote style="border-left: 5px solid #26a69a;">
-                            <span class="consented_title"><b>II.</b></span> Please confirm address and email
+                            <span class="consented_title"><b>II.</b></span> Please confirm patient’s mailing address and email address:
                         </blockquote>
 
                         <div class="col s12 m3 select-custom">
@@ -342,10 +341,9 @@
                                 ¡Me alegro de haberme conectado! ¡Que tenga un muy buen día!
                             </template>
                             <template v-else>
-                                A Registered Nurse will call you shortly from the same # I’m calling from,
-                                {{practice_phone}}.
-                                Please save it so you accept the call when she/he rings. So glad we
-                                connected! Have a great day!
+                                A registered nurse will call you in the coming days from {{practice_phone}}.
+                                Please save this number so you accept the call when he or she rings.
+                                I am so glad we were able to connect! Have a great day!
                             </template>
                         </div>
                     </blockquote>
@@ -379,13 +377,11 @@
                     <h4 style="color: #47beab">Please provide some details:</h4>
                     <blockquote style="border-left: 5px solid #26a69a;">
                         <b>If Caller Reaches Machine, Leave Voice Message: </b><br>
-                        Hi this is {{userFullName}} calling on
-                        behalf of {{ providerFullName }} at {{ practice_name }}. The doctor[s] have invited you to their
-                        new
-                        personalized care management program. Please give us a call at {{practice_phone}} to learn more.
-                        Please note there is
-                        nothing to worry about, this program just lets the Dr. take better care of you between visits.
-                        Again the number is {{practice_phone}}
+                        Hi, this is {{userFullName}} calling on behalf of {{providerFullName}} at {{practice_name}}.
+                        The doctor(s) have invited you to their new personalized care management program.
+                        Please give us a call at {{practice_phone}} to learn more.
+                        Please note there is nothing to worry about, this program just lets your doctor take better care of you between visits.
+                        Again the number is {{practice_phone}}.
                     </blockquote>
 
                     <div class="row">
@@ -399,7 +395,7 @@
                             </select>
                         </div>
 
-                        <div class="col s6 m12 select-custom">
+                        <div v-show="utc_other" class="col s6 m12 select-custom">
                             <label for="utc_reason_other" class="label">If you selected other, please specify:</label>
                             <input class="input-field" name="reason_other" id="utc_reason_other"/>
                         </div>
@@ -430,7 +426,7 @@
         </div>
 
         <!-- Rejected -->
-        <div id="rejected" class="modal confirm modal-fixed-footer">
+        <div id="rejected" class="modal confirm modal-fixed-footer" style="height: 50% !important;">
             <form method="post" id="rejected_form" :action="rejectedUrl">
 
                 <input type="hidden" name="_token" :value="csrf">
@@ -441,15 +437,15 @@
                     <div class="row">
                         <div class="col s12 m12">
                             <label for="reason" class="label">What reason did the Patient convey?</label>
-                            <select class="auto-close" name="reason" id="reason" required>
+                            <select class="auto-close" v-model="reason" name="reason" id="reason" required>
                                 <option value="Worried about co-pay">Worried about co-pay</option>
                                 <option value="Doesn’t trust medicare">Doesn’t trust medicare</option>
-                                <option value="Doesn’t need help with Health">Doesn’t need help with Health</option>
+                                <option value="Doesn’t need help with Health">Doesn’t need help with health</option>
                                 <option value="other">Other...</option>
                             </select>
                         </div>
 
-                        <div class="col s6 m12 select-custom">
+                        <div v-show="rejected_other" class="col s6 m12 select-custom">
                             <label for="rejected_reason_other" class="label">If you selected other, please
                                 specify:</label>
                             <input class="input-field" name="reason_other" id="rejected_reason_other"/>
@@ -669,6 +665,12 @@
             utc_requested_callback() {
                 return this.utc_reason === 'requested callback';
             },
+            utc_other(){
+                return this.utc_reason === 'other';
+            },
+            rejected_other(){
+                return this.reason === 'other';
+            },
             provider_pronunciation: function(){
                 return providerInfo ? (providerInfo.pronunciation ? providerInfo.pronunciation : 'N/A') : 'N/A';
             },
@@ -726,6 +728,7 @@
                 toCall: '',
                 isSoftDecline: false,
                 utc_reason: '',
+                reason: '',
                 callError: null,
                 consentedUrl: rootUrl('enrollment/consented'),
                 utcUrl: rootUrl('enrollment/utc'),
