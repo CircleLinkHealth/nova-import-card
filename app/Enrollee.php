@@ -384,6 +384,11 @@ class Enrollee extends BaseModel
             ->first();
     }
 
+    public function getLastEncounterAttribute($lastEncounter)
+    {
+        return $lastEncounter ? optional(Carbon::parse($lastEncounter))->toDateString() : null;
+    }
+
     /**
      * Get Other Phone.
      *
