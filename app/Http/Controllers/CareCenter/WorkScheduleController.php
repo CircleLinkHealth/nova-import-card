@@ -55,6 +55,11 @@ class WorkScheduleController extends Controller
         $this->fullCalendarService = $fullCalendarService;
     }
 
+    /**
+     * @param $windowId
+     *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     */
     public function destroy($windowId)
     {
         $window = $this->nurseContactWindows
@@ -63,24 +68,34 @@ class WorkScheduleController extends Controller
         if ( ! $window) {
             $errors['window'] = 'This window does not exist.';
 
-            return redirect()->route('care.center.work.schedule.index')
-                ->withErrors($errors)
-                ->withInput();
+//            return redirect()->route('care.center.work.schedule.index')
+//                ->withErrors($errors)
+//                ->withInput();
+            return response()->json([
+                'errors'    => 'Validation Failed',
+                'validator' => $errors,
+            ], 422); //@todo: Deal with the case of requestWantsJson
         }
 
         if ( ! auth()->user()->isAdmin()) {
             if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
                 $errors['window'] = 'This window does not belong to you.';
 
-                return redirect()->route('care.center.work.schedule.index')
-                    ->withErrors($errors)
-                    ->withInput();
+//                return redirect()->route('care.center.work.schedule.index')
+//                    ->withErrors($errors)
+//                    ->withInput();
+                return response()->json([
+                    'errors' => $errors,
+                ], 422); //@todo: Deal with the case of requestWantsJson
             }
         }
 
         $window->forceDelete();
 
-        return redirect()->back();
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Window has been deleted',
+        ], 200);
     }
 
     public function destroyHoliday($holidayId)
@@ -253,17 +268,17 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                return Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_end
+                    return Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_end
+                    )->diffInHours(Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_start
+                    ));
+                }) + Carbon::createFromFormat(
+                    'H:i',
+                    $workScheduleData['window_time_end']
                 )->diffInHours(Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_start
-                ));
-            }) + Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_end']
-            )->diffInHours(Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_start']
             ));
@@ -292,7 +307,7 @@ class WorkScheduleController extends Controller
             return response()->json([
                 'errors'    => 'Validation Failed',
                 'validator' => $validator->getMessageBag(),
-            ], 422);
+            ], 422); //@todo: Deal with the case of requestWantsJson
 
 //            return redirect()->back()
 //                ->withErrors($validator)
@@ -337,9 +352,11 @@ class WorkScheduleController extends Controller
         ]);
 
         return response()->json([
-            'success'   => true,
-            'savedData' => $workScheduleData,
-        ], 200);
+            'success'       => true,
+            'window'        => $window,
+            'scheduledData' => $workScheduleData,
+            'workHours'     => $workHours,
+        ], 200); //@todo: Deal with the case of requestWantsJson
         //   return redirect()->back()->with(['editedNurseId' => $nurseInfoId]);
     }
 

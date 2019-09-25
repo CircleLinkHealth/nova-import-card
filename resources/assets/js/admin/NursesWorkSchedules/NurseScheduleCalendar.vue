@@ -4,8 +4,9 @@
             <input id="holidaysCheckbox" type="checkbox" class="holidays-button" @click="holidaysChecked()">
             Upcoming Holidays
         </div>
-        <div class="calendar">
-            <full-calendar :events="events"
+        <div id="calendar" class="calendar">
+            <full-calendar ref="calendar"
+                           :events="events"
                            :config="config"
                            @day-click="handleDateCLick"
                            @event-selected="handleEventCLick"
@@ -125,57 +126,83 @@
                 errors: [],
                 clickedToViewEvent: false,
                 eventToViewData: [],
+                eventsAddedNow: [],
 
                 config: {
                     defaultView: month,
 
                 },
 
-                daysOfWeek: [
-                    {
-                        label: 'Monday',
-                        dayOfWeek: 0
-                    },
-                    {
-                        label: 'Tuesday',
-                        dayOfWeek: 1
-                    },
-                    {
-                        label: 'Wednesday',
-                        dayOfWeek: 2
-                    },
-                    {
-                        label: 'Thursday',
-                        dayOfWeek: 3
-                    },
-                    {
-                        label: 'Friday',
-                        dayOfWeek: 4
-                    },
-                    {
-                        label: 'Saturday',
-                        dayOfWeek: 5
-                    },
-                    {
-                        label: 'Sunday',
-                        dayOfWeek: 6
-                    },
-                ]
+                // daysOfWeek: [
+                //     {
+                //         label: 'Monday',
+                //         dayOfWeek: 0
+                //     },
+                //     {
+                //         label: 'Tuesday',
+                //         dayOfWeek: 1
+                //     },
+                //     {
+                //         label: 'Wednesday',
+                //         dayOfWeek: 2
+                //     },
+                //     {
+                //         label: 'Thursday',
+                //         dayOfWeek: 3
+                //     },
+                //     {
+                //         label: 'Friday',
+                //         dayOfWeek: 4
+                //     },
+                //     {
+                //         label: 'Saturday',
+                //         dayOfWeek: 5
+                //     },
+                //     {
+                //         label: 'Sunday',
+                //         dayOfWeek: 6
+                //     },
+                // ]
             }
         },
 
         methods: Object.assign(mapActions(['addNotification']), {
             deleteEvent() {
                 //pass window Id from backend
-                axios.get(`/care-center/work-schedule/destroy/${this.eventToViewData[0].windowId}`).then()
-                //post delete to : work-schedule/destroy/{id}
+                axios.get(`/care-center/work-schedule/destroy/${this.eventToViewData[0].windowId}`).then((response => {
+                    $("#addWorkEvent").modal('toggle');
+
+                    this.addNotification({
+                        title: "Success!",
+                        text: response.data.message,
+                        type: "success",
+                        timeout: true
+                    });
+
+                    alert(response.data.message);
+                    console.log(response);
+                })).catch((error) => {
+                    console.log(error);
+                    if (error.response.status === 422) {
+                        this.errors = error;
+                        this.addNotification({
+                            title: "Warning!",
+                            text: this.errors.response.data.errors,
+                            type: "danger",
+                            timeout: true
+                        });
+                        alert(this.errors.response.data.errors);
+                    }
+
+                });
+
             },
 
             submitWorkEvent() {
                 const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
 
                 if (this.workRangeStarts === '') {
-                    this.workRangeStarts = '09:00'; //@todo:deal with this later
+                    this.workRangeStarts = '09:00'; //@todo:assign to const and display placeholder
                 }
                 if (this.workRangeEnds === '') {
                     this.workRangeEnds = '17:00';
@@ -186,13 +213,16 @@
                 axios.post('/care-center/work-schedule', {
                     nurse_info_id: nurseId,
                     date: this.workEventDate,
-                    day_of_week: this.dayOfWeek.dayOfWeek,
+                    day_of_week: this.dayOfWeek.dayOfWeek, //this is actually empty but is needed to pass validation. im creating this var in php
                     work_hours: this.hoursToWork,
                     window_time_start: this.workRangeStarts,
                     window_time_end: this.workRangeEnds,
                 }).then((response => {
-                        //loader add
-                        console.log(response);
+                        //@todo: Add loader
+                        const newEvent = this.prepareLocalData(response.data);
+
+                        this.eventsAddedNow.push(newEvent);
+
                         this.addNotification({
                             title: "Success!",
                             text: "dfgdsfgggfhfhghhdfjhfdhghfghdfhdhjghjhjhjhggd.",
@@ -210,17 +240,31 @@
                     });
             },
 
+            prepareLocalData(newEventData) {
+                return {
+                    allDay: true,
+                    data: {
+                        date: this.workEventDate,
+                        windowId:newEventData.window.id,
+                        end: this.workRangeStarts,
+                        start: this.workRangeEnds,
+                        name: this.nurseData.label,
+                        nurseId: this.nurseData.nurseId
+                    },
+                    dow: [newEventData.window.dayOfWeek],
+                    end: `${this.workEventDate}T${this.workRangeStarts}`,
+                    start: `${this.workEventDate}T${this.workRangeEnds}`,
+                    title: `${this.nurseData.label} - ${this.hoursToWork} Hrs`,
+                }
+            },
+
             handleDateCLick(date, jsEvent, view) {
-                console.log(date);
                 const eventDate = date.format();
                 this.workEventDate = '';
                 this.workEventDate = eventDate;
                 $("#addWorkEvent").modal('toggle');
             },
 
-            // getEventDate(date) {
-            //     return date.format();
-            // },
 
             handleEventCLick(arg) {
                 this.clickedToViewEvent = true;
@@ -262,18 +306,18 @@
             resetModalValues() {
                 this.clickedToViewEvent = false;
                 this.eventToViewData = [];
-                this.workEventDate = '';
             },
         }),
 
         computed: {
             events() {
-                return this.showWorkHours ? this.workHours : this.holidays;
+                return this.showWorkHours ? this.workHours.concat(this.eventsAddedNow) : this.holidays;
+
             },
         },
 
         created() {
-            const workHours = this.calendarData.map(q => q.workHours);
+            const workHours = this.calendarData;
             this.workHours.push(...workHours);
         },
 

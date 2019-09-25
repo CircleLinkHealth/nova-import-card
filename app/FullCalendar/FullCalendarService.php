@@ -73,27 +73,25 @@ class FullCalendarService
             // i will NOT collect holidays here yet. Will load with axios post when requested
             return collect(
                 [
-                    'workHours' => [
-                        self::TITLE => "$nurse->display_name - $workHoursForDay Hrs",
-                        self::START => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
-                        self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
+                    self::TITLE => "$nurse->display_name - $workHoursForDay Hrs",
+                    self::START => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
+                    self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
 
-                        //                        self::START => $weekMap[$window->day_of_week],
-                        //                        self::END   => $window->window_time_end,
+                    //                        self::START => $weekMap[$window->day_of_week],
+                    //                        self::END   => $window->window_time_end,
 
-                        'allDay' => true,
-                        'dow'    => [$window->day_of_week], //@todo:need to fix plugin(rrule)for this to work
+                    'allDay' => true,
+                    'dow'    => [$window->day_of_week], //@todo:need to fix plugin(rrule)for this to work
 
-                        'data' => [
-                            'nurseId'   => $nurse->nurseInfo->id,
-                            'windowId'  => $window->id,
-                            'name'      => $nurse->display_name,
-                            'day'       => $dayInHumanLang,
-                            'date'      => $weekMap[$window->day_of_week],
-                            'start'     => $window->window_time_start,
-                            'end'       => $window->window_time_end,
-                            'workHours' => $workHoursForDay,
-                        ],
+                    'data' => [
+                        'nurseId'   => $nurse->nurseInfo->id,
+                        'windowId'  => $window->id,
+                        'name'      => $nurse->display_name,
+                        'day'       => $dayInHumanLang,
+                        'date'      => $weekMap[$window->day_of_week],
+                        'start'     => $window->window_time_start,
+                        'end'       => $window->window_time_end,
+                        'workHours' => $workHoursForDay,
                     ],
                 ]
             );
