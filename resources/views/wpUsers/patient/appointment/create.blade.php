@@ -1,5 +1,4 @@
 <?php
-    use Carbon\Carbon;
 
 ?>
 @extends('partials.providerUI')
@@ -28,6 +27,10 @@
             .margin-20 {
                 margin-top: 10px;
                 margin-bottom: 10px;
+            }
+
+            .vdp-datepicker input {
+                border: unset;
             }
         </style>
     @endpush
@@ -75,16 +78,19 @@
                                         <label for="date">
                                             Appointment Date:
                                         </label>
-                                        <v-datepicker name="date" class="selectpickerX form-control" format="MM-dd-yyyy" placeholder="MM-DD-YYYY" pattern="\d{2}\-\d{2}-\d{4}\" required></v-datepicker>
+                                        <v-datepicker name="date" class="selectpickerX form-control" format="MM-dd-yyyy"
+                                                      id="appointment-date"
+                                                      placeholder="MM-DD-YYYY" pattern="\d{2}\-\d{2}-\d{4}\"
+                                                      required></v-datepicker>
                                     </div>
                                     <div class="col-sm-12 form-group margin-20">
                                         <label for="time">
                                             Appointment Time:
                                         </label>
                                         <input name="time" id="time" type="time"
-                                            class="selectpickerX form-control"
-                                            value="12:00"
-                                            data-field="time" data-format="H:i" required>
+                                               class="selectpickerX form-control"
+                                               value="12:00"
+                                               data-field="time" data-format="H:i" required>
                                     </div>
                                     <div class="col-sm-12 form-group margin-20">
                                         <div class="radio-inline">
@@ -104,24 +110,25 @@
                                             Appointment Type:
                                         </label>
                                         <input class="form-control" id="appointment_type" name="appointment_type"
-                                        placeholder="Please specify appointment type..." maxlength="50" required />
+                                               placeholder="Please specify appointment type..." maxlength="50"
+                                               required/>
                                     </div>
                                     <div class="col-sm-12 form-group margin-20">
                                         <label for="observationSource">
                                             Additional Details:
                                         </label>
                                         <textarea class="form-control" id="comment" name="comment"
-                                        placeholder="Please enter appointment details..." rows="4"></textarea>
+                                                  placeholder="Please enter appointment details..." rows="4"></textarea>
                                     </div>
                                     <div class="col-sm-12 form-group margin-20">
                                         <input type="hidden" name="patientId" id="patientId"
-                                            value="{{ $patient->id }}">
+                                               value="{{ $patient->id }}">
                                     </div>
                                     <div class="col-sm-12 form-group margin-20">
                                         {!! Form::submit('Save', array('name' => 'save','class' => 'btn btn-primary save-btn')) !!}
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </form>
@@ -130,4 +137,26 @@
         </div>
         <div class="col-sm-12" style="padding: 100px"></div>
     </div>
+
+    @push("scripts")
+        <script>
+            const waitForEl = function (selector, callback) {
+                if (!$(selector).length) {
+                    setTimeout(function () {
+                        window.requestAnimationFrame(function () {
+                            waitForEl(selector, callback)
+                        });
+                    }, 100);
+                } else {
+                    callback();
+                }
+            };
+
+            $(function() {
+                waitForEl('#appointment-date', () => {
+                    $('#appointment-date').attr('autocomplete', 'off')
+                });
+            });
+        </script>
+    @endpush
 @endsection

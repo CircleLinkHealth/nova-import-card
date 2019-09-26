@@ -18,6 +18,47 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
+/**
+ * CircleLinkHealth\NurseInvoices\Entities\NurseInvoice.
+ *
+ * @property int                                                                                                             $id
+ * @property int                                                                                                             $nurse_info_id
+ * @property \Illuminate\Support\Carbon                                                                                      $month_year
+ * @property int|null                                                                                                        $is_nurse_approved
+ * @property \Illuminate\Support\Carbon|null                                                                                 $nurse_approved_at
+ * @property \Illuminate\Support\Carbon|null                                                                                 $sent_to_accountant_at
+ * @property mixed                                                                                                           $invoice_data
+ * @property \Illuminate\Support\Carbon|null                                                                                 $created_at
+ * @property \Illuminate\Support\Carbon|null                                                                                 $updated_at
+ * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute[]|\Illuminate\Database\Eloquent\Collection    $dailyDisputes
+ * @property \CircleLinkHealth\NurseInvoices\Entities\Dispute                                                                $dispute
+ * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection                            $media
+ * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurse
+ * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurseInfo
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice approved()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice notApproved()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice ofNurses($userId)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice undisputed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereInvoiceData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereIsNurseApproved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereMonthYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereNurseApprovedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereNurseInfoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereSentToAccountantAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereUpdatedAt($value)
+ * @mixin \Eloquent
+ *
+ * @property int|null $daily_disputes_count
+ * @property int|null $media_count
+ * @property int|null $notifications_count
+ */
 class NurseInvoice extends Model implements HasMedia, Pdfable
 {
     use Disputable;
@@ -109,7 +150,7 @@ class NurseInvoice extends Model implements HasMedia, Pdfable
                 'footer-right'  => 'Page [page] of [toPage]',
                 'footer-left'   => 'report generated on '.Carbon::now()->format('m-d-Y').' at '.Carbon::now()->format(
                     'H:iA'
-                    ),
+                ),
                 'footer-font-size' => '6',
             ]
         );

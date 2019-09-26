@@ -4,6 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
+use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
+use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
+
 return [
     /*
      * Configure the editor you want to use:
@@ -200,6 +204,10 @@ return [
         App\View\Composers\FabComposer::class,
         App\View\Composers\SAAS\Admin\ManageInternalUser::class,
         App\Providers\EligibilityBatchViewComposerServiceProvider::class,
+
+        NurseInvoicesServiceProvider::class,
+        NurseInvoicesDeferredBindingsServiceProvider::class,
+        EligibilityServiceProvider::class,
     ],
 
     /*

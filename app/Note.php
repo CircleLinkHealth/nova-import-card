@@ -64,6 +64,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note patientPractice($practiceId)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note query()
+ *
+ * @property string|null                                                                                                     $summary_type
+ * @property string|null                                                                                                     $deleted_at
+ * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ *
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Note onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereSummary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereSummaryType($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Note withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Note withoutTrashed()
+ *
+ * @property int|null $addendums_count
+ * @property int|null $notifications_count
+ * @property int|null $revision_history_count
  */
 class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport
 {
@@ -74,6 +92,9 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
     use SoftDeletes;
     const STATUS_COMPLETE = 'complete';
     const STATUS_DRAFT    = 'draft';
+    // Note Summary types
+    const SUMMARY_FYI  = 'FYI';
+    const SUMMARY_TODO = 'To-do';
 
     protected $dates = [
         'performed_at',
@@ -84,6 +105,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         'author_id',
         'logger_id',
         'summary',
+        'summary_type',
         'body',
         'isTCM',
         'type',
@@ -294,10 +316,11 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
     public function toPdf($scale = null): string
     {
         $fileName = Carbon::today()->toDateString().'-'.$this->patient->id.'.pdf';
-        $filePath       = storage_path('pdfs/notes/'.$fileName);
-        
-        if (file_exists($filePath)) return $filePath;
-        
+        $filePath = storage_path('pdfs/notes/'.$fileName);
+
+        if (file_exists($filePath)) {
+            return $filePath;
+        }
         $problems = $this->patient
             ->cpmProblems
             ->pluck('name')
@@ -327,7 +350,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         } elseif ( ! empty($fontSize)) {
             $pdf->setOption('zoom', $fontSize);
         }
-        
+
         $pdf->save($filePath, true);
 
         return $filePath;

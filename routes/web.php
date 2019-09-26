@@ -279,6 +279,11 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:patient.read,careplan.read,call.read');
             */
 
+            Route::get('download/{media_id}/{user_id}/{practice_id}', [
+                'uses' => 'DownloadController@downloadMediaFromSignedUrl',
+                'as'   => 'download.media.from.signed.url',
+            ])->middleware('signed');
+
             Route::get('without-scheduled-activities', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledActivities',
                 'as'   => 'patients.without-scheduled-activities',
@@ -435,6 +440,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post(
         'care-docs/{patient_id}',
         'API\PatientCareDocumentsController@uploadCareDocuments'
+    );
+
+    Route::post(
+        'send-care-doc/{patient_id}/{media_id}/{channel}/{address_or_fax}',
+        'API\PatientCareDocumentsController@sendCareDocument'
     );
 
     Route::get('care-docs/{patient_id}/{show_past?}', [
@@ -1054,6 +1064,16 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'eligibility.download.eligible',
                 ])->middleware('permission:enrollee.read');
 
+                Route::get('supplemental-insurance-info-csv', [
+                    'uses' => 'EligibilityBatchController@downloadAthenaApiInsuranceInfoCsv',
+                    'as'   => 'eligibility.download.supplemental_insurance_info',
+                ])->middleware('permission:enrollee.read');
+
+                Route::get('insurance-copays-csv', [
+                    'uses' => 'EligibilityBatchController@downloadAthenaApiInsuranceCopaysCsv',
+                    'as'   => 'eligibility.download.copays',
+                ])->middleware('permission:enrollee.read');
+
                 Route::get('/reprocess', [
                     'uses' => 'EligibilityBatchController@getReprocess',
                     'as'   => 'get.eligibility.reprocess',
@@ -1120,6 +1140,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/add-enrollee-custom-filter', [
                 'uses' => 'EnrollmentDirectorController@addEnrolleeCustomFilter',
                 'as'   => 'ca-director.add-enrollee-custom-filter',
+            ]);
+
+            Route::get('/create-test-enrollees', [
+                'uses' => 'EnrollmentDirectorController@runCreateEnrolleesSeeder',
+                'as'   => 'ca-director.create-test-enrollees',
             ]);
         });
 
@@ -1848,6 +1873,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('reports/nurse/weekly/data', [
         'uses' => 'NursePerformanceRepController@nurseMetricsPerformanceData',
         'as'   => 'admin.reports.nurse.performance.data',
+    ])->middleware('permission:nurseReport.read');
+    Route::get('reports/nurse/weekly/excel', [
+        'uses' => 'NursePerformanceRepController@nurseMetricsPerformanceExcel',
+        'as'   => 'admin.reports.nurse.performance.excel',
     ])->middleware('permission:nurseReport.read');
     Route::get('reports/nurse/weekly', [
         'uses' => 'NursePerformanceRepController@nurseMetricsDashboard',

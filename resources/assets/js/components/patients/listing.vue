@@ -307,7 +307,7 @@
                 return this.axios.get(rootUrl('api/providers/list')).then(response => {
                     console.log('patient-list:providers', response.data)
                     this.providersForSelect = (response.data || []).map(provider => ({
-                        id: provider.id,
+                        id: provider.user_id,
                         text: provider.name
                     })).filter(provider => !!provider.text).sort((a, b) => a.text < b.text ? -1 : 1)
                     this.loaders.providers = false

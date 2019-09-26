@@ -46,9 +46,27 @@
                 var columnForBorder = 1;
                 var columnsForTextFormating = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
+                function setExcelExportHref (startDate, endDate) {
+                    var href = $('.excel-export').attr('data-href') + '?start_date=' + startDate + '&end_date=' + endDate
+                    $('.excel-export').attr('href', href)
+                    return href
+                }
+
+                $("#start_date").change(function (date) {
+                    // whatever you need to be done on change of the input field
+                    setExcelExportHref($("#start_date").val(), $("#end_date").val())
+                });
+
+                $("#end_date").change(function (date) {
+                    // whatever you need to be done on change of the input field
+                    setExcelExportHref($("#start_date").val(), $("#end_date").val())
+                });
+
+                setExcelExportHref($("#start_date").val(), $("#end_date").val())
+
                 $('#nurse_metrics').DataTable({
                     "rowCallback": function (row, data) {
-                        if (data.name === "Z - Totals for:") {
+                        if (data.Name === "Z - Totals for:") {
                             $('td:eq(0)', row).css(
                                 {
                                     'background-color': '#32C132',
@@ -56,7 +74,7 @@
                             );
                         }
 
-                        if (data.surplusShortfallHours < 0) {
+                        if ( data['Hrs Deficit or Surplus'] < 0) {
                             $('td:eq(13)', row).css('color', '#FA5353');
                         } else {
                             $('td:eq(13)', row).css('color', '#32C132');
@@ -103,22 +121,22 @@
 
                     columns:
                         [
-                            {data: 'name', name: 'name'},
-                            {data: 'weekDay', name: 'weekDay'},
-                            {data: 'scheduledCalls', name: 'scheduledCalls'},
-                            {data: 'actualCalls', name: 'actualCalls'},
-                            {data: 'successful', name: 'successful'},
-                            {data: 'unsuccessful', name: 'unsuccessful'},
-                            {data: 'actualHours', name: 'actualHours'},
-                            {data: 'committedHours', name: 'committedHours'},
-                            {data: 'completionRate', name: 'completionRate'},
-                            {data: 'efficiencyIndex', name: 'efficiencyIndex'},
-                            {data: 'caseLoadNeededToComplete', name: 'caseLoadNeededToComplete'},
-                            {data: 'projectedHoursLeftInMonth', name: 'projectedHoursLeftInMonth'},
-                            {data: 'hoursCommittedRestOfMonth', name: 'hoursCommittedRestOfMonth'},
-                            {data: 'surplusShortfallHours', name: 'surplusShortfallHours'},
-                            {data: 'caseLoad', name: 'caseLoad'},
-                            {data: 'caseLoadComplete', name: 'caseLoadComplete'},
+                            {data: 'Name', name: 'Name'},
+                            {data: 'Day', name: 'Day'},
+                            {data: 'Assigned Calls', name: 'Assigned Calls'},
+                            {data: 'Actual Calls', name: 'Actual Calls'},
+                            {data: 'Successful Calls', name: 'Successful Calls'},
+                            {data: 'Unsuccessful Calls', name: 'Unsuccessful Calls'},
+                            {data: 'Actual Hrs Worked', name: 'Actual Hrs Worked'},
+                            {data: 'Committed Hrs', name: 'Committed Hrs'},
+                            {data: 'Attendance/Calls Completion Rate', name: 'Attendance/Calls Completion Rate'},
+                            {data: 'Efficiency Index', name: 'Efficiency Index'},
+                            {data: 'Est. Hrs to Complete Case Load', name: 'Est. Hrs to Complete Case Load'},
+                            {data: 'Projected Hrs. Left In Month', name: 'Projected Hrs. Left In Month'},
+                            {data: 'Hrs Committed Rest of Month', name: 'Hrs Committed Rest of Month'},
+                            {data: 'Hrs Deficit or Surplus', name: 'Hrs Deficit or Surplus'},
+                            {data: 'Case Load', name: 'Case Load'},
+                            {data: '% Case Load Complete', name: '% Case Load Complete'},
                         ],
                 });
 

@@ -40,6 +40,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId query()
+ *
+ * @property int|null $revision_history_count
  */
 class ForeignId extends \CircleLinkHealth\Core\Entities\BaseModel
 {

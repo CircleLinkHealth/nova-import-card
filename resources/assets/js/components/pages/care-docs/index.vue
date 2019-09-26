@@ -40,7 +40,7 @@
         <div class="col-md-12">
             <div v-for="status in patientAWVStatuses">
                 <div class="col-md-3">
-                    <div class="panel panel-primary">
+                    <div class="panel panel-primary shadow">
                         <div class="panel-heading">
                             <h4>Wellness Survey</h4>
                         </div>
@@ -68,22 +68,28 @@
                                 <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
                                 <!--</div>-->
                             </div>
-                            <div class="col-md-12  panel-section" style="margin-top: 10px">
+                            <div class="col-md-12" style="margin-top: 6px">
                                 <p><strong>Send Assessment Link to Provider via:</strong></p>
                             </div>
                             <div class="col-md-12  panel-section">
-                                <button class="col-md-6 btn btn-method btn-s">
+                                <a
+                                        class="col-md-6 btn btn-method btn-width-100 btn-s"
+                                        target="_blank"
+                                        :href="getAwvSendSmsForm('hra')">
                                     SMS
-                                </button>
-                                <button class="col-md-6 btn btn-method btn-s">
+                                </a>
+                                <a
+                                        class="col-md-6 btn btn-method btn-width-100 btn-s"
+                                        target="_blank"
+                                        :href="getAwvSendEmailForm('hra')">
                                     Email
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="panel panel-primary">
+                    <div class="panel panel-primary shadow">
                         <div class="panel-heading">
                             <h4>Vitals</h4>
                         </div>
@@ -111,16 +117,22 @@
                                 <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
                                 <!--</div>-->
                             </div>
-                            <div class="col-md-12  panel-section" style="margin-top: 10px">
+                            <div class="col-md-12" style="margin-top: 6px">
                                 <p><strong>Send Assessment Link to Provider via:</strong></p>
                             </div>
                             <div class="col-md-12  panel-section">
-                                <button class="col-md-6 btn btn-method btn-s">
+                                <a
+                                   class="col-md-6 btn btn-method btn-width-100 btn-s"
+                                   target="_blank"
+                                   :href="getAwvSendSmsForm('vitals')">
                                     SMS
-                                </button>
-                                <button class="col-md-6 btn btn-method btn-s">
+                                </a>
+                                <a
+                                   class="col-md-6 btn btn-width-100 btn-method btn-s"
+                                   target="_blank"
+                                   :href="getAwvSendEmailForm('vitals')">
                                     Email
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -135,27 +147,27 @@
             <!--</div>-->
             <div v-if="careDocs['PPP']">
                 <div v-for="doc in careDocs['PPP']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'PPP'"></care-document-box>
+                    <care-document-box :doc="doc" :type="'PPP'" :patient="patient"></care-document-box>
                 </div>
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'PPP'"></care-document-box>
+                    <care-document-box :type="'PPP'"  :patient="patient"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Provider Report']">
                 <div v-for="doc in careDocs['Provider Report']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'Provider Report'"></care-document-box>
+                    <care-document-box :doc="doc" :type="'Provider Report'" :patient="patient"></care-document-box>
                 </div>
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'Provider Report'"></care-document-box>
+                    <care-document-box :type="'Provider Report'"  :patient="patient"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Lab Results']">
                 <div v-for="doc in careDocs['Lab Results']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'Lab Results'"></care-document-box>
+                    <care-document-box :doc="doc" :type="'Lab Results'" :patient="patient"></care-document-box>
                 </div>
             </div>
         </div>
@@ -328,6 +340,14 @@
                 return this.getAwvUrl(`survey/vitals/${this.patient.id}`);
             },
 
+            getAwvSendSmsForm(survey){
+                return this.getAwvUrl(`manage-patients/${this.patient.id}/` + survey + `/sms/send-assessment-link`);
+            },
+
+            getAwvSendEmailForm(survey){
+                return this.getAwvUrl(`manage-patients/${this.patient.id}/` + survey + `/email/send-assessment-link`);
+            },
+
             getButtonTextFromStatus(status) {
                 switch (status) {
                     case "pending":
@@ -447,9 +467,12 @@
 
     .btn-method {
         border-color: #5cc0dd;
-        width: 100px;
         max-height: 30px;
         margin: 2px;
+    }
+
+    .btn-width-100{
+        width: 100px;
     }
 
     .modal-upload-care-doc .loader {
@@ -508,6 +531,10 @@
 
     .dropzone .dz-preview .dz-error-message {
         margin-top: 55px;
+    }
+
+    .shadow {
+        box-shadow:         1px 1px 1px 1px #ccc;
     }
 
 </style>

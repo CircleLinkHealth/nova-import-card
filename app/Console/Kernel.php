@@ -184,7 +184,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(OverwriteNBIPatientMRN::class)->everyThirtyMinutes()->onOneServer();
 
-        $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->monthlyOn(1, '00:30')->onOneServer();
+        $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->dailyAt('00:10')->onOneServer();
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)->monthlyOn(1, '08:30')->onOneServer();
 
         $sendReminderAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->subHours(36);

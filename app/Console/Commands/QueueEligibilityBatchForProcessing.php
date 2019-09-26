@@ -14,7 +14,6 @@ use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
-use App\Services\AthenaAPI\DetermineEnrollmentEligibility as AthenaDetermineEnrollmentEligibility;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use App\Services\GoogleDrive;
@@ -95,7 +94,7 @@ class QueueEligibilityBatchForProcessing extends Command
      */
     private function afterProcessingHook($batch)
     {
-        if ($batch->isCompleted()) {
+        if ($batch->isCompleted() && $batch->hasJobs()) {
             $this->processEligibilityService
                 ->notifySlack($batch);
         }
@@ -120,7 +119,7 @@ class QueueEligibilityBatchForProcessing extends Command
                 ->getFileStream($driveFileName, $driveFolder);
         } catch (\Exception $e) {
             \Log::debug("EXCEPTION `{$e->getMessage()}`");
-            $batch->status = 2;
+            $batch->status = EligibilityBatch::STATUSES['error'];
             $batch->save();
 
             return null;
@@ -189,35 +188,31 @@ class QueueEligibilityBatchForProcessing extends Command
 
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        $athenaService  = app(AthenaDetermineEnrollmentEligibility::class);
         $query          = TargetPatient::whereBatchId($batch->id)->whereStatus(TargetPatient::STATUS_TO_PROCESS);
-        $targetPatients = $query->with('batch')->chunkById(100, function ($targetPatients) use (&$athenaService, $batch) {
-            //Processing
-            $batch->status = 1;
+        $targetPatients = $query->with('batch')->chunkById(100, function (\Eloquent $targetPatients) use ($batch) {
+            $batch->status = EligibilityBatch::STATUSES['processing'];
             $batch->save();
 
-            foreach ($targetPatients as $targetPatient) {
+            $targetPatients->each(function (TargetPatient $targetPatient) use ($batch) {
                 try {
-                    $athenaService->determineEnrollmentEligibility($targetPatient);
+                    $targetPatient->processEligibility();
                 } catch (\Exception $exception) {
                     $targetPatient->status = TargetPatient::STATUS_ERROR;
                     $targetPatient->save();
 
-                    //error
-                    $batch->status = 2;
-                    $batch->save();
-
                     throw $exception;
                 }
-            }
+            });
         });
 
-        // Mark batch as processed by default
-        $batch->status = 3;
+        $batch->processPendingJobs(200);
 
-        if ($query->exists()) {
+        // Mark batch as processed by default
+        $batch->status = EligibilityBatch::STATUSES['complete'];
+
+        if ($query->exists() || EligibilityJob::whereBatchId($batch->id)->where('status', '<', 2)->exists()) {
             // Mark batch as processing if there are patients to precess in DB
-            $batch->status = 1;
+            $batch->status = EligibilityBatch::STATUSES['processing'];
         }
 
         $batch->save();
@@ -240,19 +235,7 @@ class QueueEligibilityBatchForProcessing extends Command
             $created = $this->createEligibilityJobsFromJsonFile($batch);
         }
 
-        EligibilityJob::whereBatchId($batch->id)
-            ->where('status', '=', 0)
-            ->inRandomOrder()
-            ->take(300)
-            ->get()
-            ->each(function ($job) use ($batch) {
-                ProcessSinglePatientEligibility::dispatch(
-                    collect([$job->data]),
-                    $job,
-                    $batch,
-                    $batch->practice
-                          )->onQueue('low');
-            });
+        $batch->processPendingJobs(300);
 
         $jobsToBeProcessedCount = EligibilityJob::whereBatchId($batch->id)
             ->where('status', '<', 2)
@@ -372,7 +355,6 @@ class QueueEligibilityBatchForProcessing extends Command
 
         $unprocessedQuery->take(200)->get()->each(function ($job) use ($batch) {
             ProcessSinglePatientEligibility::dispatchNow(
-                collect([$job->data]),
                 $job,
                 $batch,
                 $batch->practice

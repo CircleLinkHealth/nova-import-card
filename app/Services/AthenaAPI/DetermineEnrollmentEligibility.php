@@ -6,13 +6,10 @@
 
 namespace App\Services\AthenaAPI;
 
-use App\Adapters\EligibilityCheck\AthenaAPIAdapter;
-use App\EligibilityJob;
-use App\Enrollee;
 use App\TargetPatient;
-use App\ValueObjects\Athena\ProblemsAndInsurances;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 
 class DetermineEnrollmentEligibility
 {
@@ -20,114 +17,20 @@ class DetermineEnrollmentEligibility
 
     protected $athenaEhrId = 2;
 
-    public function __construct(Calls $api)
+    public function __construct(AthenaApiImplementation $api)
     {
         $this->api = $api;
     }
 
-    public function determineEnrollmentEligibility(TargetPatient $targetPatient)
-    {
-        $targetPatient->loadMissing(['batch']);
-        $patientInfo = $this->getPatientProblemsAndInsurances(
-            $targetPatient->ehr_patient_id,
-            $targetPatient->ehr_practice_id,
-            $targetPatient->ehr_department_id
-        );
-
-        $practice = $this->practiceFromExternalId($targetPatient->ehr_practice_id);
-
-        $adapter = new AthenaAPIAdapter(
-            $patientInfo,
-            new EligibilityJob(['batch_id' => $targetPatient->batch->id]),
-            $targetPatient->batch
-        );
-        $isEligible = $adapter->isEligible($practice, $targetPatient->ehr_patient_id);
-
-        $job                               = $adapter->getEligibilityJob();
-        $targetPatient->eligibility_job_id = $job->id;
-
-        if ( ! $isEligible) {
-            $targetPatient->status = TargetPatient::STATUS_INELIGIBLE;
-            $targetPatient->save();
-
-            return false;
-        }
-
-        $demos = $this->getDemographics(
-            $targetPatient->ehr_patient_id,
-            $targetPatient->ehr_practice_id
-        );
-
-        try {
-            $demos = $demos[0];
-        } catch (\Exception $e) {
-            throw new \Exception('Get Demographics api call failed.', 500, $e);
-        }
-
-        if ($demos['homephone'] or $demos['mobilephone']) {
-            $targetPatient->status = TargetPatient::STATUS_ELIGIBLE;
-        } else {
-            $targetPatient->status      = TargetPatient::STATUS_ERROR;
-            $targetPatient->description = 'Homephone or mobile phone must be provided';
-        }
-
-        $insurances = $patientInfo->getInsurances();
-
-        try {
-            $enrollee = Enrollee::create([
-                //required
-                'first_name'  => $demos['firstname'],
-                'last_name'   => $demos['lastname'],
-                'home_phone'  => $demos['homephone'],
-                'cell_phone'  => $demos['mobilephone'] ?? null,
-                'practice_id' => $practice->id,
-                'batch_id'    => $targetPatient->batch->id ?? null,
-
-                'status' => Enrollee::TO_CALL,
-
-                //notRequired
-                'address'   => $demos['address1'] ?? null,
-                'address_2' => $demos['address2'] ?? null,
-                'dob'       => $demos['dob'],
-                'state'     => $demos['state'],
-                'city'      => $demos['city'] ?? null,
-                'zip'       => $demos['zip'] ?? null,
-
-                'primary_insurance' => array_key_exists(0, $insurances)
-                    ? $insurances[0]['insurancetype'] ?? $insurances[0]['insuranceplanname']
-                    : '',
-                'secondary_insurance' => array_key_exists(1, $insurances)
-                    ? $insurances[1]['insurancetype'] ?? $insurances[1]['insuranceplanname']
-                    : '',
-                'tertiary_insurance' => array_key_exists(2, $insurances)
-                    ? $insurances[2]['insurancetype'] ?? $insurances[2]['insuranceplanname']
-                    : '',
-
-                'cpm_problem_1' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_1'),
-                'cpm_problem_2' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_2'),
-            ]);
-
-            $targetPatient->enrollee_id = $enrollee->id;
-        } catch (\Illuminate\Database\QueryException $e) {
-            //check if this is a mysql exception for unique key constraint
-            $errorCode = $e->errorInfo[1];
-            if (1062 == $errorCode) {
-                //do nothing
-                    //we don't actually want to terminate the program if we detect duplicates
-                    //we just don't wanna add the row again
-            }
-        }
-
-        $targetPatient->save();
-
-        return $enrollee ?? null;
-    }
-
-    public function getDemographics($patientId, $practiceId)
-    {
-        return $this->api->getDemographics($patientId, $practiceId);
-    }
-
+    /**
+     * @param $ehrPracticeId
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @param bool   $offset
+     * @param null   $batchId
+     *
+     * @throws \Exception
+     */
     public function getPatientIdFromAppointments(
         $ehrPracticeId,
         Carbon $startDate,
@@ -173,12 +76,15 @@ class DetermineEnrollmentEligibility
                     continue;
                 }
 
-                $target = TargetPatient::updateOrCreate([
-                    'ehr_id'            => $this->athenaEhrId,
-                    'ehr_patient_id'    => $ehrPatientId,
-                    'ehr_practice_id'   => $ehrPracticeId,
-                    'ehr_department_id' => $departmentId,
-                ]);
+                $target = TargetPatient::updateOrCreate(
+                    [
+                        'practice_id'       => Practice::where('external_id', $ehrPracticeId)->value('id'),
+                        'ehr_id'            => $this->athenaEhrId,
+                        'ehr_patient_id'    => $ehrPatientId,
+                        'ehr_practice_id'   => $ehrPracticeId,
+                        'ehr_department_id' => $departmentId,
+                    ]
+                );
 
                 if (null !== $batchId) {
                     $target->batch_id = $batchId;
@@ -190,33 +96,5 @@ class DetermineEnrollmentEligibility
                 }
             }
         }
-    }
-
-    /**
-     * @param $patientId
-     * @param $practiceId
-     * @param $departmentId
-     *
-     * @return ProblemsAndInsurances
-     */
-    public function getPatientProblemsAndInsurances($patientId, $practiceId, $departmentId)
-    {
-        $problemsResponse   = $this->api->getPatientProblems($patientId, $practiceId, $departmentId);
-        $insurancesResponse = $this->api->getPatientInsurances($patientId, $practiceId, $departmentId);
-
-        $problemsAndInsurance = new ProblemsAndInsurances();
-        $problemsAndInsurance->setProblems($problemsResponse['problems']);
-        $problemsAndInsurance->setInsurances($insurancesResponse['insurances']);
-
-        return $problemsAndInsurance;
-    }
-
-    private function practiceFromExternalId($ehrPracticeId): Practice
-    {
-        return Practice::where(
-            'external_id',
-            '=',
-            $ehrPracticeId
-        )->firstOrFail();
     }
 }

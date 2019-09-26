@@ -75,9 +75,12 @@ trait SetupTestCustomerTrait
         $patient = $this->setupUser($practice->id, $roles);
         $date    = Carbon::now();
 
-        //status
-        $status = collect([Patient::ENROLLED, Patient::PAUSED, Patient::WITHDRAWN]);
-        $patient->patientInfo->setCcmStatusAttribute($status->random());
+        $attr = \factory(Patient::class)->raw();
+        $patient->patientInfo->setCcmStatusAttribute($attr['ccm_status']);
+        $patient->patientInfo->gender     = $attr['gender'];
+        $patient->patientInfo->mrn_number = $attr['mrn_number'];
+        $patient->patientInfo->birth_date = $attr['birth_date'];
+        $patient->patientInfo->save();
 
         //attach problems, summaries, chargeable services
         $problems   = CpmProblem::get();
@@ -88,8 +91,8 @@ trait SetupTestCustomerTrait
             'month_year' => Carbon::now()->copy()->subMonth($months->random())->startOfMonth()->toDateString(),
             'ccm_time'   => 1400,
             'approved'   => 1,
-            'actor_id'   => 1,
         ]);
+
         $patient->chargeableServices()->attach(1);
 
         $problems
@@ -102,6 +105,8 @@ trait SetupTestCustomerTrait
                         'cpm_problem_id' => $p->id,
                     ]);
             });
+
+        $patient->load('ccdProblems');
 
         //careplan
         $patient->carePlan()->updateOrCreate([

@@ -6,9 +6,12 @@
 
 namespace App;
 
+use App\Traits\Relationships\BelongsToCcda;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Ehr;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 
 /**
  * App\TargetPatient.
@@ -48,9 +51,27 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUserId($value)
  * @mixin \Eloquent
+ *
+ * @property int                                          $practice_id
+ * @property \App\EligibilityBatch|null                   $batch
+ * @property \CircleLinkHealth\Customer\Entities\Practice $practice
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
+ *
+ * @property int|null                             $ccda_id
+ * @property \App\Models\MedicalRecords\Ccda|null $ccda
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
+ *
+ * @property int|null $revision_history_count
+ * @property int      $department_id
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDepartmentId($value)
  */
 class TargetPatient extends BaseModel
 {
+    use BelongsToCcda;
+
     const STATUS_CONSENTED  = 'consented';
     const STATUS_ELIGIBLE   = 'eligible';
     const STATUS_ENROLLED   = 'enrolled';
@@ -59,6 +80,8 @@ class TargetPatient extends BaseModel
     const STATUS_TO_PROCESS = 'to_process';
 
     protected $fillable = [
+        'ccda_id',
+        'practice_id',
         'batch_id',
         'eligibility_job_id',
         'ehr_id',
@@ -84,6 +107,51 @@ class TargetPatient extends BaseModel
     public function enrollee()
     {
         return $this->belongsTo(Enrollee::class, 'enrollee_id');
+    }
+
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
+    }
+
+    /**
+     * @throws \Exception
+     *
+     * @return EligibilityJob
+     */
+    public function processEligibility()
+    {
+        $this->loadMissing('batch');
+
+        if ( ! $this->batch) {
+            throw new \Exception('A batch is necessary to process a target patient.');
+        }
+
+        return tap(
+            app(AthenaEligibilityCheckableFactory::class)
+                ->makeAthenaEligibilityCheckable($this)
+                ->createAndProcessEligibilityJobFromMedicalRecord(),
+            function (EligibilityJob $eligibilityJob) {
+                $this->setStatusFromEligibilityJob($eligibilityJob);
+            }
+        );
+    }
+
+    public function setStatusFromEligibilityJob(EligibilityJob $eligibilityJob)
+    {
+        if ($eligibilityJob->isIneligible()) {
+            $this->status = self::STATUS_INELIGIBLE;
+        } elseif ($eligibilityJob->isEligible() || $eligibilityJob->wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()) {
+            $this->status = self::STATUS_ELIGIBLE;
+        } elseif ($eligibilityJob->isAlreadyEnrolled()) {
+            $this->status = self::STATUS_ENROLLED;
+        }
+    }
+
+    public function setStatusFromException(\Exception $e)
+    {
+        $this->status      = TargetPatient::STATUS_ERROR;
+        $this->description = $e->getMessage();
     }
 
     public function user()

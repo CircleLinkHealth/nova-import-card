@@ -6,12 +6,17 @@
 
 namespace App\Models\MedicalRecords;
 
+use App\Adapters\EligibilityCheck\CcdaToEligibilityJobAdapter;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\DirectMailMessage;
+use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
+use App\TargetPatient;
 use App\Traits\Relationships\BelongsToPatientUser;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -90,6 +95,19 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereDirectMailMessageId($value)
+ *
+ * @property \App\EligibilityBatch|null                        $batch
+ * @property \CircleLinkHealth\Customer\Entities\Practice|null $practice
+ * @property int|null                                          $allergies_count
+ * @property int|null                                          $demographics_count
+ * @property int|null                                          $demographics_imports_count
+ * @property int|null                                          $document_count
+ * @property int|null                                          $media_count
+ * @property int|null                                          $medications_count
+ * @property int|null                                          $problems_count
+ * @property int|null                                          $providers_count
+ * @property int|null                                          $revision_history_count
+ * @property \App\TargetPatient                                $targetPatient
  */
 class Ccda extends MedicalRecordEloquent implements HasMedia
 {
@@ -106,6 +124,10 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
     const IMPORTER     = 'importer';
     const SFTP_DROPBOX = 'sftp_dropbox';
     const UPLOADED     = 'uploaded';
+
+    protected $attributes = [
+        'imported' => false,
+    ];
 
     protected $dates = [
         'date',
@@ -129,6 +151,11 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         'xml',
         'status',
     ];
+
+    public function batch()
+    {
+        return $this->belongsTo(EligibilityBatch::class);
+    }
 
     public function bluebuttonJson()
     {
@@ -157,6 +184,13 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         return $this->hasOne(CcdaRequest::class);
     }
 
+    /**
+     * Store Ccda and store xml as Media.
+     *
+     * @param array $attributes
+     *
+     * @return Ccda|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|MedicalRecordEloquent
+     */
     public static function create($attributes = [])
     {
         if ( ! array_key_exists('xml', $attributes)) {
@@ -172,6 +206,16 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         $ccda->addMedia(storage_path("ccda-{$ccda->id}.xml"))->toMediaCollection('ccd');
 
         return $ccda;
+    }
+
+    /**
+     * @return \App\EligibilityJob
+     */
+    public function createEligibilityJobFromMedicalRecord(): EligibilityJob
+    {
+        $adapter = new CcdaToEligibilityJobAdapter($this, $this->practice, $this->batch);
+
+        return $adapter->adaptToEligibilityJob();
     }
 
     public function directMessage()
@@ -218,6 +262,11 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
             ->first();
     }
 
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
+    }
+
     public function qaSummary()
     {
         return $this->hasOne(ImportedMedicalRecord::class);
@@ -240,6 +289,14 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         $this->addMedia(storage_path("ccda-{$this->id}.xml"))->toMediaCollection('ccd');
 
         return $this;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function targetPatient()
+    {
+        return $this->hasOne(TargetPatient::class);
     }
 
     protected function parseToJson($xml)

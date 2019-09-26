@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\FromArray;
 use App\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
@@ -40,7 +41,8 @@ class NursePerformanceRepController extends Controller
     public function caseLoad($reportPerDay)
     {
         return array_key_exists('uniquePatientsAssignedForMonth', $reportPerDay)
-            ? $reportPerDay['uniquePatientsAssignedForMonth'] : 'N/A';
+            ? $reportPerDay['uniquePatientsAssignedForMonth']
+            : 'N/A';
     }
 
     /**
@@ -51,7 +53,8 @@ class NursePerformanceRepController extends Controller
     public function caseLoadComplete($reportPerDay)
     {
         return array_key_exists('caseLoadComplete', $reportPerDay)
-            ? $reportPerDay['caseLoadComplete'] : 'N/A';
+            ? $reportPerDay['caseLoadComplete']
+            : 'N/A';
     }
 
     /**
@@ -62,7 +65,8 @@ class NursePerformanceRepController extends Controller
     public function caseLoadNeededToComplete($reportPerDay)
     {
         return array_key_exists('caseLoadNeededToComplete', $reportPerDay)
-            ? $reportPerDay['caseLoadNeededToComplete'] : 'N/A';
+            ? $reportPerDay['caseLoadNeededToComplete']
+            : 'N/A';
     }
 
     /**
@@ -73,7 +77,8 @@ class NursePerformanceRepController extends Controller
     public function completionRate($reportPerDay)
     {
         return array_key_exists('completionRate', $reportPerDay)
-            ? $reportPerDay['completionRate'] : 'N/A';
+            ? (0 == $reportPerDay['committedHours'] ? 'N/A' : $reportPerDay['completionRate'])
+            : 'N/A';
     }
 
     /**
@@ -84,7 +89,8 @@ class NursePerformanceRepController extends Controller
     public function efficiencyIndex($reportPerDay)
     {
         return array_key_exists('efficiencyIndex', $reportPerDay)
-            ? $reportPerDay['efficiencyIndex'] : 'N/A';
+            ? (0 == $reportPerDay['committedHours'] ? 'N/A' : $reportPerDay['efficiencyIndex'])
+            : 'N/A';
     }
 
     /**
@@ -150,7 +156,8 @@ class NursePerformanceRepController extends Controller
     public function hoursCommittedRestOfMonth($reportPerDay)
     {
         return array_key_exists('hoursCommittedRestOfMonth', $reportPerDay)
-            ? $reportPerDay['hoursCommittedRestOfMonth'] : 'N/A';
+            ? $reportPerDay['hoursCommittedRestOfMonth']
+            : 'N/A';
     }
 
     /**
@@ -187,33 +194,79 @@ class NursePerformanceRepController extends Controller
     }
 
     /**
+     * @param Request $request
+     *
+     * @throws \Exception
+     *
+     * @return
+     */
+    public function nurseMetricsPerformanceExcel(Request $request)
+    {
+        $input = $request->input();
+
+        if (isset($input['start_date'], $input['end_date'])) {
+            $startDate = Carbon::parse($input['start_date']);
+            $endDate   = Carbon::parse($input['end_date']);
+        } else {
+            $startDate = Carbon::parse($input['start_date']);
+            $endDate   = Carbon::parse($input['end_date']);
+        }
+
+        $days   = $this->getDaysBetweenPeriodRange($startDate, $endDate);
+        $nurses = $this->service->manipulateData($days);
+
+        $filename = "Nurse Performance Report - {$startDate->toDateString()} to {$endDate->toDateString()}.xlsx";
+
+        $data = collect($this->nursesDataForView($nurses))->sortBy(function ($item) {
+            return $item['Day'].'-'.$item['Name'];
+        });
+
+        return (new FromArray($filename, $data->toArray()))->download($filename);
+    }
+
+    /**
      * @param Collection $nurses
      *
      * @return array
      */
     public function nursesDataForView(Collection $nurses)
     {
-        //@todo:one level of indendetion
         $nurseDailyData = [];
         $n              = 0;
         foreach ($nurses as $name => $report) {
             foreach ($report as $day => $reportPerDay) {
-                $nurseDailyData[$n]['weekDay']                   = Carbon::parse($day)->copy()->format('jS D');
-                $nurseDailyData[$n]['name']                      = $reportPerDay['nurse_full_name'];
-                $nurseDailyData[$n]['actualHours']               = $reportPerDay['actualHours'];
-                $nurseDailyData[$n]['committedHours']            = $reportPerDay['committedHours'];
-                $nurseDailyData[$n]['scheduledCalls']            = $reportPerDay['scheduledCalls'];
-                $nurseDailyData[$n]['actualCalls']               = $reportPerDay['actualCalls'];
-                $nurseDailyData[$n]['successful']                = $reportPerDay['successful'];
-                $nurseDailyData[$n]['unsuccessful']              = $reportPerDay['unsuccessful'];
-                $nurseDailyData[$n]['completionRate']            = $this->completionRate($reportPerDay);
-                $nurseDailyData[$n]['efficiencyIndex']           = $this->efficiencyIndex($reportPerDay);
-                $nurseDailyData[$n]['caseLoad']                  = $this->caseLoad($reportPerDay);
-                $nurseDailyData[$n]['caseLoadComplete']          = $this->caseLoadComplete($reportPerDay);
-                $nurseDailyData[$n]['caseLoadNeededToComplete']  = $this->caseLoadNeededToComplete($reportPerDay);
-                $nurseDailyData[$n]['projectedHoursLeftInMonth'] = $this->projectedHoursLeftInMonth($reportPerDay);
-                $nurseDailyData[$n]['hoursCommittedRestOfMonth'] = $this->hoursCommittedRestOfMonth($reportPerDay);
-                $nurseDailyData[$n]['surplusShortfallHours']     = $this->surplusShortfallHours($reportPerDay);
+                $nurseDailyData[$n] = [
+                    'Day'            => Carbon::parse($day)->copy()->format('jS D'),
+                    'Name'           => $reportPerDay['nurse_full_name'],
+                    'Assigned Calls' => $reportPerDay['scheduledCalls']
+                        ?: '0',
+                    'Actual Calls' => $reportPerDay['actualCalls']
+                        ?: '0',
+                    'Successful Calls' => $reportPerDay['successful']
+                        ?: '0',
+                    'Unsuccessful Calls' => $reportPerDay['unsuccessful']
+                        ?: '0',
+                    'Actual Hrs Worked' => $reportPerDay['actualHours']
+                        ?: '0',
+                    'Committed Hrs' => $reportPerDay['committedHours']
+                        ?: '0',
+                    'Attendance/Calls Completion Rate' => $this->completionRate($reportPerDay)
+                        ?: '0.00',
+                    'Efficiency Index' => $this->efficiencyIndex($reportPerDay)
+                        ?: '0.00',
+                    'Est. Hrs to Complete Case Load' => $this->caseLoadNeededToComplete($reportPerDay)
+                        ?: '0.0',
+                    'Projected Hrs. Left In Month' => $this->projectedHoursLeftInMonth($reportPerDay)
+                        ?: '0.00',
+                    'Hrs Committed Rest of Month' => $this->hoursCommittedRestOfMonth($reportPerDay)
+                        ?: '0',
+                    'Hrs Deficit or Surplus' => $this->surplusShortfallHours($reportPerDay)
+                        ?: '0',
+                    'Case Load' => $this->caseLoad($reportPerDay)
+                        ?: '0',
+                    '% Case Load Complete' => $this->caseLoadComplete($reportPerDay)
+                        ?: '0.00',
+                ];
                 ++$n;
             }
         }
@@ -229,7 +282,8 @@ class NursePerformanceRepController extends Controller
     public function projectedHoursLeftInMonth($reportPerDay)
     {
         return array_key_exists('projectedHoursLeftInMonth', $reportPerDay)
-            ? $reportPerDay['projectedHoursLeftInMonth'] : 'N/A';
+            ? $reportPerDay['projectedHoursLeftInMonth']
+            : 'N/A';
     }
 
     /**
@@ -268,7 +322,8 @@ class NursePerformanceRepController extends Controller
     public function surplusShortfallHours($reportPerDay)
     {
         return array_key_exists('surplusShortfallHours', $reportPerDay)
-            ? $reportPerDay['surplusShortfallHours'] : 'N/A';
+            ? $reportPerDay['surplusShortfallHours']
+            : 'N/A';
     }
 
     /**

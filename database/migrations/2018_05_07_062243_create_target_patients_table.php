@@ -24,6 +24,7 @@ class CreateTargetPatientsTable extends Migration
     {
         Schema::create('target_patients', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('eligibility_job_id');
             $table->integer('batch_id')->unsigned()->nullable()->index('target_patients_batch_id_foreign');
             $table->integer('ehr_id')->unsigned()->index('target_patients_ehr_id_foreign');
             $table->integer('user_id')->unsigned()->nullable()->index('target_patients_user_id_foreign');
@@ -34,6 +35,7 @@ class CreateTargetPatientsTable extends Migration
             $table->enum('status', ['to_process', 'eligible', 'ineligible', 'consented', 'enrolled', 'error'])->nullable();
             $table->timestamps();
             $table->string('description');
+            $table->foreign('eligibility_job_id')->references('id')->on('eligibility_jobs')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 }

@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Enrollment;
 use App\CareAmbassadorLog;
 use App\Enrollee;
 use App\Http\Controllers\Controller;
+use App\Jobs\ImportConsentedEnrollees;
 use App\TrixField;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -42,6 +43,15 @@ class EnrollmentCenterController extends Controller
                 break;
             case 'other':
                 $enrollee->setPrimaryPhoneNumberAttribute($request->input('other_phone'));
+                break;
+            case 'agent':
+                $enrollee->setPrimaryPhoneNumberAttribute($request->input('agent_phone'));
+                $enrollee->agent_details = [
+                    Enrollee::AGENT_PHONE_KEY        => $request->input('agent_phone'),
+                    Enrollee::AGENT_NAME_KEY         => $request->input('agent_name'),
+                    Enrollee::AGENT_EMAIL_KEY        => $request->input('agent_email'),
+                    Enrollee::AGENT_RELATIONSHIP_KEY => $request->input('agent_relationship'),
+                ];
                 break;
             default:
                 $enrollee->setPrimaryPhoneNumberAttribute($request->input('home_phone'));
@@ -78,6 +88,8 @@ class EnrollmentCenterController extends Controller
         $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
 
         $enrollee->save();
+
+        ImportConsentedEnrollees::dispatch([$enrollee->id], $enrollee->batch);
 
         return redirect()->route('enrollment-center.dashboard');
     }
@@ -183,9 +195,6 @@ class EnrollmentCenterController extends Controller
         $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
 
         $enrollee->status = $status;
-        if ($request->has('soft_decline_callback')) {
-            $enrollee->requested_callback = $request->input('soft_decline_callback');
-        }
 
         $enrollee->attempt_count    = $enrollee->attempt_count + 1;
         $enrollee->last_attempt_at  = Carbon::now()->toDateTimeString();

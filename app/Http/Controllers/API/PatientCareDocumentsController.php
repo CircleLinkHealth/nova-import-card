@@ -7,11 +7,13 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\SendCareDocument;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PatientCareDocumentsController extends Controller
 {
@@ -19,6 +21,16 @@ class PatientCareDocumentsController extends Controller
      * The size of ten megabytes, used for file validation.
      */
     const TEN_MB = 10485760;
+
+    /*
+     * Available reports that User can see as view-generated in AWV as of yet.
+     *
+     * @var array
+     * */
+    private $availableReportsForSending = [
+        'PPP',
+        'Provider Report',
+    ];
 
     public function downloadCareDocument($id, $mediaId)
     {
@@ -65,8 +77,73 @@ class PatientCareDocumentsController extends Controller
         ]);
     }
 
-    public function sendAssessmentLink()
+    public function sendCareDocument($patientId, $mediaId, $channel, $addressOrFax)
     {
+        $media = $this->getMediaItemById($patientId, $mediaId);
+
+        if ( ! $media) {
+            return response()->json(
+                'Something went wrong. Media not found.',
+                400
+            );
+        }
+
+        if ( ! in_array($media->getCustomProperty('doc_type'), $this->availableReportsForSending)) {
+            return response()->json(
+                'This has not yet been implemented.',
+                400
+            );
+        }
+
+        $patient = User::find($patientId);
+
+        if ( ! $patient) {
+            return response()->json(
+                'Something went wrong. Patient not found.',
+                400
+            );
+        }
+
+        if ('email' == $channel) {
+            $validator = Validator::make([
+                'email' => $addressOrFax,
+            ], [
+                'email' => 'required|email',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(
+                    'Invalid email address.',
+                    400
+                );
+            }
+
+            $notifiableUser = User::whereEmail($addressOrFax)->first();
+
+            if ( ! $notifiableUser) {
+                return response()->json(
+                    'Could not find User with that email.',
+                    400
+                );
+                //Fails because of non-existent id. Don't know if we want to be saving dummy users or just use dummy id.
+//                $notifiableUser = (new User())->forceFill([
+//                    'name'  => 'Notifiable User',
+//                    'email' => $addressOrFax,
+//                ]);
+            }
+
+            $notifiableUser->notify(new SendCareDocument($media, $patient, ['mail']));
+
+            return response()->json(
+                'Document sent successfully!',
+                200
+            );
+        }
+
+        return response()->json(
+            'This feature has not yet been implemented',
+            400
+        );
     }
 
     public function uploadCareDocuments(Request $request, $patientId)

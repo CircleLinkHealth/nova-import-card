@@ -6,14 +6,21 @@
 
 namespace App\Nova;
 
+use App\Constants;
 use App\TrixField;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
-use Laravel\Nova\Fields\Trix;
+use Waynestate\Nova\CKEditor;
 
 class CareAmbassadorScript extends Resource
 {
+    /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group = Constants::NOVA_GROUP_ENROLLMENT;
     /**
      * The model the resource corresponds to.
      *
@@ -79,7 +86,21 @@ class CareAmbassadorScript extends Resource
                     'es' => 'Spanish',
                 ])->displayUsingLabels(),
 
-            Trix::make('Body'),
+            CKEditor::make('Body', 'body')
+                ->options([
+                    'height'  => 500,
+                    'toolbar' => [
+                        ['Undo', 'Redo', '-', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat', '-', 'HorizontalRule', 'SpecialChar', 'PageBreak'],
+                        ['Bold', 'Italic', 'Underline', 'Strike'],
+                        ['TextColor', 'BGColor', '-', 'RemoveFormat'],
+                        '/',
+                        ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'],
+                        ['JustifyLeft', 'JustifyCenter', 'JustifyRight'],
+                        ['Link', 'Unlink', 'Anchor'],
+                        ['Format', 'FontSize'],
+                    ],
+                ])
+                ->hideFromIndex(),
         ];
     }
 

@@ -48,6 +48,10 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem query()
+ *
+ * @property int|null $care_plans_count
+ * @property int|null $children_count
+ * @property int|null $revision_history_count
  */
 class CareItem extends \CircleLinkHealth\Core\Entities\BaseModel
 {

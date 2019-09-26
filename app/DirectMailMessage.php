@@ -39,6 +39,9 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int|null $ccdas_count
+ * @property int|null $media_count
  */
 class DirectMailMessage extends Model implements HasMedia
 {

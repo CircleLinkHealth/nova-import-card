@@ -9,7 +9,7 @@
             $(document).ready(function () {
                 /* $( ".submitFormBtn").click(function(e) { */
                 $("a").click(function (e) {
-                    $("#confirmButtonModal").modal({    backdrop: 'static',    keyboard: false});
+                    $("#confirmButtonModal").modal({backdrop: 'static', keyboard: false});
                     e.preventDefault();
                     return false;
                 });
@@ -64,8 +64,10 @@
                                 <div class="col-sm-12 col-xs-10 col-xs-offset-1">
                                     <div class="form-group">
                                         <v-datepicker name="date" class="selectpickerX form-control" format="yyyy-MM-dd"
-                                            placeholder="YYYY-MM-DD"
-                                            value="{{ auth()->user()->resolveTimezoneToGMT(Carbon::parse($date)) }}" required></v-datepicker>
+                                                      :required="true"
+                                                      placeholder="YYYY-MM-DD"
+                                                      value="{{ auth()->user()->resolveTimezoneToGMT(Carbon::parse($date)) }}">
+                                        </v-datepicker>
                                     </div>
                                 </div>
 
@@ -89,6 +91,7 @@
                                 <div class="col-sm-12 col-xs-10 col-xs-offset-1">
                                     <div class="form-group">
                                         <input class="form-control" name="window_start" type="time"
+                                               required
                                                value="{{$window_start}}"
                                                id="window_start" placeholder="time">
 
@@ -99,6 +102,7 @@
                                         </label>
 
                                         <input class="form-control" name="window_end" type="time"
+                                               required
                                                value="{{$window_end}}"
                                                id="window_end" placeholder="time">
                                     </div>
@@ -146,7 +150,7 @@
 @endsection
 
 <style>
-    .vdp-datepicker *{
-        border:none;
+    .vdp-datepicker * {
+        border: none;
     }
 </style>

@@ -628,7 +628,7 @@ class ProcessEligibilityService
                 ->getFileStream($driveFileName, $driveFolder);
         } catch (\Exception $e) {
             \Log::info("EXCEPTION `{$e->getMessage()}`");
-            $batch->status = 2;
+            $batch->status = EligibilityBatch::STATUSES['error'];
             $batch->save();
 
             return null;
@@ -664,7 +664,22 @@ class ProcessEligibilityService
                 }
                 $row = [];
                 foreach (str_getcsv($iteration) as $key => $field) {
-                    $row[$headers[$key]] = $field;
+                    try {
+                        if (array_key_exists($key, $headers)) {
+                            $headerName = $headers[$key];
+                        }
+
+                        if (isset($headerName)) {
+                            $row[$headerName] = $field;
+                        }
+                    } catch (\Exception $exception) {
+                        \Log::channel('logdna')->error($exception->getMessage(), [
+                            'trace'        => $exception->getTrace(),
+                            'batch_id_tag' => "batch_id:$batch->id",
+                        ]);
+
+                        continue;
+                    }
                 }
                 $row    = array_filter($row);
                 $data[] = $row;

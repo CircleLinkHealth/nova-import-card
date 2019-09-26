@@ -42,6 +42,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $attempt_note
  * @property string|null $general_comment
  * @property string|null $ccm_status
+ * @property string|null $patient_nurse_id
+ * @property string|null $patient_nurse
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView newModelQuery()
@@ -74,6 +76,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereTimezone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereType($value)
  * @mixin \Eloquent
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereCcmStatus($value)
+ *
+ * @property int $asap
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereAsap($value)
  */
 class CallView extends Model
 {

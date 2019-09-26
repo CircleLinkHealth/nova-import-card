@@ -78,12 +78,13 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog query()
+ *
+ * @property int|null $revision_history_count
  */
 class ProviderLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog
 {
     use BelongsToCcda;
-    use
-        BelongsToVendor;
+    use BelongsToVendor;
 
     protected $fillable = [
         'location_id',

@@ -8,8 +8,9 @@ namespace App\Services\AthenaAPI;
 
 use App\ValueObjects\Athena\Patient;
 use App\ValueObjects\Athena\Problem;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 
-class Calls
+class Calls implements AthenaApiImplementation
 {
     /**
      * @var Connection
@@ -435,14 +436,16 @@ class Calls
      * @param $practiceId
      * @param $departmentId
      *
-     * @return mixed
+     * @throws \Exception
      */
     public function getPatientInsurances($patientId, $practiceId, $departmentId)
     {
         $this->initApiConnection();
 
         $response = $this->api->GET("${practiceId}/patients/${patientId}/insurances", [
-            'departmentid' => $departmentId,
+            'departmentid'  => $departmentId,
+            'showfullssn'   => false,
+            'showcancelled' => false,
         ]);
 
         return $this->response($response);
@@ -541,11 +544,7 @@ class Calls
 
     public function initApiConnection()
     {
-        $this->key     = config('services.athena.key');
-        $this->secret  = config('services.athena.secret');
-        $this->version = config('services.athena.version');
-
-        $this->api = new Connection($this->version, $this->key, $this->secret);
+        $this->api = app(AthenaApiImplementation::class);
     }
 
     /**
@@ -647,7 +646,7 @@ class Calls
         $this->initApiConnection();
 
         //check for errors
-        if (isset($response['error'])) {
+        if (is_array($response) && array_key_exists('error', $response)) {
             \Log::alert(__METHOD__.__LINE__.'Response logged below '.PHP_EOL);
 
             \Log::error(\GuzzleHttp\json_encode($response));

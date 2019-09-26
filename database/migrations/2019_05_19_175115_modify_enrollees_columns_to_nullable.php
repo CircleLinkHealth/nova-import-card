@@ -22,14 +22,16 @@ class ModifyEnrolleesColumnsToNullable extends Migration
      */
     public function up()
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        if ( ! isUnitTestingEnv()) {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
 
-        Schema::table(
-            'enrollees',
-            function (Blueprint $table) {
-                $table->dropForeign('enrollees_cpm_problem_1_foreign');
-            }
-        );
+            Schema::table(
+                'enrollees',
+                function (Blueprint $table) {
+                    $table->dropForeign('enrollees_cpm_problem_1_foreign');
+                }
+            );
+        }
 
         Schema::table(
             'enrollees',
@@ -40,16 +42,20 @@ class ModifyEnrolleesColumnsToNullable extends Migration
             }
         );
 
-        Schema::table(
-            'enrollees',
-            function (Blueprint $table) {
-                $table->foreign('cpm_problem_1')
-                    ->references('id')
-                    ->on('cpm_problems')
-                    ->onUpdate('cascade');
-            }
-        );
+        if ( ! isUnitTestingEnv()) {
+            Schema::table(
+                'enrollees',
+                function (Blueprint $table) {
+                    $table->foreign('cpm_problem_1')
+                        ->references('id')
+                        ->on('cpm_problems')
+                        ->onUpdate('cascade');
+                }
+            );
+        }
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        if ( ! isUnitTestingEnv()) {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        }
     }
 }

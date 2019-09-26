@@ -56,7 +56,7 @@ try {
     $s3Client = new S3Client($args);
 
     foreach ($keys as $s3Key => $localPath) {
-        echo "Putting $keys in $localPath";
+        echo "Putting $s3Key in $localPath";
         $result = $s3Client->getObject([
             'Bucket' => $args['bucket'],
             'Key'    => $s3Key,

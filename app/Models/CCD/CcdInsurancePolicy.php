@@ -54,12 +54,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy query()
+ *
+ * @property int|null $revision_history_count
  */
 class CcdInsurancePolicy extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use MedicalRecordIdAndTypeTrait;
-    use
-        SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'medical_record_id',

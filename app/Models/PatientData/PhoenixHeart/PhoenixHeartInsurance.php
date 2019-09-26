@@ -29,6 +29,8 @@ namespace App\Models\PatientData\PhoenixHeart;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance query()
+ *
+ * @property int|null $revision_history_count
  */
 class PhoenixHeartInsurance extends \CircleLinkHealth\Core\Entities\BaseModel
 {

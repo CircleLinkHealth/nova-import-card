@@ -260,11 +260,14 @@ class EnrollmentStatsController extends Controller
             $data[$practice->id]['total_cost'] = 0;
 
             foreach ($enrollers as $enrollerId => $time) {
-                if ( ! $enrollerId) {
+                if (empty($enrollerId)) {
                     continue;
                 }
 
                 $enroller = CareAmbassador::where('user_id', $enrollerId)->first();
+                if ( ! $enroller) {
+                    continue;
+                }
                 $data[$practice->id]['total_cost'] += number_format($enroller->hourly_rate * $time / 3600, 2);
             }
 
