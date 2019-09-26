@@ -13,6 +13,12 @@ class AnonymousNotifiable extends \Illuminate\Notifications\AnonymousNotifiable
     use RoutesNotifications;
     const ID = 0;
 
+    const ATTRIBUTES = [
+        'emr_direct_address',
+        'fax',
+        'email'
+    ];
+
     /**
      * @param $name
      *
@@ -27,7 +33,7 @@ class AnonymousNotifiable extends \Illuminate\Notifications\AnonymousNotifiable
          * Structure of $this->routes (inherited from \Illuminate\Notifications\AnonymousNotifiable) is:
          * ['channel' => $value] e.g. ['mail' => 'test@mail.com']
          * */
-        if ($name == 'emr_direct_address' || $name == 'fax' || $name == 'email'){
+        if (in_array($name, self::ATTRIBUTES)){
             return collect($this->routes)->first();
         }
 
