@@ -193,10 +193,10 @@
     import EventBus from '../admin/time-tracker/comps/event-bus'
     import LoaderComponent from '../components/loader';
     import {registerHandler, sendRequest} from "./bc-job-manager";
+    import {Logger} from '../logger-logdna';
 
     import Twilio from 'twilio-client';
     import VueTouchKeyboard from "vue-touch-keyboard";
-    import style from "vue-touch-keyboard/dist/vue-touch-keyboard.css"; // load default style
 
     window.Vue.use(VueTouchKeyboard);
 
@@ -431,6 +431,21 @@
                         else {
                             this.log = 'Calling ' + number;
                             this.connection = this.device.connect(this.getTwimlAppRequest(number, isUnlisted, isCallToPatient));
+
+                            this.connection.on('warning', (warningName) => {
+                                const temp = new Set(self.warningEvents);
+                                temp.add(warningName);
+                                self.warningEvents = Array.from(temp);
+                                Logger.warn(`WARNING: ${warningName}`, {meta: {'connection': 'warning'}});
+                            });
+
+                            this.connection.on('warning-cleared', (warningName) => {
+                                const temp = new Set(self.warningEvents);
+                                temp.delete(warningName);
+                                self.warningEvents = Array.from(temp);
+                                Logger.warn(`WARNING-CLEARED: ${warningName}`, {meta: {'connection': 'warning-cleared'}});
+                            });
+
                         }
                     }
 
@@ -741,6 +756,7 @@
                         self.device = new Twilio.Device(response.data.token, {
                             closeProtection: true, //show warning when closing the page with active call - NOT WORKING
                             debug: true,
+                            warnings: true,
                             region: 'us1' //default to US East Coast (Virginia)
                         });
 
@@ -777,18 +793,6 @@
                             self.reportError(err.code, err.message);
                             self.resetPhoneState();
                             self.log = err.message;
-                        });
-
-                        self.device.on('warning', (warningName) => {
-                            const temp = new Set(self.warningEvents);
-                            temp.add(warningName);
-                            self.warningEvents = Array.from(temp);
-                        });
-
-                        self.device.on('warning-cleared', (warningName) => {
-                            const temp = new Set(self.warningEvents);
-                            temp.delete(warningName);
-                            self.warningEvents = Array.from(temp);
                         });
 
                         self.device.on('ready', () => {
