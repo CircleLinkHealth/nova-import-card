@@ -78,7 +78,6 @@ class SendCareDocument extends Notification
      */
     public function toArray($notifiable)
     {
-        //todo: make sure we save path of file if it exists so we can delete the file from storage (if direct or fax)
         return [
             'channels'   => $this->via($notifiable),
             'sender_id'  => auth()->user()->id,
@@ -137,12 +136,11 @@ class SendCareDocument extends Notification
      */
     public function toMail($notifiable)
     {
-        //todo: add more details to message?
         $link = $this->getReportLink();
 
         return (new MailMessage())
             ->subject($this->getSubject())
-            ->line("Click at link below to see patient {$this->reportType}")
+            ->line("Click at link below to see the web version the patient's AWV {$this->reportType}.")
             ->action('Go to report', $link);
     }
 
@@ -161,8 +159,6 @@ class SendCareDocument extends Notification
         if ( ! $saved) {
             return false;
         }
-
-        //todo:make sure we delete the file in successful notification event - maybe the path will be needed on the notification itself so the even knows -
 
         return $path;
     }
@@ -197,7 +193,6 @@ class SendCareDocument extends Notification
                    .$this->media->created_at->toFormattedDateString();
 
         if (auth()->check()) {
-            //todo:double check if auth user is the right way to go
             $message .= PHP_EOL.PHP_EOL.'This Report was forwarded to you by '.auth()->user()->getFullName().'.';
         }
 

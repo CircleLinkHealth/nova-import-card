@@ -26,7 +26,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $disputable
  * @property \CircleLinkHealth\Customer\Entities\User|null $resolver
  * @property \CircleLinkHealth\Customer\Entities\User      $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\Dispute query()

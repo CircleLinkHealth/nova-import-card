@@ -64,7 +64,9 @@ class SendAWVDocument implements ShouldQueue
             }
         }
 
-        //todo: add implementation for multiple emails, delete report that is saved locally
+
+        //TODO: IN CPM-1247
+        //add implementation for multiple emails
     }
 
     private function getNotifiableEntity($channel, $input)
@@ -74,7 +76,6 @@ class SendAWVDocument implements ShouldQueue
                 $notifiable = User::whereEmail($input)->first();
                 break;
             case 'direct':
-                //get location as well
                 $notifiable = User::whereHas('emrDirect', function ($emr) use ($input) {
                     $emr->where('address', $input);
                 })->first();

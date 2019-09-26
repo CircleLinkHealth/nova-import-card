@@ -185,7 +185,7 @@ class PatientCareDocumentsController extends Controller
             case 'fax':
                 $this->sendChannels = [FaxChannel::class];
                 //todo: add phone validation
-                $validationRules = ['required'];
+                $validationRules = ['required', 'phone:us'];
                 break;
             default:
                 $this->sendChannels = [];
