@@ -8,8 +8,9 @@ namespace App\Services\AthenaAPI;
 
 use App\ValueObjects\Athena\Patient;
 use App\ValueObjects\Athena\Problem;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 
-class Calls
+class Calls implements AthenaApiImplementation
 {
     /**
      * @var Connection
@@ -543,11 +544,7 @@ class Calls
 
     public function initApiConnection()
     {
-        $this->key     = config('services.athena.key');
-        $this->secret  = config('services.athena.secret');
-        $this->version = config('services.athena.version');
-
-        $this->api = new Connection($this->version, $this->key, $this->secret);
+        $this->api = app(AthenaApiImplementation::class);
     }
 
     /**

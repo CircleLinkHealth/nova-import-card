@@ -8,7 +8,17 @@ use Illuminate\Database\Seeder;
 
 class AppConfigTableSeeder extends Seeder
 {
-    public function rows(): array
+    /**
+     * Auto generated seed file.
+     */
+    public function run()
+    {
+        \DB::table('app_config')->delete();
+
+        \DB::table('app_config')->insert($this->rows());
+    }
+
+    private function rows(): array
     {
         return [
             0 => [
@@ -32,23 +42,6 @@ class AppConfigTableSeeder extends Seeder
                 'created_at'   => '2017-04-25 17:52:30',
                 'updated_at'   => '2017-12-19 08:52:39',
             ],
-            3 => [
-                'id'           => 4,
-                'config_key'   => 'default_care_plan_template_id',
-                'config_value' => '1',
-                'created_at'   => '2017-06-09 09:03:20',
-                'updated_at'   => '2017-06-09 09:20:20',
-            ],
         ];
-    }
-
-    /**
-     * Auto generated seed file.
-     */
-    public function run()
-    {
-        \DB::table('app_config')->delete();
-
-        \DB::table('app_config')->insert($this->rows());
     }
 }

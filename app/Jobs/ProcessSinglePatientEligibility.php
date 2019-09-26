@@ -8,7 +8,7 @@ namespace App\Jobs;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
-use App\Services\EligibilityCheck;
+use App\Services\EligibilityChecker;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -74,12 +74,14 @@ class ProcessSinglePatientEligibility implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * @throws \Exception
      */
     public function handle()
     {
         //Only process if EligibilityJob status is 0 (not_started)
         if (0 == $this->eligibilityJob->status) {
-            new EligibilityCheck(
+            new EligibilityChecker(
                 $this->eligibilityJob,
                 $this->practice,
                 $this->batch,

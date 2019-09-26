@@ -73,7 +73,7 @@
                 <template slot="Care Coach" slot-scope="props">
                     <div>
                         <select-editable v-model="props.row.NurseId" :display-text="props.row['Care Coach']"
-                                         :values="props.row.nurses()" :class-name="'blue'"
+                                         :values="props.row.nurses()" :class-name="isAssignedToPatientsCareCoach(props.row) ? 'blue' : 'orange'"
                                          :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
                         <loader class="relative" v-if="props.row.loaders.nurse"></loader>
                     </div>
@@ -193,7 +193,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler'],
+                columns: ['selected', 'Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler', 'Patient\'s Care Coach'],
                 tableData: [],
                 nurses: [],
                 loaders: {
@@ -248,7 +248,7 @@
                         'Patient': this.patientNamesClass
                     },
                     sortable: ['Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
-                    filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider'],
+                    filterable: ['Type', 'Care Coach', 'Patient ID', 'Patient', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider', 'Patient\'s Care Coach'],
                     filterByColumn: true,
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -267,7 +267,8 @@
                         'CCM Time': (ascending) => (a, b) => 0,
                         'BHI Time': (ascending) => (a, b) => 0,
                         Practice: (ascending) => (a, b) => 0,
-                        Scheduler: (ascending) => (a, b) => 0
+                        Scheduler: (ascending) => (a, b) => 0,
+                        'Patient\'s Care Coach': (ascending) => (a, b) => 0,
                     }
                 }
             }
@@ -308,7 +309,8 @@
                     'Preferred Call Days': 'preferred_call_days',
                     'Patient Status': 'patient_status',
                     'Billing Provider': 'billing_provider',
-                    'Scheduler': 'scheduler'
+                    'Scheduler': 'scheduler',
+                    'Patient\'s Care Coach': 'patient_nurse'
                 };
                 return columns[name] ?
                     columns[name] :
@@ -519,6 +521,21 @@
                 }
             },
 
+            isAssignedToPatientsCareCoach(row) {
+                const careCoach = row['Care Coach'];
+                const patientsCareCoach = row['Patient\'s Care Coach'];
+
+                if (!careCoach) {
+                    return true;
+                }
+
+                if (!patientsCareCoach) {
+                    return true;
+                }
+
+                return careCoach.trim() === patientsCareCoach.trim();
+            },
+
             setupCallNew(call) {
                 const $vm = this;
 
@@ -547,6 +564,7 @@
                     'Activity End': call.call_time_end,
                     practiceId: call.practice_id,
                     ccmStatus: call.ccm_status,
+                    'Patient\'s Care Coach': call.patient_nurse,
                     nurses() {
                         return [
                             ...$vm.nurses
@@ -746,6 +764,10 @@
 
     .blue {
         color: #008cba;
+    }
+
+    .orange {
+        color: #ba5506;
     }
 
     .red {
