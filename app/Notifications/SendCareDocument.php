@@ -151,16 +151,17 @@ class SendCareDocument extends Notification
      */
     public function toPdf()
     {
-        $currentDateTime = Carbon::now();
-        $path            = storage_path("{$this->reportType}_patient_id_{$this->patient->id}_{$currentDateTime->toDateTimeString()}.pdf");
+        $filePath = storage_path($this->media->file_name);
 
-        $saved = file_put_contents($path, $this->media->getFile());
+        if ( ! file_exists($filePath)) {
+            $saved = file_put_contents($filePath, $this->media->getFile());
 
-        if ( ! $saved) {
-            return false;
+            if ( ! $saved) {
+                return false;
+            }
         }
 
-        return $path;
+        return $filePath;
     }
 
     /**
