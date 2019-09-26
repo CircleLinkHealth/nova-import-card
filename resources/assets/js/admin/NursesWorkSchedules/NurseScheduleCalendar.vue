@@ -4,7 +4,7 @@
             <input id="holidaysCheckbox" type="checkbox" class="holidays-button" @click="holidaysChecked()">
             Upcoming Holidays
         </div>
-        <div id="calendar" class="calendar">
+        <div class="calendar">
             <full-calendar ref="calendar"
                            :events="events"
                            :config="config"
@@ -168,9 +168,20 @@
 
         methods: Object.assign(mapActions(['addNotification']), {
             deleteEvent() {
-                //pass window Id from backend
-                axios.get(`/care-center/work-schedule/destroy/${this.eventToViewData[0].windowId}`).then((response => {
+                const windowId = this.eventToViewData[0].windowId;
+
+                axios.get(`/care-center/work-schedule/destroy/${windowId}`).then((response => {
                     $("#addWorkEvent").modal('toggle');
+//remove from dom
+                    if (this.eventsAddedNow !== []) {
+                        const index = this.eventsAddedNow.findIndex(x => x.data.windowId === windowId);
+                        this.eventsAddedNow.splice(index, 1);
+                    }
+
+                    if (this.workHours !== []) {
+                        const index = this.workHours.findIndex(x => x.data.windowId === windowId);
+                        this.workHours.splice(index, 1);
+                    }
 
                     this.addNotification({
                         title: "Success!",
@@ -179,8 +190,9 @@
                         timeout: true
                     });
 
+
                     alert(response.data.message);
-                    console.log(response);
+
                 })).catch((error) => {
                     console.log(error);
                     if (error.response.status === 422) {
@@ -245,7 +257,7 @@
                     allDay: true,
                     data: {
                         date: this.workEventDate,
-                        windowId:newEventData.window.id,
+                        windowId: newEventData.window.id,
                         end: this.workRangeStarts,
                         start: this.workRangeEnds,
                         name: this.nurseData.label,
@@ -271,7 +283,7 @@
                 this.eventToViewData.push(arg.data);
                 this.workEventDate = '';
                 this.workEventDate = this.eventToViewData[0].date;
-                console.log(arg.data.date);
+
                 $("#addWorkEvent").modal('toggle');
 
 
