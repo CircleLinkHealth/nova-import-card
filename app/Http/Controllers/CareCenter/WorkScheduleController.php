@@ -123,7 +123,11 @@ class WorkScheduleController extends Controller
 
         $holiday->forceDelete();
 
-        return redirect()->back();
+        return response()->json([
+            'message'   => 'Holiday Deleted',
+            'holidayId' => $holidayId,
+        ], 200);
+//        return redirect()->back(); //@todo: Deal with the case of requestWantsJson
     }
 
     /**
@@ -268,20 +272,20 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                    return Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_end
-                    )->diffInHours(Carbon::createFromFormat(
+                return Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_end
+                )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
-                }) + Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_end']
-                )->diffInHours(Carbon::createFromFormat(
+            }) + Carbon::createFromFormat(
                 'H:i',
-                $workScheduleData['window_time_start']
-            ));
+                $workScheduleData['window_time_end']
+            )->diffInHours(Carbon::createFromFormat(
+                    'H:i',
+                    $workScheduleData['window_time_start']
+                ));
 
         $invalidWorkHoursNumber = false;
 

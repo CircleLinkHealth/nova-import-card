@@ -30,6 +30,7 @@
 
                             <!--  Filter Options-->
                             <div v-if="!clickedToViewEvent" class="filter-options">
+                                <h4>Add Work Window</h4>
                                 <div>
                                     <vue-select :options="dataForDropdown"
                                                 v-model="nurseData">
@@ -38,27 +39,48 @@
 
                                 <div>
                                     <input v-model="hoursToWork"
+                                           :disabled="addHolidayChecked"
+                                           :class="{disable:addHolidayChecked}"
                                            type="number"
                                            class="work-hours"
                                            min="1" max="12"
-                                           style="max-width: 60px;"
-                                           required>
+                                           style="max-width: 60px;">
                                 </div>
                                 <div class="minimum-padding">
                                     <input v-model="workRangeStarts"
+                                           :disabled="addHolidayChecked"
+                                           :class="{disable:addHolidayChecked}"
                                            type="time"
                                            style="max-width: 120px;">
                                 </div>
                                 <div class="minimum-padding">
                                     <input v-model="workRangeEnds"
+                                           :disabled="addHolidayChecked"
+                                           :class="{disable:addHolidayChecked}"
                                            type="time"
                                            style="max-width: 120px;">
                                 </div>
+                                <h4>Add Holiday for this day</h4>
+                                <div class="add-holiday">
+                                    <input id="addHoliday"
+                                           :disabled="hoursToWorkHasValue"
+                                           :class="{disable:hoursToWorkHasValue}"
+                                           type="checkbox"
+                                           class="add-holiday-checkbox"
+                                           v-model="addHolidayChecked">
+                                </div>
                             </div>
-                            <div v-if="clickedToViewEvent" class="view-event">
+                            <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'holiday'"
+                                 class="view-event">
+                                <div class="nurse-name">{{this.eventToViewData[0].name}} holiday on</div>
+                                <div class="work-day">{{this.eventToViewData[0].day}}</div>
+                                <div class="work-day">{{this.eventToViewData[0].date}}</div>
+                            </div>
+                            <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'workDay'"
+                                 class="view-event">
                                 <div class="nurse-name">{{this.eventToViewData[0].name}} on</div>
                                 <div class="work-day">{{this.eventToViewData[0].day}} works for</div>
-                                <div class="work-hours">{{this.eventToViewData[0].workHours}} hours from</div>
+                                <div class="work-hours">{{this.eventToViewData[0].workHours}} hours between</div>
                                 <div class="start-time">{{this.eventToViewData[0].start}} to</div>
                                 <div class="start-end">{{this.eventToViewData[0].end}}</div>
                             </div>
@@ -73,7 +95,7 @@
                             </button>
                             <button v-if="!clickedToViewEvent" type="button"
                                     class="btn btn-primary"
-                                    @click="submitWorkEvent">Save
+                                    @click="addNewEvent">Save
                             </button>
                         </div>
                     </div>
@@ -127,6 +149,7 @@
                 clickedToViewEvent: false,
                 eventToViewData: [],
                 eventsAddedNow: [],
+                addHolidayChecked: false,
 
                 config: {
                     defaultView: month,
@@ -168,34 +191,78 @@
 
         methods: Object.assign(mapActions(['addNotification']), {
             deleteEvent() {
-                const windowId = this.eventToViewData[0].windowId;
+                //delete workday
+                const eventType = this.eventToViewData[0].eventType;
+                if (eventType !== 'holiday') {
+                    const windowId = this.eventToViewData[0].windowId;
+                    axios.get(`/care-center/work-schedule/destroy/${windowId}`).then((response => {
+                        $("#addWorkEvent").modal('toggle');
 
-                axios.get(`/care-center/work-schedule/destroy/${windowId}`).then((response => {
-                    $("#addWorkEvent").modal('toggle');
-//remove from dom
-                    if (this.eventsAddedNow !== []) {
-                        const index = this.eventsAddedNow.findIndex(x => x.data.windowId === windowId);
-                        this.eventsAddedNow.splice(index, 1);
-                    }
+                        //Delete event from dom
+                        if (this.eventsAddedNow !== []) {
+                            const index = this.eventsAddedNow.findIndex(x => x.data.windowId === windowId);
+                            this.eventsAddedNow.splice(index, 1);
+                        }
 
-                    if (this.workHours !== []) {
-                        const index = this.workHours.findIndex(x => x.data.windowId === windowId);
-                        this.workHours.splice(index, 1);
-                    }
+                        if (this.workHours !== []) {
+                            const index = this.workHours.findIndex(x => x.data.windowId === windowId);
+                            this.workHours.splice(index, 1);
+                        }
 
-                    this.addNotification({
-                        title: "Success!",
-                        text: response.data.message,
-                        type: "success",
-                        timeout: true
+                        //Show notification
+                        this.addNotification({
+                            title: "Success!",
+                            text: response.data.message,
+                            type: "success",
+                            timeout: true
+                        });
+
+
+                        alert(response.data.message);
+
+                    })).catch((error) => {
+                        console.log(error);
+                        if (error.response.status === 422) {
+                            this.errors = error;
+                            this.addNotification({
+                                title: "Warning!",
+                                text: this.errors.response.data.errors,
+                                type: "danger",
+                                timeout: true
+                            });
+                            alert(this.errors.response.data.errors);
+                        }
+
                     });
+                } else {
+                    //delete holiday
+                    const holidayId = this.eventToViewData[0].holidayId;
+                    axios.get(`/care-center/work-schedule/holidays/destroy/${holidayId}`).then((response => {
+                        $("#addWorkEvent").modal('toggle');
+                        console.log(response);
 
+                        //Delete event from dom
+                        if (this.eventsAddedNow !== []) {
+                            const index = this.eventsAddedNow.findIndex(x => x.data.windowId === windowId);
+                            this.eventsAddedNow.splice(index, 1);
+                        }
 
-                    alert(response.data.message);
+                        if (this.holidays !== []) {
+                            const index = this.holidays.findIndex(x => x.data.holidayId === holidayId);
+                            this.holidays.splice(index, 1);
+                        }
 
-                })).catch((error) => {
-                    console.log(error);
-                    if (error.response.status === 422) {
+                        //Show notification
+                        this.addNotification({
+                            title: "Success!",
+                            text: response.data.message,
+                            type: "success",
+                            timeout: true
+                        });
+
+                        alert(response.data.message);
+
+                    })).catch((error) => {
                         this.errors = error;
                         this.addNotification({
                             title: "Warning!",
@@ -204,20 +271,23 @@
                             timeout: true
                         });
                         alert(this.errors.response.data.errors);
-                    }
+                    });
+                    console.log('Post Holiday');
+                }
 
-                });
 
             },
 
-            submitWorkEvent() {
+            addNewEvent() {
                 const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
+                const defaultStartTime = '09:00';
+                const defaultEndTime = '17:00';
 
                 if (this.workRangeStarts === '') {
-                    this.workRangeStarts = '09:00'; //@todo:assign to const and display placeholder
+                    this.workRangeStarts = defaultStartTime; //@todo:assign placeholder to UI
                 }
                 if (this.workRangeEnds === '') {
-                    this.workRangeEnds = '17:00';
+                    this.workRangeEnds = defaultEndTime;
                 }
 
                 $("#addWorkEvent").modal('toggle'); //close modal
@@ -231,8 +301,7 @@
                     window_time_end: this.workRangeEnds,
                 }).then((response => {
                         //@todo: Add loader
-                        const newEvent = this.prepareLocalData(response.data);
-
+                        const newEvent = this.prepareLocalData(response.data); //to show in UI before page reload.
                         this.eventsAddedNow.push(newEvent);
 
                         this.addNotification({
@@ -296,7 +365,6 @@
             holidaysChecked() {
                 const checkBox = document.getElementById("holidaysCheckbox");
                 const toggleData = checkBox.checked === true;
-                console.log(toggleData);
                 this.showHolidays(toggleData);
 
             },
@@ -324,7 +392,10 @@
         computed: {
             events() {
                 return this.showWorkHours ? this.workHours.concat(this.eventsAddedNow) : this.holidays;
+            },
 
+            hoursToWorkHasValue() {
+                return this.hoursToWork.length !== 0;
             },
         },
 
@@ -342,5 +413,10 @@
 </script>
 
 <style scoped>
-
+    .disable {
+        background-color: #f4f6f6;
+        color: #d5dbdb;
+        cursor: default;
+        opacity: 0.7;
+    }
 </style>

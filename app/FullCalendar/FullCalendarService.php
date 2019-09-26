@@ -47,11 +47,24 @@ class FullCalendarService
             $holidays = $nurse->nurseInfo->holidays->where('date', '>=', Carbon::parse(now())->startOfWeek()->toDate());
 
             return collect($holidays)->map(function ($holiday) use ($nurse) {
+                $holidayDate = Carbon::parse($holiday->date)->toDateString();
+                $holidayDateInDayOfWeek = Carbon::parse($holidayDate)->dayOfWeek;
+                $holidayInHumanLang = clhDayOfWeekToDayName($holidayDateInDayOfWeek);
+
                 return collect(
                     [
-                        self::TITLE   => "$nurse->display_name",
-                        self::START   => Carbon::parse($holiday->date)->toDateString(),
-                        self::ALL_DAY => true,
+                        self::TITLE => "$nurse->display_name",
+                        self::START => $holidayDate,
+
+                        'allDay' => true,
+                        'data'   => [
+                            'holidayId' => $holiday->id,
+                            'nurseId'   => $nurse->nurseInfo->id,
+                            'name'      => $nurse->display_name,
+                            'date'      => $holidayDate,
+                            'day'       => $holidayInHumanLang,
+                            'eventType' => 'holiday',
+                        ],
                     ]
                 );
             });
@@ -70,7 +83,6 @@ class FullCalendarService
             $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
             $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
 
-            // i will NOT collect holidays here yet. Will load with axios post when requested
             return collect(
                 [
                     self::TITLE => "$nurse->display_name - $workHoursForDay Hrs",
@@ -92,6 +104,7 @@ class FullCalendarService
                         'start'     => $window->window_time_start,
                         'end'       => $window->window_time_end,
                         'workHours' => $workHoursForDay,
+                        'eventType' => 'workDay',
                     ],
                 ]
             );
