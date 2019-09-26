@@ -140,8 +140,22 @@
 
     @push("scripts")
         <script>
+            const waitForEl = function (selector, callback) {
+                if (!$(selector).length) {
+                    setTimeout(function () {
+                        window.requestAnimationFrame(function () {
+                            waitForEl(selector, callback)
+                        });
+                    }, 100);
+                } else {
+                    callback();
+                }
+            };
+
             $(function() {
-                $('#appointment-date').attr('autocomplete', 'off')
+                waitForEl('#appointment-date', () => {
+                    $('#appointment-date').attr('autocomplete', 'off')
+                });
             });
         </script>
     @endpush
