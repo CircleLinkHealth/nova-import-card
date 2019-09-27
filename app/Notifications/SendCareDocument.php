@@ -208,11 +208,9 @@ class SendCareDocument extends Notification
 
         $reportTypeForUrl = $this->getSanitizedReportType();
 
-        $year = ! is_a($this->media->created_at, 'Carbon\Carbon')
-            ? Carbon::parse($this->media->created_at)->year
-            : $this->media->year;
+        $year = Carbon::parse($this->media->created_at)->year;
 
-        return $awvUrl."/get-patient-report/{$this->patient->id}/{$reportTypeForUrl}/{$year}";
+        return $awvUrl."reports/get-patient-report/{$this->patient->id}/{$reportTypeForUrl}/{$year}";
     }
 
     private function getSanitizedReportType()
