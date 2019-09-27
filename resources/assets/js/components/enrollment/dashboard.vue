@@ -252,7 +252,7 @@
                         </div>
                     </div>
                     <div v-if="preferred_phone == 'agent' " class="row">
-                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out agent details</b></blockquote>
+                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out other contact's details</b></blockquote>
                         <div  class="col s6 m4">
                             <label for="agent_name" class="label">Other Contact's Name</label>
                             <input class="input-field" name="agent_name" id="agent_name" v-model="agent_name"/>

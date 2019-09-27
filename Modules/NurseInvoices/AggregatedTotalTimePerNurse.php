@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices;
 
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class AggregatedTotalTimePerNurse
@@ -25,15 +26,37 @@ class AggregatedTotalTimePerNurse
     protected $aggregator;
 
     /**
-     * @param TotalTimeAggregator $aggregator
+     * @var Carbon
      */
-    public function __construct(TotalTimeAggregator $aggregator)
+    protected $endDate;
+
+    /**
+     * @var Carbon
+     */
+    protected $startDate;
+
+    /**
+     * Nurse User IDs.
+     *
+     * @var array
+     */
+    protected $userIds;
+
+    /**
+     * @param array  $userIds
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     */
+    public function __construct(array $userIds, Carbon $startDate, Carbon $endDate)
     {
-        $this->aggregator = $aggregator;
+        $this->userIds   = $userIds;
+        $this->startDate = $startDate;
+        $this->endDate   = $endDate;
     }
 
     /**
-     * This is time the nurse spent on pages associated with a patient. CLH can bill insurance companies for that time (this is where our revenue comes from).
+     * This is time the nurse spent on pages associated with a patient. CLH can bill insurance companies for that time
+     * (this is where our revenue comes from).
      *
      * @param $nurseId
      *
@@ -45,7 +68,8 @@ class AggregatedTotalTimePerNurse
     }
 
     /**
-     * This is the time a nurse spends in the system, which is not associated with a patient. CLH cannot bill insurances for that time.
+     * This is the time a nurse spends in the system, which is not associated with a patient. CLH cannot bill
+     * insurances for that time.
      *
      * @param $nurseId
      *
@@ -61,6 +85,10 @@ class AggregatedTotalTimePerNurse
      */
     private function aggregatedTimeCollection()
     {
+        if ( ! $this->aggregator) {
+            $this->aggregator = new TotalTimeAggregator(parseIds($this->userIds), $this->startDate, $this->endDate);
+        }
+
         if ( ! $this->aggregatedTime) {
             $this->aggregatedTime = $this->aggregator->aggregate()->flatten();
         }
@@ -78,7 +106,10 @@ class AggregatedTotalTimePerNurse
      */
     private function time($billable, $nurseId)
     {
-        $nurseObject = $this->aggregatedTimeCollection()->where('is_billable', $billable)->where('user_id', $nurseId)->first();
+        $nurseObject = $this->aggregatedTimeCollection()->where('is_billable', $billable)->where(
+            'user_id',
+            $nurseId
+        )->first();
 
         return $nurseObject
             ? (int) $nurseObject->total_time
