@@ -225,18 +225,18 @@
                     });
                 } else {
                     //delete holiday
-                    const holidayId = this.eventToViewData[0].holidayId;
+                    const holidayId = event.holidayId;
                     axios.get(`/care-center/work-schedule/holidays/destroy/${holidayId}`).then((response => {
                         $("#addWorkEvent").modal('toggle');
                         console.log(response);
 
                         //Delete event from dom
-                        if (this.eventsAddedNow !== []) {
+                        if (isAddedNow) {
                             const index = this.eventsAddedNow.findIndex(x => x.data.windowId === windowId);
                             this.eventsAddedNow.splice(index, 1);
                         }
 
-                        if (this.holidays !== []) {
+                        if (!isAddedNow) {
                             const index = this.holidays.findIndex(x => x.data.holidayId === holidayId);
                             this.holidays.splice(index, 1);
                         }
