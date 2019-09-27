@@ -39,8 +39,6 @@
 
                                 <div>
                                     <input v-model="hoursToWork"
-                                           :disabled="addHolidayChecked"
-                                           :class="{disable:addHolidayChecked}"
                                            type="number"
                                            class="work-hours"
                                            min="1" max="12"
@@ -48,26 +46,13 @@
                                 </div>
                                 <div class="minimum-padding">
                                     <input v-model="workRangeStarts"
-                                           :disabled="addHolidayChecked"
-                                           :class="{disable:addHolidayChecked}"
                                            type="time"
                                            style="max-width: 120px;">
                                 </div>
                                 <div class="minimum-padding">
                                     <input v-model="workRangeEnds"
-                                           :disabled="addHolidayChecked"
-                                           :class="{disable:addHolidayChecked}"
                                            type="time"
                                            style="max-width: 120px;">
-                                </div>
-                                <h4>Add Holiday for this day</h4>
-                                <div class="add-holiday">
-                                    <input id="addHoliday"
-                                           :disabled="hoursToWorkHasValue"
-                                           :class="{disable:hoursToWorkHasValue}"
-                                           type="checkbox"
-                                           class="add-holiday-checkbox"
-                                           v-model="addHolidayChecked">
                                 </div>
                             </div>
                             <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'holiday'"
@@ -116,7 +101,8 @@
     // import Modal from '/admin/common/modal'
 
     const month = 'month';
-
+    const defaultEventType = 'workDay';
+    const holidayEventType = 'holiday';
     export default {
         name: "NurseScheduleCalendar",
         plugins: [rrule],
@@ -149,7 +135,6 @@
                 clickedToViewEvent: false,
                 eventToViewData: [],
                 eventsAddedNow: [],
-                addHolidayChecked: false,
 
                 config: {
                     defaultView: month,
@@ -191,20 +176,24 @@
 
         methods: Object.assign(mapActions(['addNotification']), {
             deleteEvent() {
-                //delete workday
-                const eventType = this.eventToViewData[0].eventType;
-                if (eventType !== 'holiday') {
+
+                const event = this.eventToViewData[0];
+                const eventType = event.eventType;
+                const isAddedNow = event.hasOwnProperty('isAddedNow');
+
+                if (eventType !== holidayEventType) {
+                    //delete workday
                     const windowId = this.eventToViewData[0].windowId;
                     axios.get(`/care-center/work-schedule/destroy/${windowId}`).then((response => {
                         $("#addWorkEvent").modal('toggle');
 
-                        //Delete event from dom
-                        if (this.eventsAddedNow !== []) {
+                        //Delete event from events() - dom
+
+                        if (isAddedNow) {
                             const index = this.eventsAddedNow.findIndex(x => x.data.windowId === windowId);
                             this.eventsAddedNow.splice(index, 1);
                         }
-
-                        if (this.workHours !== []) {
+                        if (!isAddedNow) {
                             const index = this.workHours.findIndex(x => x.data.windowId === windowId);
                             this.workHours.splice(index, 1);
                         }
@@ -290,8 +279,6 @@
                     this.workRangeEnds = defaultEndTime;
                 }
 
-                $("#addWorkEvent").modal('toggle'); //close modal
-
                 axios.post('/care-center/work-schedule', {
                     nurse_info_id: nurseId,
                     date: this.workEventDate,
@@ -301,6 +288,7 @@
                     window_time_end: this.workRangeEnds,
                 }).then((response => {
                         //@todo: Add loader
+                        $("#addWorkEvent").modal('toggle'); //close modal
                         const newEvent = this.prepareLocalData(response.data); //to show in UI before page reload.
                         this.eventsAddedNow.push(newEvent);
 
@@ -322,19 +310,23 @@
             },
 
             prepareLocalData(newEventData) {
+                console.log(newEventData);
+
                 return {
                     allDay: true,
                     data: {
                         date: this.workEventDate,
                         windowId: newEventData.window.id,
-                        end: this.workRangeStarts,
-                        start: this.workRangeEnds,
+                        end: this.workRangeEnds,
+                        start: this.workRangeStarts,
                         name: this.nurseData.label,
-                        nurseId: this.nurseData.nurseId
+                        nurseId: this.nurseData.nurseId,
+                        eventType: defaultEventType,
+                        isAddedNow:true,
                     },
                     dow: [newEventData.window.dayOfWeek],
-                    end: `${this.workEventDate}T${this.workRangeStarts}`,
-                    start: `${this.workEventDate}T${this.workRangeEnds}`,
+                    end: `${this.workEventDate}T${this.workRangeEnds}`,
+                    start: `${this.workEventDate}T${this.workRangeStarts}`,
                     title: `${this.nurseData.label} - ${this.hoursToWork} Hrs`,
                 }
             },
@@ -348,15 +340,24 @@
 
 
             handleEventCLick(arg) {
+                console.log('this', arg);
                 this.clickedToViewEvent = true;
+                // const data = this.prepareDataToPush(arg.data);
                 this.eventToViewData.push(arg.data);
                 this.workEventDate = '';
                 this.workEventDate = this.eventToViewData[0].date;
 
                 $("#addWorkEvent").modal('toggle');
 
-
             },
+
+            // prepareDataToPush(argData) {
+            //     const x = argData.hasOwnProperty('eventType');
+            //     if (!x) {
+            //        return this.prepareLocalData2(argData);
+            //     }
+            //     return argData;
+            // },
 
             handleEventDrop(arg) {
                 alert(arg);
@@ -386,6 +387,7 @@
             resetModalValues() {
                 this.clickedToViewEvent = false;
                 this.eventToViewData = [];
+                this.holidaysChecked = false;
             },
         }),
 
@@ -413,10 +415,5 @@
 </script>
 
 <style scoped>
-    .disable {
-        background-color: #f4f6f6;
-        color: #d5dbdb;
-        cursor: default;
-        opacity: 0.7;
-    }
+
 </style>
