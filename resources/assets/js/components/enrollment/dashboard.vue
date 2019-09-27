@@ -198,7 +198,7 @@
                     <h4 style="color: #47beab">Awesome! Please confirm patient details:</h4>
                     <blockquote style="border-left: 5px solid #26a69a;">
                         <span class="consented_title"><b>I.</b></span>
-                        <span>Ask patient:</span>
+                        <span>Ask the patient:</span>
                         <div class="font-size-20">
                             <template v-if="lang === 'ES'">
                                 ¿Quiere quele llamemos directamente o hay alguien más con el cual quiere quenos pongamos
@@ -269,11 +269,11 @@
                     </div>
                     <div class="row">
                         <blockquote style="border-left: 5px solid #26a69a;">
-                            <span class="consented_title"><b>II.</b></span> Please confirm patient’s mailing address and email address:
+                            <span class="consented_title"><b>II.</b></span> Please confirm the patient’s mailing address and email address:
                         </blockquote>
 
                         <div class="col s12 m3 select-custom">
-                            <label for="address" class="label">Address</label>
+                            <label for="address" class="label">Address Line 1</label>
                             <input class="input-field" name="address" id="address" v-model="address"/>
                         </div>
                         <div class="col s12 m2 select-custom">
