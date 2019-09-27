@@ -11,7 +11,7 @@
                 <div class="" v-else>
                     <button class="btn col-md-6 btn-default btn-m">Unavailable</button></div>
                 <div class="col-md-6">
-                    <a  v-bind:class="{'isDisabled': !doc}" style="float: right" :href="viewApi()" target="_blank">View</a>
+                    <a  class="blue-link" v-bind:class="{'isDisabled': !doc}" style="float: right; padding-top: 7px" :href="viewApi()" target="_blank">View</a>
                 </div>
             </div>
             <div>
@@ -34,7 +34,7 @@
                 </button>
             </div>
             <div class="col-md-12 panel-section">
-                <a  v-bind:class="{'isDisabled': !doc}" :href="downloadApi()">Download</a>
+                <a  class="blue-link" v-bind:class="{'isDisabled': !doc}" :href="downloadApi()">Download</a>
             </div>
         </div>
         <modal v-show="showSendModal" name="send-care-doc" class="modal-send-care-doc" :no-title="true"
@@ -253,7 +253,7 @@
     }
 
     .isDisabled {
-        color: currentColor;
+        color: grey !important;
         cursor: not-allowed;
         opacity: 0.5;
         text-decoration: none;

@@ -2,18 +2,18 @@
     <div class="container-fluid">
         <div class="col-md-12" style="margin-top: 15px">
             <div class="col-md-8 text-left" style="height: 30px; padding-top: 5px">
-                <button class="col-md-3 btn btn-secondary btn-xs pointer" v-bind:class="{'btn-info': !this.showPast}"
+                <button class="col-md-1 btn btn-secondary btn-s pointer" v-bind:class="{'btn-info': !this.showPast}"
                         @click="showCurrentDocuments()">Current
                 </button>
-                <button class="col-md-3 btn btn-secondary btn-xs pointer" v-bind:class="{'btn-info': this.showPast}"
+                <button class="col-md-1 btn btn-secondary btn-s pointer" v-bind:class="{'btn-info': this.showPast}"
                         style="margin-right: 40px"
                         @click="showPastDocuments()">Past
                 </button>
-                <button class="col-md-3 btn btn-info btn-xs pointer"
+                <button class="col-md-2 btn btn-info btn-s pointer"
                         @click="uploadCareDocument()">Upload Documents
                 </button>
                 <a v-if="!userEnrolledIntoAwv"
-                   class="col-md-2 btn btn-info btn-xs pointer"
+                   class="col-md-2 btn btn-info btn-s pointer"
                    style="margin-left: 10px"
                    target="_blank"
                    :href="getAwvUrl(`manage-patients/${this.patient.id}/enroll`)">
@@ -55,18 +55,18 @@
                                     <a v-else class="col-md-6 btn btn-m"
                                        :class="getButtonColorFromStatus(status.hra_status)"
                                        target="_blank"
-                                       :href="getViewHraSurveyUrl()">
+                                       >
                                         {{getButtonTextFromStatus(status.hra_status)}}
                                     </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a class="blue-link" style="float: right; padding-top: 7px" :href="getViewHraSurveyUrl()" target="_blank">View</a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
                                 <div class="col-md-6">
                                     {{status.year}}
                                 </div>
-                                <!--<div class="col-md-6">-->
-                                <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
-                                <!--</div>-->
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
                                 <p><strong>Send Assessment Link to Provider via:</strong></p>
@@ -104,18 +104,18 @@
                                     <a v-else class="col-md-6 btn btn-m"
                                        :class="getButtonColorFromStatus(status.vitals_status)"
                                        target="_blank"
-                                       :href="getViewVitalsSurveyUrl()">
+                                       >
                                         {{getButtonTextFromStatus(status.vitals_status)}}
                                     </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a class="blue-link" style="float: right; padding-top: 7px" :href="getViewVitalsSurveyUrl()" target="_blank">View</a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
                                 <div class="col-md-6">
                                     {{status.year}}
                                 </div>
-                                <!--<div class="col-md-6">-->
-                                <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
-                                <!--</div>-->
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
                                 <p><strong>Send Assessment Link to Provider via:</strong></p>
@@ -535,6 +535,11 @@
 
     .shadow {
         box-shadow:         1px 1px 1px 1px #ccc;
+    }
+
+    .blue-link {
+        color: #5cc0dd;
+        font-weight: 700;
     }
 
 </style>
