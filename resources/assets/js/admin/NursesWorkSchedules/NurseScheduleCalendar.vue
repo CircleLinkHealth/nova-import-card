@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="calendar-menu">
-            <input id="holidaysCheckbox" type="checkbox" class="holidays-button" @click="holidaysChecked()">
+            <input id="holidaysCheckbox" type="checkbox" class="holidays-button" v-model="checked" @change="showHolidays()">
             Upcoming Holidays
         </div>
         <div class="calendar">
@@ -135,6 +135,7 @@
                 clickedToViewEvent: false,
                 eventToViewData: [],
                 eventsAddedNow: [],
+                checked:false,
 
                 config: {
                     defaultView: month,
@@ -357,17 +358,13 @@
                 alert(arg);
             },
 
-            holidaysChecked() {
+            showHolidays() {
                 const checkBox = document.getElementById("holidaysCheckbox");
-                const toggleData = checkBox.checked === true;
-                this.showHolidays(toggleData);
-
-            },
-
-            showHolidays(toggleData) {
+                const toggleData = this.checked;
+                console.log(toggleData);
                 if (toggleData && this.holidays.length === 0) {
                     this.getHolidays();
-                } else this.showWorkHours = !(toggleData === true && this.holidays.length !== 0);
+                } else this.showWorkHours = !(toggleData && this.holidays.length !== 0);
             },
 
             getHolidays() {
