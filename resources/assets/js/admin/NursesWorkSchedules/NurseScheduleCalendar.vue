@@ -176,82 +176,86 @@
 
         methods: Object.assign(mapActions(['addNotification']), {
             deleteEvent() {
-
                 const event = this.eventToViewData[0];
                 const eventType = event.eventType;
                 const isAddedNow = event.hasOwnProperty('isAddedNow');
 
                 if (eventType !== holidayEventType) {
-                    //delete workday
-                    const windowId = this.eventToViewData[0].windowId;
-                    axios.get(`/care-center/work-schedule/destroy/${windowId}`).then((response => {
-                        $("#addWorkEvent").modal('toggle');
-
-                        //Delete event from events() - dom
-
-                        if (isAddedNow) {
-                            const index = this.eventsAddedNow.findIndex(x => x.data.windowId === windowId);
-                            this.eventsAddedNow.splice(index, 1);
-                        }
-                        if (!isAddedNow) {
-                            const index = this.workHours.findIndex(x => x.data.windowId === windowId);
-                            this.workHours.splice(index, 1);
-                        }
-
-                        //Show notification
-                        this.addNotification({
-                            title: "Success!",
-                            text: response.data.message,
-                            type: "success",
-                            timeout: true
-                        });
-
-
-                        alert(response.data.message);
-
-                    })).catch((error) => {
-                        console.log(error);
-                        if (error.response.status === 422) {
-                            this.errors = error;
-                            this.addNotification({
-                                title: "Warning!",
-                                text: this.errors.response.data.errors,
-                                type: "danger",
-                                timeout: true
-                            });
-                            alert(this.errors.response.data.errors);
-                        }
-
-                    });
+                    this.deleteWorkDay(event, isAddedNow);
                 } else {
-                    //delete holiday
-                    const holidayId = event.holidayId;
-                    axios.get(`/care-center/work-schedule/holidays/destroy/${holidayId}`).then((response => {
-                        $("#addWorkEvent").modal('toggle');
-                        console.log(response);
+                    this.deleteHoliday(event, isAddedNow);
+                }
 
-                        //Delete event from dom
-                        if (isAddedNow) {
-                            const index = this.eventsAddedNow.findIndex(x => x.data.windowId === windowId);
-                            this.eventsAddedNow.splice(index, 1);
-                        }
 
-                        if (!isAddedNow) {
-                            const index = this.holidays.findIndex(x => x.data.holidayId === holidayId);
-                            this.holidays.splice(index, 1);
-                        }
+            },
 
-                        //Show notification
-                        this.addNotification({
-                            title: "Success!",
-                            text: response.data.message,
-                            type: "success",
-                            timeout: true
-                        });
+            deleteHoliday(event, isAddedNow) {
+                const holidayId = event.holidayId;
+                axios.get(`/care-center/work-schedule/holidays/destroy/${holidayId}`).then((response => {
+                    $("#addWorkEvent").modal('toggle');
+                    console.log(response);
 
-                        alert(response.data.message);
+                    //Delete event from dom
+                    if (isAddedNow) {
+                        const index = this.eventsAddedNow.findIndex(x => x.data.windowId === windowId);
+                        this.eventsAddedNow.splice(index, 1);
+                    }
 
-                    })).catch((error) => {
+                    if (!isAddedNow) {
+                        const index = this.holidays.findIndex(x => x.data.holidayId === holidayId);
+                        this.holidays.splice(index, 1);
+                    }
+
+                    //Show notification
+                    this.addNotification({
+                        title: "Success!",
+                        text: response.data.message,
+                        type: "success",
+                        timeout: true
+                    });
+
+                    alert(response.data.message);
+
+                })).catch((error) => {
+                    this.errors = error;
+                    this.addNotification({
+                        title: "Warning!",
+                        text: this.errors.response.data.errors,
+                        type: "danger",
+                        timeout: true
+                    });
+                    alert(this.errors.response.data.errors);
+                });
+            },
+
+            deleteWorkDay(event, isAddedNow) {
+                const windowId = this.eventToViewData[0].windowId;
+                axios.get(`/care-center/work-schedule/destroy/${windowId}`).then((response => {
+                    $("#addWorkEvent").modal('toggle');
+                    //Delete event from events() - dom
+                    if (isAddedNow) {
+                        const index = this.eventsAddedNow.findIndex(x => x.data.windowId === windowId);
+                        this.eventsAddedNow.splice(index, 1);
+                    }
+                    if (!isAddedNow) {
+                        const index = this.workHours.findIndex(x => x.data.windowId === windowId);
+                        this.workHours.splice(index, 1);
+                    }
+
+                    //Show notification
+                    this.addNotification({
+                        title: "Success!",
+                        text: response.data.message,
+                        type: "success",
+                        timeout: true
+                    });
+
+
+                    alert(response.data.message);
+
+                })).catch((error) => {
+                    console.log(error);
+                    if (error.response.status === 422) {
                         this.errors = error;
                         this.addNotification({
                             title: "Warning!",
@@ -260,11 +264,9 @@
                             timeout: true
                         });
                         alert(this.errors.response.data.errors);
-                    });
-                    console.log('Post Holiday');
-                }
+                    }
 
-
+                });
             },
 
             addNewEvent() {
@@ -322,7 +324,7 @@
                         name: this.nurseData.label,
                         nurseId: this.nurseData.nurseId,
                         eventType: defaultEventType,
-                        isAddedNow:true,
+                        isAddedNow: true,
                     },
                     dow: [newEventData.window.dayOfWeek],
                     end: `${this.workEventDate}T${this.workRangeEnds}`,
@@ -351,14 +353,6 @@
 
             },
 
-            // prepareDataToPush(argData) {
-            //     const x = argData.hasOwnProperty('eventType');
-            //     if (!x) {
-            //        return this.prepareLocalData2(argData);
-            //     }
-            //     return argData;
-            // },
-
             handleEventDrop(arg) {
                 alert(arg);
             },
@@ -371,19 +365,22 @@
             },
 
             showHolidays(toggleData) {
-                if (toggleData === true && this.holidays.length === 0) {
-                    axios.get('admin/nurses/holidays')
-                        .then((response => {
-                                //loader add
-                                this.showWorkHours = false;
-                                this.holidays.push(...response.data.holidays)
-                            }
-                        )).catch((error) => {
-
-                    });
+                if (toggleData && this.holidays.length === 0) {
+                    this.getHolidays();
                 } else this.showWorkHours = !(toggleData === true && this.holidays.length !== 0);
             },
 
+            getHolidays() {
+                axios.get('admin/nurses/holidays')
+                    .then((response => {
+                            //loader add
+                            this.showWorkHours = false;
+                            this.holidays.push(...response.data.holidays)
+                        }
+                    )).catch((error) => {
+                    console.log(error);
+                });
+            },
             resetModalValues() {
                 this.clickedToViewEvent = false;
                 this.eventToViewData = [];
