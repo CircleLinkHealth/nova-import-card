@@ -64,8 +64,8 @@
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
-                                <div class="col-md-6">
-                                    {{status.year}}
+                                <div>
+                                    {{status.hra_display_date}}
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
@@ -113,8 +113,8 @@
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
-                                <div class="col-md-6">
-                                    {{status.year}}
+                                <div>
+                                    {{status.v_display_date}}
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
