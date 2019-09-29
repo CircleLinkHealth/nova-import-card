@@ -112,8 +112,9 @@
     import 'fullcalendar/dist/fullcalendar.css';
     import VueSelect from 'vue-select';
     import {addNotification} from '../../store/actions';
-    import rrule from '@fullcalendar/rrule';
+    // import rrule from '@fullcalendar/rrule';
     // import Modal from '/admin/common/modal'
+    import { RRule, RRuleSet, rrulestr } from 'rrule'
 
     const month = 'month';
     const defaultEventType = 'workDay';
@@ -121,7 +122,7 @@
 
     export default {
         name: "NurseScheduleCalendar",
-        plugins: [rrule],
+        plugins: [RRule],
         props: [
             'calendarData',
             'dataForDropdown',
@@ -158,10 +159,11 @@
                 workHolidaysChecked: false,
                 config: {
                     defaultView: month,
-                    validRange: {
-                        end: this.endOfThisWeek,
-                        start: this.startOfThisWeek,
-                    }
+                    editable:true,
+                    // validRange: {
+                    //     end: this.endOfThisWeek,
+                    //     start: this.startOfThisWeek,
+                    // }
 
                 },
 
@@ -443,7 +445,6 @@
                 if (this.workHolidaysChecked) {
                     return events.concat(this.holidays);
                 }
-
             },
 
             hoursToWorkHasValue() {
