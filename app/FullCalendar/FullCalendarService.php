@@ -42,9 +42,10 @@ class FullCalendarService
      */
     public function getUpcomingHolidays(Collection $nurses)
     {
-        return $nurses->map(function ($nurse) {
-            // @todo:make filter dropdown 1. future, 2. annual
-            $holidays = $nurse->nurseInfo->holidays->where('date', '>=', Carbon::parse(now())->startOfWeek()->toDate());
+        $limitDate = Carbon::parse(now())->startOfYear()->subMonth(2)->toDate();
+
+        return $nurses->map(function ($nurse) use ($limitDate) {
+            $holidays = $nurse->nurseInfo->holidays->where('date', '>=', $limitDate);
 
             return collect($holidays)->map(function ($holiday) use ($nurse) {
                 $holidayDate = Carbon::parse($holiday->date)->toDateString();
@@ -57,6 +58,7 @@ class FullCalendarService
                         self::START => $holidayDate,
 
                         'allDay' => true,
+                        'color'  => '#ff5b4f',
                         'data'   => [
                             'holidayId' => $holiday->id,
                             'nurseId'   => $nurse->nurseInfo->id,
@@ -73,53 +75,62 @@ class FullCalendarService
 
     /**
      * @param $nurse
+     * @param mixed $startOfThisYear
+     * @param $startOfThisWeek
+     * @param $endOfThisWeek
      *
      * @return \Illuminate\Support\Collection
      */
-    public function prepareData($nurse)
-    {
-        return collect($nurse->nurseInfo->windows)->map(function ($window) use ($nurse) {
-            $weekMap = dayOfWeekToDate($window->date);
-            $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
-            $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
+    public function prepareData($nurse, $startOfThisYear, $startOfThisWeek, $endOfThisWeek)
+    {// I need to get the past data cause we dont know when they were edited last time. (events are created once and then are repeating)
+        return collect($nurse->nurseInfo->windows)
+            ->where('date', '>=', $startOfThisYear)
+            ->map(function ($window) use ($nurse, $startOfThisWeek, $endOfThisWeek) {
+                $weekMap = dayOfWeekToDate($window->date);
+                $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
+                $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
 
-            return collect(
-                [
-                    self::TITLE => "$nurse->display_name - $workHoursForDay Hrs",
-                    self::START => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
-                    self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
+                return collect(
+                    [
+                        self::TITLE => "$nurse->display_name - $workHoursForDay Hrs",
+                        //                                            self::START => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
+                        //                                            self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
 
-                    //                        self::START => $weekMap[$window->day_of_week],
-                    //                        self::END   => $window->window_time_end,
+                        self::START => $weekMap[$window->day_of_week],
+                        self::END   => $window->window_time_end,
 
-                    'allDay' => true,
-                    'dow'    => [$window->day_of_week], //@todo:need to fix plugin(rrule)for this to work
+                        //                        'allDay' => true,
+                        'color' => '#378006',
+                        'dow'   => [$window->day_of_week], //@todo:need to fix plugin(rrule)for this to work
 
-                    'data' => [
-                        'nurseId'   => $nurse->nurseInfo->id,
-                        'windowId'  => $window->id,
-                        'name'      => $nurse->display_name,
-                        'day'       => $dayInHumanLang,
-                        'date'      => $weekMap[$window->day_of_week],
-                        'start'     => $window->window_time_start,
-                        'end'       => $window->window_time_end,
-                        'workHours' => $workHoursForDay,
-                        'eventType' => 'workDay',
-                    ],
-                ]
-            );
-        });
+                        'data' => [
+                            'nurseId'   => $nurse->nurseInfo->id,
+                            'windowId'  => $window->id,
+                            'name'      => $nurse->display_name,
+                            'day'       => $dayInHumanLang,
+                            'date'      => $weekMap[$window->day_of_week],
+                            'start'     => $window->window_time_start,
+                            'end'       => $window->window_time_end,
+                            'workHours' => $workHoursForDay,
+                            'eventType' => 'workDay',
+                        ],
+                    ]
+                );
+            });
     }
 
     /**
      * @param Collection $nurses
+     * @param mixed      $startOfThisYear
+     * @param $startOfThisWeek
+     * @param $endOfThisWeek
      *
      * @return Collection|\Illuminate\Support\Collection
      */
-    public function prepareDatesForCalendar(Collection $nurses)
+    public function prepareDatesForCalendar(Collection $nurses, $startOfThisYear, $startOfThisWeek, $endOfThisWeek)
     {
-        return $nurses->map(function ($nurse) {
-            return $this->prepareData($nurse);
+        return $nurses->map(function ($nurse) use ($startOfThisYear, $startOfThisWeek, $endOfThisWeek) {
+            return $this->prepareData($nurse, $startOfThisYear, $startOfThisWeek, $endOfThisWeek);
         })->flatten(1);
     }
 }

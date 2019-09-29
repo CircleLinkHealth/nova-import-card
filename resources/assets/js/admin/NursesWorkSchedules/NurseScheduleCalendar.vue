@@ -1,8 +1,23 @@
 <template>
     <div>
         <div class="calendar-menu">
-            <input id="holidaysCheckbox" type="checkbox" class="holidays-button" v-model="holidaysChecked" @change="showHolidays()">
-            Upcoming Holidays
+            <div class="show-holidays">
+                <input id="holidaysCheckbox"
+                       :class="{disable: workHolidaysChecked}"
+                       :disabled="workHolidaysChecked"
+                       type="checkbox"
+                       class="holidays-button"
+                       v-model="holidaysChecked"
+                       @change="showHolidays()">
+                Filter - Holidays
+            </div>
+            <div v-show="holidaysChecked" class="show-work-holidays">
+                <input id="workHolidaysCheckbox"
+                       type="checkbox"
+                       class="work-holidays-button"
+                       v-model="workHolidaysChecked">
+                Work Days and Holidays
+            </div>
         </div>
         <div class="calendar">
             <full-calendar ref="calendar"
@@ -103,12 +118,16 @@
     const month = 'month';
     const defaultEventType = 'workDay';
     const holidayEventType = 'holiday';
+
     export default {
         name: "NurseScheduleCalendar",
         plugins: [rrule],
         props: [
             'calendarData',
-            'dataForDropdown'
+            'dataForDropdown',
+            'startOfThisYear',
+            'startOfThisWeek',
+            'endOfThisWeek'
         ],
 
         components: {
@@ -135,10 +154,14 @@
                 clickedToViewEvent: false,
                 eventToViewData: [],
                 eventsAddedNow: [],
-                holidaysChecked:false,
-
+                holidaysChecked: false,
+                workHolidaysChecked: false,
                 config: {
                     defaultView: month,
+                    validRange: {
+                        end: this.endOfThisWeek,
+                        start: this.startOfThisWeek,
+                    }
 
                 },
 
@@ -335,17 +358,34 @@
             },
 
             handleDateCLick(date, jsEvent, view) {
-                const eventDate = date.format();
+                const clickedDate = date;
+
+                const startOfThisWeek = Date.parse(this.startOfThisWeek);
+                const endOfThisWeek = Date.parse(this.endOfThisWeek);
+
                 this.workEventDate = '';
-                this.workEventDate = eventDate;
-                $("#addWorkEvent").modal('toggle');
+                this.workEventDate = clickedDate.format();
+
+                if (clickedDate >= startOfThisWeek && clickedDate <= endOfThisWeek) {
+                    $("#addWorkEvent").modal('toggle');
+                } else {
+
+                    this.addNotification({
+                        title: "Warning!",
+                        text: 'You can only add/edit events within current week range',
+                        type: "danger",
+                        timeout: true
+                    });
+
+                    alert('You can only add/edit events within current week range');
+                }
+
             },
 
 
             handleEventCLick(arg) {
                 console.log('this', arg);
                 this.clickedToViewEvent = true;
-                // const data = this.prepareDataToPush(arg.data);
                 this.eventToViewData.push(arg.data);
                 this.workEventDate = '';
                 this.workEventDate = this.eventToViewData[0].date;
@@ -359,9 +399,7 @@
             },
 
             showHolidays() {
-                const checkBox = document.getElementById("holidaysCheckbox");
                 const toggleData = this.holidaysChecked;
-                console.log(toggleData);
                 if (toggleData && this.holidays.length === 0) {
                     this.getHolidays();
                 } else this.showWorkHours = !(toggleData && this.holidays.length !== 0);
@@ -385,8 +423,27 @@
         }),
 
         computed: {
+            // calcRange() {
+            //     if (this.holidaysChecked) {
+            //         this.config.validRange.start = '';
+            //         this.config.validRange.start = this.startOfThisYear;
+            //     } else{
+            //         this.config.validRange.start = '';
+            //         this.config.validRange.start = this.startOfThisWeek;
+            //     }
+            // },
+
             events() {
-                return this.showWorkHours ? this.workHours.concat(this.eventsAddedNow) : this.holidays;
+                const events = this.workHours.concat(this.eventsAddedNow);
+
+                if (!this.workHolidaysChecked) {
+                    return this.showWorkHours ? events : this.holidays;
+                }
+
+                if (this.workHolidaysChecked) {
+                    return events.concat(this.holidays);
+                }
+
             },
 
             hoursToWorkHasValue() {
@@ -408,5 +465,10 @@
 </script>
 
 <style scoped>
-
+    .disable {
+        background-color: #f4f6f6;
+        color: #d5dbdb;
+        cursor: default;
+        opacity: 0.7;
+    }
 </style>

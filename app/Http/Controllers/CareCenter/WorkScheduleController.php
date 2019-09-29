@@ -14,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
@@ -58,7 +59,7 @@ class WorkScheduleController extends Controller
     /**
      * @param $windowId
      *
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|JsonResponse
      */
     public function destroy($windowId)
     {
@@ -74,28 +75,35 @@ class WorkScheduleController extends Controller
             return response()->json([
                 'errors'    => 'Validation Failed',
                 'validator' => $errors,
-            ], 422); //@todo: Deal with the case of requestWantsJson
+            ], 422);
         }
 
         if ( ! auth()->user()->isAdmin()) {
             if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
                 $errors['window'] = 'This window does not belong to you.';
 
-//                return redirect()->route('care.center.work.schedule.index')
-//                    ->withErrors($errors)
-//                    ->withInput();
-                return response()->json([
-                    'errors' => $errors,
-                ], 422); //@todo: Deal with the case of requestWantsJson
+                if (request()->expectsJson()) {
+                    return response()->json([
+                        'errors' => $errors,
+                    ], 422);
+                }
+
+                return redirect()->route('care.center.work.schedule.index')
+                    ->withErrors($errors)
+                    ->withInput();
             }
         }
 
         $window->forceDelete();
 
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Window has been deleted',
-        ], 200);
+        if (request()->expectsJson()) {
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Window has been deleted',
+            ], 200);
+        }
+
+        return redirect()->back();
     }
 
     public function destroyHoliday($holidayId)
@@ -123,11 +131,14 @@ class WorkScheduleController extends Controller
 
         $holiday->forceDelete();
 
-        return response()->json([
-            'message'   => 'Holiday Deleted',
-            'holidayId' => $holidayId,
-        ], 200);
-//        return redirect()->back(); //@todo: Deal with the case of requestWantsJson
+        if (request()->expectsJson()) {
+            return response()->json([
+                'message'   => 'Holiday Deleted',
+                'holidayId' => $holidayId,
+            ], 200);
+        }
+
+        return redirect()->back();
     }
 
     /**
@@ -135,14 +146,26 @@ class WorkScheduleController extends Controller
      */
     public function getAllNurseSchedules()
     {
-        $nurses = $this->getNursesWithSchedule();
+        $startOfThisYear = Carbon::parse(now())->startOfYear()->subMonth(2)->startOfWeek()->toDateString();
+        $startOfThisWeek = Carbon::parse(now())->startOfWeek()->toDateString();
+        $endOfThisWeek   = Carbon::parse(now())->endOfWeek()->toDateString();
 
-        $calendarData = $this->fullCalendarService->prepareDatesForCalendar($nurses);
-        $tzAbbr       = auth()->user()->timezone_abbr ?? 'EDT';
-
+        $nurses          = $this->getNursesWithSchedule();
+        $calendarData    = $this->fullCalendarService->prepareDatesForCalendar($nurses, $startOfThisYear, $startOfThisWeek, $endOfThisWeek);
+        $tzAbbr          = auth()->user()->timezone_abbr ?? 'EDT';
         $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
 
-        return view('admin.nurse.schedules.index', compact('calendarData', 'dataForDropdown', 'nurses'));
+        return view(
+            'admin.nurse.schedules.index',
+            compact(
+                'nurses',
+                'calendarData',
+                'dataForDropdown',
+                'startOfThisYear',
+                'endOfThisWeek',
+                'startOfThisWeek'
+            )
+        );
     }
 
     /**
@@ -215,15 +238,11 @@ class WorkScheduleController extends Controller
     public function store(Request $request)
     {
         $dataRequest = $request->all();
-        $inputDate   = $dataRequest['date'];
 
         if ( ! array_key_exists('day_of_week', $dataRequest)) {
+            $inputDate                  = $dataRequest['date'];
             $dataRequest['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
-            $dataRequest['date']        = Carbon::parse($inputDate)->startOfWeek()->format('Y-m-d');
-        }
-
-        if (array_key_exists('day_of_week', $dataRequest)) {
-            $dataRequest['date'] = Carbon::parse($inputDate)->startOfWeek()->format('Y-m-d');
+//            $dataRequest['date']        = Carbon::parse($inputDate)->startOfWeek()->format('Y-m-d');
         }
 
         $workScheduleData = $dataRequest;
@@ -276,16 +295,16 @@ class WorkScheduleController extends Controller
                     'H:i:s',
                     $window->window_time_end
                 )->diffInHours(Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_start
-                    ));
+                    'H:i:s',
+                    $window->window_time_start
+                ));
             }) + Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_end']
             )->diffInHours(Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_start']
-                ));
+                'H:i',
+                $workScheduleData['window_time_start']
+            ));
 
         $invalidWorkHoursNumber = false;
 
@@ -308,24 +327,25 @@ class WorkScheduleController extends Controller
                 );
             }
 
-            return response()->json([
-                'errors'    => 'Validation Failed',
-                'validator' => $validator->getMessageBag(),
-            ], 422); //@todo: Deal with the case of requestWantsJson
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'errors'    => 'Validation Failed',
+                    'validator' => $validator->getMessageBag(),
+                ], 422);
+            }
 
-//            return redirect()->back()
-//                ->withErrors($validator)
-//                ->withInput()
-//                ->with(['editedNurseId' => $nurseInfoId]);
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with(['editedNurseId' => $nurseInfoId]);
         }
 
         if ($isAdmin) {
             $user = auth()->user();
 
             $window = $this->nurseContactWindows->create([
-                'nurse_info_id' => $nurseInfoId,
-                'date'          => $workScheduleData['date'],
-                //                'date'              => Carbon::now()->format('Y-m-d'),
+                'nurse_info_id'     => $nurseInfoId,
+                'date'              => Carbon::now()->format('Y-m-d'),
                 'day_of_week'       => $workScheduleData['day_of_week'],
                 'window_time_start' => $workScheduleData['window_time_start'],
                 'window_time_end'   => $workScheduleData['window_time_end'],
@@ -341,7 +361,7 @@ class WorkScheduleController extends Controller
             $user = auth()->user();
 
             $window = $user->nurseInfo->windows()->create([
-                'date'              => $workScheduleData['date'],
+                'date'              => Carbon::now()->format('Y-m-d'),
                 'day_of_week'       => $workScheduleData['day_of_week'],
                 'window_time_start' => $workScheduleData['window_time_start'],
                 'window_time_end'   => $workScheduleData['window_time_end'],
@@ -355,13 +375,16 @@ class WorkScheduleController extends Controller
             strtolower(clhDayOfWeekToDayName($workScheduleData['day_of_week'])) => $workScheduleData['work_hours'],
         ]);
 
-        return response()->json([
-            'success'       => true,
-            'window'        => $window,
-            'scheduledData' => $workScheduleData,
-            'workHours'     => $workHours,
-        ], 200); //@todo: Deal with the case of requestWantsJson
-        //   return redirect()->back()->with(['editedNurseId' => $nurseInfoId]);
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success'       => true,
+                'window'        => $window,
+                'scheduledData' => $workScheduleData,
+                'workHours'     => $workHours,
+            ], 200);
+        }
+
+        return redirect()->back()->with(['editedNurseId' => $nurseInfoId]);
     }
 
     public function storeHoliday(Request $request)
