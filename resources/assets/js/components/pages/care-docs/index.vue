@@ -9,7 +9,7 @@
                         style="margin-right: 40px"
                         @click="showPastDocuments()">Past
                 </button>
-                <button class="col-md-2 btn btn-info btn-s pointer"
+                <button class="col-md-3 btn btn-info btn-s pointer"
                         @click="uploadCareDocument()">Upload Documents
                 </button>
                 <a v-if="!userEnrolledIntoAwv"
