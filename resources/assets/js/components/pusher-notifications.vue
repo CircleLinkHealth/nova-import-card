@@ -116,14 +116,16 @@
                         this.waiting = false;
                     }
                 );
+if (window.EchoPusher){
+    window.EchoPusher.private('App.User.' + this.authUserId)
+        .notification((notification) => {
+            axios.get(`/notifications/${notification.id}`).then(response => {
+                    this.notificationsFromPusher.push(response.data)
+                }
+            );
+        });
+}
 
-            window.Echo.private('App.User.' + this.authUserId)
-                .notification((notification) => {
-                    axios.get(`/notifications/${notification.id}`).then(response => {
-                            this.notificationsFromPusher.push(response.data)
-                        }
-                    );
-                });
         }
     }
 
