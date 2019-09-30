@@ -608,7 +608,7 @@
 
                         //If conditions needs to be compared against to "gte" or "lte"
                         if (prevQuestConditions.hasOwnProperty('operator')) {
-                            if (prevQuestConditions.operator === 'greater_than') {
+                            if (prevQuestConditions.operator === 'greater_or_equal_than') {
                                 //Again we use only the first Question of the related Questions, which is OK for now.
                                 if (firstQuestion.answer.value.value >= prevQuestConditions.related_question_expected_answer) {
                                     canGoToPrev = false;
@@ -618,7 +618,7 @@
                                 break;
                             }
 
-                            if (prevQuestConditions.operator === 'less_than') {
+                            if (prevQuestConditions.operator === 'less_or_equal_than') {
                                 if (firstQuestion.answer.value.value <= prevQuestConditions.related_question_expected_answer) {
                                     canGoToPrev = false;
                                     break;
@@ -749,7 +749,7 @@
 
                         //If conditions needs to be compared against to "gte" or "lte"
                         if (nextQuestConditions.hasOwnProperty('operator')) {
-                            if (nextQuestConditions.operator === 'greater_than') {
+                            if (nextQuestConditions.operator === 'greater_or_equal_than') {
                                 //Again we use only the first Question of the related Questions, which is OK for now.
                                 if (firstQuestion.answer.value.value >= nextQuestConditions.related_question_expected_answer) {
                                     shouldDisable = true;
@@ -759,7 +759,7 @@
                                 break;
                             }
 
-                            if (nextQuestConditions.operator === 'less_than') {
+                            if (nextQuestConditions.operator === 'less_or_equal_than') {
                                 if (firstQuestion.answer.value.value <= nextQuestConditions.related_question_expected_answer) {
                                     shouldDisable = true;
                                     break;
