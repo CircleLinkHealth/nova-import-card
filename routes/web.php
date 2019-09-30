@@ -2250,3 +2250,23 @@ Route::get(
         'as'   => 'process.eligibility.local.zip',
     ]
 )->middleware(['auth', 'role:administrator']);
+
+Route::get('notifications/{id}', [
+    'uses' => 'NotificationController@showPusherNotification',
+    'as'   => 'notifications.show',
+])->middleware('permission:provider.read,note.read');
+
+Route::get('notifications', [
+    'uses' => 'NotificationController@index',
+    'as'   => 'notifications.index',
+])->middleware('permission:provider.read,note.read');
+
+Route::post('/redirect-mark-read/{receiverId}/{attachmentId}', [
+    'uses' => 'NotificationController@markNotificationAsRead',
+    'as'   => 'notification.redirect',
+]);
+
+Route::get('see-all-notifications', [
+    'uses' => 'NotificationController@seeAllNotifications',
+    'as'   => 'notifications.seeAll',
+])->middleware('permission:provider.read,note.read');

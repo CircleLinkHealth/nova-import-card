@@ -37,7 +37,7 @@ return [
     'connections' => [
         'sqlite' => [
             'driver'                  => 'sqlite',
-            'database'                => ':memory:',
+            'database'                => base_path('tests/data/sqlite/test_db.sqlite'),
             'prefix'                  => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],

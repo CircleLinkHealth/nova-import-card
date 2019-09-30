@@ -52,6 +52,9 @@ use App\Importer\Models\ItemLogs\ProblemLog;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport query()
  *
  * @property int|null $revision_history_count
+ * @property int|null $vendor_id
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereVendorId($value)
  */
 class ProblemImport extends \CircleLinkHealth\Core\Entities\BaseModel
 {

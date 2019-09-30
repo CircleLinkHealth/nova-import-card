@@ -66,6 +66,8 @@ interface MedicalRecord
 
     public function getDocumentCustodian(): string;
 
+    public function getId(): ?int;
+
     /**
      * Get the Transformer.
      *
@@ -79,6 +81,8 @@ interface MedicalRecord
      * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function getPatient(): User;
+
+    public function getType(): ?string;
 
     /**
      * Handles importing a MedicalRecord for QA.

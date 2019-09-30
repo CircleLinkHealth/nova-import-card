@@ -26,7 +26,7 @@ use Validator;
 /**
  * @property null medicalRecordType
  */
-class EligibilityCheck
+class EligibilityChecker
 {
     use ValidatesEligibility;
 
@@ -87,9 +87,9 @@ class EligibilityCheck
      * @throws \Exception
      */
     public function __construct(
-        EligibilityJob $eligibilityJob,
+        EligibilityJob &$eligibilityJob,
         Practice $practice,
-        EligibilityBatch $batch,
+        EligibilityBatch &$batch,
         $filterLastEncounter = false,
         $filterInsurance = false,
         $filterProblems = true,
@@ -209,7 +209,7 @@ class EligibilityCheck
             ['insurance' => 'No insurance plans found.'],
             EligibilityJob::INELIGIBLE,
             'insurance'
-                );
+        );
 
         return false;
     }
@@ -217,7 +217,7 @@ class EligibilityCheck
     /**
      * Removes Patients whose last encounter was before Feb. 1st, 2016 from the list.
      *
-     * @return EligibilityCheck
+     * @return bool
      */
     protected function validateLastEncounter(): bool
     {
@@ -240,7 +240,7 @@ class EligibilityCheck
                 3,
                 ['last_encounter' => 'Last encounter field not found, or is null.'],
                 EligibilityJob::INELIGIBLE
-                );
+            );
 
             return false;
         }
@@ -261,7 +261,7 @@ class EligibilityCheck
                     'last_encounter' => implode(
                         ',',
                         $validator->messages()->all()
-                                        )." value: `${lastEncounter}`",
+                    )." value: `${lastEncounter}`",
                 ],
                 EligibilityJob::INELIGIBLE,
                 'last_encounter'
@@ -304,12 +304,12 @@ class EligibilityCheck
                             $problem->searchKeywords = collect(
                                 explode(',', $problem->contains),
                                 [$problem->name]
-                                         )
+                            )
                                 ->transform(
                                     function ($keyword) {
                                         return trim(strtolower($keyword));
                                     }
-                                             )
+                                )
                                 ->filter()
                                 ->unique()
                                 ->values()
@@ -317,7 +317,7 @@ class EligibilityCheck
 
                             return $problem;
                         }
-                                 );
+                    );
             }
         );
 
@@ -776,9 +776,9 @@ class EligibilityCheck
                             function ($q) use ($args) {
                                 $q->withTrashed()->whereMrnNumber($args['mrn']);
                             }
-                                               );
+                        );
                 }
-                                     )->orWhere(
+            )->orWhere(
                                          function ($u) use ($args) {
                                              $u->where(
                                                  [
@@ -798,14 +798,14 @@ class EligibilityCheck
                                                          $args['last_name'],
                                                      ],
                                                  ]
-                    )->whereHas(
+                                             )->whereHas(
                         'patientInfo',
                         function ($q) use ($args) {
                             $q->withTrashed()->whereBirthDate($args['dob']);
                         }
                     );
                                          }
-            )->first();
+                                     )->first();
 
         $duplicateMySqlError = false;
         $errorMsg            = null;
@@ -817,7 +817,7 @@ class EligibilityCheck
                     'duplicate' => 'This patient already has a careplan. '.route(
                         'patient.careplan.print',
                         [$enrolledPatientExists->id]
-                        ),
+                    ),
                 ],
                 EligibilityJob::ENROLLED
             );

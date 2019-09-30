@@ -100,6 +100,10 @@ class EnrollmentConsentController extends Controller
                 'consented_at'             => ucwords($enrollee->consented_at),
                 'preferred_days'           => $days,
                 'preferred_window'         => $times,
+                'agent_phone'              => $enrollee->getAgentAttribute(Enrollee::AGENT_PHONE_KEY),
+                'agent_name'               => $enrollee->getAgentAttribute(Enrollee::AGENT_NAME_KEY),
+                'agent_email'              => $enrollee->getAgentAttribute(Enrollee::AGENT_EMAIL_KEY),
+                'agent_relationship'       => $enrollee->getAgentAttribute(Enrollee::AGENT_RELATIONSHIP_KEY),
             ];
 
             ++$count;

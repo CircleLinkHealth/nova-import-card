@@ -42,6 +42,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $attempt_note
  * @property string|null $general_comment
  * @property string|null $ccm_status
+ * @property string|null $patient_nurse_id
+ * @property string|null $patient_nurse
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView newModelQuery()

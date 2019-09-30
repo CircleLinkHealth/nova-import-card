@@ -171,8 +171,14 @@
                     <div class="alert alert-danger hasNot" v-if="hasNotAvailableNurses">
                         No available nurses for selected patient
                     </div>
-                    <div class="alert alert-warning" v-if="hasPatientInDraftMode">
-                        Action not allowed: Care plan is in draft mode. QA the care plan first.
+                    <div class="alert alert-warning" v-if="hasPatientInDraftMode || hasPatientInNotInAcceptableCcmStatus">
+                        Action not allowed:
+                        <span v-if="hasPatientInDraftMode">
+                            Care plan is in draft mode. QA the care plan first.
+                        </span>
+                        <span v-if="hasPatientInNotInAcceptableCcmStatus">
+                            Patient's CCM status is one of withdrawn, paused or unreachable.
+                        </span>
                     </div>
                 </div>
 
@@ -243,6 +249,11 @@
             selectedPracticeData: UNASSIGNED_VALUE,
             selectedNurseData: UNASSIGNED_VALUE,
             selectedPatientIsInDraftMode: false,
+
+            //CPM-1580 system has a command that deletes all calls with unreachable/paused/withdrawan patients
+            //every 5 minutes. better stop users from creating such calls from UI.
+            selectedPatientIsNotInAcceptableCcmStatus: false,
+
             nursesForSelect: [],
             patientsForSelect: [],
             skipRefreshingPatients: false //used when patient is already selected
@@ -314,6 +325,9 @@
             },
             hasPatientInDraftMode() {
                 return this.actions.filter(x => x.selectedPatientIsInDraftMode).length > 0;
+            },
+            hasPatientInNotInAcceptableCcmStatus() {
+                return this.actions.filter(x => x.selectedPatientIsNotInAcceptableCcmStatus).length > 0;
             },
             hasToConfirmFamilyOverrides() {
                 return this.actions.filter(x => x.showFamilyOverride).length > 0;
@@ -402,7 +416,8 @@
                     this.actions[actionIndex].data.patientId = patient.value;
                     const selectedPatient = this.selectedPatient(actionIndex);
                     this.setPractice(actionIndex, selectedPatient.program_id);
-                    this.actions[actionIndex].selectedPatientIsInDraftMode = (selectedPatient.status === 'draft');
+                    this.actions[actionIndex].selectedPatientIsInDraftMode = this.isPatientInDraftMode(selectedPatient);
+                    this.actions[actionIndex].selectedPatientIsNotInAcceptableCcmStatus = this.isPatientInNotInAcceptableCcmStatus(selectedPatient);
                 }
             },
             changePractice(actionIndex, practice) {
@@ -423,6 +438,12 @@
                     return Promise.all([this.getPatients(actionIndex), this.getNurses(actionIndex)])
                 }
                 return Promise.resolve([])
+            },
+            isPatientInDraftMode(patient) {
+                return patient.status === 'draft';
+            },
+            isPatientInNotInAcceptableCcmStatus(patient) {
+                return ['withdrawn', 'paused', 'unreachable'].indexOf(patient.ccm_status) > -1;
             },
             changeNurse(actionIndex, nurse) {
                 if (nurse) {
@@ -616,10 +637,19 @@
                 }
 
                 //if any patient has status draft, we do not allow creation
-                const draftPatients = patients.filter(x => x.status === 'draft');
+                const draftPatients = patients.filter(x => this.isPatientInDraftMode(x));
                 if (draftPatients.length) {
                     Event.$emit('notifications-add-action-modal:create', {
                         text: `Action not allowed: This patients' [${draftPatients.map(x => x.name || x.full_name).join(', ')}] care plan is in draft mode. QA the care plan before scheduling a call`,
+                        type: 'warning'
+                    });
+                    return;
+                }
+
+                const ccmStatusNotAcceptable = patients.filter(x => this.isPatientInNotInAcceptableCcmStatus(x));
+                if (ccmStatusNotAcceptable.length) {
+                    Event.$emit('notifications-add-action-modal:create', {
+                        text: `Action not allowed: This patients' [${draftPatients.map(x => x.name || x.full_name).join(', ')}] CCM status is one of withdrawn, paused or unreachable`,
                         type: 'warning'
                     });
                     return;

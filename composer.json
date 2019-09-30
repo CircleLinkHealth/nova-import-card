@@ -78,7 +78,7 @@
     "appstract/laravel-opcache": "^2.0",
     "barryvdh/laravel-snappy": "0.4.4",
     "circlelinkhealth/core": "dev-master",
-    "circlelinkhealth/customer": "dev-master",
+    "circlelinkhealth/customer": "1.0",
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/timetracking": "dev-master",
     "circlelinkhealth/twofa": "dev-master",
@@ -113,6 +113,8 @@
     "pragmarx/version": "^0.2.8",
     "predis/predis": "^1.1",
     "propaganistas/laravel-phone": "^3.0",
+    "pusher/pusher-php-server": "^4.0",
+    "rap2hpoutre/laravel-log-viewer": "^0.4.0",
     "seld/jsonlint": "^1.7",
     "sparclex/nova-import-card": "^2.0",
     "spatie/laravel-medialibrary": "^7.0.0",
@@ -120,7 +122,6 @@
     "titasgailius/search-relations": "^1.0",
     "twilio/sdk": "5.7",
     "waavi/url-shortener": "dev-master",
-    "waynestate/nova-ckeditor4-field": "^0.4.0",
     "wikimedia/composer-merge-plugin": "^1.4",
     "yajra/laravel-datatables-oracle": "~8.0"
   },
@@ -159,7 +160,10 @@
   "autoload-dev": {
     "psr-4": {
       "Tests\\": "tests/"
-    }
+    },
+    "files": [
+      "vendor/circlelinkhealth/core/Helpers/helpers.php"
+    ]
   },
   "scripts": {
     "lint-php": [
@@ -182,20 +186,16 @@
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
       "@php artisan nova:publish"
     ],
-    "test-db-mysql": [
-      "php artisan config:clear && php artisan db:test && php artisan migrate:fresh && php artisan migrate && php artisan db:seed && php artisan db:seed --class=TestSuiteSeeder"
-    ],
-    "test-mysql": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner WrapperRunner -p8"
-    ],
     "test": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p8"
+      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p1"
     ],
-    "integration": [
-      "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner -p4"
+    "unit-tests": [
+      "php artisan --env=testing test:create-sqlite-db",
+      "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner  SqliteRunner -p3"
     ],
-    "feature": [
-      "./vendor/bin/paratest ./tests/feature --stop-on-failure --colors --runner SqliteRunner -p4"
+    "profile-unit-tests": [
+      "php artisan --env=testing test:create-sqlite-db",
+      "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner  SqliteRunner -p3 --log-junit tests_profiles.xml"
     ],
     "clear": [
       "php artisan clear-compiled",
