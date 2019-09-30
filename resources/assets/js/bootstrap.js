@@ -32,7 +32,7 @@ window.Pusher = pusher_js;
 
 window.Echo = new Echo({
     broadcaster: 'pusher',
-    key: 'dca1637b1d26e1c5867f',
-    cluster: 'mt1',
+    key: process.env['MIX_PUSHER_KEY'],
+    cluster: process.env['MIX_PUSHER_CLUSTER'],
     encrypted: true,
 });
