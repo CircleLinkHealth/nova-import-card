@@ -20,7 +20,9 @@ class PatientCareplanRelations
             },
             'ccdInsurancePolicies',
             'ccdAllergies',
-            'ccdMedications',
+            'ccdMedications' => function ($q) {
+                $q->orderBy('name');
+            },
             'ccdProblems.cpmInstruction',
             'ccdProblems.codes',
             'ccdProblems.cpmProblem',

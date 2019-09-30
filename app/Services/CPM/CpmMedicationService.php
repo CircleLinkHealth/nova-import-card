@@ -45,14 +45,14 @@ class CpmMedicationService
 
     public function medications()
     {
-        return Medication::paginate();
+        return Medication::orderBy('name')->paginate();
     }
 
     public function patientMedicationPaginated(int $userId)
     {
         return Medication::where([
             'patient_id' => $userId,
-        ])->paginate();
+        ])->orderBy('name')->paginate();
     }
 
     public function repo()
