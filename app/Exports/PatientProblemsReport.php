@@ -205,6 +205,6 @@ class PatientProblemsReport implements FromQuery, WithMapping, PracticeDataExpor
                         );
                     },
                 ]
-                   )->select('id', 'display_name');
+            )->select('id', 'display_name');
     }
 }

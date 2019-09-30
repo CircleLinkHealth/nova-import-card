@@ -24,13 +24,15 @@ require('./logger-logdna').init();
  * allows your team to easily build robust real-time web applications.
  */
 
-// import Echo from 'laravel-echo'
+import Echo from 'laravel-echo'
 
-// window.Pusher = require('pusher-js');
+import pusher_js from "pusher-js";
+const JWTtoken = `Bearer ${localStorage.getItem('token')}`;
+window.Pusher = pusher_js;
 
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: 'your-pusher-key',
-//     cluster: 'mt1',
-//     encrypted: true
-// });
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: process.env['MIX_PUSHER_KEY'],
+    cluster: process.env['MIX_PUSHER_CLUSTER'],
+    encrypted: true,
+});
