@@ -346,6 +346,7 @@ class ProviderReportService
                     'validationValue' => 26,
                     'keyToCheck' => ['age'][0],
                 ]
+                //@todo: add more here when refactoring: eg Question:breast Cancer, Prostate etc...
             ];
 
             $keyToCheck = $allowExceptions[$errorDescription]['keyToCheck'];
