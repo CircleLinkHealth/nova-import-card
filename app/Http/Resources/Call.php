@@ -14,7 +14,7 @@ class Call extends Resource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request
+     * @param \Illuminate\Http\Request
      * @param mixed $request
      *
      * @return array
@@ -56,6 +56,7 @@ class Call extends Resource
             'attempt_note'    => $this->attempt_note,
             'scheduler'       => $schedulerName,
             'is_manual'       => $this->is_manual,
+            'asap'            => $this->asap,
             'sort_day'        => $this->sort_day ?? null,
 
             'inbound_user'  => UserResource::make($this->whenLoaded('inboundUser')),

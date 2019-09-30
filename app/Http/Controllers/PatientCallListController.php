@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 
 class PatientCallListController extends Controller
 {
+    const ASAP = 'ASAP';
+
     /**
      * Show the form for creating a new resource.
      *
@@ -30,31 +32,29 @@ class PatientCallListController extends Controller
     public function index(Request $request, NoteService $noteService)
     {
         $nurseId = \Auth::user()->id;
+        $date    = Carbon::parse(now())->copy()->toDateString();
 
         $draftNotes = $noteService->getUserDraftNotes($nurseId);
 
         $calls = CallView::where('nurse_id', '=', $nurseId);
 
-        $dateFilter = 'All';
-        $date       = Carbon::now();
-
-        // filter status
         $filterStatus = 'scheduled';
         if ( ! empty($request->input('filterStatus'))) {
             $filterStatus = $request->input('filterStatus');
         }
 
-        if ($request->has('date') && 'all' != strtolower($request->input('date'))) {
-            try {
-                $date = $dateFilter = Carbon::parse($request->input('date'));
-            } catch (\Exception $e) {
-                return redirect()->back()->withErrors('Invalid date format. Please use yyyy-mm-dd instead.');
-            }
-            $calls->where('scheduled_date', '=', $date->toDateString());
+        $filterPriority = 'all';
+        if ( ! empty($request->input('filterPriority'))) {
+            $filterPriority = $request->input('filterPriority');
         }
 
         if ('all' != $filterStatus) {
             $calls->where('status', '=', $filterStatus);
+        }
+
+        if ('all' !== $filterPriority) {
+            $calls->where('scheduled_date', '=', $date)
+                ->orWhere('call_time_start', '=', self::ASAP);
         }
 
         $calls->orderByRaw('FIELD(type, "Call Back") desc, scheduled_date asc, call_time_start asc, call_time_end asc');
@@ -66,6 +66,7 @@ class PatientCallListController extends Controller
             'calls',
             'dateFilter',
             'filterStatus',
+            'filterPriority',
         ]));
     }
 

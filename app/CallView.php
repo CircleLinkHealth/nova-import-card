@@ -89,6 +89,9 @@ class CallView extends Model
 
     protected $table = 'calls_view';
 
+    /**
+     * @return string
+     */
     public function preferredCallDaysToExpandedString()
     {
         $windows = [];
