@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0bfc0f491ddd42be0a518e41df9a9e62",
+    "content-hash": "8e2fa637618ac11c6f898c37b3a61657",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -658,7 +658,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "d8a0197e1472b115af76ec0fbdddd23050f4ca34"
+                "reference": "c98c59e5e5b88de12a82bbb6381712903a5933b9"
             },
             "require": {
                 "circlelinkhealth/core": "dev-master",
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-09-11T13:36:40+00:00"
+            "time": "2019-09-19T12:54:33+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -4603,7 +4603,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
+                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
                 "reference": "a70637130916aad3f5f4bda25080550f0fef5551"
             },
             "require": {
@@ -5367,88 +5367,6 @@
                 "random"
             ],
             "time": "2018-07-02T15:55:56+00:00"
-        },
-        {
-            "name": "paragonie/sodium_compat",
-            "version": "v1.11.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/paragonie/sodium_compat.git",
-                "reference": "a9f968bc99485f85f9303a8524c3485a7e87bc15"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/a9f968bc99485f85f9303a8524c3485a7e87bc15",
-                "reference": "a9f968bc99485f85f9303a8524c3485a7e87bc15",
-                "shasum": ""
-            },
-            "require": {
-                "paragonie/random_compat": ">=1",
-                "php": "^5.2.4|^5.3|^5.4|^5.5|^5.6|^7|^8"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^3|^4|^5"
-            },
-            "suggest": {
-                "ext-libsodium": "PHP < 7.0: Better performance, password hashing (Argon2i), secure memory management (memzero), and better security.",
-                "ext-sodium": "PHP >= 7.0: Better performance, password hashing (Argon2i), secure memory management (memzero), and better security."
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "autoload.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "ISC"
-            ],
-            "authors": [
-                {
-                    "name": "Paragon Initiative Enterprises",
-                    "email": "security@paragonie.com"
-                },
-                {
-                    "name": "Frank Denis",
-                    "email": "jedisct1@pureftpd.org"
-                }
-            ],
-            "description": "Pure PHP implementation of libsodium; uses the PHP extension if it exists",
-            "keywords": [
-                "Authentication",
-                "BLAKE2b",
-                "ChaCha20",
-                "ChaCha20-Poly1305",
-                "Chapoly",
-                "Curve25519",
-                "Ed25519",
-                "EdDSA",
-                "Edwards-curve Digital Signature Algorithm",
-                "Elliptic Curve Diffie-Hellman",
-                "Poly1305",
-                "Pure-PHP cryptography",
-                "RFC 7748",
-                "RFC 8032",
-                "Salpoly",
-                "Salsa20",
-                "X25519",
-                "XChaCha20-Poly1305",
-                "XSalsa20-Poly1305",
-                "Xchacha20",
-                "Xsalsa20",
-                "aead",
-                "cryptography",
-                "ecdh",
-                "elliptic curve",
-                "elliptic curve cryptography",
-                "encryption",
-                "libsodium",
-                "php",
-                "public-key cryptography",
-                "secret-key cryptography",
-                "side-channel resistant"
-            ],
-            "time": "2019-09-12T12:05:58+00:00"
         },
         {
             "name": "phaxio/phaxio",
@@ -6438,60 +6356,6 @@
             "time": "2018-10-13T15:16:03+00:00"
         },
         {
-            "name": "pusher/pusher-php-server",
-            "version": "v4.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pusher/pusher-http-php.git",
-                "reference": "43540be9536469f8eaec95a347d3f7532bac852c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/43540be9536469f8eaec95a347d3f7532bac852c",
-                "reference": "43540be9536469f8eaec95a347d3f7532bac852c",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "paragonie/sodium_compat": "^1.6",
-                "php": ">=7.1 <7.4",
-                "psr/log": "^1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^7.2"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Pusher\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Library for interacting with the Pusher REST API",
-            "keywords": [
-                "events",
-                "messaging",
-                "php-pusher-server",
-                "publish",
-                "push",
-                "pusher",
-                "real time",
-                "real-time",
-                "realtime",
-                "rest",
-                "trigger"
-            ],
-            "time": "2019-06-25T09:22:44+00:00"
-        },
-        {
             "name": "ralouphie/getallheaders",
             "version": "3.0.3",
             "source": {
@@ -6612,52 +6476,6 @@
                 "uuid"
             ],
             "time": "2018-07-19T23:38:55+00:00"
-        },
-        {
-            "name": "rap2hpoutre/laravel-log-viewer",
-            "version": "v0.4.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/rap2hpoutre/laravel-log-viewer.git",
-                "reference": "acf77b095f83cdbb2bc6ef4bba129b67289cbfd5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/rap2hpoutre/laravel-log-viewer/zipball/acf77b095f83cdbb2bc6ef4bba129b67289cbfd5",
-                "reference": "acf77b095f83cdbb2bc6ef4bba129b67289cbfd5",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "4.2.*|5.*",
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/controllers"
-                ],
-                "psr-0": {
-                    "Rap2hpoutre\\LaravelLogViewer\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "rap2hpoutre",
-                    "email": "raphael@ornikar.com"
-                }
-            ],
-            "description": "A Laravel log reader",
-            "keywords": [
-                "log",
-                "log-reader",
-                "log-viewer",
-                "logging"
-            ],
-            "time": "2015-10-13T08:18:50+00:00"
         },
         {
             "name": "riimu/kit-phpencoder",
@@ -8874,7 +8692,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/VentureCraft/revisionable.git",
+                "url": "git@github.com:CircleLinkHealth/revisionable.git",
                 "reference": "1b1aefc2aff0404db632cc2dbf17525943a0cf82"
             },
             "require": {
@@ -8922,6 +8740,7 @@
                 "issues": "https://github.com/VentureCraft/revisionable/issues",
                 "source": "https://github.com/VentureCraft/revisionable"
             },
+            "abandoned": true,
             "time": "2019-08-26T12:02:09+00:00"
         },
         {
@@ -9029,6 +8848,54 @@
                 "waavi"
             ],
             "time": "2019-01-28T16:48:46+00:00"
+        },
+        {
+            "name": "waynestate/nova-ckeditor4-field",
+            "version": "0.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/waynestate/nova-ckeditor4-field.git",
+                "reference": "fd6c2fcaeccbaffb91b2a0b7c9ce42a166f3dd27"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/waynestate/nova-ckeditor4-field/zipball/fd6c2fcaeccbaffb91b2a0b7c9ce42a166f3dd27",
+                "reference": "fd6c2fcaeccbaffb91b2a0b7c9ce42a166f3dd27",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Waynestate\\Nova\\CKEditorFieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Waynestate\\Nova\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Web Communications",
+                    "email": "web@wayne.edu"
+                }
+            ],
+            "description": "This nova package allows you to use CKEditor 4 for text areas.",
+            "keywords": [
+                "CKEditor",
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-07-25T15:45:09+00:00"
         },
         {
             "name": "wikimedia/composer-merge-plugin",
@@ -12960,54 +12827,6 @@
             "time": "2019-06-13T22:48:21+00:00"
         },
         {
-            "name": "waynestate/nova-ckeditor4-field",
-            "version": "0.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/waynestate/nova-ckeditor4-field.git",
-                "reference": "fd6c2fcaeccbaffb91b2a0b7c9ce42a166f3dd27"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/waynestate/nova-ckeditor4-field/zipball/fd6c2fcaeccbaffb91b2a0b7c9ce42a166f3dd27",
-                "reference": "fd6c2fcaeccbaffb91b2a0b7c9ce42a166f3dd27",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Waynestate\\Nova\\CKEditorFieldServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Waynestate\\Nova\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Web Communications",
-                    "email": "web@wayne.edu"
-                }
-            ],
-            "description": "This nova package allows you to use CKEditor 4 for text areas.",
-            "keywords": [
-                "CKEditor",
-                "laravel",
-                "nova"
-            ],
-            "time": "2019-07-25T15:45:09+00:00"
-        },
-        {
             "name": "webmozart/assert",
             "version": "1.5.0",
             "source": {
@@ -13277,19 +13096,21 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/core": 20,
-        "circlelinkhealth/customer": 20,
         "circlelinkhealth/raygun": 20,
         "circlelinkhealth/timetracking": 20,
         "circlelinkhealth/twofa": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20
+        "xethron/migrations-generator": 20,
+        "venturecraft/revisionable": 20,
+        "michalisantoniou6/laravel-cerberus": 20,
+        "circlelinkhealth/customer": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.2.0",
+        "php": ">=5.4.0",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",

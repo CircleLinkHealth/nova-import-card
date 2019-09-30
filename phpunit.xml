@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.5/phpunit.xsd"
          bootstrap="vendor/autoload.php"
+         forceCoversAnnotation="true"
+         beStrictAboutCoversAnnotation="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTodoAnnotatedTests="true"
+         backupGlobals="false"
+         backupStaticAttributes="false"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
-         stopOnFailure="false">
+         stopOnFailure="true"
+         verbose="true">
     <testsuites>
+        <testsuite name="Eligibility">
+            <directory suffix="Test.php">./Modules/Eligibility/Tests</directory>
+        </testsuite>
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
@@ -37,25 +47,11 @@
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./app</directory>
+            <directory suffix=".php">app</directory>
         </whitelist>
     </filter>
     <php>
         <env name="APP_ENV" value="testing"/>
-        <env name="CACHE_DRIVER" value="array"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="QUEUE_DRIVER" value="sync"/>
-        <env name="BCRYPT_ROUNDS" value="4"/>
-        <!--You may use this for running the test suite locally using mysql-->
-        <!--<env name="DB_CONNECTION" value="test_suite"/>-->
-
-        <!--Leave sqlite uncommented for circleci to work-->
-        <env name="DB_CONNECTION" value="sqlite"/>
-
-        <env name="MAIL_DRIVER" value="log"/>
-
-        <env name="LADA_CACHE_ACTIVE" value="false"/>
-
-        <ini name="memory_limit" value="1024M"/>
+        <ini name="display_errors" value="true"/>
     </php>
 </phpunit>

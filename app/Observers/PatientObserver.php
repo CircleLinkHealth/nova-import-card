@@ -92,5 +92,11 @@ class PatientObserver
         if ($patient->isDirty('date_paused')) {
             $patient->paused_letter_printed_at = null;
         }
+
+        if ($patient->isDirty('ccm_status')) {
+            if (Patient::UNREACHABLE == $patient->getOriginal('ccm_status') && Patient::ENROLLED == $patient->ccm_status) {
+                $patient->no_call_attempts_since_last_success = 0;
+            }
+        }
     }
 }
