@@ -679,7 +679,7 @@
 
                         //If conditions needs to be compared against to "gte" or "lte"
                         if (nextQuestConditions.hasOwnProperty('operator')) {
-                            if (nextQuestConditions.operator === 'greater_than') {
+                            if (nextQuestConditions.operator === 'greater_or_equal_than') {
                                 //Again we use only the first Question of the related Questions, which is OK for now.
                                 if (firstQuestion.answer.value.value >= nextQuestConditions.related_question_expected_answer) {
                                     canGoToNext = false;
@@ -689,7 +689,7 @@
                                 break;
                             }
 
-                            if (nextQuestConditions.operator === 'less_than') {
+                            if (nextQuestConditions.operator === 'less_or_equal_than') {
                                 if (firstQuestion.answer.value.value <= nextQuestConditions.related_question_expected_answer) {
                                     canGoToNext = false;
                                     break;
