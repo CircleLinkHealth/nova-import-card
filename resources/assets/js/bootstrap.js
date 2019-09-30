@@ -14,25 +14,12 @@ try {
 } catch (e) {
 }
 
+
 require('./bootstrap-axios');
-
+import Echo from 'laravel-echo';
+window.Echo = Echo;
 require('./logger-logdna').init();
+require('./pusher-echo').init();
 
-/**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allows your team to easily build robust real-time web applications.
- */
 
-import Echo from 'laravel-echo'
 
-import pusher_js from "pusher-js";
-const JWTtoken = `Bearer ${localStorage.getItem('token')}`;
-window.Pusher = pusher_js;
-
-window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: process.env['MIX_PUSHER_KEY'],
-    cluster: process.env['MIX_PUSHER_CLUSTER'],
-    encrypted: true,
-});
