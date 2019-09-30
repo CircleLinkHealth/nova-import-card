@@ -7,7 +7,6 @@
 namespace App\Services;
 
 use App\CarePlan;
-use App\Models\CCD\Problem;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
 use App\Services\CPM\CpmMiscService;
@@ -332,9 +331,11 @@ class ReportsService
             $careplanReport[$user->id]['bio_data'][$metric]['verb']     = $biometric_values['verb'];
         }
 
+        $miscService = app(CpmMiscService::class);
+
         //Medications List
         if ($user->cpmMiscs->where('name', CpmMisc::MEDICATION_LIST)->first()) {
-            $careplanReport[$user->id]['taking_meds'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
+            $careplanReport[$user->id]['taking_meds'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::MEDICATION_LIST
             );
@@ -344,7 +345,7 @@ class ReportsService
 
         //Allergies
         if ($user->cpmMiscs->where('name', CpmMisc::MEDICATION_LIST)->first()) {
-            $careplanReport[$user->id]['allergies'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
+            $careplanReport[$user->id]['allergies'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::ALLERGIES
             );
@@ -354,7 +355,7 @@ class ReportsService
 
         //Social Services
         if ($user->cpmMiscs->where('name', CpmMisc::SOCIAL_SERVICES)->first()) {
-            $careplanReport[$user->id]['social'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
+            $careplanReport[$user->id]['social'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::SOCIAL_SERVICES
             );
@@ -364,7 +365,7 @@ class ReportsService
 
         //Other
         if ($user->cpmMiscs->where('name', CpmMisc::OTHER)->first()) {
-            $careplanReport[$user->id]['other'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
+            $careplanReport[$user->id]['other'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::OTHER
             );
@@ -374,7 +375,7 @@ class ReportsService
 
         //Appointments
         if ($user->cpmMiscs->where('name', CpmMisc::APPOINTMENTS)->first()) {
-            $careplanReport[$user->id]['appointments'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
+            $careplanReport[$user->id]['appointments'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::APPOINTMENTS
             );
@@ -418,50 +419,22 @@ class ReportsService
 
     public function getInstructionsForOtherProblems(User $user)
     {
-        if ( ! $user) {
-            //nullify
-            return 'User not found...';
-        }
+        $user->loadMissing('ccdProblems');
 
-        // Other Conditions / Problem List
-        $ccdProblems = 'No instructions at this time';
-        $problem     = $user->cpmMiscs->where('name', CpmMisc::OTHER_CONDITIONS)->all();
-        if ( ! empty($problem)) {
-            $problems = Problem::where('patient_id', '=', $user->id)->orderBy('name')->get();
-            if ($problems->count() > 0) {
-                $ccdProblems = '';
-                $i           = 0;
-                foreach ($problems as $problem) {
-                    if (empty($problem->name)) {
-                        continue 1;
-                    }
-                    if ($i > 0) {
-                        $ccdProblems .= '<br>';
-                    }
-                    $ccdProblems .= $problem->name;
-                    ++$i;
-                }
+        $ccdProblems = '';
+        $i           = 0;
+        foreach ($user->ccdProblems as $problem) {
+            if (empty($problem->name)) {
+                continue 1;
             }
+            if ($i > 0) {
+                $ccdProblems .= '<br>';
+            }
+            $ccdProblems .= $problem->name;
+            ++$i;
         }
 
         return $ccdProblems;
-        /*
-        $problem = $user->cpmMiscs->where('name',CpmMisc::OTHER_CONDITIONS)->all();
-
-        if(empty($problem)){
-            //https://youtu.be/LloIp0HMJjc?t=19s
-            return '';
-        }
-
-        $instructions = CpmInstruction::find($problem[0]->pivot->cpm_instruction_id);
-
-        if(empty($instructions)){
-            //defualt
-                return 'No instructions at this time';
-        }
-
-        return $instructions->name;
-        */
     }
 
     public function getLifestyleToMonitor(CarePlan $carePlan)

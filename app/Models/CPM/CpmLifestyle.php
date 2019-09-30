@@ -34,6 +34,12 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle query()
+ *
+ * @property int|null $care_plan_templates_count
+ * @property int|null $cpm_instructions_count
+ * @property int|null $patient_count
+ * @property int|null $revision_history_count
+ * @property int|null $users_count
  */
 class CpmLifestyle extends \CircleLinkHealth\Core\Entities\BaseModel
 {

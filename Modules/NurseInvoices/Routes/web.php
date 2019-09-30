@@ -16,6 +16,16 @@ Route::prefix('nurseinvoices')->middleware(['auth'])->group(function () {
             'as'   => 'care.center.invoice.dispute',
         ]);
 
+        Route::post('daily-dispute', [
+            'uses' => 'NurseInvoiceDailyDisputesController@storeSuggestedWorkTime',
+            'as'   => 'care.center.invoice.daily.dispute',
+        ]);
+
+        Route::delete('delete-dispute/{invoiceId}/{disputedDay}', [
+            'uses' => 'NurseInvoiceDailyDisputesController@deleteSuggestedWorkTime',
+            'as'   => 'care.center.delete.invoice.daily.dispute',
+        ]);
+
         Route::post('approve', [
             'uses' => 'InvoiceReviewController@approveInvoice',
             'as'   => 'care.center.invoice.approve',
@@ -27,7 +37,7 @@ Route::prefix('nurseinvoices')->middleware(['auth'])->group(function () {
         ]);
     });
 
-    Route::get('nurse/{nurse_info_id}/invoice/{invoice_id?}', [
+    Route::get('nurse/{nurse_user_id}/invoice/{invoice_id?}', [
         'uses' => 'InvoiceReviewController@adminShow',
         'as'   => 'nurseinvoices.admin.show',
     ]);

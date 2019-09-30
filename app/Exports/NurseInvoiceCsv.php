@@ -46,17 +46,7 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
      */
     public function array(): array
     {
-        $invoices = NurseInvoice::with(
-            [
-                'nurse.user' => function ($q) {
-                    $q->withTrashed();
-                },
-            ]
-        )
-            ->where('month_year', $this->date)
-            ->whereHas('nurse.user', function ($q) {
-                $q->withTrashed();
-            })
+        $invoices = $this->invoicesQuery()
             ->get();
 
         $invoicesData = [];
@@ -95,6 +85,21 @@ class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
             'Extra Time Fees',
             'Total payable amount',
         ];
+    }
+
+    public function invoicesQuery()
+    {
+        return NurseInvoice::with(
+            [
+                'nurse.user' => function ($q) {
+                    $q->withTrashed();
+                },
+            ]
+        )
+            ->where('month_year', $this->date)
+            ->whereHas('nurse.user', function ($q) {
+                $q->withTrashed();
+            });
     }
 
     /**

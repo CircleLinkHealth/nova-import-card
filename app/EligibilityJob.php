@@ -6,7 +6,7 @@
 
 namespace App;
 
-use App\Services\WelcomeCallListGenerator;
+use App\Services\EligibilityCheck;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -81,6 +81,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withoutTrashed()
  * @mixin \Eloquent
+ *
+ * @property \App\EligibilityJob $eligibilityJob
+ * @property int|null            $revision_history_count
  */
 class EligibilityJob extends BaseModel
 {
@@ -161,6 +164,11 @@ class EligibilityJob extends BaseModel
         return $this->belongsTo(EligibilityBatch::class, 'batch_id');
     }
 
+    public function eligibilityJob()
+    {
+        return $this->belongsTo(EligibilityJob::class);
+    }
+
     public function enrollee()
     {
         return $this->hasOne(Enrollee::class);
@@ -184,6 +192,21 @@ class EligibilityJob extends BaseModel
         return null;
     }
 
+    public function isAlreadyEnrolled()
+    {
+        return self::ENROLLED == $this->outcome;
+    }
+
+    public function isEligible()
+    {
+        return self::ELIGIBLE == $this->outcome;
+    }
+
+    public function isIneligible()
+    {
+        return self::INELIGIBLE == $this->outcome;
+    }
+
     /**
      * Putting this here for conveniece.
      * It is NOT safe to use as $batch may not exist. Should we make processing without a batch possible?
@@ -196,26 +219,28 @@ class EligibilityJob extends BaseModel
      *
      * @throws \Exception
      *
-     * @return WelcomeCallListGenerator
+     * @return EligibilityCheck
      */
     public function process($filterLastEncounter, $filterInsurance, $filterProblems)
     {
-        return new WelcomeCallListGenerator(
-            collect([$this->data]),
+        return new EligibilityCheck(
+            $this,
+            $this->batch->practice,
+            $this->batch,
             $filterLastEncounter,
             $filterInsurance,
             $filterProblems,
-            true,
-            $this->batch->practice,
-            null,
-            null,
-            $this->batch,
-            $this
+            true
         );
     }
 
     public function scopeEligible($builder)
     {
         return $builder->where('outcome', '=', self::ELIGIBLE);
+    }
+
+    public function wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()
+    {
+        return self::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH == $this->outcome;
     }
 }

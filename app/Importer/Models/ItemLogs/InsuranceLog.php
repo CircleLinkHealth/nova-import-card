@@ -7,7 +7,6 @@
 namespace App\Importer\Models\ItemLogs;
 
 use App\Models\CCD\CcdInsurancePolicy;
-use App\Traits\Relationships\BelongsToCcda;
 use App\Traits\Relationships\BelongsToVendor;
 
 /**
@@ -46,12 +45,20 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog query()
+ *
+ * @property array $raw
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereRaw($value)
+ *
+ * @property int|null $revision_history_count
  */
 class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    use BelongsToCcda;
-    use
-        BelongsToVendor;
+    use BelongsToVendor;
+
+    protected $casts = [
+        'raw' => 'array',
+    ];
 
     protected $fillable = [
         'medical_record_id',
@@ -62,6 +69,7 @@ class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
         'relation',
         'subscriber',
         'import',
+        'raw',
     ];
 
     public function importedItem()

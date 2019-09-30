@@ -608,17 +608,6 @@ query;
             }
 
             return [];
-            /*
-            $mixedReturn = $this->getMixedValid($strMsgID, $pid, $strResponse);
-            if(empty($mixedReturn)) {
-                $testStr = str_replace( '_', '/', $strResponse);
-                if(!isset($tmpArray[0]) || $tmpArray[0] <> date('m', strtotime($testStr))) {
-                    return array();
-                } elseif (!isset($tmpArray[1]) || $tmpArray[1] <> date('d', strtotime($testStr))) {
-                    return array();
-                }
-            }
-            */
         }
 
         if ('CF_HSP_30' == $strMsgID) {
@@ -634,11 +623,6 @@ query;
 
             return [];
         }
-
-        // // check for no response, this should prevent an valid answer being found.
-        // if(empty($strResponse)) {
-        // 	$strResponse2 = 'Blank_Response';
-        // }
 
         $strQS = '';
         if ( ! empty($qstype)) {

@@ -6,8 +6,10 @@
 
 namespace App;
 
+use App\Traits\Relationships\BelongsToCcda;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Ehr;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -48,10 +50,50 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUserId($value)
  * @mixin \Eloquent
+ *
+ * @property int                                          $practice_id
+ * @property \App\EligibilityBatch|null                   $batch
+ * @property \CircleLinkHealth\Customer\Entities\Practice $practice
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
+ *
+ * @property int|null                             $ccda_id
+ * @property \App\Models\MedicalRecords\Ccda|null $ccda
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
+ *
+ * @property int|null $revision_history_count
  */
 class TargetPatient extends BaseModel
 {
-    protected $guarded = [];
+    use BelongsToCcda;
+
+    const STATUS_CONSENTED  = 'consented';
+    const STATUS_ELIGIBLE   = 'eligible';
+    const STATUS_ENROLLED   = 'enrolled';
+    const STATUS_ERROR      = 'error';
+    const STATUS_INELIGIBLE = 'ineligible';
+    const STATUS_TO_PROCESS = 'to_process';
+
+    protected $fillable = [
+        'ccda_id',
+        'practice_id',
+        'batch_id',
+        'eligibility_job_id',
+        'ehr_id',
+        'user_id',
+        'enrollee_id',
+        'ehr_patient_id',
+        'ehr_practice_id',
+        'ehr_department_id',
+        'status',
+        'description',
+    ];
+
+    public function batch()
+    {
+        return $this->belongsTo(EligibilityBatch::class, 'batch_id');
+    }
 
     public function ehr()
     {
@@ -61,6 +103,22 @@ class TargetPatient extends BaseModel
     public function enrollee()
     {
         return $this->belongsTo(Enrollee::class, 'enrollee_id');
+    }
+
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
+    }
+
+    public function setStatusFromEligibilityJob(EligibilityJob $check)
+    {
+        if ($check->isIneligible()) {
+            $this->status = self::STATUS_INELIGIBLE;
+        } elseif ($check->isEligible() || $check->wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()) {
+            $this->status = self::STATUS_ELIGIBLE;
+        } elseif ($check->isAlreadyEnrolled()) {
+            $this->status = self::STATUS_ENROLLED;
+        }
     }
 
     public function user()

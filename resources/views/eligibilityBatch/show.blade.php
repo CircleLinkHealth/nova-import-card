@@ -24,7 +24,7 @@
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <b>{{ $batch->practice->display_name }}</b> | Batch #{{$batch->id}}
+                        <b>{{ $batch->practice->display_name }}</b> | Batch #{{$batch->id}} | Type: {{$batch->getType()}}
                         | Started: <em>{{ $batch->created_at->format('m-d-Y h:mA') }}</em> | Last Update:
                         <em>{{ $batch->updated_at->format('m-d-Y h:mA')}}</em>
                         <div class="pull-right" style="color: {{$batch->getStatusFontColor()}};">
@@ -56,8 +56,7 @@
 
                             <div class="pull-left" style="padding-left: 2%;">
                                 <a href="{{route('eligibility.download.eligible', [$batch->id])}}"
-                                   class="btn btn-default">Download
-                                    Eligible Patients CSV</a>
+                                   class="btn btn-default">Download Eligible Patients CSV</a>
                             </div>
                         @endif
 
@@ -150,6 +149,19 @@
                             </div>
 
 
+
+                            <div class="row" style="margin-top: 10px;">
+                                @if($athenaInsurancesExist)
+                                    <div class="pull-left" style="padding-left: 2%;">
+                                        <a href="{{route('eligibility.download.supplemental_insurance_info', [$batch->id])}}"
+                                           class="btn btn-success">Download Supplemental Insurance Info CSV</a>
+                                    </div>
+                                    <div class="pull-left" style="padding-left: 2%;">
+                                        <a href="{{route('eligibility.download.copays', [$batch->id])}}"
+                                           class="btn btn-danger">Download Copays CSV</a>
+                                    </div>
+                                @endif
+                            </div>
 
                         <script>
                             function notifyReportWriter() {

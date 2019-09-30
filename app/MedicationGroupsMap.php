@@ -30,6 +30,8 @@ use App\Models\CPM\CpmMedicationGroup;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap query()
+ *
+ * @property int|null $revision_history_count
  */
 class MedicationGroupsMap extends \CircleLinkHealth\Core\Entities\BaseModel
 {

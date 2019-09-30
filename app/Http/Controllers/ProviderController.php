@@ -60,7 +60,7 @@ class ProviderController extends Controller
 
     public function list()
     {
-        return $this->providerInfoService->repo()->list();
+        return $this->providerInfoService->list();
     }
 
     public function removePatient($patientId, $viewNext = false)
@@ -99,7 +99,7 @@ class ProviderController extends Controller
 
     public function show($id)
     {
-        return $this->providerInfoService->repo()->provider($id);
+        return $this->providerInfoService->provider($id);
     }
 
     public function updateApproveOwnCarePlan(Request $request)

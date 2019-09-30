@@ -42,6 +42,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure query()
+ *
+ * @property int|null $revision_history_count
  */
 class CpmBloodPressure extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
 {
@@ -90,7 +92,8 @@ class CpmBloodPressure extends \CircleLinkHealth\Core\Entities\BaseModel impleme
 
     public function getUserValues(User $user)
     {
-        $biometric = $this->wherePatientId($user->id)->first();
+        $user->loadMissing('cpmBloodPressure');
+        $biometric = $user->cpmBloodPressure;
 
         return $biometric
             ? [

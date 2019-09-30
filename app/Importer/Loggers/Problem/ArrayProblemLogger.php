@@ -13,7 +13,12 @@ class ArrayProblemLogger implements Logger
 {
     public function handle($problems): array
     {
+        $results = [];
+
         foreach ($problems as $p) {
+            if ( ! is_array($p)) {
+                continue;
+            }
             $results[] = Problem::create([
                 'code'             => $p['code'],
                 'name'             => $p['name'],
@@ -32,6 +37,12 @@ class ArrayProblemLogger implements Logger
         }
 
         foreach ($problems as $prob) {
+            if ( ! is_array($prob)) {
+                \Log::error('NOT AN ARRAY:'.json_encode($problems));
+
+                return false;
+            }
+
             if ( ! array_keys_exist([
                 'code',
                 'name',

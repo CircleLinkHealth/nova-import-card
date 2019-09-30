@@ -6,12 +6,49 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DownloadMediaWithSignedRequest;
+use App\Services\GoogleDrive;
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
-use Spatie\MediaLibrary\Models\Media;
+use Illuminate\Support\Facades\Storage;
 
 class DownloadController extends Controller
 {
+    private $googleDrive;
+
+    public function __construct(GoogleDrive $googleDrive)
+    {
+        $this->googleDrive = $googleDrive;
+    }
+
+    public function downloadCsvFromGoogleDrive($filename, $dir = '/', $recursive = true)
+    {
+        $contents = $this->googleDrive->getContents($dir, $recursive);
+
+        $file = $contents
+            ->where('type', '=', 'file')
+            ->where('filename', '=', pathinfo($filename, PATHINFO_FILENAME))
+            ->first();
+
+        if (is_null($file)) {
+            $messages['warnings'][] = 'File not found!';
+
+            return response()->json($messages, 404);
+        }
+
+        $service  = Storage::drive('google')->getAdapter()->getService();
+        $mimeType = 'text/csv';
+        $export   = $service->files->export($file['basename'], $mimeType);
+
+        return response($export->getBody(), 200, $export->getHeaders());
+    }
+
+    public function downloadMediaFromSignedUrl(DownloadMediaWithSignedRequest $request)
+    {
+        return $this->downloadMedia(Media::findOrFail($request->route('media_id')));
+    }
+
     /**
      * Returns file requested to download.
      *

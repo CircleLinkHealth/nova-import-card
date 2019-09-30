@@ -13,10 +13,11 @@ use App\Filters\EnrolleeFilters;
 use App\Http\Requests\AddEnrolleeCustomFilter;
 use App\Http\Requests\EditEnrolleeData;
 use App\Http\Requests\UpdateMultipleEnrollees;
-use App\Jobs\UpdateEnrolleesFromEnglishEnrollmentSheetCsv;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 
 class EnrollmentDirectorController extends Controller
 {
@@ -43,19 +44,24 @@ class EnrollmentDirectorController extends Controller
 
     public function assignCareAmbassadorToEnrollees(UpdateMultipleEnrollees $request)
     {
-        Enrollee::whereIn(
-            'id',
-            $request->input('enrolleeIds')
-        )
-            ->get()
-            ->map(function ($e) use ($request) {
-                $e->care_ambassador_user_id = $request->input('ambassadorId');
+        //using this to input a '?' in WHERE IN for each id
+        $inQuery = implode(',', array_fill(0, count($request->input('enrolleeIds')), '?'));
 
-                if (Enrollee::SOFT_REJECTED != $e->status) {
-                    $e->status = Enrollee::TO_CALL;
-                }
-                $e->save();
-            });
+        $toCall       = Enrollee::TO_CALL;
+        $softDeclined = Enrollee::SOFT_REJECTED;
+
+        //using this to create an extra binding for each number,
+        //otherwise if we pass the imploded array as a string,
+        // it will cast it as an integer, taking only the 1st id of the comma-delimited array
+        $bindings = array_merge(
+            [$request->input('ambassadorId'), $softDeclined, $toCall],
+            $request->input('enrolleeIds')
+        );
+
+        DB::statement("UPDATE enrollees
+SET
+    care_ambassador_user_id = ?, status = CASE WHEN status = ? THEN ? ELSE status END
+WHERE id IN ({$inQuery})", $bindings);
 
         return response()->json([], 200);
     }
@@ -116,6 +122,14 @@ class EnrollmentDirectorController extends Controller
                 ? 'ASC'
                 : 'DESC';
             $data->orderBy($orderBy, $direction);
+        } else {
+            $data->orderByRaw("CASE
+   WHEN status = 'engaged' THEN 1
+   WHEN status = 'call_queue' THEN 2
+   WHEN status = 'utc' THEN 3
+   WHEN status = 'soft_rejected' THEN 4
+   ELSE 5
+END ASC, attempt_count ASC");
         }
 
         $results = $data->get()->toArray();
@@ -136,6 +150,15 @@ class EnrollmentDirectorController extends Controller
         Enrollee::whereIn('id', $request->input('enrolleeIds'))->update(['status' => Enrollee::INELIGIBLE]);
 
         return response()->json([], 200);
+    }
+
+    public function runCreateEnrolleesSeeder(Request $request)
+    {
+        if ( ! isProductionEnv()) {
+            Artisan::call('db:seed', ['--class' => 'EnrolleesSeeder']);
+        }
+
+        return 'Test Patients have been created. Please close this window.';
     }
 
     public function unassignCareAmbassadorFromEnrollees(UpdateMultipleEnrollees $request)

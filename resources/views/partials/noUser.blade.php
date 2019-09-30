@@ -32,7 +32,7 @@
     <nav class="navbar primary-navbar">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a href="{{ url('/') }}" class="navbar-brand"><img src="{{ mix('/img/clh_logo_lt.png') }}"
+                <a href="{{ url('/') }}" class="navbar-brand"><img src="{{ mix('img/logos/LogoHorizontal_Color.svg') }}"
                                                                 alt="CarePlan Manager" width='50px'
                                                                 style="position:relative;top:-5px"></a>
                 <a href="{{ url('/') }}" class="navbar-title Xcollapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>

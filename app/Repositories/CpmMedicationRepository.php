@@ -25,7 +25,7 @@ class CpmMedicationRepository
     public function editPatientMedication(Medication $medication)
     {
         if ( ! $medication->id) {
-            throw new Exception('"id" is important');
+            throw new \Exception('"id" is important');
         }
         $medications = $this->model()->where(['id' => $medication->id]);
         $medications->update([
@@ -46,13 +46,6 @@ class CpmMedicationRepository
     public function model()
     {
         return app(Medication::class);
-    }
-
-    public function patientMedication($userId)
-    {
-        return $this->model()->where([
-            'patient_id' => $userId,
-        ])->paginate();
     }
 
     public function patientMedicationsList($userId, $onlyActive = false)

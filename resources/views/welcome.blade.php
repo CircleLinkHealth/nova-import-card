@@ -14,7 +14,7 @@
 <div class="container-fluid">F
 	<div class="content text-center" style="margin-top:30px;">
 		<a href="http://www.circlelinkhealth.com">
-			<img src="{{mix('img/logo.svg')}}" alt="Logo" class="logo--small" style="width:200px;margin-top:50px;">
+			<img src="{{mix('img/logos/LogoHorizontal_Color.svg')}}" alt="Logo" class="logo--small" style="width:200px;margin-top:50px;">
 		</a>
 	</div>
 	<div class="row" style="margin-top:30px;">

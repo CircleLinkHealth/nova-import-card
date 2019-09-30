@@ -45,7 +45,7 @@
                                 </div>
                                 <div class="col-xs-7">
                                     <select class="form-control" name="service_id">
-                                        @foreach(App\ChargeableService::all() as $service)
+                                        @foreach(CircleLinkHealth\Customer\Entities\ChargeableService::all() as $service)
                                             <option value="{{$service->id}}" @if($service->code == 'CPT 99490'){{'selected'}}@endif>{{$service->code}}
                                                 - {{$service->description}}</option>
                                         @endforeach

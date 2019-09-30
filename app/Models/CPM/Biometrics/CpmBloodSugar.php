@@ -40,6 +40,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodSugar query()
+ *
+ * @property int|null $revision_history_count
  */
 class CpmBloodSugar extends \CircleLinkHealth\Core\Entities\BaseModel implements Biometric
 {
@@ -78,7 +80,8 @@ class CpmBloodSugar extends \CircleLinkHealth\Core\Entities\BaseModel implements
 
     public function getUserValues(User $user)
     {
-        $biometric = $this->wherePatientId($user->id)->first();
+        $user->loadMissing('cpmBloodSugar');
+        $biometric = $user->cpmBloodSugar;
 
         return $biometric
             ? [

@@ -73,14 +73,6 @@ class ProblemController extends Controller
         return response()->json($this->cpmProblemService->problems());
     }
 
-    public function index()
-    {
-        return response()->json([
-            'cpm_count' => $this->cpmProblemService->repo()->count(),
-            'ccd_count' => $this->ccdProblemService->repo()->count(),
-        ]);
-    }
-
     public function searchCcdAllergies(Request $request)
     {
         $term = $request->input('term');

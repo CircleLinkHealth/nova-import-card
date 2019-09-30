@@ -6,9 +6,11 @@
 
 namespace App\Nova;
 
+use App\Constants;
 use App\Enrollee;
 use App\Nova\Importers\EnroleeStatus as EnroleeStatusImporter;
 use Illuminate\Http\Request;
+use Jubeki\Nova\Cards\Linkable\LinkableAway;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
@@ -16,6 +18,12 @@ use Sparclex\NovaImportCard\NovaImportCard;
 
 class EnroleeStatus extends Resource
 {
+    /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group    = Constants::NOVA_GROUP_ENROLLMENT;
     public static $importer = EnroleeStatusImporter::class;
 
     /**
@@ -92,6 +100,11 @@ class EnroleeStatus extends Resource
     {
         return [
             new NovaImportCard(self::class),
+            (new LinkableAway())
+                ->title('CSV Template')
+                ->url(route('download.google.csv', ['filename' => 'UpdateEnroleeDataTemplate']))
+                ->subtitle('Click to download.')
+                ->target('_self'),
         ];
     }
 
@@ -164,7 +177,7 @@ class EnroleeStatus extends Resource
      */
     public static function label()
     {
-        return 'Patients To Enroll - Update Information';
+        return 'Patients - Update Information';
     }
 
     /**

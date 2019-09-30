@@ -218,7 +218,7 @@ class NursesPerformanceReportService
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
                             $this->unsuccessfulCallsMultiplier
-                                ) * $data['unsuccessful'])
+                                                                                                  ) * $data['unsuccessful'])
                         ) / $data['actualHours'])
                 )
             )
@@ -469,19 +469,19 @@ class NursesPerformanceReportService
 
         return \DB::table('calls')
             ->select(
-                //avoid duplicate patients so the total count of patients is accurate
-                \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
-                //we check null entries (in case there is no summary for the date's month)
+                  //avoid duplicate patients so the total count of patients is accurate
+                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                      //we check null entries (in case there is no summary for the date's month)
+                      \DB::raw(
+                          'if (GREATEST(pms.ccm_time, pms.bhi_time) is null, 0, GREATEST(pms.ccm_time, pms.bhi_time)/60) as patient_time'
+                      ),
                 \DB::raw(
-                    'if (GREATEST(pms.ccm_time, pms.bhi_time) is null, 0, GREATEST(pms.ccm_time, pms.bhi_time)/60) as patient_time'
-                ),
+                          "if (GREATEST(pms.ccm_time, pms.bhi_time) is null, {$this->timeGoal}, ({$this->timeGoal} - (GREATEST(pms.ccm_time, pms.bhi_time)/60))) as patient_time_left"
+                      ),
                 \DB::raw(
-                    "if (GREATEST(pms.ccm_time, pms.bhi_time) is null, {$this->timeGoal}, ({$this->timeGoal} - (GREATEST(pms.ccm_time, pms.bhi_time)/60))) as patient_time_left"
-                ),
-                \DB::raw(
-                    'if (pms.no_of_successful_calls is null, 0, pms.no_of_successful_calls) as successful_calls'
-                )
-            )
+                          'if (pms.no_of_successful_calls is null, 0, pms.no_of_successful_calls) as successful_calls'
+                      )
+                  )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoinSub($sub, 'pms', function ($join) {
                 $join->on('calls.inbound_cpm_id', '=', 'pms.patient_id');
@@ -492,7 +492,7 @@ class NursesPerformanceReportService
 calls.status = 'scheduled'
 AND calls.outbound_cpm_id = {$nurse->id}
 AND patient_info.ccm_status = 'enrolled'"
-            )
+                  )
             ->get();
     }
 
@@ -536,20 +536,21 @@ AND patient_info.ccm_status = 'enrolled'"
                             $week[$dayOfWeek] = collect($reportPerDay)->where('nurse_full_name', $nurse)->first();
                             if (empty($week[$dayOfWeek])) {
                                 $week[$dayOfWeek] = [
-                                    'nurse_full_name'           => $nurse,
-                                    'committedHours'            => 0,
-                                    'actualHours'               => 0,
-                                    'unsuccessful'              => 0,
-                                    'successful'                => 0,
-                                    'actualCalls'               => 0,
-                                    'scheduledCalls'            => 0,
-                                    'efficiency'                => 0,
-                                    'completionRate'            => 0,
-                                    'efficiencyIndex'           => 0,
-                                    'caseLoadComplete'          => 0,
-                                    'caseLoadNeededToComplete'  => 0,
-                                    'hoursCommittedRestOfMonth' => 0,
-                                    'surplusShortfallHours'     => 0,
+                                    'nurse_full_name'                => $nurse,
+                                    'committedHours'                 => 0,
+                                    'actualHours'                    => 0,
+                                    'unsuccessful'                   => 0,
+                                    'successful'                     => 0,
+                                    'actualCalls'                    => 0,
+                                    'scheduledCalls'                 => 0,
+                                    'efficiency'                     => 0,
+                                    'completionRate'                 => 0,
+                                    'efficiencyIndex'                => 0,
+                                    'uniquePatientsAssignedForMonth' => 0,
+                                    'caseLoadComplete'               => 0,
+                                    'caseLoadNeededToComplete'       => 0,
+                                    'hoursCommittedRestOfMonth'      => 0,
+                                    'surplusShortfallHours'          => 0,
                                 ];
                             }
                         }
@@ -562,15 +563,19 @@ AND patient_info.ccm_status = 'enrolled'"
         $totalsPerDay = [];
         foreach ($reports as $dayOfWeek => $reportPerDay) {
             $totalsPerDay[$dayOfWeek] = [
-                'scheduledCalls'            => $reportPerDay->sum('scheduledCalls'),
-                'actualCalls'               => $reportPerDay->sum('actualCalls'),
-                'successful'                => $reportPerDay->sum('successful'),
-                'unsuccessful'              => $reportPerDay->sum('unsuccessful'),
-                'actualHours'               => $reportPerDay->sum('actualHours'),
-                'committedHours'            => $reportPerDay->sum('committedHours'),
-                'efficiency'                => number_format($reportPerDay->avg('efficiency'), '2'),
-                'completionRate'            => number_format($reportPerDay->avg('completionRate'), '2'),
-                'efficiencyIndex'           => number_format($reportPerDay->avg('efficiencyIndex'), '2'),
+                'scheduledCalls'                 => $reportPerDay->sum('scheduledCalls'),
+                'actualCalls'                    => $reportPerDay->sum('actualCalls'),
+                'successful'                     => $reportPerDay->sum('successful'),
+                'unsuccessful'                   => $reportPerDay->sum('unsuccessful'),
+                'actualHours'                    => $reportPerDay->sum('actualHours'),
+                'committedHours'                 => $reportPerDay->sum('committedHours'),
+                'efficiency'                     => number_format($reportPerDay->avg('efficiency'), '2'),
+                'completionRate'                 => number_format($reportPerDay->avg('completionRate'), '2'),
+                'efficiencyIndex'                => number_format($reportPerDay->avg('efficiencyIndex'), '2'),
+                'uniquePatientsAssignedForMonth' => number_format(
+                    $reportPerDay->avg('uniquePatientsAssignedForMonth'),
+                    '2'
+                ),
                 'caseLoadComplete'          => number_format($reportPerDay->avg('caseLoadComplete'), '2'),
                 'caseLoadNeededToComplete'  => $reportPerDay->sum('caseLoadNeededToComplete'),
                 'projectedHoursLeftInMonth' => number_format($reportPerDay->sum('projectedHoursLeftInMonth'), '2'),
@@ -648,21 +653,23 @@ AND patient_info.ccm_status = 'enrolled'"
         return collect($totalsPerDay)->mapWithKeys(function ($totalsForDay, $day) {
             return [
                 $day => [
-                    'nurse_full_name'           => 'Z - Totals for:', //"Z" exists to place totals last in order.(tangy)
-                    'weekDay'                   => $day,
-                    'scheduledCalls'            => $totalsForDay['scheduledCalls'],
-                    'actualCalls'               => $totalsForDay['actualCalls'],
-                    'successful'                => $totalsForDay['successful'],
-                    'unsuccessful'              => $totalsForDay['unsuccessful'],
-                    'actualHours'               => $totalsForDay['actualHours'],
-                    'committedHours'            => $totalsForDay['committedHours'],
-                    'completionRate'            => $totalsForDay['completionRate'] ?? 'N/A',
-                    'efficiencyIndex'           => $totalsForDay['efficiencyIndex'] ?? 'N/A',
-                    'caseLoadNeededToComplete'  => $totalsForDay['caseLoadNeededToComplete'] ?? 'N/A',
-                    'projectedHoursLeftInMonth' => $totalsForDay['projectedHoursLeftInMonth'] ?? 'N/A',
-                    'hoursCommittedRestOfMonth' => $totalsForDay['hoursCommittedRestOfMonth'] ?? 'N/A',
-                    'surplusShortfallHours'     => $totalsForDay['surplusShortfallHours'] ?? 'N/A',
-                    'caseLoadComplete'          => $totalsForDay['caseLoadComplete'] ?? 'N/A',
+                    'nurse_full_name' => 'Z - Totals for:',
+                    //"Z" exists to place totals last in order.(tangy)
+                    'weekDay'                        => $day,
+                    'scheduledCalls'                 => $totalsForDay['scheduledCalls'],
+                    'actualCalls'                    => $totalsForDay['actualCalls'],
+                    'successful'                     => $totalsForDay['successful'],
+                    'unsuccessful'                   => $totalsForDay['unsuccessful'],
+                    'actualHours'                    => $totalsForDay['actualHours'],
+                    'committedHours'                 => $totalsForDay['committedHours'],
+                    'completionRate'                 => $totalsForDay['completionRate'] ?? 'N/A',
+                    'efficiencyIndex'                => $totalsForDay['efficiencyIndex'] ?? 'N/A',
+                    'caseLoadNeededToComplete'       => $totalsForDay['caseLoadNeededToComplete'] ?? 'N/A',
+                    'projectedHoursLeftInMonth'      => $totalsForDay['projectedHoursLeftInMonth'] ?? 'N/A',
+                    'hoursCommittedRestOfMonth'      => $totalsForDay['hoursCommittedRestOfMonth'] ?? 'N/A',
+                    'surplusShortfallHours'          => $totalsForDay['surplusShortfallHours'] ?? 'N/A',
+                    'uniquePatientsAssignedForMonth' => $totalsForDay['uniquePatientsAssignedForMonth'] ?? 'N/A',
+                    'caseLoadComplete'               => $totalsForDay['caseLoadComplete'] ?? 'N/A',
                 ],
             ];
         })->toArray();

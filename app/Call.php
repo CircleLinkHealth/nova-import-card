@@ -73,6 +73,12 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereIsManual($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereSubType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereType($value)
+ *
+ * @property int $asap
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAsap($value)
+ *
+ * @property int|null $revision_history_count
  */
 class Call extends BaseModel
 {
