@@ -68,8 +68,8 @@ class NursesPerformanceReportService
                 function ($info) {
                     $info->where('status', 'active')
                         ->when(isProductionEnv(), function ($info) {
-                             $info->where('is_demo', false);
-                         });
+                            $info->where('is_demo', false);
+                        });
                 }
             )
             ->chunk(
@@ -217,8 +217,8 @@ class NursesPerformanceReportService
                 round(
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                                $this->unsuccessfulCallsMultiplier
-                            ) * $data['unsuccessful'])
+                            $this->unsuccessfulCallsMultiplier
+                        ) * $data['unsuccessful'])
                     ) / $data['actualHours'])
                 )
             )
@@ -400,8 +400,8 @@ class NursesPerformanceReportService
                 NursesPerformanceReportService::LAST_COMMITTED_DAYS_TO_GO_BACK
             )
                 ->sortBy(function ($date) {
-                                      return $date;
-                                  });
+                    return $date;
+                });
         } catch (\Exception $e) {
             \Log::error("{$e->getMessage()}");
         }
@@ -475,24 +475,24 @@ class NursesPerformanceReportService
                       \DB::raw(
                           'if (GREATEST(pms.ccm_time, pms.bhi_time) is null, 0, GREATEST(pms.ccm_time, pms.bhi_time)/60) as patient_time'
                       ),
-                      \DB::raw(
+                \DB::raw(
                           "if (GREATEST(pms.ccm_time, pms.bhi_time) is null, {$this->timeGoal}, ({$this->timeGoal} - (GREATEST(pms.ccm_time, pms.bhi_time)/60))) as patient_time_left"
                       ),
-                      \DB::raw(
+                \DB::raw(
                           'if (pms.no_of_successful_calls is null, 0, pms.no_of_successful_calls) as successful_calls'
                       )
-                  )
+            )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoinSub($sub, 'pms', function ($join) {
-                      $join->on('calls.inbound_cpm_id', '=', 'pms.patient_id');
-                  })
+                $join->on('calls.inbound_cpm_id', '=', 'pms.patient_id');
+            })
             ->leftJoin('patient_info', 'users.id', '=', 'patient_info.user_id')
             ->whereRaw(
-                      "
+                "
 calls.status = 'scheduled'
 AND calls.outbound_cpm_id = {$nurse->id}
 AND patient_info.ccm_status = 'enrolled'"
-                  )
+            )
             ->get();
     }
 

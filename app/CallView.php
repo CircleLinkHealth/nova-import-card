@@ -82,6 +82,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $asap
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereAsap($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePatientNurse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePatientNurseId($value)
  */
 class CallView extends Model
 {
