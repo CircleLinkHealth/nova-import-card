@@ -101,7 +101,19 @@
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/medication?page=${page}`)).then(response => {
                     const pagination = response.data
                     //console.log('medications:get-medications', pagination)
-                    this.medications = this.medications.concat(pagination.data.map(this.setupMedication))
+                    this.medications = [...new Set(this.medications.concat(pagination.data.map(this.setupMedication)).distinct(medication => medication.id).sort(function(a, b) {
+                        var nameA = (a.name || '').toUpperCase();
+                        var nameB = (b.name || '').toUpperCase();
+                        if (nameA < nameB) {
+                            return -1;
+                        }
+                        if (nameA > nameB) {
+                            return 1;
+                        }
+
+                        // names must be equal
+                        return 0;
+                    }))]
                     if (pagination.next_page_url) return this.getMedications(page + 1)
                 }).catch(err => {
                     console.error('medications:get-medications', err)
