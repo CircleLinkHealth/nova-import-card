@@ -113,19 +113,32 @@
                                 </v-select>
                             </td>
                             <td>
+                                <span class="asap_label" style="font-weight: bold">ASAP</span>
+                                <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
+                                   style="color: #000;"
+                                   title="Tick to schedule as:'As soon as possible'">
+                                    <input v-model="action.data.asapChecked"
+                                           id="asap"
+                                           type="checkbox"
+                                           name="asap_check"
+                                           style=" float: right;margin-top: -14%;"
+                                           :disabled="action.disabled">
+                                </a>
+
+
                                 <input class="form-control height-40" type="date" name="scheduled_date"
                                        v-model="action.data.date"
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <input class="form-control height-40" type="time" name="window_start"
+                                <input id="window_start" class="form-control height-40" type="time" name="window_start"
                                        v-model="action.data.startTime"
-                                       :disabled="action.disabled" required/>
+                                       :disabled="action.data.asapChecked || action.disabled" required/>
                             </td>
                             <td>
-                                <input class="form-control height-40" type="time" name="window_end"
+                                <input id="window_end" class="form-control height-40" type="time" name="window_end"
                                        v-model="action.data.endTime"
-                                       :disabled="action.disabled" required/>
+                                       :disabled="action.data.asapChecked || action.disabled" required/>
                             </td>
                             <td>
                                 <input type="checkbox" id="is_manual"
@@ -217,7 +230,8 @@
         endTime: '17:00',
         text: null,
         isManual: 0,
-        familyOverride: 0
+        familyOverride: 0,
+        asapChecked: 0
     };
 
     function getNewAction() {
@@ -320,7 +334,7 @@
             },
             showPracticeColumn() {
                 return this.practices.length > 1;
-            }
+            },
         },
 
         methods: {
@@ -609,6 +623,7 @@
                             window_end: data.endTime,
                             attempt_note: data.text,
                             is_manual: data.isManual,
+                            asap: data.asapChecked,
                             family_override: data.familyOverride
                         };
                     });
@@ -823,6 +838,8 @@
         width: 100%;
         table-layout: fixed;
         margin-left: -10px;
+        border-collapse: separate;
+        border-spacing: 0 16px;
     }
 
     /* Table with a Practices column */
@@ -1005,5 +1022,11 @@
 
     .v-select .dropdown-menu > .highlight > a {
         display: inline-block;
+    }
+
+    .asap_label {
+        margin-left: 58%;
+        position: absolute;
+        margin-top: -16%;
     }
 </style>

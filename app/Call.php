@@ -109,6 +109,7 @@ class Call extends BaseModel
 
         'scheduler',
         'is_manual',
+        'asap',
 
         /*
         Mini-documentation for call statuses:
