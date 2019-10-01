@@ -2,8 +2,8 @@ window.Echo = require('laravel-echo');
 window.Pusher = require('pusher-js');
 const options = {
     broadcaster: 'pusher',
-    key: process.env.MIX_PUSHER_APP_KEY,
-    cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+    key: process.env.MIX_PUSHER_KEY,
+    cluster: process.env.MIX_PUSHER_CLUSTER,
     encrypted: true,
 };
 
