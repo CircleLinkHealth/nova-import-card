@@ -81,11 +81,12 @@ class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotificatio
 
     /**
      * @param $builder
+     *
      * @return mixed
      */
     public function scopeLiveNotification($builder)
     {
-       return $builder->where('created_at', '>=', config('live-notifications.only_show_notifications_created_after'))
+        return $builder->where('created_at', '>=', config('live-notifications.only_show_notifications_created_after'))
             ->whereIn('type', config('live-notifications.classes'));
     }
 }
