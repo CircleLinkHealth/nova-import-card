@@ -201,7 +201,7 @@
 <style>
     .modal-medications .modal-container {
         width: 900px;
-        max-height: 100%;
+        max-height: 100vh;
         overflow-y: auto;
     }
 
