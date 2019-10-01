@@ -36,7 +36,7 @@
                 <h4>Demographic Data</h4>
             </div>
             <div class="section-body">
-                The patient is a {{$reportData['demographic_data']['age']}} year
+                The patient reports that they are a {{$reportData['demographic_data']['age']}} year
                 old
                 @if($reportData['demographic_data']['ethnicity'] === 'No')
                     non
