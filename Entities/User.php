@@ -2597,6 +2597,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $query->ofType(['care-center', 'care-center-external']);
     }
 
+    public function scopePracticeStaff($query)
+    {
+        return $query->ofType(Constants::PRACTICE_STAFF_ROLE_NAMES);
+    }
+
     // CPM Models
 
     /**
