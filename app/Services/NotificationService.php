@@ -6,7 +6,6 @@
 
 namespace App\Services;
 
-use App\Http\Controllers\NotificationController;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
@@ -35,8 +34,7 @@ class NotificationService
     {
         return DatabaseNotification::whereNotifiableId(auth()->id())
             ->orderByDesc('created_at')
-            ->where('created_at', '>=', $notificationsLimitDate)
-            ->where('type', NotificationController::NOTIFICATION_TYPE)//Lets keep this here since we show only addendums for now
+            ->liveNotification()
             ->take(5)
             ->get();
     }
@@ -49,8 +47,7 @@ class NotificationService
     public function getDropdownNotificationsCount($notificationsLimitDate)
     {
         return DatabaseNotification::whereNotifiableId(auth()->id())
-            ->where('created_at', '>=', $notificationsLimitDate)
-            ->where('type', NotificationController::NOTIFICATION_TYPE)//Lets keep this here since we show only addendums for now
+            ->liveNotification()
             ->where('read_at', null)
             ->count();
     }

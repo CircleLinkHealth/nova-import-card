@@ -14,9 +14,6 @@ use Illuminate\View\View;
 
 class NotificationController extends Controller
 {
-    const LIMIT_DATE        = '2019-10-01';
-    const NOTIFICATION_TYPE = 'App\Notifications\AddendumCreated'; //temporary solution
-
     /**
      * @var NotificationService
      */
@@ -34,7 +31,7 @@ class NotificationController extends Controller
     public function __construct(NotificationService $notificationService)
     {
         $this->service                = $notificationService;
-        $this->notificationsLimitDate = Carbon::parse(self::LIMIT_DATE)->toDateTimeString();
+        $this->notificationsLimitDate = Carbon::parse(config('live-notifications.only_show_notifications_created_after'))->toDateTimeString();
     }
 
     /**
@@ -67,10 +64,8 @@ class NotificationController extends Controller
     public function seeAllNotifications()
     {
         $user              = auth()->user();
-        $userNotifications = $user->notifications
-            ->where('created_at', '>=', $this->notificationsLimitDate)
-            ->where('type', self::NOTIFICATION_TYPE); //Lets keep this here since we show only addendums for now
-        $notifications = $this->service->prepareNotifications($userNotifications);
+        $userNotifications = $user->notifications()->liveNotification()->get();
+        $notifications     = $this->service->prepareNotifications($userNotifications);
         //@todo: pagination needed
         return view('notifications.seeAllNotifications', compact('notifications'));
     }
