@@ -92,9 +92,19 @@ class CoreServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../Config/config.php' => config_path('core.php'),
         ], 'config');
+
         $this->mergeConfigFrom(
             __DIR__.'/../Config/config.php',
             'core'
+        );
+
+        $this->publishes([
+            __DIR__.'/../Config/live-notifications.php' => config_path('live-notifications.php'),
+        ], 'live-notifications');
+
+        $this->mergeConfigFrom(
+            __DIR__.'/../Config/live-notifications.php',
+            'live-notifications'
         );
     }
 }
