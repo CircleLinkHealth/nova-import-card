@@ -50,7 +50,7 @@ class TaskRecommendationsSeeder extends Seeder
                     [
                         'qualitative_trigger' => ' Poor diet (whole grain)',
                         'task_body'           => 'Foods made from grains (wheat, rice, and oats) help form the foundation of a nutritious diet. They provide vitamins, minerals, carbohydrates (starch and dietary fiber), and other substances that are important for good health. Eating plenty of whole grains, such as whole wheat bread or oatmeals may help protect you against many chronic diseases. Experts recommend that all adults eat at least half their grains as whole grains. Your doctor may suggest:',
-                        'recommendation_body' => ['Aiming for at least 3-5 servings of whole grains a day'],
+                        'recommendation_body' => ['Aiming for at least 3 servings of whole grains a day'],
                     ],
                     [
                         'qualitative_trigger' => 'Poor diet (fatty/fried foods)',
