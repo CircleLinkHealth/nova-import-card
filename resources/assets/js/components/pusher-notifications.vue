@@ -116,15 +116,15 @@
                         this.waiting = false;
                     }
                 );
-if (window.EchoPusher){
-    window.EchoPusher.private('App.User.' + this.authUserId)
-        .notification((notification) => {
-            axios.get(`/notifications/${notification.id}`).then(response => {
-                    this.notificationsFromPusher.push(response.data)
-                }
-            );
-        });
-}
+            if (window.EchoPusher !== null && window.EchoPusher !== undefined) {
+                window.EchoPusher.private('App.User.' + this.authUserId)
+                    .notification((notification) => {
+                        axios.get(`/notifications/${notification.id}`).then(response => {
+                                this.notificationsFromPusher.push(response.data)
+                            }
+                        );
+                    });
+            }
 
         }
     }
@@ -173,6 +173,7 @@ if (window.EchoPusher){
         border-bottom: 1px solid #90949c;
         cursor: pointer;
     }
+
     .badge-secondary {
         display: inline;
         background: #e46745;

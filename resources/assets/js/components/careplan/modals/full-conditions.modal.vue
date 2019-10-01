@@ -112,10 +112,11 @@
     import { Event } from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
     import VueSelect from 'vue-select'
-
+    import CareplanMixin from '../mixins/careplan.mixin'
 
     export default {
         name: 'full-conditions-modal',
+        mixins: [CareplanMixin],
         props: {
             'patient-id': String,
             problems: Array,
@@ -199,6 +200,13 @@
                 })
             },
             getSystemCodes() {
+                let codes = this.careplan().allCpmProblemCodes || null
+
+                if (codes !== null) {
+                    this.codes = codes
+                    return true
+                }
+
                 return this.axios.get(rootUrl(`api/problems/codes`)).then(response => {
                     // console.log('full-conditions:get-system-codes', response.data)
                     this.codes = response.data
