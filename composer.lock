@@ -4612,7 +4612,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
+                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
                 "reference": "a70637130916aad3f5f4bda25080550f0fef5551"
             },
             "require": {
@@ -8929,7 +8929,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/VentureCraft/revisionable.git",
+                "url": "git@github.com:CircleLinkHealth/revisionable.git",
                 "reference": "8fe8c028e6d396e6225026f6dd57474c0513f9d1"
             },
             "require": {
@@ -8977,6 +8977,7 @@
                 "issues": "https://github.com/VentureCraft/revisionable/issues",
                 "source": "https://github.com/VentureCraft/revisionable"
             },
+            "abandoned": true,
             "time": "2019-09-09T09:12:59+00:00"
         },
         {
@@ -13282,7 +13283,9 @@
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20
+        "xethron/migrations-generator": 20,
+        "venturecraft/revisionable": 20,
+        "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
