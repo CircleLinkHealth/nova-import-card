@@ -27,7 +27,7 @@
         }
     },
     "require": {
-        "circlelinkhealth/core": "dev-master",
+        "circlelinkhealth/core": "^1.0",
         "laravel/passport": "^7.0",
         "laravel/scout": "^7.1",
         "michalisantoniou6/laravel-cerberus": "dev-master",
