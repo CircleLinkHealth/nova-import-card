@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "456023b088c75e9d1cd41b7bbb400cc2",
+    "content-hash": "2ae70787a12626b8ed21670ceeb5f217",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -617,11 +617,11 @@
         },
         {
             "name": "circlelinkhealth/core",
-            "version": "dev-master",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "5488fc60837d15e5d169aac56db046c3e26c483e"
+                "reference": "9ab4782f89efb16ac3442be4c724d332fdceeaba"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -650,18 +650,18 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-09-09T09:13:00+00:00"
+            "time": "2019-10-01T12:57:12+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "dev-master",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "c98c59e5e5b88de12a82bbb6381712903a5933b9"
+                "reference": "8b71b2143babf9c5553cab44a904833ac20b2e43"
             },
             "require": {
-                "circlelinkhealth/core": "dev-master",
+                "circlelinkhealth/core": "^1.0",
                 "laravel/passport": "^7.0",
                 "laravel/scout": "^7.1",
                 "michalisantoniou6/laravel-cerberus": "dev-master",
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-09-19T12:54:33+00:00"
+            "time": "2019-10-01T13:28:15+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -730,14 +730,14 @@
         },
         {
             "name": "circlelinkhealth/timetracking",
-            "version": "dev-master",
+            "version": "v1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "614f4a7f1945f625a2b77e7b7b00c359d1b90d54"
+                "reference": "c1acd69f5fa046fc30a2b3cc1ec9bfc70582d494"
             },
             "require": {
-                "circlelinkhealth/customer": "dev-master"
+                "circlelinkhealth/customer": "v1.1"
             },
             "type": "library",
             "extra": {
@@ -759,26 +759,24 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-09-09T09:12:59+00:00"
+            "time": "2019-10-01T13:46:38+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",
-            "version": "dev-master",
+            "version": "v1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "91f8e06ba206ea58a1da8f849e8b3520d6340da4"
+                "reference": "57c0e534f0f97085189bf9f9e8f0d6290e633a68"
             },
             "require": {
-                "authy/php": "^3.0",
-                "circlelinkhealth/customer": "dev-master"
+                "authy/php": "^3.0"
             },
             "type": "library",
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\TwoFA\\Providers\\TwoFAServiceProvider",
-                        "CircleLinkHealth\\TwoFA\\Providers\\AuthyServiceProvider"
+                        "CircleLinkHealth\\TwoFA\\Providers\\TwoFAServiceProvider"
                     ],
                     "aliases": []
                 }
@@ -794,7 +792,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-09-09T09:13:00+00:00"
+            "time": "2019-03-25T09:43:33+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -13279,22 +13277,18 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/core": 20,
         "circlelinkhealth/raygun": 20,
-        "circlelinkhealth/timetracking": 20,
-        "circlelinkhealth/twofa": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20,
         "venturecraft/revisionable": 20,
-        "michalisantoniou6/laravel-cerberus": 20,
-        "circlelinkhealth/customer": 20
+        "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.4.0",
+        "php": ">=7.2.0",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",
