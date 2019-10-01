@@ -7,7 +7,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\NotificationService;
-use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
@@ -18,10 +17,6 @@ class NotificationController extends Controller
      * @var NotificationService
      */
     public $service;
-    /**
-     * @var Carbon
-     */
-    private $notificationsLimitDate;
 
     /**
      * NotificationController constructor.
@@ -30,8 +25,7 @@ class NotificationController extends Controller
      */
     public function __construct(NotificationService $notificationService)
     {
-        $this->service                = $notificationService;
-        $this->notificationsLimitDate = Carbon::parse(config('live-notifications.only_show_notifications_created_after'))->toDateTimeString();
+        $this->service = $notificationService;
     }
 
     /**
@@ -39,8 +33,8 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        $notifications                = $this->service->getDropdownNotifications($this->notificationsLimitDate);
-        $allUnreadNotificationsCount  = $this->service->getDropdownNotificationsCount($this->notificationsLimitDate);
+        $notifications                = $this->service->getDropdownNotifications();
+        $allUnreadNotificationsCount  = $this->service->getDropdownNotificationsCount();
         $notificationsWithElapsedTime = $this->service->prepareNotifications($notifications);
 
         return response()->json([
@@ -63,10 +57,8 @@ class NotificationController extends Controller
      */
     public function seeAllNotifications()
     {
-        $user              = auth()->user();
-        $userNotifications = $user->notifications()->liveNotification()->get();
-        $notifications     = $this->service->prepareNotifications($userNotifications);
-        //@todo: pagination needed
+        $notifications = $this->service->getAllUserNotifications();
+
         return view('notifications.seeAllNotifications', compact('notifications'));
     }
 

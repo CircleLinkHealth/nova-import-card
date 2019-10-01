@@ -26,11 +26,20 @@ class NotificationService
     }
 
     /**
-     * @param $notificationsLimitDate
-     *
+     * @return Collection
+     */
+    public function getAllUserNotifications()
+    {
+        $user              = auth()->user();
+        $userNotifications = $user->notifications()->liveNotification()->get();
+        //@todo: pagination needed
+        return $this->prepareNotifications($userNotifications);
+    }
+
+    /**
      * @return Builder[]|Collection|DatabaseNotification[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder[]
      */
-    public function getDropdownNotifications($notificationsLimitDate)
+    public function getDropdownNotifications()
     {
         return DatabaseNotification::whereNotifiableId(auth()->id())
             ->orderByDesc('created_at')
@@ -40,11 +49,9 @@ class NotificationService
     }
 
     /**
-     * @param $notificationsLimitDate
-     *
      * @return int
      */
-    public function getDropdownNotificationsCount($notificationsLimitDate)
+    public function getDropdownNotificationsCount()
     {
         return DatabaseNotification::whereNotifiableId(auth()->id())
             ->liveNotification()
