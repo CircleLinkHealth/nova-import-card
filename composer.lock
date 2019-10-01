@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2ae70787a12626b8ed21670ceeb5f217",
+    "content-hash": "9aff7aa35cd726a570d79dfe0d7bfe48",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -699,7 +699,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "3d3728485ecb39af1185236d070d5996535a4475"
+                "reference": "e49c3f7d73fb84a604446e112b8514ce42aae51a"
             },
             "require": {
                 "illuminate/contracts": "^5.0",
@@ -726,7 +726,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-08-08T12:42:49+00:00"
+            "time": "2019-10-01T13:56:34+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
@@ -763,20 +763,22 @@
         },
         {
             "name": "circlelinkhealth/twofa",
-            "version": "v1.0",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "57c0e534f0f97085189bf9f9e8f0d6290e633a68"
+                "reference": "c00affc9081f06c7b10de830eb007d8f960f29ec"
             },
             "require": {
-                "authy/php": "^3.0"
+                "authy/php": "^3.0",
+                "circlelinkhealth/customer": "1.1"
             },
             "type": "library",
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CircleLinkHealth\\TwoFA\\Providers\\TwoFAServiceProvider"
+                        "CircleLinkHealth\\TwoFA\\Providers\\TwoFAServiceProvider",
+                        "CircleLinkHealth\\TwoFA\\Providers\\AuthyServiceProvider"
                     ],
                     "aliases": []
                 }
@@ -792,7 +794,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-03-25T09:43:33+00:00"
+            "time": "2019-10-01T13:54:29+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -4610,7 +4612,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
+                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
                 "reference": "a70637130916aad3f5f4bda25080550f0fef5551"
             },
             "require": {
@@ -8927,7 +8929,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/revisionable.git",
+                "url": "https://github.com/VentureCraft/revisionable.git",
                 "reference": "8fe8c028e6d396e6225026f6dd57474c0513f9d1"
             },
             "require": {
@@ -8975,7 +8977,6 @@
                 "issues": "https://github.com/VentureCraft/revisionable/issues",
                 "source": "https://github.com/VentureCraft/revisionable"
             },
-            "abandoned": true,
             "time": "2019-09-09T09:12:59+00:00"
         },
         {
@@ -13281,9 +13282,7 @@
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20,
-        "venturecraft/revisionable": 20,
-        "michalisantoniou6/laravel-cerberus": 20
+        "xethron/migrations-generator": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
