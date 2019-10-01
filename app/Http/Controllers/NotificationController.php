@@ -7,13 +7,24 @@
 namespace App\Http\Controllers;
 
 use App\Services\NotificationService;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 
 class NotificationController extends Controller
 {
+    const LIMIT_DATE        = '2019-10-01';
+    const NOTIFICATION_TYPE = 'App\Notifications\AddendumCreated'; //temporary solution
+
+    /**
+     * @var NotificationService
+     */
     public $service;
+    /**
+     * @var Carbon
+     */
+    private $notificationsLimitDate;
 
     /**
      * NotificationController constructor.
@@ -22,7 +33,8 @@ class NotificationController extends Controller
      */
     public function __construct(NotificationService $notificationService)
     {
-        $this->service = $notificationService;
+        $this->service                = $notificationService;
+        $this->notificationsLimitDate = Carbon::parse(self::LIMIT_DATE)->toDateTimeString();
     }
 
     /**
@@ -30,8 +42,8 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        $notifications                = $this->service->getDropdownNotifications();
-        $allUnreadNotificationsCount  = $this->service->getDropdownNotificationsCount();
+        $notifications                = $this->service->getDropdownNotifications($this->notificationsLimitDate);
+        $allUnreadNotificationsCount  = $this->service->getDropdownNotificationsCount($this->notificationsLimitDate);
         $notificationsWithElapsedTime = $this->service->prepareNotifications($notifications);
 
         return response()->json([
@@ -55,8 +67,10 @@ class NotificationController extends Controller
     public function seeAllNotifications()
     {
         $user              = auth()->user();
-        $userNotifications = $user->notifications;
-        $notifications     = $this->service->prepareNotifications($userNotifications);
+        $userNotifications = $user->notifications
+            ->where('created_at', '>=', $this->notificationsLimitDate)
+            ->where('type', self::NOTIFICATION_TYPE); //Lets keep this here since we show only addendums for now
+        $notifications = $this->service->prepareNotifications($userNotifications);
         //@todo: pagination needed
         return view('notifications.seeAllNotifications', compact('notifications'));
     }

@@ -6,6 +6,7 @@
 
 namespace App\Services;
 
+use App\Http\Controllers\NotificationController;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
@@ -26,19 +27,32 @@ class NotificationService
     }
 
     /**
+     * @param $notificationsLimitDate
+     *
      * @return Builder[]|Collection|DatabaseNotification[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder[]
      */
-    public function getDropdownNotifications()
+    public function getDropdownNotifications($notificationsLimitDate)
     {
-        return DatabaseNotification::whereNotifiableId(auth()->id())->orderByDesc('created_at')->take(5)->get();
+        return DatabaseNotification::whereNotifiableId(auth()->id())
+            ->orderByDesc('created_at')
+            ->where('created_at', '>=', $notificationsLimitDate)
+            ->where('type', NotificationController::NOTIFICATION_TYPE)//Lets keep this here since we show only addendums for now
+            ->take(5)
+            ->get();
     }
 
     /**
+     * @param $notificationsLimitDate
+     *
      * @return int
      */
-    public function getDropdownNotificationsCount()
+    public function getDropdownNotificationsCount($notificationsLimitDate)
     {
-        return DatabaseNotification::whereNotifiableId(auth()->id())->where('read_at', null)->count();
+        return DatabaseNotification::whereNotifiableId(auth()->id())
+            ->where('created_at', '>=', $notificationsLimitDate)
+            ->where('type', NotificationController::NOTIFICATION_TYPE)//Lets keep this here since we show only addendums for now
+            ->where('read_at', null)
+            ->count();
     }
 
     /**
