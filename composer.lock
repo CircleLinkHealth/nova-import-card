@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d8d6cd586a1b0d3d596fdfb9d5927760",
+    "content-hash": "aa6a1a24b6d6397b39847b10df26488f",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -617,11 +617,11 @@
         },
         {
             "name": "circlelinkhealth/core",
-            "version": "dev-master",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "5488fc60837d15e5d169aac56db046c3e26c483e"
+                "reference": "9ab4782f89efb16ac3442be4c724d332fdceeaba"
             },
             "require": {
                 "venturecraft/revisionable": "dev-master"
@@ -650,18 +650,18 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-09-09T09:13:00+00:00"
+            "time": "2019-10-01T12:57:12+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "dev-master",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "d8a0197e1472b115af76ec0fbdddd23050f4ca34"
+                "reference": "8b71b2143babf9c5553cab44a904833ac20b2e43"
             },
             "require": {
-                "circlelinkhealth/core": "dev-master",
+                "circlelinkhealth/core": "^1.0",
                 "laravel/passport": "^7.0",
                 "laravel/scout": "^7.1",
                 "michalisantoniou6/laravel-cerberus": "dev-master",
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-09-11T13:36:40+00:00"
+            "time": "2019-10-01T13:28:15+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -699,7 +699,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "3d3728485ecb39af1185236d070d5996535a4475"
+                "reference": "e49c3f7d73fb84a604446e112b8514ce42aae51a"
             },
             "require": {
                 "illuminate/contracts": "^5.0",
@@ -726,18 +726,18 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-08-08T12:42:49+00:00"
+            "time": "2019-10-01T13:56:34+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
-            "version": "dev-master",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "614f4a7f1945f625a2b77e7b7b00c359d1b90d54"
+                "reference": "a74e7ff24977ec04eff493c142fdea6b78524479"
             },
             "require": {
-                "circlelinkhealth/customer": "dev-master"
+                "circlelinkhealth/customer": "v1.1"
             },
             "type": "library",
             "extra": {
@@ -759,19 +759,19 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-09-09T09:12:59+00:00"
+            "time": "2019-10-02T01:20:41+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",
-            "version": "dev-master",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "91f8e06ba206ea58a1da8f849e8b3520d6340da4"
+                "reference": "c00affc9081f06c7b10de830eb007d8f960f29ec"
             },
             "require": {
                 "authy/php": "^3.0",
-                "circlelinkhealth/customer": "dev-master"
+                "circlelinkhealth/customer": "1.1"
             },
             "type": "library",
             "extra": {
@@ -794,7 +794,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-09-09T09:13:00+00:00"
+            "time": "2019-10-01T13:54:29+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -4603,7 +4603,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
+                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
                 "reference": "a70637130916aad3f5f4bda25080550f0fef5551"
             },
             "require": {
@@ -8692,7 +8692,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/revisionable.git",
+                "url": "https://github.com/VentureCraft/revisionable.git",
                 "reference": "1b1aefc2aff0404db632cc2dbf17525943a0cf82"
             },
             "require": {
@@ -8740,7 +8740,6 @@
                 "issues": "https://github.com/VentureCraft/revisionable/issues",
                 "source": "https://github.com/VentureCraft/revisionable"
             },
-            "abandoned": true,
             "time": "2019-08-26T12:02:09+00:00"
         },
         {
@@ -13095,22 +13094,16 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/core": 20,
-        "circlelinkhealth/customer": 20,
         "circlelinkhealth/raygun": 20,
-        "circlelinkhealth/timetracking": 20,
-        "circlelinkhealth/twofa": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20,
-        "venturecraft/revisionable": 20,
-        "michalisantoniou6/laravel-cerberus": 20
+        "xethron/migrations-generator": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.4.0",
+        "php": ">=7.2.0",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",
