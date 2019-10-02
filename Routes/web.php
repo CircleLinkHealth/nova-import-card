@@ -27,7 +27,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'ActivityController@providerUIIndex',
                 'as'   => 'patient.activity.providerUIIndex',
             ])->middleware('permission:activity.read,patient.read,provider.read');
-
+            Route::get('audit-report', [
+                'uses' => 'ActivityController@downloadAuditReport',
+                'as'   => 'patient.activity.downloadAuditReport',
+            ])->middleware('permission:activity.read,patient.read,provider.read');
             Route::get('getCurrent', [
                 'uses' => 'ActivityController@getCurrentForPatient',
                 'as'   => 'patient.activity.get.current.for.patient',
