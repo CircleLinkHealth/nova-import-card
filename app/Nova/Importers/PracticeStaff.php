@@ -9,6 +9,7 @@ namespace App\Nova\Importers;
 use App\CLH\Repositories\UserRepository;
 use App\Search\PracticeByName;
 use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -131,6 +132,23 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
         if (empty($row['phone_number'])) {
             return;
         }
+
+        //get phone type
+        $type = collect(PhoneNumber::getTypes())->filter(function ($type) use ($row) {
+            return $type == strtolower($row['phone_type']) || starts_with(
+                $type,
+                strtolower(substr($row['phone_type'], 0, 2))
+            );
+        })->first();
+
+        $user->phoneNumbers()->create(
+            [
+                'number'    => (new \App\CLH\Helpers\StringManipulation())->formatPhoneNumber($row['phone_number']),
+                'type'      => $type,
+                'extension' => $row['phone_extension']
+                    ?: null,
+            ]
+        );
     }
 
     private function createUser($row)
@@ -167,6 +185,8 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
                 'last_name'          => 'required',
                 'role'               => 'required',
                 'emr_direct_address' => 'sometimes|email',
+                'phone_number'       => 'sometimes|phone:us',
+                'phone_extension'    => 'sometimes|digits_between:2,4',
             ]
         );
     }
