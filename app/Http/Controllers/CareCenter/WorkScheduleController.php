@@ -145,7 +145,7 @@ class WorkScheduleController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function getAllNurseSchedules()
-    {
+    {//@todo:move date vars to FullCallendarService.
         $startOfThisYear = Carbon::parse(now())->startOfYear()->subMonth(2)->startOfWeek()->toDateString();
         $startOfThisWeek = Carbon::parse(now())->startOfWeek()->toDateString();
         $endOfThisWeek   = Carbon::parse(now())->endOfWeek()->toDateString();
@@ -189,8 +189,8 @@ class WorkScheduleController extends Controller
     public function getNursesWithSchedule()
     {
         $workScheduleData = [];
-        User::// ofType('care-center')
-        with('nurseInfo.windows', 'nurseInfo.holidays')
+        User::ofType('care-center')
+            ->with('nurseInfo.windows', 'nurseInfo.holidays')
             ->whereHas('nurseInfo', function ($q) {
                 $q->where('status', 'active');
             })
@@ -291,17 +291,17 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                return Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_end
+                    return Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_end
+                    )->diffInHours(Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_start
+                    ));
+                }) + Carbon::createFromFormat(
+                    'H:i',
+                    $workScheduleData['window_time_end']
                 )->diffInHours(Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_start
-                ));
-            }) + Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_end']
-            )->diffInHours(Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_start']
             ));
