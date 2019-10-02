@@ -33,6 +33,7 @@
             <!--Edit Btn-->
             <span v-show="!isInvalidated
             && editButtonActive
+            && isUserAuthToDailyDispute
             && canBeDisputed
             && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleEdit()"
