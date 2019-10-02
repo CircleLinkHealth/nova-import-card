@@ -28,10 +28,7 @@
                 'style' => 'margin-right: 10px'
                 )) !!}
                 <div class="col-sm-3 col-xs-3" style="top: 20px">
-                    <button type="submit"
-                            href="{{route('patient.activity.providerUIIndex', ['patientId' => $patient])}}"
-                            value="audit" name="audit" id="audit" class="btn btn-primary">Audit Report
-                    </button>
+                    <a href="{{route('patient.activity.downloadAuditReport', ['patientId' => $patient])}}" class="btn btn-primary">Audit Report</a>
 
                     @if ($data && $month_selected_text === \Carbon\Carbon::now()->format('F'))
                         <button id="refresh-activity" type="button" class="btn btn-primary">
