@@ -51,6 +51,7 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
     public function onRow(Row $row)
     {
         //set arguements to create users
+        $x = 1;
 
         //create user through UserRepository
     }

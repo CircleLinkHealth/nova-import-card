@@ -9,7 +9,11 @@ namespace App\Nova;
 use App\Nova\Importers\PracticeStaff as PracticeStaffImporter;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Sparclex\NovaImportCard\NovaImportCard;
@@ -92,23 +96,26 @@ class PracticeStaff extends Resource
             //suffix - users
             Text::make('Clinical Level'),
 
-            //            //users
-            //            Text::make('Email'),
-            //
+            //users
+            Text::make('Email'),
+
             //            //practice role users
             //            Text::make('Role'),
             //
-            //            //provider info - look into this
-            //            Boolean::make('Can Approve All Care Plans'),
+            HasOne::make('providerInfo'),
+            //provider info - look into this
+            Boolean::make('Can Approve All Care Plans', 'providerInfo.approve_own_care_plans'),
+
+            //            HasMany::make('phoneNumbers'),
             //
-            //            //phone numbers
-            //            Number::make('Phone'),
-            //            //phone numbers
-            //            Number::make('Phone Extension'),
+            //                        //phone numbers
+            //            Number::make('Phone', 'phoneNumbers.number'),
+            //                        //phone numbers
+            //            Number::make('Phone Extension', 'phoneNumbers.extension'),
             //
-            //            //phone numbers
-            //            Text::make('Phone Type'),
-            //
+            //                        //phone numbers
+            //            Text::make('Phone Type', 'phoneNumbers.type'),
+
             //            //emr_direct_addresses
             //            Text::make('EMR Direct Address'),
             //
