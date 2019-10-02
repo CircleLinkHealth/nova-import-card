@@ -118,9 +118,18 @@ class InvoiceReviewController extends Controller
      */
     public function reviewInvoice(Request $request)
     {
-        $startDate = Carbon::now()->startOfMonth();
+        $lastMonth = now()->subMonth()->startOfMonth();
 
-        $invoice = NurseInvoice::where('month_year', $startDate)
+        if ($request->has('invoice_id')) {
+            $invoiceId = $request->input('invoice_id');
+            $query     = NurseInvoice::where('id', $invoiceId);
+        } elseif (now()->lt(NurseInvoiceDisputeDeadline::for($lastMonth)) && NurseInvoice::ofNurses(auth()->id())->where('month_year', $lastMonth)->exists()) {
+            $query = NurseInvoice::where('month_year', $lastMonth);
+        } else {
+            $query = NurseInvoice::orderBy('month_year', 'desc');
+        }
+
+        $invoice = $query
             ->with(
                 [
                     'dispute.resolver',
@@ -176,7 +185,7 @@ class InvoiceReviewController extends Controller
 
     private function getNurseInvoiceMap(int $nurseUserId)
     {
-        return NurseInvoice::ofNurses($nurseUserId)->pluck('month_year', 'id');
+        return NurseInvoice::ofNurses($nurseUserId)->orderBy('month_year')->pluck('month_year', 'id');
     }
 
     /**

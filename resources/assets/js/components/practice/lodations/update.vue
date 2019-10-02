@@ -297,17 +297,16 @@
             {
                 submitForm() {
                     this.updatePracticeLocation(this.formData)
-
-                    Vue.nextTick(() => {
-                        setTimeout(() => {
-                            if (!this.errors.any()) {
-                                Materialize.toast(this.formData.name + ' was successfully updated.', 3000)
-                                this.close()
-                            }
-                        }, 500);
-                    })
-
-
+                        .then(response => {
+                            Vue.nextTick(() => {
+                                setTimeout(() => {
+                                    if (!this.errors.any()) {
+                                        Materialize.toast(this.formData.name + ' was successfully updated.', 3000)
+                                        this.close()
+                                    }
+                                }, 500);
+                            })
+                        })
                 },
 
                 isValid(field) {

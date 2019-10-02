@@ -26,11 +26,26 @@ class NotificationService
     }
 
     /**
+     * @return Collection
+     */
+    public function getAllUserNotifications()
+    {
+        $user              = auth()->user();
+        $userNotifications = $user->notifications()->liveNotification()->get();
+        //@todo: pagination needed
+        return $this->prepareNotifications($userNotifications);
+    }
+
+    /**
      * @return Builder[]|Collection|DatabaseNotification[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder[]
      */
     public function getDropdownNotifications()
     {
-        return DatabaseNotification::whereNotifiableId(auth()->id())->orderByDesc('created_at')->take(5)->get();
+        return DatabaseNotification::whereNotifiableId(auth()->id())
+            ->orderByDesc('created_at')
+            ->liveNotification()
+            ->take(5)
+            ->get();
     }
 
     /**
@@ -38,7 +53,10 @@ class NotificationService
      */
     public function getDropdownNotificationsCount()
     {
-        return DatabaseNotification::whereNotifiableId(auth()->id())->where('read_at', null)->count();
+        return DatabaseNotification::whereNotifiableId(auth()->id())
+            ->liveNotification()
+            ->where('read_at', null)
+            ->count();
     }
 
     /**

@@ -33,7 +33,9 @@
             <!--Edit Btn-->
             <span v-show="!isInvalidated
             && editButtonActive
+            && isUserAuthToDailyDispute
             && canBeDisputed
+            && isUserAuthToDailyDispute
             && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleEdit()"
                   aria-hidden="true"
