@@ -86,22 +86,22 @@ class FullCalendarService
         return collect($nurse->nurseInfo->windows)
             ->where('date', '>=', $startOfThisYear)
             ->map(function ($window) use ($nurse, $startOfThisWeek, $endOfThisWeek) {
-                $weekMap = dayOfWeekToDate($window->date);
+                $weekMap = dayOfWeekToDate(); //see comment in helpers.php
                 $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
                 $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
 
                 return collect(
                     [
                         self::TITLE => "$nurse->display_name - $workHoursForDay Hrs",
-                        //                                            self::START => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
-                        //                                            self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
+                        self::START => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
+                        self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
 
-                        self::START => $weekMap[$window->day_of_week],
-                        self::END   => $window->window_time_end,
+                        //                        self::START => $weekMap[$window->day_of_week],
+                        //                        self::END   => $window->window_time_end,
 
-                        //                        'allDay' => true,
-                        'color' => '#378006',
-                        'dow'   => [$window->day_of_week], //@todo:need to fix plugin(rrule)for this to work
+                        'allDay' => true,
+                        'color'  => '#378006',
+                        //                        'dow'   => [$window->day_of_week], //@todo:need to fix plugin(rrule)for this to work
 
                         'data' => [
                             'nurseId'   => $nurse->nurseInfo->id,

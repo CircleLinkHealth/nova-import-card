@@ -10,7 +10,6 @@ use App\Constants;
 use App\Exceptions\CsvFieldNotFoundException;
 use App\Jobs\SendSlackMessage;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -1019,11 +1018,11 @@ if ( ! function_exists('validProblemName')) {
                 'check',
             ]
         ) && ! in_array(
-            strtolower($name),
-            [
-                'fu',
-            ]
-        );
+                strtolower($name),
+                [
+                    'fu',
+                ]
+            );
     }
 }
 
@@ -1499,12 +1498,14 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
 if ( ! function_exists('dayOfWeekToDayInEnglish')) {
     /**
-     * @param Carbon $date
+     * add comment here.
      *
      * @return array
      */
-    function dayOfWeekToDate(Carbon $date)
+    function dayOfWeekToDate()
     {
+        $date = Carbon::parse(now())->toDateTimeString();
+
         return [
             1 => Carbon::parse($date)->startOfWeek()->toDateString(),
             2 => Carbon::parse($date)->startOfWeek()->addDay(1)->toDateString(),
