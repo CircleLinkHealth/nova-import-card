@@ -1495,14 +1495,13 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
     }
 }
 
-
-if ( ! function_exists('eventDayOfWeekToCurrentWeek')) {
+if ( ! function_exists('convertDayOfWeekToCurrentsWeekDate')) {
     /**
      * add comment here.
      *
      * @return array
      */
-    function eventDayOfWeekToCurrentWeek()
+    function convertDayOfWeekToCurrentsWeekDate()
     {
         $date = Carbon::parse(now())->toDateTimeString();
 

@@ -76,25 +76,23 @@ class FullCalendarService
     /**
      * @param $nurse
      * @param mixed $startOfThisYear
-     * @param $startOfThisWeek
-     * @param $endOfThisWeek
      *
      * @return \Illuminate\Support\Collection
      */
-    public function prepareData($nurse, $startOfThisYear, $startOfThisWeek, $endOfThisWeek)
+    public function prepareData($nurse, $startOfThisYear)
     {// I need to get the past data cause we dont know when they were edited last time. (events are created once and then are repeating)
         return collect($nurse->nurseInfo->windows)
             ->where('date', '>=', $startOfThisYear)
-            ->map(function ($window) use ($nurse, $startOfThisWeek, $endOfThisWeek) {
-                $weekMap = eventDayOfWeekToCurrentWeek(); //see comment in helpers.php
+            ->map(function ($window) use ($nurse) {
+                $currentWeekMap = convertDayOfWeekToCurrentsWeekDate(); //see comment in helpers.php
                 $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
                 $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
 
                 return collect(
                     [
                         self::TITLE => "$nurse->display_name - $workHoursForDay Hrs",
-                        self::START => "{$weekMap[$window->day_of_week]}T{$window->window_time_start}",
-                        self::END   => "{$weekMap[$window->day_of_week]}T{$window->window_time_end}",
+                        self::START => "{$currentWeekMap[$window->day_of_week]}T{$window->window_time_start}",
+                        self::END   => "{$currentWeekMap[$window->day_of_week]}T{$window->window_time_end}",
 
                         //                        self::START => $weekMap[$window->day_of_week],
                         //                        self::END   => $window->window_time_end,
@@ -108,7 +106,7 @@ class FullCalendarService
                             'windowId'  => $window->id,
                             'name'      => $nurse->display_name,
                             'day'       => $dayInHumanLang,
-                            'date'      => $weekMap[$window->day_of_week],
+                            'date'      => $currentWeekMap[$window->day_of_week],
                             'start'     => $window->window_time_start,
                             'end'       => $window->window_time_end,
                             'workHours' => $workHoursForDay,
@@ -127,10 +125,10 @@ class FullCalendarService
      *
      * @return Collection|\Illuminate\Support\Collection
      */
-    public function prepareDatesForCalendar(Collection $nurses, $startOfThisYear, $startOfThisWeek, $endOfThisWeek)
+    public function prepareDataForCalendar(Collection $nurses, $startOfThisYear)
     {
-        return $nurses->map(function ($nurse) use ($startOfThisYear, $startOfThisWeek, $endOfThisWeek) {
-            return $this->prepareData($nurse, $startOfThisYear, $startOfThisWeek, $endOfThisWeek);
+        return $nurses->map(function ($nurse) use ($startOfThisYear) {
+            return $this->prepareData($nurse, $startOfThisYear);
         })->flatten(1);
     }
 }

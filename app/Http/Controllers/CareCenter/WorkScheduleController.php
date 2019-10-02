@@ -145,13 +145,13 @@ class WorkScheduleController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function getAllNurseSchedules()
-    {//@todo:move date vars to FullCallendarService.
+    {
         $startOfThisYear = Carbon::parse(now())->startOfYear()->subMonth(2)->startOfWeek()->toDateString();
         $startOfThisWeek = Carbon::parse(now())->startOfWeek()->toDateString();
         $endOfThisWeek   = Carbon::parse(now())->endOfWeek()->toDateString();
 
         $nurses          = $this->getNursesWithSchedule();
-        $calendarData    = $this->fullCalendarService->prepareDatesForCalendar($nurses, $startOfThisYear, $startOfThisWeek, $endOfThisWeek);
+        $calendarData    = $this->fullCalendarService->prepareDataForCalendar($nurses, $startOfThisYear);
         $tzAbbr          = auth()->user()->timezone_abbr ?? 'EDT';
         $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
 
@@ -292,16 +292,16 @@ class WorkScheduleController extends Controller
             ->get()
             ->sum(function ($window) {
                 return Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_end
-                    )->diffInHours(Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_end
+                )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
             }) + Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_end']
-                )->diffInHours(Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_end']
+            )->diffInHours(Carbon::createFromFormat(
                     'H:i',
                     $workScheduleData['window_time_start']
                 ));
