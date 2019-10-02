@@ -8,6 +8,7 @@ namespace App\Nova\Importers;
 
 use App\CLH\Repositories\UserRepository;
 use App\Search\PracticeByName;
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -55,6 +56,8 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
      */
     public function onRow(Row $row)
     {
+        $row = $row->toArray();
+
         $validator = $this->validateRow($row);
 
         if ($validator->fails()) {
@@ -101,21 +104,29 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
         throw new \Exception('Something went wrong. File not found.', 500);
     }
 
-    private function attachEmrDirectAddress($user, $row)
+    private function attachEmrDirectAddress(User $user, array $row)
     {
         if (empty($row['emr_direct_address'])) {
             return;
         }
+        $user->setEmrDirectAddressAttribute($row['emr_direct_address']);
     }
 
-    private function attachLocation($user, $row)
+    private function attachLocation(User $user, array $row)
     {
         if (empty($row['locations'])) {
             return;
         }
+
+        $locationNames = array_map('trim', explode(',', $row['locations']));
+
+        //use scout?
+        $locations = Location::where('name', $locationNames)->get();
+
+        $user->attachLocation($locations);
     }
 
-    private function attachPhone($user, $row)
+    private function attachPhone(User $user, array $row)
     {
         if (empty($row['phone_number'])) {
             return;
@@ -151,10 +162,11 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
         return Validator::make(
             $row,
             [
-                'email'      => 'required|email',
-                'first_name' => 'required',
-                'last_name'  => 'required',
-                'role'       => 'required',
+                'email'              => 'required|email',
+                'first_name'         => 'required',
+                'last_name'          => 'required',
+                'role'               => 'required',
+                'emr_direct_address' => 'sometimes|email',
             ]
         );
     }
