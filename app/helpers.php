@@ -1018,11 +1018,11 @@ if ( ! function_exists('validProblemName')) {
                 'check',
             ]
         ) && ! in_array(
-                strtolower($name),
-                [
-                    'fu',
-                ]
-            );
+            strtolower($name),
+            [
+                'fu',
+            ]
+        );
     }
 }
 
@@ -1496,13 +1496,13 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 }
 
 
-if ( ! function_exists('dayOfWeekToDayInEnglish')) {
+if ( ! function_exists('eventDayOfWeekToCurrentWeek')) {
     /**
      * add comment here.
      *
      * @return array
      */
-    function dayOfWeekToDate()
+    function eventDayOfWeekToCurrentWeek()
     {
         $date = Carbon::parse(now())->toDateTimeString();
 

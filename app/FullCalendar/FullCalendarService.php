@@ -40,7 +40,7 @@ class FullCalendarService
      *
      * @return Collection|\Illuminate\Support\Collection
      */
-    public function getUpcomingHolidays(Collection $nurses)
+    public function getHolidays(Collection $nurses)
     {
         $limitDate = Carbon::parse(now())->startOfYear()->subMonth(2)->toDate();
 
@@ -86,7 +86,7 @@ class FullCalendarService
         return collect($nurse->nurseInfo->windows)
             ->where('date', '>=', $startOfThisYear)
             ->map(function ($window) use ($nurse, $startOfThisWeek, $endOfThisWeek) {
-                $weekMap = dayOfWeekToDate(); //see comment in helpers.php
+                $weekMap = eventDayOfWeekToCurrentWeek(); //see comment in helpers.php
                 $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
                 $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
 
@@ -101,7 +101,7 @@ class FullCalendarService
 
                         'allDay' => true,
                         'color'  => '#378006',
-                        //                        'dow'   => [$window->day_of_week], //@todo:need to fix plugin(rrule)for this to work
+                        //                        'dow'   => [$window->day_of_week],
 
                         'data' => [
                             'nurseId'   => $nurse->nurseInfo->id,

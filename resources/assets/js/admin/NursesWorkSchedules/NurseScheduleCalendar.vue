@@ -112,17 +112,14 @@
     import 'fullcalendar/dist/fullcalendar.css';
     import VueSelect from 'vue-select';
     import {addNotification} from '../../store/actions';
-    // import rrule from '@fullcalendar/rrule';
-    // import Modal from '/admin/common/modal'
-    import { RRule, RRuleSet, rrulestr } from 'rrule'
 
-    const month = 'month';
+    const viewDefault = 'agendaWeek';
     const defaultEventType = 'workDay';
     const holidayEventType = 'holiday';
 
     export default {
         name: "NurseScheduleCalendar",
-        plugins: [RRule],
+
         props: [
             'calendarData',
             'dataForDropdown',
@@ -135,8 +132,6 @@
             'fullCalendar': FullCalendar,
             'vue-select': VueSelect,
             'addNotification': addNotification,
-            // 'modal': Modal,
-
         },
 
         data() {
@@ -158,45 +153,15 @@
                 holidaysChecked: false,
                 workHolidaysChecked: false,
                 config: {
-                    defaultView: month,
-                    editable:true,
+                    defaultView: viewDefault,
+                    editable: true,
                     // validRange: {
                     //     end: this.endOfThisWeek,
                     //     start: this.startOfThisWeek,
                     // }
 
-                },
 
-                // daysOfWeek: [
-                //     {
-                //         label: 'Monday',
-                //         dayOfWeek: 0
-                //     },
-                //     {
-                //         label: 'Tuesday',
-                //         dayOfWeek: 1
-                //     },
-                //     {
-                //         label: 'Wednesday',
-                //         dayOfWeek: 2
-                //     },
-                //     {
-                //         label: 'Thursday',
-                //         dayOfWeek: 3
-                //     },
-                //     {
-                //         label: 'Friday',
-                //         dayOfWeek: 4
-                //     },
-                //     {
-                //         label: 'Saturday',
-                //         dayOfWeek: 5
-                //     },
-                //     {
-                //         label: 'Sunday',
-                //         dayOfWeek: 6
-                //     },
-                // ]
+                },
             }
         },
 
@@ -425,6 +390,12 @@
         }),
 
         computed: {
+            // validRange() {
+            //     return {
+            //         end: this.endOfThisWeek,
+            //         start: this.startOfThisWeek,
+            //     };
+            // },
             // calcRange() {
             //     if (this.holidaysChecked) {
             //         this.config.validRange.start = '';
@@ -471,5 +442,10 @@
         color: #d5dbdb;
         cursor: default;
         opacity: 0.7;
+    }
+
+
+    .calendar.fc-scroller fc-time-grid-container {
+        visibility: hidden;
     }
 </style>
