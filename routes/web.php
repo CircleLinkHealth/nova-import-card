@@ -420,6 +420,11 @@ Route::group(['middleware' => 'auth'], function () {
         'API\PracticeStaffController'
     )->middleware('permission:practiceStaff.create,practiceStaff.read,practiceStaff.update,practiceStaff.delete');
 
+    Route::resource(
+        'practice.locations',
+        'API\PracticeLocationsController'
+    )->middleware('permission:location.create,location.read,location.update,location.delete');
+
     Route::get('provider/search', [
         'uses' => 'API\CareTeamController@searchProviders',
         'as'   => 'providers.search',
