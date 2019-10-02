@@ -13,6 +13,9 @@ use Illuminate\View\View;
 
 class NotificationController extends Controller
 {
+    /**
+     * @var NotificationService
+     */
     public $service;
 
     /**
@@ -54,10 +57,8 @@ class NotificationController extends Controller
      */
     public function seeAllNotifications()
     {
-        $user              = auth()->user();
-        $userNotifications = $user->notifications;
-        $notifications     = $this->service->prepareNotifications($userNotifications);
-        //@todo: pagination needed
+        $notifications = $this->service->getAllUserNotifications();
+
         return view('notifications.seeAllNotifications', compact('notifications'));
     }
 

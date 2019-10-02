@@ -102,7 +102,6 @@
                 symptom.selected = symptomIDs.includes(symptom.id)
                 return symptom
             })
-            this.getSymptoms(2)
 
             Event.$on('problems:updated', this.getPatientSymptoms.bind(this))
             Event.$on('symptoms:select', (id) => {

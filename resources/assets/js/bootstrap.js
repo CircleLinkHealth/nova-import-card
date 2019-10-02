@@ -16,8 +16,6 @@ try {
 
 
 require('./bootstrap-axios');
-import Echo from 'laravel-echo';
-window.Echo = Echo;
 require('./logger-logdna').init();
 require('./pusher-echo').init();
 
