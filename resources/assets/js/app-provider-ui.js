@@ -77,6 +77,7 @@ const CcdUploader = () => import(/* webpackChunkName: "chunk-ccd-uploader" */ '.
 const CcdViewer = () => import(/* webpackChunkName: "chunk-ccd-viewer" */ './components/importer/ccd-viewer');
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
 const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../Modules/NurseInvoices/Resources/assets/js/components/dispute-invoice')
+const NurseInvoiceDailyDispute = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../Modules/NurseInvoices/Resources/assets/js/components/nurseInvoiceDailyDispute');
 const PusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-notifications')
 const PusherSeeAllNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-see-all-notifications')
 
@@ -128,6 +129,7 @@ Vue.component('ccd-upload', CcdUploader);
 Vue.component('ccd-viewer', CcdViewer);
 Vue.component('call-mgmt-app-v2', CallMgmtAppV2);
 Vue.component('dispute-nurse-invoice', DisputeNurseInvoice);
+Vue.component('nurse-invoice-daily-dispute', NurseInvoiceDailyDispute);
 Vue.component('pusher-notifications', PusherNotifications);
 Vue.component('pusher-see-all-notifications', PusherSeeAllNotifications);
 

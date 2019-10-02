@@ -184,7 +184,7 @@ $user = auth()->user();
                             @endrole
                         </ul>
                     </li>
-                    {{--AddendumPusher bell notif Icon.--}}
+                    {{--Live Notifications--}}
                     <li class="dropdown">
                         <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
                              aria-expanded="false"><i class="glyphicon glyphicon-bell"></i> Notifications
