@@ -33,6 +33,10 @@
     }
 </style>
 {{--HACK! Duplicating css both in @push, and in <style> above so it works both with PDF, and web--}}
+{{--NOTE! This is causing an Error showing in dev console:
+Templates should only be responsible for mapping the state to the UI.
+Avoid placing tags with side-effects in your templates,
+such as <style>, as they will not be parsed.--}}
 @push('styles')
     <style>
         h1 {
