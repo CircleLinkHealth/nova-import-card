@@ -27,6 +27,7 @@
                            @event-selected="handleEventCLick"
                            @event-drop="handleEventDrop">
             </full-calendar>
+            <loader v-show="loader"></loader>
             <!-- Modal --- sorry couldn't make a vue component act as modal here so i dumped this here-->
             <div class="modal fade" id="addWorkEvent" tabindex="-1" role="dialog"
                  aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -124,7 +125,8 @@
     import {FullCalendar} from 'vue-full-calendar';
     import 'fullcalendar/dist/fullcalendar.css';
     import VueSelect from 'vue-select';
-    import {addNotification} from '../../store/actions';
+    import {addNotification} from '../../../../../resources/assets/js/store/actions.js';
+    import LoaderComponent from '../../../../../resources/assets/js/components/loader.vue';
 
     const viewDefault = 'agendaWeek';
     const defaultEventType = 'workDay';
@@ -145,6 +147,7 @@
             'fullCalendar': FullCalendar,
             'vue-select': VueSelect,
             'addNotification': addNotification,
+            'loader': LoaderComponent,
         },
 
         data() {
@@ -166,6 +169,7 @@
                 holidaysChecked: false,
                 workHolidaysChecked: false,
                 dayInHumanLangForView: '',
+                loader: false,
                 config: {
                     defaultView: viewDefault,
                     editable: false,
@@ -204,7 +208,7 @@
                     },
                     {
                         label: 'Sunday',
-                        dayOfWeek: 7
+                        dayOfWeek: 0
                     },
                 ]
             }
@@ -265,8 +269,10 @@
             },
 
             deleteWorkDay(event, isAddedNow) {
+                this.loader = true;
                 const windowId = this.eventToViewData[0].windowId;
                 axios.get(`/care-center/work-schedule/destroy/${windowId}`).then((response => {
+                    this.loader = false;
                     $("#addWorkEvent").modal('toggle');
                     //Delete event from events() - dom
                     if (isAddedNow) {
@@ -306,6 +312,7 @@
             },
 
             addNewEvent() {
+                this.loader = true;
                 const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
 
                 if (nurseId === null || nurseId === undefined) {
@@ -364,7 +371,7 @@
                     window_time_start: this.workRangeStarts,
                     window_time_end: this.workRangeEnds,
                 }).then((response => {
-                        //@todo: Add loader
+                        this.loader = false;
                         $("#addWorkEvent").modal('toggle'); //close modal
                         const newEvent = this.prepareLocalData(response.data); //to show in UI before page reload.
                         this.eventsAddedNow.push(newEvent);
@@ -410,6 +417,7 @@
             },
 
             handleDateCLick(date, jsEvent, view) {
+                this.loader = true;
                 const clickedDate = date;
 
                 const startOfThisWeek = Date.parse(this.startOfThisWeek);
@@ -419,13 +427,14 @@
                 this.workEventDate = clickedDate.format();
 
                 if (clickedDate >= startOfThisWeek && clickedDate <= endOfThisWeek) {
+                    this.loader = true;
                     $("#addWorkEvent").modal('toggle');//open  modal
                     const clickedDayOfWeek = new Date(this.workEventDate).getDay();
                     const weekMapDay = this.weekMap.filter(q => q.dayOfWeek === clickedDayOfWeek);
                     this.dayInHumanLangForView = weekMapDay[0].label;
 
                 } else {
-
+                    this.loader = false;
                     this.addNotification({
                         title: "Warning!",
                         text: 'You can only add/edit events within current week range',
@@ -440,6 +449,7 @@
 
 
             handleEventCLick(arg) {
+                this.loader = true;
                 console.log('this', arg);
                 this.clickedToViewEvent = true;
                 this.eventToViewData.push(arg.data);
@@ -447,7 +457,7 @@
                 this.workEventDate = this.eventToViewData[0].date;
 
                 $("#addWorkEvent").modal('toggle');
-
+                this.loader = false;
             },
 
             handleEventDrop(arg) {
@@ -479,6 +489,8 @@
                 this.dayInHumanLangForView = '';
                 this.hoursToWork = '5';
                 this.nurseData = [];
+                this.workRangeStarts = '09:00';
+                this.workRangeEnds = '17:00';
             },
         }),
 
@@ -567,6 +579,7 @@
         letter-spacing: 1px;
         font-weight: 500;
     }
+
     .end-time-read {
         font-size: 17px;
         letter-spacing: 1px;
