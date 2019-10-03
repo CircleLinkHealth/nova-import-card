@@ -133,6 +133,9 @@ class ActivityController extends Controller
         ShowPatientActivities $request,
         $patientId
     ) {
+        if ($request->has('download-audit-report')) {
+            return $this->downloadAuditReport($request, $patientId);
+        }
         $patient = User::findOrFail($patientId);
         
         $input = $request->all();
