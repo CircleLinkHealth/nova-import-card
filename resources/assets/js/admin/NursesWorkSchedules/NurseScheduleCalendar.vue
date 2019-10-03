@@ -451,6 +451,7 @@
             },
 
             showHolidays() {
+                this.config.header.right = 'month';
                 const toggleData = this.holidaysChecked;
                 if (toggleData && this.holidays.length === 0) {
                     this.getHolidays();
@@ -472,7 +473,7 @@
                 this.clickedToViewEvent = false;
                 this.eventToViewData = [];
                 this.dayInHumanLangForView = '';
-                this.hoursToWork = '';
+                this.hoursToWork = '5';
                 this.nurseData = [];
             },
         }),
@@ -512,7 +513,7 @@
 
 </script>
 
-<style scoped>
+<style>
     .disable {
         background-color: #f4f6f6;
         color: #d5dbdb;
@@ -576,5 +577,56 @@
         border: 1px solid #ccc;
         border-radius: 4px;
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    }
+
+    .calendar-menu{
+        margin-left: 10%;
+    }
+
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-scroller.fc-time-grid-container{
+        visibility: hidden !important;
+        display: none !important;
+    }
+
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > hr{
+        visibility: hidden !important;
+        display: none !important;
+    }
+
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-unselectable > div > div.fc-content-skeleton{
+        min-height: 100px;
+        overflow-y: scroll;
+        max-height: 670px;
+    }
+    #calendar > div.fc-view-container{
+        width: 124%;
+        margin-left: -12%;
+    }
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr{
+        text-align: left;
+    }
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-bg > table > tbody > tr > td.fc-axis.fc-widget-content{
+        visibility: hidden !important;
+    }
+
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr > td > a{
+        height: 35px;
+    }
+
+    #calendar > div.fc-toolbar.fc-header-toolbar > div.fc-right{
+        margin-right: 6%;
+    }
+
+    #calendar > div.fc-toolbar.fc-header-toolbar > div.fc-left{
+        margin-left: 10%;
+    }
+
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr > td > a > div.fc-content > span{
+        font-size: 112%;
+        font-weight: 400;
+    }
+
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr > td{
+        padding-top: 8px;
     }
 </style>

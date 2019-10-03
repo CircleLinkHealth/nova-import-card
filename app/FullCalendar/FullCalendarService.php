@@ -56,10 +56,9 @@ class FullCalendarService
                     [
                         self::TITLE => "$nurse->display_name",
                         self::START => $holidayDate,
-
-                        'allDay' => true,
-                        'color'  => '#ff5b4f',
-                        'data'   => [
+                        'allDay'    => true,
+                        'color'     => '#ff5b4f',
+                        'data'      => [
                             'holidayId' => $holiday->id,
                             'nurseId'   => $nurse->nurseInfo->id,
                             'name'      => $nurse->display_name,
@@ -89,12 +88,13 @@ class FullCalendarService
 
                 return collect(
                     [
-                        self::TITLE => " $workHoursForDay Hrs - $nurse->display_name",
+                        self::TITLE => " $workHoursForDay Hrs - $nurse->display_name 
+                        {$window->window_time_start}-{$window->window_time_end}",
                         self::START => "{$currentWeekMap[$window->day_of_week]}T{$window->window_time_start}",
                         self::END   => "{$currentWeekMap[$window->day_of_week]}T{$window->window_time_end}",
 
                         'allDay'    => true,
-                        'color'     => '#5bc0de',
+                        'color'     => '#5bc0ded6',
                         'textColor' => '#fff',
 
                         'data' => [

@@ -147,8 +147,9 @@ class WorkScheduleController extends Controller
     public function getAllNurseSchedules()
     {
         $startOfThisYear = Carbon::parse(now())->startOfYear()->subMonth(2)->startOfWeek()->toDateString();
-        $startOfThisWeek = Carbon::parse(now())->startOfWeek()->toDateString();
-        $endOfThisWeek   = Carbon::parse(now())->endOfWeek()->toDateString();
+        //subDay is needed in order to work properly in front-end
+        $startOfThisWeek = Carbon::parse(now())->startOfWeek()->subDay(1)->toDateString();
+        $endOfThisWeek   = Carbon::parse(now())->endOfWeek()->subDay(1)->toDateString();
 
         $nurses          = $this->getNursesWithSchedule();
         $calendarData    = $this->fullCalendarService->prepareDataForCalendar($nurses, $startOfThisYear);
@@ -295,16 +296,16 @@ class WorkScheduleController extends Controller
                     'H:i:s',
                     $window->window_time_end
                 )->diffInHours(Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_start
-                    ));
+                    'H:i:s',
+                    $window->window_time_start
+                ));
             }) + Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_end']
             )->diffInHours(Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_start']
-                ));
+                'H:i',
+                $workScheduleData['window_time_start']
+            ));
 
         $invalidWorkHoursNumber = false;
 
