@@ -39,7 +39,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="display-date">
+                            <div v-if="!this.clickedToViewEvent" class="display-date">
                                 <h4>{{this.dayInHumanLangForView}} {{workEventDate}}</h4>
                             </div>
 
@@ -82,16 +82,20 @@
                             <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'holiday'"
                                  class="view-event">
                                 <div class="nurse-name">{{this.eventToViewData[0].name}} holiday on</div>
-                                <div class="work-day">{{this.eventToViewData[0].day}}</div>
-                                <div class="work-day">{{this.eventToViewData[0].date}}</div>
+                                <div class="work-day-read">{{this.eventToViewData[0].day}}</div>
+                                <div class="work-day-read">{{this.eventToViewData[0].date}}</div>
                             </div>
                             <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'workDay'"
                                  class="view-event">
-                                <div class="nurse-name">{{this.eventToViewData[0].name}} on</div>
-                                <div class="work-day">{{this.eventToViewData[0].day}} works for</div>
-                                <div class="work-hours">{{this.eventToViewData[0].workHours}} hours between</div>
-                                <div class="start-time">{{this.eventToViewData[0].start}} to</div>
-                                <div class="start-end">{{this.eventToViewData[0].end}}</div>
+                                <div class="nurse-name">{{this.eventToViewData[0].name}}</div>
+                                <div class="work-day-read">on {{this.eventToViewData[0].day}} works for</div>
+                                <div class="work-hours-read">{{this.eventToViewData[0].workHours}} hours
+                                    <div style="display: flex; margin-left: 22%; margin-top: 1%;">
+                                        <div class="start-time-read">between {{this.eventToViewData[0].start}}</div>
+                                        <div style="margin-left: 5%; margin-right: 5%;">to</div>
+                                        <div class="end-time-read">{{this.eventToViewData[0].end}}</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <!-- Filters End-->
@@ -164,7 +168,7 @@
                 dayInHumanLangForView: '',
                 config: {
                     defaultView: viewDefault,
-                    editable: true,
+                    editable: false,
                     // validRange: {
                     //     end: this.endOfThisWeek,
                     //     start: this.startOfThisWeek,
@@ -352,7 +356,6 @@
                 }
 
 
-
                 axios.post('/care-center/work-schedule', {
                     nurse_info_id: nurseId,
                     date: this.workEventDate,
@@ -401,7 +404,8 @@
                     dow: [newEventData.window.dayOfWeek],
                     end: `${this.workEventDate}T${this.workRangeEnds}`,
                     start: `${this.workEventDate}T${this.workRangeStarts}`,
-                    title: `${this.hoursToWork} Hrs - ${this.nurseData.label}`,
+                    title: `${this.hoursToWork} Hrs - ${this.nurseData.label}
+                    ${this.workRangeStarts}-${this.workRangeEnds}`,
                 }
             },
 
@@ -447,7 +451,7 @@
             },
 
             handleEventDrop(arg) {
-                alert(arg);
+                //do nothing for now boy
             },
 
             showHolidays() {
@@ -533,6 +537,44 @@
         text-align: center;
     }
 
+    .nurse-name {
+        text-align: center;
+        font-size: 20px;
+        letter-spacing: 1px;
+        font-weight: 500;
+        margin-bottom: 1%;
+        margin-top: 1%;
+    }
+
+    .work-hours-read {
+        text-align: center;
+        font-size: 17px;
+        letter-spacing: 1px;
+        font-weight: 500;
+    }
+
+    .work-day-read {
+        text-align: center;
+        font-size: 17px;
+        letter-spacing: 1px;
+        font-weight: 500;
+        margin-right: 1%;
+        margin-bottom: 1%;
+    }
+
+    .start-time-read {
+        font-size: 17px;
+        letter-spacing: 1px;
+        font-weight: 500;
+    }
+    .end-time-read {
+        font-size: 17px;
+        letter-spacing: 1px;
+        font-weight: 500;
+        margin-left: 1%;
+
+    }
+
     .work-hours {
         margin-top: 4%;
     }
@@ -579,54 +621,58 @@
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
     }
 
-    .calendar-menu{
+    .calendar-menu {
         margin-left: 10%;
     }
 
-    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-scroller.fc-time-grid-container{
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-scroller.fc-time-grid-container {
         visibility: hidden !important;
         display: none !important;
     }
 
-    #calendar > div.fc-view-container > div > table > tbody > tr > td > hr{
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > hr {
         visibility: hidden !important;
         display: none !important;
     }
 
-    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-unselectable > div > div.fc-content-skeleton{
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-unselectable > div > div.fc-content-skeleton {
         min-height: 100px;
         overflow-y: scroll;
         max-height: 670px;
     }
-    #calendar > div.fc-view-container{
+
+    #calendar > div.fc-view-container {
         width: 124%;
         margin-left: -12%;
     }
-    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr{
+
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr {
         text-align: left;
     }
-    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-bg > table > tbody > tr > td.fc-axis.fc-widget-content{
+
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-bg > table > tbody > tr > td.fc-axis.fc-widget-content {
         visibility: hidden !important;
     }
 
-    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr > td > a{
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr > td > a {
         height: 35px;
+        cursor: pointer;
     }
 
-    #calendar > div.fc-toolbar.fc-header-toolbar > div.fc-right{
+    #calendar > div.fc-toolbar.fc-header-toolbar > div.fc-right {
         margin-right: 6%;
     }
 
-    #calendar > div.fc-toolbar.fc-header-toolbar > div.fc-left{
+    #calendar > div.fc-toolbar.fc-header-toolbar > div.fc-left {
         margin-left: 10%;
     }
 
-    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr > td > a > div.fc-content > span{
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr > td > a > div.fc-content > span {
         font-size: 112%;
         font-weight: 400;
     }
 
-    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr > td{
+    #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr > td {
         padding-top: 8px;
     }
 </style>

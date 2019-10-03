@@ -88,7 +88,7 @@ class FullCalendarService
 
                 return collect(
                     [
-                        self::TITLE => " $workHoursForDay Hrs - $nurse->display_name 
+                        self::TITLE => "$workHoursForDay Hrs - $nurse->display_name 
                         {$window->window_time_start}-{$window->window_time_end}",
                         self::START => "{$currentWeekMap[$window->day_of_week]}T{$window->window_time_start}",
                         self::END   => "{$currentWeekMap[$window->day_of_week]}T{$window->window_time_end}",
