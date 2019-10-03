@@ -80,9 +80,8 @@ class FullCalendarService
      * @return \Illuminate\Support\Collection
      */
     public function prepareData($nurse, $startOfThisYear)
-    {// I need to get the past data cause we dont know when they were edited last time. (events are created once and then are repeating)
+    {// I need to get all the past data cause we dont know when they were edited last time. (events are created once and then are repeating)
         return collect($nurse->nurseInfo->windows)
-            ->where('date', '>=', $startOfThisYear)
             ->map(function ($window) use ($nurse) {
                 $currentWeekMap = convertDayOfWeekToCurrentsWeekDate(); //see comment in helpers.php
                 $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
@@ -90,16 +89,13 @@ class FullCalendarService
 
                 return collect(
                     [
-                        self::TITLE => "$nurse->display_name - $workHoursForDay Hrs",
+                        self::TITLE => " $workHoursForDay Hrs - $nurse->display_name",
                         self::START => "{$currentWeekMap[$window->day_of_week]}T{$window->window_time_start}",
                         self::END   => "{$currentWeekMap[$window->day_of_week]}T{$window->window_time_end}",
 
-                        //                        self::START => $weekMap[$window->day_of_week],
-                        //                        self::END   => $window->window_time_end,
-
-                        'allDay' => true,
-                        'color'  => '#378006',
-                        //                        'dow'   => [$window->day_of_week],
+                        'allDay'    => true,
+                        'color'     => '#5bc0de',
+                        'textColor' => '#fff',
 
                         'data' => [
                             'nurseId'   => $nurse->nurseInfo->id,

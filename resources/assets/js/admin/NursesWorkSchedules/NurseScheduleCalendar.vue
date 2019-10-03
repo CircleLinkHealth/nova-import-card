@@ -33,41 +33,50 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <h3 class="modal-title" id="exampleModalLabel">{{modalTitle}}</h3>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
                             <div class="display-date">
-                                <h4>{{workEventDate}}</h4>
+                                <h4>{{this.dayInHumanLangForView}} {{workEventDate}}</h4>
                             </div>
 
                             <!--  Filter Options-->
                             <div v-if="!clickedToViewEvent" class="filter-options">
-                                <h4>Add Work Window</h4>
+                                <h5>Add Work Window:</h5>
                                 <div>
                                     <vue-select :options="dataForDropdown"
-                                                v-model="nurseData">
+                                                v-model="nurseData"
+                                                placeholder="Choose RN"
+                                                required>
                                     </vue-select>
                                 </div>
 
-                                <div>
-                                    <input v-model="hoursToWork"
-                                           type="number"
-                                           class="work-hours"
-                                           min="1" max="12"
-                                           style="max-width: 60px;">
-                                </div>
-                                <div class="minimum-padding">
-                                    <input v-model="workRangeStarts"
-                                           type="time"
-                                           style="max-width: 120px;">
-                                </div>
-                                <div class="minimum-padding">
-                                    <input v-model="workRangeEnds"
-                                           type="time"
-                                           style="max-width: 120px;">
+                                <div class="modal-inputs col-md-12">
+                                    <div class="work-hours">
+                                        <h5>Work For:</h5>
+                                        <input v-model="hoursToWork"
+                                               type="number"
+                                               class="work-hours-input"
+                                               placeholder="5"
+                                               min="1" max="12"> <strong>Hours</strong>
+                                    </div>
+                                    <div class="start-end-time">
+                                        <div class="start-time">
+                                            <h5>Between (EDT):</h5>
+                                            <input v-model="workRangeStarts"
+                                                   type="time"
+                                                   class="time-input">
+                                        </div>
+                                        <div class="end-time">
+                                            <h5>and (EDT):</h5>
+                                            <input v-model="workRangeEnds"
+                                                   type="time"
+                                                   class="time-input">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'holiday'"
@@ -143,15 +152,16 @@
                 workEventDate: '',
                 nurseData: [],
                 dayOfWeek: '',
-                hoursToWork: '',
-                workRangeStarts: '',
-                workRangeEnds: '',
+                hoursToWork: '5',
+                workRangeStarts: '09:00',
+                workRangeEnds: '17:00',
                 errors: [],
                 clickedToViewEvent: false,
                 eventToViewData: [],
                 eventsAddedNow: [],
                 holidaysChecked: false,
                 workHolidaysChecked: false,
+                dayInHumanLangForView: '',
                 config: {
                     defaultView: viewDefault,
                     editable: true,
@@ -162,6 +172,37 @@
 
 
                 },
+
+                weekMap: [
+                    {
+                        label: 'Monday',
+                        dayOfWeek: 1
+                    },
+                    {
+                        label: 'Tuesday',
+                        dayOfWeek: 2
+                    },
+                    {
+                        label: 'Wednesday',
+                        dayOfWeek: 3
+                    },
+                    {
+                        label: 'Thursday',
+                        dayOfWeek: 4
+                    },
+                    {
+                        label: 'Friday',
+                        dayOfWeek: 5
+                    },
+                    {
+                        label: 'Saturday',
+                        dayOfWeek: 6
+                    },
+                    {
+                        label: 'Sunday',
+                        dayOfWeek: 7
+                    },
+                ]
             }
         },
 
@@ -262,15 +303,55 @@
 
             addNewEvent() {
                 const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
-                const defaultStartTime = '09:00';
-                const defaultEndTime = '17:00';
+
+                if (nurseId === null || nurseId === undefined) {
+                    this.addNotification({
+                        title: "Warning!",
+                        text: "Choose an RN field is required",
+                        type: "danger",
+                        timeout: true
+                    });
+
+                    alert("Choose an RN field is required");
+                    return;
+
+                }
 
                 if (this.workRangeStarts === '') {
-                    this.workRangeStarts = defaultStartTime; //@todo:assign placeholder to UI
+                    this.addNotification({
+                        title: "Warning!",
+                        text: "Work start time is required",
+                        type: "danger",
+                        timeout: true
+                    });
+
+                    alert("Work start time is required");
+                    return;
                 }
                 if (this.workRangeEnds === '') {
-                    this.workRangeEnds = defaultEndTime;
+                    this.addNotification({
+                        title: "Warning!",
+                        text: "Work end time is required",
+                        type: "danger",
+                        timeout: true
+                    });
+
+                    alert("Work end time is required");
+                    return;
                 }
+                if (this.hoursToWork === '') {
+                    this.addNotification({
+                        title: "Warning!",
+                        text: "Hours to work for this day is required",
+                        type: "danger",
+                        timeout: true
+                    });
+
+                    alert("Hours to work for this day is required");
+                    return;
+                }
+
+
 
                 axios.post('/care-center/work-schedule', {
                     nurse_info_id: nurseId,
@@ -320,7 +401,7 @@
                     dow: [newEventData.window.dayOfWeek],
                     end: `${this.workEventDate}T${this.workRangeEnds}`,
                     start: `${this.workEventDate}T${this.workRangeStarts}`,
-                    title: `${this.nurseData.label} - ${this.hoursToWork} Hrs`,
+                    title: `${this.hoursToWork} Hrs - ${this.nurseData.label}`,
                 }
             },
 
@@ -334,7 +415,11 @@
                 this.workEventDate = clickedDate.format();
 
                 if (clickedDate >= startOfThisWeek && clickedDate <= endOfThisWeek) {
-                    $("#addWorkEvent").modal('toggle');
+                    $("#addWorkEvent").modal('toggle');//open  modal
+                    const clickedDayOfWeek = new Date(this.workEventDate).getDay();
+                    const weekMapDay = this.weekMap.filter(q => q.dayOfWeek === clickedDayOfWeek);
+                    this.dayInHumanLangForView = weekMapDay[0].label;
+
                 } else {
 
                     this.addNotification({
@@ -386,25 +471,16 @@
             resetModalValues() {
                 this.clickedToViewEvent = false;
                 this.eventToViewData = [];
+                this.dayInHumanLangForView = '';
+                this.hoursToWork = '';
+                this.nurseData = [];
             },
         }),
 
         computed: {
-            // validRange() {
-            //     return {
-            //         end: this.endOfThisWeek,
-            //         start: this.startOfThisWeek,
-            //     };
-            // },
-            // calcRange() {
-            //     if (this.holidaysChecked) {
-            //         this.config.validRange.start = '';
-            //         this.config.validRange.start = this.startOfThisYear;
-            //     } else{
-            //         this.config.validRange.start = '';
-            //         this.config.validRange.start = this.startOfThisWeek;
-            //     }
-            // },
+            modalTitle() {
+                return this.clickedToViewEvent ? 'View / Delete Event' : 'Add new work window';
+            },
 
             events() {
                 const events = this.workHours.concat(this.eventsAddedNow);
@@ -444,8 +520,61 @@
         opacity: 0.7;
     }
 
+    .modal-header {
+        padding: 10px;
+    }
 
-    .calendar.fc-scroller fc-time-grid-container {
-        visibility: hidden;
+    .modal-title {
+        text-align: center;
+    }
+
+    .display-date {
+        text-align: center;
+    }
+
+    .work-hours {
+        margin-top: 4%;
+    }
+
+    .work-hours-input {
+        width: 100px;
+        height: 54%;
+        font-size: 14px;
+        color: #555;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    }
+
+    .modal-inputs {
+        display: inline-flex;
+    }
+
+    .modal-footer {
+        margin-top: 18%;
+    }
+
+    .start-end-time {
+        padding-top: 4%;
+        display: inline-flex;
+    }
+
+    .start-time {
+        margin-left: 34%;
+
+    }
+
+    .end-time {
+        margin-left: 55%;
+    }
+
+    .time-input {
+        width: 100px;
+        height: 54%;
+        font-size: 14px;
+        color: #555;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
     }
 </style>
