@@ -7,10 +7,10 @@
 namespace App\Nova\Importers;
 
 use App\CLH\Repositories\UserRepository;
+use App\Search\LocationByName;
 use App\Search\PracticeByName;
-use CircleLinkHealth\Customer\Entities\Location;
+use App\Search\RoleByName;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
-use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
@@ -26,6 +26,8 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
     use Importable;
 
     protected $attributes;
+
+    protected $failedImports;
 
     protected $modelClass;
 
@@ -121,8 +123,10 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
 
         $locationNames = array_map('trim', explode(',', $row['locations']));
 
-        //use scout?
-        $locations = Location::where('name', $locationNames)->get();
+        $locations = [];
+        foreach ($locationNames as $locationName) {
+            $locations[] = LocationByName::first($locationName);
+        }
 
         $user->attachLocation($locations);
     }
@@ -153,11 +157,17 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
 
     private function createUser($row)
     {
-        //get role, use Scout?
-        $role = Role::where('display_name', $row['role'])->first();
+        $role = RoleByName::first($row['role']);
 
         if ( ! $role) {
             return null;
+        }
+
+        $approveOwn = false;
+        if ('provider' == $role->name && ! empty($row['grant_right_to_approve_all_care_plans'])) {
+            if (in_array(strtolower($row['grant_right_to_approve_all_care_plans']), ['n', 'no'])) {
+                $approveOwn = true;
+            }
         }
 
         $bag = new ParameterBag([
@@ -170,6 +180,9 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
             'program_id'        => $this->practice->id,
             'is_auto_generated' => true,
             'roles'             => [$role->id],
+
+            //provider
+            'approve_own_care_plans' => $approveOwn,
         ]);
 
         return (new UserRepository())->createNewUser(new User(), $bag);
