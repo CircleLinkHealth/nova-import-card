@@ -53,8 +53,6 @@ $config = PhpCsFixer\Config::create()
             'method_chaining_indentation'       => true,
             'multiline_comment_opening_closing' => true,
             'no_binary_string'                  => true,
-            'no_empty_comment'                  => true,
-            'no_empty_phpdoc'                   => true,
             'no_extra_blank_lines'              => [
                 'tokens' => [
                     'break',
