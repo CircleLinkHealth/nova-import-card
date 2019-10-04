@@ -3,8 +3,8 @@
         <div class="calendar-menu">
             <div class="show-holidays">
                 <input id="holidaysCheckbox"
-                       :class="{disable: workHolidaysChecked}"
-                       :disabled="workHolidaysChecked"
+                       :class="{disable: showWorkAndHolidaysIsChecked}"
+                       :disabled="showWorkAndHolidaysIsChecked"
                        type="checkbox"
                        class="holidays-button"
                        v-model="holidaysChecked"
@@ -15,8 +15,16 @@
                 <input id="workHolidaysCheckbox"
                        type="checkbox"
                        class="work-holidays-button"
-                       v-model="workHolidaysChecked">
+                       v-model="showWorkAndHolidaysIsChecked">
                 Work Days and Holidays
+            </div>
+
+            <div class="search-filter">
+                <vue-select :options="dataForSearchFilter"
+                            v-model="searchFilter"
+                            placeholder="Filter RN"
+                            required>
+                </vue-select>
             </div>
         </div>
         <div class="calendar">
@@ -167,9 +175,10 @@
                 eventToViewData: [],
                 eventsAddedNow: [],
                 holidaysChecked: false,
-                workHolidaysChecked: false,
+                showWorkAndHolidaysIsChecked: false,
                 dayInHumanLangForView: '',
                 loader: false,
+                searchFilter: [],
                 config: {
                     defaultView: viewDefault,
                     editable: false,
@@ -225,8 +234,6 @@
                 } else {
                     this.deleteHoliday(event, isAddedNow);
                 }
-
-
             },
 
             deleteHoliday(event, isAddedNow) {
@@ -499,20 +506,40 @@
                 return this.clickedToViewEvent ? 'View / Delete Event' : 'Add new work window';
             },
 
+            searchFilterSelection() {
+                return this.workHours.filter(q => q.data.nurseId === this.searchFilter.nurseId);
+            },
+
             events() {
                 const events = this.workHours.concat(this.eventsAddedNow);
 
-                if (!this.workHolidaysChecked) {
-                    return this.showWorkHours ? events : this.holidays;
-                }
+                if (this.searchFilter === null || this.searchFilter.length === 0) {
+                    if (!this.showWorkAndHolidaysIsChecked) {
+                        return this.showWorkHours ? events : this.holidays;
+                    }
 
-                if (this.workHolidaysChecked) {
-                    return events.concat(this.holidays);
+                    if (this.showWorkAndHolidaysIsChecked) {
+                        return events.concat(this.holidays);
+                    }
+                } else {
+                    if (!this.showWorkAndHolidaysIsChecked) {
+                        return this.showWorkHours ? events.filter(q => q.data.nurseId === this.searchFilter.nurseId) : this.holidays.filter(q => q.data.nurseId === this.searchFilter.nurseId);
+                    }
+
+                    if (this.showWorkAndHolidaysIsChecked) {
+                        return events.concat(this.holidays).filter(q => q.data.nurseId === this.searchFilter.nurseId);
+                    }
                 }
             },
 
-            hoursToWorkHasValue() {
-                return this.hoursToWork.length !== 0;
+            dataForSearchFilter() {
+                //array distinct - filtering duplicates
+                return Array.from(new Set(this.workHours.map(event => event.data.nurseId))).map(nurseId => {
+                    return {
+                        nurseId: nurseId,
+                        label: this.workHours.find(event => event.data.nurseId === nurseId).data.name
+                    }
+                });
             },
         },
 
