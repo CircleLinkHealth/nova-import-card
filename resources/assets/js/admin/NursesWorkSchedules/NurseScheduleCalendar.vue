@@ -20,8 +20,8 @@
             </div>
 
             <div class="search-filter">
-                <vue-select :options="dataForSearchFilter"
-                            v-model="searchFilter"
+                <vue-select multiple v-model="searchFilter"
+                            :options="dataForSearchFilter"
                             placeholder="Filter RN"
                             required>
                 </vue-select>
@@ -506,12 +506,9 @@
                 return this.clickedToViewEvent ? 'View / Delete Event' : 'Add new work window';
             },
 
-            searchFilterSelection() {
-                return this.workHours.filter(q => q.data.nurseId === this.searchFilter.nurseId);
-            },
-
             events() {
                 const events = this.workHours.concat(this.eventsAddedNow);
+                const workEventsWithHolidays = events.concat(this.holidays);
 
                 if (this.searchFilter === null || this.searchFilter.length === 0) {
                     if (!this.showWorkAndHolidaysIsChecked) {
@@ -519,15 +516,20 @@
                     }
 
                     if (this.showWorkAndHolidaysIsChecked) {
-                        return events.concat(this.holidays);
+                        return  workEventsWithHolidays;
                     }
                 } else {
                     if (!this.showWorkAndHolidaysIsChecked) {
-                        return this.showWorkHours ? events.filter(q => q.data.nurseId === this.searchFilter.nurseId) : this.holidays.filter(q => q.data.nurseId === this.searchFilter.nurseId);
+                        return this.searchFilter.map(q => {
+                            return this.showWorkHours ? events.filter(event => event.data.nurseId === q.nurseId)
+                                : this.holidays.filter(event => event.data.nurseId === q.nurseId);
+                        }).map(arr => arr).flat();
                     }
-
                     if (this.showWorkAndHolidaysIsChecked) {
-                        return events.concat(this.holidays).filter(q => q.data.nurseId === this.searchFilter.nurseId);
+                        return this.searchFilter.map(q => {
+                            return workEventsWithHolidays.filter(event => event.data.nurseId === q.nurseId);
+                        }).map(arr => arr).flat();
+
                     }
                 }
             },
@@ -541,12 +543,14 @@
                     }
                 });
             },
-        },
+        }
+        ,
 
         created() {
             const workHours = this.calendarData;
             this.workHours.push(...workHours);
-        },
+        }
+        ,
 
         mounted() {
             $('#addWorkEvent').on("hidden.bs.modal", this.resetModalValues)
