@@ -190,7 +190,7 @@ class GenerateProviderReportService
         $answer2 = $this->answerForHraQuestionWithOrder(22, '2');
 
         return [
-            'depression_score' => $phq2scores[strtolower(ProviderReportService::checkInputValueIsNotEmpty($answer1, '22.1'))] + $phq2scores[strtolower(ProviderReportService::checkInputValueIsNotEmpty($answer2, '22.2'))],
+            'depression_score' => $phq2scores[strtolower(ProviderReportService::checkInputValueIsNotEmpty($answer1, '22.1', []))] + $phq2scores[strtolower(ProviderReportService::checkInputValueIsNotEmpty($answer2, '22.2', []))],
         ];
     }
 
