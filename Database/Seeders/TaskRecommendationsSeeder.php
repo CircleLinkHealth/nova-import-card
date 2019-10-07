@@ -684,8 +684,8 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         'recommendation_body' => ['Set up a Medical Power of Attorney'],
                         'report_table_data'   => [
                             [
-                                'body'       => 'Bone density test',
-                                'code'       => '99497',
+                                'body'       => 'Set up a Medical Power of Attorney (NOTE: $0 co-pay if done during AWV)',
+                                'code'       => '99497/99498 (if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)',
                                 'time_frame' => 'As Needed',
                             ],
                         ],
@@ -697,8 +697,8 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         'recommendation_body' => ['Set up a living will/advance directive'],
                         'report_table_data'   => [
                             [
-                                'body'       => 'Set up a living will/advance directive',
-                                'code'       => '99497',
+                                'body'       => 'Set up a living will/advance directive (NOTE: $0 co-pay if done during AWV)',
+                                'code'       => '99497/99498 (if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)',
                                 'time_frame' => 'As Needed',
                             ],
                         ],
