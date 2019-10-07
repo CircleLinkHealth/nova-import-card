@@ -20,7 +20,7 @@ $finders = PhpCsFixer\Finder::create()
             __DIR__.'/Modules',
             __DIR__.'/CLHPackages',
         ]
-                            );
+    );
 
 $config = PhpCsFixer\Config::create()
     ->setUsingCache(true)
@@ -106,7 +106,7 @@ $config = PhpCsFixer\Config::create()
             'single_line_comment_style'   => true,
             'yoda_style'                  => true,
         ]
-                           )
+    )
     ->setFinder($finders);
 
 return $config;
