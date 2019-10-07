@@ -538,7 +538,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                     'recommendation_body' => ['Testing for glaucoma once every 1-2 years'],
                     'report_table_data'   => [
                         [
-                            'body'       => 'Home fall risk evaluation',
+                            'body'       => 'Glaucoma testing',
                             'code'       => 'G0117 / G0118',
                             'time_frame' => 'Every 1-2 Years',
                         ],
