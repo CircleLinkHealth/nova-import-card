@@ -11,7 +11,6 @@ use App\Console\Commands\Athena\DetermineTargetPatientEligibility;
 use App\Console\Commands\Athena\GetAppointments;
 use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
-use App\Console\Commands\CalculateLoginLogoutStats;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\CheckForMissingLogoutsAndInsert;
@@ -182,7 +181,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
 
-        $schedule->command(CheckForMissingLogoutsAndInsert::class)->dailyAt('00:05')->onOneServer();
+        $schedule->command(CheckForMissingLogoutsAndInsert::class)->dailyAt('04:00')->onOneServer();
 
         $schedule->command(OverwriteNBIImportedData::class)->everyThirtyMinutes()->onOneServer();
 
