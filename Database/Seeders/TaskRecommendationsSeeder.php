@@ -604,14 +604,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         'task_body'           => 'Regular skin checks by a doctor are important for people who have already had skin cancer. If you are checking your skin and find a worrisome change, you should report it to your doctor. In addition, your doctor may suggest:',
                         'recommendation_body' => ['A skin cancer screening in office'],
                     ],
-                ],
-            ],
 
-            // Other misc:
-            [
-                'title'       => 'Other misc:',
-                'task_titles' => [],
-                'data'        => [
                     // Osteoporosis
                     [
                         'sub_title'           => 'Osteoporosis',
@@ -676,6 +669,14 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             ],
                         ],
                     ],
+                ],
+            ],
+
+            // Other misc:
+            [
+                'title'       => 'Other misc:',
+                'task_titles' => [],
+                'data'        => [
                     // Advanced Care Planning
                     [// No Medical Power of Attorney = NMPA
                         'sub_title'           => 'Advanced Care Planning/NMPA',
