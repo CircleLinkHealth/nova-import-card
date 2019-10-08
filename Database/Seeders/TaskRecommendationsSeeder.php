@@ -42,22 +42,22 @@ class TaskRecommendationsSeeder extends Seeder
             [
                 'title' => 'Nutrition',
                 'data'  => [
-                    [
+                    'fruits_veggies' => [
                         'qualitative_trigger' => 'Poor diet (fruits/veggies)',
                         'task_body'           => 'Fruits and vegetables are important part of healthy eating and provide a source of many nutrients, including potassium, fiber, folate (folic acid) and vitamins A, E and C. People who eat fruit and vegetables as part of their daily diet have a reduced risk of many chronic diseases. Your doctor may recommend:',
                         'recommendation_body' => ['Getting 4-5 servings of fruits and vegetables a day'],
                     ],
-                    [
+                    'whole_grain' => [
                         'qualitative_trigger' => ' Poor diet (whole grain)',
                         'task_body'           => 'Foods made from grains (wheat, rice, and oats) help form the foundation of a nutritious diet. They provide vitamins, minerals, carbohydrates (starch and dietary fiber), and other substances that are important for good health. Eating plenty of whole grains, such as whole wheat bread or oatmeals may help protect you against many chronic diseases. Experts recommend that all adults eat at least half their grains as whole grains. Your doctor may suggest:',
                         'recommendation_body' => ['Aiming for at least 3-5 servings of whole grains a day'],
                     ],
-                    [
+                    'fatty_fried_foods' => [
                         'qualitative_trigger' => 'Poor diet (fatty/fried foods)',
                         'task_body'           => 'A small amount of fat is an essential part of a healthy, balanced diet. Although It\'s fine to enjoy fats, fried foods and sweets occasionally, too much sugar and saturated fat in your diet can raise your cholesterol. This increases the risk of heart disease. Your doctor may recommend:',
                         'recommendation_body' => ['Cutting down consumption to <1 servings of fried and high-fat foods a day'],
                     ],
-                    [
+                    'candy_sugary_beverages' => [
                         'qualitative_trigger' => 'Poor diet (candy/sugary beverages)',
                         'task_body'           => 'The average can of sugar-sweetened (sucrose, high-fructose corn syrup, dextrose, cane sugar etc.) soda or fruit punch provides about 150 calories, almost all of them from sugar, usually high-fructose corn syrup. That’s the equivalent of 10 teaspoons of table sugar. If you were to drink just one can of a sugar-sweetened soft drink every day, and not cut back on calories elsewhere, you could gain up to 5 pounds in a year. People who drink sugary beverages do not feel as full as if they had eaten the same calories from solid food, and studies show that people consuming sugary beverages don’t compensate for their high caloric content by eating less food.  Your doctor may recommend:',
                         'recommendation_body' => ['Cutting down consumption to <1 servings of sugar-sweetened beverages / sweets a day'],
@@ -69,7 +69,7 @@ class TaskRecommendationsSeeder extends Seeder
             [
                 'title' => 'Tobacco/Smoking',
                 'data'  => [
-                    [
+                    'current_smoker' => [
                         'qualitative_trigger' => 'Current Smoker',
                         'task_body'           => 'Smoking, or the use of any tobacco products harms nearly every organ of the body, causes many diseases, and reduces the health of smokers in general. Smokers are more likely than nonsmokers to develop heart disease, stroke, and lung cancer. Cigarette smoking is the leading preventable cause of death in the United States, causing more than 480,000 deaths domestically each year. This includes about 90% of all lung cancer deaths, and about 80% of all deaths from chronic obstructive pulmonary disease (COPD). Quitting smoking lowers your risk for smoking-related diseases and can add years to your life. Talk to your doctor about what interventions you may be able to use to help you quit. These may include:',
                         'recommendation_body' => [
@@ -94,7 +94,7 @@ class TaskRecommendationsSeeder extends Seeder
                             ],
                         ],
                     ],
-                    [
+                    'current_male_smoker' => [
                         'qualitative_trigger' => 'Males 65-75 and current or former smoker',
                         'task_body'           => 'Due to your age, sex, and smoking status, your Doctor may also recommend an:',
                         'recommendation_body' => ['AAA (Abdominal Aortic Aneurysm) screening'],
@@ -106,7 +106,7 @@ class TaskRecommendationsSeeder extends Seeder
                             ],
                         ],
                     ],
-                    [
+                    'former_smoker' => [
                         'qualitative_trigger' => 'Former Smoker',
                         'task_body'           => 'Congrats! Having quit smoking is a great achievement. By avoiding smoking, you are lowering your risk of smoking-related illnesses every day. Quitting smoking has health benefits that start right away and improve over many years. Unfortunately, smoking any amount can cause damage that can lead to health problems. The risk of lung cancer decreases over time, though it remains higher than a non-smoker’s. As a result, your doctor may suggest:',
                         'recommendation_body' => ['Lung cancer screening (precautionary)'],
@@ -125,7 +125,7 @@ class TaskRecommendationsSeeder extends Seeder
             [
                 'title' => 'Alcohol',
                 'data'  => [
-                    [
+                    'alcohol_dependent' => [
                         'qualitative_trigger' => 'Risky use of alcohol (gender dependent)',
                         'task_body'           => 'Drinking too much – on a single occasion or over time – can take a serious toll on your health.Having more than a 7 drinks a week for females, or more than 14 drinks a week for males may result in health complications including liver disease, pancreatitis, cancer, and ulcers/other GI problems.Talk to your doctor about ways to cut down on alcohol consumption, they may prescribe :',
                         'recommendation_body' => [
@@ -147,7 +147,7 @@ class TaskRecommendationsSeeder extends Seeder
                     ],
                 ],
                 'data' => [
-                    [
+                    'recreational_drugs' => [
                         'qualitative_trigger' => 'Patient admits to using recreational drugs',
                         'task_body'           => 'Recreational drug use can be hazardous to your health. When you use street or club drugs, usually there’s no way to know how strong they are or what else may be in them. It\'s even more unsafe to use them along with other substances like alcohol and marijuana. Your doctor can talk to you about ways to stop your recreational drug use, for example:',
                         'recommendation_body' => ['Counseling'],
@@ -160,7 +160,7 @@ class TaskRecommendationsSeeder extends Seeder
                 'title'       => 'Physical Activity',
                 'task_titles' => [],
                 'data'        => [
-                    [
+                    'less_three_week_young' => [
                         'qualitative_trigger' => ' If patient exercises <3 times/week and is a younger adult',
                         'task_body'           => 'Everyone benefits from exercise, regardless of age, sex or physical ability. Exercise can help prevent excess weight gain or help maintain weight loss. It is a fundamental component of healthy active living and involves 3 major components. Aerobic (running, swimming, biking etc.), Resistance (pushups, squats, planks etc.) and Balance training (tai chi, etc.) No matter what your current weight, being active boosts high-density lipoprotein (HDL), or "good," cholesterol and decreases unhealthy triglycerides, decreasing your risk of cardiovascular diseases. Exercise also improves mood, energy, sleep quality, and sex life. Ideally, aim for:	',
                         'recommendation_body' => [
@@ -170,7 +170,7 @@ class TaskRecommendationsSeeder extends Seeder
                             'Remember, any exercise is better than no exercise, and additional health benefits are gained by engaging in physical activity beyond the minimum requirements!',
                         ],
                     ],
-                    [
+                    'less_three_week_older' => [
                         'qualitative_trigger' => 'If patient exercises <3 times/week and is an older adult',
                         'task_body'           => 'Everyone benefits from exercise, regardless of age, sex or physical ability. Exercise can help prevent excess weight gain or help maintain weight loss. It is a fundamental component of healthy active living and involves 3 major components. Aerobic (running, swimming, biking etc.), Resistance (pushups, squats, planks etc.) and Balance training (tai chi, etc.) No matter what your current weight, being active boosts high-density lipoprotein (HDL), or "good," cholesterol and decreases unhealthy triglycerides, decreasing your risk of cardiovascular diseases. Exercise also improves mood, energy, sleep quality, and sex life. Ideally, aim for:',
                         'recommendation_body' => ['At least 2 hours and 30 minutes to 5 hours a week of moderate-intensity 
@@ -191,13 +191,13 @@ If you cannot do this because of chronic conditions, be as physically active as 
                 'title'       => 'Weight/BMI',
                 'task_titles' => [],
                 'data'        => [
-                    [
+                    'bmi_low' => [
                         'qualitative_trigger' => 'BMI <= 18.5 kg/m2',
                         'task_body'           => 'Because many of the health problems in America are associated with the high prevalence of obesity, it is easy to forget that being underweight also carries health risks. Although there are many reasons for being underweight, the condition suggests that your body is not obtaining sufficient nutrients to sustain proper function. A body mass index, or BMI, below 18.5 means a person is underweight and this is associated with health complications such as bone loss, decreased immunity, cardiac problems, and infertility. Since you have a BMI on the lower side, you should consider gaining weight and monitor your weight once a month. Your doctor:',
                         'recommendation_body' => ['Can tell you about healthy ways to gain weight gradually',
                             'May require tests like a basic metabolic panel', ],
                     ],
-                    [
+                    'bmi_high' => [
                         'qualitative_trigger' => 'BMI >= 25kg/m2',
                         'task_body'           => 'BMI is an estimate of body fat and a good gauge of your risk for diseases that can occur with more body fat. The higher your BMI, the higher your risk for certain diseases such as heart disease, high blood pressure, type 2 diabetes, gallstones, breathing problems, and certain cancers.  Since you have a BMI on the higher side, you should work on reducing your weight. Even a small weight loss (between 5 and 10 percent of your current weight) will lower your risk of developing diseases associated with obesity. Your provider can recommend some lifestyle changes and routine tests, such as:',
                         'recommendation_body' => ['Changes to diet, exercise, counseling, or certain drugs',
@@ -211,7 +211,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                 'title'       => 'Sexual Practices',
                 'task_titles' => [],
                 'data'        => [
-                    [
+                    'unprotected_sex' => [
                         'qualitative_trigger' => 'Unprotected sex (sometimes or always) with multiple sexual partners',
                         'task_body'           => 'If you are sexually active with multiple sexual partners, you should be diligent in protecting yourself from sexually transmitted infections (STI) and diseases. Vaginal or anal penetration by an infected partner who isn\'t wearing a latex condom significantly increases the risk of getting an STI. Improper or inconsistent use of condoms can also increase your risk. When being sexually active, make sure to use protection or ask your partner to use protection. Your doctor may suggest:',
                         'recommendation_body' => [
@@ -231,7 +231,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             ],
                         ],
                     ],
-                    [
+                    'reproductive_age' => [
                         'qualitative_trigger' => 'Woman of reproductive age (15-44)',
                         'task_body'           => 'As you are a woman of reproductive age, your doctor may also suggest an:',
                         'recommendation_body' => ['Intimate Partner Violence (IPV) screening'],
@@ -252,7 +252,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                 'task_titles' => [],
 
                 'data' => [
-                    [
+                    'emotional_health' => [
                         'qualitative_trigger' => 'Patients who screen positive for Depression',
                         'task_body'           => 'Being depressed often feels like carrying a very heavy burden, but you are not alone in this struggle. Millions of Americans suffer from some form of depression every year, making it one of the most common mental disorders in the country. Depression is more than just feeling sad. Everyone feels upset or unmotivated from time to time, but depression is more serious. It is a mood disorder characterized by prolonged feelings of sadness and loss of interest in daily activities. If these symptoms persist for a period of at least two weeks, it is considered a depressive episode. As some of your responses have indicated that you sometimes exhibit feelings of depression, you doctor will talk to you about whether you should seek mental health treatment via:',
                         'recommendation_body' => ['PHQ-9 Questionnaire',
@@ -268,7 +268,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                 'task_titles' => [],
 
                 'data' => [
-                    [
+                    'fall_risk' => [
                         'qualitative_trigger' => ' If patient has fallen in last 6 months',
                         'task_body'           => 'If you have fallen in the last 6 months, you\'re not alone. More than one in three people age 65 years or older falls each year. The risk of falling—and fall-related problems—rises with age. But don\'t let a fear of falling keep you from being active. Simple treatments and overcoming this fear can help you stay active, maintain your physical health, and prevent future falls. Since you have fallen in the last six months, it is important to work on strengthening your bones. Your doctor may recommend:',
                         'recommendation_body' => [
@@ -300,7 +300,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                 'title'       => 'Hearing Impairment',
                 'task_titles' => [],
                 'data'        => [
-                    [
+                    'hearing_impairment' => [
                         'qualitative_trigger' => 'If patient has indicated they have had difficulty hearing',
                         'task_body'           => 'You indicated that you have difficulty hearing at times. Hearing loss that occurs gradually as you age (presbycusis) is common. About 25 percent of people in the United States between the ages of 55 and 64 have some degree of hearing loss. For those older than 65, the number of people with some hearing loss is almost 1 in 2. Aging and chronic exposure to loud noises are significant factors that contribute to hearing loss. Other factors, such as excessive earwax, can temporarily prevent your ears from conducting sounds as well as they should. You can\'t reverse most types of hearing loss. However, you don\'t have to live in a world of muted, less distinct sounds. You and your doctor, or a hearing specialist, can take steps to improve what you hear.
                             Your doctor may follow up with:',
@@ -324,7 +324,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                 'title'       => 'Cognitive Impairment:',
                 'task_titles' => [],
                 'data'        => [
-                    [
+                    'mild_cognitive_impairment' => [
                         'qualitative_trigger' => 'Mild cognitive impairment (MCI)',
                         'task_body'           => 'Mild cognitive impairment (MCI) is the stage between normal aging and moderate and severe neurocognitive impairment. It can involve problems with memory, language, thinking and judgment that are greater than normal age-related changes. If you have mild cognitive impairment, you may be aware that your memory or mental function has "slipped." Your family and close friends also may notice a change. But these changes aren\'t severe enough to significantly interfere with your daily life and usual activities. Approximately 15 to 20 percent of people age 65 or older have MCI, and it may increase your risk of progression to more severe stages and other neurological conditions. But some people with mild cognitive impairment never get worse, and a few eventually get better. As you have shown initial signs of MCI, your doctor may recommend:',
                         'recommendation_body' => [
@@ -340,7 +340,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             ],
                         ],
                     ],
-                    [
+                    'moderate_cognitive_impairment' => [
                         'qualitative_trigger' => 'Moderate to severe neurocognitive impairment',
                         'task_body'           => ' Moderate to severe neurocognitive impairment is the loss of cognitive functioning—thinking, remembering, and reasoning—and behavioral abilities to such an extent that it interferes with a person\'s daily life and activities. These functions include memory, language skills, visual perception, problem solving, self-management, and the ability to focus and pay attention. Some people with dementia cannot control their emotions, and their personalities may change. Dementia ranges in severity from the mildest stage, when it is just beginning to affect a person\'s functioning, to the most severe stage, when the person must depend completely on others for basic activities of living.  As you may have shown the initial signs of moderate to severe neurocognitive impairment, your doctor might recommend:',
                         'recommendation_body' => [
@@ -369,7 +369,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                 'title'       => 'ADL',
                 'task_titles' => [],
                 'data'        => [
-                    [
+                    'adl_issues' => [
                         'qualitative_trigger' => 'Issues with ADL and nobody to help',
                         'task_body'           => 'Many older people experience problems in daily activities. Those difficulties restrict their ability to perform self-care, a common reason why older people seek help from outsiders, move to assisted living communities, or enter nursing homes. As you indicated you have trouble doing {insert all selected tasks in Q26} and have indicated you have nobody to assist you, your doctor may suggest:',
                         'recommendation_body' => [
@@ -398,7 +398,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                 'task_titles' => [],
                 'data'        => [
                     // Flu/Influenza
-                    [
+                    'flu' => [
                         'sub_title'           => 'Flu/Influenza',
                         'qualitative_trigger' => 'Pt. hasn’t/not planning on receiving flu shot this year',
                         'task_body'           => 'You indicated you are not planning on receiving a flu shot this year. Influenza is a potentially serious disease that can lead to hospitalization and sometimes even death. Every flu season is different, and influenza infection can affect people differently, but millions of people get the flu every year, and  an annual seasonal flu vaccine is the best way to help protect against flu.  Flu vaccines cause antibodies to develop in the body about two weeks after vaccination. These antibodies provide protection against infection with the viruses that are in the vaccine. Your doctor should advise you to get a:',
@@ -412,7 +412,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
                     // Tetanus Diphtheria (initial and/or booster)
-                    [
+                    'tetanus' => [
                         'sub_title'           => 'Tetanus Diphtheria (initial and/or booster)',
                         'qualitative_trigger' => 'Pt. hasn’t received a TDaP or DTaP',
                         'task_body'           => 'You have indicated you have not received, or are unsure of having received, either an initial Tetanus Diphtheria (DTaP) vaccine or a booster (TDaP) vaccination in the past 10 years.The Td vaccine is used to protect against Tetanus and diphtheria, both infections caused by bacteria. Tetanus (Lockjaw) causes painful muscle tightening and stiffness, and kills 1 out of every 10 people who are infected. Diphtheria can cause a thick coating to form in the back of the throat, and can lead to breathing problems, heart failure, paralysis, and death. Since vaccination began, reports of cases for both diseases have dropped by about 99%. Your doctor should advise you to receive:',
@@ -431,7 +431,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
                     // Chicken Pox/Varicella
-                    [
+                    'chicken_pox' => [
                         'sub_title'           => 'Chicken Pox/Varicella',
                         'qualitative_trigger' => 'Pt. hasn’t received Varicella vaccination',
                         'task_body'           => 'Chickenpox is a very contagious disease caused by the varicella-zoster virus (VZV). It causes a blister-like rash, itching, tiredness, and fever. Each year, chickenpox caused about 10,600 hospitalizations and 100 to 150 deaths. Two doses of the vaccine are about 90% effective at preventing chickenpox. When you get vaccinated, you protect yourself and others in your community. This is especially important for people who cannot get vaccinated, such as those with weakened immune systems or pregnant women. At your next visit, your doctor should advise a:',
@@ -445,7 +445,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
                     // Hepatitis B
-                    [
+                    'hepatitis_b' => [
                         'sub_title'           => 'Hepatitis B',
                         'qualitative_trigger' => 'Patient hasn’t received Hep B vaccine',
                         'task_body'           => 'Hepatitis B is a serious disease caused by a virus that attacks the liver. The virus, which is called Hepatitis B virus (HBV), can cause lifelong infection, cirrhosis (scarring) of the liver, liver cancer, liver failure, and death. At your next visit, your doctor should consider a:',
@@ -459,7 +459,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
                     // Measles Mumps Rubella (MMR)
-                    [
+                    'mmr' => [
                         'sub_title'           => 'Measles Mumps Rubella (MMR)',
                         'qualitative_trigger' => 'Patient hasn’t received appropriate doses of MMR Vaccine',
                         'task_body'           => 'Measles is a very contagious disease caused by a virus. It spreads through the air when an infected person coughs or sneezes. Measles starts with fever. Soon after, it causes a cough, runny nose, and red eyes. Then a rash of tiny, red spots breaks out. At your next visit, your doctor should consider a:',
@@ -473,7 +473,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
                     // Human Papillomavirus (HPV)
-                    [
+                    'hpv' => [
                         'sub_title'           => 'Human Papillomavirus (HPV)',
                         'qualitative_trigger' => 'Patient hasn’t received appropriate doses of HPV vaccine',
                         'task_body'           => 'Human Papillomavirus is a group of more than 150 related viruses which are transmitted through intimate skin-to-skin contact, most commonly vaginal, anal, or oral sex. Some HPV types can cause genital warts (papillomas). Some other HPV types can lead to cancer, including cancer of mouth/ throat, anus/rectum, penis in males, and cervix, vagina, and vulva in females. At your next visit, if you are female or a homosexual male, your doctor should advise a:',
@@ -487,7 +487,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
                     // Shingles (Herpes Zoster)
-                    [
+                    'herpes_zoster' => [
                         'sub_title'           => 'Shingles (Herpes Zoster)',
                         'qualitative_trigger' => 'Pt. has not received Shingles Vaccine AND patient is over 50 yrs. old',
                         'task_body'           => 'Shingles is a painful rash that usually develops on one side of the body, often the face or torso. The rash consists of blisters that typically scab over in 7 to 10 days and clears up within 2 to 4 weeks. This long-lasting pain is called postherpetic neuralgia (PHN), and it is the most common complication of shingles. Your risk of getting shingles and PHN increases as you get older. Your doctor should consider:',
@@ -501,7 +501,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
                     // Pneumococcal Vaccine
-                    [
+                    'pneumococcal_vaccine' => [
                         'sub_title'           => 'Pneumococcal Vaccine',
                         'qualitative_trigger' => 'Pt. has not had: 1 dose of PCV13 plus at least 1 dose of PPSV23.',
                         'task_body'           => 'Pneumococcal disease is any type of infection caused by Streptococcus pneumoniae bacteria. The CDC recommends pneumococcal conjugate vaccine for all children younger than 2 years old, all adults 65 years or older, and people 2 through 64 years old with certain medical conditions. The CDC also recommends pneumococcal polysaccharide vaccine for all adults 65 years or older, people 2 through 64 years old with certain medical conditions, and adults 19 through 64 years old who smoke cigarettes. Your doctor should advise you to get:',
@@ -523,7 +523,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                 'task_titles' => [],
                 'data'        => [
                     // Breast Cancer- Mammogram
-                    [
+                    'mammogram' => [
                         'sub_title'           => 'Breast Cancer- Mammogram',
                         'qualitative_trigger' => 'Female and 50-74 years old, OR have family history of breast cancer AND has not had a mammogram in the past 2 years',
                         'task_body'           => 'Breast cancer screening is checking a woman’s breasts for cancer before there are signs or symptoms of the disease. At this time, mammograms (X-rays of the breast) are the best way to find breast cancer early, when it is easier to treat and before it is big enough to feel or cause symptoms.  Due to your age and other potential risk factors, your doctor may suggest:',
@@ -537,7 +537,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
                     // Cervical Cancer - Pap Smear
-                    [
+                    'cervical_cancer_young' => [
                         'sub_title'           => 'Cervical Cancer - Pap Smear',
                         'qualitative_trigger' => 'Female and 21-29 years old',
                         'task_body'           => 'Screening tests offer the best chance to have cervical cancer found early when successful treatment is likely. Screening can also actually prevent most cervical cancers by finding abnormal cervical cell changes (pre-cancers) so that they can be treated before they have a chance to turn into a cervical cancer. If it’s found early, cervical cancer is one of the most successfully treatable cancers. Since you are between 21-29 years old, your doctor may recommend:',
@@ -551,7 +551,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
 
-                    [
+                    'cervical_cancer_elder' => [
                         'sub_title'           => 'Cervical Cancer - Pap Smear case2',
                         'qualitative_trigger' => 'Female and 30-65 years old',
                         'task_body'           => 'Screening tests offer the best chance to have cervical cancer found early when successful treatment is likely. Screening can also actually prevent most cervical cancers by finding abnormal cervical cell changes (pre-cancers) so that they can be treated before they have a chance to turn into a cervical cancer. If it’s found early, cervical cancer is one of the most successfully treatable cancers. Since you are between 30-65 years old, your doctor may recommend:',
@@ -565,7 +565,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
                     // Prostate Cancer- Prostate Screening
-                    [
+                    'prostate_cancer' => [
                         'sub_title'           => 'Prostate Cancer- Prostate Screening',
                         'qualitative_trigger' => 'Male and 55-69 years old and has not been screened in 10 years',
                         'task_body'           => 'Prostate cancer is the most common cancer among men (after skin cancer), but it can often be treated successfully. For every 1,000 men between the ages of 55 and 69 years old who are screened, about 1 death will be prevented, and 3 men will be prevented from getting prostate cancer that spreads to other places in the body. At your next visit, your doctor may:',
@@ -579,7 +579,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
                     // Colorectal Cancer Screening:
-                    [
+                    'colorectal_cancer' => [
                         'sub_title'           => 'Colorectal Cancer Screening:',
                         'qualitative_trigger' => '50-75 years old OR family history of Colorectal cancer and has not screened for Colorectal cancer in the past 5 years',
                         'task_body'           => 'Colorectal cancer almost always develops from precancerous polyps (abnormal growths) in the colon or rectum. Screening tests can find precancerous polyps, so that they can be removed before they turn into cancer. Screening tests can also find colorectal cancer early, when treatment works best. Your doctor may suggest any one of the following screening tests:',
@@ -598,7 +598,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
                     // Skin Cancer Screening:
-                    [
+                    'skin_cancer' => [
                         'sub_title'           => 'Skin Cancer Screening:',
                         'qualitative_trigger' => 'Pt. has had skin cancer in the past (*check this trigger) and has not had a screening in the past OR has a family history of skin cancer in 2+ relatives',
                         'task_body'           => 'Regular skin checks by a doctor are important for people who have already had skin cancer. If you are checking your skin and find a worrisome change, you should report it to your doctor. In addition, your doctor may suggest:',
@@ -606,7 +606,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                     ],
 
                     // Osteoporosis
-                    [
+                    'osteoporosis' => [
                         'sub_title'           => 'Osteoporosis',
                         'qualitative_trigger' => 'Female older than 65 or Male older than 70 or fall risk is expressed (and bone mass test not done for two years consecutively in the past)',
                         'task_body'           => 'Bone is living tissue that is constantly being broken down and replaced. Osteoporosis occurs when the creation of new bone doesn\'t keep up with the removal of old bone. Your bones are prone to becoming weak and brittle as you grow older— so brittle that a fall or even mild stresses such as bending over or coughing has the potential to cause a dangerous fracture. Your provider may recommend screening for Osteoporosis by getting a:',
@@ -620,21 +620,21 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
                     // Glaucoma
-                    [
+                    'glaucoma' => [
                         'sub_title'           => 'Glaucoma',
                         'qualitative_trigger' => 'If patient has not had an eye test/Glaucoma screening in the past 2 years',
                         'task_body'           => 'Glaucoma is a group of diseases that damage the eye’s optic nerve and can result in vision loss and even blindness. About 3 million Americans have glaucoma. There are often no early symptoms, which is why 50% of people with glaucoma don’t know they have the disease. There is no cure (yet) for glaucoma, but if it’s caught early, you can preserve your vision and prevent vision loss. Your doctor may suggest:',
                         'recommendation_body' => ['Testing for glaucoma once every 1-2 years'],
                         'report_table_data'   => [
                             [
-                                'body'       => 'Home fall risk evaluation',
+                                'body'       => 'Glaucoma Testing',
                                 'code'       => 'G0117 / G0118',
                                 'time_frame' => 'Every 1-2 Years',
                             ],
                         ],
                     ],
                     // Diabetes
-                    [
+                    'diabetes' => [
                         'sub_title'           => 'Diabetes',
                         'qualitative_trigger' => 'Adults 20+ years old who are overweight or obese',
                         'task_body'           => 'Diabetes mellitus refers to a group of diseases that affect how your body uses blood sugar (glucose). Glucose is vital to your health because it\'s an important source of energy for the cells that make up your muscles and tissues. It\'s also your brain\'s main source of fuel. No matter what type of diabetes you have, it can lead to excess sugar in your blood. Too much sugar in your blood can lead to serious health problems. You may be at risk for diabetes due to your age and BMI. Your doctor may:',
@@ -656,7 +656,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         ],
                     ],
                     // Cholesterol/Dyslipidemia
-                    [
+                    'cholesterol' => [
                         'sub_title'           => 'Cholesterol/Dyslipidemia',
                         'qualitative_trigger' => 'If high blood pressure, Obesity or any other risk factor (eg Poor diet (High in saturated fats), lack of physical activity, smoking, diabetes etc..)',
                         'task_body'           => 'Cholesterol is a dense, fatty substance found in every cell of your body. High cholesterol is a condition that occurs when levels of cholesterol in your blood are elevated enough to cause health problems such as heart disease. You may be at risk of High Cholesterol. Your provider may encourage you to:',
@@ -678,7 +678,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                 'task_titles' => [],
                 'data'        => [
                     // Advanced Care Planning
-                    [// No Medical Power of Attorney = NMPA
+                    'nmpa' => [// No Medical Power of Attorney = NMPA
                         'sub_title'           => 'Advanced Care Planning/NMPA',
                         'qualitative_trigger' => 'No Medical Power of Attorney',
                         'task_body'           => 'A Medical Power of Attorney is a legal instrument (separate from a durable power of attorney) that allows you to select the person that you want to make healthcare decisions for you if and when you become unable to make them for yourself. The person you pick is your representative in that situation for purposes of healthcare decision-making. You could limit your representative to certain types of decisions, or allow your representative to make any healthcare decision that might come up. Talk to your doctor about taking steps to:',
@@ -691,7 +691,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                             ],
                         ],
                     ],
-                    [
+                    'nlwad' => [
                         'sub_title'           => 'Advanced Care Planning/NLWAD',
                         'qualitative_trigger' => ' No living will/advance directive',
                         'task_body'           => 'Living wills and other advance directives are written, legal instructions regarding your preferences for medical care if you are unable to make decisions for yourself. Advance directives guide choices for doctors and caregivers if you\'re terminally ill, seriously injured, in a coma, in the late stages of dementia or near the end of life. By planning ahead, you can get the medical care you want, avoid unnecessary suffering and relieve caregivers of decision-making burdens during moments of crisis or grief. You also help reduce confusion or disagreement about the choices you would want people to make on your behalf. Advance directives aren\'t just for older adults. Unexpected end-of-life situations can happen at any age, so it\'s important for all adults to prepare these documents. Talk to your doctor about taking steps to:',
