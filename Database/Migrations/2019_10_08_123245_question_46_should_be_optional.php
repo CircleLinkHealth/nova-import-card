@@ -21,11 +21,10 @@ class Question46ShouldBeOptional extends Migration
     public function up()
     {
         $table = 'questions';
-        DB::table($table)->updateOrInsert(
-            ['body' => 'Do you have any other questions or concerns that you would like to speak to your provider about at your next Annual Wellness Visit?'],
-            [
+        DB::table($table)
+            ->where('body', '=', 'Do you have any other questions or concerns that you would like to speak to your provider about at your next Annual Wellness Visit?')
+            ->update([
                 'optional' => true,
-            ]
-        );
+            ]);
     }
 }
