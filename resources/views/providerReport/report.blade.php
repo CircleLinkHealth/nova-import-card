@@ -36,7 +36,7 @@
                 <h4>Demographic Data</h4>
             </div>
             <div class="section-body">
-                The patient is a {{$reportData['demographic_data']['age']}} year
+                The patient reports that they are a {{$reportData['demographic_data']['age']}} year
                 old
                 @if($reportData['demographic_data']['ethnicity'] === 'No')
                     non
@@ -73,12 +73,16 @@
                 @else
                     The patient has indicated having the following conditions:
                     @foreach($reportData['medical_history'] as $condition)
-                        {{$condition['name']}}{{$condition['type']}}{{$loop->last ? '.' : ', '}}
+                        @if(!empty($condition['type']))
+                            {{$condition['name']}} ({{$condition['type']}}) {{$loop->last ? '.' : ', '}}
+                        @else
+                            {{$condition['name']}} {{$loop->last ? '.' : ', '}}
+                        @endif
                     @endforeach()
                     @if(! empty($reportData['medical_history_other']))
                         The patient has also reported
                         @foreach($reportData['medical_history_other'] as $otherCondition)
-                            {{$otherCondition}}{{$loop->last ? '.' : ', '}}
+                            {{$otherCondition}} {{$loop->last ? '.' : ', '}}
                         @endforeach
                     @endif
                 @endif
@@ -94,7 +98,7 @@
                 @if(! empty($reportData['medication_history']))
                     @foreach($reportData['medication_history'] as $medication)
                         {{$medication['dose']}}
-                        of {{$medication['drug']}} {{$medication['frequency']}}{{$loop->last ? '.' : ', '}}
+                        of {{$medication['drug']}} {{$medication['frequency']}} {{$loop->last ? '.' : ', '}}
                     @endforeach()
                 @else
                     None.
@@ -112,7 +116,7 @@
                 @if($reportData['family_medical_history'])
                     @foreach($reportData['family_medical_history'] as $condition)
                         {{$condition['name']}} in
-                        patient's {{$condition['family']}}{{$loop->last ? '.' : ', '}}
+                        patient's {{$condition['family']}} {{$loop->last ? '.' : ', '}}
                     @endforeach()
                 @else
                     Nothing.
@@ -129,14 +133,14 @@
                 <br>
                 The patient HAS received the
                 @foreach($reportData['immunizations_received'] as $immunization)
-                    {{$immunization}}{{$loop->last ? ' ' : ', '}}
+                    {{$immunization}} {{$loop->last ? ' ' : ', '}}
                 @endforeach
                 vaccinations.
                 <br>
                 <br>
                 The patient has not, or is unsure if they have received the
                 @foreach($reportData['immunizations_not_received'] as $immunization)
-                    {{$immunization}}{{$loop->last ? ' ' : ', '}}
+                    {{$immunization}} {{$loop->last ? ' ' : ', '}}
                 @endforeach
                 vaccinations.
             </div>
