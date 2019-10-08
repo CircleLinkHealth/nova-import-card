@@ -31,7 +31,7 @@ class ProviderReportController extends Controller
         ])
                        ->findOrFail($userId);
 
-        $report = $patient->providerReports->first();
+        $report = optional($patient->providerReports)->first();
 
         if (! $report){
             throw new \Exception("This patient does not have a Provider Report for {$year}.");

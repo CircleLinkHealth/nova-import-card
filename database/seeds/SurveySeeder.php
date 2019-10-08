@@ -1245,9 +1245,9 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'order'                 => 26,
-                'question_body'         => 'Have you had a flu shot this year or do you have serious plans to get one this year?',
-                'question_type'         => QuestionType::RADIO,
+                'order' => 26,
+                'question_body' => 'Have you had a flu shot this year or do you have serious plans to get one this year?',
+                'question_type' => QuestionType::RADIO,
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'Yes',
