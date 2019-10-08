@@ -6,7 +6,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class ChangeQuestion26Text extends Migration
+class Question46ShouldBeOptional extends Migration
 {
     /**
      * Reverse the migrations.
@@ -21,8 +21,10 @@ class ChangeQuestion26Text extends Migration
     public function up()
     {
         $table = 'questions';
-
-        DB::table($table)->where('body', '=', 'Have you had a flu shot this year or are you planning to receive one this year?')
-            ->update(['body' => 'Have you had a flu shot this year or do you have serious plans to get one this year?']);
+        DB::table($table)
+            ->where('body', '=', 'Do you have any other questions or concerns that you would like to speak to your provider about at your next Annual Wellness Visit?')
+            ->update([
+                'optional' => true,
+            ]);
     }
 }
