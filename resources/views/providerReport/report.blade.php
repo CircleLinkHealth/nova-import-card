@@ -76,7 +76,7 @@
                         @if(!empty($condition['type']))
                             {{$condition['name']}} ({{$condition['type']}}) {{$loop->last ? '.' : ', '}}
                         @else
-                            {{$condition['name']}} {{$condition['type']}} {{$loop->last ? '.' : ', '}}
+                            {{$condition['name']}} {{$loop->last ? '.' : ', '}}
                         @endif
                     @endforeach()
                     @if(! empty($reportData['medical_history_other']))
