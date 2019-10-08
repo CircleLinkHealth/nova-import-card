@@ -671,7 +671,6 @@ If you cannot do this because of chronic conditions, be as physically active as 
                     ],
                 ],
             ],
-
             // Other misc:
             [
                 'title'       => 'Other misc:',
