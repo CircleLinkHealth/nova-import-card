@@ -31,7 +31,7 @@ class PersonalizedPreventionPlanController extends Controller
         ])
                        ->findOrFail($userId);
 
-        $patientPppData = $patient->personalizedPreventionPlan->first();
+        $patientPppData = optional($patient->personalizedPreventionPlan)->first();
 
         if (! $patientPppData){
             throw new \Exception("This patient does not have a PPP for {$year}.");
