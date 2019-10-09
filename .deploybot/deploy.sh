@@ -10,6 +10,16 @@ ROLLBACK=$7
 
 set -e
 
+if [ ! -d "vendor" ]; then
+  composer install --no-dev --classmap-authoritative --prefer-dist --no-scripts
+
+  # Exit if composer failed
+  if [ $? -ne 0 ]; then
+    echo "Composer failed.";
+    exit 1;
+  fi
+fi
+
 # Fetch sensitive keys from secure S3
 php $RELEASE/.deploybot/FetchKeysFromS3.php
 
@@ -23,16 +33,6 @@ if [ -d "node_modules" ]; then
 fi
 
 npm run prod
-
-if [ ! -d "vendor" ]; then
-  composer install --no-dev --classmap-authoritative --prefer-dist --no-scripts
-
-  # Exit if composer failed
-  if [ $? -ne 0 ]; then
-    echo "Composer failed.";
-    exit 1;
-  fi
-fi
 
 php artisan tickets:store $COMMIT $ENV_NAME $ROLLBACK $USER_NAME $PREVIOUS_COMMIT
 
