@@ -23,14 +23,7 @@ use Illuminate\Support\Facades\Route;
 Route::get(
     '/import-staff-to-practice',
     function (ImportPracticeStaffCsvNovaRequest $request) {
-        $resource = $request->newResource();
-        
-        //get the practice from the textbox
-        //getting the first one for demo purposes
-        $request->setPractice(Practice::first());
-        
-        //redirect to controller action somehow
-        
+        //redirect to controller action somehow. I think this will do it
         return redirect()->action('Sparclex\NovaImportCard\ImportController@handle', ['request' => $request]);
     }
 );
