@@ -10,32 +10,6 @@ ROLLBACK=$7
 
 set -e
 
-if [ ! -d "vendor" ]; then
-  composer install --no-dev --classmap-authoritative --prefer-dist --no-scripts
-
-  # Exit if composer failed
-  if [ $? -ne 0 ]; then
-    echo "Composer failed.";
-    exit 1;
-  fi
-fi
-
-# Fetch sensitive keys from secure S3
-php $RELEASE/.deploybot/FetchKeysFromS3.php
-
-if [ ! -d "node_modules" ]; then
-  npm install
-fi
-
-if [ -d "node_modules" ]; then
-    #install bower dependencies
-    ./node_modules/bower/bin/bower -V install --allow-root
-fi
-
-npm run prod
-
-php artisan tickets:store $COMMIT $ENV_NAME $ROLLBACK $USER_NAME $PREVIOUS_COMMIT
-
 # Create a shared storage directory and symlink it to the project root
 if [ ! -d "$SHARED/storage" ]; then
   mkdir -p $SHARED/storage
@@ -64,6 +38,33 @@ fi
 # laravel needs these to run, and git does not clone empty folders
 mkdir -p $RELEASE/storage/framework/{framework,sessions,views,cache}
 
+# install composer dependencies
+if [ ! -d "vendor" ]; then
+  composer install --no-dev --classmap-authoritative --prefer-dist --no-scripts
+
+  # Exit if composer failed
+  if [ $? -ne 0 ]; then
+    echo "Composer failed.";
+    exit 1;
+  fi
+fi
+
+# Fetch sensitive keys from secure S3
+php $RELEASE/.deploybot/FetchKeysFromS3.php
+
+# install npm dependencies
+if [ ! -d "node_modules" ]; then
+  npm install
+fi
+
+# install bower dependencies
+if [ -d "node_modules" ]; then
+    #install bower dependencies
+    ./node_modules/bower/bin/bower -V install --allow-root
+fi
+
+npm run prod
+
 composer dump-autoload --no-dev --classmap-authoritative --no-scripts
 
 # Run migrations
@@ -87,3 +88,5 @@ php artisan deploy:post
 # Clear response cache
 # CAUTION: This command will log users out
 # php artisan user-cache:clear
+
+php artisan tickets:store $COMMIT $ENV_NAME $ROLLBACK $USER_NAME $PREVIOUS_COMMIT
