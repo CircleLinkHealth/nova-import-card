@@ -29,7 +29,6 @@ class StoreJiraTicketsDeployed extends Command
                                            {envName : The name of the environment we just deployed to.}
                                            {rollback    : Either 1 or 0 if deployment is a rollback or not.}
                                            {userName    : Name of the user who triggered the deployment.}
-                                           {comment    : Deployment comment or last commit message for automatic deployments.}
                                            {previousRevision?    : The revision deployed before the one just deployed.}
     ';
 
@@ -62,7 +61,6 @@ class StoreJiraTicketsDeployed extends Command
         $this->info('envName: '.$envName);
         $this->info('rollback: '.$isRollback);
         $this->info('userName: '.$user);
-        $this->info('comment: '.$comment);
 
         if ( ! file_exists(base_path('.git'))) {
             $initGit = $this->runCommand(
