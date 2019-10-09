@@ -54,7 +54,6 @@ class StoreJiraTicketsDeployed extends Command
             ? true
             : false;
         $user    = $this->argument('userName');
-        $comment = $this->argument('comment');
 
         $this->info('previousRevision: '.$lastDeployedRevision);
         $this->info('currentRevision: '.$newlyDeployedRevision);
