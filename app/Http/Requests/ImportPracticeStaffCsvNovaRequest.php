@@ -12,15 +12,36 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 class ImportPracticeStaffCsvNovaRequest extends NovaRequest
 {
     private $practice;
-
+    
+    public function authorize()
+    {
+        //write logic to ensure user has access to do this
+        return true;
+    }
+    
     /**
      * @return mixed
      */
-    public function getPractice()
+    private function getPractice() : ?Practice
     {
-        return $this->practice;
+        if ($this->practice) {
+            return $this->practice;
+        }
+        
+        return $this->setPractice(Practice::findOrFail($this->input('practice_id')));
     }
-
+    
+    /**
+     * @return array
+     */
+    public function rules()
+    {
+        return array_merge(parent::rules(), [
+            //add more validation
+            'practice_id' => 'required'
+        ]);
+    }
+    
     public function newResource()
     {
         $resource = parent::newResource();
@@ -37,7 +58,7 @@ class ImportPracticeStaffCsvNovaRequest extends NovaRequest
     /**
      * @param mixed $practice
      */
-    public function setPractice(Practice $practice): ?Practice
+    private function setPractice(Practice $practice): ?Practice
     {
         //we only want to set this value once in the lifecycle of the request
         if ( ! $this->practice) {
