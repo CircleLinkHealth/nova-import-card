@@ -52,6 +52,14 @@ class OnSuccessfulDeployment extends Command
             ? true
             : false;
         $user    = $this->argument('userName');
+        
+        \Artisan::call(StoreJiraTicketsDeployed::class, [
+            'currentRevision' => $newlyDeployedRevision,
+            'envName' => $envName,
+            'rollback' => $isRollback,
+            'userName' => $user,
+            'previousRevision' => $lastDeployedRevision
+        ]);
 
         $this->info('previousRevision: '.$lastDeployedRevision);
         $this->info('currentRevision: '.$newlyDeployedRevision);

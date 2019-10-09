@@ -88,5 +88,3 @@ php artisan deploy:post
 # Clear response cache
 # CAUTION: This command will log users out
 # php artisan user-cache:clear
-
-php artisan tickets:store $COMMIT $ENV_NAME $ROLLBACK $USER_NAME $PREVIOUS_COMMIT
