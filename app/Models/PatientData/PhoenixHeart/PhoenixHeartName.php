@@ -32,7 +32,6 @@ namespace App\Models\PatientData\PhoenixHeart;
  * @property int         $processed
  * @property int|null    $eligible
  * @property string|null $created_at
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartName whereAddress1($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartName whereAddress2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartName whereCity($value)
@@ -57,15 +56,12 @@ namespace App\Models\PatientData\PhoenixHeart;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartName whereState($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartName whereZip($value)
  * @mixin \Eloquent
- *
  * @property int                                                                            $id
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartName newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartName newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartName query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\PhoenixHeart\PhoenixHeartName whereId($value)
- *
  * @property int|null $revision_history_count
  */
 class PhoenixHeartName extends \CircleLinkHealth\Core\Entities\BaseModel
