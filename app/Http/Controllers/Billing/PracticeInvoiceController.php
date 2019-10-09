@@ -63,22 +63,26 @@ class PracticeInvoiceController extends Controller
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         }
+    
+        $savedSummaries = collect();
 
-        $summaries = $this->getCurrentMonthSummariesQuery($practice_id, $date)
-            ->get();
-
-        foreach ($summaries as $summary) {
-            $summary->actor_id = $user->id;
-            $summary->needs_qa = false;
-            if ($summary->patient) {
-                if ($summary->patient->patientInfo) {
-                    $summary->closed_ccm_status = $summary->patient->patientInfo->ccm_status;
+        $this->getCurrentMonthSummariesQuery($practice_id, $date)
+            ->chunkById(100, function ($summaries) use ($user, &$savedSummaries) {
+                foreach ($summaries as $summary) {
+                    $summary->actor_id = $user->id;
+                    $summary->needs_qa = false;
+                    if ($summary->patient) {
+                        if ($summary->patient->patientInfo) {
+                            $summary->closed_ccm_status = $summary->patient->patientInfo->ccm_status;
+                        }
+                    }
+                    $summary->save();
+    
+                    $savedSummaries->push($summary);
                 }
-            }
-            $summary->save();
-        }
+            });
 
-        return response()->json($summaries);
+        return response()->json($savedSummaries);
     }
 
     public function counts(Request $request)
