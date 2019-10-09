@@ -5,6 +5,7 @@ const options = {
     key: process.env.MIX_PUSHER_KEY,
     cluster: process.env.MIX_PUSHER_CLUSTER,
     encrypted: true,
+    forceTLS: ! ['local', 'testing'].includes(process.env.MIX_APP_ENV)
 };
 
 let keyExists = options.key !== undefined && options.key !== null
