@@ -30,7 +30,7 @@ composer dump-autoload --no-dev --classmap-authoritative --no-scripts
 
 php artisan tickets:store $COMMIT $ENV_NAME $ROLLBACK $USER_NAME $COMMENT $PREVIOUS_COMMIT
 
-rm -rf node_modules/ scripts/ tests/ resources/assets/ .git .circleci .deployment-state app/Console/DevCommands/
+rm -rf node_modules/ scripts/ tests/ .git .circleci .deployment-state app/Console/DevCommands/
 
 mkdir compress
 
