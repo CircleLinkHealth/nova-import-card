@@ -11,7 +11,7 @@ ROLLBACK=$7
 set -e
 
 # Fetch sensitive keys from secure S3
-php ./FetchKeysFromS3.php
+php ./.deploybot/FetchKeysFromS3.php
 
 if [ ! -d "node_modules" ]; then
   npm install
