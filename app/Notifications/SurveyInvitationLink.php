@@ -32,7 +32,7 @@ class SurveyInvitationLink extends Notification
     const EMAIL_LINE_1_NO_PHYSICIAN = "{practiceName} practice requests you complete this health survey as soon as you can.";
     const EMAIL_LINE_2 = "Please call {clhNumber} if you have any questions.";
     const EMAIL_LINE_2_VITALS = "Please talk to your intake team if you have any questions.";
-    const SALUTATION = "REGARDS";
+    const SALUTATION = "Regards";
     const SALUTATION_TEAM = "AWV";
     const SALUTATION_VITALS = "Thanks,";
     const SALUTATION_TEAM_VITALS = "CircleLink Team";
