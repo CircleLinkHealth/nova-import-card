@@ -6,8 +6,7 @@ COMMIT=$3
 ENV_NAME=$4
 PREVIOUS_COMMIT=$5
 USER_NAME=$6
-COMMENT=$7
-ROLLBACK=$8
+ROLLBACK=$7
 
 set -e
 
@@ -35,7 +34,7 @@ if [ ! -d "vendor" ]; then
   fi
 fi
 
-php artisan tickets:store $COMMIT $ENV_NAME $ROLLBACK $USER_NAME $COMMENT $PREVIOUS_COMMIT
+php artisan tickets:store $COMMIT $ENV_NAME $ROLLBACK $USER_NAME $PREVIOUS_COMMIT
 
 # Create a shared storage directory and symlink it to the project root
 if [ ! -d "$SHARED/storage" ]; then
