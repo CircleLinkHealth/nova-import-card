@@ -22,13 +22,15 @@ class ImportPracticeStaffCsvNovaRequest extends NovaRequest
     /**
      * @return mixed
      */
-    private function getPractice() : ?Practice
+    private function getPracticeFromRequest() : ?Practice
     {
         if ($this->practice) {
             return $this->practice;
         }
+    
+        $this->practice = Practice::findOrFail($this->input('practice_id'));
         
-        return $this->setPractice(Practice::findOrFail($this->input('practice_id')));
+        return $this->practice;
     }
     
     /**
@@ -48,25 +50,10 @@ class ImportPracticeStaffCsvNovaRequest extends NovaRequest
 
         //this way we "decorate" existing behavior and just adding ours
         //here we could stop if practice was not set for example
-        if ($this->getPractice() && is_object($resource)) {
-            $resource->practice = $this->getPractice();
+        if ($this->getPracticeFromRequest() && is_object($resource)) {
+            $resource->practice = $this->getPracticeFromRequest();
         }
 
         return $resource;
-    }
-
-    /**
-     * @param mixed $practice
-     */
-    private function setPractice(Practice $practice): ?Practice
-    {
-        //we only want to set this value once in the lifecycle of the request
-        if ( ! $this->practice) {
-            $this->practice = $practice;
-
-            return $this->practice;
-        }
-
-        return null;
     }
 }
