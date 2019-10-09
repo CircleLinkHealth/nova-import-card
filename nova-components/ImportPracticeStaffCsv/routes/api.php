@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 //we cache routes on prod. I don't know if this affects nova
-Route::get(
+Route::post(
     '/import-staff-to-practice',
     function (ImportPracticeStaffCsvNovaRequest $request) {
         //redirect to controller action somehow. I think this will do it

@@ -40,7 +40,8 @@ class ImportPracticeStaffCsvNovaRequest extends NovaRequest
     {
         return array_merge(parent::rules(), [
             //add more validation
-            'practice_id' => 'required'
+            'practice_id' => 'required',
+            'file' => 'required|file',
         ]);
     }
     
