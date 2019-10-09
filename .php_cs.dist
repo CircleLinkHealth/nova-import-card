@@ -20,7 +20,7 @@ $finders = PhpCsFixer\Finder::create()
             __DIR__.'/Modules',
             __DIR__.'/CLHPackages',
         ]
-                            );
+    );
 
 $config = PhpCsFixer\Config::create()
     ->setUsingCache(true)
@@ -53,8 +53,6 @@ $config = PhpCsFixer\Config::create()
             'method_chaining_indentation'       => true,
             'multiline_comment_opening_closing' => true,
             'no_binary_string'                  => true,
-            'no_empty_comment'                  => true,
-            'no_empty_phpdoc'                   => true,
             'no_extra_blank_lines'              => [
                 'tokens' => [
                     'break',
@@ -108,7 +106,7 @@ $config = PhpCsFixer\Config::create()
             'single_line_comment_style'   => true,
             'yoda_style'                  => true,
         ]
-                           )
+    )
     ->setFinder($finders);
 
 return $config;

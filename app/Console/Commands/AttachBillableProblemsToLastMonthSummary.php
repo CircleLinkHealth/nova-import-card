@@ -31,7 +31,8 @@ class AttachBillableProblemsToLastMonthSummary extends Command
     protected $signature = 'summaries:attach-problems-to-last-month
                                 {date? : the month we are calculating for in YYYY-MM-DD}
                                 {practiceIds? : comma separated. leave empty to recalculate for all}
-                                {--reset : unlock the month and delete actor id, and problems}
+                                {--reset-actor : delete actor id}
+                                {--from-scratch : unlock the month and delete actor id, and problems}
                                 ';
 
     /**
@@ -77,8 +78,13 @@ class AttachBillableProblemsToLastMonthSummary extends Command
                                     foreach ($users as $user) {
                                         $pms = $user->patientSummaries->first();
 
-                                        if ((bool) $this->option('reset')) {
+                                        if ((bool) $this->option('from-scratch')) {
                                             $pms->reset();
+                                            $pms->save();
+                                        }
+    
+                                        if ((bool) $this->option('reset-actor')) {
+                                            $pms->actor_id = null;
                                             $pms->save();
                                         }
 
