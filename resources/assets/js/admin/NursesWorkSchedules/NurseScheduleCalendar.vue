@@ -669,6 +669,11 @@
         margin-left: 10%;
     }
 
+    .search-filter{
+        width: 50%;
+        margin-left: 23%;
+    }
+
     #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-scroller.fc-time-grid-container {
         visibility: hidden !important;
         display: none !important;
