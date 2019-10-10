@@ -14,6 +14,7 @@ trait ProtectsPhi
     public static function bootProtectsPhi(){
         static::retrieved(function ($model){
             //this protects phi from getting the model attributes from ->toArray()
+            //we could also have overwritten method attributesToArray()
             $model->hidden = array_merge($model->phi, $model->hidden);
         });
     }
@@ -45,8 +46,7 @@ trait ProtectsPhi
     }
 
     private function authUserShouldSeePhi(){
-        //auth user can see phi
-        return false;
+        return auth()->user()->hasPermission('phi.view');
     }
 
 }
