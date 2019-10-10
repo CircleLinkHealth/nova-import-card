@@ -35,7 +35,8 @@
                            @event-selected="handleEventCLick"
                            @event-drop="handleEventDrop">
             </full-calendar>
-            <loader v-show="loader"></loader>
+<!--LOADER-->
+            <calendar-loader v-show="loader" ></calendar-loader>
             <!-- Modal --- sorry couldn't make a vue component act as modal here so i dumped this here-->
             <div class="modal fade" id="addWorkEvent" tabindex="-1" role="dialog"
                  aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -134,7 +135,7 @@
     import 'fullcalendar/dist/fullcalendar.css';
     import VueSelect from 'vue-select';
     import {addNotification} from '../../../../../resources/assets/js/store/actions.js';
-    import LoaderComponent from '../../../../../resources/assets/js/components/loader.vue';
+    import CalendarLoader from './CalendarLoader';
 
     const viewDefault = 'agendaWeek';
     const defaultEventType = 'workDay';
@@ -155,7 +156,7 @@
             'fullCalendar': FullCalendar,
             'vue-select': VueSelect,
             'addNotification': addNotification,
-            'loader': LoaderComponent,
+             CalendarLoader,
         },
 
         data() {
@@ -237,6 +238,7 @@
             },
 
             deleteHoliday(event, isAddedNow) {
+                this.loader = true;
                 const holidayId = event.holidayId;
                 axios.get(`/care-center/work-schedule/holidays/destroy/${holidayId}`).then((response => {
                     $("#addWorkEvent").modal('toggle');
@@ -252,7 +254,7 @@
                         const index = this.holidays.findIndex(x => x.data.holidayId === holidayId);
                         this.holidays.splice(index, 1);
                     }
-
+                    this.loader = false;
                     //Show notification
                     this.addNotification({
                         title: "Success!",
@@ -424,7 +426,6 @@
             },
 
             handleDateCLick(date, jsEvent, view) {
-                this.loader = true;
                 const clickedDate = date;
 
                 const startOfThisWeek = Date.parse(this.startOfThisWeek);
@@ -434,7 +435,6 @@
                 this.workEventDate = clickedDate.format();
 
                 if (clickedDate >= startOfThisWeek && clickedDate <= endOfThisWeek) {
-                    this.loader = true;
                     $("#addWorkEvent").modal('toggle');//open  modal
                     const clickedDayOfWeek = new Date(this.workEventDate).getDay();
                     const weekMapDay = this.weekMap.filter(q => q.dayOfWeek === clickedDayOfWeek);
