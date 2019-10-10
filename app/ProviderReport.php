@@ -45,7 +45,7 @@ class ProviderReport extends BaseModel
         'sexual_activity'           => 'array',
         'functional_capacity'       => 'array',
         'current_providers'         => 'array',
-        'exercise_activity_levels'  => 'array',
+        //'exercise_activity_levels'  => 'array',
         'advanced_care_planning'    => 'array',
         'specific_patient_requests' => 'array',
     ];
