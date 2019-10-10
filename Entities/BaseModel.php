@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Core\Entities;
 
+use CircleLinkHealth\Core\Traits\ProtectsPhi;
 use Illuminate\Database\Eloquent\Model;
 use Venturecraft\Revisionable\RevisionableTrait;
 
@@ -22,6 +23,7 @@ use Venturecraft\Revisionable\RevisionableTrait;
 class BaseModel extends Model
 {
     use RevisionableTrait;
+    use ProtectsPhi;
 
     /**
      * Add any attributes that are PHI here.
