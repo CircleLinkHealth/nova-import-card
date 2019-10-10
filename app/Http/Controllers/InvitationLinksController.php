@@ -175,7 +175,7 @@ class InvitationLinksController extends Controller
             : null, $channel === 'sms'
             ? $channelValue
             : null))
-            ->notify(new SurveyInvitationLink($url, $surveyName, $channel));
+            ->notify(new SurveyInvitationLink($url, $surveyName, $channel, ! $targetNotifiable->is($user) ? $user : null));
 
         return true;
     }
