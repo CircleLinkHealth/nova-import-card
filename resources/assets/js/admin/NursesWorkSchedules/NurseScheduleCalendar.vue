@@ -130,10 +130,10 @@
 </template>
 
 <script>
-    import {mapActions} from 'vuex';
     import {FullCalendar} from 'vue-full-calendar';
     import 'fullcalendar/dist/fullcalendar.css';
     import VueSelect from 'vue-select';
+    import {mapActions} from 'vuex';
     import {addNotification} from '../../../../../resources/assets/js/store/actions.js';
     import CalendarLoader from './CalendarLoader';
 
@@ -325,6 +325,7 @@
                 const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
 
                 if (nurseId === null || nurseId === undefined) {
+                    this.loader = false;
                     this.addNotification({
                         title: "Warning!",
                         text: "Choose an RN field is required",
@@ -332,12 +333,13 @@
                         timeout: true
                     });
 
-                    alert("Choose an RN field is required");
+                    // alert("Choose an RN field is required");
                     return;
 
                 }
 
                 if (this.workRangeStarts === '') {
+                    this.loader = false;
                     this.addNotification({
                         title: "Warning!",
                         text: "Work start time is required",
@@ -349,6 +351,7 @@
                     return;
                 }
                 if (this.workRangeEnds === '') {
+                    this.loader = false;
                     this.addNotification({
                         title: "Warning!",
                         text: "Work end time is required",
@@ -360,6 +363,7 @@
                     return;
                 }
                 if (this.hoursToWork === '') {
+                    this.loader = false;
                     this.addNotification({
                         title: "Warning!",
                         text: "Hours to work for this day is required",
