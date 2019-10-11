@@ -402,15 +402,15 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'user.care-team.edit',
     ])->middleware(['permission:carePerson.read', 'cacheResponse']);
 
-    Route::get('practice.locations', [
+    Route::get('practice/{practice}/locations', [
         'uses' => 'API\PracticeLocationsController@index',
         'as'   => 'practice.locations.index',
     ])->middleware(['permission:location.read', 'cacheResponse']);
-    Route::delete('practice.locations', [
+    Route::delete('practice/{practice}/locations/{location}', [
         'uses' => 'API\PracticeLocationsController@destroy',
         'as'   => 'practice.locations.destroy',
     ])->middleware('permission:location.delete');
-    Route::get('practice.locations', [
+    Route::patch('practice/{practice}/locations/{location}', [
         'uses' => 'API\PracticeLocationsController@update',
         'as'   => 'practice.locations.update',
     ])->middleware('permission:location.create,location.update');
@@ -419,6 +419,11 @@ Route::group(['middleware' => 'auth'], function () {
         'practice.users',
         'API\PracticeStaffController'
     )->middleware('permission:practiceStaff.create,practiceStaff.read,practiceStaff.update,practiceStaff.delete');
+
+    Route::resource(
+        'practice.locations',
+        'API\PracticeLocationsController'
+    )->middleware('permission:location.create,location.read,location.update,location.delete');
 
     Route::get('provider/search', [
         'uses' => 'API\CareTeamController@searchProviders',
@@ -2250,3 +2255,23 @@ Route::get(
         'as'   => 'process.eligibility.local.zip',
     ]
 )->middleware(['auth', 'role:administrator']);
+
+Route::get('notifications/{id}', [
+    'uses' => 'NotificationController@showPusherNotification',
+    'as'   => 'notifications.show',
+])->middleware('permission:provider.read,note.read');
+
+Route::get('notifications', [
+    'uses' => 'NotificationController@index',
+    'as'   => 'notifications.index',
+])->middleware('permission:provider.read,note.read');
+
+Route::post('/redirect-mark-read/{receiverId}/{attachmentId}', [
+    'uses' => 'NotificationController@markNotificationAsRead',
+    'as'   => 'notification.redirect',
+]);
+
+Route::get('see-all-notifications', [
+    'uses' => 'NotificationController@seeAllNotifications',
+    'as'   => 'notifications.seeAll',
+])->middleware('permission:provider.read,note.read');

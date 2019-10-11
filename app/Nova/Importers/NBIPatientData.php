@@ -97,7 +97,7 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
                     'mrn' => $row['mrn'],
                 ],
                 $args
-        );
+            );
         }
     }
 }

@@ -209,7 +209,7 @@ class EligibilityChecker
             ['insurance' => 'No insurance plans found.'],
             EligibilityJob::INELIGIBLE,
             'insurance'
-                );
+        );
 
         return false;
     }
@@ -240,7 +240,7 @@ class EligibilityChecker
                 3,
                 ['last_encounter' => 'Last encounter field not found, or is null.'],
                 EligibilityJob::INELIGIBLE
-                );
+            );
 
             return false;
         }
@@ -261,7 +261,7 @@ class EligibilityChecker
                     'last_encounter' => implode(
                         ',',
                         $validator->messages()->all()
-                                        )." value: `${lastEncounter}`",
+                    )." value: `${lastEncounter}`",
                 ],
                 EligibilityJob::INELIGIBLE,
                 'last_encounter'
@@ -304,12 +304,12 @@ class EligibilityChecker
                             $problem->searchKeywords = collect(
                                 explode(',', $problem->contains),
                                 [$problem->name]
-                                         )
+                            )
                                 ->transform(
                                     function ($keyword) {
                                         return trim(strtolower($keyword));
                                     }
-                                             )
+                                )
                                 ->filter()
                                 ->unique()
                                 ->values()
@@ -317,7 +317,7 @@ class EligibilityChecker
 
                             return $problem;
                         }
-                                 );
+                    );
             }
         );
 
@@ -776,9 +776,9 @@ class EligibilityChecker
                             function ($q) use ($args) {
                                 $q->withTrashed()->whereMrnNumber($args['mrn']);
                             }
-                                               );
+                        );
                 }
-                                     )->orWhere(
+            )->orWhere(
                                          function ($u) use ($args) {
                                              $u->where(
                                                  [
@@ -798,14 +798,14 @@ class EligibilityChecker
                                                          $args['last_name'],
                                                      ],
                                                  ]
-                    )->whereHas(
+                                             )->whereHas(
                         'patientInfo',
                         function ($q) use ($args) {
                             $q->withTrashed()->whereBirthDate($args['dob']);
                         }
                     );
                                          }
-            )->first();
+                                     )->first();
 
         $duplicateMySqlError = false;
         $errorMsg            = null;
@@ -817,7 +817,7 @@ class EligibilityChecker
                     'duplicate' => 'This patient already has a careplan. '.route(
                         'patient.careplan.print',
                         [$enrolledPatientExists->id]
-                        ),
+                    ),
                 ],
                 EligibilityJob::ENROLLED
             );
