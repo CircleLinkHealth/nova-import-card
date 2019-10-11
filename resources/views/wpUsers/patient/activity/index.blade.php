@@ -25,12 +25,14 @@
                 ['patientId' => $patient]),
                 'method' => 'GET',
                 'class' => 'form-horizontal',
-                'style' => 'margin-right: 10px'
+                'style' => 'margin-right: 10px',
+                'id' => 'patient-activities-date-form',
                 )) !!}
-                <div class="col-sm-3 col-xs-3" style="top: 20px">
-                    <a href="{{route('patient.activity.downloadAuditReport', ['patientId' => $patient])}}" class="btn btn-primary">Audit Report</a>
 
-                    @if ($data && $month_selected_text === \Carbon\Carbon::now()->format('F'))
+                <div class="col-sm-3 col-xs-3" style="top: 20px">
+                    <input type="submit" value="Audit Report" name="download-audit-report" id="download-audit-report" class="btn btn-primary">
+
+                @if ($data && $month_selected_text === \Carbon\Carbon::now()->format('F'))
                         <button id="refresh-activity" type="button" class="btn btn-primary">
                             Reload Table
                         </button>
@@ -63,7 +65,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <button type="submit" value="find" name="find" id="find" class="btn btn-primary">Go</button>
+                        <input form="patient-activities-date-form" type="submit" value="Go" name="find" id="find" class="btn btn-primary">
 
                         <a id="downloadAudit" href="" hidden></a>
 
@@ -355,31 +357,6 @@
                     $('#refresh-activity').click();
                 }, 5000);
             @endif
-
-            $("#audit").on('click', function () {
-
-                var url = '{!! route('patient.activity.providerUIIndex', ['patientId' => $patient]) !!}';
-
-                $.ajax({
-                    type: "GET",
-                    url: url,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: {
-                        selectMonth: $('#selectMonth').val(),
-                        selectYear: $('#selectYear').val()
-                    },
-                    success: function (data) {
-                        console.log(data);
-                        var a = document.getElementById('downloadAudit');
-                        a.href = "{{url('/download/')}}" + data;
-                        a.click();
-                    }
-                });
-
-                return false;
-            });
         </script>
     @endpush
 @stop

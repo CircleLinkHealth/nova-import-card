@@ -24,7 +24,6 @@ namespace App\Models\PatientData\Rappa;
  * @property string|null $home_phone
  * @property string|null $primary_phone
  * @property string|null $preferred_contact_method
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaInsAllergy whereAddress1($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaInsAllergy whereAddress2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaInsAllergy whereAllergy($value)
@@ -41,13 +40,10 @@ namespace App\Models\PatientData\Rappa;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaInsAllergy whereSecondaryInsurance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaInsAllergy whereZip($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaInsAllergy newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaInsAllergy newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaInsAllergy query()
- *
  * @property int|null $revision_history_count
  */
 class RappaInsAllergy extends \CircleLinkHealth\Core\Entities\BaseModel

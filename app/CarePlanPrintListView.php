@@ -28,7 +28,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $approver_full_name
  * @property string|null $provider_full_name
  * @property int|null    $patient_ccm_time
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView query()
