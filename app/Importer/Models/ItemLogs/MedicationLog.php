@@ -42,7 +42,6 @@ use App\Traits\Relationships\BelongsToVendor;
  * @property \App\Models\MedicalRecords\Ccda                     $ccda
  * @property \App\Importer\Models\ImportedItems\MedicationImport $importedItem
  * @property \App\Models\CCD\CcdVendor|null                      $vendor
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\MedicationLog whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\MedicationLog whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\MedicationLog whereEdited($value)
@@ -69,13 +68,10 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\MedicationLog whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\MedicationLog whereVendorId($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\MedicationLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\MedicationLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\MedicationLog query()
- *
  * @property int|null $revision_history_count
  */
 class MedicationLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog

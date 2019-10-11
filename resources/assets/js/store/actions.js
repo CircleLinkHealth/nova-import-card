@@ -96,7 +96,7 @@ export const updatePracticeLocation = ({commit}, location) => {
         return
     }
 
-    practiceLocationsApi.update(location => {
+    return practiceLocationsApi.update(location => {
         commit('UPDATE_PRACTICE_LOCATION', location);
     }, errors => {
         commit('SET_ERRORS', errors)

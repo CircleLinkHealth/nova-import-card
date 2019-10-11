@@ -1,13 +1,14 @@
 #!/bin/bash
 
-set -e
-
 SHARED=$1
 RELEASE=$2
-REVISION=$3
-BRANCH=$4
-RELEASE_ID=$5
-PREVIOUS_REVISION=$6
+COMMIT=$3
+ENV_NAME=$4
+PREVIOUS_COMMIT=$5
+USER_NAME=$6
+ROLLBACK=$7
+
+set -e
 
 # Create a shared storage directory and symlink it to the project root
 if [ ! -d "$SHARED/storage" ]; then
@@ -37,8 +38,32 @@ fi
 # laravel needs these to run, and git does not clone empty folders
 mkdir -p $RELEASE/storage/framework/{framework,sessions,views,cache}
 
+# install composer dependencies
+if [ ! -d "vendor" ]; then
+  composer install --no-dev --classmap-authoritative --prefer-dist --no-scripts
+
+  # Exit if composer failed
+  if [ $? -ne 0 ]; then
+    echo "Composer failed.";
+    exit 1;
+  fi
+fi
+
 # Fetch sensitive keys from secure S3
-php .deploybot/FetchKeysFromS3.php
+php $RELEASE/.deploybot/FetchKeysFromS3.php
+
+# install npm dependencies
+if [ ! -d "node_modules" ]; then
+  npm install
+fi
+
+# install bower dependencies
+if [ -d "node_modules" ]; then
+    #install bower dependencies
+    ./node_modules/bower/bin/bower -V install --allow-root
+fi
+
+npm run prod
 
 composer dump-autoload --no-dev --classmap-authoritative --no-scripts
 

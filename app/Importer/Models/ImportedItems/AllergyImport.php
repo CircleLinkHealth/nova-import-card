@@ -23,7 +23,6 @@ use App\Importer\Models\ItemLogs\AllergyLog;
  * @property \Carbon\Carbon                           $created_at
  * @property \Carbon\Carbon                           $updated_at
  * @property \App\Importer\Models\ItemLogs\AllergyLog $ccdLog
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport whereAllergenName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport whereCcdAllergyLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport whereCreatedAt($value)
@@ -36,13 +35,10 @@ use App\Importer\Models\ItemLogs\AllergyLog;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport whereVendorId($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport query()
- *
  * @property int|null $revision_history_count
  */
 class AllergyImport extends \CircleLinkHealth\Core\Entities\BaseModel
