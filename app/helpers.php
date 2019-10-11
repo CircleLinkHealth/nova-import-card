@@ -1495,16 +1495,17 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
     }
 }
 
-if ( ! function_exists('convertDayOfWeekToCurrentsWeekDate')) {
+if ( ! function_exists('convertDayOfWeekToWeekDate')) {
     /**
-     * add comment here.
+     * Date parameter is the date the user saved the event. Eg. user XXX created a post to db on {date}
+     * to work on weekDay {2}.
+     *
+     * @param mixed $date
      *
      * @return array
      */
-    function convertDayOfWeekToCurrentsWeekDate()
+    function convertDayOfWeekToWeekDate($date)
     {
-        $date = Carbon::parse(now())->toDateTimeString();
-
         return [
             1 => Carbon::parse($date)->startOfWeek()->toDateString(),
             2 => Carbon::parse($date)->startOfWeek()->addDay(1)->toDateString(),

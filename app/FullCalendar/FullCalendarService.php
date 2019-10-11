@@ -79,10 +79,10 @@ class FullCalendarService
      * @return \Illuminate\Support\Collection
      */
     public function prepareData($nurse, $startOfThisYear)
-    {// I need to get all the past data cause we dont know when they were edited last time. (events are created once and then are repeating)
+    {// I need to get all the past data cause events are created once and then are repeating.
         return collect($nurse->nurseInfo->windows)
             ->map(function ($window) use ($nurse) {
-                $currentWeekMap = convertDayOfWeekToCurrentsWeekDate(); //see comment in helpers.php
+                $givenDateWeekMap = convertDayOfWeekToWeekDate($window->date); //see comment in helpers.php
                 $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
                 $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
 
@@ -90,10 +90,10 @@ class FullCalendarService
                     [
                         self::TITLE => "$workHoursForDay Hrs - $nurse->display_name 
                         {$window->window_time_start}-{$window->window_time_end}",
-                        self::START => "{$currentWeekMap[$window->day_of_week]}T{$window->window_time_start}",
-                        self::END   => "{$currentWeekMap[$window->day_of_week]}T{$window->window_time_end}",
-
-                        'allDay'    => true,
+                        // self::START => "{$currentWeekMap[$window->day_of_week]}T{$window->window_time_start}",
+                        self::START => "{$givenDateWeekMap[$window->day_of_week]}", //no time = repeated event
+                        self::END   => "{$givenDateWeekMap[$window->day_of_week]}T{$window->window_time_end}",
+                        //@todo: add until - date to repeat event
                         'color'     => '#5bc0ded6',
                         'textColor' => '#fff',
 
@@ -102,7 +102,7 @@ class FullCalendarService
                             'windowId'  => $window->id,
                             'name'      => $nurse->display_name,
                             'day'       => $dayInHumanLang,
-                            'date'      => $currentWeekMap[$window->day_of_week],
+                            'date'      => $givenDateWeekMap[$window->day_of_week],
                             'start'     => $window->window_time_start,
                             'end'       => $window->window_time_end,
                             'workHours' => $workHoursForDay,

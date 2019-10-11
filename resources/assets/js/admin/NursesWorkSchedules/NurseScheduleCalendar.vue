@@ -35,8 +35,8 @@
                            @event-selected="handleEventCLick"
                            @event-drop="handleEventDrop">
             </full-calendar>
-<!--LOADER-->
-            <calendar-loader v-show="loader" ></calendar-loader>
+            <!--LOADER-->
+            <calendar-loader v-show="loader"></calendar-loader>
             <!-- Modal --- sorry couldn't make a vue component act as modal here so i dumped this here-->
             <div class="modal fade" id="addWorkEvent" tabindex="-1" role="dialog"
                  aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -131,10 +131,11 @@
 
 <script>
     import {FullCalendar} from 'vue-full-calendar';
+    import RRule from 'rrule';
     import 'fullcalendar/dist/fullcalendar.css';
     import VueSelect from 'vue-select';
     import {mapActions} from 'vuex';
-    import {addNotification} from '../../../../../resources/assets/js/store/actions.js';
+    import {addNotification} from '../../../../../resources/assets/js/store/actions.js'; //@todo:doesnt work yet.
     import CalendarLoader from './CalendarLoader';
 
     const viewDefault = 'agendaWeek';
@@ -156,7 +157,8 @@
             'fullCalendar': FullCalendar,
             'vue-select': VueSelect,
             'addNotification': addNotification,
-             CalendarLoader,
+            CalendarLoader,
+            RRule
         },
 
         data() {
@@ -386,12 +388,12 @@
                 }).then((response => {
                         this.loader = false;
                         $("#addWorkEvent").modal('toggle'); //close modal
-                        const newEvent = this.prepareLocalData(response.data); //to show in UI before page reload.
+                        const newEvent = this.prepareLiveData(response.data); //to show in UI before page reload.
                         this.eventsAddedNow.push(newEvent);
 
                         this.addNotification({
                             title: "Success!",
-                            text: "dfgdsfgggfhfhghhdfjhfdhghfghdfhdhjghjhjhjhggd.",
+                            text: "Event has been created.",
                             type: "success",
                             timeout: true
                         });
@@ -406,9 +408,8 @@
                     });
             },
 
-            prepareLocalData(newEventData) {
-                console.log(newEventData);
-
+            prepareLiveData(newEventData) {
+                //@todo: add rule to live data if event added is set to repeated
                 return {
                     allDay: true,
                     data: {
@@ -472,7 +473,7 @@
             },
 
             handleEventDrop(arg) {
-                //do nothing for now boy
+                //@todo:do nothing for now.
             },
 
             showHolidays() {
@@ -511,7 +512,31 @@
             },
 
             events() {
-                const events = this.workHours.concat(this.eventsAddedNow);
+                const data = this.workHours.concat(this.eventsAddedNow);
+                //@todo: Future impl. if event is not set to repeated the DONT add a rule.
+                const events = data.map(q => {
+                    const rule = new RRule({                       //https://github.com/jakubroztocil/rrule
+                        freq: RRule.WEEKLY,
+                        dtstart: new Date(q.start),
+                        until: new Date('2019-12-30'), //@todo:make this dynamic
+                    });
+
+                    const rrule = rule.all();
+
+                    const eventWithRules = [];
+                    for (var i = 0; i < rrule.length; i++) {
+                        eventWithRules.push({
+                            title: q.title,
+                            start: rrule[i],
+                            allDay: true,
+                            color: q.color,
+                            textColor: q.textColor,
+                            data: q.data,
+                        })
+                    }
+                    return eventWithRules;
+                }).map(event => event).flat();
+                //@todo:implement a count - results found and in which month are found
                 const workEventsWithHolidays = events.concat(this.holidays);
 
                 if (this.searchFilter === null || this.searchFilter.length === 0) {
@@ -520,7 +545,7 @@
                     }
 
                     if (this.showWorkAndHolidaysIsChecked) {
-                        return  workEventsWithHolidays;
+                        return workEventsWithHolidays;
                     }
                 } else {
                     if (!this.showWorkAndHolidaysIsChecked) {
@@ -547,14 +572,12 @@
                     }
                 });
             },
-        }
-        ,
+        },
 
         created() {
             const workHours = this.calendarData;
             this.workHours.push(...workHours);
-        }
-        ,
+        },
 
         mounted() {
             $('#addWorkEvent').on("hidden.bs.modal", this.resetModalValues)
@@ -673,7 +696,7 @@
         margin-left: 10%;
     }
 
-    .search-filter{
+    .search-filter {
         width: 50%;
         margin-left: 23%;
     }
