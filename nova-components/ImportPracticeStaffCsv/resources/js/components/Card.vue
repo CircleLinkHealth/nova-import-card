@@ -4,7 +4,16 @@
             <h1 class="text-xl font-light">Import {{this.card.resourceLabel}}</h1>
             <form @submit.prevent="processImport" ref="form">
                 <div class="py-4">
-                    <span class="form-file mr-4">
+                    <span class="flex py-6">
+                        <label for="practices">
+                            {{__('Practice')}}
+                        </label>
+                        <select name="practices" id="practices">
+                            <option>Hello</option>
+                            <option>There</option>
+                        </select>
+                    </span>
+                    <span class="form-file mr-4 py-6">
                         <input
                                 ref="fileField"
                                 class="form-file-input"
@@ -75,7 +84,7 @@
                 formData.append('file', this.file);
                 Nova.request()
                     .post(
-                        '/nova-vendor/circlelinkhealth/import-practice-staff-csv/import-csv-to-practice/' + this.card.resource,
+                        '/nova-vendor/import-practice-staff-csv/import-csv-to-practice/' + this.card.resource,
                         formData
                     )
                     .then(({ data }) => {

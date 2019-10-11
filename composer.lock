@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0e91be65b25d646931585530906efb2e",
+    "content-hash": "1cf12b26a3d7bd4e77bb54a1e22a2b9d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -830,40 +830,6 @@
                 }
             ],
             "time": "2019-10-11T10:57:56+00:00"
-        },
-        {
-            "name": "clh/nova-import-to-practice",
-            "version": "dev-CPM-1613_nova_dropdown",
-            "dist": {
-                "type": "path",
-                "url": "./nova-components/NovaImportToPractice",
-                "reference": "9aafae9680fab4962a062232a4d5cfd20c8480c3",
-                "shasum": null
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Clh\\NovaImportToPractice\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Clh\\NovaImportToPractice\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova card.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ]
         },
         {
             "name": "composer/ca-bundle",

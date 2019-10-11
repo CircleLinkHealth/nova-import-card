@@ -138,6 +138,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['card'],
   data: function data() {
@@ -169,7 +178,7 @@ __webpack_require__.r(__webpack_exports__);
       this.working = true;
       var formData = new FormData();
       formData.append('file', this.file);
-      Nova.request().post('/nova-vendor/circlelinkhealth/import-practice-staff-csv/import-csv-to-practice/' + this.card.resource, formData).then(function (_ref) {
+      Nova.request().post('/nova-vendor/import-practice-staff-csv/import-csv-to-practice/' + this.card.resource, formData).then(function (_ref) {
         var data = _ref.data;
 
         _this.$toasted.success(data.message);
@@ -248,7 +257,23 @@ var render = function() {
         },
         [
           _c("div", { staticClass: "py-4" }, [
-            _c("span", { staticClass: "form-file mr-4" }, [
+            _c("span", { staticClass: "flex py-6" }, [
+              _c("label", { attrs: { for: "practices" } }, [
+                _vm._v(
+                  "\n                        " +
+                    _vm._s(_vm.__("Practice")) +
+                    "\n                    "
+                )
+              ]),
+              _vm._v(" "),
+              _c("select", { attrs: { name: "practices", id: "practices" } }, [
+                _c("option", [_vm._v("Hello")]),
+                _vm._v(" "),
+                _c("option", [_vm._v("There")])
+              ])
+            ]),
+            _vm._v(" "),
+            _c("span", { staticClass: "form-file mr-4 py-6" }, [
               _c("input", {
                 ref: "fileField",
                 staticClass: "form-file-input",

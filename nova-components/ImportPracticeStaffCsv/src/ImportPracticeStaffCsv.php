@@ -24,8 +24,7 @@ class ImportPracticeStaffCsv extends Card
         parent::__construct();
         $this->withMeta([
             'fields' => [
-                new File('File'),
-                new Select('practice_id')
+            
             ],
             'resourceLabel' => $resource::label(),
             'resource'      => $resource::uriKey(),
