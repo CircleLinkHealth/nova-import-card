@@ -43,7 +43,7 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
         $this->attributes = $attributes;
         $this->rules      = $rules;
         $this->modelClass = $modelClass;
-        $this->practice   = $this->getPractice();
+        $this->practice   = $resource->practice;
     }
 
     /**

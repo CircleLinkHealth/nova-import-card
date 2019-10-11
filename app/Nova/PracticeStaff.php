@@ -8,12 +8,12 @@ namespace App\Nova;
 
 use App\Nova\Importers\PracticeStaff as PracticeStaffImporter;
 use CircleLinkHealth\Customer\Entities\User;
+use Circlelinkhealth\ImportPracticeStaffCsv\ImportPracticeStaffCsv;
+use Clh\NovaImportToPractice\NovaImportToPractice;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Sparclex\NovaImportCard\NovaImportCard;
@@ -72,7 +72,11 @@ class PracticeStaff extends Resource
      */
     public function cards(Request $request)
     {
-        return [new NovaImportCard(self::class)];
+        return [
+            new ImportPracticeStaffCsv(self::class),
+            new NovaImportCard(self::class),
+            new NovaImportToPractice(self::class),
+        ];
     }
 
     /**
