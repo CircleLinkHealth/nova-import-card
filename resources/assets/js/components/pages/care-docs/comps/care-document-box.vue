@@ -181,8 +181,7 @@
                     .post(rootUrl('/send-care-doc/' + this.patient.id + '/' + this.doc.id + '/' + this.channel + '/' + this.addressOrFax))
                     .then(response => {
                         this.loading = false;
-                        this.showSendModal = false;
-                        console.log(response);
+                        this.closeSendModal();
                     })
                     .catch(err => {
                         this.loading = false;

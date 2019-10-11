@@ -22,6 +22,7 @@ class SendCareDocument extends Notification
     private $channels = [
         'database',
     ];
+    private $filePath;
     private $media;
     private $patient;
     private $reportType;
@@ -46,7 +47,9 @@ class SendCareDocument extends Notification
 
     public function __destruct()
     {
-        //delete file from storage
+        if (file_exists($this->filePath)) {
+            unlink($this->filePath);
+        }
     }
 
     /**
@@ -103,7 +106,7 @@ class SendCareDocument extends Notification
     public function toDirectMail($notifiable)
     {
         if ( ! $notifiable || ! $notifiable->emr_direct_address) {
-            throw new \Exception('File retrieved is not in json format.', 500);
+            throw new \Exception('Notifiable or Emr direct address not found.', 500);
 
             return false;
         }
@@ -156,17 +159,15 @@ class SendCareDocument extends Notification
      */
     public function toPdf()
     {
-        $filePath = storage_path($this->media->file_name);
+        $this->filePath = storage_path($this->media->file_name);
 
-        if ( ! file_exists($filePath)) {
-            $saved = file_put_contents($filePath, $this->media->getFile());
+        $saved = file_put_contents($this->filePath, $this->media->getFile());
 
-            if ( ! $saved) {
-                return false;
-            }
+        if ( ! $saved) {
+            return false;
         }
 
-        return $filePath;
+        return $this->filePath;
     }
 
     /**

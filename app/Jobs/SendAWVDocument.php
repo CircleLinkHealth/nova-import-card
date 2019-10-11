@@ -66,10 +66,6 @@ class SendAWVDocument implements ShouldQueue
 
         //TODO: IN CPM-1247
         //add implementation for multiple emails
-
-        if (file_exists(storage_path($this->media->file_name))) {
-            unlink(storage_path($this->media->file_name));
-        }
     }
 
     private function getNotifiableEntity($channel, $input)
