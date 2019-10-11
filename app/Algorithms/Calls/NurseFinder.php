@@ -202,21 +202,13 @@ class NurseFinder
         $user               = auth()->user();
         $isCurrentUserNurse = $user->isCareCoach();
 
-        $patientsNurseUserId = $this->patient->nurse_user_id;
-        if ( ! empty($patientsNurseUserId)) {
-            $patientsNurse = User::whereHas('nurseInfo', function ($q) {
-                $q->where('status', 'active');
-            })
-                ->with('nurseInfo')
-                ->find($patientsNurseUserId);
+        $patientNurseUser = $this->patient->getNurse();
+        if ($patientNurseUser) {
+            $match['nurse']              = $patientNurseUser->id;
+            $match['nurse_display_name'] = $patientNurseUser->display_name;
+            $match['window_match']       = "Assigning next call to $patientNurseUser->display_name.";
 
-            if ($patientsNurse) {
-                $match['nurse']              = $patientsNurse->id;
-                $match['nurse_display_name'] = $patientsNurse->display_name;
-                $match['window_match']       = "Assigning next call to $patientsNurse->display_name.";
-
-                return $match;
-            }
+            return $match;
         }
 
         if ($isCurrentUserNurse) {
