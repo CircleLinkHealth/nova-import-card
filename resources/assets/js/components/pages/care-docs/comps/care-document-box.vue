@@ -151,7 +151,7 @@
                 return rootUrl('/download-care-document/' + this.patient.id + '/' + this.doc.id);
             },
             openSendModal(channel) {
-                if (!doc){
+                if (! this.doc){
                     return null;
                 }
                 switch (channel) {

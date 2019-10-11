@@ -44,6 +44,11 @@ class SendCareDocument extends Notification
         $this->channels = array_merge($this->channels, $channels);
     }
 
+    public function __destruct()
+    {
+        //delete file from storage
+    }
+
     /**
      * Get the body of a DM.
      *
