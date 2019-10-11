@@ -12,6 +12,7 @@ use App\Rules\DateBeforeUsingCarbon;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Raygun\PsrLogger\RaygunLogger;
 use Illuminate\Http\Request;
@@ -214,7 +215,10 @@ class CallController extends Controller
             'callId',
             'columnName',
             'value',
-            'familyOverride'
+            'familyOverride',
+            'is_temporary',
+            'temporary_from',
+            'temporary_to'
         );
 
         $columnsToCheckForOverride = ['scheduled_date', 'window_start', 'window_end'];
@@ -229,7 +233,7 @@ class CallController extends Controller
         }
 
         // find call
-        $call = Call::find($data['callId']);
+        $call = Call::whereId($data['callId'])->with('inboundUser')->first();
         if ( ! $call) {
             return response('could not locate call '.$data['callId'], 401);
         }
@@ -318,6 +322,15 @@ class CallController extends Controller
 
         $call->save();
 
+        if ('outbound_cpm_id' === $col) {
+            $this->processNursePatientRelation($call->inboundUser, [
+                'is_temporary'    => $data['is_temporary'] ?? false,
+                'temporary_to'    => $data['temporary_to'] ?? null,
+                'temporary_from'  => $data['temporary_from'] ?? null,
+                'outbound_cpm_id' => $data['value'],
+            ]);
+        }
+
         return response(
             'successfully updated call '.$data['columnName'].'='.$data['value'].' - CallId='.$data['callId'],
             201
@@ -351,7 +364,10 @@ class CallController extends Controller
 
         //check role of current care coach
         $currentIsClhCareCoach = $call->outboundUser->hasRoleForSite('care-center', $patientPrimaryPractice);
-        $newIsClhCareCoach     = User::find($newCareCoachUserId)->hasRoleForSite('care-center', $patientPrimaryPractice);
+        $newIsClhCareCoach     = User::find($newCareCoachUserId)->hasRoleForSite(
+            'care-center',
+            $patientPrimaryPractice
+        );
 
         if ($currentIsClhCareCoach && ! $newIsClhCareCoach) {
             return false;
@@ -384,6 +400,9 @@ class CallController extends Controller
             'is_manual'       => 'required|boolean',
             'family_override' => '',
             'asap'            => '',
+            'is_temporary'    => 'required|boolean',
+            'temporary_from'  => ['nullable', 'after_or_equal:today', new DateBeforeUsingCarbon()],
+            'temporary_to'    => ['nullable', 'after_or_equal:today', new DateBeforeUsingCarbon()],
         ]);
 
         if ($validation->fails()) {
@@ -435,12 +454,12 @@ class CallController extends Controller
         }
 
         if ( ! $isFamilyOverride
-            && $this->hasAlreadyFamilyCallAtDifferentTime(
-                $patient->patientInfo,
-                $input['scheduled_date'],
-                $input['window_start'],
-                $input['window_end']
-            )) {
+             && $this->hasAlreadyFamilyCallAtDifferentTime(
+                 $patient->patientInfo,
+                 $input['scheduled_date'],
+                 $input['window_start'],
+                 $input['window_end']
+             )) {
             return [
                 'errors' => ['patient belongs to family and the family has a call at different time'],
                 'code'   => 418,
@@ -490,6 +509,43 @@ class CallController extends Controller
         }
 
         return $mustConfirm;
+    }
+
+    private function processNursePatientRelation(User $patient, $input)
+    {
+        $isTemporary = $input['is_temporary'];
+        $tempFrom    = $input['temporary_from'];
+        $tempTo      = $input['temporary_to'];
+
+        if ($isTemporary) {
+            if ( ! ($tempFrom instanceof Carbon)) {
+                $tempFrom = Carbon::parse($tempFrom);
+            }
+            if ( ! ($tempTo instanceof Carbon)) {
+                $tempTo = Carbon::parse($tempTo);
+            }
+
+            PatientNurse::updateOrCreate(
+                ['patient_user_id' => $patient->id],
+                [
+                    'patient_user_id'         => $patient->id,
+                    'temporary_nurse_user_id' => $input['outbound_cpm_id'],
+                    'temporary_from'          => $tempFrom,
+                    'temporary_to'            => $tempTo,
+                ]
+            );
+        } else {
+            PatientNurse::updateOrCreate(
+                ['patient_user_id' => $patient->id],
+                [
+                    'patient_user_id'         => $patient->id,
+                    'nurse_user_id'           => $input['outbound_cpm_id'],
+                    'temporary_nurse_user_id' => null,
+                    'temporary_from'          => null,
+                    'temporary_to'            => null,
+                ]
+            );
+        }
     }
 
     /**
@@ -544,6 +600,8 @@ class CallController extends Controller
         }
 
         $call->save();
+
+        $this->processNursePatientRelation($user, $input);
 
         return $call;
     }
