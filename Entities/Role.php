@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
+use Laravel\Scout\Searchable;
 use Michalisantoniou6\Cerberus\CerberusRole;
 
 /**
@@ -34,6 +35,8 @@ use Michalisantoniou6\Cerberus\CerberusRole;
  */
 class Role extends CerberusRole
 {
+    use Searchable;
+
     const CCM_TIME_ROLES = [
         'care-center',
         'care-center-external',
@@ -74,5 +77,38 @@ class Role extends CerberusRole
             ->whereIn('name', $roleNames)
             ->pluck('id')
             ->all();
+    }
+
+    /**
+     * Get Scout index name for the model.
+     *
+     * @return string
+     */
+    public function searchableAs()
+    {
+        return 'roles_index';
+    }
+
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array
+     */
+    public function toSearchableArray()
+    {
+        return [
+            'name'         => $this->name,
+            'display_name' => $this->display_name,
+        ];
+    }
+
+    /**
+     * Get the value used to index the model.
+     *
+     * @return mixed
+     */
+    public function getScoutKey()
+    {
+        return $this->id;
     }
 }

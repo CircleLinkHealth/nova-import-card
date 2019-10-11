@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Customer\Entities;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Scout\Searchable;
 
 /**
  * CircleLinkHealth\Customer\Entities\Location.
@@ -84,6 +85,7 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
         Notifiable;
     use
         SoftDeletes;
+    use Searchable;
 
     //Aprima's constant location id.
     const UPG_PARENT_LOCATION_ID = 26;
@@ -240,5 +242,37 @@ class Location extends \CircleLinkHealth\Core\Entities\BaseModel
     public function user()
     {
         return $this->belongsToMany(User::class);
+    }
+
+    /**
+     * Get Scout index name for the model.
+     *
+     * @return string
+     */
+    public function searchableAs()
+    {
+        return 'locations_index';
+    }
+
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array
+     */
+    public function toSearchableArray()
+    {
+        return [
+            'name'         => $this->name,
+        ];
+    }
+
+    /**
+     * Get the value used to index the model.
+     *
+     * @return mixed
+     */
+    public function getScoutKey()
+    {
+        return $this->id;
     }
 }
