@@ -47,17 +47,10 @@
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
                                 <div>
-                                    <button v-if="awvUrl.length === 0" class="col-md-6 btn btn-m"
-                                            disabled
+                                    <button class="col-md-6 btn btn-m"
                                             :class="getButtonColorFromStatus(status.hra_status)">
                                         {{getButtonTextFromStatus(status.hra_status)}}
                                     </button>
-                                    <a v-else class="col-md-6 btn btn-m"
-                                       :class="getButtonColorFromStatus(status.hra_status)"
-                                       target="_blank"
-                                       >
-                                        {{getButtonTextFromStatus(status.hra_status)}}
-                                    </a>
                                 </div>
                                 <div class="col-md-6">
                                     <a class="blue-link" style="float: right; padding-top: 7px" :href="getViewHraSurveyUrl()" target="_blank">View</a>
@@ -96,17 +89,10 @@
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
                                 <div>
-                                    <button v-if="awvUrl.length === 0" class="col-md-6 btn btn-m"
-                                            disabled
+                                    <button class="col-md-6 btn btn-m"
                                             :class="getButtonColorFromStatus(status.vitals_status)">
                                         {{getButtonTextFromStatus(status.vitals_status)}}
                                     </button>
-                                    <a v-else class="col-md-6 btn btn-m"
-                                       :class="getButtonColorFromStatus(status.vitals_status)"
-                                       target="_blank"
-                                       >
-                                        {{getButtonTextFromStatus(status.vitals_status)}}
-                                    </a>
                                 </div>
                                 <div class="col-md-6">
                                     <a class="blue-link" style="float: right; padding-top: 7px" :href="getViewVitalsSurveyUrl()" target="_blank">View</a>
