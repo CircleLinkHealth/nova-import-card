@@ -20,7 +20,8 @@ class RemoveNurseUserIdFromPatientInfo extends Migration
             $table->foreign('nurse_user_id')
                 ->references('id')
                 ->on('users')
-                ->onDelete('SET NULL');
+                ->onDelete('SET NULL')
+                ->onUpdate('CASCADE');
         });
     }
 

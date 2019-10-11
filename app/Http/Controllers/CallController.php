@@ -324,9 +324,9 @@ class CallController extends Controller
 
         if ('outbound_cpm_id' === $col) {
             $this->processNursePatientRelation($call->inboundUser, [
-                'is_temporary'    => isset($data['is_temporary']) ? $data['is_temporary'] : false,
-                'temporary_to'    => isset($data['temporary_to']) ? $data['temporary_to'] : null,
-                'temporary_from'  => isset($data['temporary_from']) ? $data['temporary_from'] : null,
+                'is_temporary'    => $data['is_temporary'] ?? false,
+                'temporary_to'    => $data['temporary_to'] ?? null,
+                'temporary_from'  => $data['temporary_from'] ?? null,
                 'outbound_cpm_id' => $data['value'],
             ]);
         }
@@ -439,9 +439,9 @@ class CallController extends Controller
         if ('call' === $input['type'] && $patient->inboundCalls) {
             $scheduledCall = $patient->inboundCalls()
                 ->where(function ($q) {
-                                         $q->whereNull('type')
-                                             ->orWhere('type', '=', 'call');
-                                     })
+                    $q->whereNull('type')
+                        ->orWhere('type', '=', 'call');
+                })
                 ->where('status', '=', 'scheduled')
                 ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
                 ->first();
