@@ -2,6 +2,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -35,4 +36,12 @@ use Illuminate\Database\Eloquent\Model;
 class PatientAWVSurveyInstanceStatus extends Model
 {
     protected $table = 'patient_awv_survey_instance_status_view';
+
+    public function getHraDisplayDateAttribute($date){
+        return Carbon::parse($date)->toDateString();
+    }
+
+    public function getVDisplayDateAttribute($date){
+        return Carbon::parse($date)->toDateString();
+    }
 }
