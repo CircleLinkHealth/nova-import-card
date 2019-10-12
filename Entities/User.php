@@ -347,6 +347,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property-read int|null $roles_count
  * @property-read int|null $tokens_count
  * @property-read int|null $ucp_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User practiceStaff()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -2595,6 +2596,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function scopeCareCoaches($query)
     {
         return $query->ofType(['care-center', 'care-center-external']);
+    }
+
+    public function scopePracticeStaff($query)
+    {
+        return $query->ofType(Constants::PRACTICE_STAFF_ROLE_NAMES);
     }
 
     // CPM Models

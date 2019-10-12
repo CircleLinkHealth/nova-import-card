@@ -2,6 +2,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -27,8 +28,20 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus whereVitalsStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus whereYear($value)
  * @mixin \Eloquent
+ * @property string|null $hra_display_date
+ * @property string|null $v_display_date
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus whereHraDisplayDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus whereVDisplayDate($value)
  */
 class PatientAWVSurveyInstanceStatus extends Model
 {
     protected $table = 'patient_awv_survey_instance_status_view';
+
+    public function getHraDisplayDateAttribute($date){
+        return Carbon::parse($date)->toDateString();
+    }
+
+    public function getVDisplayDateAttribute($date){
+        return Carbon::parse($date)->toDateString();
+    }
 }
