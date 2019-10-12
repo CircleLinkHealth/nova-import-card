@@ -36,6 +36,11 @@
                         <div class="label" data-tooltip="Notifies: {{ $notifies_text }} via {{ $note_channels_text }}">
                             <i class="fas fa-exclamation-circle fa-lg" style="color:#50b2e2"></i>
                         </div>
+                        <input type="checkbox" id="notify-patient" name="notify_patient"
+                                value="1">
+                        <label for="notify-patient" style="display: inline-block;"><span></span>Notify Patient
+
+                        </label>
                     @endempty
                 @endempty
 
@@ -97,6 +102,9 @@
                 <br>
             </div>
         </div>
+    </div>
+    <div class="col-sm-12">
+        <send-email-to-patient :patient="{{$patient}}"></send-email-to-patient>
     </div>
 
 </div>

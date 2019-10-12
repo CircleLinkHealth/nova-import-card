@@ -9,6 +9,7 @@ import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "./store";
 import {ClientTable} from 'vue-tables-2'
+import "vue-trix"
 
 Vue.use(ClientTable, {}, false)
 
@@ -80,6 +81,7 @@ const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ '
 const NurseInvoiceDailyDispute = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../Modules/NurseInvoices/Resources/assets/js/components/nurseInvoiceDailyDispute');
 const PusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-notifications')
 const PusherSeeAllNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-see-all-notifications')
+const SendEmailToPatientComponent = () => import('./components/send-email-to-patient')
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
@@ -91,6 +93,7 @@ Vue.component('createAppointmentsAddCarePerson', CreateAppointmentsAddCarePerson
 Vue.component('createCarePerson', CreateCarePerson);
 Vue.component('updateCarePerson', UpdateCarePerson);
 Vue.component('select2', Select2Component);
+Vue.component('send-email-to-patient', SendEmailToPatientComponent);
 Vue.component('fab', FabComponent);
 Vue.component('openModal', OpenModalComponent);
 Vue.component('notifications', NotificationsComponent);
