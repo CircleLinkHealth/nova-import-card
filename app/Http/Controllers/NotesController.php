@@ -472,7 +472,6 @@ class NotesController extends Controller
         $request->validate([
             'patient-email-body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
             //file exists in storage?
-
             'attachments' => ['sometimes'],
         ]);
         //Performed By field is removed from the form (per CPM-1172)

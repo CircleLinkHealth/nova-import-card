@@ -200,6 +200,15 @@
                                 </div>
                             </div>
 
+                            <div class="form-block col-md-12" style="margin-bottom: 20px">
+                                    <input type="checkbox" id="email-patient"
+                                           name="email-patient" value="1">
+                                    <label for="email-patient"><span> </span>Notify Patient</label>
+                            </div>
+                            <div id="email-patient-div" class="col-sm-12" style="display: none">
+                                <send-email-to-patient  :patient="{{$patient}}"></send-email-to-patient>
+                            </div>
+
 
                             <!-- Send Note To: -->
                             <div class="form-block col-md-12 no-padding-right">
@@ -252,7 +261,6 @@
                                                     @endempty
 
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
@@ -642,6 +650,7 @@
                 }
             };
 
+            let formAttachments;
             $(document).ready(function () {
 
                 if (medications && medications.length) {
@@ -661,6 +670,12 @@
                         }
                     });
                 }
+
+                App.$on('file-upload', (attachments) => {
+                    formAttachments = attachments;
+                    console.log('event emmitted');
+                    console.log(attachments);
+                });
 
                 //CPM-182: Show a confirmation box if user spend time creating the note
                 //but did not register a phone session
@@ -842,6 +857,20 @@
                         alert('Please enter a summary for this note.');
                         return;
                     }
+
+                    if (formAttachments){
+                        let i = 0;
+                        formAttachments.map(function (attachment) {
+                            $("<input>")
+                                .attr("type", "hidden")
+                                .attr("name", "attachments["+i+"][name]").val(attachment.name).appendTo(form);
+                            $("<input>")
+                                .attr("type", "hidden")
+                                .attr("name", "attachments["+i+"][path]").val(attachment.path).appendTo(form);
+                            i++;
+                        });
+                    }
+
 
                     const isAssociatedWithTask = $('#task').is(':checked');
                     const callHasTask = $('.tasks-radio').is(':checked');

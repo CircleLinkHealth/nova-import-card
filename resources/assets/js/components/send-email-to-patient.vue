@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="margin-bottom: 20px">
         <div class="form-group">
             <i class="far fa-envelope"  style="margin-right: 8px"></i>
             <label for="patient-email-body">
@@ -16,7 +16,7 @@
                 <VueTrix id="patient-email-body" inputId="patient-email-body"
                          inputName="patient-email-body"
                          v-model="editorContent"
-                         placeholder="Enter your content..."
+                         placeholder="Enter your content... (please do not enter patient PHI)"
                          @trix-file-accept="handleFile"
                          @trix-attachment-add="handleAttachmentAdd"
                          @trix-attachment-remove="handleAttachmentRemove"
@@ -31,6 +31,7 @@
     import VueTrix from "vue-trix";
     import {rootUrl} from '../app.config.js';
     import {Event} from 'vue-tables-2';
+    import {eventToggleSendMailToPatient} from '../notes-patient-email-events';
 
     export default {
         name: "send-email-to-patient",
@@ -58,10 +59,9 @@
         },
         methods: {
             handleFile (file) {
-                console.log('Drop file:', file)
+                // console.log('Drop file:', file)
             },
             handleAttachmentAdd (event) {
-
                 //this is to upload as soon as file is selected via ajax
                 let formData = new FormData();
                 let file = event.attachment.file;
@@ -76,7 +76,7 @@
                             'name': response.data['name'],
                             'path': response.data['path']
                         });
-                        console.log(response)
+                        App.$emit('file-upload', this.attachments);
                     }
                     else {
                         throw new Error('no response')
@@ -90,10 +90,11 @@
                 //route to remove care document
             },
             handleEditorFocus (event) {
-                console.log('Editor is focused:', event)
+                //maybe tips - 'glepete ta PHI'
+                // console.log('Editor is focused:', event)
             },
             handleEditorBlur (event) {
-                console.log('Editor is lost focus', event)
+                // console.log('Editor is lost focus', event)
             }
         },
     }

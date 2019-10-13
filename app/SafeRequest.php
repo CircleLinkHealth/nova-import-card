@@ -32,7 +32,11 @@ class SafeRequest extends Request
 
         $result = [];
         foreach ($all as $key => $value) {
-            $result[$key] = htmlspecialchars($value, ENT_NOQUOTES);
+            if (is_array($value) || 'patient-email-body' == $key) {
+                $result[$key] = $value;
+            } else {
+                $result[$key] = htmlspecialchars($value, ENT_NOQUOTES);
+            }
         }
 
         return $result;

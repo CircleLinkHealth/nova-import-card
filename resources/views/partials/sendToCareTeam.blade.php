@@ -103,9 +103,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-12">
-        <send-email-to-patient  :patient="{{$patient}}"></send-email-to-patient>
-    </div>
+
 
 </div>
 
@@ -176,8 +174,15 @@
             setSubmitText();
         });
 
+        $('#email-patient').change(function (e) {
+            $('#email-patient-div').toggle();
+            setSubmitText();
+        });
+
+
+
         function setSubmitText() {
-            const text = ($('#notify-circlelink-support').is(':checked') || $('#notify-careteam').is(':checked')) ? 'Save / Send Note' : 'Save Note';
+            const text = ($('#notify-circlelink-support').is(':checked') || $('#notify-careteam').is(':checked') || $('#email-patient').is(':checked')) ? 'Save / Send Note' : 'Save Note';
             $('#Submit').text(text);
         }
 
