@@ -72,7 +72,10 @@
                     }
                 }).then((response, status) => {
                     if (response) {
-                        //save path so we can retrieve from storage
+                        this.attachments.push({
+                            'name': response.data['name'],
+                            'path': response.data['path']
+                        });
                         console.log(response)
                     }
                     else {
@@ -80,7 +83,7 @@
                     }
                     return null
                 }).catch(err => {
-                    throw new Error('error with request')
+                    throw new Error(err)
                 })
             },
             handleAttachmentRemove (file) {

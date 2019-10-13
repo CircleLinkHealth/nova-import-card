@@ -13,6 +13,7 @@ use App\Http\Requests\NotesReport;
 use App\Models\Addendum;
 use App\Note;
 use App\Repositories\PatientWriteRepository;
+use App\Rules\PatientEmailBodyDoesNotContainPhi;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
@@ -468,6 +469,12 @@ class NotesController extends Controller
 
         $input['status'] = 'complete';
 
+        $request->validate([
+            'patient-email-body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
+            //file exists in storage?
+
+            'attachments' => ['sometimes'],
+        ]);
         //Performed By field is removed from the form (per CPM-1172)
         $input['author_id'] = auth()->id();
 
