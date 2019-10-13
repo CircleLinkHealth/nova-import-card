@@ -1,16 +1,27 @@
 <template>
     <div>
-        <div><h3>Compose new mail</h3></div>
-        <div v-if="this.patient.email">Email: {{this.patient.email}}</div>
-        <div v-else>
+        <div class="form-group">
+            <i class="far fa-envelope"  style="margin-right: 8px"></i>
+            <label for="patient-email-body">
+                Compose Mail
+            </label></div>
+        <div class="form-group" v-if="this.patient.email">Patient email: {{this.patient.email}}</div>
+        <div  class="form-group" v-else>
+            <span>Patient email not found. Please input below:</span>
             <textarea name="custom-patient-email" placeholder="Enter email..."></textarea>
             <input type="checkbox" id="default-patient-email" name="default-patient-email" value="1">
             <label for="default-patient-email"><span> </span>Save as default patient email</label>
         </div>
-        <div>
-            <form>
-                <VueTrix inputId="editor1" v-model="editorContent" placeholder="enter your content..."/>
-            </form>
+        <div class="form-group">
+                <VueTrix id="patient-email-body" inputId="patient-email-body"
+                         inputName="patient-email-body"
+                         v-model="editorContent"
+                         placeholder="Enter your content..."
+                         @trix-file-accept="handleFile"
+                         @trix-attachment-add="handleAttachmentAdd"
+                         @trix-attachment-remove="handleAttachmentRemove"
+                         @trix-focus="handleEditorFocus"
+                         @trix-blur="handleEditorBlur"/>
         </div>
     </div>
     
@@ -18,6 +29,8 @@
 
 <script>
     import VueTrix from "vue-trix";
+    import {rootUrl} from '../app.config.js';
+    import {Event} from 'vue-tables-2';
 
     export default {
         name: "send-email-to-patient",
@@ -27,12 +40,64 @@
                 required: true
             }
         },
+        data () {
+            return {
+                editorContent : '',
+                attachments: []
+            }
+
+        },
         components: {
             VueTrix
-        }
+        },
+        computed: {
+            uploadUrl() {
+                //create another url maybe another controller
+                return rootUrl('/patient-email-attachment/' + this.patient.id + '/upload');
+            },
+        },
+        methods: {
+            handleFile (file) {
+                console.log('Drop file:', file)
+            },
+            handleAttachmentAdd (event) {
+
+                //this is to upload as soon as file is selected via ajax
+                let formData = new FormData();
+                let file = event.attachment.file;
+                formData.append("file", file);
+                return this.axios.post(this.uploadUrl, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then((response, status) => {
+                    if (response) {
+                        //save path so we can retrieve from storage
+                        console.log(response)
+                    }
+                    else {
+                        throw new Error('no response')
+                    }
+                    return null
+                }).catch(err => {
+                    throw new Error('error with request')
+                })
+            },
+            handleAttachmentRemove (file) {
+                //route to remove care document
+            },
+            handleEditorFocus (event) {
+                console.log('Editor is focused:', event)
+            },
+            handleEditorBlur (event) {
+                console.log('Editor is lost focus', event)
+            }
+        },
     }
 </script>
 
 <style scoped>
-
+    .hidden {
+        display: none;
+    }
 </style>

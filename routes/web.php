@@ -443,6 +443,11 @@ Route::group(['middleware' => 'auth'], function () {
     ])->middleware('permission:careplan-pdf.read')->middleware('doNotCacheResponse');
 
     Route::post(
+        'patient-email-attachment/{patient_id}/upload',
+        'API\PatientEmailController@uploadAttachment'
+    );
+
+    Route::post(
         'care-docs/{patient_id}',
         'API\PatientCareDocumentsController@uploadCareDocuments'
     );

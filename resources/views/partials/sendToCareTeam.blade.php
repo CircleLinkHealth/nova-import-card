@@ -104,7 +104,7 @@
         </div>
     </div>
     <div class="col-sm-12">
-        <send-email-to-patient :patient="{{$patient}}"></send-email-to-patient>
+        <send-email-to-patient  :patient="{{$patient}}"></send-email-to-patient>
     </div>
 
 </div>
