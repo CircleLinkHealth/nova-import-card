@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string                          $value
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ReportSetting newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ReportSetting newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ReportSetting query()

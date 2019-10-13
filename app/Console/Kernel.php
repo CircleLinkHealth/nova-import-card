@@ -128,7 +128,7 @@ class Kernel extends ConsoleKernel
             ->cron('1 0 1 * *')->onOneServer();
 
         //Run at 12:30am every 1st of month
-        $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
+        $schedule->command(AttachBillableProblemsToLastMonthSummary::class, ['--reset-actor' => true])
             ->cron('30 0 1 * *')->onOneServer();
 
 //        $schedule->command(

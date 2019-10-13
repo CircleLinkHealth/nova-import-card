@@ -103,6 +103,34 @@
                                        @change="function (e) { changeUnscheduledPatients(index, e); }"/>
                             </td>
                             <td>
+                                <!--
+                                <span class="asap_label">Temporary</span>
+                                <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
+                                   style="color: #000;"
+                                   title="Is this a temporary assignment?">
+                                    <input v-model="action.data.isTemporary"
+                                           id="temporary"
+                                           type="checkbox"
+                                           name="temporary"
+                                           style=" float: right;margin-top: -14%;"
+                                           :disabled="action.disabled">
+                                </a>
+
+                                <input :disabled="action.disabled"
+                                       type="date"
+                                       v-show="action.data.isTemporary"
+                                       v-model="action.data.temporaryFrom"
+                                       name="temporary_from" class="form-control height-40"
+                                       :required="action.data.isTemporary"/>
+
+                                <input :disabled="action.disabled"
+                                       type="date"
+                                       v-show="action.data.isTemporary"
+                                       v-model="action.data.temporaryTo"
+                                       name="temporary_to" class="form-control height-40"
+                                       :required="action.data.isTemporary"/>
+                                -->
+
                                 <v-select :disabled="action.disabled"
                                           max-height="200px"
                                           class="form-control" name="outbound_cpm_id"
@@ -124,7 +152,6 @@
                                            style=" float: right;margin-top: -14%;"
                                            :disabled="action.disabled">
                                 </a>
-
 
                                 <input class="form-control height-40" type="date" name="scheduled_date"
                                        v-model="action.data.date"
@@ -171,7 +198,8 @@
                     <div class="alert alert-danger hasNot" v-if="hasNotAvailableNurses">
                         No available nurses for selected patient
                     </div>
-                    <div class="alert alert-warning" v-if="hasPatientInDraftMode || hasPatientInNotInAcceptableCcmStatus">
+                    <div class="alert alert-warning"
+                         v-if="hasPatientInDraftMode || hasPatientInNotInAcceptableCcmStatus">
                         Action not allowed:
                         <span v-if="hasPatientInDraftMode">
                             Care plan is in draft mode. QA the care plan first.
@@ -231,7 +259,10 @@
         text: null,
         isManual: 0,
         familyOverride: 0,
-        asapChecked: 0
+        asapChecked: 0,
+        isTemporary: 0,
+        temporaryFrom: null,
+        temporaryTo: null
     };
 
     function getNewAction() {
@@ -624,7 +655,10 @@
                             attempt_note: data.text,
                             is_manual: data.isManual,
                             asap: data.asapChecked,
-                            family_override: data.familyOverride
+                            family_override: data.familyOverride,
+                            is_temporary: data.isTemporary,
+                            temporary_from: data.temporaryFrom,
+                            temporary_to: data.temporaryTo
                         };
                     });
 
@@ -667,13 +701,13 @@
 
                             //we have to check that all calls have been placed successfully
                             const actions = response.data || [];
-                            const errors = actions.filter(x => x.errors && x.errors.length > 0);
+                            const errors = actions.filter(x => x.errors && (x.errors.length > 0 || Object.keys(x.errors).length > 0));
                             if (errors.length) {
 
                                 //we have to go through all calls and display if call was saved or not
                                 actions.forEach((action, index) => {
 
-                                    if (action.errors && action.errors.length > 0) {
+                                    if (action.errors && (action.errors.length > 0 || Object.keys(action.errors).length > 0)) {
 
                                         //enable this action so it can be edited
                                         this.actions[index].disabled = false;

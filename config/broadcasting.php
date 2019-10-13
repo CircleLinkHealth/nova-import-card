@@ -39,6 +39,8 @@ return [
             'app_id'  => env('PUSHER_APP_ID'),
             'options' => [
                 'encrypted' => true,
+                'cluster'   => env('PUSHER_CLUSTER'),
+                'useTLS'    => ! in_array(env('APP_ENV'), ['local', 'testing']),
             ],
         ],
 
