@@ -13,7 +13,7 @@
                                  :today="{{json_encode($today)}}"
                                  :start-of-month="{{json_encode($startOfMonth)}}"
                                  :end-of-month="{{json_encode($endOfMonth)}}"
-                                 :year="{{json_encode($year)}}"></nurse-schedule-calendar>
+                                 :end-of-year="{{json_encode($endOfYear)}}"></nurse-schedule-calendar>
     </div>
 @endsection
 

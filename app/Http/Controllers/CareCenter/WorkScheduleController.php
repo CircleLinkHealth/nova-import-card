@@ -146,10 +146,11 @@ class WorkScheduleController extends Controller
      */
     public function getAllNurseSchedules()
     {
-        $today           = Carbon::parse(now())->toDateString();
-        $startOfMonth    = Carbon::parse($today)->startOfMonth()->copy()->toDateString();
-        $endOfMonth      = Carbon::parse($today)->endOfMonth()->copy()->toDateString();
-        $year            = Carbon::parse($today)->year;
+        $today        = Carbon::parse(now())->toDateString();
+        $startOfMonth = Carbon::parse($today)->startOfMonth()->copy()->toDateString();
+        $endOfMonth   = Carbon::parse($today)->endOfMonth()->copy()->toDateString();
+        $endOfYear    = Carbon::parse($today)->endOfYear()->copy()->toDateString();
+
         $nurses          = $this->getNursesWithSchedule();
         $calendarData    = $this->fullCalendarService->prepareDataForCalendar($nurses);
         $tzAbbr          = auth()->user()->timezone_abbr ?? 'EDT';
@@ -164,7 +165,7 @@ class WorkScheduleController extends Controller
                 'today',
                 'startOfMonth',
                 'endOfMonth',
-                'year'
+                'endOfYear'
             )
         );
     }
@@ -295,16 +296,16 @@ class WorkScheduleController extends Controller
                     'H:i:s',
                     $window->window_time_end
                 )->diffInHours(Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_start
-                ));
+                        'H:i:s',
+                        $window->window_time_start
+                    ));
             }) + Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_end']
             )->diffInHours(Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_start']
-            ));
+                    'H:i',
+                    $workScheduleData['window_time_start']
+                ));
 
         $invalidWorkHoursNumber = false;
 
@@ -349,6 +350,8 @@ class WorkScheduleController extends Controller
                 'day_of_week'       => $workScheduleData['day_of_week'],
                 'window_time_start' => $workScheduleData['window_time_start'],
                 'window_time_end'   => $workScheduleData['window_time_end'],
+                'repeat_frequency'  => $workScheduleData['repeat_freq'],
+                'until'             => $workScheduleData['repeat_until'],
             ]);
 
             $nurseUser = Nurse::find($nurseInfoId)->user;

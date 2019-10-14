@@ -89,6 +89,15 @@ class FullCalendarService
                 $windowEndForView = Carbon::parse($window->window_time_end)->format('H:i');
                 $hoursAbrev = 'h';
 
+                $color = '#5bc0ded6';
+                //@todo:needs to change only for the event checked and not for cloned events also
+//                if ('worked' === $window->validated) {
+//                    $color = 'green';
+//                }
+//                if ('not_worked' === $window->validated) {
+//                    $color = 'brown';
+//                }
+
                 return collect(
                     [
                         self::TITLE => "$nurse->display_name ({$workHoursForDay}$hoursAbrev)
@@ -97,9 +106,11 @@ class FullCalendarService
                         //                        self::START => "{$givenDateWeekMap[$window->day_of_week]}", //no time = repeated event
                         self::END => "{$givenDateWeekMap[$window->day_of_week]}T{$window->window_time_end}",
                         //@todo: add until - date to repeat event
-                        'color'     => '#5bc0ded6',
-                        'textColor' => '#fff',
-                        'data'      => [
+                        'color'            => $color,
+                        'textColor'        => '#fff',
+                        'repeat_frequency' => $window->repeat_frequency,
+                        'until'            => $window->until,
+                        'data'             => [
                             'nurseId'      => $nurse->nurseInfo->id,
                             'windowId'     => $window->id,
                             'name'         => $nurse->display_name,

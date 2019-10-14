@@ -33,20 +33,20 @@
             </div>
 
             <!--            Previous - Next custom Buttons -->
-<!--            <div class="prev-next-buttons">-->
-<!--                <button type="button"-->
-<!--                        class="prev-button"-->
-<!--                        aria-label="prev" @click="sex('prev')">-->
-<!--                    <span class="fc-icon fc-icon-left-single-arrow"></span>-->
-<!--                </button>-->
+            <!--            <div class="prev-next-buttons">-->
+            <!--                <button type="button"-->
+            <!--                        class="prev-button"-->
+            <!--                        aria-label="prev" @click="sex('prev')">-->
+            <!--                    <span class="fc-icon fc-icon-left-single-arrow"></span>-->
+            <!--                </button>-->
 
-<!--                <button type="button"-->
-<!--                        class="next-button"-->
-<!--                        aria-label="next" @click="sex('next')">-->
-<!--                    <span class="fc-icon fc-icon-right-single-arrow"></span>-->
-<!--                </button>-->
+            <!--                <button type="button"-->
+            <!--                        class="next-button"-->
+            <!--                        aria-label="next" @click="sex('next')">-->
+            <!--                    <span class="fc-icon fc-icon-right-single-arrow"></span>-->
+            <!--                </button>-->
 
-<!--            </div>-->
+            <!--            </div>-->
         </div>
         <div class="calendar">
             <full-calendar ref="fullCalendar"
@@ -109,6 +109,11 @@
                                                    class="time-input">
                                         </div>
                                     </div>
+                                </div>
+
+                                <div class="repeat-until">
+                                    <input type="date" name="until"
+                                           v-model="repeatUntil">
                                 </div>
                             </div>
 
@@ -190,7 +195,7 @@
             'today',
             'startOfMonth',
             'endOfMonth',
-            'year'
+            'endOfYear'
         ],
 
         components: {
@@ -226,6 +231,7 @@
                 addNewEventMainClicked: false,
                 selectedDate: [],
                 selectedMonthInView: this.startOfMonth,
+                repeatUntil: '',
 
 
                 config: {
@@ -286,17 +292,17 @@
 
                 frequency: [
                     {
+                        label: 'Repeat Daily',
+                        value: 'daily'
+                    },
+                    {
                         label: 'Repeat Weekly',
                         value: 'weekly'
                     },
                     {
-                        label: 'Repeat Monthly',
+                        label: 'Repeat Monthly on same date',
                         value: 'monthly'
                     },
-                    {
-                        label: 'Repeat Daily(Monday - Friday)',
-                        value: 'daily'
-                    }
                 ],
 
                 // monthOfYearDates: [
@@ -475,6 +481,8 @@
                 this.loader = true;
                 const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
                 const workDate = this.addNewEventMainClicked ? this.selectedDate : this.workEventDate;
+                const repeatFreq = this.eventFrequency.length !== 0 ? this.eventFrequency.value : 'does_not_repeat';
+                const repeatUntil = this.repeatUntil !== '' ? this.repeatUntil : this.endOfYear; //null - repeat forever
 
                 if (nurseId === null || nurseId === undefined) {
                     this.loader = false;
@@ -534,6 +542,8 @@
                     work_hours: this.hoursToWork,
                     window_time_start: this.workRangeStarts,
                     window_time_end: this.workRangeEnds,
+                    repeat_freq: repeatFreq,
+                    repeat_until: repeatUntil
                 }).then((response => {
                         this.loader = false;
                         this.toggleModal();
@@ -649,6 +659,7 @@
                 this.workRangeStarts = '09:00';
                 this.workRangeEnds = '17:00';
                 this.addNewEventMainClicked = false;
+                this.eventFrequency = [];
             },
 
             // sex(direction) {
@@ -678,35 +689,59 @@
             },
 
             events() {
+                debugger;
                 const data = this.workHours.concat(this.eventsAddedNow);
                 //@todo: Future impl. if event is not set to repeated the DONT add the rule.
                 const events = data.map(q => {
-                    // const repeatOnDays Of Week = this.weekMap.filter(weekDay=>weekDay.weekMapClhDayOfWeek === q.data.clhDayOfWeek);
-                    const rule = new RRule({                       //https://github.com/jakubroztocil/rrule
-                        freq: RRule.WEEKLY, //@todo :make this dynamic
-                        // byweekday: [q.data.clhDayOfWeek],
-                        dtstart: new Date(q.start),
-                        until: new Date('2019-12-30'), //@todo:make this dynamic
-                    });
+                    const repeatFrequency = q.repeat_frequency;
+                    const repeatUntil  = q.until !== null ? q.until : this.endOfYear;
 
-                    // const rrule = rule.between(new Date(this.selectedMonthInView), new Date(this.endOfMonth));
-                    const rrule = rule.all();
-                    const eventWithRules = [];
-                    for (var i = 0; i < rrule.length; i++) {
-                        eventWithRules.push({
-                            title: q.title,
-                            start: rrule[i],
-                            allDay: true,
-                            color: q.color,
-                            textColor: q.textColor,
-                            data: q.data,
-                        })
+                    if (repeatFrequency !== 'does_not_repeat') {
+                        const frequency = [];
+                        //current data have null frequency. These events will repeat WEEKLY by default,
+                        // to keep current functionality working
+                        if (repeatFrequency === null || repeatFrequency === 'weekly') {
+                            frequency.push(RRule.WEEKLY);
+                        }
+
+                        if (repeatFrequency === 'monthly') {
+                            frequency.push(RRule.MONTHLY);
+                        }
+
+                        if (repeatFrequency === 'daily') {
+                            frequency.push(RRule.DAILY);
+                        }
+                        const rule = new RRule({                       //https://github.com/jakubroztocil/rrule
+                            freq: frequency[0],
+                            // byweekday: [q.data.clhDayOfWeek],
+                            dtstart: new Date(q.start),
+                            until: new Date(repeatUntil),
+                        });
+                        // const rrule = rule.between(new Date(this.selectedMonthInView), new Date(this.endOfMonth));
+
+                        const rrule = rule.all();
+                        const eventWithRules = [];
+                        for (var i = 0; i < rrule.length; i++) {
+                            eventWithRules.push({
+                                title: q.title,
+                                start: rrule[i],
+                                allDay: true,
+                                color: q.color,
+                                textColor: q.textColor,
+                                repeat_frequency: q.repeat_frequency,
+                                until:q.until,
+                                data: q.data,
+                            })
+                        }
+                        return eventWithRules;
+                    } else {
+                        return data;
                     }
-                    return eventWithRules;
                 }).map(event => event).flat();
-                //@todo:implement a count - results found and in which month are found
-                const workEventsWithHolidays = events.concat(this.holidays);
 
+                //@todo:implement a count - results found and in which month are found
+
+                const workEventsWithHolidays = events.concat(this.holidays);
                 if (this.searchFilter === null || this.searchFilter.length === 0) {
                     if (!this.showWorkAndHolidaysIsChecked) {
                         return this.showWorkHours ? events : this.holidays;
