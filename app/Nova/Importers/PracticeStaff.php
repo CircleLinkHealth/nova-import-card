@@ -8,7 +8,6 @@ namespace App\Nova\Importers;
 
 use App\CLH\Repositories\UserRepository;
 use App\Search\LocationByName;
-use App\Search\PracticeByName;
 use App\Search\RoleByName;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
@@ -83,28 +82,6 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
     public function rules(): array
     {
         return $this->rules;
-    }
-
-    protected function getPractice()
-    {
-        $fileName = request()->file->getClientOriginalName();
-
-        if ($fileName) {
-            $array = explode('.', $fileName);
-
-            $practice = PracticeByName::first($array[0]);
-
-            if ( ! $practice) {
-                throw new \Exception(
-                    'Practice not found. Please make sure that the file name is a valid Practice name.',
-                    500
-                );
-            }
-
-            return $practice;
-        }
-
-        throw new \Exception('Something went wrong. File not found.', 500);
     }
 
     private function attachEmrDirectAddress(User $user, array $row)

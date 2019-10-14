@@ -6,11 +6,10 @@
                 <div class="py-4">
                     <span class="flex py-6">
                         <label for="practices">
-                            {{__('Practice')}}
+                            {{__('Practice: ')}}
                         </label>
-                        <select name="practices" id="practices">
-                            <option>Hello</option>
-                            <option>There</option>
+                        <select name="practices" id="practices" v-model="practiceId" style="margin-left: 10px">
+                            <option v-for="(id, name) in this.card.practices" v-bind:value="id">{{name}}</option>
                         </select>
                     </span>
                     <span class="form-file mr-4 py-6">
@@ -61,11 +60,13 @@
                 label: 'no file selected',
                 working: false,
                 errors: null,
+                practiceId : null
+
             };
         },
 
         mounted() {
-            console.log('here')
+
         },
 
         methods: {
@@ -82,6 +83,7 @@
                 this.working = true;
                 let formData = new FormData();
                 formData.append('file', this.file);
+                formData.append('practice_id', this.practiceId);
                 Nova.request()
                     .post(
                         '/nova-vendor/import-practice-staff-csv/import-csv-to-practice/' + this.card.resource,

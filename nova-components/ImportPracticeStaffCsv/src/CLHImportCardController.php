@@ -6,12 +6,16 @@
 
 namespace Circlelinkhealth\ImportPracticeStaffCsv;
 
-use Circlelinkhealth\ImportPracticeStaffCsv\ImportPracticeStaffCsvNovaRequest;
+use Sparclex\NovaImportCard\ImportController;
 
 class CLHImportCardController
 {
     public function handle(ImportPracticeStaffCsvNovaRequest $request)
     {
-        return redirect()->action('Sparclex\NovaImportCard\ImportController@handle', ['request' => $request]);
+        //not possible to redirect to POST
+        $controller = new ImportController();
+
+        return $controller->handle($request);
+//        return redirect()->action('\Sparclex\NovaImportCard\ImportController@handle', ['request' => $request]);
     }
 }

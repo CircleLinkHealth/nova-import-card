@@ -146,7 +146,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['card'],
   data: function data() {
@@ -155,11 +154,13 @@ __webpack_require__.r(__webpack_exports__);
       file: null,
       label: 'no file selected',
       working: false,
-      errors: null
+      errors: null,
+      practiceId: null
     };
   },
   mounted: function mounted() {
     console.log('here');
+    console.log(this.card);
   },
   methods: {
     fileChange: function fileChange(event) {
@@ -178,6 +179,7 @@ __webpack_require__.r(__webpack_exports__);
       this.working = true;
       var formData = new FormData();
       formData.append('file', this.file);
+      formData.append('practice_id', this.practiceId);
       Nova.request().post('/nova-vendor/import-practice-staff-csv/import-csv-to-practice/' + this.card.resource, formData).then(function (_ref) {
         var data = _ref.data;
 
@@ -261,16 +263,47 @@ var render = function() {
               _c("label", { attrs: { for: "practices" } }, [
                 _vm._v(
                   "\n                        " +
-                    _vm._s(_vm.__("Practice")) +
+                    _vm._s(_vm.__("Practice: ")) +
                     "\n                    "
                 )
               ]),
               _vm._v(" "),
-              _c("select", { attrs: { name: "practices", id: "practices" } }, [
-                _c("option", [_vm._v("Hello")]),
-                _vm._v(" "),
-                _c("option", [_vm._v("There")])
-              ])
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.practiceId,
+                      expression: "practiceId"
+                    }
+                  ],
+                  staticStyle: { "margin-left": "10px" },
+                  attrs: { name: "practices", id: "practices" },
+                  on: {
+                    change: function($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function(o) {
+                          return o.selected
+                        })
+                        .map(function(o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.practiceId = $event.target.multiple
+                        ? $$selectedVal
+                        : $$selectedVal[0]
+                    }
+                  }
+                },
+                _vm._l(this.card.practices, function(id, name) {
+                  return _c("option", { domProps: { value: id } }, [
+                    _vm._v(_vm._s(name))
+                  ])
+                }),
+                0
+              )
             ]),
             _vm._v(" "),
             _c("span", { staticClass: "form-file mr-4 py-6" }, [
@@ -552,8 +585,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/michalis/Code/app-cpm-web/nova-components/ImportPracticeStaffCsv/resources/js/card.js */"./resources/js/card.js");
-module.exports = __webpack_require__(/*! /Users/michalis/Code/app-cpm-web/nova-components/ImportPracticeStaffCsv/resources/sass/card.scss */"./resources/sass/card.scss");
+__webpack_require__(/*! /Users/kakoushias/Code/CLH/cpm-web/nova-components/ImportPracticeStaffCsv/resources/js/card.js */"./resources/js/card.js");
+module.exports = __webpack_require__(/*! /Users/kakoushias/Code/CLH/cpm-web/nova-components/ImportPracticeStaffCsv/resources/sass/card.scss */"./resources/sass/card.scss");
 
 
 /***/ })
