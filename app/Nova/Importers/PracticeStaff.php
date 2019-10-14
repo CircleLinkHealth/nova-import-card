@@ -79,7 +79,7 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         $validator = $this->validateRow($row);
 
         if ($validator->fails()) {
-            $this->resource->importingErrors[$this->rowNumber] = implode(', ', $validator->messages()->keys());
+            $this->importingErrors[$this->rowNumber] = implode(', ', $validator->messages()->keys());
             ++$this->rowNumber;
 
             return;
