@@ -29,6 +29,8 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
 
     protected $attributes;
 
+    protected $fileName;
+
     protected $importingErrors = [];
 
     protected $modelClass;
@@ -50,31 +52,29 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         $this->rules      = $rules;
         $this->modelClass = $modelClass;
         $this->practice   = $resource->practice;
+        $this->fileName   = $resource->fileName;
         $this->repo       = new UserRepository();
     }
 
     public function __destruct()
     {
         if ( ! empty($this->importingErrors)) {
-            $fileName = ' ';
-
             $rowErrors = collect($this->importingErrors)->transform(function ($item, $key) {
                 return "Row: {$key} - Errors: {$item}. ";
             })->implode('\n');
 
             sendSlackMessage('#background-tasks', "The following rows from queued job to import practice staff for practice '{$this->practice->display_name}', 
-            from file {$fileName} failed to import. See reasons below:\n {$rowErrors}");
+            from file {$this->fileName} failed to import. See reasons below:\n {$rowErrors}");
         }
     }
 
     public static function afterImport(AfterImport $event)
     {
-        $practiceName = $event->getConcernable()->practice->display_name;
-        $fileName     = '';
-        //add file name
+        $importer = $event->getConcernable();
+
         sendSlackMessage(
             '#background-tasks',
-            "Queued job Import Practice Staff for practice {$practiceName}, from file {$fileName} is completed.\n"
+            "Queued job Import Practice Staff for practice {$importer->practice->display_name}, from file {$importer->fileName} is completed.\n"
         );
     }
 

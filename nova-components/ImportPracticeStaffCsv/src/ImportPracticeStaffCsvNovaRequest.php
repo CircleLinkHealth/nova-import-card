@@ -27,6 +27,7 @@ class ImportPracticeStaffCsvNovaRequest extends NovaRequest
         //here we could stop if practice was not set for example
         if ($this->getPracticeFromRequest() && is_object($resource)) {
             $resource->practice = $this->getPracticeFromRequest();
+            $resource->fileName = $this->file->getClientOriginalName();
         }
 
         return $resource;
