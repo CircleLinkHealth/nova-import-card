@@ -14,6 +14,39 @@
                     return false;
                 });
             });
+
+            const temporaryTo =@json($temporary_to ?? null);
+            const temporaryFrom =@json($temporary_from ?? null);
+            const nurse =@json($nurse);
+            const nurseAlt =@json($nurse_alt ?? null);
+            const windowMatch =@json($window_match ?? null);
+            const windowMatchAlt =@json($window_match_alt ?? null);
+
+            function dateChanged(d) {
+                d.setSeconds(0);
+                d.setMinutes(0);
+                d.setHours(0);
+                const from = new Date(temporaryFrom.date);
+                from.setSeconds(0);
+                from.setMinutes(0);
+                from.setHours(0);
+                const to = new Date(temporaryTo.date);
+                to.setSeconds(0);
+                to.setMinutes(0);
+                to.setHours(0);
+                if (d >= from && d <= to) {
+                    $('#nurse').val(nurse);
+                    //found in callInfo.blade.php
+                    $('#window_match_text').html(windowMatch);
+                } else {
+                    $('#nurse').val(nurseAlt);
+                    //found in callInfo.blade.php
+                    $('#window_match_text').html(windowMatchAlt);
+                }
+            }
+
+            const current = @json($date);
+            dateChanged(new Date(current));
         </script>
     @endpush
 
@@ -64,8 +97,10 @@
                                 <div class="col-sm-12 col-xs-10 col-xs-offset-1">
                                     <div class="form-group">
                                         <v-datepicker name="date" class="selectpickerX form-control" format="yyyy-MM-dd"
+                                                      id="date"
                                                       :required="true"
                                                       placeholder="YYYY-MM-DD"
+                                                      @selected="function (e) { this.dateChanged(e) }"
                                                       value="{{ auth()->user()->resolveTimezoneToGMT(Carbon::parse($date)) }}">
                                         </v-datepicker>
                                     </div>
@@ -77,7 +112,7 @@
                 </div>
 
                 <input type="hidden" name="suggested_date" value="{{\Carbon\Carbon::parse($date)->format('Y-m-d')}}">
-                <input type="hidden" name="nurse" value="{{$nurse}}">
+                <input type="hidden" name="nurse" id="nurse" value="{{$nurse}}">
 
                 <div class="form-block col-md-8" style="padding-top: 15px">
                     <div class="row form-inline">
