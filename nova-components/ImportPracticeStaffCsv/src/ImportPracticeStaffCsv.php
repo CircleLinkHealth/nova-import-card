@@ -6,7 +6,6 @@
 
 namespace Circlelinkhealth\ImportPracticeStaffCsv;
 
-use CircleLinkHealth\Customer\Entities\Practice;
 use Laravel\Nova\Card;
 
 class ImportPracticeStaffCsv extends Card
@@ -18,21 +17,12 @@ class ImportPracticeStaffCsv extends Card
      */
     public $width = '1/2';
 
-    public function __construct($resource)
+    public function __construct($resource, $practices)
     {
-        //todo: remove from constructor
-        $practices = Practice::
-//        whereIn('id', auth()->user()->viewableProgramIds())
-//                             ->
-                             activeBillable()
-                                 ->pluck('id', 'display_name')
-                                 ->toArray();
-
         parent::__construct();
 
         $this->withMeta([
             'fields' => [
-                //add select
             ],
             'practices'     => $practices,
             'resourceLabel' => $resource::label(),

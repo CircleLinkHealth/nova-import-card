@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\Nova\Importers\PracticeStaff as PracticeStaffImporter;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Circlelinkhealth\ImportPracticeStaffCsv\ImportPracticeStaffCsv;
 use Illuminate\Http\Request;
@@ -15,7 +16,6 @@ use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Sparclex\NovaImportCard\NovaImportCard;
 
 class PracticeStaff extends Resource
 {
@@ -71,8 +71,13 @@ class PracticeStaff extends Resource
      */
     public function cards(Request $request)
     {
+        $practices = Practice::whereIn('id', auth()->user()->viewableProgramIds())
+            ->activeBillable()
+            ->pluck('id', 'display_name')
+            ->toArray();
+
         return [
-            new ImportPracticeStaffCsv(self::class),
+            new ImportPracticeStaffCsv(self::class, $practices),
         ];
     }
 

@@ -11,22 +11,21 @@ use App\Search\LocationByName;
 use App\Search\RoleByName;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\OnEachRow;
+use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithValidation;
-use Maatwebsite\Excel\Row;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Validator;
 
-class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, WithHeadingRow
+class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueue
 {
     use Importable;
 
     protected $attributes;
 
-    protected $failedImports;
+    protected $failedImports = 1;
 
     protected $modelClass;
 
@@ -53,13 +52,8 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
         return 200;
     }
 
-    /**
-     * @param Row $row
-     */
-    public function onRow(Row $row)
+    public function model(array $row)
     {
-        $row = $row->toArray();
-
         $validator = $this->validateRow($row);
 
         if ($validator->fails()) {
@@ -174,9 +168,9 @@ class PracticeStaff implements OnEachRow, WithChunkReading, WithValidation, With
                 'first_name'         => 'required',
                 'last_name'          => 'required',
                 'role'               => 'required',
-                'emr_direct_address' => 'sometimes|email',
-                'phone_number'       => 'sometimes|phone:us',
-                'phone_extension'    => 'sometimes|digits_between:2,4',
+                'emr_direct_address' => 'nullable|email',
+                'phone_number'       => 'nullable|phone:us',
+                'phone_extension'    => 'nullable|digits_between:2,4',
             ]
         );
     }
