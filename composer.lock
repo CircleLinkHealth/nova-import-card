@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "304089d201274eadad891521439a7a58",
+    "content-hash": "b3795bc7a3efef1edea4c882ff8bf6c2",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -303,11 +303,11 @@
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.2",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "84bbcfcf5266196983fafa01cb41055ad10fbe55"
+                "reference": "a14d84585b03ac1364a6d95b0e51f7e875099813"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
@@ -340,7 +340,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-08T20:17:33+00:00"
+            "time": "2019-10-14T15:34:09+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
