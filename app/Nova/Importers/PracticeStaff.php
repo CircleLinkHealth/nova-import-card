@@ -13,25 +13,33 @@ use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
+use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Events\AfterImport;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Validator;
 
-class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueue
+class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueue, withEvents
 {
     use Importable;
+    use RegistersEventListeners;
 
     protected $attributes;
 
-    protected $failedImports = 1;
+    protected $importingErrors = [];
 
     protected $modelClass;
 
     protected $practice;
 
+    protected $repo;
+
     protected $resource;
+
+    protected $rowNumber = 2;
 
     protected $rules;
 
@@ -42,6 +50,15 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         $this->rules      = $rules;
         $this->modelClass = $modelClass;
         $this->practice   = $resource->practice;
+        $this->repo       = new UserRepository();
+    }
+
+    public static function afterImport(AfterImport $event)
+    {
+        //getting static class
+//        $importerErrors = $event->getConcernable()->importingErrors;
+
+        sendSlackMessage('#background-tasks', "Queued job Import CSV patient list failed: \n");
     }
 
     /**
@@ -52,25 +69,42 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         return 200;
     }
 
+    public function message(): string
+    {
+        return 'File queued for importing';
+    }
+
     public function model(array $row)
     {
         $validator = $this->validateRow($row);
 
         if ($validator->fails()) {
+            $this->resource->importingErrors[$this->rowNumber] = implode(', ', $validator->messages()->keys());
+            ++$this->rowNumber;
+
             return;
         }
 
-        $user = $this->createUser($row);
+        try {
+            $user = $this->createUser($row);
 
-        if ( ! $user) {
+            if ( ! $user) {
+                throw new \Exception('Something went wrong while creating User');
+            }
+
+            $this->attachPhone($user, $row);
+
+            $this->attachEmrDirectAddress($user, $row);
+
+            $this->attachLocation($user, $row);
+        } catch (\Exception $exception) {
+            $this->importingErrors[$this->rowNumber] = $exception->getMessage();
+            ++$this->rowNumber;
+
             return;
         }
 
-        $this->attachPhone($user, $row);
-
-        $this->attachEmrDirectAddress($user, $row);
-
-        $this->attachLocation($user, $row);
+        ++$this->rowNumber;
     }
 
     public function rules(): array
@@ -156,7 +190,7 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
             'approve_own_care_plans' => $approveOwn,
         ]);
 
-        return (new UserRepository())->createNewUser(new User(), $bag);
+        return $this->repo->createNewUser(new User(), $bag);
     }
 
     private function validateRow($row)

@@ -93,40 +93,17 @@ class PracticeStaff extends Resource
         return [
             ID::make()->sortable(),
 
-            //user
             Text::make('First Name'),
 
-            //user
             Text::make('Last Name'),
 
-            //suffix - users
             Text::make('Clinical Level'),
 
-            //users
             Text::make('Email'),
 
-            //            //practice role users
-            //            Text::make('Role'),
-            //
             HasOne::make('providerInfo'),
-            //provider info - look into this
+
             Boolean::make('Can Approve All Care Plans', 'providerInfo.approve_own_care_plans'),
-
-            //            HasMany::make('phoneNumbers'),
-            //
-            //                        //phone numbers
-            //            Number::make('Phone', 'phoneNumbers.number'),
-            //                        //phone numbers
-            //            Number::make('Phone Extension', 'phoneNumbers.extension'),
-            //
-            //                        //phone numbers
-            //            Text::make('Phone Type', 'phoneNumbers.type'),
-
-            //            //emr_direct_addresses
-            //            Text::make('EMR Direct Address'),
-            //
-            //            //location user
-            //            Text::make('Locations')
         ];
     }
 
