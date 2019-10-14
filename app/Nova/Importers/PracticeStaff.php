@@ -199,6 +199,7 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
             'first_name'        => $row['first_name'],
             'last_name'         => $row['last_name'],
             'username'          => $row['email'],
+            'suffix'            => $row['clinical_level'],
             'program_id'        => $this->practice->id,
             'is_auto_generated' => true,
             'roles'             => [$role->id],

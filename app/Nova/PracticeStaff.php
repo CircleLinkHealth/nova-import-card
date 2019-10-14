@@ -41,6 +41,10 @@ class PracticeStaff extends Resource
      */
     public static $search = [
         'id',
+        'first_name',
+        'last_name',
+        'email',
+        'suffix',
     ];
 
     /**
@@ -93,13 +97,13 @@ class PracticeStaff extends Resource
         return [
             ID::make()->sortable(),
 
-            Text::make('First Name'),
+            Text::make('First Name')->sortable(),
 
-            Text::make('Last Name'),
+            Text::make('Last Name')->sortable(),
 
-            Text::make('Clinical Level'),
+            Text::make('Clinical Level', 'suffix')->sortable(),
 
-            Text::make('Email'),
+            Text::make('Email')->sortable(),
 
             HasOne::make('providerInfo'),
 

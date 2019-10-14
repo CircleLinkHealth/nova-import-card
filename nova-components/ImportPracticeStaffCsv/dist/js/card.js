@@ -158,10 +158,7 @@ __webpack_require__.r(__webpack_exports__);
       practiceId: null
     };
   },
-  mounted: function mounted() {
-    console.log('here');
-    console.log(this.card);
-  },
+  mounted: function mounted() {},
   methods: {
     fileChange: function fileChange(event) {
       var path = event.target.value;
