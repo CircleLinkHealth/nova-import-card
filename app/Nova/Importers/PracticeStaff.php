@@ -22,7 +22,7 @@ use Maatwebsite\Excel\Events\AfterImport;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Validator;
 
-class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueue, withEvents
+class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueue, WithEvents
 {
     use Importable;
     use RegistersEventListeners;
@@ -53,12 +53,29 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         $this->repo       = new UserRepository();
     }
 
+    public function __destruct()
+    {
+        if ( ! empty($this->importingErrors)) {
+            $fileName = ' ';
+
+            $rowErrors = collect($this->importingErrors)->transform(function ($item, $key) {
+                return "Row: {$key} - Errors: {$item}. ";
+            })->implode('\n');
+
+            sendSlackMessage('#background-tasks', "The following rows from queued job to import practice staff for practice '{$this->practice->display_name}', 
+            from file {$fileName} failed to import. See reasons below:\n {$rowErrors}");
+        }
+    }
+
     public static function afterImport(AfterImport $event)
     {
-        //getting static class
-//        $importerErrors = $event->getConcernable()->importingErrors;
-
-        sendSlackMessage('#background-tasks', "Queued job Import CSV patient list failed: \n");
+        $practiceName = $event->getConcernable()->practice->display_name;
+        $fileName     = '';
+        //add file name
+        sendSlackMessage(
+            '#background-tasks',
+            "Queued job Import Practice Staff for practice {$practiceName}, from file {$fileName} is completed.\n"
+        );
     }
 
     /**
@@ -71,7 +88,7 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
 
     public function message(): string
     {
-        return 'File queued for importing';
+        return 'File queued for importing.';
     }
 
     public function model(array $row)
