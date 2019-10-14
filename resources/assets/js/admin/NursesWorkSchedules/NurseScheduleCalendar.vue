@@ -26,9 +26,31 @@
                             required>
                 </vue-select>
             </div>
+
+            <!-- Add new event - main button-->
+            <div class="add-event-main">
+                <button class="btn btn-primary" @click="openMainEventModal">Add New</button>
+            </div>
+
+            <!--            Previous - Next custom Buttons -->
+<!--            <div class="prev-next-buttons">-->
+<!--                <button type="button"-->
+<!--                        class="prev-button"-->
+<!--                        aria-label="prev" @click="sex('prev')">-->
+<!--                    <span class="fc-icon fc-icon-left-single-arrow"></span>-->
+<!--                </button>-->
+
+<!--                <button type="button"-->
+<!--                        class="next-button"-->
+<!--                        aria-label="next" @click="sex('next')">-->
+<!--                    <span class="fc-icon fc-icon-right-single-arrow"></span>-->
+<!--                </button>-->
+
+<!--            </div>-->
         </div>
         <div class="calendar">
-            <full-calendar ref="calendar"
+            <full-calendar ref="fullCalendar"
+                           id="calendar"
                            :events="events"
                            :config="config"
                            @day-click="handleDateCLick"
@@ -49,7 +71,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div v-if="!this.clickedToViewEvent" class="display-date">
+                            <div v-if="!this.clickedToViewEvent || !this.addNewEventMainClicked" class="display-date">
                                 <h4>{{this.dayInHumanLangForView}} {{workEventDate}}</h4>
                             </div>
 
@@ -89,6 +111,23 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div v-if="!clickedToViewEvent" style="margin-top: 20%;">
+                                <div class="repeat-day-frequency">
+                                    <vue-select :options="frequency"
+                                                v-model="eventFrequency"
+                                                placeholder="Doesn't Repeat">
+                                    </vue-select>
+                                </div>
+
+                                <div v-if="addNewEventMainClicked">
+                                    <div class="choose-event-date">
+                                        <input type="date" name="event_date"
+                                               v-model="selectedDate">
+                                    </div>
+                                </div>
+                            </div>
+
                             <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'holiday'"
                                  class="view-event">
                                 <div class="nurse-name">{{this.eventToViewData[0].name}} holiday on</div>
@@ -148,9 +187,10 @@
         props: [
             'calendarData',
             'dataForDropdown',
-            'startOfThisYear',
-            'startOfThisWeek',
-            'endOfThisWeek'
+            'today',
+            'startOfMonth',
+            'endOfMonth',
+            'year'
         ],
 
         components: {
@@ -182,9 +222,22 @@
                 dayInHumanLangForView: '',
                 loader: false,
                 searchFilter: [],
+                eventFrequency: [],
+                addNewEventMainClicked: false,
+                selectedDate: [],
+                selectedMonthInView: this.startOfMonth,
+
+
                 config: {
                     defaultView: viewDefault,
                     editable: false,
+
+                    header: {
+                        left: 'prev, next, today',
+                        center: 'title',
+                        right: 'month,agendaWeek,agendaDay'
+                    },
+
                     // validRange: {
                     //     end: this.endOfThisWeek,
                     //     start: this.startOfThisWeek,
@@ -196,37 +249,133 @@
                 weekMap: [
                     {
                         label: 'Monday',
-                        dayOfWeek: 1
+                        weekMapClhDayOfWeek: 1,
+                        weekMapDayOfWeek: 0
                     },
                     {
                         label: 'Tuesday',
-                        dayOfWeek: 2
+                        weekMapClhDayOfWeek: 2,
+                        weekMapDayOfWeek: 1
                     },
                     {
                         label: 'Wednesday',
-                        dayOfWeek: 3
+                        weekMapClhDayOfWeek: 3,
+                        weekMapDayOfWeek: 2
                     },
                     {
                         label: 'Thursday',
-                        dayOfWeek: 4
+                        weekMapClhDayOfWeek: 4,
+                        weekMapDayOfWeek: 3
                     },
                     {
                         label: 'Friday',
-                        dayOfWeek: 5
+                        weekMapClhDayOfWeek: 5,
+                        weekMapDayOfWeek: 4
                     },
                     {
                         label: 'Saturday',
-                        dayOfWeek: 6
+                        weekMapClhDayOfWeek: 6,
+                        weekMapDayOfWeek: 5
                     },
                     {
                         label: 'Sunday',
-                        dayOfWeek: 0
+                        weekMapClhDayOfWeek: 0,
+                        weekMapDayOfWeek: 6
                     },
-                ]
+                ],
+
+                frequency: [
+                    {
+                        label: 'Repeat Weekly',
+                        value: 'weekly'
+                    },
+                    {
+                        label: 'Repeat Monthly',
+                        value: 'monthly'
+                    },
+                    {
+                        label: 'Repeat Daily(Monday - Friday)',
+                        value: 'daily'
+                    }
+                ],
+
+                // monthOfYearDates: [
+                //     {
+                //         month: 'September',
+                //         monthAbr: 'Sep',
+                //         date: new Date(this.year, 8, 1)
+                //
+                //     },
+                //     {
+                //         month: 'October',
+                //         monthAbr: 'Oct',
+                //         date: new Date('2019-10-01')
+                //     },
+                //     {
+                //         month: 'November',
+                //         monthAbr: 'Nov',
+                //         date: new Date('2019-11-01')
+                //     },
+                //     {
+                //         month: 'December',
+                //         monthAbr: 'Dec',
+                //
+                //         date: new Date('2019-12-01')
+                //     },
+                //     {
+                //         month: 'January',
+                //         monthAbr: 'Jan',
+                //         date: new Date('2019-01-01')
+                //     },
+                //     {
+                //         month: 'February',
+                //         monthAbr: 'Feb',
+                //         date: new Date('2019-02-01')
+                //     },
+                //     {
+                //         month: 'March',
+                //         monthAbr: 'Mar',
+                //         date: new Date('2019-03-01')
+                //     },
+                //     {
+                //         month: 'April',
+                //         monthAbr: 'Apr',
+                //         date: new Date('2019-04-01')
+                //     },
+                //     {
+                //         month: 'May',
+                //         monthAbr: 'May',
+                //         date: new Date('2019-05-01')
+                //     },
+                //     {
+                //         month: 'June',
+                //         monthAbr: 'Jun',
+                //         date: new Date('2019-06-01')
+                //     },
+                //     {
+                //         month: 'July',
+                //         monthAbr: 'Jul',
+                //         date: new Date('2019-07-01')
+                //     },
+                //     {
+                //         month: 'August',
+                //         monthAbr: 'Aug',
+                //         date: new Date('2019-08-01')
+                //     }
+                // ],
             }
         },
 
         methods: Object.assign(mapActions(['addNotification']), {
+            openMainEventModal() {
+                this.addNewEventMainClicked = true;
+                this.toggleModal();
+            },
+
+            toggleModal() {
+                $("#addWorkEvent").modal('toggle');
+            },
+
             deleteEvent() {
                 const event = this.eventToViewData[0];
                 const eventType = event.eventType;
@@ -243,7 +392,7 @@
                 this.loader = true;
                 const holidayId = event.holidayId;
                 axios.get(`/care-center/work-schedule/holidays/destroy/${holidayId}`).then((response => {
-                    $("#addWorkEvent").modal('toggle');
+                    this.toggleModal();
                     console.log(response);
 
                     //Delete event from dom
@@ -284,7 +433,7 @@
                 const windowId = this.eventToViewData[0].windowId;
                 axios.get(`/care-center/work-schedule/destroy/${windowId}`).then((response => {
                     this.loader = false;
-                    $("#addWorkEvent").modal('toggle');
+                    this.toggleModal();
                     //Delete event from events() - dom
                     if (isAddedNow) {
                         const index = this.eventsAddedNow.findIndex(x => x.data.windowId === windowId);
@@ -325,6 +474,7 @@
             addNewEvent() {
                 this.loader = true;
                 const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
+                const workDate = this.addNewEventMainClicked ? this.selectedDate : this.workEventDate;
 
                 if (nurseId === null || nurseId === undefined) {
                     this.loader = false;
@@ -335,7 +485,7 @@
                         timeout: true
                     });
 
-                    // alert("Choose an RN field is required");
+                    alert("Choose an RN field is required");
                     return;
 
                 }
@@ -377,17 +527,16 @@
                     return;
                 }
 
-
                 axios.post('/care-center/work-schedule', {
                     nurse_info_id: nurseId,
-                    date: this.workEventDate,
+                    date: workDate,
                     day_of_week: this.dayOfWeek.dayOfWeek, //this is actually empty but is needed to pass validation. im creating this var in php
                     work_hours: this.hoursToWork,
                     window_time_start: this.workRangeStarts,
                     window_time_end: this.workRangeEnds,
                 }).then((response => {
                         this.loader = false;
-                        $("#addWorkEvent").modal('toggle'); //close modal
+                        this.toggleModal();
                         const newEvent = this.prepareLiveData(response.data); //to show in UI before page reload.
                         this.eventsAddedNow.push(newEvent);
 
@@ -409,7 +558,6 @@
             },
 
             prepareLiveData(newEventData) {
-                //@todo: add rule to live data if event added is set to repeated
                 return {
                     allDay: true,
                     data: {
@@ -422,39 +570,37 @@
                         eventType: defaultEventType,
                         isAddedNow: true,
                     },
-                    dow: [newEventData.window.dayOfWeek],
+                    // dow: [newEventData.window.dayOfWeek],
                     end: `${this.workEventDate}T${this.workRangeEnds}`,
                     start: `${this.workEventDate}T${this.workRangeStarts}`,
-                    title: `${this.hoursToWork} Hrs - ${this.nurseData.label}
+                    title: `${this.nurseData.label} (${this.hoursToWork}h)
                     ${this.workRangeStarts}-${this.workRangeEnds}`,
                 }
             },
 
             handleDateCLick(date, jsEvent, view) {
                 const clickedDate = date;
-
-                const startOfThisWeek = Date.parse(this.startOfThisWeek);
-                const endOfThisWeek = Date.parse(this.endOfThisWeek);
+                const today = Date.parse(this.today);
 
                 this.workEventDate = '';
                 this.workEventDate = clickedDate.format();
 
-                if (clickedDate >= startOfThisWeek && clickedDate <= endOfThisWeek) {
-                    $("#addWorkEvent").modal('toggle');//open  modal
+                if (clickedDate >= today) {
+                    this.toggleModal();
                     const clickedDayOfWeek = new Date(this.workEventDate).getDay();
-                    const weekMapDay = this.weekMap.filter(q => q.dayOfWeek === clickedDayOfWeek);
+                    const weekMapDay = this.weekMap.filter(q => q.weekMapClhDayOfWeek === clickedDayOfWeek);
                     this.dayInHumanLangForView = weekMapDay[0].label;
 
                 } else {
                     this.loader = false;
                     this.addNotification({
                         title: "Warning!",
-                        text: 'You can only add/edit events within current week range',
+                        text: 'You can only add/edit events for today or for a future date',
                         type: "danger",
                         timeout: true
                     });
 
-                    alert('You can only add/edit events within current week range');
+                    alert('You can only add/edit events for today or for a future date');
                 }
 
             },
@@ -462,13 +608,12 @@
 
             handleEventCLick(arg) {
                 this.loader = true;
-                console.log('this', arg);
                 this.clickedToViewEvent = true;
                 this.eventToViewData.push(arg.data);
                 this.workEventDate = '';
                 this.workEventDate = this.eventToViewData[0].date;
 
-                $("#addWorkEvent").modal('toggle');
+                this.toggleModal();
                 this.loader = false;
             },
 
@@ -503,7 +648,28 @@
                 this.nurseData = [];
                 this.workRangeStarts = '09:00';
                 this.workRangeEnds = '17:00';
+                this.addNewEventMainClicked = false;
             },
+
+            // sex(direction) {
+            //
+            //     const calendarDateTitle = this.$refs.fullCalendar.fireMethod('getView');
+            //     const monthInView = calendarDateTitle.title.split(" ", 1);
+            //
+            //     const x = this.monthOfYearDates.filter(q => q.month === monthInView[0] || q.monthAbr === monthInView[0]);
+            //     const date = x[0].date;
+            //
+            //     this.selectedMonthInView = '';
+            //     this.selectedMonthInView = date;
+            //
+            //
+            //     if (direction === 'prev') {
+            //         this.$refs.fullCalendar.fireMethod('prev');
+            //     } else {
+            //         this.$refs.fullCalendar.fireMethod('next');
+            //     }
+            //
+            // },
         }),
 
         computed: {
@@ -513,16 +679,18 @@
 
             events() {
                 const data = this.workHours.concat(this.eventsAddedNow);
-                //@todo: Future impl. if event is not set to repeated the DONT add a rule.
+                //@todo: Future impl. if event is not set to repeated the DONT add the rule.
                 const events = data.map(q => {
+                    // const repeatOnDays Of Week = this.weekMap.filter(weekDay=>weekDay.weekMapClhDayOfWeek === q.data.clhDayOfWeek);
                     const rule = new RRule({                       //https://github.com/jakubroztocil/rrule
-                        freq: RRule.WEEKLY,
+                        freq: RRule.WEEKLY, //@todo :make this dynamic
+                        // byweekday: [q.data.clhDayOfWeek],
                         dtstart: new Date(q.start),
                         until: new Date('2019-12-30'), //@todo:make this dynamic
                     });
 
+                    // const rrule = rule.between(new Date(this.selectedMonthInView), new Date(this.endOfMonth));
                     const rrule = rule.all();
-
                     const eventWithRules = [];
                     for (var i = 0; i < rrule.length; i++) {
                         eventWithRules.push({
@@ -580,7 +748,7 @@
         },
 
         mounted() {
-            $('#addWorkEvent').on("hidden.bs.modal", this.resetModalValues)
+            $('#addWorkEvent').on("hidden.bs.modal", this.resetModalValues);
         }
     }
 
@@ -638,6 +806,10 @@
         font-weight: 500;
     }
 
+    .repeated-checkbox {
+        margin-top: 19%;
+    }
+
     .end-time-read {
         font-size: 17px;
         letter-spacing: 1px;
@@ -660,12 +832,16 @@
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
     }
 
+    .choose-event-date {
+        margin-top: 4%;
+    }
+
     .modal-inputs {
         display: inline-flex;
     }
 
     .modal-footer {
-        margin-top: 18%;
+        margin-top: 5%;
     }
 
     .start-end-time {
@@ -752,3 +928,4 @@
         padding-top: 8px;
     }
 </style>
+

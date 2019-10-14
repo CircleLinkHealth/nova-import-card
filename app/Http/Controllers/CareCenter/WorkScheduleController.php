@@ -146,13 +146,12 @@ class WorkScheduleController extends Controller
      */
     public function getAllNurseSchedules()
     {
-        $startOfThisYear = Carbon::parse(now())->startOfYear()->subMonth(2)->startOfWeek()->toDateString();
-        //subDay is needed in order to work properly in front-end
-        $startOfThisWeek = Carbon::parse(now())->startOfWeek()->subDay(1)->toDateString();
-        $endOfThisWeek   = Carbon::parse(now())->endOfWeek()->subDay(1)->toDateString();
-
+        $today           = Carbon::parse(now())->toDateString();
+        $startOfMonth    = Carbon::parse($today)->startOfMonth()->copy()->toDateString();
+        $endOfMonth      = Carbon::parse($today)->endOfMonth()->copy()->toDateString();
+        $year            = Carbon::parse($today)->year;
         $nurses          = $this->getNursesWithSchedule();
-        $calendarData    = $this->fullCalendarService->prepareDataForCalendar($nurses, $startOfThisYear);
+        $calendarData    = $this->fullCalendarService->prepareDataForCalendar($nurses);
         $tzAbbr          = auth()->user()->timezone_abbr ?? 'EDT';
         $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
 
@@ -162,9 +161,10 @@ class WorkScheduleController extends Controller
                 'nurses',
                 'calendarData',
                 'dataForDropdown',
-                'startOfThisYear',
-                'endOfThisWeek',
-                'startOfThisWeek'
+                'today',
+                'startOfMonth',
+                'endOfMonth',
+                'year'
             )
         );
     }
@@ -243,7 +243,6 @@ class WorkScheduleController extends Controller
         if ( ! array_key_exists('day_of_week', $dataRequest)) {
             $inputDate                  = $dataRequest['date'];
             $dataRequest['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
-//            $dataRequest['date']        = Carbon::parse($inputDate)->startOfWeek()->format('Y-m-d');
         }
 
         $workScheduleData = $dataRequest;

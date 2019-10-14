@@ -10,14 +10,14 @@
 
         <nurse-schedule-calendar :calendar-data="{{json_encode($calendarData)}}"
                                  :data-for-dropdown="{{json_encode($dataForDropdown)}}"
-                                 :start-of-this-year="{{json_encode($startOfThisYear)}}"
-                                 :start-of-this-week="{{json_encode($startOfThisWeek)}}"
-                                 :end-of-this-week="{{json_encode($endOfThisWeek)}}"></nurse-schedule-calendar>
+                                 :today="{{json_encode($today)}}"
+                                 :start-of-month="{{json_encode($startOfMonth)}}"
+                                 :end-of-month="{{json_encode($endOfMonth)}}"
+                                 :year="{{json_encode($year)}}"></nurse-schedule-calendar>
     </div>
 @endsection
 
 @push('scripts')
-
     @if(session('editedNurseId'))
         <script>
             (function () {

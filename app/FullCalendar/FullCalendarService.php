@@ -78,35 +78,38 @@ class FullCalendarService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function prepareData($nurse, $startOfThisYear)
+    public function prepareData($nurse)
     {// I need to get all the past data cause events are created once and then are repeating.
         return collect($nurse->nurseInfo->windows)
             ->map(function ($window) use ($nurse) {
                 $givenDateWeekMap = convertDayOfWeekToWeekDate($window->date); //see comment in helpers.php
                 $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
                 $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
+                $windowStartForView = Carbon::parse($window->window_time_start)->format('H:i');
+                $windowEndForView = Carbon::parse($window->window_time_end)->format('H:i');
+                $hoursAbrev = 'h';
 
                 return collect(
                     [
-                        self::TITLE => "$workHoursForDay Hrs - $nurse->display_name 
-                        {$window->window_time_start}-{$window->window_time_end}",
-                        // self::START => "{$currentWeekMap[$window->day_of_week]}T{$window->window_time_start}",
-                        self::START => "{$givenDateWeekMap[$window->day_of_week]}", //no time = repeated event
-                        self::END   => "{$givenDateWeekMap[$window->day_of_week]}T{$window->window_time_end}",
+                        self::TITLE => "$nurse->display_name ({$workHoursForDay}$hoursAbrev)
+                        {$windowStartForView}-{$windowEndForView}",
+                        self::START => "{$givenDateWeekMap[$window->day_of_week]}T{$window->window_time_start}",
+                        //                        self::START => "{$givenDateWeekMap[$window->day_of_week]}", //no time = repeated event
+                        self::END => "{$givenDateWeekMap[$window->day_of_week]}T{$window->window_time_end}",
                         //@todo: add until - date to repeat event
                         'color'     => '#5bc0ded6',
                         'textColor' => '#fff',
-
-                        'data' => [
-                            'nurseId'   => $nurse->nurseInfo->id,
-                            'windowId'  => $window->id,
-                            'name'      => $nurse->display_name,
-                            'day'       => $dayInHumanLang,
-                            'date'      => $givenDateWeekMap[$window->day_of_week],
-                            'start'     => $window->window_time_start,
-                            'end'       => $window->window_time_end,
-                            'workHours' => $workHoursForDay,
-                            'eventType' => 'workDay',
+                        'data'      => [
+                            'nurseId'      => $nurse->nurseInfo->id,
+                            'windowId'     => $window->id,
+                            'name'         => $nurse->display_name,
+                            'day'          => $dayInHumanLang,
+                            'date'         => $givenDateWeekMap[$window->day_of_week],
+                            'start'        => $window->window_time_start,
+                            'end'          => $window->window_time_end,
+                            'workHours'    => $workHoursForDay,
+                            'eventType'    => 'workDay',
+                            'clhDayOfWeek' => $window->day_of_week,
                         ],
                     ]
                 );
@@ -115,16 +118,13 @@ class FullCalendarService
 
     /**
      * @param Collection $nurses
-     * @param mixed      $startOfThisYear
-     * @param $startOfThisWeek
-     * @param $endOfThisWeek
      *
      * @return Collection|\Illuminate\Support\Collection
      */
-    public function prepareDataForCalendar(Collection $nurses, $startOfThisYear)
+    public function prepareDataForCalendar(Collection $nurses)
     {
-        return $nurses->map(function ($nurse) use ($startOfThisYear) {
-            return $this->prepareData($nurse, $startOfThisYear);
+        return $nurses->map(function ($nurse) {
+            return $this->prepareData($nurse);
         })->flatten(1);
     }
 }
