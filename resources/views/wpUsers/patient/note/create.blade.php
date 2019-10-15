@@ -858,6 +858,12 @@
                         return;
                     }
 
+                    //prevent sent if send patient email is check and email body is empty
+                    if($("[id='email-patient']").prop("checked") == true && $("[id='patient-email-body-input']").val() == 0){
+                        alert("Please fill patient email body!");
+                        return;
+                    }
+                    //append patient email attachments on form if the exist
                     if (formAttachments){
                         let i = 0;
                         formAttachments.map(function (attachment) {
