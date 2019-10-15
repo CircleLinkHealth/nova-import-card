@@ -59,14 +59,16 @@ class PatientController extends Controller
     public function getPatientContactInfo(Request $request, $userId)
     {
         $user = User::with([
-            'phoneNumbers' => function ($q) {
-                $q->whereNotNull('number');
-            },
+            'phoneNumbers',
         ])->findOrFail($userId);
+
+        $filteredPhoneNumbers = $user->phoneNumbers->filter(function ($phone){
+            return !empty(trim($phone->number));
+        });
 
         return response()->json([
             'user_id'       => $userId,
-            'phone_numbers' => $user->phoneNumbers,
+            'phone_numbers' => $filteredPhoneNumbers,
             'email'         => $user->email,
         ]);
     }
