@@ -173,10 +173,10 @@ class InvitationLinksController extends Controller
         //in case notifiable user is not the patient
         if ( ! $targetNotifiable->is($user)) {
             $practiceName     = $user->primaryPractice->display_name;
-            $providerLastName = $user->billingProviderUser()->last_name;
+            $providerFullName = $user->billingProviderUser()->getFullName();
         } else {
             $practiceName     = $targetNotifiable->primaryPractice->display_name;
-            $providerLastName = $targetNotifiable->billingProviderUser()->last_name;
+            $providerFullName = $targetNotifiable->billingProviderUser()->getFullName();
         }
 
         (new NotifiableUser($targetNotifiable, $channel === 'mail'
@@ -184,7 +184,7 @@ class InvitationLinksController extends Controller
             : null, $channel === 'sms'
             ? $channelValue
             : null))
-            ->notify(new SurveyInvitationLink($url, $surveyName, $channel, $practiceName, $providerLastName));
+            ->notify(new SurveyInvitationLink($url, $surveyName, $channel, $practiceName, $providerFullName));
 
         return true;
     }
