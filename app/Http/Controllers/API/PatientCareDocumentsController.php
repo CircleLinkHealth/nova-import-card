@@ -6,11 +6,9 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Contracts\SendsNotification;
 use App\Http\Controllers\Controller;
 use App\Jobs\SendAWVDocument;
-use App\Notifications\Channels\DirectMailChannel;
-use App\Notifications\Channels\FaxChannel;
-use App\Notifications\SendCareDocument;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus;
@@ -35,8 +33,6 @@ class PatientCareDocumentsController extends Controller
         'Provider Report',
     ];
 
-    private $sendChannels;
-
     public function downloadCareDocument($id, $mediaId)
     {
         $mediaItem = $this->getMediaItemById($id, $mediaId);
@@ -52,8 +48,8 @@ class PatientCareDocumentsController extends Controller
     {
         $patientAWVStatuses = PatientAWVSurveyInstanceStatus::where('patient_id', $patientId)
             ->when( ! $showPast, function ($query) {
-                $query->where('year', Carbon::now()->year);
-            })
+                                                                $query->where('year', Carbon::now()->year);
+                                                            })
             ->get();
 
         $files = Media::where('collection_name', 'patient-care-documents')
@@ -62,19 +58,19 @@ class PatientCareDocumentsController extends Controller
             ->get()
             ->sortByDesc('created_at')
             ->mapToGroups(function ($item, $key) {
-                $docType = $item->getCustomProperty('doc_type');
+                          $docType = $item->getCustomProperty('doc_type');
 
-                return [$docType => $item];
-            })
+                          return [$docType => $item];
+                      })
             ->reject(function ($value, $key) {
-                return ! $key;
-            })
+                          return ! $key;
+                      })
             //get the latest file from each category
             ->unless('true' == $showPast, function ($files) {
-                return $files->map(function ($typeGroup) {
-                    return collect([$typeGroup->first()]);
-                });
-            });
+                          return $files->map(function ($typeGroup) {
+                              return collect([$typeGroup->first()]);
+                          });
+                      });
 
         return response()->json([
             'files'              => $files->toArray(),
@@ -109,13 +105,18 @@ class PatientCareDocumentsController extends Controller
             );
         }
 
-        $validator = $this->setChannelAndValidateInput($channel, $input);
+        $validator = $this->validateInput($channel, $input);
 
         if ($validator->fails()) {
-            return response()->json($validator->messages(), 400);
+            return response()->json($validator->messages()->getMessages(), 400);
         }
 
-        SendAWVDocument::dispatch($media, $patient, $this->sendChannels, $input);
+        SendAWVDocument::dispatch(app(SendsNotification::class, [
+            'patient' => $patient,
+            'media'   => $media,
+            'input'   => $input,
+            'channel' => $channel,
+        ]));
 
         return response()->json(
             '',
@@ -171,25 +172,20 @@ class PatientCareDocumentsController extends Controller
             ->find($mediaId);
     }
 
-    private function setChannelAndValidateInput($channel, $input)
+    private function validateInput($channel, $input)
     {
         switch ($channel) {
             case 'email':
-                $this->sendChannels = ['mail'];
-                $validationRules    = ['required', 'email'];
+                $validationRules = ['required', 'email'];
                 break;
             case 'direct':
-                $this->sendChannels = [DirectMailChannel::class];
-                $validationRules    = ['required', 'email'];
+                $validationRules = ['required', 'email'];
                 break;
             case 'fax':
-                $this->sendChannels = [FaxChannel::class];
-                //todo: add phone validation
                 $validationRules = ['required', 'phone:us'];
                 break;
             default:
-                $this->sendChannels = [];
-                $validationRules    = [];
+                $validationRules = [];
         }
 
         return Validator::make([

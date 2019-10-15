@@ -14,6 +14,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 
 class SendCareDocument extends Notification
 {
