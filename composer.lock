@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fbab8bc172ed6ab27e87276ff9be7d3c",
+    "content-hash": "7eed83e63743889bcdda8a37fb29b9c5",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -44,8 +44,8 @@
             "authors": [
                 {
                     "name": "Alex Bowers",
-                    "role": "Developer",
-                    "email": "bowersbros@gmail.com"
+                    "email": "bowersbros@gmail.com",
+                    "role": "Developer"
                 }
             ],
             "description": "A tool to allow BelongsTo searchable fields to be pre-populated with data",
@@ -294,9 +294,9 @@
             "authors": [
                 {
                     "name": "Olav van Schie",
-                    "role": "Developer",
                     "email": "hello@appstract.team",
-                    "homepage": "https://appstract.team"
+                    "homepage": "https://appstract.team",
+                    "role": "Developer"
                 }
             ],
             "description": "OPcache helper for Laravel.",
@@ -350,9 +350,9 @@
             "authors": [
                 {
                     "name": "Olav van Schie",
-                    "role": "Developer",
                     "email": "hello@appstract.team",
-                    "homepage": "https://appstract.team"
+                    "homepage": "https://appstract.team",
+                    "role": "Developer"
                 }
             ],
             "description": "Smart Http Client for PHP.",
@@ -654,11 +654,11 @@
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.1",
+            "version": "v1.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "8b71b2143babf9c5553cab44a904833ac20b2e43"
+                "reference": "b8891d710b7a486d913b7fb1c5787e8754c1a5fd"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-01T13:28:15+00:00"
+            "time": "2019-10-11T11:07:09+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -730,14 +730,14 @@
         },
         {
             "name": "circlelinkhealth/timetracking",
-            "version": "1.1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "c21fc6d04970c7d586b98c4e51c762ace438050d"
+                "reference": "acd472d1a0b35242793ede8552134b46f4c6861d"
             },
             "require": {
-                "circlelinkhealth/customer": "v1.1"
+                "circlelinkhealth/customer": "^1.1"
             },
             "type": "library",
             "extra": {
@@ -759,19 +759,19 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-03T17:52:09+00:00"
+            "time": "2019-10-10T08:40:30+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",
-            "version": "v1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "c00affc9081f06c7b10de830eb007d8f960f29ec"
+                "reference": "533b8d192da2f383fb2c4db17eef8a98451502ac"
             },
             "require": {
                 "authy/php": "^3.0",
-                "circlelinkhealth/customer": "1.1"
+                "circlelinkhealth/customer": "^1.1"
             },
             "type": "library",
             "extra": {
@@ -794,7 +794,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-01T13:54:29+00:00"
+            "time": "2019-10-11T10:57:56+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -3873,8 +3873,8 @@
             "authors": [
                 {
                     "name": "Luís Otávio Cobucci Oblonczyk",
-                    "role": "Developer",
-                    "email": "lcobucci@gmail.com"
+                    "email": "lcobucci@gmail.com",
+                    "role": "Developer"
                 }
             ],
             "description": "A simple library to work with JSON Web Token and JSON Web Signature",
@@ -4611,7 +4611,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
+                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
                 "reference": "6a42f69cd6dd2e47724879f6234ce81b2cb688a2"
             },
             "dist": {
@@ -6950,9 +6950,9 @@
             "authors": [
                 {
                     "name": "Freek Van der Herten",
+                    "role": "Developer",
                     "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
+                    "homepage": "https://spatie.be"
                 }
             ],
             "description": "Manipulate images with an expressive API",
@@ -7000,9 +7000,9 @@
             "authors": [
                 {
                     "name": "Freek Van der Herten",
+                    "role": "Developer",
                     "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
+                    "homepage": "https://spatie.be"
                 }
             ],
             "description": "Easily optimize images using PHP",
@@ -8835,8 +8835,8 @@
             "authors": [
                 {
                     "name": "Tijs Verkoyen",
-                    "role": "Developer",
-                    "email": "css_to_inline_styles@verkoyen.eu"
+                    "email": "css_to_inline_styles@verkoyen.eu",
+                    "role": "Developer"
                 }
             ],
             "description": "CssToInlineStyles is a class that enables you to convert HTML-pages/files into HTML-pages/files with inline styles. This is very useful when you're sending emails.",
@@ -10320,8 +10320,8 @@
             "authors": [
                 {
                     "name": "Filipe Dobreira",
-                    "homepage": "https://github.com/filp",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "homepage": "https://github.com/filp"
                 }
             ],
             "description": "php error handling for cool kids",
@@ -13286,12 +13286,13 @@
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20,
-        "venturecraft/revisionable": 20
+        "venturecraft/revisionable": 20,
+        "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.4.0",
+        "php": ">=7.2.0",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",
