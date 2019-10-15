@@ -48,8 +48,8 @@ class PatientCareDocumentsController extends Controller
     {
         $patientAWVStatuses = PatientAWVSurveyInstanceStatus::where('patient_id', $patientId)
             ->when( ! $showPast, function ($query) {
-                                                                $query->where('year', Carbon::now()->year);
-                                                            })
+                $query->where('year', Carbon::now()->year);
+            })
             ->get();
 
         $files = Media::where('collection_name', 'patient-care-documents')
@@ -58,19 +58,19 @@ class PatientCareDocumentsController extends Controller
             ->get()
             ->sortByDesc('created_at')
             ->mapToGroups(function ($item, $key) {
-                          $docType = $item->getCustomProperty('doc_type');
+                $docType = $item->getCustomProperty('doc_type');
 
-                          return [$docType => $item];
-                      })
+                return [$docType => $item];
+            })
             ->reject(function ($value, $key) {
-                          return ! $key;
-                      })
+                return ! $key;
+            })
             //get the latest file from each category
             ->unless('true' == $showPast, function ($files) {
-                          return $files->map(function ($typeGroup) {
-                              return collect([$typeGroup->first()]);
-                          });
-                      });
+                return $files->map(function ($typeGroup) {
+                    return collect([$typeGroup->first()]);
+                });
+            });
 
         return response()->json([
             'files'              => $files->toArray(),
@@ -108,7 +108,7 @@ class PatientCareDocumentsController extends Controller
         $validator = $this->validateInput($channel, $input);
 
         if ($validator->fails()) {
-            return response()->json($validator->messages()->getMessages(), 400);
+            return response()->json(convertValidatorMessagesToString($validator), 400);
         }
 
         SendAWVDocument::dispatch(app(SendsNotification::class, [

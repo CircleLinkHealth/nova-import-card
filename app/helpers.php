@@ -138,12 +138,12 @@ if ( ! function_exists('activeNurseNames')) {
                         $q->where('is_demo', '!=', true);
                     },
                 ]
-                   )->whereHas(
+            )->whereHas(
                        'nurseInfo',
                        function ($q) {
                            $q->where('is_demo', '!=', true);
                        }
-            )->where('user_status', 1)
+                   )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -1028,7 +1028,7 @@ if ( ! function_exists('validProblemName')) {
                 'prediabetes',
                 'check',
             ]
-            ) && ! in_array(
+        ) && ! in_array(
                 strtolower($name),
                 [
                     'fu',
@@ -1507,5 +1507,24 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
             \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
         }
+    }
+}
+
+if ( ! function_exists('convertValidatorMessagesToString')) {
+    /**
+     * Formats Validator messages to return string.
+     *
+     * @param Validator $validator
+     *
+     * @return string
+     */
+    function convertValidatorMessagesToString(Illuminate\Validation\Validator $validator): string
+    {
+        return implode('\n', collect($validator->getMessageBag()->toArray())->transform(function ($item, $key) {
+            $errors = implode(', ', $item);
+            $key = ucfirst($key);
+
+            return "{$key}: $errors";
+        })->toArray());
     }
 }
