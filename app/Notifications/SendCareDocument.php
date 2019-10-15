@@ -210,13 +210,24 @@ class SendCareDocument extends Notification
 
     private function getReportLink()
     {
-        $awvUrl = config('services.awv.url');
+        $awvUrl = config('services.awv.report_url');
 
-        $reportTypeForUrl = $this->getSanitizedReportType();
+        $awvUrl = Str::replaceFirst(
+            '$PATIENT_ID$',
+            $this->patient->id,
+            $awvUrl
+        );
+        $awvUrl = Str::replaceFirst(
+            '$REPORT_TYPE$',
+            $this->getSanitizedReportType(),
+            $awvUrl
+        );
 
-        $year = Carbon::parse($this->media->created_at)->year;
-
-        return $awvUrl."reports/get-patient-report/{$this->patient->id}/{$reportTypeForUrl}/{$year}";
+        return Str::replaceFirst(
+            '$YEAR$',
+            Carbon::parse($this->media->created_at)->year,
+            $awvUrl
+        );
     }
 
     private function getSanitizedReportType()
