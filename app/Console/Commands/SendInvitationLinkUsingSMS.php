@@ -114,14 +114,14 @@ class SendInvitationLinkUsingSMS extends Command
         //in case notifiable user is not the patient
         if ( ! $targetNotifiable->is($user)) {
             $practiceName     = $user->primaryPractice->display_name;
-            $providerLastName = $user->billingProviderUser()->last_name;
+            $providerFullName = $user->billingProviderUser()->getFullName();
         } else {
             $practiceName     = $targetNotifiable->primaryPractice->display_name;
-            $providerLastName = $targetNotifiable->billingProviderUser()->last_name;
+            $providerFullName = $targetNotifiable->billingProviderUser()->getFullName();
         }
 
         $notifiableUser = new NotifiableUser($targetNotifiable, null, $phoneNumber);
-        $invitation     = new SurveyInvitationLink($url, $surveyName, 'sms', $practiceName, $providerLastName);
+        $invitation     = new SurveyInvitationLink($url, $surveyName, 'sms', $practiceName, $providerFullName);
 
         try {
             if ($this->isDryRun()) {
@@ -132,7 +132,6 @@ class SendInvitationLinkUsingSMS extends Command
                 $this->info('Sending notification');
             }
             $this->info("Done");
-
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }
