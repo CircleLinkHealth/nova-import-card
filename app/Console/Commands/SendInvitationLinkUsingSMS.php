@@ -132,7 +132,6 @@ class SendInvitationLinkUsingSMS extends Command
                 $this->info('Sending notification');
             }
             $this->info("Done");
-
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }
