@@ -58,7 +58,11 @@ class PatientController extends Controller
 
     public function getPatientContactInfo(Request $request, $userId)
     {
-        $user = User::with('phoneNumbers')->findOrFail($userId);
+        $user = User::with([
+            'phoneNumbers' => function ($q) {
+                $q->whereNotNull('number');
+            },
+        ])->findOrFail($userId);
 
         return response()->json([
             'user_id'       => $userId,
@@ -67,20 +71,21 @@ class PatientController extends Controller
         ]);
     }
 
-    public function getPatientReport($patienId, $reportType, $year){
+    public function getPatientReport($patienId, $reportType, $year)
+    {
 
-        if ($reportType == 'ppp'){
+        if ($reportType == 'ppp') {
             return redirect()->route('get-ppp-report', [
                 'userId' => $patienId,
-                'year'   => $year
+                'year'   => $year,
 
             ]);
         }
 
-        if ($reportType == 'provider-report'){
+        if ($reportType == 'provider-report') {
             return redirect()->route('get-provider-report', [
                 'userId' => $patienId,
-                'year'   => $year
+                'year'   => $year,
 
             ]);
         }

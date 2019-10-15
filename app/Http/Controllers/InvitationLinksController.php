@@ -117,7 +117,7 @@ class InvitationLinksController extends Controller
             'patientId'   => $patient->id,
             'patientName' => $patient->display_name,
             'surveyName'  => $surveyName,
-            'channel'         => $channel,
+            'channel'     => $channel,
         ]);
     }
 
@@ -170,12 +170,21 @@ class InvitationLinksController extends Controller
             throw new \Exception("Could not find user[$channelValue] in the system.");
         }
 
+        //in case notifiable user is not the patient
+        if ( ! $targetNotifiable->is($user)) {
+            $practiceName     = $user->primaryPractice->display_name;
+            $providerLastName = $user->billingProviderUser()->last_name;
+        } else {
+            $practiceName     = $targetNotifiable->primaryPractice->display_name;
+            $providerLastName = $targetNotifiable->billingProviderUser()->last_name;
+        }
+
         (new NotifiableUser($targetNotifiable, $channel === 'mail'
             ? $channelValue
             : null, $channel === 'sms'
             ? $channelValue
             : null))
-            ->notify(new SurveyInvitationLink($url, $surveyName, $channel));
+            ->notify(new SurveyInvitationLink($url, $surveyName, $channel, $practiceName, $providerLastName));
 
         return true;
     }

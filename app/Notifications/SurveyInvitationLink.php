@@ -44,7 +44,18 @@ class SurveyInvitationLink extends Notification
      * @var string
      */
     private $surveyName;
+
     private $via;
+
+    /**
+     * @var string
+     */
+    private $practiceName;
+
+    /**
+     * @var string
+     */
+    private $providerLastName;
 
     /**
      * Create a new notification instance.
@@ -52,12 +63,16 @@ class SurveyInvitationLink extends Notification
      * @param string $url
      * @param string $surveyName
      * @param $via 'sms' or 'mail'
+     * @param null $practiceName
+     * @param null $providerLastName
      */
-    public function __construct(string $url, string $surveyName, $via)
+    public function __construct(string $url, string $surveyName, $via, $practiceName = null, $providerLastName = null)
     {
-        $this->url = $url;
-        $this->surveyName = $surveyName;
-        $this->via = $via;
+        $this->url              = $url;
+        $this->surveyName       = $surveyName;
+        $this->via              = $via;
+        $this->practiceName     = $practiceName;
+        $this->providerLastName = $providerLastName;
     }
 
     /**
@@ -82,41 +97,41 @@ class SurveyInvitationLink extends Notification
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail(NotifiableUser $notifiableUser)
-    {//todo: check if we have known appointment and select appropriate SMS message
-        $practiceName = $notifiableUser->user->primaryPractice->display_name;
-        $provider = $notifiableUser->user->billingProviderUser();
+    {
+        //todo: check if we have known appointment and select appropriate SMS message
+
         $isVitalsSurvey = $this->surveyName === self::VITALS;
 
         if ($isVitalsSurvey) {
-            $subject = Str::replaceFirst("{practiceName}", $practiceName,
+            $subject        = Str::replaceFirst("{practiceName}", $this->practiceName,
                 self::EMAIL_SUBJECT_VITALS);
-            $line1 = Str::replaceFirst("{practiceName}", $practiceName,
+            $line1          = Str::replaceFirst("{practiceName}", $this->practiceName,
                 self::EMAIL_LINE_1_VITALS);
-            $line2 = self::EMAIL_LINE_2_VITALS;
-            $action = self::EMAIL_ACTION_VITALS;
-            $salutation = self::SALUTATION_VITALS;
-            $salutationTeam =  self::SALUTATION_TEAM_VITALS;
-        } elseif ($provider && !$isVitalsSurvey) {
-            $providerLastName = $provider->last_name;
+            $line2          = self::EMAIL_LINE_2_VITALS;
+            $action         = self::EMAIL_ACTION_VITALS;
+            $salutation     = self::SALUTATION_VITALS;
+            $salutationTeam = self::SALUTATION_TEAM_VITALS;
+        } elseif ($this->providerLastName && ! $isVitalsSurvey) {
 
-            $subject = Str::replaceFirst("{primaryPhysicianLastName}", $providerLastName,
+            $subject = Str::replaceFirst("{primaryPhysicianLastName}", $this->providerLastName,
                 self::EMAIL_SUBJECT);
-            $subject = Str::replaceFirst("{practiceName}", $practiceName, $subject);
+            $subject = Str::replaceFirst("{practiceName}", $this->practiceName, $subject);
 
-            $line1 = Str::replaceFirst("{primaryPhysicianLastName}", $providerLastName,
+            $line1          = Str::replaceFirst("{primaryPhysicianLastName}", $this->providerLastName,
                 self::EMAIL_LINE_1);
-            $line1 = Str::replaceFirst("{practiceName}", $practiceName, $line1);
-            $line2 = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), self::EMAIL_LINE_2);
-            $action = self::EMAIL_ACTION;
-            $salutation = self::SALUTATION;
-            $salutationTeam =  self::SALUTATION_TEAM;
+            $line1          = Str::replaceFirst("{practiceName}", $this->practiceName, $line1);
+            $line2          = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), self::EMAIL_LINE_2);
+            $action         = self::EMAIL_ACTION;
+            $salutation     = self::SALUTATION;
+            $salutationTeam = self::SALUTATION_TEAM;
         } else {
-            $subject = Str::replaceFirst("{practiceName}", $practiceName, self::EMAIL_SUBJECT_NO_PHYSICIAN);
-            $line1 = Str::replaceFirst("{practiceName}", $practiceName, self::EMAIL_LINE_1_NO_PHYSICIAN);
-            $line2 = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), self::EMAIL_LINE_2);
-            $action = self::EMAIL_ACTION;
-            $salutation = self::SALUTATION;
-            $salutationTeam =  self::SALUTATION_TEAM;
+            $subject        = Str::replaceFirst("{practiceName}", $this->practiceName,
+                self::EMAIL_SUBJECT_NO_PHYSICIAN);
+            $line1          = Str::replaceFirst("{practiceName}", $this->practiceName, self::EMAIL_LINE_1_NO_PHYSICIAN);
+            $line2          = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), self::EMAIL_LINE_2);
+            $action         = self::EMAIL_ACTION;
+            $salutation     = self::SALUTATION;
+            $salutationTeam = self::SALUTATION_TEAM;
         }
 
 
@@ -141,19 +156,16 @@ class SurveyInvitationLink extends Notification
         //todo: check if we have known appointment and select appropriate SMS message
         //todo: use $surveyName to decide the body of the message
 
-        $practiceName = $notifiableUser->user->primaryPractice->display_name;
-        $provider = $notifiableUser->user->billingProviderUser();
+        if ($this->providerLastName) {
 
-        if ($provider) {
-            $providerLastName = $provider->last_name;
-
-            $text = Str::replaceFirst("{primaryPhysicianLastName}", $providerLastName,
+            $text = Str::replaceFirst("{primaryPhysicianLastName}", $this->providerLastName,
                 self::SMS_TEXT_FOR_UNKNOWN_APPOINTMENT_DATE);
-            $text = Str::replaceFirst("{practiceName}", $practiceName, $text);
+            $text = Str::replaceFirst("{practiceName}", $this->practiceName, $text);
             $text = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), $text);
             $text = $text . "\n" . $this->url;
         } else {
-            $text = Str::replaceFirst("{practiceName}", $practiceName, self::SMS_TEXT_FOR_UNKNOWN_APPOINTMENT_DATE);
+            $text = Str::replaceFirst("{practiceName}", $this->practiceName,
+                self::SMS_TEXT_FOR_UNKNOWN_APPOINTMENT_DATE);
             $text = Str::replaceFirst("{clhNumber}", config('services.twilio.from'), $text);
             $text = $text . "\n" . $this->url;
         }
