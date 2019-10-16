@@ -32,8 +32,19 @@ class SafeRequest extends Request
 
         $result = [];
         foreach ($all as $key => $value) {
-            if (is_array($value) || 'patient-email-body' == $key) {
-                $result[$key] = $value;
+            //if input is Trix value we need some tags
+            if ('patient-email-body' == $key) {
+                $result[$key] = stripNonTrixTags($value);
+            } elseif (is_array($value)) {
+                foreach ($value as $subKey => $subValue) {
+                    if (is_array($subValue)) {
+                        foreach ($subValue as $k => $v) {
+                            $result[$key][$subKey][$k] = htmlspecialchars($v, ENT_NOQUOTES);
+                        }
+                    } else {
+                        $result[$key][$subKey] = htmlspecialchars($subValue, ENT_NOQUOTES);
+                    }
+                }
             } else {
                 $result[$key] = htmlspecialchars($value, ENT_NOQUOTES);
             }

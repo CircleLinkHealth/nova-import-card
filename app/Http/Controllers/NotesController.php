@@ -10,7 +10,6 @@ use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\NoteFinalSaved;
 use App\Http\Requests\NotesReport;
-use App\Models\Addendum;
 use App\Note;
 use App\Notifications\SendPatientEmail;
 use App\Repositories\PatientWriteRepository;
@@ -470,16 +469,20 @@ class NotesController extends Controller
 
         $input['status'] = 'complete';
 
-        if ($request->input('email-patient')) {
+        if ($input['email-patient']) {
+            //update email here so we can use it later on notifiable patient
+
+            //use validator to get sanitized input
             $request->validate([
                 //                'patient-email-body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
                 //file exists in storage?
                 'attachments' => ['sometimes'],
             ]);
 
+            //currently testing
             $user = User::whereEmail('kakoushias@gmail.com')->first();
 
-            $user->notify(new SendPatientEmail($request->input('patient-email-body')));
+            $user->notify(new SendPatientEmail($input['patient-email-body']));
 
             //todo: update patient email if necessary
             //dispatch Job to
