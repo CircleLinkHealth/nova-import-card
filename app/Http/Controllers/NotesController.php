@@ -12,6 +12,7 @@ use App\Events\NoteFinalSaved;
 use App\Http\Requests\NotesReport;
 use App\Models\Addendum;
 use App\Note;
+use App\Notifications\SendPatientEmail;
 use App\Repositories\PatientWriteRepository;
 use App\Rules\PatientEmailBodyDoesNotContainPhi;
 use App\SafeRequest;
@@ -469,11 +470,24 @@ class NotesController extends Controller
 
         $input['status'] = 'complete';
 
-        $request->validate([
-            'patient-email-body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
-            //file exists in storage?
-            'attachments' => ['sometimes'],
-        ]);
+        if ($request->input('email-patient')) {
+            $request->validate([
+                //                'patient-email-body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
+                //file exists in storage?
+                'attachments' => ['sometimes'],
+            ]);
+
+            $user = User::whereEmail('kakoushias@gmail.com')->first();
+
+            $user->notify(new SendPatientEmail($request->input('patient-email-body')));
+
+            //todo: update patient email if necessary
+            //dispatch Job to
+            //default-patient-email
+            //custom-patient-email
+            //email-patient
+        }
+
         //Performed By field is removed from the form (per CPM-1172)
         $input['author_id'] = auth()->id();
 

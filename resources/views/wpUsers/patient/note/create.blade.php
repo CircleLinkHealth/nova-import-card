@@ -872,7 +872,7 @@
 
                     //prevent sent if send patient email is check and email body is empty
                     if($("[id='email-patient']").prop("checked") == true && $("[id='patient-email-body-input']").val() == 0){
-                        alert("Please fill patient email body!");
+                        alert("Please fill out the patient email!");
                         return;
                     }
                     //append patient email attachments on form if the exist

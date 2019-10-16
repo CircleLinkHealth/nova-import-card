@@ -13,7 +13,7 @@
             <label for="default-patient-email"><span> </span>Save as default patient email</label>
         </div>
         <div class="form-group">
-                <VueTrix id="patient-email-body" inputId="patient-email-body"
+                <VueTrix id="patient-email-body" inputId="patient-email-body-input"
                          inputName="patient-email-body"
                          v-model="editorContent"
                          placeholder="Enter your content... (please do not enter patient PHI)"
