@@ -13,8 +13,12 @@
                 </div>
                 <div class="align-items-center">
                     <div class="survey-sub-welcome-text">
-                        Thank you for completing your AWV Health Risk Assessment. When your Vitals are taken in the
-                        office, please hand over your phone to the clinician so they can enter your information.
+                        Thank you for completing your AWV Health Risk Assessment. If your vitals are being taken
+                        in-office now, please hand over your phone to the clinician so they can enter your information.
+                    </div>
+                    <div class="survey-sub-welcome-text">
+                        If you're not in the office, {{doctorName}}'s office will see you at your upcoming
+                        appointment. Please contact {{doctorName}}'s office if you don't have one scheduled.
                     </div>
                     <div class="survey-sub-welcome-text" v-if="isProviderLoggedIn">
                         <b>If you're the provider/staff</b>, please click below to input {{patientName}} Vitals
@@ -35,6 +39,7 @@
                     </mdb-btn>
 
                     <form id="logout-form" action="/logout" method="POST" style="display: none;">
+                        <input type="hidden" name="redirectTo" :value="getCurrentRoute()">
                     </form>
 
                 </div>
@@ -53,9 +58,13 @@
 
     export default {
         name: "VitalsSurveyWelcome",
-        props: ['patientId', 'patientName', 'isProviderLoggedIn'],
+        props: ['patientId', 'patientName', 'isProviderLoggedIn', 'doctorName'],
         components: {mdbBtn},
         methods: {
+
+            getCurrentRoute() {
+                return window.location.pathname;
+            },
 
             showVitalsSurvey() {
                 window.location.href = `/survey/vitals/${this.patientId}`;
