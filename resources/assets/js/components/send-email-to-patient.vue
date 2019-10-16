@@ -5,10 +5,10 @@
             <label for="patient-email-body">
                 Compose Mail
             </label></div>
-        <div class="form-group" v-if="this.patient.email">Patient email: {{this.patient.email}}</div>
+        <div class="form-group" v-if="this.patient.email">To: {{this.patient.email}}</div>
         <div  class="form-group" v-else>
-            <span>Patient email not found. Please input below:</span>
-            <textarea name="custom-patient-email" placeholder="Enter email..."></textarea>
+            <span>Patient email not found. Please input below:</span><br>
+            <textarea name="custom-patient-email" placeholder="Enter email..."></textarea><br>
             <input type="checkbox" id="default-patient-email" name="default-patient-email" value="1">
             <label for="default-patient-email"><span> </span>Save as default patient email</label>
         </div>
