@@ -8,7 +8,7 @@ namespace App\Http\Controllers\API;
 
 use App\Contracts\SendsNotification;
 use App\Http\Controllers\Controller;
-use App\Jobs\SendAWVDocument;
+use App\Jobs\SendSingleNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus;
@@ -111,7 +111,7 @@ class PatientCareDocumentsController extends Controller
             return response()->json(convertValidatorMessagesToString($validator), 400);
         }
 
-        SendAWVDocument::dispatch(app(SendsNotification::class, [
+        SendSingleNotification::dispatch(app(SendsNotification::class, [
             'patient' => $patient,
             'media'   => $media,
             'input'   => $input,

@@ -13,7 +13,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SendAWVDocument implements ShouldQueue
+class SendSingleNotification implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
