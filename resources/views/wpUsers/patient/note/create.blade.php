@@ -143,13 +143,13 @@
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                          style=" border:0 solid #50b2e2;padding: 10px 35px;">
 
-                        <div class="col-md-6" style="padding-top: 10px">
+                        <div class="col-md-6" style="padding-top: 10px;">
 
                             <!-- Note Type -->
                             <div class="form-block col-md-12">
                                 <div class="row">
                                     <div class="new-note-item">
-                                        <div class="form-group" style="margin-bottom: 10px">
+                                        <div class="form-group" style="margin-bottom: 25px">
                                             <div class="col-sm-12">
                                                 <label class="label-margin" for="activityKey">
                                                     Note Topic
@@ -177,10 +177,10 @@
                             </div>
 
                             <!-- Performance Time -->
-                            <div class="form-block col-md-12">
+                            <div class="form-block col-md-12" style="margin-bottom: 25px">
                                 <div class="row">
                                     <div class="new-note-item">
-                                        <div class="form-group" style="margin-bottom: 10px">
+                                        <div class="form-group" style="margin-bottom: 25px">
                                             <div class="col-sm-12">
                                                 <label class="label-margin" for="performed_at">
                                                     When (Patient Local Time):
@@ -480,8 +480,8 @@
                                                                    name="notify_careteam"
                                                                    @empty($note_channels_text) disabled="disabled"
                                                                    @endempty value="1">
-                                                            <label for="notify-careteam"
-                                                                   style="display: inline-block;"><span></span>Provider/CareTeam
+                                                            <label id="notify-careteam-label" for="notify-careteam"
+                                                                   style="display: inline-block;"><span id="notify-careteam-span"></span>Provider/CareTeam
 
                                                             </label>
                                                             <div class="label"

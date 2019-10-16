@@ -176,6 +176,15 @@
 
         $('#email-patient').change(function (e) {
             $('#email-patient-div').toggle();
+            $('#notify-careteam').prop('disabled', $('#email-patient').prop('checked'));
+            if($('#email-patient').prop('checked')){
+                $('#notify-careteam-label').css("color", "#D3D3D3");
+                $('#notify-careteam-span').css("cursor", "not-allowed");
+            }else{
+                $('#notify-careteam-label').css("color","#7b7d81");
+                $('#notify-careteam-span').css("cursor", "");
+            }
+
             setSubmitText();
         });
 
