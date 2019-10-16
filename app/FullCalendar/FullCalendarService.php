@@ -7,6 +7,7 @@
 namespace App\FullCalendar;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -70,6 +71,21 @@ class FullCalendarService
                 );
             });
         })->flatten(1);
+    }
+
+    public function getNursesWithSchedule()
+    {
+        $workScheduleData = [];
+        User::ofType('care-center')
+            ->with('nurseInfo.windows', 'nurseInfo.holidays')
+            ->whereHas('nurseInfo', function ($q) {
+                $q->where('status', 'active');
+            })
+            ->chunk(100, function ($nurses) use (&$workScheduleData) {
+                $workScheduleData[] = $nurses;
+            });
+
+        return $workScheduleData[0];
     }
 
     /**
@@ -137,5 +153,13 @@ class FullCalendarService
         return $nurses->map(function ($nurse) {
             return $this->prepareData($nurse);
         })->flatten(1);
+    }
+
+    public function validateWorkHoursWithActivities($activities)
+    {
+        $x = $this->getNursesWithSchedule();
+
+        //check if exists the activity checkare to array olan
+        dd($x);
     }
 }
