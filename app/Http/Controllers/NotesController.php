@@ -10,14 +10,15 @@ use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\NoteFinalSaved;
 use App\Http\Requests\NotesReport;
+use App\Jobs\SendSingleNotification;
 use App\Note;
-use App\Notifications\SendPatientEmail;
 use App\Repositories\PatientWriteRepository;
 use App\Rules\PatientEmailBodyDoesNotContainPhi;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
 use App\Services\NoteService;
+use App\Services\PatientCustomEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
@@ -479,13 +480,11 @@ class NotesController extends Controller
                 'attachments' => ['sometimes'],
             ]);
 
-            //currently testing
-            $user = User::whereEmail('kakoushias@gmail.com')->first();
+            $address = 'kakoushias@gmail.com';
 
-            $user->notify(new SendPatientEmail($input['patient-email-body']));
+            SendSingleNotification::dispatch(new PatientCustomEmail($input['patient-email-body'], $address));
 
             //todo: update patient email if necessary
-            //dispatch Job to
             //default-patient-email
             //custom-patient-email
             //email-patient

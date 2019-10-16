@@ -61,6 +61,6 @@ class Constants
     ];
     const SNOMED                     = 'snomed_code';
     const SNOMED_NAME                = 'SNOMED CT';
-    const TRIX_ALLOWABLE_TAGS_STRING = '<div><strong><h1><em><del><blockquote><pre>';
+    const TRIX_ALLOWABLE_TAGS_STRING = '<div><strong><h1><em><del><blockquote><pre><br>';
     const VIEWING_PATIENT            = 'viewing-patient';
 }

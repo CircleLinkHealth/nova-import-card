@@ -20,8 +20,9 @@ class SendPatientEmail extends Notification
      * Create a new notification instance.
      *
      * @param mixed $content
+     * @param mixed $filePathOrMedia
      */
-    public function __construct($content)
+    public function __construct($content, $filePathOrMedia)
     {
         $this->content = $content;
     }
@@ -35,6 +36,7 @@ class SendPatientEmail extends Notification
      */
     public function toArray($notifiable)
     {
+        //log media id from S3 so we can retrieve in the future
         return [
         ];
     }
@@ -44,7 +46,7 @@ class SendPatientEmail extends Notification
      *
      * @param mixed $notifiable
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return TrixMailable
      */
     public function toMail($notifiable)
     {

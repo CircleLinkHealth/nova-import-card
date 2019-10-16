@@ -34,8 +34,6 @@ class TrixMailable extends Mailable
      */
     public function build()
     {
-        $x = 1;
-
         return $this->view('patient.patient-email')
             ->with([
                 'content' => $this->content,
