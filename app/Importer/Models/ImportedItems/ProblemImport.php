@@ -27,7 +27,6 @@ use App\Importer\Models\ItemLogs\ProblemLog;
  * @property \Carbon\Carbon                           $created_at
  * @property \Carbon\Carbon                           $updated_at
  * @property \App\Importer\Models\ItemLogs\ProblemLog $ccdLog
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereActivate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereCcdProblemLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereCode($value)
@@ -44,16 +43,12 @@ use App\Importer\Models\ItemLogs\ProblemLog;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereSubstituteId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport query()
- *
  * @property int|null $revision_history_count
  * @property int|null $vendor_id
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereVendorId($value)
  */
 class ProblemImport extends \CircleLinkHealth\Core\Entities\BaseModel

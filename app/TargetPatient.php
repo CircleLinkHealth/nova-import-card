@@ -33,7 +33,6 @@ use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
  * @property \App\Enrollee|null                                                             $enrollee
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User|null                                  $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient query()
@@ -51,21 +50,15 @@ use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUserId($value)
  * @mixin \Eloquent
- *
  * @property int                                          $practice_id
  * @property \App\EligibilityBatch|null                   $batch
  * @property \CircleLinkHealth\Customer\Entities\Practice $practice
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
- *
  * @property int|null                             $ccda_id
  * @property \App\Models\MedicalRecords\Ccda|null $ccda
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
- *
  * @property int|null $revision_history_count
  * @property int      $department_id
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDepartmentId($value)
  */
 class TargetPatient extends BaseModel
