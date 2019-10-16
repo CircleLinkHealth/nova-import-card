@@ -199,13 +199,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Email Patient Checkbox -->
-                            <div class="form-block col-md-12" style="margin-bottom: 10px">
-                                    <input type="checkbox" id="email-patient"
-                                           name="email-patient" value="1">
-                                    <label for="email-patient"><span> </span>Email Patient</label>
-                            </div>
                         </div>
 
                         <div class="col-md-6" style="padding-top: 10px">
@@ -445,12 +438,7 @@
                             </div>
                         </div>
 
-                        <!-- Compose Mail: -->
-                        <div class="form-block col-md-12">
-                            <div id="email-patient-div" class="col-sm-12" style="display: none; padding-right: 40px">
-                                <send-email-to-patient  :patient="{{$patient}}"></send-email-to-patient>
-                            </div>
-                        </div>
+
 
                         <div class="col-md-12">
 
@@ -505,8 +493,13 @@
                                                     @endempty
 
                                                 </div>
-                                                <div>
-
+                                                <div class="col-md-4">
+                                                    <!-- Email Patient Checkbox -->
+                                                    <div class="form-block col-md-12" style="margin-bottom: 10px">
+                                                        <input type="checkbox" id="email-patient"
+                                                               name="email-patient" value="1">
+                                                        <label for="email-patient"><span> </span>Email Patient</label>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -517,6 +510,15 @@
                         </div>
                         <div class="form-block col-md-12">
                             <div class="row col-md-12">
+
+                                <!-- Compose Patient Mail: -->
+                                <div class="new-note-item">
+                                    <div class="form-group">
+                                        <div id="email-patient-div" class="col-md-12" style="display: none;">
+                                                <send-email-to-patient  :patient="{{$patient}}"></send-email-to-patient>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <!-- Enter CareTeam -->
                                 <div class="form-block col-md-12">
