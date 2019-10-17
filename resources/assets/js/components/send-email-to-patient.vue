@@ -12,8 +12,11 @@
             <input type="checkbox" id="default-patient-email" name="default-patient-email" value="1">
             <label for="default-patient-email"><span> </span>Save as default patient email</label>
         </div>
+        <!--<div class="form-group">-->
+            <!--<progress v-if="this.showProgressBar" class="progress-bar" max="100" :value.prop="uploadPercentage"></progress>-->
+        <!--</div>-->
         <div class="form-group">
-                <VueTrix id="patient-email-body" inputId="patient-email-body-input"
+                <VueTrix class="" id="patient-email-body" inputId="patient-email-body-input"
                          inputName="patient-email-body"
                          v-model="editorContent"
                          placeholder="Enter your content... (please do not enter patient PHI)"
@@ -30,8 +33,6 @@
 <script>
     import VueTrix from "vue-trix";
     import {rootUrl} from '../app.config.js';
-    import {Event} from 'vue-tables-2';
-    import {eventToggleSendMailToPatient} from '../notes-patient-email-events';
 
     export default {
         name: "send-email-to-patient",
@@ -44,7 +45,9 @@
         data () {
             return {
                 editorContent : '',
-                attachments: []
+                attachments: [],
+                uploadPercentage: 0,
+                showProgressBar: false
             }
 
         },
@@ -53,22 +56,33 @@
         },
         computed: {
             uploadUrl() {
-                //create another url maybe another controller
                 return rootUrl('/patient-email-attachment/' + this.patient.id + '/upload');
             },
         },
         methods: {
             handleFile (file) {
-                // console.log('Drop file:', file)
             },
             handleAttachmentAdd (event) {
                 //this is to upload as soon as file is selected via ajax
                 let formData = new FormData();
                 let file = event.attachment.file;
                 formData.append("file", file);
+                this.showProgressBar = true;
                 return this.axios.post(this.uploadUrl, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
+                    },
+                    onUploadProgress: function( progressEvent ) {
+                        let progress = progressEvent.loaded / progressEvent.total * 100;
+                        event.attachment.setUploadProgress(progress);
+                            // parseInt( Math.round( ( progressEvent.loaded * 100 ) / progressEvent.total ) );
+                    }.bind(this),
+                    load: function(loadEvent){
+                        var attributes = {
+                            url: 'host' + 'key',
+                            href: 'host' + 'key' + "?content-disposition=attachment"
+                        };
+                        event.attachments.setAttributes(attributes);
                     }
                 }).then((response, status) => {
                     if (response) {
@@ -81,6 +95,8 @@
                     else {
                         throw new Error('no response')
                     }
+                    // this.uploadPercentage = 0;
+                    // this.showProgressBar = false;
                     return null
                 }).catch(err => {
                     throw new Error(err)
@@ -94,7 +110,6 @@
                 // console.log('Editor is focused:', event)
             },
             handleEditorBlur (event) {
-                // console.log('Editor is lost focus', event)
             }
         },
     }
@@ -103,5 +118,10 @@
 <style scoped>
     .hidden {
         display: none;
+    }
+
+    .progress-bar {
+        width: 50%;
+        margin-left: 25%;
     }
 </style>

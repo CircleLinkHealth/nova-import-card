@@ -39,6 +39,6 @@ class TrixMailable extends Mailable
                 'content' => $this->content,
             ])
             ->from('no-replyg@circlelinkhealth.com', 'CircleLink Health')
-            ->subject('You have received a mail from Care Plan Manager');
+            ->subject('You have received a message from CircleLink Health');
     }
 }
