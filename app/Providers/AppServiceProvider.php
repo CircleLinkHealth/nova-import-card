@@ -7,7 +7,7 @@
 namespace App\Providers;
 
 use App\Contracts\ReportFormatter;
-use App\Contracts\SendsNotification;
+use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Formatters\WebixFormatter;
 use App\Services\AWV\DirectPatientDocument;
 use App\Services\AWV\EmailPatientDocument;

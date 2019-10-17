@@ -6,16 +6,15 @@
 
 namespace App\Services\AWV;
 
-use App\Contracts\SendsNotification;
 use App\Notifications\Channels\DirectMailChannel;
+use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Notifications\SendCareDocument;
 use CircleLinkHealth\Core\Facades\Notification;
-use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 
-class DirectPatientDocument implements SendsNotification
+class DirectPatientDocument extends SendsNotification
 {
     /**
      * @var string
@@ -35,8 +34,8 @@ class DirectPatientDocument implements SendsNotification
     /**
      * DirectPatientDocument constructor.
      *
-     * @param User   $patient
-     * @param Media  $document
+     * @param User $patient
+     * @param Media $document
      * @param string $address
      */
     public function __construct(User $patient, Media $document, string $address)
@@ -47,14 +46,14 @@ class DirectPatientDocument implements SendsNotification
     }
 
     /**
-     * @return Notifiable
+     * @return
      */
     public function getNotifiable()
     {
         return User::whereHas('emrDirect', function ($emr) {
             $emr->where('address', $this->address);
         })->first()
-        ?:
+            ?:
             (Location::whereHas('emrDirect', function ($emr) {
                 $emr->where('address', $this->address);
             })->first()
@@ -67,10 +66,5 @@ class DirectPatientDocument implements SendsNotification
     public function getNotification(): \Illuminate\Notifications\Notification
     {
         return new SendCareDocument($this->document, $this->patient, [DirectMailChannel::class]);
-    }
-
-    public function send()
-    {
-        $this->getNotifiable()->notify($this->getNotification());
     }
 }
