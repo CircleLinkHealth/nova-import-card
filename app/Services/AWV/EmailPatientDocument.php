@@ -6,14 +6,14 @@
 
 namespace App\Services\AWV;
 
-use App\Contracts\SendsNotification;
+use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Notifications\SendCareDocument;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use Notification;
 
-class EmailPatientDocument implements SendsNotification
+class EmailPatientDocument extends SendsNotification
 {
     /**
      * @var string
@@ -32,8 +32,8 @@ class EmailPatientDocument implements SendsNotification
     /**
      * EmailPatientDocument constructor.
      *
-     * @param User   $patient
-     * @param Media  $document
+     * @param User $patient
+     * @param Media $document
      * @param string $address
      */
     public function __construct(User $patient, Media $document, string $address)
@@ -48,7 +48,8 @@ class EmailPatientDocument implements SendsNotification
      */
     public function getNotifiable()
     {
-        return User::whereEmail($this->address)->first() ?: Notification::route('mail', $this->address);
+        return User::whereEmail($this->address)->first()
+            ?: Notification::route('mail', $this->address);
     }
 
     /**
@@ -57,10 +58,5 @@ class EmailPatientDocument implements SendsNotification
     public function getNotification(): \Illuminate\Notifications\Notification
     {
         return new SendCareDocument($this->document, $this->patient, ['mail']);
-    }
-
-    public function send()
-    {
-        $this->getNotifiable()->notify($this->getNotification());
     }
 }

@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Contracts\SendsNotification;
+use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Http\Controllers\Controller;
 use App\Jobs\SendSingleNotification;
 use Carbon\Carbon;
