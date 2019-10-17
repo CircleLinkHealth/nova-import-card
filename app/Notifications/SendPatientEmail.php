@@ -14,6 +14,8 @@ class SendPatientEmail extends Notification
 {
     use Queueable;
 
+    protected $attachments;
+
     protected $content;
 
     /**
@@ -21,10 +23,12 @@ class SendPatientEmail extends Notification
      *
      * @param mixed $content
      * @param mixed $filePathOrMedia
+     * @param mixed $attachments
      */
-    public function __construct($content, $filePathOrMedia)
+    public function __construct($content, $attachments)
     {
-        $this->content = $content;
+        $this->content     = $content;
+        $this->attachments = $attachments;
     }
 
     /**
@@ -50,7 +54,7 @@ class SendPatientEmail extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new TrixMailable($this->content))
+        return (new TrixMailable($this->content, $this->attachments))
             ->to($notifiable->email);
     }
 

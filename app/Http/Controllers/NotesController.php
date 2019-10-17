@@ -473,19 +473,25 @@ class NotesController extends Controller
         if (isset($input['email-patient'])) {
             //use validator to use inputSafe
             $request->validate([
-                //                'patient-email-body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
-                //file exists in storage?
-                'attachments' => ['sometimes'],
+                'patient-email-body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
+                'attachments'        => ['sometimes'],
                 //add when default, include custom
             ]);
 
-            if (isset($input['default-patient-email'])) {
-                $patient->email = $input['custom-patient-email'];
-            }
+            $address = $patient->email;
 
+            if (isset($input['custom-patient-email'])) {
+                $address = $input['custom-patient-email'];
+
+                if (isset($input['default-patient-email'])) {
+                    $patient->email = $input['custom-patient-email'];
+                    $patient->save();
+                }
+            }
+            //todo: remove
             $address = 'kakoushias@gmail.com';
 
-            SendSingleNotification::dispatch(new PatientCustomEmail($input['patient-email-body'], $address));
+            SendSingleNotification::dispatch(new PatientCustomEmail($input['patient-email-body'], $address, isset($input['attachments']) ? $input['attachments'] : []));
         }
 
         //Performed By field is removed from the form (per CPM-1172)

@@ -9,12 +9,22 @@ namespace App\Rules;
 use App\Constants;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Database\Eloquent\Model;
 
 class PatientEmailBodyDoesNotContainPhi implements Rule
 {
     private $patientUser;
 
     private $phiFound = [];
+
+    private $transformable = [
+        //attribute key/field
+        'gender' => [
+            //value -> transform to
+            'm' => 'male',
+            'f' => 'female',
+        ],
+    ];
 
     /**
      * Create a new rule instance.
@@ -51,23 +61,40 @@ class PatientEmailBodyDoesNotContainPhi implements Rule
         $this->patientUser->loadMissing(Constants::PATIENT_PHI_RELATIONSHIPS);
 
         //check if string contains and just add fields that are found. Looping over each one individually, so we can report back to the user which phi exist in the message
-
         $value = strtolower($value);
 
         //For User
         foreach ($this->patientUser->phi as $phi) {
-            $this->phiFound[] = str_contains($value, strtolower($this->patientUser->getAttribute($phi))) ? $phi : null;
+            $string = $this->getSanitizedAndTransformedAttribute($this->patientUser, $phi);
+
+            if ($string) {
+                $this->phiFound[] = preg_match("/\b{$string}\b/", $value) ? $phi : null;
+            }
         }
 
         //For Relationships
         foreach ($this->patientUser->getRelations() as $relation) {
             foreach ($relation->phi as $phi) {
-                $this->phiFound[] = str_contains($value, strtolower($relation->getAttribute($phi))) ? $phi : null;
+                $string = $this->getSanitizedAndTransformedAttribute($relation, $phi);
+                if ($string) {
+                    $this->phiFound[] = preg_match("/\b{$string}\b/", $value) ? $phi : null;
+                }
             }
         }
 
         $this->phiFound = array_filter($this->phiFound);
 
         return empty($this->phiFound);
+    }
+
+    private function getSanitizedAndTransformedAttribute(Model $model, $phi)
+    {
+        $string = trim(strtolower($model->getAttribute($phi)));
+
+        if (array_key_exists($phi, $this->tranformable)) {
+            $string = $this->transformable[$phi][$string];
+        }
+
+        return $string;
     }
 }

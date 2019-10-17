@@ -17,6 +17,7 @@
         <!--</div>-->
         <div class="form-group">
                 <VueTrix class="" id="patient-email-body" inputId="patient-email-body-input"
+                         localStorage
                          inputName="patient-email-body"
                          v-model="editorContent"
                          placeholder="Enter your content... (please do not enter patient PHI)"
@@ -46,8 +47,8 @@
             return {
                 editorContent : '',
                 attachments: [],
-                uploadPercentage: 0,
-                showProgressBar: false
+                // uploadPercentage: 0,
+                // showProgressBar: false
             }
 
         },
@@ -58,6 +59,9 @@
             uploadUrl() {
                 return rootUrl('/patient-email-attachment/' + this.patient.id + '/upload');
             },
+            deleteUrl() {
+                return rootUrl('/patient-email-attachment/' + this.patient.id + '/delete');
+            },
         },
         methods: {
             handleFile (file) {
@@ -67,22 +71,23 @@
                 let formData = new FormData();
                 let file = event.attachment.file;
                 formData.append("file", file);
-                this.showProgressBar = true;
+                // this.showProgressBar = true;
                 return this.axios.post(this.uploadUrl, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },
                     onUploadProgress: function( progressEvent ) {
-                        let progress = progressEvent.loaded / progressEvent.total * 100;
+                        var progress = parseInt( Math.round( ( progressEvent.loaded * 100 ) / progressEvent.total ) );
+                            // progressEvent.loaded / progressEvent.total * 100;
                         event.attachment.setUploadProgress(progress);
                             // parseInt( Math.round( ( progressEvent.loaded * 100 ) / progressEvent.total ) );
                     }.bind(this),
                     load: function(loadEvent){
-                        var attributes = {
-                            url: 'host' + 'key',
-                            href: 'host' + 'key' + "?content-disposition=attachment"
-                        };
-                        event.attachments.setAttributes(attributes);
+                        // var attributes = {
+                        //     url: 'host' + 'key',
+                        //     href: 'host' + 'key' + "?content-disposition=attachment"
+                        // };
+                        // event.attachments.setAttributes(attributes);
                     }
                 }).then((response, status) => {
                     if (response) {
@@ -102,8 +107,44 @@
                     throw new Error(err)
                 })
             },
-            handleAttachmentRemove (file) {
-                //route to remove care document
+            handleAttachmentRemove (event) {
+                let formData = new FormData();
+                let file = event.attachment.file;
+                formData.append("file", file);
+                this.showProgressBar = true;
+                return this.axios.post(this.deleteUrl, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    onUploadProgress: function( progressEvent ) {
+                        let progress = progressEvent.loaded / progressEvent.total * 100;
+                        event.attachment.setUploadProgress(progress);
+                        // parseInt( Math.round( ( progressEvent.loaded * 100 ) / progressEvent.total ) );
+                    }.bind(this),
+                    load: function(loadEvent){
+                        // var attributes = {
+                        //     url: 'host' + 'key',
+                        //     href: 'host' + 'key' + "?content-disposition=attachment"
+                        // };
+                        // event.attachments.setAttributes(attributes);
+                    }
+                }).then((response, status) => {
+                    if (response) {
+                        this.attachments.push({
+                            'name': response.data['name'],
+                            'path': response.data['path']
+                        });
+                        App.$emit('file-upload', this.attachments);
+                    }
+                    else {
+                        throw new Error('no response')
+                    }
+                    // this.uploadPercentage = 0;
+                    // this.showProgressBar = false;
+                    return null
+                }).catch(err => {
+                    throw new Error(err)
+                })
             },
             handleEditorFocus (event) {
                 //maybe tips - 'glepete ta PHI'

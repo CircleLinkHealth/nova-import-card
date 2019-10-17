@@ -448,6 +448,11 @@ Route::group(['middleware' => 'auth'], function () {
     );
 
     Route::post(
+        'patient-email-attachment/{patient_id}/delete',
+        'API\PatientEmailController@deleteAttachment'
+    );
+
+    Route::post(
         'care-docs/{patient_id}',
         'API\PatientCareDocumentsController@uploadCareDocuments'
     );
