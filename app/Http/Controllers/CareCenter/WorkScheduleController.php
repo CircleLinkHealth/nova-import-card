@@ -151,8 +151,9 @@ class WorkScheduleController extends Controller
         $endOfMonth   = Carbon::parse($today)->endOfMonth()->copy()->toDateString();
         $endOfYear    = Carbon::parse($today)->endOfYear()->copy()->toDateString();
 
-        $nurses          = $this->getNursesWithSchedule();
-        $calendarData    = $this->fullCalendarService->prepareDataForCalendar($nurses);
+        $nurses       = $this->getNursesWithSchedule();
+        $calendarData = $this->fullCalendarService->prepareDataForCalendar($nurses);
+
         $tzAbbr          = auth()->user()->timezone_abbr ?? 'EDT';
         $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
 
@@ -245,6 +246,10 @@ class WorkScheduleController extends Controller
             $inputDate                  = $dataRequest['date'];
             $dataRequest['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
         }
+        //If until is not defined(event is not repeated)then we set to the end of here
+        if (empty($dataRequest['until'])) {
+            $dataRequest['until'] = Carbon::parse(now())->endOfYear()->toDateString();
+        }
 
         $workScheduleData = $dataRequest;
 
@@ -284,6 +289,11 @@ class WorkScheduleController extends Controller
                 '=',
                 $workScheduleData['day_of_week'],
             ],
+            //            [
+            //                'repeat_frequency',
+            //                '!=',
+            //                $workScheduleData['repeat_freq'],
+            //            ],
         ])->first();
 
         $hoursSum = NurseContactWindow::where([
@@ -292,20 +302,20 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                return Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_end
-                )->diffInHours(Carbon::createFromFormat(
+                    return Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_end
+                    )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
-            }) + Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_end']
-            )->diffInHours(Carbon::createFromFormat(
+                }) + Carbon::createFromFormat(
                     'H:i',
-                    $workScheduleData['window_time_start']
-                ));
+                    $workScheduleData['window_time_end']
+                )->diffInHours(Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_start']
+            ));
 
         $invalidWorkHoursNumber = false;
 
@@ -342,16 +352,16 @@ class WorkScheduleController extends Controller
         }
 
         if ($isAdmin) {
-            $user = auth()->user();
-
+            $user   = auth()->user();
             $window = $this->nurseContactWindows->create([
-                'nurse_info_id'     => $nurseInfoId,
+                'nurse_info_id' => $nurseInfoId,
+                //                'date'          => $dataRequest['date'],
                 'date'              => Carbon::now()->format('Y-m-d'),
                 'day_of_week'       => $workScheduleData['day_of_week'],
                 'window_time_start' => $workScheduleData['window_time_start'],
                 'window_time_end'   => $workScheduleData['window_time_end'],
                 'repeat_frequency'  => $workScheduleData['repeat_freq'],
-                'until'             => $workScheduleData['repeat_until'],
+                'until'             => $workScheduleData['until'],
             ]);
 
             $nurseUser = Nurse::find($nurseInfoId)->user;

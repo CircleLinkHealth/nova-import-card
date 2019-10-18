@@ -215,7 +215,7 @@
                 workEventDate: '',
                 nurseData: [],
                 dayOfWeek: '',
-                hoursToWork: '5',
+                hoursToWork: '5',// make this array and save integers NOT strings.
                 workRangeStarts: '09:00',
                 workRangeEnds: '17:00',
                 errors: [],
@@ -482,7 +482,7 @@
                 const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
                 const workDate = this.addNewEventMainClicked ? this.selectedDate : this.workEventDate;
                 const repeatFreq = this.eventFrequency.length !== 0 ? this.eventFrequency.value : 'does_not_repeat';
-                const repeatUntil = this.repeatUntil !== '' ? this.repeatUntil : this.endOfYear; //null - repeat forever
+                const repeatUntil = this.repeatUntil !== '' ? this.repeatUntil : this.endOfYear; //if until left empty = repeat till endOfYear
 
                 if (nurseId === null || nurseId === undefined) {
                     this.loader = false;
@@ -543,7 +543,7 @@
                     window_time_start: this.workRangeStarts,
                     window_time_end: this.workRangeEnds,
                     repeat_freq: repeatFreq,
-                    repeat_until: repeatUntil
+                    until: repeatUntil
                 }).then((response => {
                         this.loader = false;
                         this.toggleModal();
@@ -568,8 +568,10 @@
             },
 
             prepareLiveData(newEventData) {
+                console.log(newEventData);
                 return {
                     allDay: true,
+                    until:newEventData.scheduledData.until,
                     data: {
                         date: this.workEventDate,
                         windowId: newEventData.window.id,
@@ -689,55 +691,55 @@
             },
 
             events() {
-                debugger;
-                const data = this.workHours.concat(this.eventsAddedNow);
-                //@todo: Future impl. if event is not set to repeated the DONT add the rule.
-                const events = data.map(q => {
-                    const repeatFrequency = q.repeat_frequency;
-                    const repeatUntil  = q.until !== null ? q.until : this.endOfYear;
-
-                    if (repeatFrequency !== 'does_not_repeat') {
-                        const frequency = [];
-                        //current data have null frequency. These events will repeat WEEKLY by default,
-                        // to keep current functionality working
-                        if (repeatFrequency === null || repeatFrequency === 'weekly') {
-                            frequency.push(RRule.WEEKLY);
-                        }
-
-                        if (repeatFrequency === 'monthly') {
-                            frequency.push(RRule.MONTHLY);
-                        }
-
-                        if (repeatFrequency === 'daily') {
-                            frequency.push(RRule.DAILY);
-                        }
-                        const rule = new RRule({                       //https://github.com/jakubroztocil/rrule
-                            freq: frequency[0],
-                            // byweekday: [q.data.clhDayOfWeek],
-                            dtstart: new Date(q.start),
-                            until: new Date(repeatUntil),
-                        });
-                        // const rrule = rule.between(new Date(this.selectedMonthInView), new Date(this.endOfMonth));
-
-                        const rrule = rule.all();
-                        const eventWithRules = [];
-                        for (var i = 0; i < rrule.length; i++) {
-                            eventWithRules.push({
-                                title: q.title,
-                                start: rrule[i],
-                                allDay: true,
-                                color: q.color,
-                                textColor: q.textColor,
-                                repeat_frequency: q.repeat_frequency,
-                                until:q.until,
-                                data: q.data,
-                            })
-                        }
-                        return eventWithRules;
-                    } else {
-                        return data;
-                    }
-                }).map(event => event).flat();
+                const events = this.workHours.concat(this.eventsAddedNow);
+                // const events = data.map(q => {
+                //     const repeatFrequency = q.repeat_frequency;
+                //     //We also need this conditional to exist here(as in the WorkScheduleController::store())
+                //     //Reason: For the current events we have that dont have a repeatUntil value.
+                //     const repeatUntil  = q.until !== null ? q.until : this.endOfYear;
+                //
+                //     if (repeatFrequency !== 'does_not_repeat') {
+                //         const frequency = [];
+                //         //current data have null frequency. These events will repeat WEEKLY by default,
+                //         // to keep current functionality working
+                //         if (repeatFrequency === null || repeatFrequency === 'weekly') {
+                //             frequency.push(RRule.WEEKLY);
+                //         }
+                //
+                //         if (repeatFrequency === 'monthly') {
+                //             frequency.push(RRule.MONTHLY);
+                //         }
+                //
+                //         if (repeatFrequency === 'daily') {
+                //             frequency.push(RRule.DAILY);
+                //         }
+                //         const rule = new RRule({                       //https://github.com/jakubroztocil/rrule
+                //             freq: frequency[0],
+                //             // byweekday: [q.data.clhDayOfWeek],
+                //             dtstart: new Date(q.start),
+                //             until: new Date(repeatUntil),
+                //         });
+                //         // const rrule = rule.between(new Date(this.selectedMonthInView), new Date(this.endOfMonth));
+                //
+                //         const rrule = rule.all();
+                //         const eventWithRules = [];
+                //         for (var i = 0; i < rrule.length; i++) {
+                //             eventWithRules.push({
+                //                 title: q.title,
+                //                 start: rrule[i],
+                //                 allDay: true,
+                //                 color: q.color,
+                //                 textColor: q.textColor,
+                //                 repeat_frequency: q.repeat_frequency,
+                //                 until:q.until,
+                //                 data: q.data,
+                //             })
+                //         }
+                //         return eventWithRules;
+                //     } else {
+                //         return data;
+                //     }
+                // }).map(event => event).flat();
 
                 //@todo:implement a count - results found and in which month are found
 

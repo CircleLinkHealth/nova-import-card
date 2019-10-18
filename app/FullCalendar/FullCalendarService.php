@@ -120,12 +120,12 @@ class FullCalendarService
                         {$windowStartForView}-{$windowEndForView}",
                         self::START => "{$givenDateWeekMap[$window->day_of_week]}T{$window->window_time_start}",
                         //                        self::START => "{$givenDateWeekMap[$window->day_of_week]}", //no time = repeated event
-                        self::END => "{$givenDateWeekMap[$window->day_of_week]}T{$window->window_time_end}",
-                        //@todo: add until - date to repeat event
+                        self::END          => "{$givenDateWeekMap[$window->day_of_week]}T{$window->window_time_end}",
                         'color'            => $color,
                         'textColor'        => '#fff',
                         'repeat_frequency' => $window->repeat_frequency,
                         'until'            => $window->until,
+                        'allDay'           => true,
                         'data'             => [
                             'nurseId'      => $nurse->nurseInfo->id,
                             'windowId'     => $window->id,
