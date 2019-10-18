@@ -473,8 +473,9 @@ class NotesController extends Controller
         if (isset($input['email-patient'])) {
             //use validator to use inputSafe
             $request->validate([
-                'patient-email-body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
-                'attachments'        => ['sometimes'],
+                'patient-email-body'   => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
+                'attachments'          => ['sometimes'],
+                'custom-patient-email' => 'email',
                 //add when default, include custom
             ]);
 

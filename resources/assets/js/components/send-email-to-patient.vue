@@ -7,10 +7,11 @@
             </label></div>
         <div class="form-group" v-if="this.patient.email">To: {{this.patient.email}}</div>
         <div  class="form-group" v-else>
-            <span>Patient email not found. Please input below:</span><br>
-            <textarea name="custom-patient-email" placeholder="Enter email..."></textarea><br>
-            <input type="checkbox" id="default-patient-email" name="default-patient-email" value="1">
-            <label for="default-patient-email"><span> </span>Save as default patient email</label>
+            <div style="padding-bottom: 10px"><span><strong>Patient email not found.</strong></span><br></div>
+            <div class="col-sm-6" style="padding-left: 0"><span>Send to: </span><input type="email" name="custom-patient-email" placeholder="Enter email..."></div>
+            <div class="col-sm-6"><input type="checkbox" id="default-patient-email" name="default-patient-email" value="1">
+                <label for="default-patient-email"><span> </span>Save as default patient email</label></div>
+
         </div>
         <!--<div class="form-group">-->
             <!--<progress v-if="this.showProgressBar" class="progress-bar" max="100" :value.prop="uploadPercentage"></progress>-->

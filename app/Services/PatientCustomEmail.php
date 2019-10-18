@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\Contracts\SendsNotification;
+use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Notifications\SendCareDocument;
 use App\Notifications\SendPatientEmail;
 use CircleLinkHealth\Core\Traits\Notifiable;
@@ -14,7 +14,7 @@ use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use Notification;
 
-class PatientCustomEmail implements SendsNotification
+class PatientCustomEmail extends SendsNotification
 {
     /**
      * @var string
@@ -60,10 +60,5 @@ class PatientCustomEmail implements SendsNotification
     public function getNotification(): \Illuminate\Notifications\Notification
     {
         return new SendPatientEmail($this->content, $this->attachments);
-    }
-
-    public function send()
-    {
-        $this->getNotifiable()->notify($this->getNotification());
     }
 }
