@@ -1562,6 +1562,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $name . ' (' . $this->id . ')';
     }
 
+    public function getFullNameWithIdAttribute()
+    {
+        $name = $this->getFullName();
+
+        return $name . ' (' . $this->id . ')';
+    }
+
     public function getGender()
     {
         if (!$this->patientInfo) {
