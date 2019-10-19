@@ -23,6 +23,14 @@ if (isset($patient)) {
 @section('content')
     @push('styles')
         <style>
+            @media print {
+                a[href]:after {
+                    content: none;
+                }
+                .padding-top-print {
+                    padding-top: 10px;
+                }
+            }
             div.pad-right-20 {
                 padding-right: 25px;
             }
@@ -60,7 +68,7 @@ if (isset($patient)) {
                                             <div>
                                                 <small>CCM</small>
                                             </div>
-                                            <div>
+                                            <div class="padding-top-print">
                                                  <a id="monthly-time-static"
                                                     href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
                                                     {{$monthlyTime}}
@@ -72,7 +80,7 @@ if (isset($patient)) {
                                                 <div>
                                                     <small>BHI</small>
                                                 </div>
-                                                <div>
+                                                <div class="padding-top-print">
                                                      <a id="monthly-bhi-time-static"
                                                         href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
                                                         {{$monthlyBhiTime}}
