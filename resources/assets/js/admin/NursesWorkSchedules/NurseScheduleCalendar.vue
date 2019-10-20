@@ -175,7 +175,7 @@
 
 <script>
     import {FullCalendar} from 'vue-full-calendar';
-    import RRule from 'rrule';
+    import {RRule} from 'rrule';
     import 'fullcalendar/dist/fullcalendar.css';
     import VueSelect from 'vue-select';
     import {mapActions} from 'vuex';
@@ -482,7 +482,10 @@
                 const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
                 const workDate = this.addNewEventMainClicked ? this.selectedDate : this.workEventDate;
                 const repeatFreq = this.eventFrequency.length !== 0 ? this.eventFrequency.value : 'does_not_repeat';
-                const repeatUntil = this.repeatUntil !== '' ? this.repeatUntil : this.endOfYear; //if until left empty = repeat till endOfYear
+                const repeatUntil = this.repeatUntil !== ''
+                && repeatFreq !== 'does_not_repeat'
+                    ? this.repeatUntil
+                    : null;
 
                 if (nurseId === null || nurseId === undefined) {
                     this.loader = false;
@@ -568,10 +571,10 @@
             },
 
             prepareLiveData(newEventData) {
-                console.log(newEventData);
                 return {
                     allDay: true,
-                    until:newEventData.scheduledData.until,
+                    until: newEventData.scheduledData.until,
+
                     data: {
                         date: this.workEventDate,
                         windowId: newEventData.window.id,
@@ -691,55 +694,71 @@
             },
 
             events() {
-                const events = this.workHours.concat(this.eventsAddedNow);
-                // const events = data.map(q => {
-                //     const repeatFrequency = q.repeat_frequency;
-                //     //We also need this conditional to exist here(as in the WorkScheduleController::store())
-                //     //Reason: For the current events we have that dont have a repeatUntil value.
-                //     const repeatUntil  = q.until !== null ? q.until : this.endOfYear;
-                //
-                //     if (repeatFrequency !== 'does_not_repeat') {
-                //         const frequency = [];
-                //         //current data have null frequency. These events will repeat WEEKLY by default,
-                //         // to keep current functionality working
-                //         if (repeatFrequency === null || repeatFrequency === 'weekly') {
-                //             frequency.push(RRule.WEEKLY);
-                //         }
-                //
-                //         if (repeatFrequency === 'monthly') {
-                //             frequency.push(RRule.MONTHLY);
-                //         }
-                //
-                //         if (repeatFrequency === 'daily') {
-                //             frequency.push(RRule.DAILY);
-                //         }
-                //         const rule = new RRule({                       //https://github.com/jakubroztocil/rrule
-                //             freq: frequency[0],
-                //             // byweekday: [q.data.clhDayOfWeek],
-                //             dtstart: new Date(q.start),
-                //             until: new Date(repeatUntil),
-                //         });
-                //         // const rrule = rule.between(new Date(this.selectedMonthInView), new Date(this.endOfMonth));
-                //
-                //         const rrule = rule.all();
-                //         const eventWithRules = [];
-                //         for (var i = 0; i < rrule.length; i++) {
-                //             eventWithRules.push({
-                //                 title: q.title,
-                //                 start: rrule[i],
-                //                 allDay: true,
-                //                 color: q.color,
-                //                 textColor: q.textColor,
-                //                 repeat_frequency: q.repeat_frequency,
-                //                 until:q.until,
-                //                 data: q.data,
-                //             })
-                //         }
-                //         return eventWithRules;
-                //     } else {
-                //         return data;
-                //     }
-                // }).map(event => event).flat();
+                const data = this.workHours.concat(this.eventsAddedNow);
+                const events = data.map(q => {
+                        const repeatFrequency = q.repeat_frequency;
+
+                        const until = [];
+
+                        const frequency = [];
+
+                        if (repeatFrequency === 'weekly') {
+                            frequency.push(RRule.WEEKLY);
+                            until.push(new Date(q.until))
+                        }
+
+                        if (repeatFrequency === 'monthly') {
+                            frequency.push(RRule.MONTHLY);
+                            until.push(new Date(q.until))
+                        }
+
+                        if (repeatFrequency === 'daily') {
+                            frequency.push(RRule.DAILY);
+                            until.push(new Date(q.until))
+                        }
+
+                        if (repeatFrequency !== 'does_not_repeat') {
+                            until.push(new Date(q.start))
+                        }
+
+
+                        const rule = new RRule({                       //https://github.com/jakubroztocil/rrule
+                            freq: frequency[0],
+                            // byweekday: [q.data.clhDayOfWeek],
+                            dtstart: new Date(q.start),
+                            until: until[0],
+                        });
+
+                        const rrule = rule.all();
+
+                        // const rruleSet = new RRuleSet();   //https://github.com/jakubroztocil/rrule
+                        //
+                        // rruleSet.rrule(new RRule({
+                        //     freq: frequency[0],
+                        //     // byweekday: [q.data.clhDayOfWeek],
+                        //     dtstart: new Date(q.start),
+                        //     until: until[0],
+                        // }));
+                        //
+                        // const rrule = rruleSet.all();
+
+                        const eventWithRules = [];
+                        for (var i = 0; i < rrule.length; i++) {
+                            eventWithRules.push({
+                                title: q.title,
+                                start: rrule[i],
+                                allDay: true,
+                                color: q.color,
+                                textColor: q.textColor,
+                                repeat_frequency: frequency[0],
+                                until: q.until,
+                                // repeat_rule_in_human: rruleSet.toText(),
+                                data: q.data,
+                            })
+                        }
+                        return eventWithRules;
+                    }
+                ).map(event => event).flat();
 
                 //@todo:implement a count - results found and in which month are found
 

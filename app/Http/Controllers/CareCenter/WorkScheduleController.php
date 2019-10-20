@@ -156,7 +156,7 @@ class WorkScheduleController extends Controller
 
         $tzAbbr          = auth()->user()->timezone_abbr ?? 'EDT';
         $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
-
+        //dd($calendarData);
         return view(
             'admin.nurse.schedules.index',
             compact(
@@ -246,10 +246,10 @@ class WorkScheduleController extends Controller
             $inputDate                  = $dataRequest['date'];
             $dataRequest['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
         }
-        //If until is not defined(event is not repeated)then we set to the end of here
-        if (empty($dataRequest['until'])) {
-            $dataRequest['until'] = Carbon::parse(now())->endOfYear()->toDateString();
-        }
+
+//        if (empty($dataRequest['until'])) {
+//            $dataRequest['until'] = Carbon::parse(now())->endOfYear()->toDateString();
+//        }
 
         $workScheduleData = $dataRequest;
 
@@ -355,8 +355,8 @@ class WorkScheduleController extends Controller
             $user   = auth()->user();
             $window = $this->nurseContactWindows->create([
                 'nurse_info_id' => $nurseInfoId,
-                //                'date'          => $dataRequest['date'],
-                'date'              => Carbon::now()->format('Y-m-d'),
+                'date'          => $dataRequest['date'],
+                //                                'date'              => Carbon::now()->format('Y-m-d'),
                 'day_of_week'       => $workScheduleData['day_of_week'],
                 'window_time_start' => $workScheduleData['window_time_start'],
                 'window_time_end'   => $workScheduleData['window_time_end'],

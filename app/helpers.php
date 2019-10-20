@@ -1497,8 +1497,7 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
 if ( ! function_exists('convertDayOfWeekToWeekDate')) {
     /**
-     * Date parameter is the date the user saved the event. Eg. user XXX created a post to db on {date}
-     * to work on weekDay {2}.
+     * Date parameter is the date the user saved the event for. Take that to startOfWeek and days to find the date?
      *
      * @param mixed $date
      *

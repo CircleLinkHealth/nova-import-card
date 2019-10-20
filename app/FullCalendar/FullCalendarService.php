@@ -105,6 +105,14 @@ class FullCalendarService
                 $windowEndForView = Carbon::parse($window->window_time_end)->format('H:i');
                 $hoursAbrev = 'h';
 
+                if (null === $window->until && (null === $window->repeat_frequency || 'does_not_repeat' !== $window->repeat_frequency)) {
+                    $repeatUntil = Carbon::parse(now())->endOfYear()->toDateString();
+                    $repeatFrequency = 'weekly';
+                } else {
+                    $repeatUntil = $window->until;
+                    $repeatFrequency = $window->repeat_frequency;
+                }
+
                 $color = '#5bc0ded6';
                 //@todo:needs to change only for the event checked and not for cloned events also
 //                if ('worked' === $window->validated) {
@@ -123,8 +131,8 @@ class FullCalendarService
                         self::END          => "{$givenDateWeekMap[$window->day_of_week]}T{$window->window_time_end}",
                         'color'            => $color,
                         'textColor'        => '#fff',
-                        'repeat_frequency' => $window->repeat_frequency,
-                        'until'            => $window->until,
+                        'repeat_frequency' => $repeatFrequency,
+                        'until'            => $repeatUntil,
                         'allDay'           => true,
                         'data'             => [
                             'nurseId'      => $nurse->nurseInfo->id,
