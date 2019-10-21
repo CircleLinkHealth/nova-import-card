@@ -9,6 +9,7 @@ use App\SurveyInstance;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
+use Waavi\UrlShortener\Facades\UrlShortener;
 
 class SurveyInvitationLinksService
 {
@@ -52,6 +53,8 @@ class SurveyInvitationLinksService
             $surveyId = $hraSurveyInstance->survey_id;
         }
 
+        $url      = null;
+        $shortUrl = null;
         if (Survey::HRA === $surveyName) {
             $patientInfoId = $user->patientInfo->id;
             $this->expireAllPastUrls($patientInfoId, $surveyId);
@@ -66,6 +69,12 @@ class SurveyInvitationLinksService
                     'timestamp' => Carbon::now()->timestamp,
                 ]);
 
+            try {
+                $shortUrl = UrlShortener::shorten($url);
+            } catch (\Exception $e) {
+                \Log::warning($e->getMessage());
+            }
+
             $urlToken = $this->parseUrl($url);
 
             InvitationLink::create([
@@ -73,6 +82,8 @@ class SurveyInvitationLinksService
                 'survey_id'           => $surveyId,
                 'link_token'          => $urlToken,
                 'is_manually_expired' => false,
+                'url'                 => $url,
+                'short_url'           => $shortUrl,
             ]);
         } else {
             $url = route('survey.vitals', [
@@ -80,7 +91,7 @@ class SurveyInvitationLinksService
             ]);
         }
 
-        return $url;
+        return $shortUrl ?? $url;
     }
 
     public function expireAllPastUrls($patientInfoId, $surveyId = null)

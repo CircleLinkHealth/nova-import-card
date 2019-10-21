@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
+ * @property string url
+ * @property string short_url
  * @property int survey_id
  * @property Carbon updated_at
  * @property bool is_manually_expired
@@ -18,6 +20,8 @@ class InvitationLink extends BaseModel
         'survey_id',
         'link_token',
         'is_manually_expired',
+        'url',
+        'short_url',
     ];
 
     protected $casts = [
