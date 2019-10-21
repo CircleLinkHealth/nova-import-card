@@ -68,7 +68,9 @@ class PatientEmailBodyDoesNotContainPhi implements Rule
             $string = $this->getSanitizedAndTransformedAttribute($this->patientUser, $phi);
 
             if ($string) {
-                $this->phiFound[] = preg_match("/\b{$string}\b/", $value) ? $phi : null;
+                $this->phiFound[] = preg_match("/\b{$string}\b/", $value)
+                    ? $phi
+                    : null;
             }
         }
 
@@ -77,7 +79,9 @@ class PatientEmailBodyDoesNotContainPhi implements Rule
             foreach ($relation->phi as $phi) {
                 $string = $this->getSanitizedAndTransformedAttribute($relation, $phi);
                 if ($string) {
-                    $this->phiFound[] = preg_match("/\b{$string}\b/", $value) ? $phi : null;
+                    $this->phiFound[] = preg_match("/\b{$string}\b/", $value)
+                        ? $phi
+                        : null;
                 }
             }
         }
@@ -89,13 +93,12 @@ class PatientEmailBodyDoesNotContainPhi implements Rule
 
     private function getSanitizedAndTransformedAttribute(Model $model, $phi)
     {
-        return trim(strtolower($model->getAttribute($phi)));
-//        try {
-//            if (array_key_exists($phi, $this->tranformable)) {
-//                $string = $this->transformable[$phi][$string];
-//            }
-//        } catch (\Exception $exception) {
-////            dd($this);
-//        }
+        $string = trim(strtolower($model->getAttribute($phi)));
+
+        if (array_key_exists($phi, $this->transformable)) {
+            $string = $this->transformable[$phi][$string];
+        }
+
+        return $string;
     }
 }
