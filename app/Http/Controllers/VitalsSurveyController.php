@@ -18,11 +18,18 @@ class VitalsSurveyController extends Controller
 
     public function showWelcome($patientId)
     {
-        $patient = User::findOrFail($patientId);
+        $patient = User::with(['regularDoctor', 'billingProvider'])->findOrFail($patientId);
+
+        if ( ! empty($patient->regularDoctorUser())) {
+            $doctorsName = $patient->regularDoctorUser()->getFullName();
+        } else if ( ! empty($patient->billingProviderUser())) {
+            $doctorsName = $patient->billingProviderUser()->getFullName();
+        }
 
         return view('survey.vitals.welcome', [
             'patientId' => $patient->id,
             'patientName' => $patient->display_name,
+            'doctorName' => $doctorsName ?? '',
         ]);
     }
 
