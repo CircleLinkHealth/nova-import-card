@@ -31,6 +31,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Validator;
 
 class NotesController extends Controller
 {
@@ -135,16 +136,16 @@ class NotesController extends Controller
                 ->where('inbound_cpm_id', '=', $patientId)
                 ->where('outbound_cpm_id', '=', $author_id)
                 ->select(
-                    [
-                        'id',
-                        'type',
-                        'sub_type',
-                        'attempt_note',
-                        'scheduled_date',
-                        'window_start',
-                        'window_end',
-                    ]
-                )
+                                           [
+                                               'id',
+                                               'type',
+                                               'sub_type',
+                                               'attempt_note',
+                                               'scheduled_date',
+                                               'window_start',
+                                               'window_end',
+                                           ]
+                                       )
                 ->get();
         }
 
@@ -351,19 +352,28 @@ class NotesController extends Controller
     ) {
         $input                  = $request->allSafe();
         $shouldSendPatientEmail = isset($input['email-patient']);
+        $shouldNotifyCareTeam   = isset($input['notify_careteam']);
+        $shouldNotifySupport    = isset($input['notify_circlelink_support']);
 
         $note = Note::where('patient_id', $input['patient_id'])
             ->findOrFail($input['noteId']);
 
         $patient = User::findOrFail($patientId);
 
-        $note->forward($input['notify_careteam'], $input['notify_circlelink_support']);
+        $note->forward($shouldNotifyCareTeam, $shouldNotifySupport);
 
         if ($shouldSendPatientEmail) {
+            Validator::make($input, [
+                'patient-email-body'   => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
+                'attachments'          => ['sometimes'],
+                'custom-patient-email' => 'email',
+                //add when default, include custom
+            ])->validate();
+
             $this->sendPatientEmail($input, $patient, $note);
         }
 
-        return redirect()->route('patient.note.index', [$noteId]);
+        return redirect()->route('patient.note.index', [$patientId]);
     }
 
     public function show(
@@ -479,16 +489,17 @@ class NotesController extends Controller
 
         $input['status'] = 'complete';
 
-        $shouldSendPatientEmail = isset($input['email-patient']) ? true : false;
+        $shouldSendPatientEmail = isset($input['email-patient'])
+            ? true
+            : false;
 
         if ($shouldSendPatientEmail) {
-            //use validator to use inputSafe
-            $request->validate([
+            Validator::make($input, [
                 'patient-email-body'   => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
                 'attachments'          => ['sometimes'],
                 'custom-patient-email' => 'email',
                 //add when default, include custom
-            ]);
+            ])->validate();
         }
 
         //Performed By field is removed from the form (per CPM-1172)
@@ -836,7 +847,9 @@ class NotesController extends Controller
         SendSingleNotification::dispatch(new PatientCustomEmail(
             $input['patient-email-body'],
             $address,
-            isset($input['attachments']) ? $input['attachments'] : [],
+            isset($input['attachments'])
+                ? $input['attachments']
+                : [],
             $note->id
         ));
     }
@@ -859,11 +872,11 @@ class NotesController extends Controller
     {
         return Practice::whereId($patient->program_id)
             ->where(
-                function ($q) {
-                    $q->where('name', '=', 'phoenix-heart')
-                        ->orWhere('name', '=', 'demo');
-                }
-            )
+                           function ($q) {
+                               $q->where('name', '=', 'phoenix-heart')
+                                   ->orWhere('name', '=', 'demo');
+                           }
+                       )
             ->exists();
     }
 

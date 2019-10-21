@@ -46,8 +46,7 @@ class TrixMailable extends Mailable
                 'content' => $this->content,
             ])
             ->from('no-replyg@circlelinkhealth.com', 'CircleLink Health')
-            ->subject('You have received a message from CircleLink Health')
-            ->attachFromStorage();
+            ->subject('You have received a message from CircleLink Health');
 
         //not working
 //            ->attachFromStorageDisk('s3', $this->s3attachments[0]['path']);

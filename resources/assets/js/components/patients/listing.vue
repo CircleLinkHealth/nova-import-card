@@ -293,7 +293,6 @@
             },
             getPractices() {
                 return this.loaders.practices = this.axios.get(rootUrl('api/practices')).then(response => {
-                    console.log('patient-list:practices', response.data)
                     this.practices = response.data
                     this.loaders.practices = null
                     return this.practices
@@ -305,7 +304,6 @@
             getProviders() {
                 this.loaders.providers = true
                 return this.axios.get(rootUrl('api/providers/list')).then(response => {
-                    console.log('patient-list:providers', response.data)
                     this.providersForSelect = (response.data || []).map(provider => ({
                         id: provider.user_id,
                         text: provider.name
@@ -343,7 +341,6 @@
                         //request was cancelled
                         return;
                     }
-                    console.log('patient-list', response.data)
                     const pagination = response.data
                     const ids = this.tableData.map(patient => patient.id)
                     this.pagination = {

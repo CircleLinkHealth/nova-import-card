@@ -89,16 +89,13 @@ class PatientEmailBodyDoesNotContainPhi implements Rule
 
     private function getSanitizedAndTransformedAttribute(Model $model, $phi)
     {
-        $string = trim(strtolower($model->getAttribute($phi)));
-
-        try {
-            if (array_key_exists($phi, $this->tranformable)) {
-                $string = $this->transformable[$phi][$string];
-            }
-        } catch (\Exception $exception) {
-            dd($this);
-        }
-
-        return $string;
+        return trim(strtolower($model->getAttribute($phi)));
+//        try {
+//            if (array_key_exists($phi, $this->tranformable)) {
+//                $string = $this->transformable[$phi][$string];
+//            }
+//        } catch (\Exception $exception) {
+////            dd($this);
+//        }
     }
 }

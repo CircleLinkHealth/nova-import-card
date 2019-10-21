@@ -685,8 +685,6 @@
 
                 App.$on('file-upload', (attachments) => {
                     formAttachments = attachments;
-                    console.log('event emmitted');
-                    console.log(attachments);
                 });
 
                 //CPM-182: Show a confirmation box if user spend time creating the note

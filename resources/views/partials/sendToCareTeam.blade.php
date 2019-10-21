@@ -142,9 +142,6 @@
         const isCreateNotePage = @json(Route::is('patient.note.create'));
         const hasSummary = @json(isset($note['summary']) && !empty($note['summary']));
 
-        let formAttachments;
-
-
         if (isCreateNotePage) {
             (function ($) {
                 //hacky way to display summary input required when notify-careteam is checked, and also make summary required
