@@ -57,7 +57,7 @@
 
                         <div v-if="isSubQuestion(question) && shouldShowQuestionGroupTitle(question)"
                              class="questions-title">
-                            {{getQuestionGroupTitle(question)}}
+                            <span v-html="getQuestionGroupTitle(question)"></span>
                         </div>
 
                         <br v-if="shouldShowQuestionGroupTitle(question)">
@@ -394,8 +394,7 @@
                     let scrollTo = 0;
                     if (currentQuestionOffset < 0) {
                         scrollTo = surveyContainer.scrollTop() + currentQuestionOffset;
-                    }
-                    else {
+                    } else {
                         scrollTo = currentQuestionOffset
                     }
 
@@ -438,11 +437,9 @@
                         else if (typeof q.related_question_expected_answer === "undefined") {
                             if (Array.isArray(firstQuestion.answer.value) && firstQuestion.answer.value.length === 0) {
                                 canGoToPrev = false;
-                            }
-                            else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
+                            } else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
                                 canGoToPrev = false;
-                            }
-                            else if (firstQuestion.answer.value.value && firstQuestion.answer.value.value.length === 0) {
+                            } else if (firstQuestion.answer.value.value && firstQuestion.answer.value.value.length === 0) {
                                 canGoToPrev = false;
                             }
 
@@ -480,11 +477,9 @@
                         else if (typeof q.related_question_expected_answer === "undefined") {
                             if (Array.isArray(firstQuestion.answer.value) && firstQuestion.answer.value.length === 0) {
                                 canGoToNext = false;
-                            }
-                            else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
+                            } else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
                                 canGoToNext = false;
-                            }
-                            else if (firstQuestion.answer.value.value && firstQuestion.answer.value.value.length === 0) {
+                            } else if (firstQuestion.answer.value.value && firstQuestion.answer.value.value.length === 0) {
                                 canGoToNext = false;
                             }
 
@@ -584,20 +579,17 @@
 
                         if (error.response && error.response.status === 404) {
                             this.error = "Not Found [404]";
-                        }
-                        else if (error.response && error.response.status === 419) {
+                        } else if (error.response && error.response.status === 419) {
                             this.error = "Not Authenticated [419]";
                             //reload the page which will redirect to login
                             window.location.reload();
-                        }
-                        else if (error.response && error.response.data) {
+                        } else if (error.response && error.response.data) {
                             const errors = [error.response.data.message];
                             Object.keys(error.response.data.errors || []).forEach(e => {
                                 errors.push(error.response.data.errors[e]);
                             });
                             this.error = errors.join('<br/>');
-                        }
-                        else {
+                        } else {
                             this.error = error.message;
                         }
                     });
@@ -660,8 +652,7 @@
                         this.readOnlyMode = !this.readOnlyMode;
                         this.actionsDisabled = false;
                     });
-                }
-                else {
+                } else {
                     this.readOnlyMode = !this.readOnlyMode;
                     this.actionsDisabled = false;
                 }
@@ -715,8 +706,7 @@
                 this.latestQuestionAnsweredIndex = index;
                 if (this.latestQuestionAnsweredIndex >= (this.questions.length - 1)) {
                     this.currentQuestionIndex = 0;
-                }
-                else {
+                } else {
                     this.currentQuestionIndex = this.latestQuestionAnsweredIndex + 1;
                 }
             }
