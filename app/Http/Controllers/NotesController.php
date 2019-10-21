@@ -345,14 +345,23 @@ class NotesController extends Controller
     }
 
     public function send(
-        Request $input,
+        SafeRequest $request,
         $patientId,
         $noteId
     ) {
+        $input                  = $request->allSafe();
+        $shouldSendPatientEmail = isset($input['email-patient']);
+
         $note = Note::where('patient_id', $input['patient_id'])
             ->findOrFail($input['noteId']);
 
+        $patient = User::findOrFail($patientId);
+
         $note->forward($input['notify_careteam'], $input['notify_circlelink_support']);
+
+        if ($shouldSendPatientEmail) {
+            $this->sendPatientEmail($input, $patient, $note);
+        }
 
         return redirect()->route('patient.note.index', [$noteId]);
     }
@@ -470,7 +479,9 @@ class NotesController extends Controller
 
         $input['status'] = 'complete';
 
-        if (isset($input['email-patient'])) {
+        $shouldSendPatientEmail = isset($input['email-patient']) ? true : false;
+
+        if ($shouldSendPatientEmail) {
             //use validator to use inputSafe
             $request->validate([
                 'patient-email-body'   => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
@@ -478,21 +489,6 @@ class NotesController extends Controller
                 'custom-patient-email' => 'email',
                 //add when default, include custom
             ]);
-
-            $address = $patient->email;
-
-            if (isset($input['custom-patient-email'])) {
-                $address = $input['custom-patient-email'];
-
-                if (isset($input['default-patient-email'])) {
-                    $patient->email = $input['custom-patient-email'];
-                    $patient->save();
-                }
-            }
-            //todo: remove
-            $address = 'kakoushias@gmail.com';
-
-            SendSingleNotification::dispatch(new PatientCustomEmail($input['patient-email-body'], $address, isset($input['attachments']) ? $input['attachments'] : []));
         }
 
         //Performed By field is removed from the form (per CPM-1172)
@@ -527,6 +523,10 @@ class NotesController extends Controller
             'notifyCLH'      => $input['notify_circlelink_support'] ?? false,
             'forceNotify'    => false,
         ]));
+
+        if ($shouldSendPatientEmail) {
+            $this->sendPatientEmail($input, $patient, $note);
+        }
 
         $info = $this->updatePatientInfo($patient, $input);
         $this->updatePatientCallWindows($info, $input);
@@ -816,6 +816,29 @@ class NotesController extends Controller
         )
             ->flatten()
             ->all();
+    }
+
+    private function sendPatientEmail($input, $patient, $note)
+    {
+        $address = $patient->email;
+
+        if (isset($input['custom-patient-email'])) {
+            $address = $input['custom-patient-email'];
+
+            if (isset($input['default-patient-email'])) {
+                $patient->email = $input['custom-patient-email'];
+                $patient->save();
+            }
+        }
+        //todo: remove
+        $address = 'kakoushias@gmail.com';
+
+        SendSingleNotification::dispatch(new PatientCustomEmail(
+            $input['patient-email-body'],
+            $address,
+            isset($input['attachments']) ? $input['attachments'] : [],
+            $note->id
+        ));
     }
 
 //    /**

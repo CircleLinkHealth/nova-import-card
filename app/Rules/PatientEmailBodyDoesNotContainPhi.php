@@ -91,8 +91,12 @@ class PatientEmailBodyDoesNotContainPhi implements Rule
     {
         $string = trim(strtolower($model->getAttribute($phi)));
 
-        if (array_key_exists($phi, $this->tranformable)) {
-            $string = $this->transformable[$phi][$string];
+        try {
+            if (array_key_exists($phi, $this->tranformable)) {
+                $string = $this->transformable[$phi][$string];
+            }
+        } catch (\Exception $exception) {
+            dd($this);
         }
 
         return $string;

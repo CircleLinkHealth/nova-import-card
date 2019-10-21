@@ -18,17 +18,21 @@ class SendPatientEmail extends Notification
 
     protected $content;
 
+    protected $noteId;
+
     /**
      * Create a new notification instance.
      *
-     * @param mixed $content
-     * @param mixed $filePathOrMedia
-     * @param mixed $attachments
+     * @param mixed      $content
+     * @param mixed      $filePathOrMedia
+     * @param mixed      $attachments
+     * @param mixed|null $noteId
      */
-    public function __construct($content, $attachments)
+    public function __construct($content, $attachments, $noteId = null)
     {
         $this->content     = $content;
         $this->attachments = $attachments;
+        $this->noteId      = $noteId;
     }
 
     /**
@@ -40,8 +44,10 @@ class SendPatientEmail extends Notification
      */
     public function toArray($notifiable)
     {
-        //log media id from S3 so we can retrieve in the future
         return [
+            //media id s3 for attachments
+            //note id
+            //email this was sent to
         ];
     }
 

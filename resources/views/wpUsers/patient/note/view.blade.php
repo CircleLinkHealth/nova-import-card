@@ -54,7 +54,7 @@
                 <div class="main-form-title col-lg-12">
                     View Note
                 </div>
-                {!! Form::open(array('url' => route('patient.note.send', ['patientId' => $patient->id, 'noteId' => $note['id']]), 'class' => 'form-horizontal')) !!}
+                {!! Form::open(array('url' => route('patient.note.send', ['patientId' => $patient->id, 'noteId' => $note['id']]), 'class' => 'form-horizontal', 'id' => 'viewNote')) !!}
 
                 @include('partials.userheader')
 
@@ -207,6 +207,42 @@
                                         $(function () {
                                             $('[data-toggle="tooltip"]').tooltip()
                                         });
+
+                                        $(document).ready(function () {
+                                            App.$on('file-upload', (attachments) => {
+                                                formAttachments = attachments;
+                                                console.log('event emmitted');
+                                                console.log(attachments);
+                                            });
+
+                                            $('#newNote').submit(function (e) {
+                                                e.preventDefault();
+                                                form = this;
+                                                //prevent sent if send patient email is check and email body is empty
+                                                if($("[id='email-patient']").prop("checked") == true && $("[id='patient-email-body-input']").val() == 0){
+                                                    alert("Please fill out the patient email!");
+                                                    return;
+                                                }
+                                                //append patient email attachments on form if the exist
+                                                if (formAttachments){
+                                                    let i = 0;
+                                                    formAttachments.map(function (attachment) {
+                                                        $("<input>")
+                                                            .attr("type", "hidden")
+                                                            .attr("name", "attachments["+i+"][name]").val(attachment.name).appendTo(form);
+                                                        $("<input>")
+                                                            .attr("type", "hidden")
+                                                            .attr("name", "attachments["+i+"][path]").val(attachment.path).appendTo(form);
+                                                        i++;
+                                                    });
+                                                }
+
+                                            });
+
+                                            form.submit();
+                                        });
+
+
 
                                         $('.collapse').collapse();
 

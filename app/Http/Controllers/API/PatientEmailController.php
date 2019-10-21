@@ -22,7 +22,6 @@ class PatientEmailController extends Controller
 
         if ($file) {
             $filePath = $file->getPath();
-
             if ($filePath) {
                 if (file_exists($filePath)) {
                     unlink($filePath);

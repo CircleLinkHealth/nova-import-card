@@ -13,12 +13,8 @@
                 <label for="default-patient-email"><span> </span>Save as default patient email</label></div>
 
         </div>
-        <!--<div class="form-group">-->
-            <!--<progress v-if="this.showProgressBar" class="progress-bar" max="100" :value.prop="uploadPercentage"></progress>-->
-        <!--</div>-->
         <div class="form-group">
                 <VueTrix class="" id="patient-email-body" inputId="patient-email-body-input"
-                         localStorage
                          inputName="patient-email-body"
                          v-model="editorContent"
                          placeholder="Enter your content... (please do not enter patient PHI)"
@@ -48,8 +44,6 @@
             return {
                 editorContent : '',
                 attachments: [],
-                // uploadPercentage: 0,
-                // showProgressBar: false
             }
 
         },
@@ -78,20 +72,20 @@
                         'Content-Type': 'multipart/form-data'
                     },
                     onUploadProgress: function( progressEvent ) {
-                        var progress = parseInt( Math.round( ( progressEvent.loaded * 100 ) / progressEvent.total ) );
+                        var progress = parseInt( Math.round( ( progressEvent.loaded * 80 ) / progressEvent.total ) );
                             // progressEvent.loaded / progressEvent.total * 100;
                         event.attachment.setUploadProgress(progress);
                             // parseInt( Math.round( ( progressEvent.loaded * 100 ) / progressEvent.total ) );
                     }.bind(this),
                     load: function(loadEvent){
-                        // var attributes = {
-                        //     url: 'host' + 'key',
-                        //     href: 'host' + 'key' + "?content-disposition=attachment"
-                        // };
-                        // event.attachments.setAttributes(attributes);
+                        var attributes = {
+                            url: 'host' + 'key',
+                            href: 'host' + 'key'
+                        };
                     }
                 }).then((response, status) => {
                     if (response) {
+                        event.attachment.setUploadProgress(100);
                         this.attachments.push({
                             'name': response.data['name'],
                             'path': response.data['path']
@@ -101,8 +95,6 @@
                     else {
                         throw new Error('no response')
                     }
-                    // this.uploadPercentage = 0;
-                    // this.showProgressBar = false;
                     return null
                 }).catch(err => {
                     throw new Error(err)

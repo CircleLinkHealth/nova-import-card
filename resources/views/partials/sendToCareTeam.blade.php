@@ -30,22 +30,23 @@
                         <input type="checkbox" id="notify-careteam" name="notify_careteam"
                                @empty($note_channels_text) disabled="disabled"
                                @endempty value="1">
-                        <label for="notify-careteam" style="display: inline-block;"><span></span>Provider/CareTeam
+                        <label id="notify-careteam-label" for="notify-careteam" style="display: inline-block;"><span id="notify-careteam-span"></span>Provider/CareTeam
 
                         </label>
                         <div class="label" data-tooltip="Notifies: {{ $notifies_text }} via {{ $note_channels_text }}">
                             <i class="fas fa-exclamation-circle fa-lg" style="color:#50b2e2"></i>
                         </div>
-                        <input type="checkbox" id="notify-patient" name="notify_patient"
-                                value="1">
-                        <label for="notify-patient" style="display: inline-block;"><span></span>Notify Patient
-
-                        </label>
                     @endempty
                 @endempty
-
             </div>
-            <div class="col-sm-4" style="text-align: right">
+            <div class="col-sm-2" style="margin-right: 0; padding-right: 0">
+                <div>
+                    <input type="checkbox" id="email-patient"
+                           name="email-patient" value="1">
+                    <label for="email-patient"><span> </span>Email Patient</label>
+                </div>
+            </div>
+            <div class="col-sm-2" style="text-align: right">
                 @if(Route::is('patient.note.view'))
                     <input type="hidden" value="new_activity"/>
                     <button id="update" name="submitAction" type="submit" value="new_activity"
@@ -57,7 +58,15 @@
             <div class="col-sm-12">
                 <hr>
             </div>
-
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group">
+                <div class="no-padding-left no-padding-right">
+                    <div id="email-patient-div" style="display: none;">
+                        <send-email-to-patient  :patient="{{$patient}}"></send-email-to-patient>
+                    </div>
+                </div>
+            </div>
         </div>
     @endif
 
@@ -132,6 +141,10 @@
     <script>
         const isCreateNotePage = @json(Route::is('patient.note.create'));
         const hasSummary = @json(isset($note['summary']) && !empty($note['summary']));
+
+        let formAttachments;
+
+
         if (isCreateNotePage) {
             (function ($) {
                 //hacky way to display summary input required when notify-careteam is checked, and also make summary required
