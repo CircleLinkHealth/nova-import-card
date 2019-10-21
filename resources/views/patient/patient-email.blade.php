@@ -115,10 +115,3 @@ $style = [
 </table>
 </body>
 </html>
-
-
-{!! $content !!}
-
-
-
-//add pretty stuff from CLH

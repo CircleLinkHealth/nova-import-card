@@ -17,18 +17,18 @@ class TrixMailable extends Mailable
 
     protected $content;
 
-    protected $s3attachments;
+    protected $mailAttachments;
 
     /**
      * Create a new message instance.
      *
      * @param mixed $content
-     * @param mixed $s3attachments
+     * @param array $mailAttachments
      */
-    public function __construct($content, $s3attachments = [])
+    public function __construct($content, $mailAttachments = [])
     {
-        $this->content       = $content;
-        $this->s3attachments = $s3attachments;
+        $this->content         = $content;
+        $this->mailAttachments = $mailAttachments;
     }
 
     /**
@@ -38,17 +38,19 @@ class TrixMailable extends Mailable
      */
     public function build()
     {
-        //todo:attach multiple?
-        //check if attachments exist
-
-        return $this->view('patient.patient-email')
+        $email = $this->view('patient.patient-email')
             ->with([
                 'content' => $this->content,
             ])
             ->from('no-replyg@circlelinkhealth.com', 'CircleLink Health')
             ->subject('You have received a message from CircleLink Health');
 
-        //not working
-//            ->attachFromStorageDisk('s3', $this->s3attachments[0]['path']);
+        if ( ! empty($this->mailAttachments)) {
+            foreach ($this->mailAttachments as $attachment) {
+                $email->attach($attachment['path']);
+            }
+        }
+
+        return $email;
     }
 }

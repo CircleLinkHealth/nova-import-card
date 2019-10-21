@@ -110,7 +110,7 @@
                         'Content-Type': 'multipart/form-data'
                     },
                     onUploadProgress: function( progressEvent ) {
-                        let progress = progressEvent.loaded / progressEvent.total * 100;
+                        let progress = progressEvent.loaded / progressEvent.total * 90;
                         event.attachment.setUploadProgress(progress);
                         // parseInt( Math.round( ( progressEvent.loaded * 100 ) / progressEvent.total ) );
                     }.bind(this),
@@ -123,6 +123,7 @@
                     }
                 }).then((response, status) => {
                     if (response) {
+                        event.attachment.setUploadProgress(100);
                         this.attachments.push({
                             'name': response.data['name'],
                             'path': response.data['path']
@@ -132,8 +133,6 @@
                     else {
                         throw new Error('no response')
                     }
-                    // this.uploadPercentage = 0;
-                    // this.showProgressBar = false;
                     return null
                 }).catch(err => {
                     throw new Error(err)

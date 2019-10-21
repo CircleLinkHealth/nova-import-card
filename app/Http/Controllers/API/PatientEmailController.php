@@ -21,7 +21,7 @@ class PatientEmailController extends Controller
         $file = $request->file()['file'];
 
         if ($file) {
-            $filePath = $file->getPath();
+            $filePath = storage_path($file->hashName());
             if ($filePath) {
                 if (file_exists($filePath)) {
                     unlink($filePath);
@@ -39,20 +39,16 @@ class PatientEmailController extends Controller
 
     public function uploadAttachment(Request $request, $patientId)
     {
-        //for s3?
-        $patient = User::findOrFail($patientId);
-
-        //get file
         $file = $request->file()['file'];
 
         if ($file) {
             $path  = storage_path($file->hashName());
-            $saved = $file->store($path);
-            if ( ! $saved) {
+            $saved = file_put_contents($path, file_get_contents($file->getPathname()));
+
+            if ( ! $saved || ! file_exists($path)) {
                 return response()->json('Something went wrong, file not saved.', 400);
             }
         }
-        //save to S3? maybe we also need to save to S3 to have attachments if we need to backtrack emails to patient sort of like a chat
 //        $media = $patient->addMedia($file)
 //                ->withCustomProperties(['doc_type' => 'patient-mail-attachment'])
 //                ->toMediaCollection('patient-mail-attachments');
