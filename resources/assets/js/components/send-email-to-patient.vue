@@ -148,13 +148,12 @@
     }
 </script>
 
-<style scoped>
-    .hidden {
-        display: none;
+<style>
+    .trix-content > ul > li {
+        list-style: outside !important;
     }
 
-    .progress-bar {
-        width: 50%;
-        margin-left: 25%;
+    .trix-content > ol > li {
+        list-style: decimal !important;
     }
 </style>

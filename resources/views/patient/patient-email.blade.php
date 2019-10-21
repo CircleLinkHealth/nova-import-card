@@ -46,7 +46,7 @@ $style = [
     'header-1'         => 'margin-top: 0; color: #2F3133; font-size: 19px; font-weight: bold; text-align: left;',
     'paragraph'        => 'margin-top: 0; color: #74787E; font-size: 16px; line-height: 1.5em;',
     'paragraph-sub'    => 'margin-top: 0; color: #74787E; font-size: 12px; line-height: 1.5em;',
-    'paragraph-center' => 'text-align: center;',
+    'paragraph-center' => '',
 
     // Buttons ------------------------------
 
@@ -80,7 +80,7 @@ $style = [
                 <!-- Email Body -->
                 <tr>
                     <td style="{{ $style['email-body'] }}" width="100%">
-                        <table style="{{ $style['email-body_inner'] }}" align="center" width="570" cellpadding="0"
+                        <table style="{{ $style['email-body_inner'] }}" width="570" cellpadding="0"
                                cellspacing="0">
                             <tr>
                                 <td style="{{ $fontFamily }} {{ $style['email-body_cell'] }}">
