@@ -8,7 +8,7 @@
         <div class="form-group" v-if="this.patient.email">To: {{this.patient.email}}</div>
         <div class="form-group" v-else>
             <div style="padding-bottom: 10px"><span><strong>Patient email not found.</strong> Send to:</span><br></div>
-            <div class="col-sm-4" style="padding-left: 0"><input type="email" name="custom-patient-email"
+            <div class="col-sm-4" style="padding-left: 0"><input type="email" id="custom-patient-email" name="custom-patient-email"
                                                                  placeholder="Enter email..."></div>
             <div class="col-sm-4"><input type="checkbox" id="default-patient-email" name="default-patient-email"
                                          value="1">

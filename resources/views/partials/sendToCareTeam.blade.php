@@ -190,9 +190,13 @@
             if($('#email-patient').prop('checked')){
                 $('#notify-careteam-label').css("color", "#D3D3D3");
                 $('#notify-careteam-span').css("cursor", "not-allowed");
+                @empty($patient->email)
+                $('#custom-patient-email').prop('required', true);
+                @endempty
             }else{
                 $('#notify-careteam-label').css("color","#7b7d81");
                 $('#notify-careteam-span').css("cursor", "");
+                $('#custom-patient-email').prop('required', false);
             }
 
             setSubmitText();

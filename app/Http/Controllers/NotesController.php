@@ -13,6 +13,7 @@ use App\Http\Requests\NotesReport;
 use App\Jobs\SendSingleNotification;
 use App\Note;
 use App\Repositories\PatientWriteRepository;
+use App\Rules\PatientEmailAttachments;
 use App\Rules\PatientEmailBodyDoesNotContainPhi;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
@@ -364,10 +365,8 @@ class NotesController extends Controller
 
         if ($shouldSendPatientEmail) {
             Validator::make($input, [
-                'patient-email-body'   => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
-                'attachments'          => ['sometimes'],
-                'custom-patient-email' => 'email',
-                //add when default, include custom
+                'patient-email-body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
+                'attachments'        => ['sometimes', new PatientEmailAttachments()],
             ])->validate();
 
             $this->sendPatientEmail($input, $patient, $note);
@@ -489,16 +488,12 @@ class NotesController extends Controller
 
         $input['status'] = 'complete';
 
-        $shouldSendPatientEmail = isset($input['email-patient'])
-            ? true
-            : false;
+        $shouldSendPatientEmail = isset($input['email-patient']);
 
         if ($shouldSendPatientEmail) {
             Validator::make($input, [
-                'patient-email-body'   => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
-                'attachments'          => ['sometimes'],
-                'custom-patient-email' => 'email',
-                //add when default, include custom
+                'patient-email-body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
+                'attachments'        => ['sometimes', new PatientEmailAttachments()],
             ])->validate();
         }
 
@@ -841,8 +836,6 @@ class NotesController extends Controller
                 $patient->save();
             }
         }
-        //todo: remove
-        $address = 'kakoushias@gmail.com';
 
         SendSingleNotification::dispatch(new PatientCustomEmail(
             $patient,
