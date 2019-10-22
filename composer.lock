@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "04ad58a2b157b3498ab93f7653c59a27",
+    "content-hash": "a952f6a15c58bbd20758bb5c23697bef",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -303,11 +303,11 @@
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.3.2",
+            "version": "v1.3.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "b3c5340f939af0f73f0ffdbb82c75ac5166b9b26"
+                "reference": "9a2742fb177d657182feb9b32fa6bb997480c0ed"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
@@ -340,7 +340,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-18T04:24:01+00:00"
+            "time": "2019-10-21T18:27:32+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -2892,6 +2892,55 @@
                 "psr-3"
             ],
             "time": "2019-09-06T13:49:17+00:00"
+        },
+        {
+            "name": "mremi/url-shortener",
+            "version": "v2.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mremi/UrlShortener.git",
+                "reference": "18ab67aa27c9c48ba54a440d002bd6d2fa65e094"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mremi/UrlShortener/zipball/18ab67aa27c9c48ba54a440d002bd6d2fa65e094",
+                "reference": "18ab67aa27c9c48ba54a440d002bd6d2fa65e094",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.0",
+                "php": "^5.5 || ^7.0",
+                "symfony/console": "^2.7 || ^3.1 || ^4.1"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "~0.1 || ~1.0",
+                "phpunit/phpunit": "~4.8",
+                "symfony/phpunit-bridge": "~2.7 || ~3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Mremi\\UrlShortener\\": "src/Mremi/UrlShortener"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rémi Marseille",
+                    "email": "marseille.remi@gmail.com"
+                }
+            ],
+            "description": "A PHP5 library using API to shorten/expand URL",
+            "homepage": "https://github.com/mremi/UrlShortener",
+            "keywords": [
+                "api",
+                "shortener",
+                "url"
+            ],
+            "time": "2018-10-10T07:01:17+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -5931,6 +5980,61 @@
             "time": "2019-01-29T11:11:52+00:00"
         },
         {
+            "name": "waavi/url-shortener",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:subzero10/url-shortener.git",
+                "reference": "b3f9c6a6569a479982a58be6cdf9d039ea1f0149"
+            },
+            "require": {
+                "illuminate/config": "5.1.x|5.2.x|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*",
+                "illuminate/support": "5.1.x|5.2.x|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*",
+                "mremi/url-shortener": "^2.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^0.9.4",
+                "orchestra/testbench": "3.1.x|3.2.x|3.3.x|3.4.x|3.5.x",
+                "phpunit/phpunit": "^6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Waavi\\UrlShortener\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Waavi\\UrlShortener\\Test\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Waavi",
+                    "email": "info@waavi.com",
+                    "homepage": "http://waavi.com"
+                }
+            ],
+            "description": "Url Shortener for Laravel 5 with support for Google and Bitly drivers.",
+            "keywords": [
+                "laravel",
+                "shortener",
+                "url",
+                "url short",
+                "url shortener",
+                "waavi"
+            ],
+            "time": "2019-01-28T16:48:46+00:00"
+        },
+        {
             "name": "zendframework/zend-diactoros",
             "version": "2.1.4",
             "source": {
@@ -8345,7 +8449,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "circlelinkhealth/raygun": 20,
-        "michalisantoniou6/laravel-cerberus": 20
+        "michalisantoniou6/laravel-cerberus": 20,
+        "waavi/url-shortener": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

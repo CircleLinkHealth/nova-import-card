@@ -175,7 +175,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\TwilioClientServiceProvider::class
+        App\Providers\TwilioClientServiceProvider::class,
+        Waavi\UrlShortener\UrlShortenerServiceProvider::class,
     ],
 
     /*
@@ -224,6 +225,6 @@ return [
         'URL'          => Illuminate\Support\Facades\URL::class,
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
-
+        'UrlShortener' => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
 ];
