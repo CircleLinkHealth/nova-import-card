@@ -72,12 +72,14 @@
 
     @include('partials.confirm-modal')
 
+    @if (!empty($note) && $note->status === 'draft')
     <form id="delete-form" action="{{ route('patient.note.delete.draft', [
                                     'patientId' => Route::getCurrentRoute()->parameter('patientId'),
-                                    'noteId' => Route::getCurrentRoute()->parameter('noteId')
+                                    'noteId' => $note->id
                                 ]) }}" method="POST" style="display: none;">
         {{ csrf_field() }}
     </form>
+    @endif
 
     <form id="newNote" method="post"
           action="{{route('patient.note.store', ['patientId' => $patient->id, 'noteId' => !empty($note) ? $note->id : null])}}"
