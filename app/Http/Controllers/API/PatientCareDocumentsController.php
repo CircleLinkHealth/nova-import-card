@@ -6,9 +6,9 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Http\Controllers\Controller;
 use App\Jobs\SendSingleNotification;
+use App\Notifications\NotificationStrategies\SendsNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus;
@@ -144,7 +144,7 @@ class PatientCareDocumentsController extends Controller
             }
             $patient->addMedia($file)
                 ->withCustomProperties(['doc_type' => $request->doc_type])
-                ->toMediaCollection('patient-care-documents');
+                ->toMediaCollection('patient-email-attachments');
         }
 
         return response()->json([]);

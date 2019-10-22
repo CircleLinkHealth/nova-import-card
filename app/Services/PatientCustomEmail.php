@@ -35,6 +35,10 @@ class PatientCustomEmail extends SendsNotification
      */
     protected $noteId;
 
+    protected $patient;
+
+    protected $senderId;
+
     /**
      * EmailPatientDocument constructor.
      *
@@ -42,9 +46,12 @@ class PatientCustomEmail extends SendsNotification
      * @param string $address
      * @param mixed  $attachments
      * @param null   $noteId
+     * @param mixed  $senderId
      */
-    public function __construct(string $content, $address, $attachments = [], $noteId = null)
+    public function __construct(User $patient, $senderId, string $content, $address, $attachments = [], $noteId = null)
     {
+        $this->patient     = $patient;
+        $this->senderId    = $senderId;
         $this->content     = $content;
         $this->address     = $address;
         $this->attachments = $attachments;
@@ -65,6 +72,12 @@ class PatientCustomEmail extends SendsNotification
      */
     public function getNotification(): \Illuminate\Notifications\Notification
     {
-        return new SendPatientEmail($this->content, $this->attachments, $this->noteId);
+        return new SendPatientEmail(
+            $this->patient,
+            $this->senderId,
+            $this->content,
+            $this->attachments,
+            $this->noteId
+        );
     }
 }

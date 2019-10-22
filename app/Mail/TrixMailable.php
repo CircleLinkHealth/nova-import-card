@@ -6,6 +6,7 @@
 
 namespace App\Mail;
 
+use CircleLinkHealth\Customer\Entities\Media;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -19,14 +20,18 @@ class TrixMailable extends Mailable
 
     protected $mailAttachments;
 
+    protected $patient;
+
     /**
      * Create a new message instance.
      *
      * @param mixed $content
      * @param array $mailAttachments
+     * @param mixed $patient
      */
-    public function __construct($content, $mailAttachments = [])
+    public function __construct($patient, $content, $mailAttachments = [])
     {
+        $this->patient         = $patient;
         $this->content         = $content;
         $this->mailAttachments = $mailAttachments;
     }
@@ -47,7 +52,7 @@ class TrixMailable extends Mailable
 
         if ( ! empty($this->mailAttachments)) {
             foreach ($this->mailAttachments as $attachment) {
-                $email->attach($attachment['path']);
+                $email->attachFromStorageDisk('cloud', $attachment['path']);
             }
         }
 

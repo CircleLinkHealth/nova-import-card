@@ -879,7 +879,7 @@
                         formAttachments.map(function (attachment) {
                             $("<input>")
                                 .attr("type", "hidden")
-                                .attr("name", "attachments["+i+"][name]").val(attachment.name).appendTo(form);
+                                .attr("name", "attachments["+i+"][media_id]").val(attachment.media_id).appendTo(form);
                             $("<input>")
                                 .attr("type", "hidden")
                                 .attr("name", "attachments["+i+"][path]").val(attachment.path).appendTo(form);

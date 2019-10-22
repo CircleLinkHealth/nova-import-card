@@ -7,6 +7,7 @@
 namespace App\Notifications;
 
 use App\Mail\TrixMailable;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -20,19 +21,37 @@ class SendPatientEmail extends Notification
 
     protected $noteId;
 
+    protected $patient;
+
+    protected $senderId;
+
     /**
      * Create a new notification instance.
      *
+     * @param User $patient
+     * @param $senderId
      * @param mixed      $content
-     * @param mixed      $filePathOrMedia
      * @param mixed      $attachments
      * @param mixed|null $noteId
      */
-    public function __construct($content, $attachments, $noteId = null)
+    public function __construct(User $patient, $senderId, string $content, $attachments, $noteId = null)
     {
+        $this->senderId    = $senderId;
+        $this->patient     = $patient;
         $this->content     = $content;
         $this->attachments = $attachments;
         $this->noteId      = $noteId;
+    }
+
+    public function __destruct()
+    {
+        if ( ! empty($this->attachments)) {
+            foreach ($this->attachments as $attachment) {
+                if (file_exists($attachment['path'])) {
+                    unlink($attachment['path']);
+                }
+            }
+        }
     }
 
     /**
@@ -44,11 +63,23 @@ class SendPatientEmail extends Notification
      */
     public function toArray($notifiable)
     {
-        return [
-            //media id s3 for attachments
-            //note id
-            //email this was sent to
+        $toArray = [
+            'recipient_email' => $notifiable->email,
+            'email_content'   => $this->content,
+            'sender_id'       => $this->senderId,
         ];
+
+        if ( ! empty($this->attachments)) {
+            foreach ($this->attachments as $attachment) {
+                $toArray['attachments'][] = ['media_id' => $attachment['media_id']];
+            }
+        }
+
+        if ($this->noteId) {
+            $toArray['note_id'] = $this->noteId;
+        }
+
+        return $toArray;
     }
 
     /**
@@ -60,7 +91,7 @@ class SendPatientEmail extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new TrixMailable($this->content, $this->attachments))
+        return (new TrixMailable($this->patient, $this->content, $this->attachments))
             ->to($notifiable->email);
     }
 
@@ -73,6 +104,6 @@ class SendPatientEmail extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 }
