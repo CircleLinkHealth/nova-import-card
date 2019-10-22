@@ -39,7 +39,7 @@
                     </mdb-btn>
 
                     <form id="logout-form" action="/logout" method="POST" style="display: none;">
-                        <input type="hidden" name="redirectTo" :value="getCurrentRoute()">
+                        <input type="hidden" name="redirectTo" :value="getVitalsRoute()">
                     </form>
 
                 </div>
@@ -62,12 +62,12 @@
         components: {mdbBtn},
         methods: {
 
-            getCurrentRoute() {
-                return window.location.pathname;
+            getVitalsRoute() {
+                return `/survey/vitals/${this.patientId}`;
             },
 
             showVitalsSurvey() {
-                window.location.href = `/survey/vitals/${this.patientId}`;
+                window.location.href = this.getVitalsRoute();
             },
 
             logout() {

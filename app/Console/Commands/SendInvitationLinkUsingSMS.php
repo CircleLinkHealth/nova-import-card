@@ -112,12 +112,20 @@ class SendInvitationLinkUsingSMS extends Command
         }
 
         //in case notifiable user is not the patient
+        $providerFullName = "PROVIDER";
         if ( ! $targetNotifiable->is($user)) {
             $practiceName     = $user->primaryPractice->display_name;
-            $providerFullName = $user->billingProviderUser()->getFullName();
+
+            $billingProviderUser = $user->billingProviderUser();
+            if ($billingProviderUser) {
+                $providerFullName = $billingProviderUser->getFullName();
+            }
         } else {
             $practiceName     = $targetNotifiable->primaryPractice->display_name;
-            $providerFullName = $targetNotifiable->billingProviderUser()->getFullName();
+            $billingProviderUser = $targetNotifiable->billingProviderUser();
+            if ($billingProviderUser) {
+                $providerFullName = $billingProviderUser->getFullName();
+            }
         }
 
         $notifiableUser = new NotifiableUser($targetNotifiable, null, $phoneNumber);
