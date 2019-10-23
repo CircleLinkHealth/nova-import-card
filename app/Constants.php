@@ -14,6 +14,9 @@ class Constants
      */
     const CACHED_USER_NOTIFICATIONS = 'user:{$userId}:notifications';
 
+    /**
+     * To create more patients, simply add to the array below, following the existing array structure.
+     */
     const CBT_TEST_PATIENTS = [
         'patient_1' => [
             //user
@@ -33,11 +36,11 @@ class Constants
             'preferred_contact_timezone' => 'America/New_York',
             'mrn_number'                 => 236025386923,
 
-            //conditions => ALL
             'conditions' => [
                 'all',
             ],
-            //MEDICATIONS => 25 medications as 'med 1, med 2 etc
+            //number of dummy medications
+            'medications' => 25,
         ],
         'patient_2' => [
             //user
@@ -62,7 +65,8 @@ class Constants
                 'Dementia',
                 'Diabetes Type 2',
             ],
-            //MEDICATIONS => 25 medications as 'med 1, med 2 etc
+            //number of dummy medications
+            'medications' => 25,
         ],
     ];
 

@@ -40,11 +40,14 @@ class PatientController extends Controller
         $problems = CpmProblem::get();
 
         foreach (Constants::CBT_TEST_PATIENTS as $patientData) {
-            $user = User::whereEmail($patientData['email'])->first();
+            //in case something goes wrong and users where not deleted, take all
+            $users = User::whereEmail($patientData['email'])->get();
 
             //If user exists delete and create again
-            if ($user) {
-                $user->delete();
+            if ($users->count() > 0) {
+                foreach ($users as $user) {
+                    $user->forceDelete();
+                }
             }
 
             $bag = new ParameterBag([
@@ -82,7 +85,7 @@ class PatientController extends Controller
                 ];
             }
             $user->ccdProblems()->createMany($ccdProblems);
-            $user->ccdMedications()->createMany(Constants::testMedications());
+            $user->ccdMedications()->createMany(Constants::testMedications($patientData['medications']));
             $user->careTeamMembers()->create([
                 'member_user_id' => $patientData['billing_provider_id'],
                 'type'           => CarePerson::BILLING_PROVIDER,
@@ -138,12 +141,12 @@ class PatientController extends Controller
                     ->orWhere('last_name', 'like', "%${term}%")
                     ->orWhere('id', 'like', "%${term}%")
                     ->orWhereHas('patientInfo', function ($query) use ($term) {
-                      $query->where('mrn_number', 'like', "%${term}%")
-                          ->orWhere('birth_date', 'like', "%${term}%");
-                  })
+                        $query->where('mrn_number', 'like', "%${term}%")
+                            ->orWhere('birth_date', 'like', "%${term}%");
+                    })
                     ->orWhereHas('phoneNumbers', function ($query) use ($term) {
-                      $query->where('number', 'like', "%${term}%");
-                  });
+                        $query->where('number', 'like', "%${term}%");
+                    });
             });
         }
 
@@ -365,8 +368,8 @@ class PatientController extends Controller
         // get number of approvals
         $patients = User::intersectPracticesWith(auth()->user())
             ->with('phoneNumbers', 'patientInfo', 'careTeamMembers')->whereHas('roles', function ($q) {
-                            $q->where('name', '=', 'participant');
-                        })->get()->pluck('fullNameWithId', 'id')->all();
+                $q->where('name', '=', 'participant');
+            })->get()->pluck('fullNameWithId', 'id')->all();
 
         return view('wpUsers.patient.select', compact(['patients']));
     }
