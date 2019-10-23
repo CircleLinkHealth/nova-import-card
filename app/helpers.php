@@ -1495,15 +1495,15 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
     }
 }
 
-if ( ! function_exists('convertDayOfWeekToWeekDate')) {
+if ( ! function_exists('createWeekMap')) {
     /**
-     * Date parameter is the date the user saved the event for. Take that to startOfWeek and days to find the date?
+     * Date parameter is the date the user saved the event for. Take that to startOfWeek and create the dates of that week?
      *
      * @param mixed $date
      *
      * @return array
      */
-    function convertDayOfWeekToWeekDate($date)
+    function createWeekMap($date)
     {
         return [
             1 => Carbon::parse($date)->startOfWeek()->toDateString(),

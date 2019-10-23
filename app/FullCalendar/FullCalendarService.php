@@ -98,7 +98,7 @@ class FullCalendarService
     {// I need to get all the past data cause events are created once and then are repeating.
         return collect($nurse->nurseInfo->windows)
             ->map(function ($window) use ($nurse) {
-                $givenDateWeekMap = convertDayOfWeekToWeekDate($window->date); //see comment in helpers.php
+                $givenDateWeekMap = createWeekMap($window->date); //see comment in helpers.php
                 $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
                 $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
                 $windowStartForView = Carbon::parse($window->window_time_start)->format('H:i');
@@ -161,13 +161,5 @@ class FullCalendarService
         return $nurses->map(function ($nurse) {
             return $this->prepareData($nurse);
         })->flatten(1);
-    }
-
-    public function validateWorkHoursWithActivities($activities)
-    {
-        $x = $this->getNursesWithSchedule();
-
-        //check if exists the activity checkare to array olan
-        dd($x);
     }
 }

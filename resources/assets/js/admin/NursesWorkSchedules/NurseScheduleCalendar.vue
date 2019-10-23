@@ -731,6 +731,8 @@
 
                         const rrule = rule.all();
 
+                        //@todo: need to be  able to delete the selected event and NOT ALL occurrences of that event
+
                         // const rruleSet = new RRuleSet();   //https://github.com/jakubroztocil/rrule
                         //
                         // rruleSet.rrule(new RRule({
@@ -752,7 +754,7 @@
                                 textColor: q.textColor,
                                 repeat_frequency: frequency[0],
                                 until: q.until,
-                                // repeat_rule_in_human: rruleSet.toText(),
+                                // repeat_rule_in_human: rule.toText(),
                                 data: q.data,
                             })
                         }

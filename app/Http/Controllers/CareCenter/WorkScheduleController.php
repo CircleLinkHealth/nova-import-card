@@ -302,20 +302,20 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                    return Carbon::createFromFormat(
+                return Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_end
                     )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
-                }) + Carbon::createFromFormat(
+            }) + Carbon::createFromFormat(
                     'H:i',
                     $workScheduleData['window_time_end']
                 )->diffInHours(Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_start']
-            ));
+                    'H:i',
+                    $workScheduleData['window_time_start']
+                ));
 
         $invalidWorkHoursNumber = false;
 
