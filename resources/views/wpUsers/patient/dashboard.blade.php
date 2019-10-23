@@ -9,18 +9,7 @@
         <div class="row row-centered">
             <div class="col-sm-12">
                 @if(! isProductionEnv())
-                    <div class="col-md-12">
-                        <div class="col-md-4">
-                        </div>
-                        <div class="col-md-4">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">Create or Remove Test patients</div>
-                                <div class="panel-body">
-                                    @include('patient.create-test-patients')
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @include('patient.create-test-patients')
                 @endif
                 <ul class="" style="margin:0;padding:0;">
 

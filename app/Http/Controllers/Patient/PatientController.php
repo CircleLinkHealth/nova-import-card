@@ -10,9 +10,11 @@ use App\CLH\Repositories\UserRepository;
 use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
+use App\Models\CPM\CpmProblem;
 use App\Services\CarePlanViewService;
 use App\Services\PdfService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -33,9 +35,9 @@ class PatientController extends Controller
     {
         $repo = new UserRepository();
 
-        $practice            = Practice::whereName('demo')->firstOrFail();
-        $role                = Role::whereName('participant')->firstOrFail();
-        $billingProviderUser = User::findOrFail(13242);
+        $practice = Practice::whereName('demo')->firstOrFail();
+        $role     = Role::whereName('participant')->firstOrFail();
+        $problems = CpmProblem::get();
 
         foreach (Constants::CBT_TEST_PATIENTS as $patientData) {
             $user = User::whereEmail($patientData['email'])->first();
@@ -67,6 +69,24 @@ class PatientController extends Controller
             ]);
 
             $user = $repo->createNewUser(new User(), $bag);
+
+            $userProblems = in_array('all', $patientData['conditions'])
+                ? $problems
+                : $problems->whereIn('name', $patientData['conditions']);
+            $ccdProblems = [];
+            foreach ($userProblems as $problem) {
+                $ccdProblems[] = [
+                    'is_monitored'   => 1,
+                    'name'           => $problem->name,
+                    'cpm_problem_id' => $problem->id,
+                ];
+            }
+            $user->ccdProblems()->createMany($ccdProblems);
+            $user->ccdMedications()->createMany(Constants::testMedications());
+            $user->careTeamMembers()->create([
+                'member_user_id' => $patientData['billing_provider_id'],
+                'type'           => CarePerson::BILLING_PROVIDER,
+            ]);
         }
 
         return redirect()->back();
@@ -118,12 +138,12 @@ class PatientController extends Controller
                     ->orWhere('last_name', 'like', "%${term}%")
                     ->orWhere('id', 'like', "%${term}%")
                     ->orWhereHas('patientInfo', function ($query) use ($term) {
-                        $query->where('mrn_number', 'like', "%${term}%")
-                            ->orWhere('birth_date', 'like', "%${term}%");
-                    })
+                      $query->where('mrn_number', 'like', "%${term}%")
+                          ->orWhere('birth_date', 'like', "%${term}%");
+                  })
                     ->orWhereHas('phoneNumbers', function ($query) use ($term) {
-                        $query->where('number', 'like', "%${term}%");
-                    });
+                      $query->where('number', 'like', "%${term}%");
+                  });
             });
         }
 
@@ -345,8 +365,8 @@ class PatientController extends Controller
         // get number of approvals
         $patients = User::intersectPracticesWith(auth()->user())
             ->with('phoneNumbers', 'patientInfo', 'careTeamMembers')->whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })->get()->pluck('fullNameWithId', 'id')->all();
+                            $q->where('name', '=', 'participant');
+                        })->get()->pluck('fullNameWithId', 'id')->all();
 
         return view('wpUsers.patient.select', compact(['patients']));
     }

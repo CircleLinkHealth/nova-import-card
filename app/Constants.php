@@ -34,6 +34,9 @@ class Constants
             'mrn_number'                 => 236025386923,
 
             //conditions => ALL
+            'conditions' => [
+                'all',
+            ],
             //MEDICATIONS => 25 medications as 'med 1, med 2 etc
         ],
         'patient_2' => [
@@ -57,7 +60,7 @@ class Constants
             'conditions' => [
                 'Hypertension',
                 'Dementia',
-                'Diabetes type 2',
+                'Diabetes Type 2',
             ],
             //MEDICATIONS => 25 medications as 'med 1, med 2 etc
         ],
@@ -109,4 +112,22 @@ class Constants
     const SNOMED          = 'snomed_code';
     const SNOMED_NAME     = 'SNOMED CT';
     const VIEWING_PATIENT = 'viewing-patient';
+
+    /**
+     * @param int $i
+     *
+     * Generate dummy medication names for users
+     *
+     * @return array
+     */
+    public static function testMedications($i = 25)
+    {
+        $medications = [];
+        while ($i > 0) {
+            $medications[] = ['name' => 'med'.' '.$i];
+            --$i;
+        }
+
+        return $medications;
+    }
 }
