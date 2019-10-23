@@ -73,7 +73,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('create-test-patients', [
         'uses' => 'Patient\PatientController@createCBTTestPatient',
         'as'   => 'create-test-patients',
-    ])->middleware('doNotCacheResponse');
+    ]);
 
     Route::get('impersonate/leave', [
         'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@leave',
