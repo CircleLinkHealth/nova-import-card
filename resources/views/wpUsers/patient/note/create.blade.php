@@ -74,7 +74,7 @@
 
     @if (!empty($note) && $note->status === 'draft')
     <form id="delete-form" action="{{ route('patient.note.delete.draft', [
-                                    'patientId' => Route::getCurrentRoute()->parameter('patientId'),
+                                    'patientId' => $note->patient_id,
                                     'noteId' => $note->id
                                 ]) }}" method="POST" style="display: none;">
         {{ csrf_field() }}
