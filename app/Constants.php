@@ -14,6 +14,55 @@ class Constants
      */
     const CACHED_USER_NOTIFICATIONS = 'user:{$userId}:notifications';
 
+    const CBT_TEST_PATIENTS = [
+        'patient_1' => [
+            //user
+            'first_name' => 'CBT',
+            'last_name'  => 'Automation 1',
+            'email'      => 'cbtAutomation1@test.com',
+            //use name to get practice id for 'program_id'
+            'practice_name'       => 'demo',
+            'billing_provider_id' => 13242,
+
+            //patient_info
+            'gender'                     => 'M',
+            'preferred_contact_language' => 'EN',
+            'ccm_status'                 => 'enrolled',
+            'birth_date'                 => '1945-11-27',
+            'consent_date'               => '2019-03-13',
+            'preferred_contact_timezone' => 'America/New_York',
+            'mrn_number'                 => 236025386923,
+
+            //conditions => ALL
+            //MEDICATIONS => 25 medications as 'med 1, med 2 etc
+        ],
+        'patient_2' => [
+            //user
+            'first_name' => 'CBT',
+            'last_name'  => 'Automation 2',
+            'email'      => 'cbtAutomation2@test.com',
+            //use name to get practice id for 'program_id'
+            'practice_name'       => 'demo',
+            'billing_provider_id' => 13242,
+
+            //patient_info
+            'gender'                     => 'F',
+            'preferred_contact_language' => 'EN',
+            'ccm_status'                 => 'enrolled',
+            'birth_date'                 => '1927-12-07',
+            'consent_date'               => '2018-05-27',
+            'preferred_contact_timezone' => 'America/New_York',
+            'mrn_number'                 => 186027387923,
+
+            'conditions' => [
+                'Hypertension',
+                'Dementia',
+                'Diabetes type 2',
+            ],
+            //MEDICATIONS => 25 medications as 'med 1, med 2 etc
+        ],
+    ];
+
     const CLH_INTERNAL_USER_ROLE_NAMES         = ['saas-admin', 'care-center', 'administrator'];
     const CLOUD_CCDAS_PROCESS_ELIGIBILITY_PATH = '/eligibility/ccdas';
 
