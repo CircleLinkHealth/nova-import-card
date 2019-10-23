@@ -16,20 +16,16 @@ namespace App;
  * @property string|null                              $meta_value
  * @property \App\CPRulesItem|null                    $item
  * @property \CircleLinkHealth\Customer\Entities\User $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereItemsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereMetaKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereMetaValue($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereUcpId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereUserId($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP query()
- *
  * @property int|null $revision_history_count
  */
 class CPRulesUCP extends \CircleLinkHealth\Core\Entities\BaseModel

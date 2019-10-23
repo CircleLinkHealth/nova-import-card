@@ -47,6 +47,7 @@ class ApproveBillablePatientsService
             ->billablePatientSummaries($practiceId, $month)
             ->where('approved', '=', false)
             ->where('rejected', '=', false)
+            ->where('needs_qa', '=', true)
             ->count();
 
         $count['rejected'] = $this->approvePatientsRepo
