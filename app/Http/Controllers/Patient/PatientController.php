@@ -25,6 +25,15 @@ class PatientController extends Controller
         $this->formatter = $formatter;
     }
 
+    public function createCBTTestPatient(Request $request)
+    {
+        //check if patients exist
+
+        //create patients
+
+        //attach info, medications etc
+    }
+
     public function patientAjaxSearch(Request $request)
     {
         return view('wpUsers.patient.select');
