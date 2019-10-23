@@ -78,12 +78,12 @@
                         event.attachment.setUploadProgress(progress);
                         // parseInt( Math.round( ( progressEvent.loaded * 100 ) / progressEvent.total ) );
                     }.bind(this),
-                    load: function (loadEvent) {
-                        var attributes = {
-                            url: 'host' + 'key',
-                            href: 'host' + 'key'
-                        };
-                    }
+                    onDownloadProgress: function (loadEvent) {
+                       event.attachment.setAttributes({
+                           url : JSON.parse(loadEvent.currentTarget.response).url,
+                           href : JSON.parse(loadEvent.currentTarget.response).url
+                       });
+                    }.bind(this)
                 }).then((response, status) => {
                     if (response) {
                         event.attachment.setUploadProgress(100);

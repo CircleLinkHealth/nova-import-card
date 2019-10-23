@@ -49,16 +49,26 @@ class PatientEmailController extends Controller
 
         $file = $request->file()['file'];
 
-        $media = $patient->addMedia($file)
-            ->withCustomProperties(['doc_type' => 'patient-mail-attachment'])
-            ->toMediaCollection('patient-email-attachments');
+        if ($file) {
+            $media = $patient->addMedia($file)
+                ->withCustomProperties(['doc_type' => 'patient-mail-attachment'])
+                ->toMediaCollection('patient-email-attachments');
+
+            return response()->json(
+                [
+                    'media_id' => $media->id,
+                    'path'     => $media->getPath(),
+                    'url'      => $media->getFullUrl(),
+                ],
+                200
+            );
+        }
 
         return response()->json(
             [
-                'media_id' => $media->id,
-                'path'     => $media->getPath(),
+                'success' => false,
             ],
-            200
+            400
         );
     }
 }
