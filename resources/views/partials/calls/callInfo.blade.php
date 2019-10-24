@@ -22,20 +22,18 @@
                                     {{--</ul>--}}
                                 </span>
                             </div>
-                            @if(isProductionEnv())
-                                @if(!empty($logic))
-                                    <div class="col-sm-12"><br>
-                                        <span style="font-size: 1.1em;"><b>Logic:</b> {{$logic}}
+                            {{--                            @if(isProductionEnv()) --}}
+                            @if(!empty($logic))
+                                <div class="col-sm-12"><br>
+                                    <span style="font-size: 1.1em;"><b>Logic:</b> {{$logic}}
                                 </span>
-                                    </div>
-                                @endif
-                                @if(!empty($logic))
-                                    <div class="col-sm-12"><br>
-                                        <span style="font-size: 1.1em;"><b>Schedule Match:</b> {{$window_match}}
+                                </div>
+                                <div class="col-sm-12"><br>
+                                    <span style="font-size: 1.1em;"><b>Schedule Match:</b> <span id="window_match_text">{{$window_match}}</span>
                                 </span>
-                                    </div>
-                                @endif
+                                </div>
                             @endif
+                            {{--                            @endif--}}
                         </div>
                     </div>
                 </div>

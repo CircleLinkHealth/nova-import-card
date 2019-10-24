@@ -10,7 +10,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ action('LocationController@index') }}" class="btn btn-danger">Back</a>
+                            <a href="{{ action('\App\Http\Controllers\LocationController@index') }}" class="btn btn-danger">Back</a>
                         </div>
                     </div>
                 </div>
@@ -19,7 +19,7 @@
                         @include('errors.errors')
 
                         <form id="location-form" class="form-horizontal" role="form" method="POST"
-                              action="{{ action('LocationController@store') }}">
+                              action="{{ action('\App\Http\Controllers\LocationController@store') }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                             <div class="form-group">
