@@ -79,10 +79,10 @@
                         // parseInt( Math.round( ( progressEvent.loaded * 100 ) / progressEvent.total ) );
                     }.bind(this),
                     onDownloadProgress: function (loadEvent) {
-                       event.attachment.setAttributes({
-                           url : JSON.parse(loadEvent.currentTarget.response).url,
-                           href : JSON.parse(loadEvent.currentTarget.response).url
-                       });
+                       // event.attachment.setAttributes({
+                       //     url : JSON.parse(loadEvent.currentTarget.response).url,
+                       //     href : JSON.parse(loadEvent.currentTarget.response).url
+                       // });
                     }.bind(this)
                 }).then((response, status) => {
                     if (response) {

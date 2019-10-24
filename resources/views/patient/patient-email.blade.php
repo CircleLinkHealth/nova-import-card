@@ -87,7 +87,7 @@ $style = [
                                    {!! $content !!}
                                     <hr>
                                     @foreach($attachments as $attachment)
-                                        <img src="{{$message->embedData($attachment->getFile(), $attachment->id)}}">
+                                        <img src="{{$message->embedData($attachment->getFile(), $attachment->file_name)}}">
                                     @endforeach
                                 </td>
                             </tr>

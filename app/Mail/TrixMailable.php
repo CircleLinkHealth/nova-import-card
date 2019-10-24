@@ -43,6 +43,7 @@ class TrixMailable extends Mailable
      */
     public function build()
     {
+        //get media to embed images
         $media = [];
         foreach ($this->mailAttachments as $attachment) {
             $media[] = Media::where('collection_name', 'patient-email-attachments')
@@ -59,6 +60,7 @@ class TrixMailable extends Mailable
             ->from('no-replyg@circlelinkhealth.com', 'CircleLink Health')
             ->subject('You have received a message from CircleLink Health');
 
+        //attach media
         if ( ! empty($this->mailAttachments)) {
             foreach ($this->mailAttachments as $attachment) {
                 $email->attachFromStorageDisk('cloud', $attachment['path']);
