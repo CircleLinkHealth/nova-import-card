@@ -230,7 +230,8 @@
         },
         "merge-plugin": {
             "include": [
-                "Modules/*/composer.json"
+                "Modules/*/composer.json",
+                "CLHPackages/*/composer.json"
             ],
             "require": [],
             "recurse": true,
