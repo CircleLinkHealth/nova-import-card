@@ -10,7 +10,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ action('LocationController@create') }}" class="btn btn-success">New Location</a>
+                            <a href="{{ action('\App\Http\Controllers\LocationController@create') }}" class="btn btn-success">New Location</a>
                         </div>
                     </div>
                 </div>
