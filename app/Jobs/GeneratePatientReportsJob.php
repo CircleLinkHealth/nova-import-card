@@ -176,12 +176,7 @@ class GeneratePatientReportsJob implements ShouldQueue
 
         /** @var PdfWrapper $pdf */
         $pdf = App::make('snappy.pdf.wrapper');
-        $pdf->setOption('lowquality', false);
-        $pdf->setOption('disable-smart-shrinking', true);
-        $pdf->setOption('margin-top', 0);
-        $pdf->setOption('margin-bottom', 0);
-        $pdf->setOption('margin-left', 0);
-        $pdf->setOption('margin-right', 0);
+        $this->setPdfOptions($pdf);
 
         $pdf->loadView('providerReport.report', [
             'reportData' => $providerReportFormattedData,
@@ -208,12 +203,7 @@ class GeneratePatientReportsJob implements ShouldQueue
 
         /** @var PdfWrapper $pdf */
         $pdf = App::make('snappy.pdf.wrapper');
-        $pdf->setOption('lowquality', false);
-        $pdf->setOption('disable-smart-shrinking', true);
-        $pdf->setOption('margin-top', 0);
-        $pdf->setOption('margin-bottom', 0);
-        $pdf->setOption('margin-left', 0);
-        $pdf->setOption('margin-right', 0);
+        $this->setPdfOptions($pdf);
 
         $pdf->loadView('personalizedPreventionPlan', [
             'patientPppData'            => $ppp,
@@ -233,5 +223,16 @@ class GeneratePatientReportsJob implements ShouldQueue
         return $patient->addMedia($path)
                        ->withCustomProperties(['doc_type' => 'PPP'])
                        ->toMediaCollection('patient-care-documents');
+    }
+
+    private function setPdfOptions(PdfWrapper $pdf)
+    {
+        $pdf->setOption('lowquality', false);
+        $pdf->setOption('disable-smart-shrinking', true);
+        $pdf->setOption('margin-top', 8);
+        $pdf->setOption('margin-bottom', 8);
+        $pdf->setOption('margin-left', 5);
+        $pdf->setOption('margin-right', 5);
+        $pdf->setOption('footer-right', '[page] of [topage]');
     }
 }
