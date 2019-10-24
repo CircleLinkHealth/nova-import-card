@@ -9,6 +9,8 @@ import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "./store";
 import {ClientTable} from 'vue-tables-2'
+import EventBus from './admin/time-tracker/comps/event-bus'
+import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
 
 Vue.use(ClientTable, {}, false)
 
@@ -78,6 +80,8 @@ const CcdViewer = () => import(/* webpackChunkName: "chunk-ccd-viewer" */ './com
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
 const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../Modules/NurseInvoices/Resources/assets/js/components/dispute-invoice')
 const NurseInvoiceDailyDispute = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../Modules/NurseInvoices/Resources/assets/js/components/nurseInvoiceDailyDispute');
+const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/NurseScheduleCalendar');
+const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/CalendarLoader');
 const PusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-notifications')
 const PusherSeeAllNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-see-all-notifications')
 
@@ -130,6 +134,8 @@ Vue.component('ccd-viewer', CcdViewer);
 Vue.component('call-mgmt-app-v2', CallMgmtAppV2);
 Vue.component('dispute-nurse-invoice', DisputeNurseInvoice);
 Vue.component('nurse-invoice-daily-dispute', NurseInvoiceDailyDispute);
+Vue.component('nurse-schedule-calendar', NurseScheduleCalendar);
+Vue.component('calendar-loader', CalendarLoader);
 Vue.component('pusher-notifications', PusherNotifications);
 Vue.component('pusher-see-all-notifications', PusherSeeAllNotifications);
 
