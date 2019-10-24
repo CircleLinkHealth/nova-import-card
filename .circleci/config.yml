@@ -54,13 +54,14 @@ jobs:
         - node_modules
         - ~/.yarn
 
-    #    - run: npm run prod
+    - run: npm run bower_install
+    - run: npm run dev
+
     # prepare the database
-    - run: cp .env.circleci .env
-    #    - run: php artisan migrate --force
+    - run: cp .env.testing .env
 
       # run tests with paratest
-    - run: ./vendor/bin/paratest ./tests/Unit --verbose=1 --stop-on-failure --colors --runner SqliteRunner -p8
+    - run: composer unit-test
     - store_test_results:
         path: tests/_output
     - store_artifacts:

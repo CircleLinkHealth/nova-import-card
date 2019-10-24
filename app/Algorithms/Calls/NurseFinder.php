@@ -16,7 +16,9 @@ class NurseFinder
 {
     protected $data;
     protected $matchArray;
-    protected $nursesForPatient;
+
+    //not used anymore
+    //protected $nursesForPatient;
 
     protected $offsetDate;
 
@@ -25,6 +27,7 @@ class NurseFinder
      * Use function handle to get (Nurse, target date, start window and end window)
      */
 
+    /** @var Patient patient */
     protected $patient;
     protected $previousCall;
     protected $windowEnd;
@@ -37,12 +40,12 @@ class NurseFinder
         $windowEnd,
         Call $previousCall = null
     ) {
-        $this->patient          = $patient;
-        $this->offsetDate       = $date;
-        $this->windowStart      = $windowStart;
-        $this->windowEnd        = $windowEnd;
-        $this->nursesForPatient = $this->getMostFrequentNursesForPatient();
-        $this->previousCall     = $previousCall;
+        $this->patient     = $patient;
+        $this->offsetDate  = $date;
+        $this->windowStart = $windowStart;
+        $this->windowEnd   = $windowEnd;
+        //$this->nursesForPatient = $this->getMostFrequentNursesForPatient();
+        $this->previousCall = $previousCall;
     }
 
     //finds any days that have windows for patient and nurse
@@ -199,6 +202,15 @@ class NurseFinder
         $user               = auth()->user();
         $isCurrentUserNurse = $user->isCareCoach();
 
+        $patientNurseUser = $this->patient->getNurse();
+        if ($patientNurseUser) {
+            $match['nurse']              = $patientNurseUser->id;
+            $match['nurse_display_name'] = $patientNurseUser->display_name;
+            $match['window_match']       = "Assigning next call to $patientNurseUser->display_name.";
+
+            return $match;
+        }
+
         if ($isCurrentUserNurse) {
             $match['nurse']        = auth()->id();
             $match['window_match'] = 'Assigning next call to current care coach.';
@@ -220,8 +232,8 @@ class NurseFinder
         $isPreviousCallNurseActive = false;
         $previousCallUser          = User::ofType('care-center')
             ->whereHas('nurseInfo', function ($q) {
-                $q->where('status', 'active');
-            })
+                                             $q->where('status', 'active');
+                                         })
             ->with('nurseInfo')
             ->find($this->previousCall['outbound_cpm_id']);
 
@@ -275,6 +287,7 @@ class NurseFinder
          */
 
         $match['window_match'] .= '('.$nurseDisplayName.')';
+        $match['nurse_display_name'] = $nurseDisplayName;
 
         return $match;
     }
@@ -298,10 +311,10 @@ class NurseFinder
                 ->where('attempt_note', '=', '')
                 ->where('outbound_cpm_id', '!=', $nurseToIgnore)
                 ->whereHas('outboundUser', function ($q) {
-                    $q->whereHas('nurseInfo', function ($q2) {
-                        $q2->where('status', '=', 'active');
-                    });
-                })
+                $q->whereHas('nurseInfo', function ($q2) {
+                    $q2->where('status', '=', 'active');
+                });
+            })
                 ->orderBy('called_date', 'desc')
                 ->first())->outboundUser;
 
@@ -326,10 +339,10 @@ class NurseFinder
 
             if ($intersection) {
                 $successfulCallCount = Call
-                        ::where('outbound_cpm_id', $nurse->user_id)
-                            ->where('inbound_cpm_id', $this->patient->user_id)
-                            ->where('status', 'reached')
-                            ->count();
+                    ::where('outbound_cpm_id', $nurse->user_id)
+                        ->where('inbound_cpm_id', $this->patient->user_id)
+                        ->where('status', 'reached')
+                        ->count();
 
                 $canCare[$nurse->user_id] = $successfulCallCount;
             }

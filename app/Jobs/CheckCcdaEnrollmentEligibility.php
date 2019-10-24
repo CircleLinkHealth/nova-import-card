@@ -8,7 +8,6 @@ namespace App\Jobs;
 
 use App\EligibilityBatch;
 use App\Models\MedicalRecords\Ccda;
-use App\Services\EligibilityCheck;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -49,16 +48,15 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             $ccda = $ccda->id;
         }
 
-        $this->ccda                = Ccda::find($ccda);
-        $this->practice            = $practice;
-        $this->filterInsurance     = $batch->shouldFilterInsurance();
-        $this->filterLastEncounter = $batch->shouldFilterLastEncounter();
-        $this->filterProblems      = $batch->shouldFilterProblems();
-        $this->batch               = $batch;
+        $this->ccda     = Ccda::find($ccda);
+        $this->practice = $practice;
+        $this->batch    = $batch;
     }
 
     /**
      * Execute the job.
+     *
+     * @throws \Exception
      */
     public function handle()
     {
@@ -66,27 +64,7 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             return null;
         }
 
-        return $this->determineEligibility();
-    }
-
-    /**
-     * @throws \Exception
-     *
-     * @return EligibilityCheck
-     */
-    private function determineEligibility()
-    {
-        $job = $this->ccda->createEligibilityJobFromMedicalRecord();
-
-        $check = (new EligibilityCheck(
-            $job,
-            $this->practice,
-            $this->batch,
-            $this->filterLastEncounter,
-            $this->filterInsurance,
-            $this->filterProblems,
-            true
-        ));
+        $check = $this->ccda->createEligibilityJobFromMedicalRecord()->process();
 
         if ($check->getEligibilityJob()->isEligible()) {
             $this->ccda->status = Ccda::ELIGIBLE;
