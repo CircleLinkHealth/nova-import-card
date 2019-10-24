@@ -91,7 +91,6 @@
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ route('admin.users.index') }}">All Users</a></li>
                                     <li><a href="{{ route('admin.users.create') }}">New User</a></li>
-                                    <li><a href="{{ route('admin.observations.index') }}">Observations</a></li>
                                     <li><a href="{{ route('observations-dashboard.index') }}">Edit/Delete
                                             Observations</a></li>
                                 </ul>
