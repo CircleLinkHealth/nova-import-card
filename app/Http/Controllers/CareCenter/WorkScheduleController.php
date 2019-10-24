@@ -156,7 +156,7 @@ class WorkScheduleController extends Controller
 
         $tzAbbr          = auth()->user()->timezone_abbr ?? 'EDT';
         $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
-        //dd($calendarData);
+
         return view(
             'admin.nurse.schedules.index',
             compact(
@@ -197,7 +197,7 @@ class WorkScheduleController extends Controller
             ->whereHas('nurseInfo', function ($q) {
                 $q->where('status', 'active');
             })
-            // ->whereHas('nurseInfo.windows')
+//            ->whereHas('nurseInfo.windows')
             ->chunk(100, function ($nurses) use (&$workScheduleData) {
                 $workScheduleData[] = $nurses;
             });
@@ -303,19 +303,19 @@ class WorkScheduleController extends Controller
             ->get()
             ->sum(function ($window) {
                 return Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_end
-                    )->diffInHours(Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_start
-                    ));
-            }) + Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_end']
+                    'H:i:s',
+                    $window->window_time_end
                 )->diffInHours(Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_start']
+                    'H:i:s',
+                    $window->window_time_start
                 ));
+            }) + Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_end']
+            )->diffInHours(Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_start']
+            ));
 
         $invalidWorkHoursNumber = false;
 
