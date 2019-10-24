@@ -109,7 +109,7 @@
                 editButtonActive: false,
                 deleteButtonActive: false,
                 showDisputeBox: false,
-                formattedTime: this.invoiceData.formatted_time,
+                formattedTime: this.invoiceData.disputedFormattedTime ? this.invoiceData.disputedFormattedTime : this.invoiceData.formatted_time,
                 requestedTimeToShow: '',
                 liveRequestedTime: '',
                 requestedTimeFromDb: this.invoiceData.suggestedTime,
