@@ -12,10 +12,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 /**
  * CircleLinkHealth\Customer\Entities\PatientNurse
  *
- * @property int temporary_nurse_user_id
- * @property Carbon temporary_from
- * @property Carbon temporary_to
- * @property User nurse
  * @property int $id
  * @property int $patient_user_id
  * @property int|null $nurse_user_id
@@ -28,17 +24,26 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property-read \CircleLinkHealth\Customer\Entities\User $patient
  * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property-read int|null $revision_history_count
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
+ *     newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse query()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse whereNurseUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse wherePatientUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse whereTemporaryFrom($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse whereTemporaryNurseUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse whereTemporaryTo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
+ *     whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
+ *     whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
+ *     whereNurseUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
+ *     wherePatientUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
+ *     whereTemporaryFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
+ *     whereTemporaryNurseUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
+ *     whereTemporaryTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
+ *     whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class PatientNurse extends BaseModel
@@ -60,18 +65,27 @@ class PatientNurse extends BaseModel
 
     public function nurse()
     {
-        $now = Carbon::now();
-        if ($this->temporary_nurse_user_id && $now->isBetween($this->temporary_from, $this->temporary_to)) {
-            $record = $this->belongsTo(User::class, 'temporary_nurse_user_id', 'id')
-                        ->whereHas('nurseInfo', function ($q) {
-                            $q->where('status', 'active');
-                        });
+        if ($this->hasTemporaryNurse()) {
+            $record = $this->temporaryNurse();
 
             if ($record->exists()) {
                 return $record;
             }
         }
 
+        return $this->permanentNurse();
+    }
+
+    public function temporaryNurse()
+    {
+        return $this->belongsTo(User::class, 'temporary_nurse_user_id', 'id')
+                    ->whereHas('nurseInfo', function ($q) {
+                        $q->where('status', 'active');
+                    });
+    }
+
+    public function permanentNurse()
+    {
         return $this->belongsTo(User::class, 'nurse_user_id', 'id')
                     ->whereHas('nurseInfo', function ($q) {
                         $q->where('status', 'active');
@@ -81,5 +95,12 @@ class PatientNurse extends BaseModel
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_user_id', 'id');
+    }
+
+    public function hasTemporaryNurse()
+    {
+        $now = Carbon::now();
+
+        return $this->temporary_nurse_user_id && $now->isBetween($this->temporary_from, $this->temporary_to);
     }
 }
