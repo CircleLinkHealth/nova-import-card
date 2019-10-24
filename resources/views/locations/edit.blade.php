@@ -10,7 +10,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ action('LocationController@index') }}" class="btn btn-danger">Back</a>
+                            <a href="{{ action('\App\Http\Controllers\LocationController@index') }}" class="btn btn-danger">Back</a>
                         </div>
                     </div>
                 </div>
