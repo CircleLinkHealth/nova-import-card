@@ -66,7 +66,7 @@ class Constants
                 'Diabetes Type 2',
             ],
             //number of dummy medications
-            'medications' => 25,
+            'medications' => 0,
         ],
     ];
 
