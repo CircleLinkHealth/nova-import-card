@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -42,7 +43,7 @@ class NurseInvoice extends Resource
      * @var array
      */
     public static $searchRelations = [
-        'nurse.user' => ['display_name', 'first_name', 'last_name'],
+        'user' => ['display_name', 'first_name', 'last_name'],
     ];
 
     /**
@@ -118,6 +119,12 @@ class NurseInvoice extends Resource
     public function fields(Request $request)
     {
         return [
+            BelongsTo::make('Care Coach', 'user', CareCoachUser::class)
+                     ->hideWhenUpdating()
+                     ->hideFromIndex()
+                     ->searchable()
+                     ->prepopulate(),
+            
             Text::make('Name', 'nurse.user.display_name')
                 ->sortable()
                 ->hideWhenCreating()

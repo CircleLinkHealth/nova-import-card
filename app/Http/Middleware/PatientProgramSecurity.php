@@ -46,6 +46,10 @@ class PatientProgramSecurity
             return redirect()->guest('login');
         }
 
+        if ($loggedInUser->hasRole('participant')) {
+            abort(403);
+        }
+
         if ($loggedInUser->hasRole('care-ambassador')) {
             return redirect()->route('enrollment-center.dashboard', []);
         }
