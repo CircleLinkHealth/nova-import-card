@@ -120,6 +120,8 @@ class CallController extends Controller
             $previousCall->save();
         }
 
+        $request->merge(['is_reschedule' => true]);
+
         return $this->create($request);
     }
 
@@ -400,7 +402,8 @@ class CallController extends Controller
             'is_manual'       => 'required|boolean',
             'family_override' => '',
             'asap'            => '',
-            'is_temporary'    => 'required|boolean',
+            'is_temporary'    => 'sometimes|boolean',
+            'is_reschedule'   => 'sometimes|boolean',
             'temporary_from'  => ['nullable', 'after_or_equal:today', new DateBeforeUsingCarbon()],
             'temporary_to'    => ['nullable', 'after_or_equal:today', new DateBeforeUsingCarbon()],
         ]);
@@ -439,9 +442,9 @@ class CallController extends Controller
         if ('call' === $input['type'] && $patient->inboundCalls) {
             $scheduledCall = $patient->inboundCalls()
                 ->where(function ($q) {
-                    $q->whereNull('type')
-                        ->orWhere('type', '=', 'call');
-                })
+                                         $q->whereNull('type')
+                                             ->orWhere('type', '=', 'call');
+                                     })
                 ->where('status', '=', 'scheduled')
                 ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
                 ->first();
@@ -513,9 +516,15 @@ class CallController extends Controller
 
     private function processNursePatientRelation(User $patient, $input)
     {
-        $isTemporary = $input['is_temporary'];
-        $tempFrom    = $input['temporary_from'];
-        $tempTo      = $input['temporary_to'];
+        $isReschedule = $input['is_reschedule'] ?? false;
+        $isTemporary  = $input['is_temporary'] ?? false;
+        $tempFrom     = $input['temporary_from'] ?? null;
+        $tempTo       = $input['temporary_to'] ?? null;
+
+        //request came from Notes Pages Call Reschedule
+        if ($isReschedule) {
+            return;
+        }
 
         if ($isTemporary) {
             if ( ! ($tempFrom instanceof Carbon)) {
@@ -580,7 +589,7 @@ class CallController extends Controller
             ? $input['sub_type']
             : null;
         $call->inbound_cpm_id = $user->id;
-        $call->asap           = boolval($input['asap']);
+        $call->asap           = boolval($input['asap'] ?? false);
         //make sure we are sending the dates correctly formatted
         $call->scheduled_date  = $scheduledDate->format('Y-m-d');
         $call->window_start    = $windowStart->format('H:i');
