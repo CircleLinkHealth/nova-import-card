@@ -4,6 +4,9 @@
     <div class="container-fluid">
 
         <div class="row">
+            @if(! isProductionEnv())
+                @include('patient.create-test-patients')
+            @endif
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">Import Eligible Patients Using Eligible Patient Id (enrollee id)</div>
@@ -99,8 +102,6 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
     </div>

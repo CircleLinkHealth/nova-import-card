@@ -8,6 +8,9 @@
     <div class="container container--menu">
         <div class="row row-centered">
             <div class="col-sm-12">
+                @if(! isProductionEnv())
+                    @include('patient.create-test-patients')
+                @endif
                 <ul class="" style="margin:0;padding:0;">
 
                     {{--<li class="menu-item">--}}
@@ -75,10 +78,8 @@
                                     <p class="text-medium-big text--menu text-serif">Import CCDs<BR><BR><br></p>
                                 </div>
                             </a>
-
                         </li>
                     @endif
-
                 </ul>
             </div>
         </div>

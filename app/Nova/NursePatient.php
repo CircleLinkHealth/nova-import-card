@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientNurse;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
@@ -29,7 +29,7 @@ class NursePatient extends Resource
      *
      * @var string
      */
-    public static $model = Patient::class;
+    public static $model = PatientNurse::class;
 
     /**
      * The columns that should be searched.
@@ -37,7 +37,7 @@ class NursePatient extends Resource
      * @var array
      */
     public static $search = [
-        'user_id',
+        'patient_user_id',
         'nurse_user_id',
     ];
 
@@ -47,8 +47,8 @@ class NursePatient extends Resource
      * @var array
      */
     public static $searchRelations = [
-        'user'  => ['id', 'display_name', 'first_name', 'last_name'],
-        'nurse' => ['id', 'display_name', 'first_name', 'last_name'],
+        'patient' => ['id', 'display_name', 'first_name', 'last_name'],
+        'nurse'   => ['id', 'display_name', 'first_name', 'last_name'],
     ];
 
     /**
@@ -128,19 +128,22 @@ class NursePatient extends Resource
                 ->hideWhenCreating()
                 ->hideFromIndex(),
 
-            Text::make('Patient Id', 'user.id')
+            Text::make('Patient Id', 'patient.id')
                 ->sortable()
+                ->hideWhenCreating()
                 ->readonly(true),
 
-            Text::make('Patient', 'user.display_name')
+            Text::make('Patient', 'patient.display_name')
                 ->hideFromIndex()
                 ->hideFromDetail()
+                ->hideWhenCreating()
                 ->readonly(true),
 
-            BelongsTo::make('Patient', 'user', User::class)
-                ->readonly(true)
+            BelongsTo::make('Patient', 'patient', User::class)
                 ->sortable()
-                ->hideWhenUpdating(),
+                ->searchable()
+                ->hideWhenUpdating()
+                ->readonly(true),
 
             BelongsTo::make('Nurse', 'nurse', User::class)
                 ->searchable()
