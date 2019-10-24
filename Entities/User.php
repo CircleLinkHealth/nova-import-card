@@ -432,24 +432,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'password',
     ];
 
-    protected $patient_rules = [
-        'daily_reminder_optin' => 'required',
-        'daily_reminder_time' => 'required',
-        'daily_reminder_areas' => 'required',
-        'hospital_reminder_optin' => 'required',
-        'hospital_reminder_time' => 'required',
-        'hospital_reminder_areas' => 'required',
-        'first_name' => 'required',
-        'last_name' => 'required',
-        'gender' => 'required',
-        'mrn_number' => 'required',
-        'birth_date' => 'required',
-        'home_phone_number' => 'required',
-        'consent_date' => 'required',
-        'ccm_status' => 'required',
-        'program_id' => 'required',
-    ];
-
     protected $rules = [];
 
     public function __construct(array $attributes = [])
@@ -1562,6 +1544,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $name . ' (' . $this->id . ')';
     }
 
+    public function getFullNameWithIdAttribute()
+    {
+        $name = $this->getFullName();
+
+        return $name . ' (' . $this->id . ')';
+    }
+
     public function getGender()
     {
         if (!$this->patientInfo) {
@@ -1766,7 +1755,24 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getPatientRules()
     {
-        return $this->patient_rules;
+        return [
+            'daily_reminder_optin' => 'required',
+            'daily_reminder_time' => 'required',
+            'daily_reminder_areas' => 'required',
+            'hospital_reminder_optin' => 'required',
+            'hospital_reminder_time' => 'required',
+            'hospital_reminder_areas' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'gender' => 'required',
+            'mrn_number' => 'required',
+            'birth_date' => 'required',
+            'home_phone_number' => 'required',
+            'consent_date' => 'required',
+            'ccm_status' => 'required',
+            'program_id' => 'required',
+            'email' => 'sometimes|email|unique:users,email' . ($this->id != null ? (','.$this->id) : '')
+        ];
     }
 
     public function getPreferredCcContactDays()
