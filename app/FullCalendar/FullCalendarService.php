@@ -96,7 +96,7 @@ class FullCalendarService
      */
     public function prepareData($nurse)
     {// I need to get all the past data cause events are created once and then are repeating.
-        return collect($nurse->nurseInfo->windows)
+        return collect($nurse->nurseInfo->windows)->where('hide_from_calendar', '=', null)
             ->map(function ($window) use ($nurse) {
                 $givenDateWeekMap = createWeekMap($window->date); //see comment in helpers.php
                 $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
