@@ -43,9 +43,18 @@ class TrixMailable extends Mailable
      */
     public function build()
     {
+        $media = [];
+        foreach ($this->mailAttachments as $attachment) {
+            $media[] = Media::where('collection_name', 'patient-email-attachments')
+                ->where('model_id', $this->patient->id)
+                ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+                ->find($attachment['media_id']);
+        }
+
         $email = $this->view('patient.patient-email')
             ->with([
-                'content' => $this->content,
+                'content'     => $this->content,
+                'attachments' => $media,
             ])
             ->from('no-replyg@circlelinkhealth.com', 'CircleLink Health')
             ->subject('You have received a message from CircleLink Health');
