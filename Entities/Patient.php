@@ -127,19 +127,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \CircleLinkHealth\Customer\Entities\Location|null $location
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient byStatus($fromDate, $toDate)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient ccmStatus($status, $operator = '=')
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient filter(\App\Filters\QueryFilters $filters)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient
+ *     filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient query()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereDateUnreachable($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient wherePausedLetterPrintedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient
+ *     whereDateUnreachable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient
+ *     wherePausedLetterPrintedAt($value)
  * @property string|null $withdrawn_reason
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient enrolledOrPaused()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereWithdrawnReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient
+ *     whereWithdrawnReason($value)
  * @property-read int|null $contact_windows_count
  * @property-read \CircleLinkHealth\Customer\Entities\User|null $nurse
  * @property-read int|null $revision_history_count
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereNurseUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient
+ *     whereNurseUserId($value)
  */
 class Patient extends BaseModel
 {
@@ -688,6 +693,11 @@ class Patient extends BaseModel
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    /**
+     * Returns current nurse of patient (could be temporary or permanent
+     *
+     * @return User|null
+     */
     public function getNurse()
     {
         /** @var PatientNurse $record */
@@ -699,10 +709,45 @@ class Patient extends BaseModel
             return null;
         }
 
-        if (!$record->nurse) {
+        if ( ! $record->nurse) {
             return null;
         }
 
         return $record->nurse;
+    }
+
+    /**
+     * Get current nurse (could be parmanent or temporary) and upcoming (temporary)
+     */
+    public function getNurses()
+    {
+        /** @var PatientNurse $record */
+        $record = PatientNurse::where('patient_user_id', '=', $this->user_id)
+                              ->with(['permanentNurse', 'temporaryNurse'])
+                              ->first();
+
+        if ( ! $record) {
+            return null;
+        }
+
+        $result = [];
+        if ($record->permanentNurse) {
+            $result['permanent'] = [
+                'user' => $record->permanentNurse,
+            ];
+        }
+
+        $now = Carbon::now();
+        if ($record->temporaryNurse && $now->isBefore($record->temporary_to)) {
+            $result['temporary'] = [
+                'from' => $record->temporary_from,
+                'to'   => $record->temporary_to,
+                'user' => $record->temporaryNurse,
+            ];
+        }
+
+        return empty($result)
+            ? null
+            : $result;
     }
 }
