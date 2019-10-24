@@ -8,15 +8,15 @@
         <div class="form-group" v-if="this.patient.email">To: {{this.patient.email}}</div>
         <div class="form-group" v-else>
             <div style="padding-bottom: 10px"><span><strong>Patient email not found.</strong> Send to:</span><br></div>
-            <div class="col-sm-4" style="padding-left: 0"><input type="email" id="custom-patient-email" name="custom-patient-email"
+            <div class="col-sm-4" style="padding-left: 0"><input class="form-control" type="email" id="custom-patient-email" name="custom-patient-email"
                                                                  placeholder="Enter email..."></div>
             <div class="col-sm-4"><input type="checkbox" id="default-patient-email" name="default-patient-email"
                                          value="1">
-                <label for="default-patient-email"><span> </span>Save as default patient email</label></div>
+                <label style="padding-top: 5px;" for="default-patient-email"><span> </span>Save as default patient email</label></div>
 
         </div>
         <div class="form-group">
-            <VueTrix class="" id="patient-email-body" inputId="patient-email-body-input"
+            <VueTrix id="patient-email-body" inputId="patient-email-body-input"
                      inputName="patient-email-body"
                      v-model="editorContent"
                      placeholder="Enter your content... (please do not enter patient PHI)"
@@ -79,6 +79,7 @@
                         // parseInt( Math.round( ( progressEvent.loaded * 100 ) / progressEvent.total ) );
                     }.bind(this),
                     onDownloadProgress: function (loadEvent) {
+                        //this adds inline attachments using <a> and <img> tags. There is an issue with embedding them to the mailable, may fix in the future
                        // event.attachment.setAttributes({
                        //     url : JSON.parse(loadEvent.currentTarget.response).url,
                        //     href : JSON.parse(loadEvent.currentTarget.response).url
@@ -111,18 +112,6 @@
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },
-                    onUploadProgress: function (progressEvent) {
-                        let progress = progressEvent.loaded / progressEvent.total * 90;
-                        event.attachment.setUploadProgress(progress);
-                        // parseInt( Math.round( ( progressEvent.loaded * 100 ) / progressEvent.total ) );
-                    }.bind(this),
-                    load: function (loadEvent) {
-                        // var attributes = {
-                        //     url: 'host' + 'key',
-                        //     href: 'host' + 'key' + "?content-disposition=attachment"
-                        // };
-                        // event.attachments.setAttributes(attributes);
-                    }
                 }).then((response, status) => {
                     if (response) {
                         App.$emit('file-upload', this.attachments);
@@ -136,8 +125,6 @@
                 })
             },
             handleEditorFocus(event) {
-                //maybe tips - 'glepete ta PHI'
-                // console.log('Editor is focused:', event)
             },
             handleEditorBlur(event) {
             }
