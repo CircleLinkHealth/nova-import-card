@@ -103,7 +103,7 @@ class TotalTimeAggregator
             ->join($nurseInvoiceTable, "$nurseInvoiceTable.id", '=', "$table.invoice_id")
             ->join($nurseInfoTable, "$nurseInfoTable.id", '=', "$nurseInvoiceTable.nurse_info_id")
             ->select(//@todo:case: approveRejectedDisputes - add where(status = approved)
-                \DB::raw("SUM(TIME_TO_SEC($approvedDailyDisputes.suggested_formatted_time) - TIME_TO_SEC($approvedDailyDisputes.disputed_formatted_time)) as total_time"),
+                \DB::raw('SUM(TIME_TO_SEC(suggested_formatted_time) - TIME_TO_SEC(disputed_formatted_time)) as total_time'),
                 \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
                 "$nurseInfoTable.user_id as user_id",
                 $isBillable
