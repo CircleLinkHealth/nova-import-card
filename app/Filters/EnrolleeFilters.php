@@ -59,6 +59,7 @@ class EnrolleeFilters extends QueryFilters
         $decoded['hideStatus'] = array_merge($decoded['hideStatus'], [
             'legacy',
             'rejected',
+            'enrolled',
         ]);
 
         $filtered = collect($decoded)->filter();
