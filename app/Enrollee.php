@@ -180,6 +180,11 @@ class Enrollee extends BaseModel
     const INELIGIBLE = 'ineligible';
 
     /**
+     * status = legacy. These are enrolees who have existed in our system before releasing the care ambassador channel.
+     */
+    const LEGACY = 'legacy';
+
+    /**
      * status = rejected.
      *
      * (a.k.a hard rejected/declined)
