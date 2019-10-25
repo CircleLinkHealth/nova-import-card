@@ -85,15 +85,24 @@ $style = [
                             <tr>
                                 <td style="{{ $fontFamily }} {{ $style['email-body_cell'] }}">
                                    {!! $content !!}
-                                    <hr>
-                                    @foreach($attachments as $attachment)
-                                        <img src="{{$message->embedData($attachment->getFile(), $attachment->file_name)}}">
-                                    @endforeach
                                 </td>
                             </tr>
                         </table>
+                        <hr>
+                        <table style="{{ $style['email-body_inner'] }}" cellpadding="0"
+                               cellspacing="0">
+                            @foreach($attachments as $attachment)
+                            <tr>
+                                <td style="{{ $fontFamily }} {{ $style['email-body_cell'] }}">
+                                    <img src="{{$message->embedData($attachment->getFile(), $attachment->file_name)}}">
+                                </td>
+                            </tr>
+                            @endforeach
+                        </table>
                     </td>
+
                 </tr>
+
 
                 <!-- Footer -->
                 <tr>
