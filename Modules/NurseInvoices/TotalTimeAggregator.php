@@ -9,7 +9,6 @@ namespace CircleLinkHealth\NurseInvoices;
 use App\TimeTrackedPerDayView;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
@@ -96,12 +95,15 @@ class TotalTimeAggregator
         $isBillable        = false;
         $nurseInvoiceTable = (new NurseInvoice())->getTable();
         $nurseInfoTable    = (new Nurse())->getTable();
+        $approved          = 'approved';
+
+        $approvedDailyDisputes = \DB::table($table)->where('status', $approved)->get();
 
         return \DB::table($table)
             ->join($nurseInvoiceTable, "$nurseInvoiceTable.id", '=', "$table.invoice_id")
             ->join($nurseInfoTable, "$nurseInfoTable.id", '=', "$nurseInvoiceTable.nurse_info_id")
-            ->select(
-                \DB::raw('SUM(TIME_TO_SEC(suggested_formatted_time) - TIME_TO_SEC(disputed_formatted_time)) as total_time'),
+            ->select(//@todo:case: approveRejectedDisputes - add where(status = approved)
+                \DB::raw("SUM(TIME_TO_SEC($approvedDailyDisputes.suggested_formatted_time) - TIME_TO_SEC($approvedDailyDisputes.disputed_formatted_time)) as total_time"),
                 \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
                 "$nurseInfoTable.user_id as user_id",
                 $isBillable
