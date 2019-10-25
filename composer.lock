@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6f2a1ecd7d55ddc78961e9a7f4baf584",
+    "content-hash": "5c976b96d6f69eeddbb097656b63485e",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -654,11 +654,11 @@
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.3",
+            "version": "v1.3.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "b8891d710b7a486d913b7fb1c5787e8754c1a5fd"
+                "reference": "760f26a9bbaaa6a1e139a6f6b65998bb96a04164"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-11T11:07:09+00:00"
+            "time": "2019-10-24T20:39:08+00:00"
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
@@ -4646,7 +4646,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
+                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
                 "reference": "6a42f69cd6dd2e47724879f6234ce81b2cb688a2"
             },
             "dist": {
@@ -8965,7 +8965,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/VentureCraft/revisionable.git",
+                "url": "git@github.com:CircleLinkHealth/revisionable.git",
                 "reference": "4e288ba15f82a5614cf10bc18698cc8a8f374498"
             },
             "dist": {
@@ -9011,6 +9011,7 @@
                 "model",
                 "revision"
             ],
+            "abandoned": true,
             "time": "2019-09-23T21:20:15+00:00"
         },
         {
@@ -13202,7 +13203,9 @@
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20
+        "xethron/migrations-generator": 20,
+        "venturecraft/revisionable": 20,
+        "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
