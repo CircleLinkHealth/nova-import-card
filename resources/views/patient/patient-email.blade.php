@@ -88,17 +88,19 @@ $style = [
                                 </td>
                             </tr>
                         </table>
+                        @if(! empty($attachments))
                         <hr>
                         <table style="{{ $style['email-body_inner'] }}" cellpadding="0"
                                cellspacing="0">
                             @foreach($attachments as $attachment)
                             <tr>
                                 <td style="{{ $fontFamily }} {{ $style['email-body_cell'] }}">
-                                    <img src="{{$message->embedData($attachment->getFile(), $attachment->file_name)}}">
+                                    <img style="max-width: 800px; max-height: 800px" src="{{$message->embedData($attachment->getFile(), $attachment->file_name)}}">
                                 </td>
                             </tr>
                             @endforeach
                         </table>
+                        @endif
                     </td>
 
                 </tr>
