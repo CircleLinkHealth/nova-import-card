@@ -83,7 +83,7 @@ class EnrollmentCenterController extends Controller
             $enrollee->preferred_window = implode(', ', $request->input('times'));
         }
 
-        $enrollee->status          = 'consented';
+        $enrollee->status          = Enrollee::CONSENTED;
         $enrollee->consented_at    = Carbon::now()->toDateTimeString();
         $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
 
@@ -131,7 +131,7 @@ class EnrollmentCenterController extends Controller
         }
 
         $engagedEnrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
-            ->where('status', '=', 'engaged')
+            ->where('status', '=', Enrollee::ENGAGED)
             ->orderBy('attempt_count')
             ->with(['practice.enrollmentTips', 'provider.providerInfo'])
             ->first();
@@ -146,7 +146,7 @@ class EnrollmentCenterController extends Controller
         }
 
         //mark as engaged to prevent double dipping
-        $enrollee->status = 'engaged';
+        $enrollee->status = Enrollee::ENGAGED;
         $enrollee->save();
 
         return view(
@@ -231,12 +231,12 @@ class EnrollmentCenterController extends Controller
         $enrollee->care_ambassador_user_id = $careAmbassador->user_id;
 
         if ('requested callback' == $request->input('reason')) {
-            $enrollee->status = 'call_queue';
+            $enrollee->status = Enrollee::TO_CALL;
             if ($request->has('utc_callback')) {
                 $enrollee->requested_callback = $request->input('utc_callback');
             }
         } else {
-            $enrollee->status = 'utc';
+            $enrollee->status = Enrollee::UNREACHABLE;
         }
 
         $enrollee->attempt_count    = $enrollee->attempt_count + 1;

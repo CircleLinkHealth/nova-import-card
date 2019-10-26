@@ -191,7 +191,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)->monthlyOn($sendReminderAt->day, $sendReminderAt->format('H:i'))->onOneServer();
 
         $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('08:35')->skip(function () {
-            SendResolveInvoiceDisputeReminder::shouldSkip();
+            return SendResolveInvoiceDisputeReminder::shouldSkip();
         })->onOneServer();
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30')->onOneServer();
     }
