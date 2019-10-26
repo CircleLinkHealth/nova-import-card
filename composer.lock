@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "160a1d93b0f1383d89218bfa4ed0a19a",
+    "content-hash": "6237ee1958c2af6d34f1f10ce5b772ea",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -654,11 +654,11 @@
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.3.5",
+            "version": "v1.3.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "760f26a9bbaaa6a1e139a6f6b65998bb96a04164"
+                "reference": "f640f5f83ecf6cae81665d4ade0014ad43296093"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-24T20:39:08+00:00"
+            "time": "2019-10-26T18:38:24+00:00"
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
