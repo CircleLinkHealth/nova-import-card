@@ -32,7 +32,7 @@ class AddColumsToNurseContactWindow extends Migration
         Schema::table('nurse_contact_window', function (Blueprint $table) {
             $table->enum('repeat_frequency', ['daily', 'monthly', 'weekly', 'does_not_repeat'])->nullable();
             $table->boolean('manually_edited')->default(false);
-            $table->json('exclude_events_dates')->nullable();
+            $table->boolean('manually_created')->default(false);
             $table->date('until')->nullable();
             $table->enum('validated', ['not_checked', 'worked', 'not_worked'])->default('not_checked');
             $table->dateTime('hide_from_calendar')->nullable();

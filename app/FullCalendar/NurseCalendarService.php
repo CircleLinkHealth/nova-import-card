@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Database\Eloquent\Collection;
 
-class FullCalendarService
+class NurseCalendarService
 {
     const ALL_DAY = 'allDay';
     const END     = 'end';
@@ -98,6 +98,7 @@ class FullCalendarService
     {// I need to get all the past data cause events are created once and then are repeating.
         return collect($nurse->nurseInfo->windows)->where('hide_from_calendar', '=', null)
             ->map(function ($window) use ($nurse) {
+                //@todo:these need to go
                 $givenDateWeekMap = createWeekMap($window->date); //see comment in helpers.php
                 $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
                 $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();

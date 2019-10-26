@@ -6,14 +6,16 @@
 
 namespace App\Http\Controllers\CareCenter;
 
-use App\FullCalendar\FullCalendarService;
+use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
+use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -33,16 +35,16 @@ class WorkScheduleController extends Controller
     /**
      * WorkScheduleController constructor.
      *
-     * @param NurseContactWindow  $nurseContactWindow
-     * @param Holiday             $holiday
-     * @param WorkHours           $workHours
-     * @param FullCalendarService $fullCalendarService
+     * @param NurseContactWindow   $nurseContactWindow
+     * @param Holiday              $holiday
+     * @param WorkHours            $workHours
+     * @param NurseCalendarService $fullCalendarService
      */
     public function __construct(
         NurseContactWindow $nurseContactWindow,
         Holiday $holiday,
         WorkHours $workHours,
-        FullCalendarService $fullCalendarService
+        NurseCalendarService $fullCalendarService
     ) {
         $this->nextWeekStart = Carbon::parse('this sunday')->copy();
         $this->nextWeekEnd   = Carbon::parse('next sunday')
@@ -141,6 +143,21 @@ class WorkScheduleController extends Controller
         return redirect()->back();
     }
 
+    public function getActiveNurses()
+    {
+        $workScheduleData = [];
+        User::ofType('care-center')
+            ->with('nurseInfo.windows', 'nurseInfo.holidays')
+            ->whereHas('nurseInfo', function ($q) {
+//                $q->where('status', 'active');
+            })
+            ->chunk(100, function ($nurses) use (&$workScheduleData) {
+                $workScheduleData[] = $nurses;
+            });
+
+        return $workScheduleData[0];
+    }
+
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -151,7 +168,7 @@ class WorkScheduleController extends Controller
         $endOfMonth   = Carbon::parse($today)->endOfMonth()->copy()->toDateString();
         $endOfYear    = Carbon::parse($today)->endOfYear()->copy()->toDateString();
 
-        $nurses       = $this->getNursesWithSchedule();
+        $nurses       = $this->getActiveNurses();
         $calendarData = $this->fullCalendarService->prepareDataForCalendar($nurses);
 
         $tzAbbr          = auth()->user()->timezone_abbr ?? 'EDT';
@@ -176,7 +193,7 @@ class WorkScheduleController extends Controller
      */
     public function getHolidays()
     {
-        $nurses = $this->getNursesWithSchedule();
+        $nurses = $this->getActiveNurses();
 
         if ( ! $nurses) {
             return response()->json(['errors' => 'Nurses not found'], 400);
@@ -187,22 +204,6 @@ class WorkScheduleController extends Controller
             'success'  => true,
             'holidays' => $holidays,
         ], 200);
-    }
-
-    public function getNursesWithSchedule()
-    {
-        $workScheduleData = [];
-        User::ofType('care-center')
-            ->with('nurseInfo.windows', 'nurseInfo.holidays')
-            ->whereHas('nurseInfo', function ($q) {
-                $q->where('status', 'active');
-            })
-//            ->whereHas('nurseInfo.windows')
-            ->chunk(100, function ($nurses) use (&$workScheduleData) {
-                $workScheduleData[] = $nurses;
-            });
-
-        return $workScheduleData[0];
     }
 
     public function index()

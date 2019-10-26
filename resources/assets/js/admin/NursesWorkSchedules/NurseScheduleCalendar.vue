@@ -694,73 +694,73 @@
             },
 
             events() {
-                const data = this.workHours.concat(this.eventsAddedNow);
-                const events = data.map(q => {
-                        const repeatFrequency = q.repeat_frequency;
-
-                        const until = [];
-
-                        const frequency = [];
-
-                        if (repeatFrequency === 'weekly') {
-                            frequency.push(RRule.WEEKLY);
-                            until.push(new Date(q.until))
-                        }
-
-                        if (repeatFrequency === 'monthly') {
-                            frequency.push(RRule.MONTHLY);
-                            until.push(new Date(q.until))
-                        }
-
-                        if (repeatFrequency === 'daily') {
-                            frequency.push(RRule.DAILY);
-                            until.push(new Date(q.until))
-                        }
-
-                        if (repeatFrequency !== 'does_not_repeat') {
-                            until.push(new Date(q.start))
-                        }
-
-
-                        const rule = new RRule({                       //https://github.com/jakubroztocil/rrule
-                            freq: frequency[0],
-                            // byweekday: [q.data.clhDayOfWeek],
-                            dtstart: new Date(q.start),
-                            until: until[0],
-                        });
-
-                        const rrule = rule.all();
-
-                        //@todo: need to be  able to delete the selected event and NOT ALL occurrences of that event
-
-                        // const rruleSet = new RRuleSet();   //https://github.com/jakubroztocil/rrule
-                        //
-                        // rruleSet.rrule(new RRule({
-                        //     freq: frequency[0],
-                        //     // byweekday: [q.data.clhDayOfWeek],
-                        //     dtstart: new Date(q.start),
-                        //     until: until[0],
-                        // }));
-                        //
-                        // const rrule = rruleSet.all();
-
-                        const eventWithRules = [];
-                        for (var i = 0; i < rrule.length; i++) {
-                            eventWithRules.push({
-                                title: q.title,
-                                start: rrule[i],
-                                allDay: true,
-                                color: q.color,
-                                textColor: q.textColor,
-                                repeat_frequency: frequency[0],
-                                until: q.until,
-                                // repeat_rule_in_human: rule.toText(),
-                                data: q.data,
-                            })
-                        }
-                        return eventWithRules;
-                    }
-                ).map(event => event).flat();
+                const events = this.workHours.concat(this.eventsAddedNow);
+                // const events = data.map(q => {
+                //         const repeatFrequency = q.repeat_frequency;
+                //
+                //         const until = [];
+                //
+                //         const frequency = [];
+                //
+                //         if (repeatFrequency === 'weekly') {
+                //             frequency.push(RRule.WEEKLY);
+                //             until.push(new Date(q.until))
+                //         }
+                //
+                //         if (repeatFrequency === 'monthly') {
+                //             frequency.push(RRule.MONTHLY);
+                //             until.push(new Date(q.until))
+                //         }
+                //
+                //         if (repeatFrequency === 'daily') {
+                //             frequency.push(RRule.DAILY);
+                //             until.push(new Date(q.until))
+                //         }
+                //
+                //         if (repeatFrequency !== 'does_not_repeat') {
+                //             until.push(new Date(q.start))
+                //         }
+                //
+                //
+                //         const rule = new RRule({                       //https://github.com/jakubroztocil/rrule
+                //             freq: frequency[0],
+                //             // byweekday: [q.data.clhDayOfWeek],
+                //             dtstart: new Date(q.start),
+                //             until: until[0],
+                //         });
+                //
+                //         const rrule = rule.all();
+                //
+                //         //@todo: need to be  able to delete the selected event and NOT ALL occurrences of that event
+                //
+                //         // const rruleSet = new RRuleSet();   //https://github.com/jakubroztocil/rrule
+                //         //
+                //         // rruleSet.rrule(new RRule({
+                //         //     freq: frequency[0],
+                //         //     // byweekday: [q.data.clhDayOfWeek],
+                //         //     dtstart: new Date(q.start),
+                //         //     until: until[0],
+                //         // }));
+                //         //
+                //         // const rrule = rruleSet.all();
+                //
+                //         const eventWithRules = [];
+                //         for (var i = 0; i < rrule.length; i++) {
+                //             eventWithRules.push({
+                //                 title: q.title,
+                //                 start: rrule[i],
+                //                 allDay: true,
+                //                 color: q.color,
+                //                 textColor: q.textColor,
+                //                 repeat_frequency: frequency[0],
+                //                 until: q.until,
+                //                 // repeat_rule_in_human: rule.toText(),
+                //                 data: q.data,
+                //             })
+                //         }
+                //         return eventWithRules;
+                //     }
+                // ).map(event => event).flat();
 
                 //@todo:implement a count - results found and in which month are found
 
