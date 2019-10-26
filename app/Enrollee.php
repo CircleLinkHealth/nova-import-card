@@ -72,6 +72,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\User|null     $provider
  * @property mixed                                             $primary_phone_number
  * @property \CircleLinkHealth\Customer\Entities\User|null     $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toCall()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toSMS()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAddress($value)
@@ -122,6 +123,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereZip($value)
  * @mixin \Eloquent
+ *
  * @property int|null                 $batch_id
  * @property int|null                 $eligibility_job_id
  * @property int|null                 $care_ambassador_user_id
@@ -132,6 +134,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property mixed                                                                          $primary_phone_e164
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property \App\TargetPatient                                                             $targetPatient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee newQuery()
@@ -141,8 +144,10 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereEligibilityJobId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSoftRejectedCallback($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereRequestedCallback($value)
- * @property int|null $revision_history_count
+ *
+ * @property int|null   $revision_history_count
  * @property mixed|null $agent_details
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAgentDetails($value)
  */
 class Enrollee extends BaseModel
@@ -160,6 +165,11 @@ class Enrollee extends BaseModel
     const ELIGIBLE = 'eligible';
 
     /**
+     * status = engaged. When a care ambassador has viewed an enrollee but hasn't actually performed any action on them.
+     */
+    const ENGAGED = 'engaged';
+
+    /**
      * status = enrolled.
      */
     const ENROLLED = 'enrolled';
@@ -168,6 +178,11 @@ class Enrollee extends BaseModel
      * status = ineligible.
      */
     const INELIGIBLE = 'ineligible';
+
+    /**
+     * status = legacy. These are enrolees who have existed in our system before releasing the care ambassador channel.
+     */
+    const LEGACY = 'legacy';
 
     /**
      * status = rejected.
