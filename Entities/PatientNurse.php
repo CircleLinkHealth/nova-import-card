@@ -45,6 +45,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
  *     whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \CircleLinkHealth\Customer\Entities\User|null $permanentNurse
+ * @property-read \CircleLinkHealth\Customer\Entities\User|null $temporaryNurse
  */
 class PatientNurse extends BaseModel
 {
