@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c976b96d6f69eeddbb097656b63485e",
+    "content-hash": "160a1d93b0f1383d89218bfa4ed0a19a",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -9119,6 +9119,54 @@
                 "waavi"
             ],
             "time": "2019-01-28T16:48:46+00:00"
+        },
+        {
+            "name": "waynestate/nova-ckeditor4-field",
+            "version": "0.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/waynestate/nova-ckeditor4-field.git",
+                "reference": "fd6c2fcaeccbaffb91b2a0b7c9ce42a166f3dd27"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/waynestate/nova-ckeditor4-field/zipball/fd6c2fcaeccbaffb91b2a0b7c9ce42a166f3dd27",
+                "reference": "fd6c2fcaeccbaffb91b2a0b7c9ce42a166f3dd27",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Waynestate\\Nova\\CKEditorFieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Waynestate\\Nova\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Web Communications",
+                    "email": "web@wayne.edu"
+                }
+            ],
+            "description": "This nova package allows you to use CKEditor 4 for text areas.",
+            "keywords": [
+                "CKEditor",
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-07-25T15:45:09+00:00"
         },
         {
             "name": "wikimedia/composer-merge-plugin",
