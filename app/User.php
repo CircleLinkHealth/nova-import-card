@@ -209,6 +209,8 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereZip($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withCareTeamOfType($type)
  * @mixin \Eloquent
+ *
+ * @property mixed $full_name_with_id
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
