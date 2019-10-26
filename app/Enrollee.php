@@ -172,6 +172,11 @@ class Enrollee extends BaseModel
     const ELIGIBLE = 'eligible';
 
     /**
+     * status = engaged. When a care ambassador has viewed an enrollee but hasn't actually performed any action on them.
+     */
+    const ENGAGED = 'engaged';
+
+    /**
      * status = enrolled.
      */
     const ENROLLED = 'enrolled';
@@ -180,6 +185,11 @@ class Enrollee extends BaseModel
      * status = ineligible.
      */
     const INELIGIBLE = 'ineligible';
+
+    /**
+     * status = legacy. These are enrolees who have existed in our system before releasing the care ambassador channel.
+     */
+    const LEGACY = 'legacy';
 
     /**
      * status = rejected.

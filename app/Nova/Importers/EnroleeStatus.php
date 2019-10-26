@@ -9,6 +9,7 @@ namespace App\Nova\Importers;
 use App\Enrollee;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Log;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -50,7 +51,7 @@ class EnroleeStatus implements WithChunkReading, ToModel, WithHeadingRow, Should
                         try {
                             $e->last_attempt_at = Carbon::parse("{$date[0]}/{$date[1]}/{$date[2]}");
                         } catch (\Exception $exception) {
-                            //do nothing, date provided in csv is invalid
+                            Log::error("Enrollee with id {$e->id} failed to update last_attempt_field");
                         }
                     }
                 }
