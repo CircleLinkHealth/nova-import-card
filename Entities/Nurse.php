@@ -101,6 +101,8 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         'is_demo',
         'pay_interval',
         'is_variable_rate',
+        //"Case Load Capacity" is an integer denoting the target number of patients a nurse should be handling.
+        'case_load_capacity'
     ];
 
     protected $table = 'nurse_info';
