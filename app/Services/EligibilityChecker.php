@@ -74,7 +74,7 @@ class EligibilityChecker
     private $practice;
 
     /**
-     * EligibilityCheck constructor.
+     * EligibilityChecker constructor.
      *
      * @param EligibilityJob   $eligibilityJob
      * @param Practice         $practice
@@ -779,8 +779,8 @@ class EligibilityChecker
                         );
                 }
             )->orWhere(
-                                         function ($u) use ($args) {
-                                             $u->where(
+                function ($u) use ($args) {
+                    $u->where(
                                                  [
                                                      [
                                                          'program_id',
@@ -799,13 +799,13 @@ class EligibilityChecker
                                                      ],
                                                  ]
                                              )->whereHas(
-                        'patientInfo',
-                        function ($q) use ($args) {
-                            $q->withTrashed()->whereBirthDate($args['dob']);
-                        }
-                    );
-                                         }
-                                     )->first();
+                                                 'patientInfo',
+                                                 function ($q) use ($args) {
+                                                     $q->withTrashed()->whereBirthDate($args['dob']);
+                                                 }
+                                             );
+                }
+            )->first();
 
         $duplicateMySqlError = false;
         $errorMsg            = null;

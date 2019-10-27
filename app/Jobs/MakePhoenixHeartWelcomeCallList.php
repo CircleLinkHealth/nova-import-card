@@ -128,7 +128,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 
                             return $i;
                         }
-                                                   )
+                    )
                     ->unique('name')
                     ->sortBy('order')
                     ->pluck('name')
@@ -140,7 +140,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 
                             return ['type' => $ins];
                         }
-                                                   )
+                    )
                     ->filter()
                     ->values();
 
