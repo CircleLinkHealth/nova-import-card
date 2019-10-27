@@ -5,9 +5,11 @@
  */
 
 use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Enrollee;
-use Carbon\Carbon;
+use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 use App\TargetPatient;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Invite;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -230,16 +232,26 @@ $factory->define(EligibilityBatch::class, function (Faker\Generator $faker) {
     ];
 });
 
+$factory->define(EligibilityJob::class, function (Faker\Generator $faker) {
+    $batch = factory(EligibilityBatch::class)->create();
+
+    return [
+        'batch_id' => $batch->id,
+        'data'     => [],
+    ];
+});
+
 $factory->define(Ehr::class, function (Faker\Generator $faker) {
     return [
-        'name' => "EHR: $faker->company",
+        'name'               => "EHR: $faker->company",
+        'pdf_report_handler' => AthenaApiPdfHandler::class,
     ];
 });
 
 $factory->define(TargetPatient::class, function (Faker\Generator $faker) {
     $batch = factory(EligibilityBatch::class)->create();
     $ehr = factory(Ehr::class)->create();
-    
+
     return [
         'batch_id'          => $batch->id,
         'practice_id'       => $batch->practice_id,
