@@ -14,6 +14,8 @@ use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
+use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
+use App\Console\Commands\CreateCalendarRecurringEventsCommand;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
@@ -31,7 +33,6 @@ use App\Console\Commands\ResetPatients;
 use App\Console\Commands\RunScheduler;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
-use App\Console\Commands\CreateCalendarRecurringEventsCommand;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
@@ -181,7 +182,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->dailyAt('00:10')->onOneServer();
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)->monthlyOn(1, '08:30')->onOneServer();
-
+    
+        $schedule->command(CheckForYesterdaysActivitiesAndUpdateContactWindows::class)->dailyAt('00:06')->onOneServer();
+        
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)->everyMinute()->when(function () {
             return SendMonthlyNurseInvoiceLAN::shouldSend();
         })->onOneServer();
