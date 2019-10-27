@@ -779,8 +779,8 @@ class EligibilityChecker
                         );
                 }
             )->orWhere(
-                                         function ($u) use ($args) {
-                                             $u->where(
+                function ($u) use ($args) {
+                    $u->where(
                                                  [
                                                      [
                                                          'program_id',
@@ -799,13 +799,13 @@ class EligibilityChecker
                                                      ],
                                                  ]
                                              )->whereHas(
-                        'patientInfo',
-                        function ($q) use ($args) {
-                            $q->withTrashed()->whereBirthDate($args['dob']);
-                        }
-                    );
-                                         }
-                                     )->first();
+                                                 'patientInfo',
+                                                 function ($q) use ($args) {
+                                                     $q->withTrashed()->whereBirthDate($args['dob']);
+                                                 }
+                                             );
+                }
+            )->first();
 
         $duplicateMySqlError = false;
         $errorMsg            = null;
@@ -843,7 +843,7 @@ class EligibilityChecker
             }
         }
 
-        if ($enrolleeExists) {
+        if ($enrolleeExists && $enrolleeExists->batch_id !== $this->batch->id) {
             $batchInfo = $enrolleeExists->batch_id
                 ? " in batch {$enrolleeExists->batch_id}"
                 : '';
