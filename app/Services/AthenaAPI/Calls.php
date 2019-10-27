@@ -8,16 +8,15 @@ namespace App\Services\AthenaAPI;
 
 use App\ValueObjects\Athena\Patient;
 use App\ValueObjects\Athena\Problem;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 
-class Calls
+class Calls implements AthenaApiImplementation
 {
     /**
      * @var Connection
      */
-    protected $api;
-    protected $key;
-    protected $secret;
-    protected $version;
+    private $connection;
 
     /**
      * List or add patient problems. - POST /v1/{practiceid}/chart/{patientid}/problems.
@@ -26,8 +25,6 @@ class Calls
      */
     public function addProblem(Problem $problem)
     {
-        $this->initApiConnection();
-
         $practiceId = $problem->getPracticeId();
 
         if ( ! $practiceId) {
@@ -40,13 +37,29 @@ class Calls
             throw new \Exception('practiceid is required.', 422);
         }
 
-        $response = $this->api->POST("{$practiceId}/chart/{$patientId}/problems", [
+        $response = $this->api()->POST("{$practiceId}/chart/{$patientId}/problems", [
             'departmentid' => $problem->getDepartmentId(),
             'snomedcode'   => $problem->getSnomedCode(),
             'status'       => $problem->getStatus(),
         ]);
 
         return $this->response($response);
+    }
+
+    /**
+     * @return Connection
+     */
+    public function api()
+    {
+        if ( ! $this->connection instanceof Connection) {
+            $this->connection = app(AthenaApiConnection::class);
+        }
+
+        if ( ! $this->connection instanceof Connection) {
+            throw new \Exception('AthenaAPI Connection not initialized');
+        }
+
+        return $this->connection;
     }
 
     /**
@@ -69,11 +82,9 @@ class Calls
         $appointmentId,
         $reasonId
     ) {
-        $this->initApiConnection();
+        $this->api()->setPracticeId($practiceId);
 
-        $this->api->setPracticeId($practiceId);
-
-        $response = $this->api->PUT("appointments/${appointmentId}", [
+        $response = $this->api()->PUT("appointments/${appointmentId}", [
             'practiceid'                  => $practiceId,
             'departmentid'                => $departmentId,
             'patientid'                   => $patientId,
@@ -111,11 +122,9 @@ class Calls
         $appointmentDate,
         $appointmentTime
     ) {
-        $this->initApiConnection();
+        $this->api()->setPracticeId($practiceId);
 
-        $this->api->setPracticeId($practiceId);
-
-        $response = $this->api->POST('appointments/open', [
+        $response = $this->api()->POST('appointments/open', [
             'practiceid'      => $practiceId,
             'departmentid'    => $departmentId,
             'providerid'      => $providerId,
@@ -130,15 +139,13 @@ class Calls
     //create method to create patient in athena (for testing), issue with date format
     public function createNewPatient(Patient $patient)
     {
-        $this->initApiConnection();
-
         $practiceId = $patient->getPracticeId();
 
         if ( ! $practiceId) {
             throw new \Exception('practiceid is required.', 422);
         }
 
-        $response = $this->api->POST("{$practiceId}/patients", [
+        $response = $this->api()->POST("{$practiceId}/patients", [
             'departmentid' => $patient->getDepartmentId(),
             'dob'          => $patient->getDob(),
             'firstname'    => $patient->getFirstName(),
@@ -175,11 +182,9 @@ class Calls
         $appointmentId,
         $showDeleted = false
     ) {
-        $this->initApiConnection();
+        $this->api()->setPracticeId($practiceId);
 
-        $this->api->setPracticeId($practiceId);
-
-        $response = $this->api->GET("appointments/{$appointmentId}/notes", [
+        $response = $this->api()->GET("appointments/{$appointmentId}/notes", [
             'showdeleted' => $showDeleted,
         ]);
 
@@ -195,9 +200,7 @@ class Calls
      */
     public function getAvailablePractices($practiceId = 1)
     {
-        $this->initApiConnection();
-
-        $response = $this->api->GET("${practiceId}/practiceinfo", [
+        $response = $this->api()->GET("${practiceId}/practiceinfo", [
             //$practiceId defaults to 1, which will give us all practices we have access to
         ]);
 
@@ -206,11 +209,9 @@ class Calls
 
     public function getBillingProviderName($practiceId, $providerId)
     {
-        $this->initApiConnection();
+        $this->api()->setPracticeId($practiceId);
 
-        $this->api->setPracticeId($practiceId);
-
-        $response = $this->api->GET("providers/${providerId}", [
+        $response = $this->api()->GET("providers/${providerId}", [
             'showallproviderids' => true,
         ]);
 
@@ -242,11 +243,9 @@ class Calls
         $limit = 1000,
         $showCancelled = false
     ) {
-        $this->initApiConnection();
+        $this->api()->setPracticeId($practiceId);
 
-        $this->api->setPracticeId($practiceId);
-
-        $response = $this->api->GET('appointments/booked', [
+        $response = $this->api()->GET('appointments/booked', [
             'practiceid'    => $practiceId,
             'startdate'     => $startDate,
             'enddate'       => $endDate,
@@ -274,11 +273,9 @@ class Calls
         $practiceId,
         $departmentId
     ) {
-        $this->initApiConnection();
+        $this->api()->setPracticeId($practiceId);
 
-        $this->api->setPracticeId($practiceId);
-
-        $response = $this->api->GET("patients/{$patientId}/ccda", [
+        $response = $this->api()->GET("patients/{$patientId}/ccda", [
             'patientid'    => $patientId,
             'practiceid'   => $practiceId,
             'departmentid' => $departmentId,
@@ -299,9 +296,7 @@ class Calls
      */
     public function getDemographics($patientId, $practiceId)
     {
-        $this->initApiConnection();
-
-        $response = $this->api->GET("${practiceId}/patients/${patientId}");
+        $response = $this->api()->GET("${practiceId}/patients/${patientId}");
 
         return $this->response($response);
     }
@@ -318,11 +313,9 @@ class Calls
      */
     public function getDepartmentIds($practiceId, $showAllDepartments = true)
     {
-        $this->initApiConnection();
+        $this->api()->setPracticeId($practiceId);
 
-        $this->api->setPracticeId($practiceId);
-
-        $response = $this->api->GET('departments', [
+        $response = $this->api()->GET('departments', [
             'practiceid'         => $practiceId,
             'showalldepartments' => $showAllDepartments,
         ]);
@@ -332,11 +325,9 @@ class Calls
 
     public function getDepartmentInfo($practiceId, $departmentId, $providerList = false)
     {
-        $this->initApiConnection();
+        $this->api()->setPracticeId($practiceId);
 
-        $this->api->setPracticeId($practiceId);
-
-        $response = $this->api->GET("departments/${departmentId}", [
+        $response = $this->api()->GET("departments/${departmentId}", [
             'providerlist' => $providerList,
         ]);
 
@@ -352,8 +343,6 @@ class Calls
      */
     public function getNextPage($url)
     {
-        $this->initApiConnection();
-
         //@todo: this is a workaround to compensate for a bug in athena
         //it always returns production urls
         if (app()->environment('local')) {
@@ -364,9 +353,9 @@ class Calls
         }
 
         //just so it doesn't append clh_practice_id to the url
-        $this->api->setPracticeId(null);
+        $this->api()->setPracticeId(null);
 
-        return $this->api->GET($url);
+        return $this->api()->GET($url);
     }
 
     /**
@@ -388,11 +377,9 @@ class Calls
         $showPast = true,
         $showCancelled = false
     ) {
-        $this->initApiConnection();
+        $this->api()->setPracticeId($practiceId);
 
-        $this->api->setPracticeId($practiceId);
-
-        $response = $this->api->GET(
+        $response = $this->api()->GET(
             "patients/{$patientId}/appointments",
             [
                 'showpast'      => $showPast,
@@ -417,9 +404,7 @@ class Calls
         $practiceId,
         $departmentId
     ) {
-        $this->initApiConnection();
-
-        $response = $this->api->GET("patients/{$patientId}/customfields", [
+        $response = $this->api()->GET("patients/{$patientId}/customfields", [
             'patientid'    => $patientId,
             'practiceid'   => $practiceId,
             'departmentid' => $departmentId,
@@ -439,9 +424,7 @@ class Calls
      */
     public function getPatientInsurances($patientId, $practiceId, $departmentId)
     {
-        $this->initApiConnection();
-
-        $response = $this->api->GET("${practiceId}/patients/${patientId}/insurances", [
+        $response = $this->api()->GET("${practiceId}/patients/${patientId}/insurances", [
             'departmentid'  => $departmentId,
             'showfullssn'   => false,
             'showcancelled' => false,
@@ -482,9 +465,7 @@ class Calls
         $workphone = null,
         $departmentId = null
     ) {
-        $this->initApiConnection();
-
-        $response = $this->api->GET("${practiceId}/patients", [
+        $response = $this->api()->GET("${practiceId}/patients", [
             'firstname'    => $patientFirstName,
             'middlename'   => $patientMiddleName,
             'lastname'     => $patientLastName,
@@ -510,9 +491,7 @@ class Calls
      */
     public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true)
     {
-        $this->initApiConnection();
-
-        $response = $this->api->GET("${practiceId}/chart/${patientId}/problems", [
+        $response = $this->api()->GET("${practiceId}/chart/${patientId}/problems", [
             'departmentid'      => $departmentId,
             'showdiagnosisinfo' => $showDiagnosisInfo,
         ]);
@@ -529,25 +508,14 @@ class Calls
      */
     public function getPracticeCustomFields($practiceId)
     {
-        $this->initApiConnection();
-
         //just so it doesn't append clh_practice_id to the url
-        $this->api->setPracticeId($practiceId);
+        $this->api()->setPracticeId($practiceId);
 
-        $response = $this->api->GET('customfields', [
+        $response = $this->api()->GET('customfields', [
             'practiceid' => $practiceId,
         ]);
 
         return $this->response($response);
-    }
-
-    public function initApiConnection()
-    {
-        $this->key     = config('services.athena.key');
-        $this->secret  = config('services.athena.secret');
-        $this->version = config('services.athena.version');
-
-        $this->api = new Connection($this->version, $this->key, $this->secret);
     }
 
     /**
@@ -570,11 +538,9 @@ class Calls
         $noteText,
         $showOnDisplay = false
     ) {
-        $this->initApiConnection();
+        $this->api()->setPracticeId($practiceId);
 
-        $this->api->setPracticeId($practiceId);
-
-        $response = $this->api->POST("appointments/{$appointmentId}/notes", [
+        $response = $this->api()->POST("appointments/{$appointmentId}/notes", [
             'displayonschedule' => $showOnDisplay,
             'notetext'          => $noteText,
         ]);
@@ -604,9 +570,7 @@ class Calls
         $documentSubClass = 'CLINICALDOCUMENT',
         $contentType = 'multipart/form-data'
     ) {
-        $this->initApiConnection();
-
-//        $response = $this->api->POST("patients/{$patientId}/documents", [
+//        $response = $this->api()->POST("patients/{$patientId}/documents", [
 //            'patientid' => $patientId,
 //            'practiceid' => $practiceId,
 //            'departmentid' => $departmentId,
@@ -618,7 +582,7 @@ class Calls
 //            'Content-type' => 'multipart/form-data',
 //        ]);
 
-        $version = $this->version;
+        $version = $this->api()->getVersion();
 
         /*
          * HACK
@@ -628,7 +592,7 @@ class Calls
             ? "-F appointmentid=${appointmentId}"
             : '';
 
-        $command = "curl -v -k 'https://api.athenahealth.com/${version}/${practiceId}/patients/${patientId}/documents' -XPOST -F documentsubclass=${documentSubClass} -F departmentid=${departmentId} ${appointmentField} -F 'attachmentcontents=@${attachmentContent}' -H 'Authorization: Bearer {$this->api->get_token()}'";
+        $command = "curl -v -k 'https://api.athenahealth.com/${version}/${practiceId}/patients/${patientId}/documents' -XPOST -F documentsubclass=${documentSubClass} -F departmentid=${departmentId} ${appointmentField} -F 'attachmentcontents=@${attachmentContent}' -H 'Authorization: Bearer {$this->api()->get_token()}'";
 
         $response = exec($command);
 
@@ -646,8 +610,6 @@ class Calls
      */
     private function response($response)
     {
-        $this->initApiConnection();
-
         //check for errors
         if (is_array($response) && array_key_exists('error', $response)) {
             \Log::alert(__METHOD__.__LINE__.'Response logged below '.PHP_EOL);

@@ -89,6 +89,26 @@ class GetPatientIdFromLastYearAppointments extends Command
             );
         }
 
+        // If the date range passed is greater than 31 days, we will perform a separate API call for each month.
+        if ($startDate->diffInDays($endDate) > 31) {
+            //initialize currentDate
+            $currentDate = $startDate->copy();
+            do {
+                $chunkStartDate = $currentDate->copy();
+                $chunkEndDate   = $chunkStartDate->isSameMonth($endDate, true) ? $endDate->copy() : $chunkStartDate->copy()->endOfMonth();
+
+                $this->line('Getting appointments for');
+                $this->warn("Athena Practice Id: $athenaPracticeId");
+                $this->line('for date range');
+                $this->warn($chunkStartDate->toDateTimeString().' until '.$chunkEndDate->toDateTimeString());
+
+                $this->service->getPatientIdFromAppointments($athenaPracticeId, $chunkStartDate, $chunkEndDate, $offset, $batchId);
+
+                //increment currentDate
+                $currentDate = $currentDate->addMonth();
+            } while ($currentDate->lt($endDate));
+        }
+
         $this->service->getPatientIdFromAppointments($athenaPracticeId, $startDate, $endDate, $offset, $batchId);
     }
 }
