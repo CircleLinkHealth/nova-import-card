@@ -97,7 +97,7 @@ class StoreJiraTicketsDeployed extends Command
             }
         );
 
-        $loginLink = config('opcache.url');
+        $loginLink = config('app.url');
         $message .= "\n Login at: $loginLink";
 
         $stored = file_put_contents(storage_path('jira-tickets-deployed'), json_encode(['message' => $message]));
@@ -105,5 +105,7 @@ class StoreJiraTicketsDeployed extends Command
         if (false === $stored) {
             throw new \Exception('Could not store file');
         }
+
+        $this->line('Jira tickets file successfully created');
     }
 }
