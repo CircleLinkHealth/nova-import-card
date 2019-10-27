@@ -20,6 +20,93 @@ class NurseCalendarService
     const TITLE   = 'title';
 
     /**
+     * @param $diffRange
+     * @param $eventDate
+     * @param $repeatFrequency
+     *
+     * @return array|\Illuminate\Support\Collection
+     */
+    public function createRecurringDates($diffRange, $eventDate, $repeatFrequency)
+    {
+        $defaultRecurringDates = collect();
+
+        if ('weekly' === $repeatFrequency) {
+            for ($i = 0; $i < $diffRange; ++$i) {
+                $defaultRecurringDates[] = Carbon::parse($eventDate)->copy()->addWeek($i)->toDateString();
+            }
+        }
+
+        if ('monthly' === $repeatFrequency) {
+            for ($i = 0; $i < $diffRange; ++$i) {
+                $defaultRecurringDates[] = Carbon::parse($eventDate)->copy()->addMonth($i)->toDateString();
+            }
+        }
+
+        if ('daily' === $repeatFrequency) {
+            for ($i = 0; $i < $diffRange; ++$i) { //@todo:should exclude weekedns option
+                $defaultRecurringDates[] = Carbon::parse($eventDate)->copy()->addDay($i)->toDateString();
+            }
+        }
+
+        return $defaultRecurringDates;
+    }
+
+    /**
+     * @param $eventDate
+     * @param $nurseInfoId
+     * @param $windowTimeStart
+     * @param $windowTimeEnd
+     * @param $repeatFrequency
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function createRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency)
+    {
+        //converts the date that event was saved to - date that event is scheduled for + transfered to current's week (dow)
+        //So events are starting to repeat from release's date week. This is what we want?
+        $repeatEventByDefaultUntil = Carbon::parse($eventDate)->copy()->addMonths(3)->toDateString();
+        $rangeToRepeat             = $this->getWeeksOrDaysToRepeat($eventDate, $repeatEventByDefaultUntil, $repeatFrequency);
+        $validatedDefault          = 'not_checked';
+
+        $recurringDates = $this->createRecurringDates($rangeToRepeat, $eventDate, $repeatFrequency);
+
+        return $this->createWindowsArrays($recurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $repeatFrequency, $repeatEventByDefaultUntil);
+    }
+
+    /**
+     * @param $defaultRecurringDates
+     * @param $window
+     * @param $eventDate
+     * @param $validatedDefault
+     * @param $defaultRepeatFreq
+     * @param $repeatEventByDefaultUntil
+     * @param mixed $nurseInfoId
+     * @param mixed $windowTimeStart
+     * @param mixed $windowTimeEnd
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function createWindowsArrays($defaultRecurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $defaultRepeatFreq, $repeatEventByDefaultUntil)
+    {
+        return collect($defaultRecurringDates)
+            ->map(function ($date) use ($defaultRecurringDates, $nurseInfoId,$windowTimeStart,$windowTimeEnd, $eventDate, $validatedDefault, $defaultRepeatFreq, $repeatEventByDefaultUntil) {
+                return [
+                    'nurse_info_id'     => $nurseInfoId,
+                    'date'              => $date,
+                    'day_of_week'       => Carbon::parse($eventDate)->dayOfWeek,
+                    'window_time_start' => $windowTimeStart,
+                    'window_time_end'   => $windowTimeEnd,
+                    'validated'         => $validatedDefault,
+                    'manually_created'  => true,
+                    'repeat_frequency'  => $defaultRepeatFreq,
+                    'until'             => $repeatEventByDefaultUntil,
+                    'created_at'        => Carbon::parse(now())->toDateTimeString(),
+                    'updated_at'        => Carbon::parse(now())->toDateTimeString(),
+                ];
+            });
+    }
+
+    /**
      * @param Collection $nurses
      *
      * @return Collection|\Illuminate\Support\Collection
@@ -89,51 +176,49 @@ class NurseCalendarService
     }
 
     /**
+     * @param $eventDate
+     * @param $repeatUntil
+     * @param $repeatFrequency
+     *
+     * @return int
+     */
+    public function getWeeksOrDaysToRepeat($eventDate, $repeatUntil, $repeatFrequency)
+    {
+        return 'daily' !== $repeatFrequency
+            ? Carbon::parse($eventDate)->diffInWeeks($repeatUntil)
+            : Carbon::parse($eventDate)->diffInDays($repeatUntil);
+    }
+
+    /**
      * @param $nurse
      * @param mixed $startOfThisYear
      *
      * @return \Illuminate\Support\Collection
      */
     public function prepareData($nurse)
-    {// I need to get all the past data cause events are created once and then are repeating.
-        return collect($nurse->nurseInfo->windows)->where('hide_from_calendar', '=', null)
+    {
+        return collect($nurse->nurseInfo->windows)
+            ->where('repeat_frequency', '!=', null)
             ->map(function ($window) use ($nurse) {
-                //@todo:these need to go
                 $givenDateWeekMap = createWeekMap($window->date); //see comment in helpers.php
                 $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
                 $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
                 $windowStartForView = Carbon::parse($window->window_time_start)->format('H:i');
                 $windowEndForView = Carbon::parse($window->window_time_end)->format('H:i');
+                $windowDate = Carbon::parse($window->date)->toDateString();
                 $hoursAbrev = 'h';
-
-                if (null === $window->until && (null === $window->repeat_frequency || 'does_not_repeat' !== $window->repeat_frequency)) {
-                    $repeatUntil = Carbon::parse(now())->endOfYear()->toDateString();
-                    $repeatFrequency = 'weekly';
-                } else {
-                    $repeatUntil = $window->until;
-                    $repeatFrequency = $window->repeat_frequency;
-                }
-
                 $color = '#5bc0ded6';
-                //@todo:needs to change only for the event checked and not for cloned events also
-//                if ('worked' === $window->validated) {
-//                    $color = 'green';
-//                }
-//                if ('not_worked' === $window->validated) {
-//                    $color = 'brown';
-//                }
 
                 return collect(
                     [
                         self::TITLE => "$nurse->display_name ({$workHoursForDay}$hoursAbrev)
                         {$windowStartForView}-{$windowEndForView}",
-                        self::START => "{$givenDateWeekMap[$window->day_of_week]}T{$window->window_time_start}",
-                        //                        self::START => "{$givenDateWeekMap[$window->day_of_week]}", //no time = repeated event
-                        self::END          => "{$givenDateWeekMap[$window->day_of_week]}T{$window->window_time_end}",
+                        self::START        => "{$windowDate}T{$window->window_time_start}",
+                        self::END          => "{$windowDate}T{$window->window_time_end}",
                         'color'            => $color,
                         'textColor'        => '#fff',
-                        'repeat_frequency' => $repeatFrequency,
-                        'until'            => $repeatUntil,
+                        'repeat_frequency' => $window->repeat_frequency,
+                        'until'            => $window->until,
                         'allDay'           => true,
                         'data'             => [
                             'nurseId'      => $nurse->nurseInfo->id,

@@ -181,6 +181,7 @@
     import {mapActions} from 'vuex';
     import {addNotification} from '../../../../../resources/assets/js/store/actions.js'; //@todo:doesnt work yet.
     import CalendarLoader from './CalendarLoader';
+    import axios from "../../bootstrap-axios";
 
     const viewDefault = 'agendaWeek';
     const defaultEventType = 'workDay';
@@ -190,12 +191,12 @@
         name: "NurseScheduleCalendar",
 
         props: [
-            'calendarData',
-            'dataForDropdown',
-            'today',
-            'startOfMonth',
-            'endOfMonth',
-            'endOfYear'
+            // 'calendarData',
+            // 'dataForDropdown',
+            // 'today',
+            // 'startOfMonth',
+            // 'endOfMonth',
+            // 'endOfYear'
         ],
 
         components: {
@@ -208,6 +209,12 @@
 
         data() {
             return {
+                // calendarData:[],
+                dataForDropdown:[],
+                today:'',
+                startOfMonth:[],
+                endOfMonth:[],
+                endOfYear:[],
                 workHours: [],
                 holidays: [],
                 showWorkHours: true,
@@ -230,7 +237,7 @@
                 eventFrequency: [],
                 addNewEventMainClicked: false,
                 selectedDate: [],
-                selectedMonthInView: this.startOfMonth,
+                // selectedMonthInView: this.startOfMonth,
                 repeatUntil: '',
 
 
@@ -482,6 +489,7 @@
                 const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
                 const workDate = this.addNewEventMainClicked ? this.selectedDate : this.workEventDate;
                 const repeatFreq = this.eventFrequency.length !== 0 ? this.eventFrequency.value : 'does_not_repeat';
+                const validatedDefault = 'not_checked';
                 const repeatUntil = this.repeatUntil !== ''
                 && repeatFreq !== 'does_not_repeat'
                     ? this.repeatUntil
@@ -546,7 +554,8 @@
                     window_time_start: this.workRangeStarts,
                     window_time_end: this.workRangeEnds,
                     repeat_freq: repeatFreq,
-                    until: repeatUntil
+                    until: repeatUntil,
+                    validated:validatedDefault
                 }).then((response => {
                         this.loader = false;
                         this.toggleModal();
@@ -645,6 +654,8 @@
             },
 
             getHolidays() {
+                //Im loading holidays when they will be requested.
+                // Then they saty loaded and are hidden or displayed accordingly
                 axios.get('admin/nurses/holidays')
                     .then((response => {
                             //loader add
@@ -655,6 +666,7 @@
                     console.log(error);
                 });
             },
+
             resetModalValues() {
                 this.clickedToViewEvent = false;
                 this.eventToViewData = [];
@@ -666,104 +678,15 @@
                 this.addNewEventMainClicked = false;
                 this.eventFrequency = [];
             },
-
-            // sex(direction) {
-            //
-            //     const calendarDateTitle = this.$refs.fullCalendar.fireMethod('getView');
-            //     const monthInView = calendarDateTitle.title.split(" ", 1);
-            //
-            //     const x = this.monthOfYearDates.filter(q => q.month === monthInView[0] || q.monthAbr === monthInView[0]);
-            //     const date = x[0].date;
-            //
-            //     this.selectedMonthInView = '';
-            //     this.selectedMonthInView = date;
-            //
-            //
-            //     if (direction === 'prev') {
-            //         this.$refs.fullCalendar.fireMethod('prev');
-            //     } else {
-            //         this.$refs.fullCalendar.fireMethod('next');
-            //     }
-            //
-            // },
         }),
 
         computed: {
             modalTitle() {
                 return this.clickedToViewEvent ? 'View / Delete Event' : 'Add new work window';
             },
-
+//@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
             events() {
                 const events = this.workHours.concat(this.eventsAddedNow);
-                // const events = data.map(q => {
-                //         const repeatFrequency = q.repeat_frequency;
-                //
-                //         const until = [];
-                //
-                //         const frequency = [];
-                //
-                //         if (repeatFrequency === 'weekly') {
-                //             frequency.push(RRule.WEEKLY);
-                //             until.push(new Date(q.until))
-                //         }
-                //
-                //         if (repeatFrequency === 'monthly') {
-                //             frequency.push(RRule.MONTHLY);
-                //             until.push(new Date(q.until))
-                //         }
-                //
-                //         if (repeatFrequency === 'daily') {
-                //             frequency.push(RRule.DAILY);
-                //             until.push(new Date(q.until))
-                //         }
-                //
-                //         if (repeatFrequency !== 'does_not_repeat') {
-                //             until.push(new Date(q.start))
-                //         }
-                //
-                //
-                //         const rule = new RRule({                       //https://github.com/jakubroztocil/rrule
-                //             freq: frequency[0],
-                //             // byweekday: [q.data.clhDayOfWeek],
-                //             dtstart: new Date(q.start),
-                //             until: until[0],
-                //         });
-                //
-                //         const rrule = rule.all();
-                //
-                //         //@todo: need to be  able to delete the selected event and NOT ALL occurrences of that event
-                //
-                //         // const rruleSet = new RRuleSet();   //https://github.com/jakubroztocil/rrule
-                //         //
-                //         // rruleSet.rrule(new RRule({
-                //         //     freq: frequency[0],
-                //         //     // byweekday: [q.data.clhDayOfWeek],
-                //         //     dtstart: new Date(q.start),
-                //         //     until: until[0],
-                //         // }));
-                //         //
-                //         // const rrule = rruleSet.all();
-                //
-                //         const eventWithRules = [];
-                //         for (var i = 0; i < rrule.length; i++) {
-                //             eventWithRules.push({
-                //                 title: q.title,
-                //                 start: rrule[i],
-                //                 allDay: true,
-                //                 color: q.color,
-                //                 textColor: q.textColor,
-                //                 repeat_frequency: frequency[0],
-                //                 until: q.until,
-                //                 // repeat_rule_in_human: rule.toText(),
-                //                 data: q.data,
-                //             })
-                //         }
-                //         return eventWithRules;
-                //     }
-                // ).map(event => event).flat();
-
-                //@todo:implement a count - results found and in which month are found
-
                 const workEventsWithHolidays = events.concat(this.holidays);
                 if (this.searchFilter === null || this.searchFilter.length === 0) {
                     if (!this.showWorkAndHolidaysIsChecked) {
@@ -801,8 +724,18 @@
         },
 
         created() {
-            const workHours = this.calendarData;
-            this.workHours.push(...workHours);
+            axios.get('care-center/work-schedule/get-calendar-data')
+                .then((response => {
+                    const calendarData = response.data.calendarData;
+                    this.workHours.push(...calendarData.workEvents);
+                    this.dataForDropdown.push(...calendarData.dataForDropdown);
+                    this.today = calendarData.today;
+
+                })).catch((error) => {
+                this.errors = error;
+
+            });
+
         },
 
         mounted() {

@@ -12,7 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class CreateCalendarRecurringEvents implements ShouldQueue
+class CreateCalendarRecurringEventsJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -38,6 +38,7 @@ class CreateCalendarRecurringEvents implements ShouldQueue
      */
     public function handle()
     {
+
         foreach ($this->recurringEventsToSave as $event) {
             $this->window->insert($event);
         }

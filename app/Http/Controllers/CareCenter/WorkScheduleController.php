@@ -8,14 +8,13 @@ namespace App\Http\Controllers\CareCenter;
 
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
+use App\Jobs\CreateCalendarRecurringEventsJob;
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -149,7 +148,7 @@ class WorkScheduleController extends Controller
         User::ofType('care-center')
             ->with('nurseInfo.windows', 'nurseInfo.holidays')
             ->whereHas('nurseInfo', function ($q) {
-//                $q->where('status', 'active');
+                $q->where('status', 'active');
             })
             ->chunk(100, function ($nurses) use (&$workScheduleData) {
                 $workScheduleData[] = $nurses;
@@ -163,29 +162,35 @@ class WorkScheduleController extends Controller
      */
     public function getAllNurseSchedules()
     {
+        return view('admin.nurse.schedules.index');
+    }
+
+    public function getCalendarData()
+    {
         $today        = Carbon::parse(now())->toDateString();
         $startOfMonth = Carbon::parse($today)->startOfMonth()->copy()->toDateString();
         $endOfMonth   = Carbon::parse($today)->endOfMonth()->copy()->toDateString();
         $endOfYear    = Carbon::parse($today)->endOfYear()->copy()->toDateString();
 
-        $nurses       = $this->getActiveNurses();
-        $calendarData = $this->fullCalendarService->prepareDataForCalendar($nurses);
+        $nurses     = $this->getActiveNurses();
+        $windowData = $this->fullCalendarService->prepareDataForCalendar($nurses);
 
         $tzAbbr          = auth()->user()->timezone_abbr ?? 'EDT';
         $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
 
-        return view(
-            'admin.nurse.schedules.index',
-            compact(
-                'nurses',
-                'calendarData',
-                'dataForDropdown',
-                'today',
-                'startOfMonth',
-                'endOfMonth',
-                'endOfYear'
-            )
-        );
+        $calendarData = [
+            'workEvents'      => $windowData,
+            'dataForDropdown' => $dataForDropdown,
+            'today'           => $today,
+            'startOfMonth'    => $startOfMonth,
+            'endOfMonth'      => $endOfMonth,
+            'endOfYear'       => $endOfYear,
+        ];
+
+        return response()->json([
+            'success'      => true,
+            'calendarData' => $calendarData,
+        ], 200);
     }
 
     /**
@@ -248,15 +253,17 @@ class WorkScheduleController extends Controller
             $dataRequest['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
         }
 
-//        if (empty($dataRequest['until'])) {
-//            $dataRequest['until'] = Carbon::parse(now())->endOfYear()->toDateString();
-//        }
-
         $workScheduleData = $dataRequest;
+
+        $eventDate       = $workScheduleData['date'];
+        $nurseInfoId     = $workScheduleData['nurse_info_id'];
+        $windowTimeStart = $workScheduleData['window_time_start'];
+        $windowTimeEnd   = $workScheduleData['window_time_end'];
+        $repeatFrequency = $workScheduleData['repeat_freq']; //@todo: replace with $vars
 
         $isAdmin     = auth()->user()->isAdmin();
         $nurseInfoId = $isAdmin
-            ? $workScheduleData['nurse_info_id']
+            ? $nurseInfoId
             : auth()->user()->nurseInfo->id;
 
         if ( ! $nurseInfoId) {
@@ -290,11 +297,6 @@ class WorkScheduleController extends Controller
                 '=',
                 $workScheduleData['day_of_week'],
             ],
-            //            [
-            //                'repeat_frequency',
-            //                '!=',
-            //                $workScheduleData['repeat_freq'],
-            //            ],
         ])->first();
 
         $hoursSum = NurseContactWindow::where([
@@ -303,17 +305,17 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                return Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_end
+                    return Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_end
+                    )->diffInHours(Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_start
+                    ));
+                }) + Carbon::createFromFormat(
+                    'H:i',
+                    $workScheduleData['window_time_end']
                 )->diffInHours(Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_start
-                ));
-            }) + Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_end']
-            )->diffInHours(Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_start']
             ));
@@ -353,24 +355,34 @@ class WorkScheduleController extends Controller
         }
 
         if ($isAdmin) {
-            $user   = auth()->user();
-            $window = $this->nurseContactWindows->create([
-                'nurse_info_id' => $nurseInfoId,
-                'date'          => $dataRequest['date'],
-                //                                'date'              => Carbon::now()->format('Y-m-d'),
-                'day_of_week'       => $workScheduleData['day_of_week'],
-                'window_time_start' => $workScheduleData['window_time_start'],
-                'window_time_end'   => $workScheduleData['window_time_end'],
-                'repeat_frequency'  => $workScheduleData['repeat_freq'],
-                'until'             => $workScheduleData['until'],
-            ]);
+            $user = auth()->user();
+            if ('does_not_repeat' !== $repeatFrequency) {
+                $window    = NurseContactWindow::first();
+                $setRepeat = 'weekly';
+                if ($repeatFrequency !== $setRepeat) {
+                    $setRepeat = $repeatFrequency;
+                } //@todo: validate if date exists and act.
+                $recurringEventsToSave = $this->fullCalendarService->createRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $setRepeat);
+                CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window)->onQueue('low');
+            } else {
+                $window = $this->nurseContactWindows->create([
+                    'nurse_info_id' => $nurseInfoId,
+                    'date'          => $dataRequest['date'],
+                    //                                'date'              => Carbon::now()->format('Y-m-d'),
+                    'day_of_week'       => $workScheduleData['day_of_week'],
+                    'window_time_start' => $workScheduleData['window_time_start'],
+                    'window_time_end'   => $workScheduleData['window_time_end'],
+                    'repeat_frequency'  => $workScheduleData['repeat_freq'],
+                    'until'             => $workScheduleData['until'],
+                ]);
 
-            $nurseUser = Nurse::find($nurseInfoId)->user;
+                $nurseUser = Nurse::find($nurseInfoId)->user;
 
-            $dayName      = clhDayOfWeekToDayName($window->day_of_week);
-            $nurseMessage = "Admin {$user->display_name} assigned Nurse {$nurseUser->display_name} to work for";
-            $message      = "${nurseMessage} {$workScheduleData['work_hours']} hours on ${dayName} between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
-            sendSlackMessage('#carecoachscheduling', $message);
+                $dayName      = clhDayOfWeekToDayName($window->day_of_week);
+                $nurseMessage = "Admin {$user->display_name} assigned Nurse {$nurseUser->display_name} to work for";
+                $message      = "${nurseMessage} {$workScheduleData['work_hours']} hours on ${dayName} between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
+                sendSlackMessage('#carecoachscheduling', $message);
+            }
         } else {
             $user = auth()->user();
 
@@ -445,6 +457,6 @@ class WorkScheduleController extends Controller
     protected function canAddNewWindow(Carbon $date)
     {
         return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
-            || $date->gt($this->nextWeekEnd);
+                || $date->gt($this->nextWeekEnd);
     }
 }

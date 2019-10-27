@@ -8,12 +8,7 @@
 
     <div class="container">
 
-        <nurse-schedule-calendar :calendar-data="{{json_encode($calendarData)}}"
-                                 :data-for-dropdown="{{json_encode($dataForDropdown)}}"
-                                 :today="{{json_encode($today)}}"
-                                 :start-of-month="{{json_encode($startOfMonth)}}"
-                                 :end-of-month="{{json_encode($endOfMonth)}}"
-                                 :end-of-year="{{json_encode($endOfYear)}}"></nurse-schedule-calendar>
+        <nurse-schedule-calendar></nurse-schedule-calendar>
     </div>
 @endsection
 

@@ -31,7 +31,7 @@ use App\Console\Commands\ResetPatients;
 use App\Console\Commands\RunScheduler;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
-use App\Console\Commands\CreateNurseCalendarRecurringEvents;
+use App\Console\Commands\CreateCalendarRecurringEventsCommand;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
@@ -173,7 +173,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
 
-        $schedule->command(CreateNurseCalendarRecurringEvents::class)->dailyAt('00:01')->onOneServer();
+        $schedule->command(CreateCalendarRecurringEventsCommand::class)->dailyAt('00:01')->onOneServer();
 
         $schedule->command(OverwriteNBIImportedData::class)->everyThirtyMinutes()->onOneServer();
 

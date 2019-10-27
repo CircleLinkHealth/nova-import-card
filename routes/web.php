@@ -1859,6 +1859,12 @@ Route::group(['middleware' => 'auth'], function () {
             ],
         ])->middleware('permission:nurseContactWindow.read,nurseContactWindow.create');
 
+
+        Route::get('work-schedule/get-calendar-data', [
+            'uses' => 'CareCenter\WorkScheduleController@getCalendarData',
+            'as'   => 'care.center.work.schedule.destroy',
+        ])->middleware('permission:nurseContactWindow.read');
+
         Route::get('work-schedule/destroy/{id}', [
             'uses' => 'CareCenter\WorkScheduleController@destroy',
             'as'   => 'care.center.work.schedule.destroy',
