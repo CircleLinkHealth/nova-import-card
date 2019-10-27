@@ -7,6 +7,7 @@
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
+use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 use App\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Ehr;
@@ -242,7 +243,8 @@ $factory->define(EligibilityJob::class, function (Faker\Generator $faker) {
 
 $factory->define(Ehr::class, function (Faker\Generator $faker) {
     return [
-        'name' => "EHR: $faker->company",
+        'name'               => "EHR: $faker->company",
+        'pdf_report_handler' => AthenaApiPdfHandler::class,
     ];
 });
 
