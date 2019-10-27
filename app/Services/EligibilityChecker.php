@@ -647,6 +647,11 @@ class EligibilityChecker
         if ( ! is_array($args)) {
             throw new \Exception('$args is expected to be an array. '.EligibilityJob::class.':'.$this->eligibilityJob->id);
         }
+
+        $args['primary_insurance']   = $this->eligibilityJob->primary_insurance;
+        $args['secondary_insurance'] = $this->eligibilityJob->secondary_insurance;
+        $args['tertiary_insurance']  = $this->eligibilityJob->tertiary_insurance;
+
         if (isset($args['insurance_plans']) || isset($args['insurance_plan'])) {
             $args = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($args);
         }
@@ -685,7 +690,7 @@ class EligibilityChecker
             $args['problems'] = json_encode($args['problems']);
         }
 
-        if (array_key_exists('insurances', $args) && ! array_key_exists('primary_insurance', $args)) {
+        if (array_key_exists('insurances', $args) && ! (array_key_exists('primary_insurance', $args) && ! empty($args['primary_insurance']))) {
             $insurances = is_array($args['insurances'])
                 ? collect($args['insurances'])
                 : $args['insurances'];
@@ -806,11 +811,11 @@ class EligibilityChecker
                             ],
                         ]
                     )->whereHas(
-                                                 'patientInfo',
-                                                 function ($q) use ($args) {
-                                                     $q->withTrashed()->whereBirthDate($args['dob']);
-                                                 }
-                                             );
+                        'patientInfo',
+                        function ($q) use ($args) {
+                            $q->withTrashed()->whereBirthDate($args['dob']);
+                        }
+                    );
                 }
             )->first();
 
@@ -950,8 +955,9 @@ class EligibilityChecker
         $i = 0;
 
         foreach ($record['insurances'] as $insurance) {
-            if ($this->eligibilityJob && ! empty($insurance) && $i < 3) {
-                switch ($i) {
+            if (array_key_exists('type', $insurance)) {
+                if ($this->eligibilityJob && ! empty($insurance) && $i < 3) {
+                    switch ($i) {
                     case 0:
                         $this->eligibilityJob->primary_insurance = $insurance['type'];
 
@@ -963,12 +969,54 @@ class EligibilityChecker
                         break;
                     case 1:
                         $this->eligibilityJob->secondary_insurance = $insurance['type'];
+
+                        if (str_contains(strtolower($insurance['type']), 'medicare')
+                        ) {
+                            $isEligible = true;
+                        }
+
                         break;
                     case 2:
                         $this->eligibilityJob->tertiary_insurance = $insurance['type'];
+
+                        if (str_contains(strtolower($insurance['type']), 'medicare')
+                        ) {
+                            $isEligible = true;
+                        }
+
                         break;
                     default:
                         break;
+                }
+
+                    ++$i;
+                }
+            } elseif (array_keys_exist(['insurancetype', 'insuranceplanname'], $insurance)) {
+                //Athena
+
+                if (0 === $i) {
+                    $this->eligibilityJob->primary_insurance = $insurance['insuranceplanname'].'('.$insurance['insurancetype'].')' ?? '';
+
+                    if (str_contains(strtolower($this->eligibilityJob->primary_insurance), 'medicare')
+                    ) {
+                        $isEligible = true;
+                    }
+                }
+                if (1 === $i) {
+                    $this->eligibilityJob->secondary_insurance = $insurance['insuranceplanname'].'('.$insurance['insurancetype'].')' ?? '';
+
+                    if (str_contains(strtolower($this->eligibilityJob->secondary_insurance), 'medicare')
+                    ) {
+                        $isEligible = true;
+                    }
+                }
+                if (2 === $i) {
+                    $this->eligibilityJob->tertiary_insurance = $insurance['insuranceplanname'].'('.$insurance['insurancetype'].')' ?? '';
+
+                    if (str_contains(strtolower($this->eligibilityJob->tertiary_insurance), 'medicare')
+                    ) {
+                        $isEligible = true;
+                    }
                 }
 
                 ++$i;
