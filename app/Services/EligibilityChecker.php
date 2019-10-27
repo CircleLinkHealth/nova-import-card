@@ -690,9 +690,16 @@ class EligibilityChecker
                 ? collect($args['insurances'])
                 : $args['insurances'];
 
-            $args['primary_insurance']   = $insurances[0]['type'] ?? '';
-            $args['secondary_insurance'] = $insurances[1]['type'] ?? '';
-            $args['tertiary_insurance']  = $insurances[2]['type'] ?? '';
+            if (array_key_exists(0, $insurances) && array_keys_exist(['insurancetype', 'insuranceplanname'], $insurances[0])) {
+                //Athena
+                $args['primary_insurance']   = $insurances[0]['insuranceplanname'].'('.$insurances[0]['insurancetype'].')' ?? '';
+                $args['secondary_insurance'] = $insurances[1]['insuranceplanname'].'('.$insurances[1]['insurancetype'].')' ?? '';
+                $args['tertiary_insurance']  = $insurances[2]['insuranceplanname'].'('.$insurances[2]['insurancetype'].')' ?? '';
+            } else {
+                $args['primary_insurance']   = $insurances[0]['type'] ?? '';
+                $args['secondary_insurance'] = $insurances[1]['type'] ?? '';
+                $args['tertiary_insurance']  = $insurances[2]['type'] ?? '';
+            }
         }
 
         $args['practice_id'] = $this->practice->id;
@@ -781,24 +788,24 @@ class EligibilityChecker
             )->orWhere(
                 function ($u) use ($args) {
                     $u->where(
-                                                 [
-                                                     [
-                                                         'program_id',
-                                                         '=',
-                                                         $args['practice_id'],
-                                                     ],
-                                                     [
-                                                         'first_name',
-                                                         '=',
-                                                         $args['first_name'],
-                                                     ],
-                                                     [
-                                                         'last_name',
-                                                         '=',
-                                                         $args['last_name'],
-                                                     ],
-                                                 ]
-                                             )->whereHas(
+                        [
+                            [
+                                'program_id',
+                                '=',
+                                $args['practice_id'],
+                            ],
+                            [
+                                'first_name',
+                                '=',
+                                $args['first_name'],
+                            ],
+                            [
+                                'last_name',
+                                '=',
+                                $args['last_name'],
+                            ],
+                        ]
+                    )->whereHas(
                                                  'patientInfo',
                                                  function ($q) use ($args) {
                                                      $q->withTrashed()->whereBirthDate($args['dob']);
