@@ -73,6 +73,18 @@
                                         <th>
                                             Preferred Window
                                         </th>
+                                        <th>
+                                            Other Contact's Name
+                                        </th>
+                                        <th>
+                                            Other Contact's Phone
+                                        </th>
+                                        <th>
+                                            Other Contact's Email
+                                        </th>
+                                        <th>
+                                            Other Contact's Relationship to Patient
+                                        </th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -110,6 +122,10 @@
                             {data: 'consented_at', name: 'consented_at'},
                             {data: 'preferred_days', name: 'preferred_days'},
                             {data: 'preferred_window', name: 'preferred_window'},
+                            {data: 'agent_name', name: 'agent_name'},
+                            {data: 'agent_phone', name: 'agent_phone'},
+                            {data: 'agent_email', name: 'agent_email'},
+                            {data: 'agent_relationship', name: 'agent_relationship'},
 
 
 

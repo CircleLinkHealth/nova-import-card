@@ -67,6 +67,8 @@ use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
  * @property int      $department_id
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDepartmentId($value)
+ *
+ * @property \App\EligibilityJob|null $eligibilityJob
  */
 class TargetPatient extends BaseModel
 {

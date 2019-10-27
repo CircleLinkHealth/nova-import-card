@@ -215,34 +215,59 @@
                             calls.</b>
                     </blockquote>
                     <div class="row">
-                        <div class="col s6 m4 select-custom">
+                        <div class="col s6 m3 select-custom">
                             <label for="home_radio"
                                    :class="{valid: home_is_valid, invalid: home_is_invalid}">
-                                <input class="with-gap" name="preferred_phone" type="radio" id="home_radio" value="home"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="home_radio" value="home"
                                        :checked="home_phone != ''"/>
-                                <span>{{home_phone_label}}</span>
+                                <span class="phone-label">{{home_phone_label}}</span>
 
                             </label>
                             <input class="input-field" name="home_phone" id="home_phone" v-model="home_phone"/>
                         </div>
-                        <div class="col s6 m4 select-custom">
+                        <div class="col s6 m3 select-custom">
 
                             <label for="cell_radio"
                                    :class="{valid: cell_is_valid, invalid: cell_is_invalid}">
-                                <input class="with-gap" name="preferred_phone" type="radio" id="cell_radio" value="cell"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="cell_radio" value="cell"
                                        :checked="home_phone == '' && cell_phone != ''"/>
-                                <span>{{cell_phone_label}}</span></label>
+                                <span class="phone-label">{{cell_phone_label}}</span></label>
                             <input class="input-field" name="cell_phone" id="cell_phone" v-model="cell_phone"/>
                         </div>
-                        <div class="col s6 m4 select-custom">
+                        <div class="col s6 m3 select-custom">
 
                             <label for="other_radio"
                                    :class="{valid: other_is_valid, invalid: other_is_invalid}">
-                                <input class="with-gap" name="preferred_phone" type="radio" id="other_radio" value="other"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="other_radio" value="other"
                                        :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
-                                <span>{{other_phone_label}}</span>
+                                <span class="phone-label">{{other_phone_label}}</span>
                             </label>
                             <input class="input-field" name="other_phone" id="other_phone" v-model="other_phone"/>
+                        </div>
+                        <div class="col s6 m3 select-custom">
+                            <label for="agent_radio"
+                                   :class="{valid: agent_is_valid, invalid: agent_is_invalid}">
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="agent_radio" value="agent"
+                                       :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
+                                <span class="phone-label">{{agent_phone_label}}</span>
+                            </label>
+                            <input class="input-field" name="agent_phone" id="agent_phone" v-model="agent_phone"/>
+                        </div>
+                    </div>
+                    <div v-if="preferred_phone == 'agent' " class="row">
+                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out other contact's details</b></blockquote>
+                        <div  class="col s6 m4">
+                            <label for="agent_name" class="label">Other Contact's Name</label>
+                            <input class="input-field" name="agent_name" id="agent_name" v-model="agent_name"/>
+                        </div>
+                        <div class="col s6 m4">
+                            <label for="agent_email" class="label">Other Contact's Email</label>
+                            <input class="input-field" name="agent_email" id="agent_email" v-model="agent_email"/>
+                        </div>
+                        <div class="col s6 m4">
+                            <label for="agent_relationship" class="label">Other Contact's Relationship to the Patient</label>
+                            <input class="input-field" name="agent_relationship" id="agent_relationship"
+                                   v-model="agent_relationship"/>
                         </div>
                     </div>
                     <div class="row">
@@ -433,8 +458,6 @@
                         </div>
 
                         <div v-if="isSoftDecline" class="col s6 m12 select-custom">
-                            <label for="soft_decline_callback" class="label">Patient Requests Callback On:</label>
-                            <input name="soft_decline_callback" id="soft_decline_callback">
                             <input type="hidden" name="status" value="soft_rejected">
                         </div>
                         <div v-else>
@@ -583,11 +606,26 @@
 
                 return 'Other Phone Invalid..'
             },
+            agent_phone_label: function () {
+                if (this.agent_phone == '') {
+                    return 'Other Contact\'s Phone Unknown...';
+                }
+                if (this.validatePhone(this.agent_phone)) {
+                    return 'Other Contact\'s Phone Valid!';
+                }
+                return 'Other Contact\'s Phone Invalid..'
+            },
             other_is_valid: function () {
                 return this.validatePhone(this.other_phone)
             },
             other_is_invalid: function () {
                 return !this.validatePhone(this.other_phone)
+            },
+            agent_is_valid: function () {
+                return this.validatePhone(this.agent_phone)
+            },
+            agent_is_invalid: function () {
+                return !this.validatePhone(this.agent_phone)
             },
             //other phone computer vars
             home_phone_label: function () {
@@ -693,7 +731,13 @@
                 rejectedUrl: rootUrl('enrollment/rejected'),
 
                 //twilio
-                device: null
+                device: null,
+
+                preferred_phone: '',
+                agent_phone: '',
+                agent_name: '',
+                agent_email: '',
+                agent_relationship: '',
             };
         },
         mounted: function () {
@@ -901,6 +945,10 @@
 
 </script>
 <style>
+
+    .phone-label {
+        margin-bottom: 10px;
+    }
 
     .consented_modal {
         max-height: 100% !important;
