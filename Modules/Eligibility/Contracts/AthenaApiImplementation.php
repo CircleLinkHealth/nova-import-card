@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Contracts;
 
+use App\Services\AthenaAPI\Connection;
 use App\ValueObjects\Athena\Patient;
 use App\ValueObjects\Athena\Problem;
 
@@ -17,6 +18,11 @@ interface AthenaApiImplementation
      * @see: https://developer.athenahealth.com/docs/read/chart/Problems#section-0
      */
     public function addProblem(Problem $problem);
+
+    /**
+     * @return Connection
+     */
+    public function api();
 
     /**
      * @param $practiceId
@@ -250,8 +256,6 @@ interface AthenaApiImplementation
      * @return mixed
      */
     public function getPracticeCustomFields($practiceId);
-
-    public function initApiConnection();
 
     /**
      * Add a note for an appointment.
