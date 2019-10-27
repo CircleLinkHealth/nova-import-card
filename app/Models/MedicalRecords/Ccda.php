@@ -7,7 +7,6 @@
 namespace App\Models\MedicalRecords;
 
 use App\Adapters\EligibilityCheck\CcdaToEligibilityJobAdapter;
-use App\Contracts\EligibilityCheckable;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\DirectMailMessage;
 use App\EligibilityBatch;
@@ -15,6 +14,7 @@ use App\EligibilityJob;
 use App\Entities\CcdaRequest;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
+use App\TargetPatient;
 use App\Traits\Relationships\BelongsToPatientUser;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -56,6 +56,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \App\Importer\Models\ItemLogs\ProblemLog[]|\Illuminate\Database\Eloquent\Collection    $problems
  * @property \App\Importer\Models\ItemLogs\ProviderLog[]|\Illuminate\Database\Eloquent\Collection   $providers
  * @property \App\Models\MedicalRecords\ImportedMedicalRecord                                       $qaSummary
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda onlyTrashed()
  * @method static bool|null restore()
@@ -81,17 +82,20 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda withoutTrashed()
  * @mixin \Eloquent
+ *
  * @property int|null                                                                       $direct_mail_message_id
  * @property int|null                                                                       $batch_id
  * @property \App\DirectMailMessage                                                         $directMessage
  * @property \App\Media[]|\Illuminate\Database\Eloquent\Collection                          $media
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda exclude($value = array())
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereDirectMailMessageId($value)
+ *
  * @property \App\EligibilityBatch|null                        $batch
  * @property \CircleLinkHealth\Customer\Entities\Practice|null $practice
  * @property int|null                                          $allergies_count
@@ -103,8 +107,9 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                          $problems_count
  * @property int|null                                          $providers_count
  * @property int|null                                          $revision_history_count
+ * @property \App\TargetPatient                                $targetPatient
  */
-class Ccda extends MedicalRecordEloquent implements HasMedia, EligibilityCheckable
+class Ccda extends MedicalRecordEloquent implements HasMedia
 {
     use BelongsToPatientUser;
     use HasMediaTrait;
@@ -210,7 +215,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, EligibilityCheckab
     {
         $adapter = new CcdaToEligibilityJobAdapter($this, $this->practice, $this->batch);
 
-        return $adapter->adapt();
+        return $adapter->adaptToEligibilityJob();
     }
 
     public function directMessage()
@@ -284,6 +289,14 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, EligibilityCheckab
         $this->addMedia(storage_path("ccda-{$this->id}.xml"))->toMediaCollection('ccd');
 
         return $this;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function targetPatient()
+    {
+        return $this->hasOne(TargetPatient::class);
     }
 
     protected function parseToJson($xml)
