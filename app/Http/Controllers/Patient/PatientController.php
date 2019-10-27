@@ -7,12 +7,12 @@
 namespace App\Http\Controllers\Patient;
 
 use App\CLH\Repositories\UserRepository;
-use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\CPM\CpmProblem;
 use App\Services\CarePlanViewService;
 use App\Services\PdfService;
+use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -31,6 +31,13 @@ class PatientController extends Controller
         $this->formatter = $formatter;
     }
 
+    /**
+     * Create Cross Browser Testing Patients.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function createCBTTestPatient(Request $request)
     {
         $repo = new UserRepository();
@@ -39,7 +46,7 @@ class PatientController extends Controller
         $role     = Role::whereName('participant')->firstOrFail();
         $problems = CpmProblem::get();
 
-        foreach (Constants::CBT_TEST_PATIENTS as $patientData) {
+        foreach (TestPatients::CBT_TEST_PATIENTS as $patientData) {
             //in case something goes wrong and users where not deleted, take all
             $users = User::whereEmail($patientData['email'])->get();
 
@@ -85,7 +92,7 @@ class PatientController extends Controller
                 ];
             }
             $user->ccdProblems()->createMany($ccdProblems);
-            $user->ccdMedications()->createMany(Constants::testMedications($patientData['medications']));
+            $user->ccdMedications()->createMany(TestPatients::testMedications($patientData['medications']));
             $user->careTeamMembers()->create([
                 'member_user_id' => $patientData['billing_provider_id'],
                 'type'           => CarePerson::BILLING_PROVIDER,
