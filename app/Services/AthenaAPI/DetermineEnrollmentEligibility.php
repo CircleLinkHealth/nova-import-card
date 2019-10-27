@@ -7,12 +7,10 @@
 namespace App\Services\AthenaAPI;
 
 use App\Jobs\CheckCcdaEnrollmentEligibility;
-use App\Models\MedicalRecords\Ccda;
 use App\TargetPatient;
-use App\ValueObjects\Athena\Insurances;
-use App\ValueObjects\Athena\Problems;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Checkables\AthenaPatient;
 
 class DetermineEnrollmentEligibility
 {
@@ -25,20 +23,21 @@ class DetermineEnrollmentEligibility
         $this->api = $api;
     }
 
-    public function determineEnrollmentEligibility(TargetPatient $targetPatient)
+    /**
+     * @param TargetPatient $athenaPatient
+     */
+    public function determineEnrollmentEligibility(AthenaPatient $athenaPatient)
     {
-        $targetPatient->loadMissing(['batch', 'practice']);
+        $athenaPatient->loadMissing(['batch', 'practice']);
 
-        $ccda = $this->createCcdaFromAthena($targetPatient);
-
-        $job   = new CheckCcdaEnrollmentEligibility($ccda, $targetPatient->practice, $targetPatient->batch);
+        $job   = new CheckCcdaEnrollmentEligibility($athenaPatient->getMedicalRecord(), $athenaPatient->practice, $athenaPatient->batch);
         $check = $job->handle();
 
-        $targetPatient->eligibility_job_id = $check->getEligibilityJob()->id;
+        $athenaPatient->eligibility_job_id = $check->getEligibilityJob()->id;
 
-        $targetPatient->setStatusFromEligibilityJob($check->getEligibilityJob());
+        $athenaPatient->setStatusFromEligibilityJob($check->getEligibilityJob());
 
-        $targetPatient->save();
+        $athenaPatient->save();
     }
 
     public function getDemographics($patientId, $practiceId)

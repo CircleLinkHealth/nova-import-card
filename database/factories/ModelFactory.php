@@ -7,6 +7,8 @@
 use App\EligibilityBatch;
 use App\Enrollee;
 use Carbon\Carbon;
+use App\TargetPatient;
+use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Invite;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -225,5 +227,25 @@ $factory->define(EligibilityBatch::class, function (Faker\Generator $faker) {
         'practice_id' => $practice->id,
         'type'        => EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE,
         'options'     => [],
+    ];
+});
+
+$factory->define(Ehr::class, function (Faker\Generator $faker) {
+    return [
+        'name' => "EHR: $faker->company",
+    ];
+});
+
+$factory->define(TargetPatient::class, function (Faker\Generator $faker) {
+    $batch = factory(EligibilityBatch::class)->create();
+    $ehr = factory(Ehr::class)->create();
+    
+    return [
+        'batch_id'          => $batch->id,
+        'practice_id'       => $batch->practice_id,
+        'ehr_id'            => $ehr->id,
+        'ehr_patient_id'    => $faker->numberBetween(1, 2),
+        'ehr_practice_id'   => $faker->numberBetween(1, 5000),
+        'ehr_department_id' => $faker->numberBetween(1, 10),
     ];
 });
