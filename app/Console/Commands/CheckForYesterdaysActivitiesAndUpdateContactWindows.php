@@ -65,7 +65,9 @@ class CheckForYesterdaysActivitiesAndUpdateContactWindows extends Command
                     }
 
                     $window->update([
-                        'validated' => $validated,
+                        'validated'       => $validated,
+                        'manually_edited' => true,
+                        'updated_at'      => Carbon::parse(now())->toDateTimeString(),
                     ]);
                 });
             });

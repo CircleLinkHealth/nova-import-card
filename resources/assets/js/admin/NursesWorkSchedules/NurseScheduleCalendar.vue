@@ -210,11 +210,11 @@
         data() {
             return {
                 // calendarData:[],
-                dataForDropdown:[],
-                today:'',
-                startOfMonth:[],
-                endOfMonth:[],
-                endOfYear:[],
+                dataForDropdown: [],
+                today: '',
+                startOfMonth: [],
+                endOfMonth: [],
+                endOfYear: [],
                 workHours: [],
                 holidays: [],
                 showWorkHours: true,
@@ -555,7 +555,7 @@
                     window_time_end: this.workRangeEnds,
                     repeat_freq: repeatFreq,
                     until: repeatUntil,
-                    validated:validatedDefault
+                    validated: validatedDefault
                 }).then((response => {
                         this.loader = false;
                         this.toggleModal();
@@ -724,16 +724,18 @@
         },
 
         created() {
+            this.loader = true;
             axios.get('care-center/work-schedule/get-calendar-data')
                 .then((response => {
                     const calendarData = response.data.calendarData;
                     this.workHours.push(...calendarData.workEvents);
                     this.dataForDropdown.push(...calendarData.dataForDropdown);
                     this.today = calendarData.today;
+                    this.loader = false;
 
                 })).catch((error) => {
                 this.errors = error;
-
+                console.log(this.errors);
             });
 
         },

@@ -64,7 +64,7 @@ class NurseCalendarService
     {
         //converts the date that event was saved to - date that event is scheduled for + transfered to current's week (dow)
         //So events are starting to repeat from release's date week. This is what we want?
-        $repeatEventByDefaultUntil = Carbon::parse($eventDate)->copy()->addMonths(3)->toDateString();
+        $repeatEventByDefaultUntil = Carbon::parse($eventDate)->copy()->addMonths(4)->toDateString();
         $rangeToRepeat             = $this->getWeeksOrDaysToRepeat($eventDate, $repeatEventByDefaultUntil, $repeatFrequency);
         $validatedDefault          = 'not_checked';
 
