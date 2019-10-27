@@ -424,13 +424,19 @@ class Calls implements AthenaApiImplementation
      */
     public function getPatientInsurances($patientId, $practiceId, $departmentId)
     {
-        $response = $this->api()->GET("${practiceId}/patients/${patientId}/insurances", [
+        $this->api()->setPracticeId($practiceId);
+
+        $apiPath = "patients/${patientId}/insurances";
+
+        $response = $this->api()->GET($apiPath, [
             'departmentid'  => $departmentId,
             'showfullssn'   => false,
             'showcancelled' => false,
         ]);
 
-        return $this->response($response);
+        return $this->response(array_merge($response, [
+            'api_path' => $apiPath,
+        ]));
     }
 
     /**

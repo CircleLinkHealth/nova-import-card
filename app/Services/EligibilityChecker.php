@@ -843,7 +843,7 @@ class EligibilityChecker
             }
         }
 
-        if ($enrolleeExists) {
+        if ($enrolleeExists && $enrolleeExists->batch_id !== $this->batch->id) {
             $batchInfo = $enrolleeExists->batch_id
                 ? " in batch {$enrolleeExists->batch_id}"
                 : '';
