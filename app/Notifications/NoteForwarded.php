@@ -99,26 +99,21 @@ class NoteForwarded extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'channels' => $this->channels,
-
+            'channels'    => $this->channels,
             'sender_id'   => auth()->id(),
             'sender_type' => auth()->check()
                 ? User::class
                 : null,
-            'sender_email' => optional(auth()->user())->email,
-
+            'sender_email'   => optional(auth()->user())->email,
             'receiver_type'  => get_class($notifiable),
             'receiver_id'    => $notifiable->id,
             'receiver_email' => $notifiable->email,
-
-            'email_body' => $this->getEmailBody(),
-            'dm_body'    => $this->getDMBody(),
-            'link'       => $this->note->link(),
-            'subject'    => $this->getSubject(),
-
-            'note_id' => $this->note->id,
-
-            'pathToPdf' => $this->pathToPdf,
+            'email_body'     => $this->getEmailBody(),
+            'dm_body'        => $this->getDMBody(),
+            'link'           => $this->note->link(),
+            'subject'        => $this->getSubject(),
+            'note_id'        => $this->note->id,
+            'pathToPdf'      => $this->pathToPdf,
         ];
     }
 

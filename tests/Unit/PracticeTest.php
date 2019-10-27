@@ -7,13 +7,10 @@
 namespace Tests\Unit;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class PracticeTest extends TestCase
 {
-    use DatabaseTransactions;
-
     private $practice;
 
     protected function setUp()

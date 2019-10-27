@@ -21,6 +21,9 @@ class ModifyEnrolleesViewTable extends Migration
      */
     public function up()
     {
+        if (isUnitTestingEnv()) {
+            return;
+        }
         //changes care_ambassador_id to care_ambassador_user_id
         $viewName = 'enrollees_view';
         \DB::statement("DROP VIEW IF EXISTS ${viewName}");
