@@ -13,7 +13,7 @@ use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\Eligibility\Entities\Problem;
-use App\Services\EligibilityCheck;
+use App\Services\EligibilityChecker;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
@@ -128,7 +128,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 
                             return $i;
                         }
-                                                   )
+                    )
                     ->unique('name')
                     ->sortBy('order')
                     ->pluck('name')
@@ -140,7 +140,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 
                             return ['type' => $ins];
                         }
-                                                   )
+                    )
                     ->filter()
                     ->values();
 
@@ -152,7 +152,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             function ($p) use ($phxPractice) {
                 $job = $this->createEligibilityJob($p, $phxPractice);
 
-                $list = (new EligibilityCheck(
+                $list = (new EligibilityChecker(
                     $job,
                     $phxPractice,
                     $this->batch,
