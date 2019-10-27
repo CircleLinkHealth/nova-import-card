@@ -87,7 +87,7 @@ class AddInsuranceFromAthenaToEligibilityJob
 
         if (array_key_exists('insurances', $insurances)) {
             foreach ($insurances['insurances'] as $insurance) {
-                $this->insuranceCollection->push(InsuranceLog::create([
+                $this->insuranceCollection->push(InsuranceLog::updateOrCreate([
                     'medical_record_id'   => optional($medicalRecord)->id,
                     'medical_record_type' => get_class($medicalRecord),
                     'name'                => $insurance['insuranceplanname'] ?? null,
