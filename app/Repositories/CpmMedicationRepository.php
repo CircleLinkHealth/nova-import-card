@@ -12,15 +12,7 @@ class CpmMedicationRepository
 {
     public function addMedicationToPatient(Medication $medication)
     {
-        //todo find why it does not save group id and fix tanginess
-        $medicationGroupId = $medication->medication_group_id;
-
         $medication->save();
-
-        if ($medicationGroupId) {
-            $medication->medication_group_id = $medicationGroupId;
-            $medication->save();
-        }
 
         return $medication;
     }
