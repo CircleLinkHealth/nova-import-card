@@ -5,7 +5,7 @@ $user      = auth()->user();
 $lastLogin = null;
 $timezone  = null;
 
-$time      = null;
+$time = null;
 
 if (session('last_login')) {
     $dt = Carbon\Carbon::parse(session('last_login'));

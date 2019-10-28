@@ -175,7 +175,7 @@
                     </span>
                 </blockquote>
 
-                <div class="enrollment-script">
+                <div class="padding-top-5 font-size-20">
                     <p v-html="care_ambassador_script"></p>
                 </div>
             </div>
@@ -198,9 +198,8 @@
                     <h4 style="color: #47beab">Awesome! Please confirm patient details:</h4>
                     <blockquote style="border-left: 5px solid #26a69a;">
                         <span class="consented_title"><b>I.</b></span>
-
-                        <b>Ask patient:</b>
-                        <div class="enrollment-script">
+                        <span>Ask the patient:</span>
+                        <div class="font-size-20">
                             <template v-if="lang === 'ES'">
                                 ¿Quiere quele llamemos directamente o hay alguien más con el cual quiere quenos pongamos
                                 en
@@ -211,47 +210,96 @@
                             </template>
                         </div>
                         <br>
-                        <b>Use radio button to confirm patient's preferred phone number to receive care management
-                            calls.</b>
+                        <span>Please enter any unknown phone numbers and select the patient's preferred phone number to receive care management calls:</span>
                     </blockquote>
                     <div class="row">
-                        <div class="col s6 m4 select-custom">
+                        <div class="col s6 m3 select-custom">
                             <label for="home_radio"
                                    :class="{valid: home_is_valid, invalid: home_is_invalid}">
-                                <input class="with-gap" name="preferred_phone" type="radio" id="home_radio" value="home"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="home_radio" value="home"
                                        :checked="home_phone != ''"/>
-                                <span>{{home_phone_label}}</span>
+                                <span class="phone-label">{{home_phone_label}}</span>
 
                             </label>
                             <input class="input-field" name="home_phone" id="home_phone" v-model="home_phone"/>
                         </div>
-                        <div class="col s6 m4 select-custom">
+                        <div class="col s6 m3 select-custom">
 
                             <label for="cell_radio"
                                    :class="{valid: cell_is_valid, invalid: cell_is_invalid}">
-                                <input class="with-gap" name="preferred_phone" type="radio" id="cell_radio" value="cell"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="cell_radio" value="cell"
                                        :checked="home_phone == '' && cell_phone != ''"/>
-                                <span>{{cell_phone_label}}</span></label>
+                                <span class="phone-label">{{cell_phone_label}}</span></label>
                             <input class="input-field" name="cell_phone" id="cell_phone" v-model="cell_phone"/>
                         </div>
-                        <div class="col s6 m4 select-custom">
+                        <div class="col s6 m3 select-custom">
 
                             <label for="other_radio"
                                    :class="{valid: other_is_valid, invalid: other_is_invalid}">
-                                <input class="with-gap" name="preferred_phone" type="radio" id="other_radio" value="other"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="other_radio" value="other"
                                        :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
-                                <span>{{other_phone_label}}</span>
+                                <span class="phone-label">{{other_phone_label}}</span>
                             </label>
                             <input class="input-field" name="other_phone" id="other_phone" v-model="other_phone"/>
+                        </div>
+                        <div class="col s6 m3 select-custom">
+                            <label for="agent_radio"
+                                   :class="{valid: agent_is_valid, invalid: agent_is_invalid}">
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="agent_radio" value="agent"
+                                       :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
+                                <span class="phone-label">{{agent_phone_label}}</span>
+                            </label>
+                            <input class="input-field" name="agent_phone" id="agent_phone" v-model="agent_phone"/>
+                        </div>
+                    </div>
+                    <div v-if="preferred_phone == 'agent' " class="row">
+                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out other contact's details</b></blockquote>
+                        <div  class="col s6 m4">
+                            <label for="agent_name" class="label">Other Contact's Name</label>
+                            <input class="input-field" name="agent_name" id="agent_name" v-model="agent_name"/>
+                        </div>
+                        <div class="col s6 m4">
+                            <label for="agent_email" class="label">Other Contact's Email</label>
+                            <input class="input-field" name="agent_email" id="agent_email" v-model="agent_email"/>
+                        </div>
+                        <div class="col s6 m4">
+                            <label for="agent_relationship" class="label">Other Contact's Relationship to the Patient</label>
+                            <input class="input-field" name="agent_relationship" id="agent_relationship"
+                                   v-model="agent_relationship"/>
+                        </div>
+                        <div class="col s6 m3 select-custom">
+                            <label for="agent_radio"
+                                   :class="{valid: agent_is_valid, invalid: agent_is_invalid}">
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="agent_radio" value="agent"
+                                       :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
+                                <span class="phone-label">{{agent_phone_label}}</span>
+                            </label>
+                            <input class="input-field" name="agent_phone" id="agent_phone" v-model="agent_phone"/>
+                        </div>
+                    </div>
+                    <div v-if="preferred_phone == 'agent' " class="row">
+                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out other contact's details</b></blockquote>
+                        <div  class="col s6 m4">
+                            <label for="agent_name" class="label">Other Contact's Name</label>
+                            <input class="input-field" name="agent_name" id="agent_name" v-model="agent_name"/>
+                        </div>
+                        <div class="col s6 m4">
+                            <label for="agent_email" class="label">Other Contact's Email</label>
+                            <input class="input-field" name="agent_email" id="agent_email" v-model="agent_email"/>
+                        </div>
+                        <div class="col s6 m4">
+                            <label for="agent_relationship" class="label">Other Contact's Relationship to the Patient</label>
+                            <input class="input-field" name="agent_relationship" id="agent_relationship"
+                                   v-model="agent_relationship"/>
                         </div>
                     </div>
                     <div class="row">
                         <blockquote style="border-left: 5px solid #26a69a;">
-                            <span class="consented_title"><b>II.</b></span> Please confirm address and email
+                            <span class="consented_title"><b>II.</b></span> Please confirm the patient’s mailing address and email address:
                         </blockquote>
 
                         <div class="col s12 m3 select-custom">
-                            <label for="address" class="label">Address</label>
+                            <label for="address" class="label">Address Line 1</label>
                             <input class="input-field" name="address" id="address" v-model="address"/>
                         </div>
                         <div class="col s12 m2 select-custom">
@@ -311,7 +359,7 @@
                     <blockquote style="border-left: 5px solid #26a69a;">
                         <span class="consented_title"><b>IV.</b></span>
                         <span style="color: red"><b>TELL PATIENT BEFORE HANGING UP!</b></span><br>
-                        <div class="enrollment-script">
+                        <div class="font-size-20">
                             <template v-if="lang === 'ES'">
                                 Una enfermera registrada le llamará en breve del mismo desde el cual lo estoy llamando
                                 {{practice_phone}}. Por favor, guárdelo para que acepte la llamada cuando suene el
@@ -319,10 +367,9 @@
                                 ¡Me alegro de haberme conectado! ¡Que tenga un muy buen día!
                             </template>
                             <template v-else>
-                                A Registered Nurse will call you shortly from the same # I’m calling from,
-                                {{practice_phone}}.
-                                Please save it so you accept the call when she/he rings. So glad we
-                                connected! Have a great day!
+                                A registered nurse will call you in the coming days from {{practice_phone}}.
+                                Please save this number so you accept the call when he or she rings.
+                                I am so glad we were able to connect! Have a great day!
                             </template>
                         </div>
                     </blockquote>
@@ -356,13 +403,11 @@
                     <h4 style="color: #47beab">Please provide some details:</h4>
                     <blockquote style="border-left: 5px solid #26a69a;">
                         <b>If Caller Reaches Machine, Leave Voice Message: </b><br>
-                        Hi this is {{userFullName}} calling on
-                        behalf of {{ providerFullName }} at {{ practice_name }}. The doctor[s] have invited you to their
-                        new
-                        personalized care management program. Please give us a call at {{practice_phone}} to learn more.
-                        Please note there is
-                        nothing to worry about, this program just lets the Dr. take better care of you between visits.
-                        Again the number is {{practice_phone}}
+                        Hi, this is {{userFullName}} calling on behalf of {{providerFullName}} at {{practice_name}}.
+                        The doctor(s) have invited you to their new personalized care management program.
+                        Please give us a call at {{practice_phone}} to learn more.
+                        Please note there is nothing to worry about, this program just lets your doctor take better care of you between visits.
+                        Again the number is {{practice_phone}}.
                     </blockquote>
 
                     <div class="row">
@@ -376,7 +421,7 @@
                             </select>
                         </div>
 
-                        <div class="col s6 m12 select-custom">
+                        <div v-show="utc_other" class="col s6 m12 select-custom">
                             <label for="utc_reason_other" class="label">If you selected other, please specify:</label>
                             <input class="input-field" name="reason_other" id="utc_reason_other"/>
                         </div>
@@ -390,7 +435,7 @@
 
                     <input type="hidden" name="status" value="utc">
                     <input type="hidden" name="enrollee_id" :value="enrolleeId">
-                    <input type="hidden" name="total_time_in_system" v-bind:value="total_time_in_system">
+                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                     <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
 
                 </div>
@@ -407,7 +452,7 @@
         </div>
 
         <!-- Rejected -->
-        <div id="rejected" class="modal confirm modal-fixed-footer">
+        <div id="rejected" class="modal confirm modal-fixed-footer" style="height: 50% !important;">
             <form method="post" id="rejected_form" :action="rejectedUrl">
 
                 <input type="hidden" name="_token" :value="csrf">
@@ -418,23 +463,21 @@
                     <div class="row">
                         <div class="col s12 m12">
                             <label for="reason" class="label">What reason did the Patient convey?</label>
-                            <select class="auto-close" name="reason" id="reason" required>
+                            <select class="auto-close" v-model="reason" name="reason" id="reason" required>
                                 <option value="Worried about co-pay">Worried about co-pay</option>
                                 <option value="Doesn’t trust medicare">Doesn’t trust medicare</option>
-                                <option value="Doesn’t need help with Health">Doesn’t need help with Health</option>
+                                <option value="Doesn’t need help with Health">Doesn’t need help with health</option>
                                 <option value="other">Other...</option>
                             </select>
                         </div>
 
-                        <div class="col s6 m12 select-custom">
+                        <div v-show="rejected_other" class="col s6 m12 select-custom">
                             <label for="rejected_reason_other" class="label">If you selected other, please
                                 specify:</label>
                             <input class="input-field" name="reason_other" id="rejected_reason_other"/>
                         </div>
 
                         <div v-if="isSoftDecline" class="col s6 m12 select-custom">
-                            <label for="soft_decline_callback" class="label">Patient Requests Callback On:</label>
-                            <input name="soft_decline_callback" id="soft_decline_callback">
                             <input type="hidden" name="status" value="soft_rejected">
                         </div>
                         <div v-else>
@@ -445,7 +488,7 @@
 
 
                     <input type="hidden" name="enrollee_id" :value="enrolleeId">
-                    <input type="hidden" name="total_time_in_system" v-bind:value="total_time_in_system">
+                    <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                     <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
 
                 </div>
@@ -583,11 +626,26 @@
 
                 return 'Other Phone Invalid..'
             },
+            agent_phone_label: function () {
+                if (this.agent_phone == '') {
+                    return 'Other Contact\'s Phone Unknown...';
+                }
+                if (this.validatePhone(this.agent_phone)) {
+                    return 'Other Contact\'s Phone Valid!';
+                }
+                return 'Other Contact\'s Phone Invalid..'
+            },
             other_is_valid: function () {
                 return this.validatePhone(this.other_phone)
             },
             other_is_invalid: function () {
                 return !this.validatePhone(this.other_phone)
+            },
+            agent_is_valid: function () {
+                return this.validatePhone(this.agent_phone)
+            },
+            agent_is_invalid: function () {
+                return !this.validatePhone(this.agent_phone)
             },
             //other phone computer vars
             home_phone_label: function () {
@@ -629,6 +687,12 @@
             },
             utc_requested_callback() {
                 return this.utc_reason === 'requested callback';
+            },
+            utc_other(){
+                return this.utc_reason === 'other';
+            },
+            rejected_other(){
+                return this.reason === 'other';
             },
             provider_pronunciation: function(){
                 return providerInfo ? (providerInfo.pronunciation ? providerInfo.pronunciation : 'N/A') : 'N/A';
@@ -687,13 +751,20 @@
                 toCall: '',
                 isSoftDecline: false,
                 utc_reason: '',
+                reason: '',
                 callError: null,
                 consentedUrl: rootUrl('enrollment/consented'),
                 utcUrl: rootUrl('enrollment/utc'),
                 rejectedUrl: rootUrl('enrollment/rejected'),
 
                 //twilio
-                device: null
+                device: null,
+
+                preferred_phone: '',
+                agent_phone: '',
+                agent_name: '',
+                agent_email: '',
+                agent_relationship: '',
             };
         },
         mounted: function () {
@@ -902,6 +973,10 @@
 </script>
 <style>
 
+    .phone-label {
+        margin-bottom: 10px;
+    }
+
     .consented_modal {
         max-height: 100% !important;
         height: 90% !important;
@@ -928,9 +1003,13 @@
         color: red;
     }
 
-    .enrollment-script {
-        font-size: 20px;
+
+    .padding-top-5 {
         padding-top: 5%;
+    }
+
+    .font-size-20 {
+        font-size: 20px;
     }
 
     /**
@@ -983,6 +1062,10 @@
 
     .action-buttons li a {
         width: 100%;
+    }
+
+    .phone-label {
+        margin-bottom: 10px;
     }
 
 </style>

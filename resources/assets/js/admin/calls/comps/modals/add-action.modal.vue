@@ -103,6 +103,34 @@
                                        @change="function (e) { changeUnscheduledPatients(index, e); }"/>
                             </td>
                             <td>
+                                <!--
+                                <span class="asap_label">Temporary</span>
+                                <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
+                                   style="color: #000;"
+                                   title="Is this a temporary assignment?">
+                                    <input v-model="action.data.isTemporary"
+                                           id="temporary"
+                                           type="checkbox"
+                                           name="temporary"
+                                           style=" float: right;margin-top: -14%;"
+                                           :disabled="action.disabled">
+                                </a>
+
+                                <input :disabled="action.disabled"
+                                       type="date"
+                                       v-show="action.data.isTemporary"
+                                       v-model="action.data.temporaryFrom"
+                                       name="temporary_from" class="form-control height-40"
+                                       :required="action.data.isTemporary"/>
+
+                                <input :disabled="action.disabled"
+                                       type="date"
+                                       v-show="action.data.isTemporary"
+                                       v-model="action.data.temporaryTo"
+                                       name="temporary_to" class="form-control height-40"
+                                       :required="action.data.isTemporary"/>
+                                -->
+
                                 <v-select :disabled="action.disabled"
                                           max-height="200px"
                                           class="form-control" name="outbound_cpm_id"
@@ -113,19 +141,31 @@
                                 </v-select>
                             </td>
                             <td>
+                                <span class="asap_label" style="font-weight: bold">ASAP</span>
+                                <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
+                                   style="color: #000;"
+                                   title="Tick to schedule as:'As soon as possible'">
+                                    <input v-model="action.data.asapChecked"
+                                           id="asap"
+                                           type="checkbox"
+                                           name="asap_check"
+                                           style=" float: right;margin-top: -14%;"
+                                           :disabled="action.disabled">
+                                </a>
+
                                 <input class="form-control height-40" type="date" name="scheduled_date"
                                        v-model="action.data.date"
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <input class="form-control height-40" type="time" name="window_start"
+                                <input id="window_start" class="form-control height-40" type="time" name="window_start"
                                        v-model="action.data.startTime"
-                                       :disabled="action.disabled" required/>
+                                       :disabled="action.data.asapChecked || action.disabled" required/>
                             </td>
                             <td>
-                                <input class="form-control height-40" type="time" name="window_end"
+                                <input id="window_end" class="form-control height-40" type="time" name="window_end"
                                        v-model="action.data.endTime"
-                                       :disabled="action.disabled" required/>
+                                       :disabled="action.data.asapChecked || action.disabled" required/>
                             </td>
                             <td>
                                 <input type="checkbox" id="is_manual"
@@ -158,8 +198,15 @@
                     <div class="alert alert-danger hasNot" v-if="hasNotAvailableNurses">
                         No available nurses for selected patient
                     </div>
-                    <div class="alert alert-warning" v-if="hasPatientInDraftMode">
-                        Action not allowed: Care plan is in draft mode. QA the care plan first.
+                    <div class="alert alert-warning"
+                         v-if="hasPatientInDraftMode || hasPatientInNotInAcceptableCcmStatus">
+                        Action not allowed:
+                        <span v-if="hasPatientInDraftMode">
+                            Care plan is in draft mode. QA the care plan first.
+                        </span>
+                        <span v-if="hasPatientInNotInAcceptableCcmStatus">
+                            Patient's CCM status is one of withdrawn, paused or unreachable.
+                        </span>
                     </div>
                 </div>
 
@@ -211,7 +258,11 @@
         endTime: '17:00',
         text: null,
         isManual: 0,
-        familyOverride: 0
+        familyOverride: 0,
+        asapChecked: 0,
+        isTemporary: 0,
+        temporaryFrom: null,
+        temporaryTo: null
     };
 
     function getNewAction() {
@@ -229,6 +280,11 @@
             selectedPracticeData: UNASSIGNED_VALUE,
             selectedNurseData: UNASSIGNED_VALUE,
             selectedPatientIsInDraftMode: false,
+
+            //CPM-1580 system has a command that deletes all calls with unreachable/paused/withdrawan patients
+            //every 5 minutes. better stop users from creating such calls from UI.
+            selectedPatientIsNotInAcceptableCcmStatus: false,
+
             nursesForSelect: [],
             patientsForSelect: [],
             skipRefreshingPatients: false //used when patient is already selected
@@ -301,12 +357,15 @@
             hasPatientInDraftMode() {
                 return this.actions.filter(x => x.selectedPatientIsInDraftMode).length > 0;
             },
+            hasPatientInNotInAcceptableCcmStatus() {
+                return this.actions.filter(x => x.selectedPatientIsNotInAcceptableCcmStatus).length > 0;
+            },
             hasToConfirmFamilyOverrides() {
                 return this.actions.filter(x => x.showFamilyOverride).length > 0;
             },
             showPracticeColumn() {
                 return this.practices.length > 1;
-            }
+            },
         },
 
         methods: {
@@ -388,7 +447,8 @@
                     this.actions[actionIndex].data.patientId = patient.value;
                     const selectedPatient = this.selectedPatient(actionIndex);
                     this.setPractice(actionIndex, selectedPatient.program_id);
-                    this.actions[actionIndex].selectedPatientIsInDraftMode = (selectedPatient.status === 'draft');
+                    this.actions[actionIndex].selectedPatientIsInDraftMode = this.isPatientInDraftMode(selectedPatient);
+                    this.actions[actionIndex].selectedPatientIsNotInAcceptableCcmStatus = this.isPatientInNotInAcceptableCcmStatus(selectedPatient);
                 }
             },
             changePractice(actionIndex, practice) {
@@ -409,6 +469,12 @@
                     return Promise.all([this.getPatients(actionIndex), this.getNurses(actionIndex)])
                 }
                 return Promise.resolve([])
+            },
+            isPatientInDraftMode(patient) {
+                return patient.status === 'draft';
+            },
+            isPatientInNotInAcceptableCcmStatus(patient) {
+                return ['withdrawn', 'paused', 'unreachable'].indexOf(patient.ccm_status) > -1;
             },
             changeNurse(actionIndex, nurse) {
                 if (nurse) {
@@ -588,7 +654,11 @@
                             window_end: data.endTime,
                             attempt_note: data.text,
                             is_manual: data.isManual,
-                            family_override: data.familyOverride
+                            asap: data.asapChecked,
+                            family_override: data.familyOverride,
+                            is_temporary: data.isTemporary,
+                            temporary_from: data.temporaryFrom,
+                            temporary_to: data.temporaryTo
                         };
                     });
 
@@ -601,10 +671,19 @@
                 }
 
                 //if any patient has status draft, we do not allow creation
-                const draftPatients = patients.filter(x => x.status === 'draft');
+                const draftPatients = patients.filter(x => this.isPatientInDraftMode(x));
                 if (draftPatients.length) {
                     Event.$emit('notifications-add-action-modal:create', {
                         text: `Action not allowed: This patients' [${draftPatients.map(x => x.name || x.full_name).join(', ')}] care plan is in draft mode. QA the care plan before scheduling a call`,
+                        type: 'warning'
+                    });
+                    return;
+                }
+
+                const ccmStatusNotAcceptable = patients.filter(x => this.isPatientInNotInAcceptableCcmStatus(x));
+                if (ccmStatusNotAcceptable.length) {
+                    Event.$emit('notifications-add-action-modal:create', {
+                        text: `Action not allowed: This patients' [${draftPatients.map(x => x.name || x.full_name).join(', ')}] CCM status is one of withdrawn, paused or unreachable`,
                         type: 'warning'
                     });
                     return;
@@ -622,13 +701,13 @@
 
                             //we have to check that all calls have been placed successfully
                             const actions = response.data || [];
-                            const errors = actions.filter(x => x.errors && x.errors.length > 0);
+                            const errors = actions.filter(x => x.errors && (x.errors.length > 0 || Object.keys(x.errors).length > 0));
                             if (errors.length) {
 
                                 //we have to go through all calls and display if call was saved or not
                                 actions.forEach((action, index) => {
 
-                                    if (action.errors && action.errors.length > 0) {
+                                    if (action.errors && (action.errors.length > 0 || Object.keys(action.errors).length > 0)) {
 
                                         //enable this action so it can be edited
                                         this.actions[index].disabled = false;
@@ -793,6 +872,8 @@
         width: 100%;
         table-layout: fixed;
         margin-left: -10px;
+        border-collapse: separate;
+        border-spacing: 0 16px;
     }
 
     /* Table with a Practices column */
@@ -975,5 +1056,11 @@
 
     .v-select .dropdown-menu > .highlight > a {
         display: inline-block;
+    }
+
+    .asap_label {
+        margin-left: 58%;
+        position: absolute;
+        margin-top: -16%;
     }
 </style>

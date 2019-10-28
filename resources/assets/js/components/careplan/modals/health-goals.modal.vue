@@ -124,7 +124,6 @@
                 return this.axios.post(rootUrl(`api/patients/${this.patientId}/biometrics`), Object.assign({
                     biometric_id: this.selectedGoal.id
                 }, this.selectedGoal.info)).then(response => {
-                    console.log('health-goals:add', response.data)
                     Event.$emit('health-goals:add', this.selectedGoal.id, response.data)
                     this.loaders.addGoal = false
                 }).catch(err => {
@@ -137,7 +136,6 @@
                 if (this.selectedGoal && confirm('Are you sure you want to disable this goal?')) {
                     this.loaders.removeGoal = true
                     return this.axios.delete(rootUrl(`api/patients/${this.patientId}/biometrics/${this.selectedGoal.id}`)).then(response => {
-                        console.log('health-goals:remove', response.data)
                         Event.$emit('health-goals:remove', this.selectedGoal.id)
                         this.loaders.removeGoal = false
                     }).catch(err => {

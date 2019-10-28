@@ -37,7 +37,7 @@ return [
     'connections' => [
         'sqlite' => [
             'driver'                  => 'sqlite',
-            'database'                => ':memory:',
+            'database'                => base_path('tests/data/sqlite/test_db.sqlite'),
             'prefix'                  => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
@@ -131,10 +131,11 @@ return [
         'client' => 'predis',
 
         'default' => [
-            'host'     => env('REDIS_HOST', '127.0.0.1'),
-            'password' => env('REDIS_PASSWORD', null),
-            'port'     => env('REDIS_PORT', 6379),
-            'database' => env('REDIS_DB', 0),
+            'host'               => env('REDIS_HOST', '127.0.0.1'),
+            'password'           => env('REDIS_PASSWORD', null),
+            'port'               => env('REDIS_PORT', 6379),
+            'database'           => env('REDIS_DB', 0),
+            'read_write_timeout' => -1,
         ],
 
         'cache' => [

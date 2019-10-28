@@ -29,7 +29,6 @@ class StoreJiraTicketsDeployed extends Command
                                            {envName : The name of the environment we just deployed to.}
                                            {rollback    : Either 1 or 0 if deployment is a rollback or not.}
                                            {userName    : Name of the user who triggered the deployment.}
-                                           {comment    : Deployment comment or last commit message for automatic deployments.}
                                            {previousRevision?    : The revision deployed before the one just deployed.}
     ';
 
@@ -54,15 +53,13 @@ class StoreJiraTicketsDeployed extends Command
         $isRollback            = 1 == $this->argument('rollback')
             ? true
             : false;
-        $user    = $this->argument('userName');
-        $comment = $this->argument('comment');
+        $user = $this->argument('userName');
 
         $this->info('previousRevision: '.$lastDeployedRevision);
         $this->info('currentRevision: '.$newlyDeployedRevision);
         $this->info('envName: '.$envName);
         $this->info('rollback: '.$isRollback);
         $this->info('userName: '.$user);
-        $this->info('comment: '.$comment);
 
         if ( ! file_exists(base_path('.git'))) {
             $initGit = $this->runCommand(
@@ -97,7 +94,7 @@ class StoreJiraTicketsDeployed extends Command
             }
         );
 
-        $loginLink = config('opcache.url');
+        $loginLink = config('app.url');
         $message .= "\n Login at: $loginLink";
 
         $stored = file_put_contents(storage_path('jira-tickets-deployed'), json_encode(['message' => $message]));
@@ -105,5 +102,7 @@ class StoreJiraTicketsDeployed extends Command
         if (false === $stored) {
             throw new \Exception('Could not store file');
         }
+
+        $this->line('Jira tickets file successfully created');
     }
 }

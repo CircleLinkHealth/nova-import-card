@@ -74,7 +74,7 @@ class NoteService
         $patient = User::find($note->patient_id);
 
         $note->body = 'Created/Edited Assessment for '.$patient->name().' ('.$assessment->careplan_id.') ... See '.
-                              URL::to('/manage-patients/'.$assessment->careplan_id.'/view-careplan/assessment');
+            URL::to('/manage-patients/'.$assessment->careplan_id.'/view-careplan/assessment');
         $note->type         = 'Edit Assessment';
         $note->performed_at = Carbon::now();
         $note->save();
@@ -271,7 +271,19 @@ class NoteService
             });
     }
 
-    //Save call information for note
+    //Get all notes for patients with specified date range
+
+//    public function getNotesAndOfflineActivitiesForPatient(User $patient)
+//    {
+//        $notes = $patient->notes;
+//        $activities = $patient->activities;
+//        $appointments = $patient->appointments;
+//
+//        return $notes->merge($activities)
+//            ->merge($appointments);
+//    }
+
+    //Get all notes that have been sent to anyone for a given provider with specified date range
 
     public function getNotesWithRangeForPatients(
         $patients,
@@ -288,19 +300,7 @@ class NoteService
             ->get();
     }
 
-    //Get all notes for patients with specified date range
-
-//    public function getNotesAndOfflineActivitiesForPatient(User $patient)
-//    {
-//        $notes = $patient->notes;
-//        $activities = $patient->activities;
-//        $appointments = $patient->appointments;
-//
-//        return $notes->merge($activities)
-//            ->merge($appointments);
-//    }
-
-    //Get all notes that have been sent to anyone for a given provider with specified date range
+    //Save call information for note
 
     public function getNotesWithRangeForProvider(
         $providers,

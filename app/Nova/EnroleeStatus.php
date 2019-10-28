@@ -102,7 +102,7 @@ class EnroleeStatus extends Resource
             new NovaImportCard(self::class),
             (new LinkableAway())
                 ->title('CSV Template')
-                ->url(route('download.google.csv', ['filename' => 'UpdateEnroleeDataTemplate']))
+                ->url('https://docs.google.com/spreadsheets/d/1hvA5ILwpDTX6D9rh81RUlMivhlfe7PVBDSwF6Td9-QI/edit?usp=sharing')
                 ->subtitle('Click to download.')
                 ->target('_self'),
         ];

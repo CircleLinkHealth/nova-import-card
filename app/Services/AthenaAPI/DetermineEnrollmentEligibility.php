@@ -6,21 +6,16 @@
 
 namespace App\Services\AthenaAPI;
 
-use App\Jobs\CheckCcdaEnrollmentEligibility;
-use App\Models\MedicalRecords\Ccda;
 use App\TargetPatient;
-use App\ValueObjects\Athena\Insurances;
-use App\ValueObjects\Athena\Problems;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\Eligibility\Jobs\Athena\GetAppointmentsForDepartment;
 
 class DetermineEnrollmentEligibility
 {
-    protected $api;
+    private $api;
 
-    protected $athenaEhrId = 2;
-
-    public function __construct(Calls $api)
+    public function __construct(AthenaApiImplementation $api)
     {
         $this->api = $api;
     }
@@ -46,6 +41,15 @@ class DetermineEnrollmentEligibility
         return $this->api->getDemographics($patientId, $practiceId);
     }
 
+    /**
+     * @param $ehrPracticeId
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @param bool   $offset
+     * @param null   $batchId
+     *
+     * @throws \Exception
+     */
     public function getPatientIdFromAppointments(
         $ehrPracticeId,
         Carbon $startDate,
@@ -53,60 +57,20 @@ class DetermineEnrollmentEligibility
         $offset = false,
         $batchId = null
     ) {
-        $start = $startDate->format('m/d/Y');
-        $end   = $endDate->format('m/d/Y');
+        $departments = \Cache::tags(['athena_api', "ehr_practice_id:$ehrPracticeId"])->remember("athena_api:$ehrPracticeId:department_ids", 5, function () use ($ehrPracticeId) {
+            return $this->api->getDepartmentIds($ehrPracticeId);
+        });
 
-        $departments = $this->api->getDepartmentIds($ehrPracticeId);
+        $count = count($departments);
+
+        \Log::channel('logdna')->info("Found $count departments", [
+            'batch_id'        => $batchId,
+            'ehr_practice_id' => $ehrPracticeId,
+        ]);
 
         foreach ($departments['departments'] as $department) {
-            $offsetBy = 0;
-
-            if ($offset) {
-                $offsetBy = TargetPatient::where('ehr_practice_id', $ehrPracticeId)
-                    ->where('ehr_department_id', $department['departmentid'])
-                    ->count();
-            }
-
-            $response = $this->api->getBookedAppointments(
-                $ehrPracticeId,
-                $start,
-                $end,
-                $department['departmentid'],
-                $offsetBy
-            );
-
-            if ( ! isset($response['appointments'])) {
-                return;
-            }
-
-            if (0 == count($response['appointments'])) {
-                return;
-            }
-
-            foreach ($response['appointments'] as $bookedAppointment) {
-                $ehrPatientId = $bookedAppointment['patientid'];
-                $departmentId = $bookedAppointment['departmentid'];
-
-                if ( ! $ehrPatientId) {
-                    continue;
-                }
-
-                $target = TargetPatient::updateOrCreate([
-                    'practice_id'       => Practice::where('external_id', $ehrPracticeId)->value('id'),
-                    'ehr_id'            => $this->athenaEhrId,
-                    'ehr_patient_id'    => $ehrPatientId,
-                    'ehr_practice_id'   => $ehrPracticeId,
-                    'ehr_department_id' => $departmentId,
-                ]);
-
-                if (null !== $batchId) {
-                    $target->batch_id = $batchId;
-                }
-
-                if ( ! $target->status) {
-                    $target->status = 'to_process';
-                    $target->save();
-                }
+            if ( ! empty($department['departmentid'])) {
+                GetAppointmentsForDepartment::dispatch($department['departmentid'], $ehrPracticeId, $startDate, $endDate, $offset, $batchId);
             }
         }
     }
@@ -136,46 +100,5 @@ class DetermineEnrollmentEligibility
         $problems->setProblems($problemsResponse['problems']);
 
         return $problems;
-    }
-
-    /**
-     * @param TargetPatient $targetPatient
-     *
-     * @throws \Exception
-     *
-     * @return \App\Importer\MedicalRecordEloquent|Ccda|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
-     */
-    private function createCcdaFromAthena(TargetPatient $targetPatient)
-    {
-        $athenaApi = app(Calls::class);
-
-        $ccdaExternal = $athenaApi->getCcd(
-            $targetPatient->ehr_patient_id,
-            $targetPatient->ehr_practice_id,
-            $targetPatient->ehr_department_id
-        );
-
-        if ( ! isset($ccdaExternal[0])) {
-            throw new \Exception('Could not retrieve CCD from Athena for '.TargetPatient::class.':'.$targetPatient->id);
-        }
-
-        return Ccda::create([
-            'practice_id' => $targetPatient->practice_id,
-            'vendor_id'   => 1,
-            'xml'         => $ccdaExternal[0]['ccda'],
-            'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-            'source'      => Ccda::ATHENA_API,
-            'imported'    => false,
-            'batch_id'    => $targetPatient->batch_id,
-        ]);
-    }
-
-    private function practiceFromExternalId($ehrPracticeId): Practice
-    {
-        return Practice::where(
-            'external_id',
-            '=',
-            $ehrPracticeId
-        )->firstOrFail();
     }
 }

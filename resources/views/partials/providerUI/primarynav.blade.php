@@ -184,6 +184,17 @@ $user = auth()->user();
                             @endrole
                         </ul>
                     </li>
+                    {{--Live Notifications--}}
+                    <li class="dropdown">
+                        <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                             aria-expanded="false"><i class="glyphicon glyphicon-bell"></i> Notifications
+                            <a class="inline-block">
+
+                                <pusher-notifications :user-id="{{json_encode(\Illuminate\Support\Facades\Auth::id())}}"></pusher-notifications>
+                            </a>
+                        </div>
+                    </li>
+
                     <li class="dropdown">
                         <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
                              aria-expanded="false">

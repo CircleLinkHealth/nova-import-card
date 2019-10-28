@@ -5,8 +5,12 @@
  */
 
 use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Enrollee;
+use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
+use App\TargetPatient;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Invite;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -225,5 +229,35 @@ $factory->define(EligibilityBatch::class, function (Faker\Generator $faker) {
         'practice_id' => $practice->id,
         'type'        => EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE,
         'options'     => [],
+    ];
+});
+
+$factory->define(EligibilityJob::class, function (Faker\Generator $faker) {
+    $batch = factory(EligibilityBatch::class)->create();
+
+    return [
+        'batch_id' => $batch->id,
+        'data'     => [],
+    ];
+});
+
+$factory->define(Ehr::class, function (Faker\Generator $faker) {
+    return [
+        'name'               => "EHR: $faker->company",
+        'pdf_report_handler' => AthenaApiPdfHandler::class,
+    ];
+});
+
+$factory->define(TargetPatient::class, function (Faker\Generator $faker) {
+    $batch = factory(EligibilityBatch::class)->create();
+    $ehr = factory(Ehr::class)->create();
+
+    return [
+        'batch_id'          => $batch->id,
+        'practice_id'       => $batch->practice_id,
+        'ehr_id'            => $ehr->id,
+        'ehr_patient_id'    => $faker->numberBetween(1, 2),
+        'ehr_practice_id'   => $faker->numberBetween(1, 5000),
+        'ehr_department_id' => $faker->numberBetween(1, 10),
     ];
 });

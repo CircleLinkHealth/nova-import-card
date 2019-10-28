@@ -6,7 +6,7 @@
 
 namespace App;
 
-use App\Services\EligibilityCheck;
+use App\Services\EligibilityChecker;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \App\EligibilityBatch                                                          $batch
  * @property \App\Enrollee                                                                  $enrollee
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob eligible()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob newModelQuery()
@@ -80,6 +81,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withoutTrashed()
  * @mixin \Eloquent
+ *
  * @property \App\EligibilityJob $eligibilityJob
  * @property int|null            $revision_history_count
  */
@@ -206,10 +208,23 @@ class EligibilityJob extends BaseModel
     }
 
     /**
-     * Putting this here for conveniece.
-     * It is NOT safe to use as $batch may not exist. Should we make processing without a batch possible?
+     * Process Eligibility With Batch Options.
      *
-     * @todo: figure out above, buy beer
+     * @throws \Exception
+     *
+     * @return EligibilityChecker
+     */
+    public function process()
+    {
+        if ( ! $this->batch) {
+            throw new \Exception('A batch is necessary to process an eligibility job.');
+        }
+
+        return $this->processWithOptions($this->batch->shouldFilterLastEncounter(), $this->batch->shouldFilterInsurance(), $this->batch->shouldFilterProblems());
+    }
+
+    /**
+     * Process eligibility with given options.
      *
      * @param $filterLastEncounter
      * @param $filterInsurance
@@ -217,11 +232,15 @@ class EligibilityJob extends BaseModel
      *
      * @throws \Exception
      *
-     * @return EligibilityCheck
+     * @return EligibilityChecker
      */
-    public function process($filterLastEncounter, $filterInsurance, $filterProblems)
+    public function processWithOptions(bool $filterLastEncounter = false, bool $filterInsurance = false, bool $filterProblems = true)
     {
-        return new EligibilityCheck(
+        if ( ! $this->batch) {
+            throw new \Exception('A batch is necessary to process an eligibility job.');
+        }
+
+        return new EligibilityChecker(
             $this,
             $this->batch->practice,
             $this->batch,

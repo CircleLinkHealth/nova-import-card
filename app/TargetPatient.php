@@ -11,6 +11,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 
 /**
  * App\TargetPatient.
@@ -32,6 +33,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\Enrollee|null                                                             $enrollee
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User|null                                  $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient query()
@@ -49,16 +51,24 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereUserId($value)
  * @mixin \Eloquent
+ *
  * @property int                                          $practice_id
  * @property \App\EligibilityBatch|null                   $batch
  * @property \CircleLinkHealth\Customer\Entities\Practice $practice
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
+ *
  * @property int|null                             $ccda_id
  * @property \App\Models\MedicalRecords\Ccda|null $ccda
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
+ *
  * @property int|null $revision_history_count
- * @property int $department_id
+ * @property int      $department_id
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDepartmentId($value)
+ *
+ * @property \App\EligibilityJob|null $eligibilityJob
  */
 class TargetPatient extends BaseModel
 {
@@ -96,6 +106,11 @@ class TargetPatient extends BaseModel
         return $this->belongsTo(Ehr::class, 'ehr_id');
     }
 
+    public function eligibilityJob()
+    {
+        return $this->belongsTo(EligibilityJob::class);
+    }
+
     public function enrollee()
     {
         return $this->belongsTo(Enrollee::class, 'enrollee_id');
@@ -106,15 +121,46 @@ class TargetPatient extends BaseModel
         return $this->belongsTo(Practice::class);
     }
 
-    public function setStatusFromEligibilityJob(EligibilityJob $check)
+    /**
+     * @throws \Exception
+     *
+     * @return EligibilityJob
+     */
+    public function processEligibility()
     {
-        if ($check->isIneligible()) {
+        $this->loadMissing('batch');
+
+        if ( ! $this->batch) {
+            throw new \Exception('A batch is necessary to process a target patient.');
+        }
+
+        return tap(
+            app(AthenaEligibilityCheckableFactory::class)
+                ->makeAthenaEligibilityCheckable($this)
+                ->createAndProcessEligibilityJobFromMedicalRecord(),
+            function (EligibilityJob $eligibilityJob) {
+                $this->setStatusFromEligibilityJob($eligibilityJob);
+                $this->eligibility_job_id = $eligibilityJob->id;
+                $this->save();
+            }
+        );
+    }
+
+    public function setStatusFromEligibilityJob(EligibilityJob $eligibilityJob)
+    {
+        if ($eligibilityJob->isIneligible()) {
             $this->status = self::STATUS_INELIGIBLE;
-        } elseif ($check->isEligible() || $check->wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()) {
+        } elseif ($eligibilityJob->isEligible() || $eligibilityJob->wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()) {
             $this->status = self::STATUS_ELIGIBLE;
-        } elseif ($check->isAlreadyEnrolled()) {
+        } elseif ($eligibilityJob->isAlreadyEnrolled()) {
             $this->status = self::STATUS_ENROLLED;
         }
+    }
+
+    public function setStatusFromException(\Exception $e)
+    {
+        $this->status      = TargetPatient::STATUS_ERROR;
+        $this->description = $e->getMessage();
     }
 
     public function user()

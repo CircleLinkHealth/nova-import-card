@@ -21,7 +21,7 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <datepicker class="form-control pad-0" :class="{ error: !newAppointment.isPending() }" format="MM-dd-yyyy"
-                                            v-model="newAppointment.date" :disabled="{ to: today }" placeholder="MM-DD-YYYY" required></datepicker>
+                                            v-model="newAppointment.date" :disabledDates="{ to: today }" placeholder="MM-DD-YYYY" required></datepicker>
                                     </div>
                                     <div class="col-sm-6">
                                         <input type="time" class="form-control" :class="{ error: !newAppointment.isPending() }" v-model="newAppointment.time" required />
@@ -120,13 +120,14 @@
                 newAppointment: {
                     provider: null,
                     min: moment(new Date()).format('MM-DD-YYYY'),
-                    date: null,
+                    date: moment().add(1, 'days').format('MM-DD-YYYY'),
                     time: '09:00:00',
                     type: null,
                     comment: null,
                     isPending: () => (moment(this.newAppointmentDate + ' ' + this.newAppointment.time).toDate() > new Date())
                 },
-                today: moment().add(-1, 'days').toDate(),
+                // today: moment().add(-1, 'days').toDate(),
+                today: moment().toDate(),
                 selectedAppointment: null,
                 loaders: {
                     addAppointment: null,
@@ -153,7 +154,7 @@
             reset() {
                 this.newAppointment = {
                     provider: null,
-                    date: moment(new Date()).format('MM-DD-YYYY'),
+                    date: moment().add(1, 'days').format('MM-DD-YYYY'),
                     time: '09:00:00',
                     type: null,
                     comment: null,
@@ -277,5 +278,12 @@
 
     .vdp-datepicker.form-control.error div {
         border: 1px solid red;
+    }
+
+    .vdp-datepicker input[type="text"] {
+        border: none;
+        border-radius: 5px;
+        line-height: 29px;
+        padding-left: 12px;
     }
 </style>

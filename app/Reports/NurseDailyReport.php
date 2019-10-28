@@ -22,11 +22,11 @@ class NurseDailyReport
             ->where('access_disabled', 0)
             ->get();
 
-        $aggregatedTime = app(AggregatedTotalTimePerNurse::class, [
+        $aggregatedTime = new AggregatedTotalTimePerNurse(
             $nurse_users->pluck('id')->all(),
             $date->copy()->startOfDay(),
-            $date->copy()->endOfDay(),
-        ]);
+            $date->copy()->endOfDay()
+        );
 
         $nurses = [];
 

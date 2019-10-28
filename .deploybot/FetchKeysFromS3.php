@@ -11,7 +11,8 @@ use Aws\S3\S3Client;
 
 $hostname = gethostname();
 
-//staging
+//staging env
+//
 //@todo: clean this up
 if ('ip-10-0-1-17' === $hostname) {
     //keys need to be stored here
