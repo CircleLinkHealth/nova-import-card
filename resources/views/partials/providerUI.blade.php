@@ -13,6 +13,8 @@
         @endif
     @endif
 
+    <open-modal></open-modal>
+    <notifications ref="globalNotification"></notifications>
 
     @yield('content')
 
@@ -31,6 +33,5 @@
         }
     }
     ?>
-    <open-modal></open-modal>
-    <notifications ref="globalNotification"></notifications>
+
 @endsection
