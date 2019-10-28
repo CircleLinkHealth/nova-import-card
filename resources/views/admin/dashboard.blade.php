@@ -111,12 +111,6 @@
                     </div>
                 </div>
             </div>
-
-            @if(! isProductionEnv())
-                <div class="col-md-4">
-                    @include('patient.create-test-patients')
-                </div>
-            @endif
         </div>
     </div>
     </div>
