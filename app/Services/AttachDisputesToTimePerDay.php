@@ -62,9 +62,10 @@ class AttachDisputesToTimePerDay
             $date = Carbon::parse($disputes->disputed_day)->copy()->toDateString();
 
             $dailyDisputes[$date] = [
-                'suggestedTime' => $disputes->suggested_formatted_time,
-                'status'        => $disputes->status,
-                'invalidated'   => $this->checkForBonusesOnThisDate($invoice, $date),
+                'suggestedTime'         => $disputes->suggested_formatted_time,
+                'status'                => $disputes->status,
+                'disputedFormattedTime' => $disputes->disputed_formatted_time,
+                'invalidated'           => $this->checkForBonusesOnThisDate($invoice, $date),
             ];
         }
 
@@ -94,9 +95,10 @@ class AttachDisputesToTimePerDay
 
         foreach ($dailyDisputes as $day => $disputes) {
             if (array_key_exists($day, $timePerDay)) {
-                $timePerDay[$day]['suggestedTime'] = $disputes['suggestedTime'];
-                $timePerDay[$day]['status']        = $disputes['status'];
-                $timePerDay[$day]['invalidated']   = $disputes['invalidated'];
+                $timePerDay[$day]['suggestedTime']         = $disputes['suggestedTime'];
+                $timePerDay[$day]['disputedFormattedTime'] = $disputes['disputedFormattedTime'];
+                $timePerDay[$day]['status']                = $disputes['status'];
+                $timePerDay[$day]['invalidated']           = $disputes['invalidated'];
             }
         }
 
