@@ -150,6 +150,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property mixed      $agent
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAgentDetails($value)
+ *
+ * @property null $agent
  */
 class Enrollee extends BaseModel
 {
@@ -159,7 +161,7 @@ class Enrollee extends BaseModel
     const AGENT_EMAIL_KEY        = 'email';
     const AGENT_NAME_KEY         = 'name';
     const AGENT_PHONE_KEY        = 'phone';
-    const AGENT_RELATIONSHIP_KEY = 'name';
+    const AGENT_RELATIONSHIP_KEY = 'relationship';
 
     /**
      * status = consented.
@@ -335,7 +337,6 @@ class Enrollee extends BaseModel
         if (empty($this->agent_details)) {
             return null;
         }
-
         if ( ! array_key_exists($key, $this->agent_details)) {
             return null;
         }
@@ -485,7 +486,14 @@ class Enrollee extends BaseModel
     public function scopeToCall($query)
     {
         //@todo add check for where phones are not all null
-        return $query->where('status', self::TO_CALL);
+
+        return $query->where('status', self::TO_CALL)
+            ->orWhere(
+                function ($q) {
+                    $q->where('status', '=', 'soft_rejected')
+                        ->where('requested_callback', '<=', Carbon::now()->toDateString());
+                }
+            );
     }
 
     public function scopeToSMS($query)
