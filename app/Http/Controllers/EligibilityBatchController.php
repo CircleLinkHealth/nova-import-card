@@ -63,6 +63,7 @@ class EligibilityBatchController extends Controller
             $headers = [];
 
             InsuranceLog::whereMedicalRecordType(Ccda::class)
+                ->distinct()
                 ->whereNotNull('raw')
                 ->join('target_patients', 'target_patients.ccda_id', '=', 'insurance_logs.medical_record_id')
                 ->where('target_patients.batch_id', $batch->id)
@@ -121,6 +122,7 @@ class EligibilityBatchController extends Controller
             $headers = [];
 
             InsuranceLog::whereMedicalRecordType(Ccda::class)
+                ->distinct()
                 ->whereNotNull('raw')
                 ->join('target_patients', 'target_patients.ccda_id', '=', 'insurance_logs.medical_record_id')
                 ->where('target_patients.batch_id', $batch->id)

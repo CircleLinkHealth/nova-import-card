@@ -67,6 +67,8 @@ use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
  * @property int      $department_id
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereDepartmentId($value)
+ *
+ * @property \App\EligibilityJob|null $eligibilityJob
  */
 class TargetPatient extends BaseModel
 {
@@ -104,6 +106,11 @@ class TargetPatient extends BaseModel
         return $this->belongsTo(Ehr::class, 'ehr_id');
     }
 
+    public function eligibilityJob()
+    {
+        return $this->belongsTo(EligibilityJob::class);
+    }
+
     public function enrollee()
     {
         return $this->belongsTo(Enrollee::class, 'enrollee_id');
@@ -133,6 +140,8 @@ class TargetPatient extends BaseModel
                 ->createAndProcessEligibilityJobFromMedicalRecord(),
             function (EligibilityJob $eligibilityJob) {
                 $this->setStatusFromEligibilityJob($eligibilityJob);
+                $this->eligibility_job_id = $eligibilityJob->id;
+                $this->save();
             }
         );
     }

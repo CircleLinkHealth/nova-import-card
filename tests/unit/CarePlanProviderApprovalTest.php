@@ -51,7 +51,7 @@ class CarePlanProviderApprovalTest extends TestCase
 
         //Setup Practice and Location
         $this->practice = Practice::first() ?? factory(Practice::class)->create();
-        $this->location = factory(Location::class)->create([
+        $this->location = Location::firstOrCreate([
             'practice_id' => $this->practice->id,
         ]);
 
