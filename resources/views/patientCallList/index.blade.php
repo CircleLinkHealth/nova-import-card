@@ -244,7 +244,8 @@ function formatTime($time)
                                                     <td class="{{ \Carbon\Carbon::parse($call->scheduled_date)->lessThan(\Carbon\Carbon::today()) ? 'red' : '' }}">
                                                         {{ presentDate($call->scheduled_date, false) }}
                                                     </td>
-                                                    @if($call->asap === 1 && $curDate <= $call->scheduled_date)
+                                                    {{--What do we want to do here? show ASAP forever or??--}}
+                                                    @if($call->asap === 1 && $curDate <= $call->scheduled_date && $call->status !== 'reached')
                                                         <td>{{ 'ASAP' }}</td>
                                                         <td>{{ 'N/A' }}</td>
                                                     @else
