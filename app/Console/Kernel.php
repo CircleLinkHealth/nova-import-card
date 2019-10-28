@@ -13,7 +13,6 @@ use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
-use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
@@ -168,11 +167,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckEmrDirectInbox::class)
             ->everyFiveMinutes()
             ->withoutOverlapping()->onOneServer();
-
-        $schedule->command(DeleteProcessedFiles::class)
-            ->everyThirtyMinutes()
-            ->withoutOverlapping()->onOneServer();
-
+        
         //uncomment when ready
 //        $schedule->command(DownloadTwilioRecordings::class)
 //                 ->everyThirtyMinutes()
