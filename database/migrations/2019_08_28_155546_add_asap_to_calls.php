@@ -23,7 +23,7 @@ class AddAsapToCalls extends Migration
     public function up()
     {
         Schema::table('calls', function (Blueprint $table) {
-            $table->boolean('asap');
+            $table->boolean('asap')->default(false);
         });
     }
 }

@@ -53,7 +53,7 @@ class StoreJiraTicketsDeployed extends Command
         $isRollback            = 1 == $this->argument('rollback')
             ? true
             : false;
-        $user    = $this->argument('userName');
+        $user = $this->argument('userName');
 
         $this->info('previousRevision: '.$lastDeployedRevision);
         $this->info('currentRevision: '.$newlyDeployedRevision);
@@ -94,7 +94,7 @@ class StoreJiraTicketsDeployed extends Command
             }
         );
 
-        $loginLink = config('opcache.url');
+        $loginLink = config('app.url');
         $message .= "\n Login at: $loginLink";
 
         $stored = file_put_contents(storage_path('jira-tickets-deployed'), json_encode(['message' => $message]));
@@ -102,5 +102,7 @@ class StoreJiraTicketsDeployed extends Command
         if (false === $stored) {
             throw new \Exception('Could not store file');
         }
+
+        $this->line('Jira tickets file successfully created');
     }
 }
