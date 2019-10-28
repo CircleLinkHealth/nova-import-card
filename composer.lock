@@ -44,8 +44,8 @@
             "authors": [
                 {
                     "name": "Alex Bowers",
-                    "email": "bowersbros@gmail.com",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "bowersbros@gmail.com"
                 }
             ],
             "description": "A tool to allow BelongsTo searchable fields to be pre-populated with data",
@@ -294,9 +294,9 @@
             "authors": [
                 {
                     "name": "Olav van Schie",
+                    "role": "Developer",
                     "email": "hello@appstract.team",
-                    "homepage": "https://appstract.team",
-                    "role": "Developer"
+                    "homepage": "https://appstract.team"
                 }
             ],
             "description": "OPcache helper for Laravel.",
@@ -350,9 +350,9 @@
             "authors": [
                 {
                     "name": "Olav van Schie",
+                    "role": "Developer",
                     "email": "hello@appstract.team",
-                    "homepage": "https://appstract.team",
-                    "role": "Developer"
+                    "homepage": "https://appstract.team"
                 }
             ],
             "description": "Smart Http Client for PHP.",
@@ -695,12 +695,11 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-development",
+            "version": "dev-nurse_invoice_daily_dispute_total_change_on_approval",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5",
-                "shasum": null
+                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5"
             },
             "require": {
                 "php": ">=7.1.0",
@@ -1074,16 +1073,16 @@
         },
         {
             "name": "doctrine/cache",
-            "version": "v1.8.0",
+            "version": "v1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/cache.git",
-                "reference": "d768d58baee9a4862ca783840eca1b9add7a7f57"
+                "reference": "d4374ae95b36062d02ef310100ed33d78738d76c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/cache/zipball/d768d58baee9a4862ca783840eca1b9add7a7f57",
-                "reference": "d768d58baee9a4862ca783840eca1b9add7a7f57",
+                "url": "https://api.github.com/repos/doctrine/cache/zipball/d4374ae95b36062d02ef310100ed33d78738d76c",
+                "reference": "d4374ae95b36062d02ef310100ed33d78738d76c",
                 "shasum": ""
             },
             "require": {
@@ -1119,16 +1118,16 @@
             ],
             "authors": [
                 {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
                     "name": "Roman Borschel",
                     "email": "roman@code-factory.org"
                 },
                 {
                     "name": "Benjamin Eberlei",
                     "email": "kontakt@beberlei.de"
-                },
-                {
-                    "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com"
                 },
                 {
                     "name": "Jonathan Wage",
@@ -1145,7 +1144,7 @@
                 "cache",
                 "caching"
             ],
-            "time": "2018-08-21T18:01:43+00:00"
+            "time": "2019-10-28T09:31:32+00:00"
         },
         {
             "name": "doctrine/dbal",
@@ -2022,16 +2021,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.119",
+            "version": "v0.120",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "580beda87338639b18fc2135b8945d4f898fefae"
+                "reference": "ddf9d37944bf3f1420363d135622ddb7d667dcb6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/580beda87338639b18fc2135b8945d4f898fefae",
-                "reference": "580beda87338639b18fc2135b8945d4f898fefae",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/ddf9d37944bf3f1420363d135622ddb7d667dcb6",
+                "reference": "ddf9d37944bf3f1420363d135622ddb7d667dcb6",
                 "shasum": ""
             },
             "require": {
@@ -2055,7 +2054,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2019-10-18T00:23:50+00:00"
+            "time": "2019-10-27T00:24:10+00:00"
         },
         {
             "name": "google/auth",
@@ -3909,8 +3908,8 @@
             "authors": [
                 {
                     "name": "Luís Otávio Cobucci Oblonczyk",
-                    "email": "lcobucci@gmail.com",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "lcobucci@gmail.com"
                 }
             ],
             "description": "A simple library to work with JSON Web Token and JSON Web Signature",
@@ -4647,14 +4646,8 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
-                "reference": "6a42f69cd6dd2e47724879f6234ce81b2cb688a2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/michalisantoniou6/laravel-cerberus/zipball/6a42f69cd6dd2e47724879f6234ce81b2cb688a2",
-                "reference": "6a42f69cd6dd2e47724879f6234ce81b2cb688a2",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
+                "reference": "a70637130916aad3f5f4bda25080550f0fef5551"
             },
             "require": {
                 "illuminate/cache": "~5.0",
@@ -4687,18 +4680,22 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "classmap": [
+                    "tests/Middleware/MiddlewareTest.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "Andrew Elkins",
-                    "homepage": "http://andrewelkins.com"
-                },
-                {
                     "name": "Zizaco Zizuini",
                     "email": "zizaco@gmail.com"
+                },
+                {
+                    "name": "Andrew Elkins",
+                    "homepage": "http://andrewelkins.com"
                 },
                 {
                     "name": "Ben Batschelet",
@@ -4723,7 +4720,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2019-05-06T11:55:53+00:00"
+            "time": "2019-04-05T19:26:30+00:00"
         },
         {
             "name": "mindscape/raygun4php",
@@ -6024,8 +6021,8 @@
             "authors": [
                 {
                     "name": "Antonio Carlos Ribeiro",
-                    "email": "acr@antoniocarlosribeiro.com",
-                    "role": "Creator & Designer"
+                    "role": "Creator & Designer",
+                    "email": "acr@antoniocarlosribeiro.com"
                 }
             ],
             "description": "Take control over your Laravel app version",
@@ -6084,8 +6081,8 @@
             "authors": [
                 {
                     "name": "Antonio Carlos Ribeiro",
-                    "email": "acr@antoniocarlosribeiro.com",
-                    "role": "Creator & Designer"
+                    "role": "Creator & Designer",
+                    "email": "acr@antoniocarlosribeiro.com"
                 }
             ],
             "description": "Load your Laravel config files using yaml",
@@ -6578,16 +6575,16 @@
         },
         {
             "name": "pusher/pusher-php-server",
-            "version": "v4.0.0",
+            "version": "v4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pusher/pusher-http-php.git",
-                "reference": "43540be9536469f8eaec95a347d3f7532bac852c"
+                "reference": "f88698f332f3f398fa683f9a5b6b2409f1748f73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/43540be9536469f8eaec95a347d3f7532bac852c",
-                "reference": "43540be9536469f8eaec95a347d3f7532bac852c",
+                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/f88698f332f3f398fa683f9a5b6b2409f1748f73",
+                "reference": "f88698f332f3f398fa683f9a5b6b2409f1748f73",
                 "shasum": ""
             },
             "require": {
@@ -6628,7 +6625,7 @@
                 "rest",
                 "trigger"
             ],
-            "time": "2019-06-25T09:22:44+00:00"
+            "time": "2019-10-28T11:51:09+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -7034,9 +7031,9 @@
             "authors": [
                 {
                     "name": "Freek Van der Herten",
+                    "role": "Developer",
                     "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
+                    "homepage": "https://spatie.be"
                 }
             ],
             "description": "Manipulate images with an expressive API",
@@ -7084,9 +7081,9 @@
             "authors": [
                 {
                     "name": "Freek Van der Herten",
+                    "role": "Developer",
                     "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
+                    "homepage": "https://spatie.be"
                 }
             ],
             "description": "Easily optimize images using PHP",
@@ -9016,18 +9013,12 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/VentureCraft/revisionable.git",
-                "reference": "4e288ba15f82a5614cf10bc18698cc8a8f374498"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/VentureCraft/revisionable/zipball/4e288ba15f82a5614cf10bc18698cc8a8f374498",
-                "reference": "4e288ba15f82a5614cf10bc18698cc8a8f374498",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/revisionable.git",
+                "reference": "40018d189c253eb49ee59ee54ade332ca2cef497"
             },
             "require": {
-                "illuminate/support": "~4.0|~5.0|~5.1|^6.0",
-                "laravel/framework": "~5.4|^6.0",
+                "illuminate/support": "~4.0|~5.0|~5.1",
+                "laravel/framework": "~5.4",
                 "php": ">=5.4.0"
             },
             "require-dev": {
@@ -9042,7 +9033,11 @@
                     "Venturecraft\\Revisionable": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Venturecraft\\Revisionable\\Tests\\": "tests/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -9055,14 +9050,19 @@
             "description": "Keep a revision history for your models without thinking, created as a package for use with Laravel",
             "homepage": "http://github.com/venturecraft/revisionable",
             "keywords": [
-                "Audit",
                 "ardent",
+                "audit",
                 "history",
                 "laravel",
                 "model",
                 "revision"
             ],
-            "time": "2019-09-23T21:20:15+00:00"
+            "support": {
+                "issues": "https://github.com/VentureCraft/revisionable/issues",
+                "source": "https://github.com/VentureCraft/revisionable"
+            },
+            "abandoned": true,
+            "time": "2019-10-02T20:12:15+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -9628,9 +9628,9 @@
             "authors": [
                 {
                     "name": "Brian",
+                    "role": "Lead",
                     "email": "scaturrob@gmail.com",
-                    "homepage": "http://brianscaturro.com",
-                    "role": "Lead"
+                    "homepage": "http://brianscaturro.com"
                 }
             ],
             "description": "A dependable php environment",
@@ -10451,8 +10451,8 @@
             "authors": [
                 {
                     "name": "Filipe Dobreira",
-                    "homepage": "https://github.com/filp",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "homepage": "https://github.com/filp"
                 }
             ],
             "description": "php error handling for cool kids",
@@ -11189,18 +11189,18 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 },
                 {
                     "name": "Sebastian Heuer",
-                    "email": "sebastian@phpeople.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpeople.de"
                 },
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Component for reading phar.io manifest information from a PHP Archive (PHAR)",
@@ -11771,16 +11771,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.16",
+            "version": "7.5.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "316afa6888d2562e04aeb67ea7f2017a0eb41661"
+                "reference": "4c92a15296e58191a4cd74cff3b34fc8e374174a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/316afa6888d2562e04aeb67ea7f2017a0eb41661",
-                "reference": "316afa6888d2562e04aeb67ea7f2017a0eb41661",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/4c92a15296e58191a4cd74cff3b34fc8e374174a",
+                "reference": "4c92a15296e58191a4cd74cff3b34fc8e374174a",
                 "shasum": ""
             },
             "require": {
@@ -11851,7 +11851,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-09-14T09:08:39+00:00"
+            "time": "2019-10-28T10:37:36+00:00"
         },
         {
             "name": "react/event-loop",
@@ -12608,16 +12608,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.5.1",
+            "version": "3.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "82cd0f854ceca17731d6d019c7098e3755c45060"
+                "reference": "65b12cdeaaa6cd276d4c3033a95b9b88b12701e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/82cd0f854ceca17731d6d019c7098e3755c45060",
-                "reference": "82cd0f854ceca17731d6d019c7098e3755c45060",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/65b12cdeaaa6cd276d4c3033a95b9b88b12701e7",
+                "reference": "65b12cdeaaa6cd276d4c3033a95b9b88b12701e7",
                 "shasum": ""
             },
             "require": {
@@ -12655,7 +12655,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2019-10-16T21:14:26+00:00"
+            "time": "2019-10-28T04:36:32+00:00"
         },
         {
             "name": "swagger-api/swagger-ui",
@@ -13021,8 +13021,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
@@ -13301,7 +13301,9 @@
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20
+        "xethron/migrations-generator": 20,
+        "venturecraft/revisionable": 20,
+        "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
