@@ -6,6 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\Ehr;
+
 class Constants
 {
     const CACHE_USER_HAS_CCDA = 'user:{$userId}:has_ccda';
@@ -60,4 +62,11 @@ class Constants
     const SNOMED          = 'snomed_code';
     const SNOMED_NAME     = 'SNOMED CT';
     const VIEWING_PATIENT = 'viewing-patient';
+
+    public static function athenaEhrId()
+    {
+        return \Cache::remember('athena_ehr_id_in_cpm', 5, function () {
+            return optional(Ehr::whereName('Athena')->firstOrFail())->id;
+        });
+    }
 }

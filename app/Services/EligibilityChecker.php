@@ -26,7 +26,7 @@ use Validator;
 /**
  * @property null medicalRecordType
  */
-class EligibilityCheck
+class EligibilityChecker
 {
     use ValidatesEligibility;
 
@@ -74,7 +74,7 @@ class EligibilityCheck
     private $practice;
 
     /**
-     * EligibilityCheck constructor.
+     * EligibilityChecker constructor.
      *
      * @param EligibilityJob   $eligibilityJob
      * @param Practice         $practice
@@ -87,9 +87,9 @@ class EligibilityCheck
      * @throws \Exception
      */
     public function __construct(
-        EligibilityJob $eligibilityJob,
+        EligibilityJob &$eligibilityJob,
         Practice $practice,
-        EligibilityBatch $batch,
+        EligibilityBatch &$batch,
         $filterLastEncounter = false,
         $filterInsurance = false,
         $filterProblems = true,
@@ -209,7 +209,7 @@ class EligibilityCheck
             ['insurance' => 'No insurance plans found.'],
             EligibilityJob::INELIGIBLE,
             'insurance'
-                );
+        );
 
         return false;
     }
@@ -217,7 +217,7 @@ class EligibilityCheck
     /**
      * Removes Patients whose last encounter was before Feb. 1st, 2016 from the list.
      *
-     * @return EligibilityCheck
+     * @return bool
      */
     protected function validateLastEncounter(): bool
     {
@@ -240,7 +240,7 @@ class EligibilityCheck
                 3,
                 ['last_encounter' => 'Last encounter field not found, or is null.'],
                 EligibilityJob::INELIGIBLE
-                );
+            );
 
             return false;
         }
@@ -261,7 +261,7 @@ class EligibilityCheck
                     'last_encounter' => implode(
                         ',',
                         $validator->messages()->all()
-                                        )." value: `${lastEncounter}`",
+                    )." value: `${lastEncounter}`",
                 ],
                 EligibilityJob::INELIGIBLE,
                 'last_encounter'
@@ -304,12 +304,12 @@ class EligibilityCheck
                             $problem->searchKeywords = collect(
                                 explode(',', $problem->contains),
                                 [$problem->name]
-                                         )
+                            )
                                 ->transform(
                                     function ($keyword) {
                                         return trim(strtolower($keyword));
                                     }
-                                             )
+                                )
                                 ->filter()
                                 ->unique()
                                 ->values()
@@ -317,7 +317,7 @@ class EligibilityCheck
 
                             return $problem;
                         }
-                                 );
+                    );
             }
         );
 
@@ -647,6 +647,11 @@ class EligibilityCheck
         if ( ! is_array($args)) {
             throw new \Exception('$args is expected to be an array. '.EligibilityJob::class.':'.$this->eligibilityJob->id);
         }
+
+        $args['primary_insurance']   = $this->eligibilityJob->primary_insurance;
+        $args['secondary_insurance'] = $this->eligibilityJob->secondary_insurance;
+        $args['tertiary_insurance']  = $this->eligibilityJob->tertiary_insurance;
+
         if (isset($args['insurance_plans']) || isset($args['insurance_plan'])) {
             $args = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($args);
         }
@@ -685,7 +690,7 @@ class EligibilityCheck
             $args['problems'] = json_encode($args['problems']);
         }
 
-        if (array_key_exists('insurances', $args) && ! array_key_exists('primary_insurance', $args)) {
+        if (array_key_exists('insurances', $args) && ! (array_key_exists('primary_insurance', $args) && ! empty($args['primary_insurance']))) {
             $insurances = is_array($args['insurances'])
                 ? collect($args['insurances'])
                 : $args['insurances'];
@@ -776,35 +781,35 @@ class EligibilityCheck
                             function ($q) use ($args) {
                                 $q->withTrashed()->whereMrnNumber($args['mrn']);
                             }
-                                               );
+                        );
                 }
-                                     )->orWhere(
-                                         function ($u) use ($args) {
-                                             $u->where(
-                                                 [
-                                                     [
-                                                         'program_id',
-                                                         '=',
-                                                         $args['practice_id'],
-                                                     ],
-                                                     [
-                                                         'first_name',
-                                                         '=',
-                                                         $args['first_name'],
-                                                     ],
-                                                     [
-                                                         'last_name',
-                                                         '=',
-                                                         $args['last_name'],
-                                                     ],
-                                                 ]
+            )->orWhere(
+                function ($u) use ($args) {
+                    $u->where(
+                        [
+                            [
+                                'program_id',
+                                '=',
+                                $args['practice_id'],
+                            ],
+                            [
+                                'first_name',
+                                '=',
+                                $args['first_name'],
+                            ],
+                            [
+                                'last_name',
+                                '=',
+                                $args['last_name'],
+                            ],
+                        ]
                     )->whereHas(
                         'patientInfo',
                         function ($q) use ($args) {
                             $q->withTrashed()->whereBirthDate($args['dob']);
                         }
                     );
-                                         }
+                }
             )->first();
 
         $duplicateMySqlError = false;
@@ -817,7 +822,7 @@ class EligibilityCheck
                     'duplicate' => 'This patient already has a careplan. '.route(
                         'patient.careplan.print',
                         [$enrolledPatientExists->id]
-                        ),
+                    ),
                 ],
                 EligibilityJob::ENROLLED
             );
@@ -843,7 +848,7 @@ class EligibilityCheck
             }
         }
 
-        if ($enrolleeExists) {
+        if ($enrolleeExists && $enrolleeExists->batch_id !== $this->batch->id) {
             $batchInfo = $enrolleeExists->batch_id
                 ? " in batch {$enrolleeExists->batch_id}"
                 : '';
@@ -943,8 +948,9 @@ class EligibilityCheck
         $i = 0;
 
         foreach ($record['insurances'] as $insurance) {
-            if ($this->eligibilityJob && ! empty($insurance) && $i < 3) {
-                switch ($i) {
+            if (array_key_exists('type', $insurance)) {
+                if ($this->eligibilityJob && ! empty($insurance) && $i < 3) {
+                    switch ($i) {
                     case 0:
                         $this->eligibilityJob->primary_insurance = $insurance['type'];
 
@@ -956,12 +962,54 @@ class EligibilityCheck
                         break;
                     case 1:
                         $this->eligibilityJob->secondary_insurance = $insurance['type'];
+
+                        if (str_contains(strtolower($insurance['type']), 'medicare')
+                        ) {
+                            $isEligible = true;
+                        }
+
                         break;
                     case 2:
                         $this->eligibilityJob->tertiary_insurance = $insurance['type'];
+
+                        if (str_contains(strtolower($insurance['type']), 'medicare')
+                        ) {
+                            $isEligible = true;
+                        }
+
                         break;
                     default:
                         break;
+                }
+
+                    ++$i;
+                }
+            } elseif (array_keys_exist(['insurancetype', 'insuranceplanname'], $insurance)) {
+                //Athena
+
+                if (0 === $i) {
+                    $this->eligibilityJob->primary_insurance = $insurance['insuranceplanname'].'('.$insurance['insurancetype'].')' ?? '';
+
+                    if (str_contains(strtolower($this->eligibilityJob->primary_insurance), 'medicare')
+                    ) {
+                        $isEligible = true;
+                    }
+                }
+                if (1 === $i) {
+                    $this->eligibilityJob->secondary_insurance = $insurance['insuranceplanname'].'('.$insurance['insurancetype'].')' ?? '';
+
+                    if (str_contains(strtolower($this->eligibilityJob->secondary_insurance), 'medicare')
+                    ) {
+                        $isEligible = true;
+                    }
+                }
+                if (2 === $i) {
+                    $this->eligibilityJob->tertiary_insurance = $insurance['insuranceplanname'].'('.$insurance['insurancetype'].')' ?? '';
+
+                    if (str_contains(strtolower($this->eligibilityJob->tertiary_insurance), 'medicare')
+                    ) {
+                        $isEligible = true;
+                    }
                 }
 
                 ++$i;

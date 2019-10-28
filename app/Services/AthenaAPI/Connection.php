@@ -146,6 +146,11 @@ class Connection
         return $this->token;
     }
 
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
     /**
      * Perform at HTTP POST request and return an associative array of the API response.
      *

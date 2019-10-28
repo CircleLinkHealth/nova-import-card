@@ -72,6 +72,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\User|null     $provider
  * @property mixed                                             $primary_phone_number
  * @property \CircleLinkHealth\Customer\Entities\User|null     $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toCall()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toSMS()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAddress($value)
@@ -122,6 +123,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereZip($value)
  * @mixin \Eloquent
+ *
  * @property int|null                 $batch_id
  * @property int|null                 $eligibility_job_id
  * @property int|null                 $care_ambassador_user_id
@@ -132,6 +134,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property mixed                                                                          $primary_phone_e164
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property \App\TargetPatient                                                             $targetPatient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee newQuery()
@@ -141,13 +144,23 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereEligibilityJobId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSoftRejectedCallback($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereRequestedCallback($value)
- * @property int|null $revision_history_count
+ *
+ * @property int|null   $revision_history_count
  * @property mixed|null $agent_details
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAgentDetails($value)
+ *
+ * @property null $agent
  */
 class Enrollee extends BaseModel
 {
     use Filterable;
+
+    // Agent array keys
+    const AGENT_EMAIL_KEY        = 'email';
+    const AGENT_NAME_KEY         = 'name';
+    const AGENT_PHONE_KEY        = 'phone';
+    const AGENT_RELATIONSHIP_KEY = 'relationship';
 
     /**
      * status = consented.
@@ -160,6 +173,11 @@ class Enrollee extends BaseModel
     const ELIGIBLE = 'eligible';
 
     /**
+     * status = engaged. When a care ambassador has viewed an enrollee but hasn't actually performed any action on them.
+     */
+    const ENGAGED = 'engaged';
+
+    /**
      * status = enrolled.
      */
     const ENROLLED = 'enrolled';
@@ -168,6 +186,11 @@ class Enrollee extends BaseModel
      * status = ineligible.
      */
     const INELIGIBLE = 'ineligible';
+
+    /**
+     * status = legacy. These are enrolees who have existed in our system before releasing the care ambassador channel.
+     */
+    const LEGACY = 'legacy';
 
     /**
      * status = rejected.
@@ -213,6 +236,11 @@ class Enrollee extends BaseModel
         'tertiary_insurance',
         'has_copay',
         'email',
+        'agent_details',
+    ];
+
+    protected $casts = [
+        'agent_details' => 'array',
     ];
 
     protected $dates = [
@@ -283,6 +311,9 @@ class Enrollee extends BaseModel
         'cpm_problem_2',
 
         'requested_callback',
+
+        //contains array of agent details, similar to patient_info fields
+        'agent_details',
     ];
 
     protected $table = 'enrollees';
@@ -295,6 +326,21 @@ class Enrollee extends BaseModel
     public function eligibilityJob()
     {
         return $this->belongsTo(EligibilityJob::class);
+    }
+
+    /**
+     * @param mixed $key
+     */
+    public function getAgentAttribute($key)
+    {
+        if (empty($this->agent_details)) {
+            return null;
+        }
+        if ( ! array_key_exists($key, $this->agent_details)) {
+            return null;
+        }
+
+        return $this->agent_details[$key];
     }
 
     /**
@@ -437,11 +483,11 @@ class Enrollee extends BaseModel
 
         return $query->where('status', self::TO_CALL)
             ->orWhere(
-                function ($q) {
-                    $q->where('status', '=', 'soft_rejected')
-                        ->where('requested_callback', '<=', Carbon::now()->toDateString());
-                }
-            );
+                         function ($q) {
+                             $q->where('status', '=', 'soft_rejected')
+                                 ->where('requested_callback', '<=', Carbon::now()->toDateString());
+                         }
+                     );
     }
 
     public function scopeToSMS($query)
