@@ -255,11 +255,14 @@ class WorkScheduleController extends Controller
 
         $workScheduleData = $dataRequest;
 
-        $eventDate       = $workScheduleData['date'];
-        $nurseInfoId     = $workScheduleData['nurse_info_id'];
-        $windowTimeStart = $workScheduleData['window_time_start'];
-        $windowTimeEnd   = $workScheduleData['window_time_end'];
-        $repeatFrequency = $workScheduleData['repeat_freq']; //@todo: replace with $vars
+        $eventDate         = $workScheduleData['date'];
+        $nurseInfoId       = $workScheduleData['nurse_info_id'];
+        $windowTimeStart   = $workScheduleData['window_time_start'];
+        $windowTimeEnd     = $workScheduleData['window_time_end'];
+        $repeatFrequency   = $workScheduleData['repeat_freq']; //@todo: replace with $vars
+        $windowDayOfWeek   = $workScheduleData['day_of_week'];
+        $windowRepeatUntil = $workScheduleData['until'];
+        $updateCollisions  = null === $workScheduleData['updateCollisions'] ? false : $workScheduleData['updateCollisions'];
 
         $isAdmin     = auth()->user()->isAdmin();
         $nurseInfoId = $isAdmin
@@ -276,49 +279,27 @@ class WorkScheduleController extends Controller
             'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
         ]);
 
-        $windowExists = NurseContactWindow::where([
-            [
-                'nurse_info_id',
-                '=',
-                $nurseInfoId,
-            ],
-            [
-                'window_time_end',
-                '>=',
-                $workScheduleData['window_time_start'],
-            ],
-            [
-                'window_time_start',
-                '<=',
-                $workScheduleData['window_time_end'],
-            ],
-            [
-                'day_of_week',
-                '=',
-                $workScheduleData['day_of_week'],
-            ],
-        ])->first();
-
-        $hoursSum = NurseContactWindow::where([
+        $windowExists = $this->fullCalendarService->checkIfWindowsExists($nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate);
+        $hoursSum     = NurseContactWindow::where([
             ['nurse_info_id', '=', $nurseInfoId],
             ['day_of_week', '=', $workScheduleData['day_of_week']],
         ])
             ->get()
             ->sum(function ($window) {
-                    return Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_end
-                    )->diffInHours(Carbon::createFromFormat(
+                return Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_end
+                )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
-                }) + Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_end']
-                )->diffInHours(Carbon::createFromFormat(
+            }) + Carbon::createFromFormat(
                 'H:i',
-                $workScheduleData['window_time_start']
-            ));
+                $workScheduleData['window_time_end']
+            )->diffInHours(Carbon::createFromFormat(
+                    'H:i',
+                    $workScheduleData['window_time_start']
+                ));
 
         $invalidWorkHoursNumber = false;
 
@@ -357,13 +338,24 @@ class WorkScheduleController extends Controller
         if ($isAdmin) {
             $user = auth()->user();
             if ('does_not_repeat' !== $repeatFrequency) {
-                $window    = NurseContactWindow::first();
-                $setRepeat = 'weekly';
-                if ($repeatFrequency !== $setRepeat) {
-                    $setRepeat = $repeatFrequency;
-                } //@todo: validate if date exists and act.
-                $recurringEventsToSave = $this->fullCalendarService->createRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $setRepeat);
-                CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window)->onQueue('low');
+//                $window                   = NurseContactWindow::first(); //@todo: Try and fix this
+                $recurringEventsToSave    = $this->fullCalendarService->createRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency, $windowRepeatUntil);
+                $confirmationNeededEvents = $this->fullCalendarService->getEventsToAskConfirmation($recurringEventsToSave);
+
+                if ( ! empty($confirmationNeededEvents) && ! $updateCollisions) {
+                    $collidingDates = $this->fullCalendarService->getCollidingDates($confirmationNeededEvents);
+
+                    return response()->json([
+                        'errors'    => 'Validation Failed',
+                        'validator' => $validator->getMessageBag()->add(
+                            'window_time_start',
+                            "This window is overlapping with an already existing window in $collidingDates."
+                        ),
+                        'collidingEvents' => $confirmationNeededEvents,
+                    ], 422);
+                }
+
+                CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $updateCollisions)->onQueue('low');
             } else {
                 $window = $this->nurseContactWindows->create([
                     'nurse_info_id' => $nurseInfoId,
@@ -457,6 +449,6 @@ class WorkScheduleController extends Controller
     protected function canAddNewWindow(Carbon $date)
     {
         return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
-                || $date->gt($this->nextWeekEnd);
+            || $date->gt($this->nextWeekEnd);
     }
 }

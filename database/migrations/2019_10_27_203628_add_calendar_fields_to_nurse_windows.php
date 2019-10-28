@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColumsToNurseContactWindow extends Migration
+class AddCalendarFieldsToNurseWindows extends Migration
 {
     /**
      * Reverse the migrations.
@@ -17,8 +17,6 @@ class AddColumsToNurseContactWindow extends Migration
     {
         Schema::table('nurse_contact_window', function (Blueprint $table) {
             $table->dropColumn('repeat_frequency');
-            $table->dropColumn('manually_saved');
-            $table->dropColumn('exclude_events_dates');
             $table->dropColumn('until');
             $table->dropColumn('validated');
         });
@@ -31,11 +29,8 @@ class AddColumsToNurseContactWindow extends Migration
     {
         Schema::table('nurse_contact_window', function (Blueprint $table) {
             $table->enum('repeat_frequency', ['daily', 'monthly', 'weekly', 'does_not_repeat'])->nullable();
-            $table->boolean('manually_edited')->default(false);
-            $table->boolean('manually_created')->default(false);
             $table->date('until')->nullable();
             $table->enum('validated', ['not_checked', 'worked', 'not_worked'])->default('not_checked');
-            $table->dateTime('hide_from_calendar')->nullable();
         });
     }
 }

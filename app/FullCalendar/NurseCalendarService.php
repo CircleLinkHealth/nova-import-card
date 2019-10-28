@@ -7,9 +7,12 @@
 namespace App\FullCalendar;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class NurseCalendarService
 {
@@ -18,6 +21,46 @@ class NurseCalendarService
     const LABEL   = 'label';
     const START   = 'start';
     const TITLE   = 'title';
+
+    /**
+     * @param $nurseInfoId
+     * @param $windowTimeStart
+     * @param $windowTimeEnd
+     * @param $windowDayOfWeek
+     * @param mixed $windowDate
+     *
+     * @return Builder|Model|object|null
+     */
+    public function checkIfWindowsExists($nurseInfoId, $windowTimeStart, $windowTimeEnd, $windowDate)
+    {
+        return NurseContactWindow::where([
+            [
+                'nurse_info_id',
+                '=',
+                $nurseInfoId,
+            ],
+            [
+                'window_time_end',
+                '>=',
+                $windowTimeStart,
+            ],
+            [
+                'window_time_start',
+                '<=',
+                $windowTimeEnd,
+            ],
+            [
+                'date',
+                '=',
+                $windowDate,
+            ],
+            //            [
+            //                'day_of_week',
+            //                '=',
+            //                $windowDayOfWeek,
+            //            ],
+        ])->first();
+    }
 
     /**
      * @param $diffRange
@@ -56,21 +99,24 @@ class NurseCalendarService
      * @param $nurseInfoId
      * @param $windowTimeStart
      * @param $windowTimeEnd
-     * @param $repeatFrequency
+     * @param null $frequency
+     * @param null $repeatUntil
      *
      * @return \Illuminate\Support\Collection
      */
-    public function createRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency)
+    public function createRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $frequency = null, $repeatUntil = null)
     {
         //converts the date that event was saved to - date that event is scheduled for + transfered to current's week (dow)
         //So events are starting to repeat from release's date week. This is what we want?
-        $repeatEventByDefaultUntil = Carbon::parse($eventDate)->copy()->addMonths(4)->toDateString();
-        $rangeToRepeat             = $this->getWeeksOrDaysToRepeat($eventDate, $repeatEventByDefaultUntil, $repeatFrequency);
-        $validatedDefault          = 'not_checked';
+        $repeatFrequency   = null === $frequency ? 'weekly' : $frequency;
+        $defaultRepeatDate = Carbon::parse($eventDate)->copy()->addMonths(4)->toDateString();
+        $repeatEventUntil  = null === $repeatUntil ? $defaultRepeatDate : $repeatUntil;
+        $rangeToRepeat     = $this->getWeeksOrDaysToRepeat($eventDate, $repeatEventUntil, $repeatFrequency);
+        $validatedDefault  = 'not_checked';
 
         $recurringDates = $this->createRecurringDates($rangeToRepeat, $eventDate, $repeatFrequency);
 
-        return $this->createWindowsArrays($recurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $repeatFrequency, $repeatEventByDefaultUntil);
+        return $this->createWindowsArrays($recurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $repeatFrequency, $repeatEventUntil);
     }
 
     /**
@@ -89,7 +135,7 @@ class NurseCalendarService
     public function createWindowsArrays($defaultRecurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $defaultRepeatFreq, $repeatEventByDefaultUntil)
     {
         return collect($defaultRecurringDates)
-            ->map(function ($date) use ($defaultRecurringDates, $nurseInfoId,$windowTimeStart,$windowTimeEnd, $eventDate, $validatedDefault, $defaultRepeatFreq, $repeatEventByDefaultUntil) {
+            ->map(function ($date) use ($defaultRecurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $defaultRepeatFreq, $repeatEventByDefaultUntil) {
                 return [
                     'nurse_info_id'     => $nurseInfoId,
                     'date'              => $date,
@@ -97,13 +143,24 @@ class NurseCalendarService
                     'window_time_start' => $windowTimeStart,
                     'window_time_end'   => $windowTimeEnd,
                     'validated'         => $validatedDefault,
-                    'manually_created'  => true,
                     'repeat_frequency'  => $defaultRepeatFreq,
                     'until'             => $repeatEventByDefaultUntil,
                     'created_at'        => Carbon::parse(now())->toDateTimeString(),
                     'updated_at'        => Carbon::parse(now())->toDateTimeString(),
                 ];
             });
+    }
+
+    /**
+     * @param $events
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getCollidingDates($events)
+    {
+        return collect($events)->map(function ($event) {
+            return Carbon::parse($event['date'])->toDateString();
+        });
     }
 
     /**
@@ -121,6 +178,29 @@ class NurseCalendarService
                 'label'   => $nurse->display_name,
             ];
         });
+    }
+
+    /**
+     * @param $recurringEventsToSave
+     *
+     * @return array
+     */
+    public function getEventsToAskConfirmation($recurringEventsToSave)
+    {
+        $askForConfirmationEvents = [];
+        foreach ($recurringEventsToSave as $event) {
+            $windowsExists = $this->checkIfWindowsExists(
+                $event['nurse_info_id'],
+                $event['window_time_start'],
+                $event['window_time_end'],
+                $event['date']
+            );
+            if ($windowsExists) {
+                $askForConfirmationEvents[] = $windowsExists;
+            }
+        }
+
+        return $askForConfirmationEvents;
     }
 
     /**

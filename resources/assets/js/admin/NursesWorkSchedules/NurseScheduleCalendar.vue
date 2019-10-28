@@ -49,8 +49,7 @@
             <!--            </div>-->
         </div>
         <div class="calendar">
-            <full-calendar ref="fullCalendar"
-                           id="calendar"
+            <full-calendar ref="calendar"
                            :events="events"
                            :config="config"
                            @day-click="handleDateCLick"
@@ -239,6 +238,7 @@
                 selectedDate: [],
                 // selectedMonthInView: this.startOfMonth,
                 repeatUntil: '',
+                workEventsToConfirm: [],
 
 
                 config: {
@@ -484,6 +484,23 @@
                 });
             },
 
+            refetchEvents() {
+                this.$refs.calendar.$emit('refetch-events');
+            },
+
+            formatDate(date) {
+                var d = new Date(date),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
+
+                if (month.length < 2)
+                    month = '0' + month;
+                if (day.length < 2)
+                    day = '0' + day;
+
+                return [year, month, day].join('-');
+            },
             addNewEvent() {
                 this.loader = true;
                 const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
@@ -546,6 +563,60 @@
                     return;
                 }
 
+                if (repeatFreq !== 'does_not_repeat') {
+                    const until = [];
+                    const frequency = [];
+
+                    if (repeatFreq === 'weekly') {
+                        frequency.push(RRule.WEEKLY);
+                        until.push(new Date(repeatUntil))
+                    }
+                    if (repeatFreq === 'monthly') {
+                        frequency.push(RRule.MONTHLY);
+                        until.push(new Date(repeatUntil))
+                    }
+                    if (repeatFreq === 'daily') {
+                        frequency.push(RRule.DAILY);
+                        until.push(new Date(repeatUntil))
+                    }
+
+
+                    const recurringDatesToEvent = new RRule({                       //https://github.com/jakubroztocil/rrule
+                        freq: frequency[0],
+                        // byweekday: [q.data.clhDayOfWeek],
+                        dtstart: new Date(workDate),
+                        until: until[0],
+                    });
+                    const recurringDates = recurringDatesToEvent.all();
+                    const events = this.workHours.concat(this.holidays);
+
+                    const eventsToConfirmTemporary = [];
+                    for (var i = 0; i < recurringDates.length; i++) {
+                        const date = this.formatDate(recurringDates[i]);
+                        //i was expecting filter to give me arrays that satisfy the condition however i was gettin also empty arrays
+                        const eventsToAskConfirmation = events.filter(event => event.data.date === date && event.data.nurseId === nurseId);
+
+                        if (eventsToAskConfirmation.length !== 0) {
+                            this.loader = false;
+                            eventsToConfirmTemporary.push(...eventsToAskConfirmation);
+                        }
+                    }
+                    this.workEventsToConfirm.push(...eventsToConfirmTemporary);
+
+                    if (eventsToConfirmTemporary.length !== 0) {
+                        if (confirm("There are windows overlapping at ...pass dates here...Do you want to replace existing windows with new?")) {
+                            this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, true);
+                        }
+                    } else {
+                        this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
+                    }
+                }
+
+
+            },
+            updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, updateCollisionWindow = null) {
+
+                const updateCollidedWindows = updateCollisionWindow === null ? false : updateCollisionWindow;
                 axios.post('/care-center/work-schedule', {
                     nurse_info_id: nurseId,
                     date: workDate,
@@ -555,13 +626,13 @@
                     window_time_end: this.workRangeEnds,
                     repeat_freq: repeatFreq,
                     until: repeatUntil,
-                    validated: validatedDefault
+                    validated: validatedDefault,
+                    updateCollisions: updateCollidedWindows
                 }).then((response => {
                         this.loader = false;
                         this.toggleModal();
                         const newEvent = this.prepareLiveData(response.data); //to show in UI before page reload.
                         this.eventsAddedNow.push(newEvent);
-
                         this.addNotification({
                             title: "Success!",
                             text: "Event has been created.",
@@ -578,7 +649,6 @@
                         }
                     });
             },
-
             prepareLiveData(newEventData) {
                 return {
                     allDay: true,
@@ -679,12 +749,12 @@
                 this.eventFrequency = [];
             },
         }),
-
+//@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
         computed: {
             modalTitle() {
                 return this.clickedToViewEvent ? 'View / Delete Event' : 'Add new work window';
             },
-//@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
+
             events() {
                 const events = this.workHours.concat(this.eventsAddedNow);
                 const workEventsWithHolidays = events.concat(this.holidays);
