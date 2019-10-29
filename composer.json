@@ -82,7 +82,8 @@
         "appstract/laravel-opcache": "^2.0",
         "barryvdh/laravel-snappy": "0.4.4",
         "circlelinkhealth/core": "1.3",
-        "circlelinkhealth/customer": "1.3.5",
+        "circlelinkhealth/customer": "1.3.6",
+        "circlelinkhealth/import-practice-staff-csv": "*",
         "circlelinkhealth/raygun": "dev-master",
         "circlelinkhealth/timetracking": "1.1.2",
         "circlelinkhealth/twofa": "1.1.2",
@@ -113,6 +114,7 @@
         "league/fractal": "0.12.*",
         "maatwebsite/excel": "^3.1",
         "nao-pon/flysystem-google-drive": "~1.1",
+        "nvanheuverzwijn/monolog-logdna": "^2.1",
         "phaxio/phaxio": "^1.0",
         "pragmarx/version": "^0.2.8",
         "predis/predis": "^1.1",
@@ -126,9 +128,9 @@
         "titasgailius/search-relations": "^1.0",
         "twilio/sdk": "5.7",
         "waavi/url-shortener": "dev-master",
+        "waynestate/nova-ckeditor4-field": "^0.4.0",
         "wikimedia/composer-merge-plugin": "^1.4",
-        "yajra/laravel-datatables-oracle": "~8.0",
-        "circlelinkhealth/import-practice-staff-csv": "*"
+        "yajra/laravel-datatables-oracle": "~8.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "*",
@@ -196,11 +198,11 @@
         ],
         "unit-tests": [
             "php artisan --env=testing test:create-sqlite-db",
-            "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner  SqliteRunner -p3"
+            "./vendor/phpunit/phpunit/phpunit --testsuite=Unit --testdox"
         ],
         "profile-unit-tests": [
             "php artisan --env=testing test:create-sqlite-db",
-            "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner  SqliteRunner -p3 --log-junit tests_profiles.xml"
+            "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner SqliteRunner -p3 --log-junit tests_profiles.xml"
         ],
         "clear": [
             "php artisan clear-compiled",

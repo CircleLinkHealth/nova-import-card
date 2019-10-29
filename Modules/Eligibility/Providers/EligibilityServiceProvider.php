@@ -64,7 +64,7 @@ class EligibilityServiceProvider extends ServiceProvider
             $secret = config('services.athena.secret');
             $version = config('services.athena.version');
 
-            $this->api = new Connection($version, $key, $secret);
+            return new Connection($version, $key, $secret);
         });
     }
 

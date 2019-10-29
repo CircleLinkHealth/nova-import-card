@@ -70,8 +70,13 @@ Route::group([
 //
 //
 Route::group(['middleware' => 'auth'], function () {
-    Route::post('create-test-patients', [
+    Route::get('cbt/test-patients/create', [
         'uses' => 'Patient\PatientController@createCBTTestPatient',
+        'as'   => 'show.create-test-patients',
+    ]);
+
+    Route::post('cbt/test-patients', [
+        'uses' => 'Patient\PatientController@storeCBTTestPatient',
         'as'   => 'create-test-patients',
     ]);
 

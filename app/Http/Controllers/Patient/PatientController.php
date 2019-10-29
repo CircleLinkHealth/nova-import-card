@@ -7,12 +7,12 @@
 namespace App\Http\Controllers\Patient;
 
 use App\CLH\Repositories\UserRepository;
-use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\CPM\CpmProblem;
 use App\Services\CarePlanViewService;
 use App\Services\PdfService;
+use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -33,66 +33,11 @@ class PatientController extends Controller
 
     public function createCBTTestPatient(Request $request)
     {
-        $repo = new UserRepository();
-
-        $practice = Practice::whereName('demo')->firstOrFail();
-        $role     = Role::whereName('participant')->firstOrFail();
-        $problems = CpmProblem::get();
-
-        foreach (Constants::CBT_TEST_PATIENTS as $patientData) {
-            //in case something goes wrong and users where not deleted, take all
-            $users = User::whereEmail($patientData['email'])->get();
-
-            //If user exists delete and create again
-            if ($users->count() > 0) {
-                foreach ($users as $user) {
-                    $user->forceDelete();
-                }
-            }
-
-            $bag = new ParameterBag([
-                'email'             => $patientData['email'],
-                'password'          => str_random(),
-                'display_name'      => $patientData['first_name'].' '.$patientData['last_name'],
-                'first_name'        => $patientData['first_name'],
-                'last_name'         => $patientData['last_name'],
-                'username'          => $patientData['email'],
-                'program_id'        => $practice->id,
-                'is_auto_generated' => true,
-                'roles'             => [$role->id],
-
-                //patientInfo
-                'gender'                     => $patientData['gender'],
-                'preferred_contact_language' => $patientData['preferred_contact_language'],
-                'ccm_status'                 => $patientData['ccm_status'],
-                'birth_date'                 => $patientData['birth_date'],
-                'consent_date'               => $patientData['consent_date'],
-                'preferred_contact_timezone' => $patientData['preferred_contact_timezone'],
-                'mrn_number'                 => $patientData['mrn_number'],
-            ]);
-
-            $user = $repo->createNewUser(new User(), $bag);
-
-            $userProblems = in_array('all', $patientData['conditions'])
-                ? $problems
-                : $problems->whereIn('name', $patientData['conditions']);
-            $ccdProblems = [];
-            foreach ($userProblems as $problem) {
-                $ccdProblems[] = [
-                    'is_monitored'   => 1,
-                    'name'           => $problem->name,
-                    'cpm_problem_id' => $problem->id,
-                ];
-            }
-            $user->ccdProblems()->createMany($ccdProblems);
-            $user->ccdMedications()->createMany(Constants::testMedications($patientData['medications']));
-            $user->careTeamMembers()->create([
-                'member_user_id' => $patientData['billing_provider_id'],
-                'type'           => CarePerson::BILLING_PROVIDER,
-            ]);
+        if (isProductionEnv()) {
+            return back();
         }
 
-        return redirect()->back();
+        return view('patient.create-test-patients');
     }
 
     public function patientAjaxSearch(Request $request)
@@ -604,5 +549,80 @@ class PatientController extends Controller
             'program' => $program,
             'patient' => $wpUser,
         ]);
+    }
+
+    /**
+     * Create Cross Browser Testing Patients.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function storeCBTTestPatient(Request $request)
+    {
+        if (isProductionEnv()) {
+            return back();
+        }
+
+        $repo = new UserRepository();
+
+        $practice = Practice::whereName('demo')->firstOrFail();
+        $role     = Role::whereName('participant')->firstOrFail();
+        $problems = CpmProblem::get();
+
+        foreach (TestPatients::CBT_TEST_PATIENTS as $patientData) {
+            //in case something goes wrong and users where not deleted, take all
+            $users = User::whereEmail($patientData['email'])->get();
+
+            //If user exists delete and create again
+            if ($users->count() > 0) {
+                foreach ($users as $user) {
+                    $user->forceDelete();
+                }
+            }
+
+            $bag = new ParameterBag([
+                'email'             => $patientData['email'],
+                'password'          => str_random(),
+                'display_name'      => $patientData['first_name'].' '.$patientData['last_name'],
+                'first_name'        => $patientData['first_name'],
+                'last_name'         => $patientData['last_name'],
+                'username'          => $patientData['email'],
+                'program_id'        => $practice->id,
+                'is_auto_generated' => true,
+                'roles'             => [$role->id],
+
+                //patientInfo
+                'gender'                     => $patientData['gender'],
+                'preferred_contact_language' => $patientData['preferred_contact_language'],
+                'ccm_status'                 => $patientData['ccm_status'],
+                'birth_date'                 => $patientData['birth_date'],
+                'consent_date'               => $patientData['consent_date'],
+                'preferred_contact_timezone' => $patientData['preferred_contact_timezone'],
+                'mrn_number'                 => $patientData['mrn_number'],
+            ]);
+
+            $user = $repo->createNewUser(new User(), $bag);
+
+            $userProblems = in_array('all', $patientData['conditions'])
+                ? $problems
+                : $problems->whereIn('name', $patientData['conditions']);
+            $ccdProblems = [];
+            foreach ($userProblems as $problem) {
+                $ccdProblems[] = [
+                    'is_monitored'   => 1,
+                    'name'           => $problem->name,
+                    'cpm_problem_id' => $problem->id,
+                ];
+            }
+            $user->ccdProblems()->createMany($ccdProblems);
+            $user->ccdMedications()->createMany(TestPatients::testMedications($patientData['medications']));
+            $user->careTeamMembers()->create([
+                'member_user_id' => $patientData['billing_provider_id'],
+                'type'           => CarePerson::BILLING_PROVIDER,
+            ]);
+        }
+
+        return redirect()->back();
     }
 }

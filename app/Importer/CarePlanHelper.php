@@ -47,7 +47,6 @@ class CarePlanHelper
     public $patientInfo;
     public $probs;
     public $user;
-
     /**
      * @var Enrollee
      */
@@ -699,7 +698,6 @@ class CarePlanHelper
         if ( ! $this->enrollee) {
             return [];
         }
-
         if (empty($this->enrollee->agent_details)) {
             return [];
         }

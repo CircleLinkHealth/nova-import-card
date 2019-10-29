@@ -6,22 +6,12 @@
 
 namespace App\Services;
 
-use App\Notifications\AddendumCreated;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
 
 class AddendumNotificationsService
 {//constants values are demo
     const ADDENDUM_DESCRIPTION = 'Addendum';
     const ADDENDUM_SUBJECT     = 'has created an addendum for';
-
-    public function createNotifForAddendum(User $noteAuthor, $addendum)
-    {
-        $instance = new AddendumCreated($addendum);
-        $noteAuthor->notify(new AddendumCreated($addendum));
-
-        return $instance;
-    }
 
 //    /**
 //     * @param $dataToPusher

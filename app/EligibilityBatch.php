@@ -28,6 +28,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\User                                       $initiatorUser
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                              $practice
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch query()
@@ -42,6 +43,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property int|null $eligibility_jobs_count
  * @property int|null $revision_history_count
  */
@@ -99,11 +101,15 @@ class EligibilityBatch extends BaseModel
             ->groupBy('outcome')
             ->get()
             ->mapWithKeys(function ($result) {
-                return [
-                    is_null($result['outcome'])
-                        ? 'Not processed yet.'
-                        : $result['outcome'] => $result['total'],
-                ];
+                if (is_null($result['outcome'])) {
+                    $outcome = ['Not processed yet.' => $result['total'] ?? null];
+                } elseif (EligibilityJob::ELIGIBLE === $result['outcome']) {
+                    $outcome = ['eligible_and_not_in_cpm' => $result['total']];
+                } else {
+                    $outcome = [$result['outcome'] => $result['total']];
+                }
+
+                return $outcome ?? [];
             });
     }
 
@@ -285,12 +291,12 @@ class EligibilityBatch extends BaseModel
 
     public function shouldFilterInsurance()
     {
-        return array_key_exists('filterLastEncounter', $this->options) ? (bool) $this->options['filterLastEncounter'] : false;
+        return array_key_exists('filterInsurance', $this->options) ? (bool) $this->options['filterInsurance'] : false;
     }
 
     public function shouldFilterLastEncounter()
     {
-        return array_key_exists('filterInsurance', $this->options) ? (bool) $this->options['filterInsurance'] : false;
+        return array_key_exists('filterLastEncounter', $this->options) ? (bool) $this->options['filterLastEncounter'] : false;
     }
 
     public function shouldFilterProblems()
