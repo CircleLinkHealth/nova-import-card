@@ -22,7 +22,7 @@ class PracticeStatsHelperTest extends TestCase
     protected $service;
     protected $start;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

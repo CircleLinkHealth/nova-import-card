@@ -22,7 +22,7 @@ class AddNewSaasAccountTest
     private $adminPractice;
     private $adminUser;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

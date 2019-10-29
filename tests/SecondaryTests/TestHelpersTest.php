@@ -20,7 +20,7 @@ class TestHelpersTest extends TestCase
     private $provider;
     private $total;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

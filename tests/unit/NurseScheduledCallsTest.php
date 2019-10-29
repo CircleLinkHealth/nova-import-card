@@ -20,7 +20,7 @@ class NurseScheduledCallsTest extends TestCase
     private $patient;
     private $practice;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -44,7 +44,7 @@ class BillablePatientsServiceTest extends TestCase
     private $service;
     private $summary;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

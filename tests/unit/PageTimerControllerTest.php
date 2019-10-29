@@ -41,7 +41,7 @@ class PageTimerControllerTest extends TestCase
     private $practice;
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->practice = factory(Practice::class)->create();

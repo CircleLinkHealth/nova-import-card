@@ -42,7 +42,7 @@ class NotificationsTest extends TestCase
 
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

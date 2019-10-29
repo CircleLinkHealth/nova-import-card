@@ -20,7 +20,7 @@ class NoteServiceTest extends TestCase
     protected $provider;
     protected $service;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

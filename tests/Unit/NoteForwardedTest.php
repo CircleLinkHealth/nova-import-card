@@ -25,7 +25,7 @@ class NoteForwardedTest extends TestCase
 
     protected $practice;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
