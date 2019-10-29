@@ -3,6 +3,40 @@
         font-size: 14px;
     }
 
+    .vue-modal-container {
+        overflow: visible;
+    }
+
+    .suffix-element .dropdown-menu {
+        max-height: 160px !important;
+    }
+    .care-team-dropdown.searchable .dropdown-toggle {
+        cursor: text;
+    }
+    .care-team-dropdown .vs__selected-options input {
+        margin-top: 0 !important;
+    }
+
+    .care-team-dropdown .dropdown-toggle {
+        height: 35px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(60, 60, 60, .26) !important;
+    }
+
+    .care-team-dropdown .vs__actions {
+        padding-top: 4px !important;
+    }
+
+    .care-team-dropdown .selected-tag {
+        padding-top: 3px !important;
+    }
+
+    .care-team-dropdown .vs__open-indicator {
+        padding-top: 2px;
+    }
+
+
     .providerForm {
         padding: 10px;
     }
@@ -117,12 +151,15 @@
                                 <div class="col-md-12">
                                     <validate auto-label :class="fieldClassName(formstate.specialty)">
                                         <div class="col-md-12">
-                                            <select2 :options="specialtiesOptions"
-                                                     name="specialty"
-                                                     v-model="newCarePerson.user.provider_info.specialty"
-                                                     style="width: 100%;">
-                                                <option disabled value="0">Select one</option>
-                                            </select2>
+                                            <v-select class="care-team-dropdown"
+                                                      placeholder="Select one"
+                                                    label="text"
+                                                      :options="specialtiesOptions"
+                                                      name="specialty"
+                                                      v-model="newCarePerson.user.provider_info.specialty"
+                                                      index="id"
+                                            >
+                                            </v-select>
                                         </div>
 
                                         <div class="col-md-12">
@@ -397,8 +434,8 @@
                                                             </div>
                                                         </field-messages>
                                                         <span v-if="!newCarePerson.user.email || formstate.email && !formstate.email.$valid"
-                                                             class="validation-error text-left"
-                                                             style="color: green;">
+                                                              class="validation-error text-left"
+                                                              style="color: green;">
                                                             A valid email is required.
                                                         </span>
                                                     </div>
@@ -423,23 +460,17 @@
                                 <div class="form-group required-field col-md-6">
                                     <validate auto-label :class="fieldClassName(formstate.suffix)">
                                         <div class="col-md-12">
-                                            <select v-model="newCarePerson.user.suffix"
+                                            <v-select
+                                                    class="care-team-dropdown suffix-element"
+                                                    :options="suffixOptions"
+                                                    label="text"
+                                                    index="id"
+                                                    :value="selectedSuffix"
+                                                    @input="setSelectedSuffix"
                                                     id="suffix"
                                                     name="suffix"
-                                                    class="form-control input-md"
                                                     required>
-                                                <option value="" disabled></option>
-                                                <option value="non-clinical" :selected="newCarePerson.user.provider_info.is_clinical == 0">Non-clinical</option>
-                                                <option value="MD">MD</option>
-                                                <option value="DO">DO</option>
-                                                <option value="NP">NP</option>
-                                                <option value="PA">PA</option>
-                                                <option value="RN">RN</option>
-                                                <option value="LPN">LPN</option>
-                                                <option value="PN">PN</option>
-                                                <option value="CNA">CNA</option>
-                                                <option value="MA">MA</option>
-                                            </select>
+                                            </v-select>
                                         </div>
 
                                         <div class="col-md-12">
@@ -467,11 +498,14 @@
                                 <div class="col-md-12">
                                     <validate auto-label :class="fieldClassName(formstate.typeForDropdown)">
                                         <div class="col-md-12">
-                                            <select2 :settings="relationToPatientOptions"
-                                                     name="relation-to-patient"
-                                                     v-model="newCarePerson.typeForDropdown"
-                                                     style="width: 100%;">
-                                            </select2>
+                                            <v-select class="care-team-dropdown"
+                                                      label="text"
+                                                      index="id"
+                                                      :options="relationToPatientOptions.data"
+                                                      name="relation-to-patient"
+                                                      v-model="newCarePerson.typeForDropdown"
+                                            >
+                                            </v-select>
                                         </div>
 
                                         <div class="col-md-12">
@@ -511,15 +545,15 @@
     import modal from '../shared/modal.vue';
     import SearchProviders from './search-providers.vue'
     import store from '../../store';
-    import {mapGetters, mapActions} from 'vuex'
-    import {getPatientCareTeam, clearOpenModal, addNotification, updateCarePerson} from '../../store/actions'
+    import {mapActions, mapGetters} from 'vuex'
+    import {addNotification, clearOpenModal, getPatientCareTeam, updateCarePerson} from '../../store/actions'
     import specialtiesOptions from './specialties-options';
+    import suffixOptions from './suffix-options';
+
+    import VueSelect from 'vue-select';
     import {
-        RELATION_VALID_DROPDOWN_OPTIONS,
-        BILLING_PROVIDER,
-        REGULAR_DOCTOR,
-        relationToPatientOptions,
-        checkCareTeamRelations
+        checkCareTeamRelations, RELATION_VALID_DROPDOWN_OPTIONS,
+        relationToPatientOptions
     } from './care-team-relation-to-patient';
 
     export default {
@@ -532,7 +566,8 @@
 
         components: {
             modal,
-            SearchProviders
+            SearchProviders,
+            'v-select': VueSelect,
         },
 
         computed: Object.assign(
@@ -550,6 +585,15 @@
                     return this.newCarePerson.user.first_name
                         + ' '
                         + this.newCarePerson.user.last_name
+                }
+            },
+            {
+                selectedSuffix() {
+                    return this.newCarePerson.user.provider_info.is_clinical == 0
+                    || this.newCarePerson.user.suffix == 'non-clinical' ?
+                        suffixOptions['non-clinical'] :
+                        suffixOptions[this.newCarePerson.user.suffix];
+
                 }
             }
         ),
@@ -588,6 +632,9 @@
                     this.newCarePerson.user.phone_numbers = user.phone_numbers
                     this.newCarePerson.user.primary_practice = user.primary_practice
                     this.newCarePerson.user.provider_info = user.provider_info
+                },
+                setSelectedSuffix(input) {
+                    this.newCarePerson.user.suffix = input
                 },
 
                 sendForm() {
@@ -677,7 +724,8 @@
                         }
                     }
                 },
-                specialtiesOptions: specialtiesOptions
+                specialtiesOptions: specialtiesOptions,
+                suffixOptions: suffixOptions
             }
         }
     }
