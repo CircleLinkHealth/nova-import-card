@@ -120,7 +120,7 @@ class ImportConsentedEnrollees implements ShouldQueue
         if ($this->batch && $imported->isNotEmpty()) {
             \Log::info($imported->toJson());
 
-            \Cache::put("batch:{$this->batch->id}:last_consented_enrollee_import", $imported->toJson(), 14400);
+            \Cache::put("batch:{$this->batch->id}:last_consented_enrollee_import", $imported->toJson(), 864000);
         }
 
         return $imported;

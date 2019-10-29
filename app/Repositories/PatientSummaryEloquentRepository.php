@@ -191,7 +191,7 @@ class PatientSummaryEloquentRepository
 
         $chargeableServices = Cache::remember(
             "${class}:{$patient->primaryPractice->id}:chargeableServices",
-            2,
+            120,
             function () use ($patient) {
                 return $patient->primaryPractice->chargeableServices->keyBy('code');
             }

@@ -33,7 +33,7 @@ class View
             'created_at' => Carbon::now()->toDateTimeString(),
             'expires_at' => Carbon::now()->addWeek()->toDateTimeString(),
             'data'       => $data,
-        ], 11000);
+        ], 660000);
 
         return $this->viewHashKey;
     }
