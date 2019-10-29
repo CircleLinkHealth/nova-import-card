@@ -34,7 +34,7 @@ function getStringValue($val, $default = '')
         <link href="{{ asset('css/pdf.css') }}" rel="stylesheet">
     @endif
 
-    <link href="{{ asset('css/coverReport.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/pppReport.css') }}" rel="stylesheet">
 
     <div class="container report">
         <div class="report-title">
@@ -148,12 +148,12 @@ function getStringValue($val, $default = '')
 
 <style type="text/css" media="all">
     .image.carrot {
-        background: url({{asset('/images/carrot@3x.png')}}) no-repeat;
+        background: url({{asset('/images/carrot.svg')}}) no-repeat;
         margin-top: 1px;
     }
 
     .image.cigarette {
-        background: url({{asset('/images/cigarette@3x.png')}}) no-repeat;
+        background: url({{asset('/images/cigarette.svg')}}) no-repeat;
         margin-top: 11px;
     }
 
@@ -174,15 +174,15 @@ function getStringValue($val, $default = '')
     }
 
     .image.weight-scale {
-        background: url({{asset('/images/weight-scale@3x.png')}}) no-repeat;
+        background: url({{asset('/images/weight-scale.svg')}}) no-repeat;
     }
 
     .image.hearts {
-        background: url({{asset('/images/hearts@3x.png')}}) no-repeat;
+        background: url({{asset('/images/hearts.svg')}}) no-repeat;
     }
 
     .image.happy-face {
-        background: url({{asset('/images/happy-face@3x.png')}}) no-repeat;
+        background: url({{asset('/images/happy-face.svg')}}) no-repeat;
     }
 
     .image.patch {
@@ -199,11 +199,11 @@ function getStringValue($val, $default = '')
     }
 
     .image.raised-hand {
-        background: url({{asset('/images/raised-hand@3x.png')}}) no-repeat;
+        background: url({{asset('/images/raised-hand.svg')}}) no-repeat;
     }
 
     .image.syringe {
-        background: url({{asset('/images/syringe@3x.png')}}) no-repeat;
+        background: url({{asset('/images/syringe.svg')}}) no-repeat;
     }
 
     .image.clipboard-list {
