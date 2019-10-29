@@ -31,7 +31,10 @@ function getStringValue($val, $default = '')
     @if (isset($isPdf) && $isPdf)
         <!-- found in surveysMaster but for some reason dompdf has issues with it -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/pdf.css') }}" rel="stylesheet">
     @endif
+
+    <link href="{{ asset('css/coverReport.css') }}" rel="stylesheet">
 
     <div class="container report">
         <div class="report-title">
@@ -144,96 +147,6 @@ function getStringValue($val, $default = '')
 @endsection
 
 <style type="text/css" media="all">
-
-    .section-title {
-        font-family: Poppins;
-        background-color: #50b2e2;
-        font-size: 20px;
-        font-weight: 600;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1.1px;
-        padding-left: 25px;
-        padding-top: 10px;
-        padding-bottom: 5px;
-        color: #ffffff;
-    }
-
-    .section-body {
-        font-family: Poppins;
-        padding-top: 20px;
-    }
-
-    .health-advice-title {
-        font-family: Poppins;
-        font-size: 24px;
-        font-weight: 600;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1.3px;
-        color: #1a1a1a;
-    }
-
-    .report {
-        font-family: Poppins;
-        padding-left: 5%;
-        padding-right: 5%;
-        padding-top: 5%;
-        padding-bottom: 5%;
-    }
-
-    .recommendation-title {
-        font-family: Poppins;
-        font-size: 18px;
-        font-weight: 600;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: 1px;
-        color: #ffffff;
-        padding: 1% 20px;
-        background-color: #50b2e2;
-    }
-
-    .table.table td, table.table th {
-        padding-top: 0.4rem;
-        padding-bottom: 0.2rem;
-        align-content: center;
-    }
-
-    .table.table thead th {
-        padding-left: 1%;
-        width: 250px;
-
-    }
-
-    .suggested-list {
-        display: flex;
-    }
-
-    .report-title {
-
-    }
-
-    .side-title {
-        padding-top: 1%;
-    }
-
-    .suggested-list-body {
-        font-weight: 500;
-    }
-
-    .image {
-        width: 20px;
-        height: 20px;
-        float: left;
-        margin-top: 3px;
-        margin-right: 10px;
-        background-size: contain !important;
-    }
-
     .image.carrot {
         background: url({{asset('/images/carrot@3x.png')}}) no-repeat;
         margin-top: 1px;

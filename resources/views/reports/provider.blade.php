@@ -4,6 +4,7 @@
     @if (isset($isPdf) && $isPdf)
         <!-- found in surveysMaster but for some reason dompdf has issues with it -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/pdf.css') }}" rel="stylesheet">
     @endif
 
     <link href="{{ asset('css/providerReport.css') }}" rel="stylesheet">
