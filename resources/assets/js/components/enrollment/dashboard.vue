@@ -210,7 +210,7 @@
                             </template>
                         </div>
                         <br>
-                        <span>Please enter any unknown phone numbers and select the patient's preferred phone number to receive care management calls:</span>
+                        <span><strong>Please enter any unknown phone numbers and select the patient's preferred phone number to receive care management calls:</strong></span>
                     </blockquote>
                     <div class="row">
                         <div class="col s6 m3 select-custom">
@@ -1069,3 +1069,5 @@
     }
 
 </style>
+
+

@@ -6,10 +6,10 @@
 
 namespace App\Notifications;
 
-use App\Http\Controllers\NotificationController;
 use App\Models\Addendum;
 use App\Note;
 use App\Services\NotificationService;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,15 +23,21 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     use Queueable;
     public $addendum;
     public $attachment;
+    /**
+     * @var User
+     */
+    protected $sender;
 
     /**
      * Create a new notification instance.
      *
      * @param Addendum $addendum
+     * @param User     $sender
      */
-    public function __construct(Addendum $addendum)
+    public function __construct(Addendum $addendum, User $sender)
     {
         $this->attachment = $this->addendum = $addendum;
+        $this->sender     = $sender;
     }
 
     /**
@@ -92,7 +98,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     public function toArray($notifiable)
     {
         return [
-            'sender_id'       => auth()->id(),
+            'sender_id'       => $this->sender->id,
             'receiver_id'     => $notifiable->id,
             'patient_name'    => $this->getPatientName(),
             'note_id'         => $this->getNoteId(),
@@ -101,7 +107,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
             'attachment_type' => Addendum::class,
             'description'     => 'Addendum',
             'subject'         => 'has created an addendum for',
-            'sender_name'     => auth()->user()->display_name,
+            'sender_name'     => $this->sender->display_name,
         ];
     }
 

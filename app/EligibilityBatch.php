@@ -101,11 +101,15 @@ class EligibilityBatch extends BaseModel
             ->groupBy('outcome')
             ->get()
             ->mapWithKeys(function ($result) {
-                return [
-                    is_null($result['outcome'])
-                        ? 'Not processed yet.'
-                        : $result['outcome'] => $result['total'],
-                ];
+                if (is_null($result['outcome'])) {
+                    $outcome = ['Not processed yet.' => $result['total'] ?? null];
+                } elseif (EligibilityJob::ELIGIBLE === $result['outcome']) {
+                    $outcome = ['eligible_and_not_in_cpm' => $result['total']];
+                } else {
+                    $outcome = [$result['outcome'] => $result['total']];
+                }
+
+                return $outcome ?? [];
             });
     }
 
