@@ -6,15 +6,15 @@
 
 namespace App\Providers;
 
+use Illuminate\Contracts\Support\DeferrableProvider;
 use App\Contracts\DirectMail;
 use App\Services\PhiMail\IncomingMessageHandler;
 use App\Services\PhiMail\PhiMail;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\ServiceProvider;
 
-class DirectMailServiceProvider extends ServiceProvider
+class DirectMailServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    protected $defer = true;
 
     /**
      * Bootstrap the application services.
