@@ -111,7 +111,6 @@ function formatTime($time)
                     Patient Activities
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-
                     <div class="">
                         <br/>
                         <br/>
@@ -245,7 +244,8 @@ function formatTime($time)
                                                     <td class="{{ \Carbon\Carbon::parse($call->scheduled_date)->lessThan(\Carbon\Carbon::today()) ? 'red' : '' }}">
                                                         {{ presentDate($call->scheduled_date, false) }}
                                                     </td>
-                                                    @if($call->asap === 1)
+                                                    {{--What do we want to do here? show ASAP forever or??--}}
+                                                    @if($call->asap === 1 && $curDate <= $call->scheduled_date && $call->status !== 'reached')
                                                         <td>{{ 'ASAP' }}</td>
                                                         <td>{{ 'N/A' }}</td>
                                                     @else
