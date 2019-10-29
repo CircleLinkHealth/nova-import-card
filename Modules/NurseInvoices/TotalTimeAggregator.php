@@ -8,6 +8,9 @@ namespace CircleLinkHealth\NurseInvoices;
 
 use App\TimeTrackedPerDayView;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\Collection;
@@ -53,15 +56,16 @@ class TotalTimeAggregator
             ->fromSub(
                 $this->systemTimeFromPageTimer($this->userIds)
                     ->unionAll($this->offlineSystemTime($this->userIds))
-                    ->unionAll($this->totalBillableTimeMap($this->userIds)),
+                    ->unionAll($this->totalBillableTimeMap($this->userIds))
+                    ->unionAll($this->approvedDisputesTime($this->userIds)),
                 'activities'
-                  )
+            )
             ->select(
                 \DB::raw('SUM(total_time) as total_time'),
                 'date',
                 'user_id',
                 'is_billable'
-                  )
+            )
             ->groupBy('user_id', 'date', 'is_billable')
             ->get()
             ->groupBy(['user_id', 'date'])
@@ -80,6 +84,39 @@ class TotalTimeAggregator
     public static function get(array $userIds, Carbon $startDate, Carbon $endDate)
     {
         return (new static($userIds, $startDate, $endDate))->aggregate();
+    }
+
+    private function approvedDisputesTime(array $nurseUserIds)
+    {
+        $disputesTable     = (new NurseInvoiceDailyDispute())->getTable();
+        $start             = $this->startDate;
+        $end               = $this->endDate;
+        $dateTimeField     = 'disputed_day';
+        $isBillable        = false;
+        $nurseInvoiceTable = (new NurseInvoice())->getTable();
+        $nurseInfoTable    = (new Nurse())->getTable();
+
+        return \DB::table($disputesTable)
+            ->join($nurseInvoiceTable, "$nurseInvoiceTable.id", '=', "$disputesTable.invoice_id")
+            ->join($nurseInfoTable, "$nurseInfoTable.id", '=', "$nurseInvoiceTable.nurse_info_id")
+            ->select(
+                \DB::raw('SUM(TIME_TO_SEC(suggested_formatted_time) - TIME_TO_SEC(disputed_formatted_time)) as total_time'),
+                \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
+                "$nurseInfoTable.user_id as user_id",
+                $isBillable
+                    ? \DB::raw('TRUE as is_billable')
+                    : \DB::raw('FALSE as is_billable')
+            )
+            ->where("$disputesTable.status", '=', 'approved')
+            ->whereIn('user_id', $nurseUserIds)
+            ->whereBetween(
+                $dateTimeField,
+                [
+                    $start,
+                    $end,
+                ]
+            )
+            ->groupBy('date', 'user_id');
     }
 
     /**
@@ -108,9 +145,9 @@ class TotalTimeAggregator
                 \DB::raw("DATE_FORMAT($dateTimeField, '%Y-%m-%d') as date"),
                 'provider_id as user_id',
                 $isBillable
-                          ? \DB::raw('TRUE as is_billable')
-                          : \DB::raw('FALSE as is_billable')
-                  )
+                    ? \DB::raw('TRUE as is_billable')
+                    : \DB::raw('FALSE as is_billable')
+            )
             ->whereIn('provider_id', $nurseUserIds)
             ->whereBetween(
                 $dateTimeField,
@@ -118,7 +155,7 @@ class TotalTimeAggregator
                     $start,
                     $end,
                 ]
-                  )->groupBy('date', 'user_id');
+            )->groupBy('date', 'user_id');
     }
 
     /**
@@ -187,7 +224,7 @@ class TotalTimeAggregator
                     $this->startDate->toDateString(),
                     $this->endDate->toDateString(),
                 ]
-                                    )
+            )
             ->groupBy('date', 'user_id', 'is_billable')
             ->get()
             ->groupBy(['user_id', 'date', 'is_billable'])
