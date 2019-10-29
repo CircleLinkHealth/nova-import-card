@@ -66,11 +66,11 @@ jobs:
         path: tests/_output
     - store_artifacts:
         path: tests/_output
-    - run:
-        name: Add a version to the build
-        command: |
-          php artisan version:refresh
-          php artisan version:absorb
-          git add config/version.yml
-          git commit --allow-empty -m "Version build"
-          git push
+#    - run:
+#        name: Add a version to the build
+#        command: |
+#          php artisan version:refresh
+#          php artisan version:absorb
+#          git add config/version.yml
+#          git commit --allow-empty -m "Version build"
+#          git push
