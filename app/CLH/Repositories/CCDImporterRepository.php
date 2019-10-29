@@ -6,12 +6,12 @@
 
 namespace App\CLH\Repositories;
 
-use Illuminate\Support\Str;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use GuzzleHttp\Client;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CCDImporterRepository

@@ -5,6 +5,7 @@
  */
 
 namespace App\Importer\Loggers\Allergy;
+
 use Illuminate\Support\Str;
 
 class NumberedAllergyFields

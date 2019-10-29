@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers\Patient;
 
-use Illuminate\Support\Str;
 use App\CarePlan;
 use App\CarePlanPrintListView;
 use App\CLH\Repositories\UserRepository;
@@ -29,6 +28,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PatientCareplanController extends Controller

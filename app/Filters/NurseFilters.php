@@ -6,10 +6,10 @@
 
 namespace App\Filters;
 
-use Illuminate\Support\Str;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class NurseFilters extends QueryFilters
 {

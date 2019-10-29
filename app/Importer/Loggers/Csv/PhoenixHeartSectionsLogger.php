@@ -6,7 +6,6 @@
 
 namespace App\Importer\Loggers\Csv;
 
-use Illuminate\Support\Str;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\InsuranceLog;
@@ -22,6 +21,7 @@ use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Str;
 
 class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 {

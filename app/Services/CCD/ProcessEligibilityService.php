@@ -6,7 +6,6 @@
 
 namespace App\Services\CCD;
 
-use Illuminate\Support\Str;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
@@ -24,6 +23,7 @@ use App\Traits\ValidatesEligibility;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProcessEligibilityService
 {

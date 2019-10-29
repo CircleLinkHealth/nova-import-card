@@ -6,10 +6,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Support\Str;
 use App\Contracts\Services\TwilioClientable;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Twilio\Rest\Api\V2010\Account\RecordingInstance;
 
 class DownloadTwilioRecordings extends Command

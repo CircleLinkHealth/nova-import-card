@@ -85,8 +85,6 @@ class Problem extends \CircleLinkHealth\Core\Entities\BaseModel implements \App\
      *
      * @var array
      */
-    
-
     protected $fillable = [
         'is_monitored',
         'problem_import_id',

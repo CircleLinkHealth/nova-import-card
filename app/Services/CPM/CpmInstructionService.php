@@ -6,10 +6,10 @@
 
 namespace App\Services\CPM;
 
-use Illuminate\Support\Str;
 use App\Models\CPM\CpmInstruction;
 use App\Repositories\CpmInstructionRepository;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Str;
 
 class CpmInstructionService
 {

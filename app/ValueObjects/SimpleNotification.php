@@ -6,9 +6,9 @@
 
 namespace App\ValueObjects;
 
-use Illuminate\Support\Str;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Str;
 
 class SimpleNotification implements Arrayable
 {

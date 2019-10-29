@@ -6,7 +6,6 @@
 
 namespace App\Notifications;
 
-use Illuminate\Support\Str;
 use App\CarePlan;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
@@ -14,6 +13,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 
 class CarePlanProviderApproved extends Notification
 {

@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers\API;
 
-use Illuminate\Support\Str;
 use App\CLH\Helpers\StringManipulation;
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -15,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class CareTeamController extends Controller

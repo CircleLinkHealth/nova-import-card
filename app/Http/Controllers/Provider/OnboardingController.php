@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers\Provider;
 
-use Illuminate\Support\Str;
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Http\Controllers\Controller;
@@ -17,6 +16,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class OnboardingController extends Controller

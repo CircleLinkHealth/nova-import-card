@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Str;
 use App\CLH\Repositories\UserRepository;
 use App\Notifications\EhrReportWriterNotification;
 use App\Services\CCD\ProcessEligibilityService;
@@ -15,6 +14,7 @@ use App\Traits\ValidatesEligibility;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Storage;
 use Symfony\Component\HttpFoundation\ParameterBag;
 

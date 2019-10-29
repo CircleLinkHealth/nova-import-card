@@ -6,8 +6,8 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Support\Str;
 use CircleLinkHealth\Customer\Entities\Practice;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class PracticeTest extends TestCase

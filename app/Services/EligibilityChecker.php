@@ -6,7 +6,6 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Str;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Constants;
 use App\EligibilityBatch;
@@ -22,6 +21,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Validator;
 
 /**

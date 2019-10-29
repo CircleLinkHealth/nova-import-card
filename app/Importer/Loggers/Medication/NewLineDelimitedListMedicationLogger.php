@@ -6,8 +6,8 @@
 
 namespace App\Importer\Loggers\Medication;
 
-use Illuminate\Support\Str;
 use App\Contracts\Importer\MedicalRecord\Section\Logger;
+use Illuminate\Support\Str;
 
 class NewLineDelimitedListMedicationLogger implements Logger
 {

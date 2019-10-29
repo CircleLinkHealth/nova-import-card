@@ -6,7 +6,6 @@
 
 namespace App\Importer\Loggers\Csv;
 
-use Illuminate\Support\Str;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
@@ -19,6 +18,7 @@ use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Services\Eligibility\Entities\Problem as ProblemEntity;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Str;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {

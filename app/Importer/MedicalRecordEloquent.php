@@ -13,7 +13,6 @@ namespace App\Importer;
  * Time: 4:05 PM
  */
 
-use Illuminate\Support\Str;
 use App\Console\Commands\OverwriteNBIImportedData;
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Importer\Predictors\HistoricBillingProviderPredictor;
@@ -30,6 +29,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\BaseModel implements MedicalRecord
 {

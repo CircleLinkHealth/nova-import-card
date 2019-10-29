@@ -6,7 +6,6 @@
 
 namespace App\Services\MedicalRecords;
 
-use Illuminate\Support\Str;
 use App\Enrollee;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\TabularMedicalRecord;
@@ -14,6 +13,7 @@ use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Str;
 
 class ImportService
 {

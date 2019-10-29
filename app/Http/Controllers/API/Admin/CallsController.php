@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers\API\Admin;
 
-use Illuminate\Support\Str;
 use App\Call;
 use App\Filters\CallFilters;
 use App\Filters\PatientFilters;
@@ -20,6 +19,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CallsController extends ApiController
 {

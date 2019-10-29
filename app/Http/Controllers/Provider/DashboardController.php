@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers\Provider;
 
-use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Http\Resources\SAAS\PracticeChargeableServices;
@@ -21,6 +20,7 @@ use CircleLinkHealth\Customer\Entities\Settings;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {

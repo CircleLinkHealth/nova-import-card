@@ -6,12 +6,12 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Support\Str;
 use App\Note;
 use App\Notifications\NoteForwarded;
 use App\Services\NoteService;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class NoteServiceTest extends TestCase

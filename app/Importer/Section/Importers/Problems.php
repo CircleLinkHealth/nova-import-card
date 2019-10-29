@@ -6,13 +6,13 @@
 
 namespace App\Importer\Section\Importers;
 
-use Illuminate\Support\Str;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Constants;
 use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 use App\Importer\Models\ImportedItems\ProblemImport;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Models\CPM\CpmProblem;
+use Illuminate\Support\Str;
 
 class Problems extends BaseImporter
 {

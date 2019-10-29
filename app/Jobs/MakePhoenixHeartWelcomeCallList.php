@@ -6,7 +6,6 @@
 
 namespace App\Jobs;
 
-use Illuminate\Support\Str;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
@@ -22,6 +21,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 
 class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 {

@@ -6,8 +6,8 @@
 
 namespace App;
 
-use Illuminate\Support\Str;
 use App\Models\CPM\CpmMedicationGroup;
+use Illuminate\Support\Str;
 
 /**
  * App\MedicationGroupsMap.

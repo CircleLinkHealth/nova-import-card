@@ -6,10 +6,10 @@
 
 namespace Tests\Provider;
 
-use Illuminate\Support\Str;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
+use Illuminate\Support\Str;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 

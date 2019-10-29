@@ -6,7 +6,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Str;
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
 use Carbon\Carbon;
@@ -19,6 +18,7 @@ use Illuminate\Database\SQLiteConnection;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Laravel\Horizon\Horizon;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Queue;

@@ -6,8 +6,8 @@
 
 namespace App\Observers;
 
-use Illuminate\Support\Str;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
+use Illuminate\Support\Str;
 
 class SaasAccountObserver
 {

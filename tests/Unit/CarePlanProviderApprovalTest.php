@@ -6,7 +6,6 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Support\Str;
 use App\CarePlan;
 use App\Models\CPM\CpmProblem;
 use App\Notifications\CarePlanProviderApproved;
@@ -15,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
+use Illuminate\Support\Str;
 use Notification;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;

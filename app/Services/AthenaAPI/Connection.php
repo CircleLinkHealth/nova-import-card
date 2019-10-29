@@ -22,8 +22,8 @@ namespace App\Services\AthenaAPI;
    permissions and limitations under the License.
 */
 
-use Illuminate\Support\Str;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
+use Illuminate\Support\Str;
 
 /**
  * This module contains utilities for communicating with the More Disruption Please API.

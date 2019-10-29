@@ -6,12 +6,12 @@
 
 namespace App\Http\Controllers\SAAS\Admin\CRUD;
 
-use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SAAS\StorePractice;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PracticeController extends Controller
 {

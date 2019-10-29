@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Str;
 use App\Observation;
 use App\Services\MsgCPRules;
 use App\Services\ObservationService;
@@ -16,6 +15,7 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Str;
 use Validator;
 
 class ObservationController extends Controller

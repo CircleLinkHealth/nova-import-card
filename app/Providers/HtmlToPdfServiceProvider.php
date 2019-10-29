@@ -6,14 +6,13 @@
 
 namespace App\Providers;
 
-use Illuminate\Contracts\Support\DeferrableProvider;
 use App\Contracts\HtmlToPdfService;
 use App\Services\SnappyPdfWrapper;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
 class HtmlToPdfServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-
     public function provides()
     {
         return [

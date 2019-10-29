@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers\Patient;
 
-use Illuminate\Support\Str;
 use App\CLH\Repositories\UserRepository;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
@@ -21,6 +20,7 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PatientController extends Controller

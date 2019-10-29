@@ -6,11 +6,11 @@
 
 namespace App\Services\PhiMail;
 
-use Illuminate\Support\Str;
 use App\DirectMailMessage;
 use App\Jobs\ImportCcda;
 use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 /**
  * Handle an incoming message from EMR Direct Mail API.

@@ -6,14 +6,13 @@
 
 namespace App\Providers;
 
-use Illuminate\Contracts\Support\DeferrableProvider;
 use App\Contracts\Services\TwilioClientable;
 use App\Services\TwilioClientService;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
 class TwilioClientServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-
     /**
      * Bootstrap the application services.
      */

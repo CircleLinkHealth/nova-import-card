@@ -6,15 +6,14 @@
 
 namespace App\Providers;
 
-use Illuminate\Contracts\Support\DeferrableProvider;
 use App\Contracts\Efax;
 use App\Services\Phaxio\PhaxioService;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use Phaxio\Phaxio;
 
 class FaxServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-
     /**
      * Bootstrap the application services.
      */

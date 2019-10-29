@@ -11,7 +11,6 @@ use Illuminate\Support\ServiceProvider;
 
 class DevelopmentServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-
     /**
      * Bootstrap services.
      */
