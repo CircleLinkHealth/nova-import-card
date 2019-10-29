@@ -1,10 +1,7 @@
 <?php
 
-/*
- * This file is part of CarePlan Manager by CircleLink Health.
- */
-
 return [
+
     /*
     |--------------------------------------------------------------------------
     | Mail Driver
@@ -14,7 +11,8 @@ return [
     | sending of e-mail. You may specify which one you're using throughout
     | your application here. By default, Laravel is setup for SMTP mail.
     |
-    | Supported: "smtp", "mail", "sendmail", "mailgun", "mandrill", "log"
+    | Supported: "smtp", "sendmail", "mailgun", "mandrill", "ses",
+    |            "sparkpost", "postmark", "log", "array"
     |
     */
 
@@ -58,8 +56,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'no-reply@circlelinkhealth.com'),
-        'name'    => env('MAIL_FROM_NAME', 'CircleLink Health'),
+        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+        'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
     /*
@@ -85,7 +83,9 @@ return [
     | connection. You may also set the "password" value below this one.
     |
     */
+
     'username' => env('MAIL_USERNAME'),
+
     'password' => env('MAIL_PASSWORD'),
 
     /*
@@ -98,6 +98,7 @@ return [
     | been provided here, which will work well on most of your systems.
     |
     */
+
     'sendmail' => '/usr/sbin/sendmail -bs',
 
     /*
@@ -110,8 +111,10 @@ return [
     | of the emails. Or, you may simply stick with the Laravel defaults!
     |
     */
+
     'markdown' => [
         'theme' => 'default',
+
         'paths' => [
             resource_path('views/vendor/mail'),
         ],
@@ -129,4 +132,5 @@ return [
     */
 
     'log_channel' => env('MAIL_LOG_CHANNEL'),
+
 ];
