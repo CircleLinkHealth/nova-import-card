@@ -85,7 +85,7 @@ class Problem extends \CircleLinkHealth\Core\Entities\BaseModel implements \App\
      *
      * @var array
      */
-    protected $dates = ['deleted_at'];
+    
 
     protected $fillable = [
         'is_monitored',
