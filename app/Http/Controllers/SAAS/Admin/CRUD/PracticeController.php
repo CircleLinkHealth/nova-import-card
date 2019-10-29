@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\SAAS\Admin\CRUD;
 
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SAAS\StorePractice;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -117,7 +118,7 @@ class PracticeController extends Controller
         }
 
         $practice->saas_account_id = $saasAccount->id;
-        $practice->name            = str_slug($request['display_name']);
+        $practice->name            = Str::slug($request['display_name']);
         $practice->display_name    = $request['display_name'];
         $practice->term_days       = $request['term_days'];
         $practice->clh_pppm        = $request['amount'];

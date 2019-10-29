@@ -6,6 +6,7 @@
 
 namespace App\Repositories\Cache;
 
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class View
@@ -14,7 +15,7 @@ class View
 
     public function __construct($viewHashKey = null)
     {
-        $this->viewHashKey = $viewHashKey ?? 'view'.str_random('20');
+        $this->viewHashKey = $viewHashKey ?? 'view'.Str::random('20');
     }
 
     /**

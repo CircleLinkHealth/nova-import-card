@@ -6,6 +6,7 @@
 
 namespace App;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -61,7 +62,7 @@ class TrixField extends Model
             'eng',
             'english',
         ]) ||
-            starts_with(strtolower($language), 'en')
+            Str::startsWith(strtolower($language), 'en')
         ) {
             $scriptLanguage = self::ENGLISH_LANGUAGE;
         }
@@ -72,7 +73,7 @@ class TrixField extends Model
             'spanish',
             'spa',
         ]) ||
-            starts_with(strtolower($language), ['es', 'sp'])
+            Str::startsWith(strtolower($language), ['es', 'sp'])
         ) {
             $scriptLanguage = self::SPANISH_LANGUAGE;
         }

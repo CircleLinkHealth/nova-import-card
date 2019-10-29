@@ -6,6 +6,7 @@
 
 namespace App\Services\PhiMail;
 
+use Illuminate\Support\Str;
 use App\DirectMailMessage;
 use App\Jobs\ImportCcda;
 use App\Models\MedicalRecords\Ccda;
@@ -46,10 +47,10 @@ class IncomingMessageHandler
      */
     public function handleMessageAttachment(DirectMailMessage &$dm, ShowResult $showRes)
     {
-        if (str_contains($showRes->mimeType, 'plain')) {
+        if (Str::contains($showRes->mimeType, 'plain')) {
             $dm->body = $showRes->data;
             $dm->save();
-        } elseif (str_contains($showRes->mimeType, 'xml') && false !== stripos($showRes->data, '<ClinicalDocument')) {
+        } elseif (Str::contains($showRes->mimeType, 'xml') && false !== stripos($showRes->data, '<ClinicalDocument')) {
             $this->storeAndImportCcd($showRes, $dm);
         } else {
             $path = storage_path('dm_id_'.$dm->id.'_attachment_'.Carbon::now()->toAtomString());

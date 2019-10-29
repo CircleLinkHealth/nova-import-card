@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use App\CLH\Repositories\UserRepository;
 use App\Notifications\EhrReportWriterNotification;
 use App\Services\CCD\ProcessEligibilityService;
@@ -275,7 +276,7 @@ class EhrReportWriterController extends Controller
                 return null;
             }
             foreach ($contents as $file) {
-                if (starts_with($file['name'], 'processed')) {
+                if (Str::startsWith($file['name'], 'processed')) {
                     continue;
                 }
                 $files[] = $file;

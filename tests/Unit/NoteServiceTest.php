@@ -6,6 +6,7 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Support\Str;
 use App\Note;
 use App\Notifications\NoteForwarded;
 use App\Services\NoteService;
@@ -31,7 +32,7 @@ class NoteServiceTest extends TestCase
     public function createNotification($id = null)
     {
         $args = [
-            'id'              => $id ?? 'test_'.str_random(5),
+            'id'              => $id ?? 'test_'.Str::random(5),
             'type'            => NoteForwarded::class,
             'notifiable_id'   => $this->provider->id,
             'notifiable_type' => User::class,

@@ -6,6 +6,7 @@
 
 namespace App\Importer\Loggers\Csv;
 
+use Illuminate\Support\Str;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\InsuranceLog;
@@ -168,10 +169,10 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
                 continue;
             }
 
-            if (str_contains($problem->code, ['-'])) {
+            if (Str::contains($problem->code, ['-'])) {
                 $pos         = strpos($problem->code, '-') + 1;
                 $problemCode = mb_substr($problem->code, $pos);
-            } elseif (str_contains($problem->code, ['ICD'])) {
+            } elseif (Str::contains($problem->code, ['ICD'])) {
                 $pos         = strpos($problem, 'ICD') + 3;
                 $problemCode = mb_substr($problem->code, $pos);
             } else {

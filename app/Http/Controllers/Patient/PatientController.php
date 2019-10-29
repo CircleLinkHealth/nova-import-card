@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Patient;
 
+use Illuminate\Support\Str;
 use App\CLH\Repositories\UserRepository;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
@@ -583,7 +584,7 @@ class PatientController extends Controller
 
             $bag = new ParameterBag([
                 'email'             => $patientData['email'],
-                'password'          => str_random(),
+                'password'          => Str::random(),
                 'display_name'      => $patientData['first_name'].' '.$patientData['last_name'],
                 'first_name'        => $patientData['first_name'],
                 'last_name'         => $patientData['last_name'],

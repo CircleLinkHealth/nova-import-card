@@ -6,6 +6,7 @@
 
 namespace App\Importer\Section\Importers;
 
+use Illuminate\Support\Str;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Constants;
 use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
@@ -61,14 +62,14 @@ class Problems extends BaseImporter
                 $cpmProblem = optional($this->getCpmProblem($itemLog, $problemCodes->cons_name));
 
                 //if problem is Diabetes and string contains 2, it's probably diabetes type 2
-                if (1 == $cpmProblem->id && str_contains($problemCodes->cons_name, ['2'])) {
+                if (1 == $cpmProblem->id && Str::contains($problemCodes->cons_name, ['2'])) {
                     $cpmProblem = $this->cpmProblems->firstWhere(
                         'name',
                         'Diabetes Type 2'
                                             );
                 }
                 //if problem is Diabetes and string contains 1, it's probably diabetes type 1
-                elseif (1 == $cpmProblem->id && str_contains(
+                elseif (1 == $cpmProblem->id && Str::contains(
                     $problemCodes->cons_name,
                     ['1']
                                         )) {
@@ -186,7 +187,7 @@ class Problems extends BaseImporter
 
                 $keyword = trim($keyword);
 
-                if (str_contains(strtolower($problemName), strtolower($keyword)) || str_contains(
+                if (Str::contains(strtolower($problemName), strtolower($keyword)) || Str::contains(
                     strtolower($keyword),
                     strtolower($problemName)
                 )) {

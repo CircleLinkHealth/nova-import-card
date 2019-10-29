@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Support\Str;
 use App\Contracts\Services\TwilioClientable;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Console\Command;
@@ -68,7 +69,7 @@ class DownloadTwilioRecordings extends Command
     private function download(RecordingInstance $recording): bool
     {
         $ext    = '.mp3';
-        $mp3Url = str_replace_last('.json', $ext, $recording->uri);
+        $mp3Url = Str::replaceLast('.json', $ext, $recording->uri);
         $url    = 'https://api.twilio.com'.$mp3Url;
         $result = $this->twilioService->downloadMedia($url);
         if ($result && $result['errorDetail']) {

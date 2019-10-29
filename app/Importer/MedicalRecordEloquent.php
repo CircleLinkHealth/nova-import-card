@@ -13,6 +13,7 @@ namespace App\Importer;
  * Time: 4:05 PM
  */
 
+use Illuminate\Support\Str;
 use App\Console\Commands\OverwriteNBIImportedData;
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use App\Importer\Predictors\HistoricBillingProviderPredictor;
@@ -433,7 +434,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     {
         return $this->insurances->reject(
             function ($i) {
-                return ! str_contains(strtolower($i->name.$i->type), 'medicare');
+                return ! Str::contains(strtolower($i->name.$i->type), 'medicare');
             }
             )
             ->count() >= 1;

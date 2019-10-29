@@ -6,6 +6,7 @@
 
 namespace App\Importer\Loggers\Allergy;
 
+use Illuminate\Support\Str;
 use App\Contracts\Importer\MedicalRecord\Section\Logger;
 
 class CommaDelimitedListAllergyLogger implements Logger
@@ -29,6 +30,6 @@ class CommaDelimitedListAllergyLogger implements Logger
 
     public function shouldHandle($allergies): bool
     {
-        return ! starts_with($allergies, ['[', '{']);
+        return ! Str::startsWith($allergies, ['[', '{']);
     }
 }

@@ -6,6 +6,7 @@
 
 namespace App\Importer\Loggers\Csv;
 
+use Illuminate\Support\Str;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
@@ -274,7 +275,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     {
         $delimiter = ' ';
 
-        if (str_contains($this->medicalRecord->provider_name, ',')) {
+        if (Str::contains($this->medicalRecord->provider_name, ',')) {
             $delimiter = ',';
         }
 

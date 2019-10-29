@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use Illuminate\Support\Str;
 use App\CarePlan;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
@@ -152,7 +153,7 @@ class CarePlanProviderApproved extends Notification
     public function toMail($notifiable)
     {
         $saasAccountName     = $notifiable->saasAccountName();
-        $slugSaasAccountName = strtolower(str_slug($saasAccountName, ''));
+        $slugSaasAccountName = strtolower(Str::slug($saasAccountName, ''));
 
         $mail = (new MailMessage())
             ->view('vendor.notifications.email', [

@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Provider;
 
+use Illuminate\Support\Str;
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Http\Controllers\Controller;
@@ -204,7 +205,7 @@ class OnboardingController extends Controller
             $this->validate($request, ['name' => 'required|unique:practices,name']);
 
             $practice = Practice::create([
-                'name'           => str_slug($input['name']),
+                'name'           => Str::slug($input['name']),
                 'user_id'        => $lead->id,
                 'display_name'   => $input['name'],
                 'federal_tax_id' => $input['federal_tax_id'],

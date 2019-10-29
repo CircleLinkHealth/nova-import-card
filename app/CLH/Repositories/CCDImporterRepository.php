@@ -6,6 +6,7 @@
 
 namespace App\CLH\Repositories;
 
+use Illuminate\Support\Str;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -31,7 +32,7 @@ class CCDImporterRepository
             throw new \Exception('User role not found.', 500);
         }
 
-        $newUserId = str_random(20);
+        $newUserId = Str::random(20);
 
         $email = empty($email = $demographics->email)
             ? $newUserId.'@careplanmanager.com'
@@ -48,7 +49,7 @@ class CCDImporterRepository
 
         $bag = new ParameterBag([
             'email'             => $email,
-            'password'          => str_random(),
+            'password'          => Str::random(),
             'display_name'      => $user_nicename,
             'first_name'        => $demographics->first_name,
             'last_name'         => $demographics->last_name,

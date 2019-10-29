@@ -6,6 +6,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Str;
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
 use Carbon\Carbon;
@@ -133,7 +134,7 @@ class AppServiceProvider extends ServiceProvider
         // Excel Package Importing Config
         // Format input array keys to be all lower-case and sluggified
         HeadingRowFormatter::extend('custom', function ($value) {
-            return strtolower(str_slug($value));
+            return strtolower(Str::slug($value));
         });
 
         $this->app->register(\Maatwebsite\Excel\ExcelServiceProvider::class);

@@ -6,6 +6,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Str;
 use App\Contracts\HtmlToPdfService;
 use App\Exceptions\FileNotFoundException;
 use Carbon\Carbon;
@@ -155,7 +156,7 @@ class PdfService
      */
     private function randomFileFullPath()
     {
-        $name = Carbon::now()->toAtomString().str_random(20);
+        $name = Carbon::now()->toAtomString().Str::random(20);
 
         return storage_path("pdfs/${name}.pdf");
     }

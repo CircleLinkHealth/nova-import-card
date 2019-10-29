@@ -6,6 +6,7 @@
 
 namespace App\Services\AthenaAPI;
 
+use Illuminate\Support\Str;
 use App\Entities\CcdaRequest;
 use App\Jobs\ImportCcda;
 use App\Models\MedicalRecords\Ccda;
@@ -113,7 +114,7 @@ class CreateAndPostPdfCareplan
             //If 'CCM Enabled' contains a y (meaning yes), then save the patient id
             foreach ($patientCustomFields as $customField) {
                 if ($customField['customfieldid'] == $ccmEnabledFieldId
-                    && str_contains($customField['customfieldvalue'], ['Y', 'y'])
+                    && Str::contains($customField['customfieldvalue'], ['Y', 'y'])
                 ) {
                     $ccdaRequest = $this->ccdaRequests->create([
                         'patient_id'    => $patientId,

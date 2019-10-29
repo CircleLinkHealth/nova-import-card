@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use Illuminate\Support\Str;
 use App\Models\CPM\CpmProblem;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -45,8 +46,8 @@ class PatientSeeder extends Seeder
             ]);
 
             $u->ccdProblems()->createMany([
-                ['name' => 'test'.str_random(5)],
-                ['name' => 'test'.str_random(5)],
+                ['name' => 'test'.Str::random(5)],
+                ['name' => 'test'.Str::random(5)],
             ]);
         });
     }

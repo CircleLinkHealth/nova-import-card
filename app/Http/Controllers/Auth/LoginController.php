@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -252,7 +253,7 @@ class LoginController extends Controller
 
         $request->merge(array_map('trim', $request->input()));
 
-        if ( ! str_contains($request->input('email'), '@')) {
+        if ( ! Str::contains($request->input('email'), '@')) {
             $this->username = 'username';
 
             $request->merge([

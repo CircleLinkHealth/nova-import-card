@@ -6,6 +6,7 @@
 
 namespace App\Services\CPM;
 
+use Illuminate\Support\Str;
 use App\Models\CPM\CpmInstruction;
 use App\Repositories\CpmInstructionRepository;
 use CircleLinkHealth\Customer\Entities\User;
@@ -80,7 +81,7 @@ class CpmInstructionService
             throw new \Exception('Relationship does not exist', 500);
         }
 
-        $pivotTableName = snake_case($relationship).'_users';
+        $pivotTableName = Str::snake($relationship).'_users';
 
         $userRel = $user->{$relationship}()
             ->where($entityForeign, '=', $entityId)

@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use Illuminate\Support\Str;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
@@ -93,10 +94,10 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
                 );
 
                 foreach ($problems as $problem) {
-                    if (str_contains($problem->code, ['-'])) {
+                    if (Str::contains($problem->code, ['-'])) {
                         $pos = strpos($problem->code, '-') + 1;
                         $problemCode = mb_substr($problem->code, $pos);
-                    } elseif (str_contains($problem->code, ['ICD'])) {
+                    } elseif (Str::contains($problem->code, ['ICD'])) {
                         $pos = strpos($problem, 'ICD') + 3;
                         $problemCode = mb_substr($problem->code, $pos);
                     } else {

@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Patient;
 
+use Illuminate\Support\Str;
 use App\CarePlan;
 use App\CarePlanPrintListView;
 use App\CLH\Repositories\UserRepository;
@@ -580,7 +581,7 @@ class PatientCareplanController extends Controller
         ];
         $this->validate($request, $user->getPatientRules(), $messages);
         $role      = Role::whereName('participant')->first();
-        $newUserId = str_random(15);
+        $newUserId = Str::random(15);
 
         $carePlanStatus = CarePlan::DRAFT;
         if (auth()->user()->isPracticeStaff()) {

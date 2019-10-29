@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Provider;
 
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Http\Resources\SAAS\PracticeChargeableServices;
@@ -185,7 +186,7 @@ class DashboardController extends Controller
             'email'      => $request->input('email'),
             'subject'    => $request->input('subject'),
             'message'    => $request->input('message'),
-            'code'       => str_random(20),
+            'code'       => Str::random(20),
         ]);
     }
 

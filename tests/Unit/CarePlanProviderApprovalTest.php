@@ -6,6 +6,7 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Support\Str;
 use App\CarePlan;
 use App\Models\CPM\CpmProblem;
 use App\Notifications\CarePlanProviderApproved;
@@ -115,9 +116,9 @@ class CarePlanProviderApprovalTest extends TestCase
 
         $cpmProblems = CpmProblem::get();
         $ccdProblems = $this->patient->ccdProblems()->createMany([
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
+            ['name' => 'test'.Str::random(5)],
+            ['name' => 'test'.Str::random(5)],
+            ['name' => 'test'.Str::random(5)],
         ]);
 
         foreach ($ccdProblems as $problem) {

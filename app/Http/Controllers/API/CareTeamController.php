@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\API;
 
+use Illuminate\Support\Str;
 use App\CLH\Helpers\StringManipulation;
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -272,7 +273,7 @@ class CareTeamController extends Controller
             'email'    => $input['user']['email'],
         ]);
 
-        $type = snake_case($input['formatted_type']);
+        $type = Str::snake($input['formatted_type']);
 
         if (CarePerson::BILLING_PROVIDER == $type) {
             $existingCarePersonsOfSameType = $this->clearExistingCarePeopleWithSameType($type, $patient);
@@ -373,7 +374,7 @@ class CareTeamController extends Controller
                     $practice = Practice::updateOrCreate([
                         'display_name' => $primaryPractice['display_name'],
                     ], [
-                        'name' => str_slug($primaryPractice['display_name']),
+                        'name' => Str::slug($primaryPractice['display_name']),
                     ]);
                 }
 

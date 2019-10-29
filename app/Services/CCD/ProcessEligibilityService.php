@@ -6,6 +6,7 @@
 
 namespace App\Services\CCD;
 
+use Illuminate\Support\Str;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
@@ -290,7 +291,7 @@ class ProcessEligibilityService
 //                $cloudFileName = $file['filename'];
 //                $cloudDirName  = $file['dirname'];
 //
-//                if (str_contains($cloudFileName, ['processed'])) {
+//                if (Str::contains($cloudFileName, ['processed'])) {
 //                    $cloudDisk->move($cloudFilePath, "{$processedDir['path']}/{$cloudFileName}");
 //
 //                    return $file;
@@ -318,7 +319,7 @@ class ProcessEligibilityService
 //
 //                    foreach ($localDisk->allFiles($unzipDir) as $path) {
 //                        $now       = Carbon::now()->toAtomString();
-//                        $randomStr = str_random();
+//                        $randomStr = Str::random();
 //                        $put       = $cloudDisk->put($cloudDirName . "/$randomStr-$now",
 //                            fopen($localDisk->path($path), 'r+'));
 //
@@ -382,7 +383,7 @@ class ProcessEligibilityService
 
             $rawData = $cloudDisk->get($driveFilePath);
 
-            if (str_contains($file['filename'], ['processed'])) {
+            if (Str::contains($file['filename'], ['processed'])) {
                 $cloudDisk->move($file['path'], "{$processedDir['path']}/{$file['filename']}");
 
                 return $file;
@@ -463,9 +464,9 @@ class ProcessEligibilityService
                 $cloudDirName = $file['dirname'];
 
                 foreach ($localDisk->allFiles($unzipDir) as $path) {
-                    if (str_contains($path, 'xml')) {
+                    if (Str::contains($path, 'xml')) {
                         $now = Carbon::now()->toAtomString();
-                        $randomStr = str_random();
+                        $randomStr = Str::random();
 
                         $put = $cloudDisk->put(
                             "{$processedDir['path']}/${randomStr}-${now}",

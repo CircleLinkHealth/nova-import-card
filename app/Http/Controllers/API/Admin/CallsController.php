@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\API\Admin;
 
+use Illuminate\Support\Str;
 use App\Call;
 use App\Filters\CallFilters;
 use App\Filters\PatientFilters;
@@ -146,7 +147,7 @@ class CallsController extends ApiController
      */
     public function remove($ids)
     {
-        if (str_contains($ids, ',')) {
+        if (Str::contains($ids, ',')) {
             $ids = explode(',', $ids);
         }
 

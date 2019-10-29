@@ -6,6 +6,7 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Support\Str;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
 
@@ -29,7 +30,7 @@ class PracticeTest extends TestCase
         $this->assertCount(3, $array);
 
         foreach ($array as $item) {
-            $this->assertFalse(str_contains($item, [' ']));
+            $this->assertFalse(Str::contains($item, [' ']));
         }
     }
 }

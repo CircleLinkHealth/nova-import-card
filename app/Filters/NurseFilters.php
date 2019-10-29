@@ -6,6 +6,7 @@
 
 namespace App\Filters;
 
+use Illuminate\Support\Str;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -119,7 +120,7 @@ class NurseFilters extends QueryFilters
             return $this->builder->with('states');
         }
 
-        if (str_contains($states, ',')) {
+        if (Str::contains($states, ',')) {
             $states = explode(',', $states);
         }
 

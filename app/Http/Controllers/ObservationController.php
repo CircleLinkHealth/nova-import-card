@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use App\Observation;
 use App\Services\MsgCPRules;
 use App\Services\ObservationService;
@@ -199,7 +200,7 @@ class ObservationController extends Controller
         if ('RPT/CF_RPT_60' == $request->input('observationType')) {
             $params['obs_value'] = str_replace('%', '', $params['obs_value']);
 
-            if (str_contains(
+            if (Str::contains(
                 $params['obs_value'],
                 '.'
                 ) && 3 == strlen($params['obs_value']) && is_numeric($params['obs_value'])

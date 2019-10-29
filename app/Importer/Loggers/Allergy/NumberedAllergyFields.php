@@ -5,6 +5,7 @@
  */
 
 namespace App\Importer\Loggers\Allergy;
+use Illuminate\Support\Str;
 
 class NumberedAllergyFields
 {
@@ -22,7 +23,7 @@ class NumberedAllergyFields
                 break;
             }
 
-            if ( ! empty($patient["allergy_${i}"]) && ! str_contains(
+            if ( ! empty($patient["allergy_${i}"]) && ! Str::contains(
                 strtolower($patient["allergy_${i}"]),
                 ['#n/a', 'no known']
             )) {

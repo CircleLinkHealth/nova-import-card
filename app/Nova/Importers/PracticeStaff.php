@@ -6,6 +6,7 @@
 
 namespace App\Nova\Importers;
 
+use Illuminate\Support\Str;
 use App\CLH\Repositories\UserRepository;
 use App\Search\LocationByName;
 use App\Search\RoleByName;
@@ -161,7 +162,7 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
 
         //get phone type
         $type = collect(PhoneNumber::getTypes())->filter(function ($type) use ($row) {
-            return $type == strtolower($row['phone_type']) || starts_with(
+            return $type == strtolower($row['phone_type']) || Str::startsWith(
                 $type,
                 strtolower(substr($row['phone_type'], 0, 2))
             );
@@ -194,7 +195,7 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
 
         $bag = new ParameterBag([
             'email'             => $row['email'],
-            'password'          => str_random(),
+            'password'          => Str::random(),
             'display_name'      => $row['first_name'].' '.$row['last_name'],
             'first_name'        => $row['first_name'],
             'last_name'         => $row['last_name'],

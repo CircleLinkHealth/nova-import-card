@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use Illuminate\Support\Str;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
@@ -162,7 +163,7 @@ class NoteForwarded extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         $saasAccountName     = $notifiable->saasAccountName();
-        $slugSaasAccountName = strtolower(str_slug($saasAccountName, ''));
+        $slugSaasAccountName = strtolower(Str::slug($saasAccountName, ''));
 
         $mail = (new MailMessage())
             ->view(

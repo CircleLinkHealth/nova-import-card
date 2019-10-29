@@ -6,6 +6,7 @@
 
 namespace App\Services\MedicalRecords;
 
+use Illuminate\Support\Str;
 use App\Enrollee;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\TabularMedicalRecord;
@@ -53,21 +54,21 @@ class ImportService
         }
 
         if (array_key_exists('primary_phone', $row) && array_key_exists('primary_phone_type', $row)) {
-            if (str_contains(strtolower($row['primary_phone_type']), ['cell', 'mobile'])) {
+            if (Str::contains(strtolower($row['primary_phone_type']), ['cell', 'mobile'])) {
                 $row['cell_phone'] = $row['primary_phone'];
-            } elseif (str_contains(strtolower($row['primary_phone_type']), 'home')) {
+            } elseif (Str::contains(strtolower($row['primary_phone_type']), 'home')) {
                 $row['home_phone'] = $row['primary_phone'];
-            } elseif (str_contains(strtolower($row['primary_phone_type']), 'work')) {
+            } elseif (Str::contains(strtolower($row['primary_phone_type']), 'work')) {
                 $row['work_phone'] = $row['primary_phone'];
             }
         }
 
         if (array_key_exists('alt_phone', $row) && array_key_exists('alt_phone_type', $row)) {
-            if (str_contains(strtolower($row['alt_phone_type']), ['cell', 'mobile'])) {
+            if (Str::contains(strtolower($row['alt_phone_type']), ['cell', 'mobile'])) {
                 $row['cell_phone'] = $row['alt_phone'];
-            } elseif (str_contains(strtolower($row['alt_phone_type']), 'home')) {
+            } elseif (Str::contains(strtolower($row['alt_phone_type']), 'home')) {
                 $row['home_phone'] = $row['alt_phone'];
-            } elseif (str_contains(strtolower($row['alt_phone_type']), 'work')) {
+            } elseif (Str::contains(strtolower($row['alt_phone_type']), 'work')) {
                 $row['work_phone'] = $row['alt_phone'];
             }
         }
@@ -226,9 +227,9 @@ class ImportService
             return null;
         }
 
-        if (str_contains($dob, '/')) {
+        if (Str::contains($dob, '/')) {
             $delimiter = '/';
-        } elseif (str_contains($dob, '-')) {
+        } elseif (Str::contains($dob, '-')) {
             $delimiter = '-';
         }
         $date = explode($delimiter, $dob);

@@ -6,6 +6,7 @@
 
 namespace Tests\Provider;
 
+use Illuminate\Support\Str;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
@@ -48,7 +49,7 @@ class DashboardTest extends DuskTestCase
                 ->press('@save-practice');
         });
 
-        $this->practiceSlug = str_slug($name);
+        $this->practiceSlug = Str::slug($name);
 
         $this->assertDatabaseHas('practices', [
             'name'         => $this->practiceSlug,
