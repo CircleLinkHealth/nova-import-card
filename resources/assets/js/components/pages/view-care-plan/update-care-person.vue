@@ -22,6 +22,15 @@
     .has-errors {
         color: #a94442;
     }
+
+    .v-select .dropdown-toggle {
+        height: 40px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(60,60,60,.26) !important;
+    }
+
+
 </style>
 
 <template>
@@ -113,12 +122,12 @@
                                     <div class="col-md-12">
                                         <validate auto-label :class="fieldClassName(formstate.specialty)">
                                             <div class="col-md-12">
-                                                <select2 :options="specialtiesOptions"
-                                                         name="specialty"
-                                                         v-model="formData.user.provider_info.specialty"
-                                                         style="width: 100%;">
-                                                    <option disabled value="0">Select one</option>
-                                                </select2>
+                                                <v-select label="text" :options="specialtiesOptions"
+                                                          name="specialty"
+                                                          v-model="formData.user.provider_info.specialty"
+                                                          index="id"
+                                                >
+                                                </v-select>
                                             </div>
 
                                             <div class="col-md-12">
@@ -408,6 +417,7 @@
                         </div>
                     </div>
 
+                    <!--clinical type/suffix-->
                     <div class="row providerForm">
                         <div class="form-group">
 
@@ -419,26 +429,16 @@
                                     <div class="required-field col-md-6">
                                         <validate auto-label :class="fieldClassName(formstate.suffix)">
                                             <div class="col-md-12">
-                                                <select v-model="formData.user.suffix"
+                                                <v-select
+                                                        :options="suffixOptions"
+                                                        label="text"
+                                                        index="id"
+                                                        :value="selectedSuffix"
+                                                        @input="setSelectedSuffix"
                                                         id="suffix"
                                                         name="suffix"
-                                                        class="form-control input-md"
                                                         required>
-                                                    <option value="" disabled></option>
-                                                    <option value="non-clinical"
-                                                            :selected="formData.user.provider_info.is_clinical == 0">
-                                                        Non-clinical
-                                                    </option>
-                                                    <option value="MD">MD</option>
-                                                    <option value="DO">DO</option>
-                                                    <option value="NP">NP</option>
-                                                    <option value="PA">PA</option>
-                                                    <option value="RN">RN</option>
-                                                    <option value="LPN">LPN</option>
-                                                    <option value="PN">PN</option>
-                                                    <option value="CNA">CNA</option>
-                                                    <option value="MA">MA</option>
-                                                </select>
+                                                </v-select>
                                             </div>
 
                                             <div class="col-md-12">
@@ -466,11 +466,13 @@
                                     <div class="col-md-12">
                                         <validate auto-label :class="fieldClassName(formstate.typeForDropdown)">
                                             <div class="col-md-12">
-                                                <select2 :settings="relationToPatientOptions"
-                                                         name="relation-to-patient"
-                                                         v-model="formData.typeForDropdown"
-                                                         style="width: 100%;">
-                                                </select2>
+                                                <v-select label="text"
+                                                          index="id"
+                                                          :options="relationToPatientOptions.data"
+                                                          name="relation-to-patient"
+                                                          v-model="formData.typeForDropdown"
+                                                >
+                                                </v-select>
                                             </div>
 
                                             <div class="col-md-12">
@@ -514,6 +516,7 @@
 
     import {addNotification, clearOpenModal, getPatientCareTeam, updateCarePerson} from '../../../store/actions'
     import specialtiesOptions from '../../CareTeam/specialties-options';
+    import suffixOptions from '../../CareTeam/suffix-options';
     import store from '../../../store';
     import {
         RELATION_VALID_DROPDOWN_OPTIONS,
@@ -522,6 +525,7 @@
         relationToPatientOptions,
         checkCareTeamRelations
     } from '../../CareTeam/care-team-relation-to-patient';
+    import VueSelect from 'vue-select';
 
     export default {
         props: {
@@ -529,7 +533,8 @@
         },
 
         components: {
-            modal
+            modal,
+            'v-select': VueSelect,
         },
 
         computed: Object.assign(
@@ -547,6 +552,14 @@
                     return this.carePerson.user.first_name
                         + ' '
                         + this.carePerson.user.last_name
+                }
+            },
+            {
+                selectedSuffix() {
+                    return this.formData.user.provider_info.is_clinical == 0 ?
+                        'non-clinical' :
+                        this.formData.user.suffix;
+
                 }
             }
         ),
@@ -596,6 +609,9 @@
                         return 'has-danger';
                     }
                 },
+                setSelectedSuffix(input){
+                    this.formData.user.suffix = input
+                },
             }
         ),
 
@@ -642,6 +658,7 @@
                 formstate: {},
                 relationToPatientOptions: relationToPatientOptions,
                 specialtiesOptions: specialtiesOptions,
+                suffixOptions: suffixOptions,
                 formData: {
                     id: '',
                     formatted_type: 'External',
