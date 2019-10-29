@@ -11,14 +11,13 @@ use Laravel\Nova\Filters\Filter;
 
 class PracticeFilter extends Filter
 {
-    public $name = 'Practice';
-    
     /**
      * The filter's component.
      *
      * @var string
      */
     public $component = 'select-filter';
+    public $name      = 'Practice';
 
     /**
      * Apply the filter to the given query.

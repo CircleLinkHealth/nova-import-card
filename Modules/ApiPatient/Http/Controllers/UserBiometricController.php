@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
 use App\Services\CPM\CpmBiometricService;
-use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class UserBiometricController extends Controller
 {
@@ -16,7 +16,7 @@ class UserBiometricController extends Controller
      * @var CpmBiometricService
      */
     protected $biometricUserService;
-    
+
     /**
      * UserBiometricController constructor.
      *
@@ -26,7 +26,17 @@ class UserBiometricController extends Controller
     {
         $this->biometricUserService = $biometricUserService;
     }
-    
+
+    public function destroy($userId, $id)
+    {
+        return response()->json($this->biometricUserService->removePatientBiometric($userId, $id));
+    }
+
+    public function show($userId)
+    {
+        return response()->json($this->biometricUserService->patientBiometrics($userId));
+    }
+
     public function store($userId, Request $request)
     {
         $biometricId             = $request->input('biometric_id');
@@ -79,17 +89,7 @@ class UserBiometricController extends Controller
         } else {
             return \response('"biometric_id" is important');
         }
-        
+
         return response()->json($result);
-    }
-    
-    public function show($userId)
-    {
-        return response()->json($this->biometricUserService->patientBiometrics($userId));
-    }
-    
-    public function destroy($userId, $id)
-    {
-        return response()->json($this->biometricUserService->removePatientBiometric($userId, $id));
     }
 }

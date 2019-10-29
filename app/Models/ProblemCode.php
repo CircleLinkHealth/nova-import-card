@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null             $deleted_at
  * @property \App\Models\CCD\Problem $problem
  * @property \App\ProblemCodeSystem  $system
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode onlyTrashed()
  * @method static bool|null restore()
@@ -39,12 +40,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode withoutTrashed()
  * @mixin \Eloquent
+ *
  * @property int|null                                                                       $problem_code_system_id
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode whereProblemCodeSystemId($value)
+ *
  * @property int|null $revision_history_count
  */
 class ProblemCode extends \CircleLinkHealth\Core\Entities\BaseModel

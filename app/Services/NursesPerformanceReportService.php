@@ -476,10 +476,10 @@ class NursesPerformanceReportService
                           'if (GREATEST(pms.ccm_time, pms.bhi_time) is null, 0, GREATEST(pms.ccm_time, pms.bhi_time)/60) as patient_time'
                       ),
                 \DB::raw(
-                          "if (GREATEST(pms.ccm_time, pms.bhi_time) is null, {$this->timeGoal}, ({$this->timeGoal} - (GREATEST(pms.ccm_time, pms.bhi_time)/60))) as patient_time_left"
+                    "if (GREATEST(pms.ccm_time, pms.bhi_time) is null, {$this->timeGoal}, ({$this->timeGoal} - (GREATEST(pms.ccm_time, pms.bhi_time)/60))) as patient_time_left"
                       ),
                 \DB::raw(
-                          'if (pms.no_of_successful_calls is null, 0, pms.no_of_successful_calls) as successful_calls'
+                    'if (pms.no_of_successful_calls is null, 0, pms.no_of_successful_calls) as successful_calls'
                       )
             )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')

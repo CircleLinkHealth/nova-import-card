@@ -172,8 +172,8 @@ class SchedulerService
                                $row
                            ) {
                     $q->where(
-                                   'birth_date',
-                                   Carbon::parse($row['DOB'])->toDateString()
+                        'birth_date',
+                        Carbon::parse($row['DOB'])->toDateString()
                                );
                 })
                 ->first();

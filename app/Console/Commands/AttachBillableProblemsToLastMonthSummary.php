@@ -82,7 +82,7 @@ class AttachBillableProblemsToLastMonthSummary extends Command
                                             $pms->reset();
                                             $pms->save();
                                         }
-    
+
                                         if ((bool) $this->option('reset-actor')) {
                                             $pms->actor_id = null;
                                             $pms->save();

@@ -17,9 +17,11 @@ namespace App\Models\CPM;
  * @property \Carbon\Carbon                 $updated_at
  * @property \App\Models\CPM\CpmInstruction $instruction
  * @mixin \Eloquent
+ *
  * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection      $cpmInstructions
  * @property \App\Models\CPM\CpmProblem                                                     $problems
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser query()
@@ -29,6 +31,7 @@ namespace App\Models\CPM;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser wherePatientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereUpdatedAt($value)
+ *
  * @property \App\Models\CPM\CpmProblem $problem
  * @property int|null                   $cpm_instructions_count
  * @property int|null                   $revision_history_count

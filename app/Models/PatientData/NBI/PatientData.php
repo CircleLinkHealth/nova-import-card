@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null                     $secondary_insurance
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\NBI\PatientData newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\NBI\PatientData newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\NBI\PatientData query()

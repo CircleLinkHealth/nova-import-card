@@ -24,6 +24,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Carbon\Carbon                           $updated_at
  * @property \App\Importer\Models\ItemLogs\AllergyLog $ccdLog
  * @property \CircleLinkHealth\Customer\Entities\User $patient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereAllergenName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereAllergyImportId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereCcdAllergyLogId($value)
@@ -35,10 +36,13 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereVendorId($value)
  * @mixin \Eloquent
+ *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy query()
+ *
  * @property int|null $revision_history_count
  */
 class Allergy extends \CircleLinkHealth\Core\Entities\BaseModel

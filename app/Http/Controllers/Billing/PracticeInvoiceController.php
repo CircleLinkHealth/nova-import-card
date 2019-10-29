@@ -63,7 +63,7 @@ class PracticeInvoiceController extends Controller
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         }
-    
+
         $savedSummaries = collect();
 
         $this->getCurrentMonthSummariesQuery($practice_id, $date)
@@ -77,7 +77,7 @@ class PracticeInvoiceController extends Controller
                         }
                     }
                     $summary->save();
-    
+
                     $savedSummaries->push($summary);
                 }
             });

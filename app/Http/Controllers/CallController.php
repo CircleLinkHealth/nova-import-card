@@ -442,9 +442,9 @@ class CallController extends Controller
         if ('call' === $input['type'] && $patient->inboundCalls) {
             $scheduledCall = $patient->inboundCalls()
                 ->where(function ($q) {
-                                         $q->whereNull('type')
-                                             ->orWhere('type', '=', 'call');
-                                     })
+                    $q->whereNull('type')
+                        ->orWhere('type', '=', 'call');
+                })
                 ->where('status', '=', 'scheduled')
                 ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
                 ->first();

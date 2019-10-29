@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \App\Models\CPM\CpmProblem|null                                    $cpmProblem
  * @property \CircleLinkHealth\Customer\Entities\User                           $patient
  * @property \App\Models\CPM\CpmInstruction                                     $cpmInstruction
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereActivate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCcdProblemLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCcdaId($value)
@@ -52,10 +53,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereVendorId($value)
  * @mixin \Eloquent
+ *
  * @property int                                                                                                  $is_monitored     A monitored problem is a problem we provide Care Management for.
  * @property int|null                                                                                             $billable
  * @property \CircleLinkHealth\Customer\Entities\PatientMonthlySummary[]|\Illuminate\Database\Eloquent\Collection $patientSummaries
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                       $revisionHistory
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem newQuery()
@@ -67,6 +70,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereIsMonitored($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\Problem withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\Problem withoutTrashed()
+ *
  * @property int|null $codes_count
  * @property int|null $patient_summaries_count
  * @property int|null $revision_history_count

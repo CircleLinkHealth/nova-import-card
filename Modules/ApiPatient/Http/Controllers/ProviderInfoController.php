@@ -7,7 +7,6 @@
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
 use App\Services\ProviderInfoService;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
 class ProviderInfoController extends Controller
@@ -16,7 +15,7 @@ class ProviderInfoController extends Controller
      * @var ProviderInfoService
      */
     protected $providerService;
-    
+
     /**
      * ProviderInfoController constructor.
      *
@@ -26,7 +25,7 @@ class ProviderInfoController extends Controller
     {
         $this->providerService = $providerService;
     }
-    
+
     public function show($userId)
     {
         return \response($this->providerService->getPatientProviders($userId));

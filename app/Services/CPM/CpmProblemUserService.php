@@ -29,7 +29,9 @@ class CpmProblemUserService
     {
         $problemUser = $this->create($patientId, $cpmProblemId, null);
         if ($problemUser) {
-            return $this->cpmProblemService->setupProblem(CpmProblem::with(['cpmInstructions' => function($q) { $q->latest(); },'snomedMaps',])->find($cpmProblemId));
+            return $this->cpmProblemService->setupProblem(CpmProblem::with(['cpmInstructions' => function ($q) {
+                $q->latest();
+            }, 'snomedMaps'])->find($cpmProblemId));
         }
 
         return $problemUser;

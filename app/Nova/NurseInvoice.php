@@ -120,11 +120,11 @@ class NurseInvoice extends Resource
     {
         return [
             BelongsTo::make('Care Coach', 'user', CareCoachUser::class)
-                     ->hideWhenUpdating()
-                     ->hideFromIndex()
-                     ->searchable()
-                     ->prepopulate(),
-            
+                ->hideWhenUpdating()
+                ->hideFromIndex()
+                ->searchable()
+                ->prepopulate(),
+
             Text::make('Name', 'nurse.user.display_name')
                 ->sortable()
                 ->hideWhenCreating()

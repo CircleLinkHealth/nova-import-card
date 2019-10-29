@@ -167,7 +167,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckEmrDirectInbox::class)
             ->everyFiveMinutes()
             ->withoutOverlapping()->onOneServer();
-        
+
         //uncomment when ready
 //        $schedule->command(DownloadTwilioRecordings::class)
 //                 ->everyThirtyMinutes()

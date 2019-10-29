@@ -15,10 +15,13 @@ namespace App;
  * @property \App\CarePlanItem[]|\Illuminate\Database\Eloquent\Collection $children
  * @property \App\CarePlanItem                                            $parents
  * @mixin \Eloquent
+ *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem query()
+ *
  * @property int|null $children_count
  * @property int|null $revision_history_count
  */

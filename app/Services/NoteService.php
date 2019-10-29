@@ -367,7 +367,7 @@ class NoteService
             ->get()
             ->markAsRead();
     }
-    
+
     public function patientNotes($userId, NoteFilters $filters)
     {
         return $this->noteRepo->patientNotes($userId, $filters);

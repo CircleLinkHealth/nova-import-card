@@ -10,7 +10,6 @@ use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\NoteFinalSaved;
 use App\Http\Requests\NotesReport;
-use App\Models\Addendum;
 use App\Note;
 use App\Repositories\PatientWriteRepository;
 use App\SafeRequest;

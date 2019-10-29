@@ -42,6 +42,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\Note|null                                                                 $note
  * @property \CircleLinkHealth\Customer\Entities\User|null                                  $outboundUser
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAttemptNote($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCallTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCalledDate($value)
@@ -61,6 +62,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowEnd($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowStart($value)
  * @mixin \Eloquent
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newQuery()
@@ -71,8 +73,11 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereIsManual($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereSubType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereType($value)
+ *
  * @property int $asap
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAsap($value)
+ *
  * @property int|null $revision_history_count
  */
 class Call extends BaseModel

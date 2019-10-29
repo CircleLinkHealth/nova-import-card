@@ -32,6 +32,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\Importer\Models\ItemLogs\MedicationLog $ccdLog
  * @property \App\Models\CPM\CpmMedicationGroup          $cpmMedicationGroup
  * @property \CircleLinkHealth\Customer\Entities\User    $patient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereCcdMedicationLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereCcdaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereCode($value)
@@ -48,11 +49,14 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereVendorId($value)
  * @mixin \Eloquent
+ *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereActive($value)
+ *
  * @property int|null $revision_history_count
  */
 class Medication extends \CircleLinkHealth\Core\Entities\BaseModel
