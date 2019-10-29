@@ -13,7 +13,7 @@ class CallView extends Resource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request
+     * @param \Illuminate\Http\Request
      * @param mixed $request
      *
      * @return array
@@ -41,8 +41,11 @@ class CallView extends Resource
             'scheduler'              => $this->scheduler,
             'is_ccm'                 => $this->is_ccm,
             'is_bhi'                 => $this->is_bhi,
+            'asap'                   => $this->asap,
             'billing_provider'       => $this->billing_provider,
             'ccm_status'             => $this->ccm_status,
+            'patient_nurse_id'       => $this->patient_nurse_id,
+            'patient_nurse'          => $this->patient_nurse,
         ];
     }
 }

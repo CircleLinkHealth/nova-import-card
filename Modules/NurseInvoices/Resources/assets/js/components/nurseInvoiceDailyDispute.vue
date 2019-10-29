@@ -35,6 +35,7 @@
             && editButtonActive
             && isUserAuthToDailyDispute
             && canBeDisputed
+            && isUserAuthToDailyDispute
             && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleEdit()"
                   aria-hidden="true"
@@ -109,7 +110,7 @@
                 editButtonActive: false,
                 deleteButtonActive: false,
                 showDisputeBox: false,
-                formattedTime: this.invoiceData.formatted_time,
+                formattedTime: this.invoiceData.disputedFormattedTime ? this.invoiceData.disputedFormattedTime : this.invoiceData.formatted_time,
                 requestedTimeToShow: '',
                 liveRequestedTime: '',
                 requestedTimeFromDb: this.invoiceData.suggestedTime,
@@ -118,7 +119,7 @@
                 showTillRefresh: true,
                 loader: false,
                 errors: [],
-                temporaryValue: '',
+                temporaryTime: '',
                 disputeStatus: this.invoiceData.status,
                 disputeInvalidated: this.invoiceData.invalidated,
             }
@@ -138,9 +139,16 @@
 
             setRequestedValue() {
                 const requestedTimeFromDbExists = this.requestedTimeFromDb === undefined;
-                const temporaryValue = !!this.temporaryValue;
+                const temporaryTime = !!this.temporaryTime;
 
-                return temporaryValue || requestedTimeFromDbExists ? this.temporaryValue : this.requestedTimeFromDb;
+               if (temporaryTime || requestedTimeFromDbExists){
+                   const secondHrDigit = this.temporaryTime.substring(0, 2).charAt(1);
+                   const timeWithLeadingZero = this.temporaryTime.padStart(5, '0'); //add leading zero to time
+
+                   return secondHrDigit === ':' ? timeWithLeadingZero : this.temporaryTime;
+               }
+
+                return this.requestedTimeFromDb;
             },
 
             showDeleteBtn() {
@@ -204,7 +212,7 @@
                         this.showTillRefresh = false;
                         this.requestedTimeFromDb = undefined;
                         this.liveRequestedTime = '';
-                        this.temporaryValue = '';
+                        this.temporaryTime = '';
                         this.disputeStatus = undefined;
                         this.loader = false;
 
@@ -247,7 +255,7 @@
                         this.editButtonActive = false;
                         this.showDisputeBox = false;
                         this.disputeStatus = defaultDisputeStatus;
-                        this.temporaryValue = this.liveRequestedTime;
+                        this.temporaryTime = this.liveRequestedTime;
                         this.loader = false;
 
                         this.addNotification({
