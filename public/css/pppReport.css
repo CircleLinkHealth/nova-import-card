@@ -86,3 +86,13 @@
     margin-right: 10px;
     background-size: contain !important;
 }
+
+.recommendations-area {
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 0.78px;
+    color: #1a1a1a;
+}

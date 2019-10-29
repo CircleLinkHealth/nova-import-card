@@ -118,7 +118,7 @@ function getStringValue($val, $default = '')
                     @foreach($tasks['tasks'] as $key => $recommendations)
                         @if(! empty($recommendations) && isset($recommendations['qualitative_trigger']))
                             <div class="recommendations-area">
-                                <div style="font-weight: 600">{{$recommendations['qualitative_trigger']}}</div>
+                                <div><strong>{{$recommendations['qualitative_trigger']}}</strong></div>
                                 <div>{{$recommendations['task_body']}}</div>
                                 <br>
                                 @if (is_array($recommendations['recommendation_body']))

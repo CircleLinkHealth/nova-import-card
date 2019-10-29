@@ -309,10 +309,10 @@ class GeneratePatientReportsJob implements ShouldQueue
     {
         $pdf->setOption('lowquality', false);
         $pdf->setOption('disable-smart-shrinking', true);
-        $pdf->setOption('margin-top', 8);
-        $pdf->setOption('margin-bottom', 8);
-        $pdf->setOption('margin-left', 5);
-        $pdf->setOption('margin-right', 5);
+        $pdf->setOption('margin-top', 12);
+        $pdf->setOption('margin-bottom', 12);
+        $pdf->setOption('margin-left', 13);
+        $pdf->setOption('margin-right', 13);
         if ($addPageNumbers) {
             $pdf->setOption('footer-right', '[page] of [topage]');
         }
