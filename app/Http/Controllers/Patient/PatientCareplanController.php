@@ -177,7 +177,7 @@ class PatientCareplanController extends Controller
         // create pdf for each user
         $p = 1;
         foreach ($users as $user_id) {
-            $user = User::with(['careTeamMembers', 'carePlan.pdfs'])->find($user_id);
+            $user = User::with(['careTeamMembers', 'carePlan.pdfs', 'primaryPractice'])->find($user_id);
 
             if ( ! $user) {
                 return response()->json("User with id: {$user->id} not found.");
@@ -204,6 +204,7 @@ class PatientCareplanController extends Controller
                         'letter'       => $letter,
                         'problemNames' => $careplan['problem'],
                         'careTeam'     => $user->careTeamMembers,
+                        'practiceName' => $user->primaryPractice->name,
                         'data'         => $careplanService->careplan($user_id),
                     ]
                 );
@@ -223,6 +224,7 @@ class PatientCareplanController extends Controller
                     'problemNames' => $careplan['problem'],
                     'careTeam'     => $user->careTeamMembers,
                     'data'         => $careplanService->careplan($user_id),
+                    'practiceName' => $user->primaryPractice->name,
                     'pdfCareplan'  => $pdfCareplan,
                 ],
                 null,
