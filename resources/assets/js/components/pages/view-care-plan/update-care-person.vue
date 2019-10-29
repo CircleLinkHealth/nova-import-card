@@ -31,6 +31,40 @@
     }
 
 
+    .vue-modal-container {
+        overflow: visible;
+    }
+
+    .suffix-element .dropdown-menu {
+        max-height: 160px !important;
+    }
+    .care-team-dropdown.searchable .dropdown-toggle {
+        cursor: text;
+    }
+    .care-team-dropdown .vs__selected-options input {
+        margin-top: 0 !important;
+    }
+
+    .care-team-dropdown .dropdown-toggle {
+        height: 35px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(60, 60, 60, .26) !important;
+    }
+
+    .care-team-dropdown .vs__actions {
+        padding-top: 4px !important;
+    }
+
+    .care-team-dropdown .selected-tag {
+        padding-top: 3px !important;
+    }
+
+    .care-team-dropdown .vs__open-indicator {
+        padding-top: 2px;
+    }
+
+
 </style>
 
 <template>
@@ -122,7 +156,8 @@
                                     <div class="col-md-12">
                                         <validate auto-label :class="fieldClassName(formstate.specialty)">
                                             <div class="col-md-12">
-                                                <v-select label="text" :options="specialtiesOptions"
+                                                <v-select class="care-team-dropdown"
+                                                        label="text" :options="specialtiesOptions"
                                                           name="specialty"
                                                           v-model="formData.user.provider_info.specialty"
                                                           index="id"
@@ -430,6 +465,7 @@
                                         <validate auto-label :class="fieldClassName(formstate.suffix)">
                                             <div class="col-md-12">
                                                 <v-select
+                                                        class="care-team-dropdown suffix-element"
                                                         :options="suffixOptions"
                                                         label="text"
                                                         index="id"
@@ -466,7 +502,8 @@
                                     <div class="col-md-12">
                                         <validate auto-label :class="fieldClassName(formstate.typeForDropdown)">
                                             <div class="col-md-12">
-                                                <v-select label="text"
+                                                <v-select class="care-team-dropdown"
+                                                        label="text"
                                                           index="id"
                                                           :options="relationToPatientOptions.data"
                                                           name="relation-to-patient"
