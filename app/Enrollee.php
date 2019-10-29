@@ -146,11 +146,10 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereRequestedCallback($value)
  *
  * @property int|null   $revision_history_count
- * @property mixed|null $agent_details
+ * @property array|null $agent_details
+ * @property mixed      $agent
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAgentDetails($value)
- *
- * @property null $agent
  */
 class Enrollee extends BaseModel
 {
@@ -394,6 +393,11 @@ class Enrollee extends BaseModel
             ->first();
     }
 
+    public function getLastEncounterAttribute($lastEncounter)
+    {
+        return $lastEncounter ? optional(Carbon::parse($lastEncounter))->toDateString() : null;
+    }
+
     /**
      * Get Other Phone.
      *
@@ -480,14 +484,7 @@ class Enrollee extends BaseModel
     public function scopeToCall($query)
     {
         //@todo add check for where phones are not all null
-
-        return $query->where('status', self::TO_CALL)
-            ->orWhere(
-                         function ($q) {
-                             $q->where('status', '=', 'soft_rejected')
-                                 ->where('requested_callback', '<=', Carbon::now()->toDateString());
-                         }
-                     );
+        return $query->where('status', self::TO_CALL);
     }
 
     public function scopeToSMS($query)
