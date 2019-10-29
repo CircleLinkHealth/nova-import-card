@@ -9,7 +9,6 @@ namespace CircleLinkHealth\NurseInvoices;
 use App\TimeTrackedPerDayView;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
@@ -89,7 +88,7 @@ class TotalTimeAggregator
 
     private function approvedDisputesTime(array $nurseUserIds)
     {
-        $table             = (new NurseInvoiceDailyDispute())->getTable();
+        $disputesTable     = (new NurseInvoiceDailyDispute())->getTable();
         $start             = $this->startDate;
         $end               = $this->endDate;
         $dateTimeField     = 'disputed_day';
@@ -97,8 +96,8 @@ class TotalTimeAggregator
         $nurseInvoiceTable = (new NurseInvoice())->getTable();
         $nurseInfoTable    = (new Nurse())->getTable();
 
-        return \DB::table($table)
-            ->join($nurseInvoiceTable, "$nurseInvoiceTable.id", '=', "$table.invoice_id")
+        return \DB::table($disputesTable)
+            ->join($nurseInvoiceTable, "$nurseInvoiceTable.id", '=', "$disputesTable.invoice_id")
             ->join($nurseInfoTable, "$nurseInfoTable.id", '=', "$nurseInvoiceTable.nurse_info_id")
             ->select(
                 \DB::raw('SUM(TIME_TO_SEC(suggested_formatted_time) - TIME_TO_SEC(disputed_formatted_time)) as total_time'),
@@ -108,6 +107,7 @@ class TotalTimeAggregator
                     ? \DB::raw('TRUE as is_billable')
                     : \DB::raw('FALSE as is_billable')
             )
+            ->where("$disputesTable.status", '=', 'approved')
             ->whereIn('user_id', $nurseUserIds)
             ->whereBetween(
                 $dateTimeField,
@@ -115,7 +115,8 @@ class TotalTimeAggregator
                     $start,
                     $end,
                 ]
-            )->groupBy('date', 'user_id');
+            )
+            ->groupBy('date', 'user_id');
     }
 
     /**
