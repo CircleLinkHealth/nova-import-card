@@ -140,14 +140,14 @@
             setRequestedValue() {
                 const requestedTimeFromDbExists = this.requestedTimeFromDb === undefined;
                 const temporaryTime = !!this.temporaryTime;
-                
+
                if (temporaryTime || requestedTimeFromDbExists){
                    const secondHrDigit = this.temporaryTime.substring(0, 2).charAt(1);
                    const timeWithLeadingZero = this.temporaryTime.padStart(5, '0'); //add leading zero to time
 
                    return secondHrDigit === ':' ? timeWithLeadingZero : this.temporaryTime;
                }
-                
+
                 return this.requestedTimeFromDb;
             },
 
