@@ -10,7 +10,7 @@ use App\Notifications\NoteForwarded;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Notification;
+use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
