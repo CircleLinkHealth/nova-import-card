@@ -14,7 +14,7 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Illuminate\Support\Facades\Notification;
+use Notification;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
