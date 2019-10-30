@@ -75,10 +75,6 @@ return [
         'base-uri' => env('CCD_PARSER_BASE_URI', 'https://circlelink-ccd-parser.medstack.net'),
     ],
 
-    'ccda' => [
-        'dropbox-path' => env('CCDA_DROPBOX_PATH'),
-    ],
-
     'no-call-mode' => [
         'env' => ! in_array(env('APP_ENV'), ['local', 'staging']),
     ],

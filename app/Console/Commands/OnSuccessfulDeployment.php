@@ -51,14 +51,14 @@ class OnSuccessfulDeployment extends Command
         $isRollback            = 1 == $this->argument('rollback')
             ? true
             : false;
-        $user    = $this->argument('userName');
-        
+        $user = $this->argument('userName');
+
         \Artisan::call(StoreJiraTicketsDeployed::class, [
-            'currentRevision' => $newlyDeployedRevision,
-            'envName' => $envName,
-            'rollback' => $isRollback,
-            'userName' => $user,
-            'previousRevision' => $lastDeployedRevision
+            'currentRevision'  => $newlyDeployedRevision,
+            'envName'          => $envName,
+            'rollback'         => $isRollback,
+            'userName'         => $user,
+            'previousRevision' => $lastDeployedRevision,
         ]);
 
         $this->info('previousRevision: '.$lastDeployedRevision);

@@ -54,6 +54,9 @@ class NurseInvoiceDailyDispute extends BaseModel
         'invalidated',
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function nurseInvoice()
     {
         return $this->belongsTo(NurseInvoice::class, 'invoice_id', 'id');

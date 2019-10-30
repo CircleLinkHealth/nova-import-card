@@ -66,7 +66,7 @@ class AthenaCheckable implements Checkable
             );
 
             $this->eligibilityJob = $decoratedAdapter->adaptToEligibilityJob()
-                ->process();
+                ->process()->getEligibilityJob();
         }
 
         return $this->eligibilityJob;

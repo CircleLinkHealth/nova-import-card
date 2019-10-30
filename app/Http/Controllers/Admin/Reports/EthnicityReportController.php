@@ -18,19 +18,36 @@ class EthnicityReportController extends Controller
     {
         $data = DemographicsLog::all();
 
+        if ($data->isEmpty()) {
+            return 'No Data found.';
+        }
         //Prepare spreadsheet data
         $filtered = $data->map(
             function ($demoLog) {
                 $ccdVendor = CcdVendor::find($demoLog->vendor_id);
-                $program = Practice::find($ccdVendor->program_id);
+                if ($ccdVendor) {
+                    $program = Practice::find($ccdVendor->program_id);
 
-                return [
-                    'program'   => $program->display_name,
-                    'ethnicity' => $demoLog->ethnicity,
-                    'race'      => $demoLog->race,
-                ];
+                    if ($program) {
+                        return [
+                            'program'   => $program->display_name,
+                            'ethnicity' => $demoLog->ethnicity,
+                            'race'      => $demoLog->race,
+                        ];
+                    }
+                    Log::error("Ccd Vendor with id: {$ccdVendor->id} has invalid program_id. Practice with id:{$ccdVendor->program_id} not found. ");
+
+                    return null;
+                }
+                Log::error("Ccd Demographics Log with id: {$demoLog->id} has invalid vendor_id. CcdVendor with id:{$demoLog->vendor_id} not found. ");
+
+                return null;
             }
-        );
+        )->filter();
+
+        if ($filtered->isEmpty()) {
+            return 'No Valid Data found.';
+        }
 
         $filename = 'Ethnicity Report';
 

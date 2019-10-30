@@ -202,13 +202,29 @@ class NurseFinder
         $user               = auth()->user();
         $isCurrentUserNurse = $user->isCareCoach();
 
-        $patientNurseUser = $this->patient->getNurse();
-        if ($patientNurseUser) {
-            $match['nurse']              = $patientNurseUser->id;
-            $match['nurse_display_name'] = $patientNurseUser->display_name;
-            $match['window_match']       = "Assigning next call to $patientNurseUser->display_name.";
+        $patientNurseUsers = $this->patient->getNurses();
+        if ($patientNurseUsers) {
+            $patientNurseUser = $patientNurseUsers['temporary'] ?? $patientNurseUsers['permanent'];
 
-            return $match;
+            if ($patientNurseUser) {
+                $match['nurse']              = $patientNurseUser['user']->id;
+                $match['nurse_display_name'] = $patientNurseUser['user']->display_name;
+                $match['window_match']       = "Assigning next call to {$patientNurseUser['user']->display_name}.";
+
+                if (isset($patientNurseUsers['temporary'])) {
+                    $match['temporary_from'] = $patientNurseUser['from'];
+                    $match['temporary_to']   = $patientNurseUser['to'];
+
+                    if (isset($patientNurseUsers['permanent'])) {
+                        $alt                             = $patientNurseUsers['permanent']['user'];
+                        $match['nurse_alt']              = $alt->id;
+                        $match['nurse_display_name_alt'] = $alt->display_name;
+                        $match['window_match_alt']       = "Assigning next call to $alt->display_name.";
+                    }
+                }
+
+                return $match;
+            }
         }
 
         if ($isCurrentUserNurse) {

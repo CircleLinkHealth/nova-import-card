@@ -75,10 +75,8 @@
                                     <p class="text-medium-big text--menu text-serif">Import CCDs<BR><BR><br></p>
                                 </div>
                             </a>
-
                         </li>
                     @endif
-
                 </ul>
             </div>
         </div>
