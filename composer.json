@@ -198,7 +198,7 @@
         ],
         "unit-tests": [
             "php artisan --env=testing test:create-sqlite-db",
-            "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner SqliteRunner -p1"
+            "./vendor/phpunit/phpunit/phpunit --testsuite=Unit --testdox"
         ],
         "profile-unit-tests": [
             "php artisan --env=testing test:create-sqlite-db",
