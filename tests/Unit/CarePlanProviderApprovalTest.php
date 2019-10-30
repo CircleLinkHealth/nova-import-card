@@ -22,7 +22,6 @@ use Tests\TestCase;
 class CarePlanProviderApprovalTest extends TestCase
 {
     use CarePlanHelpers;
-
     use UserHelpers;
 
     /**
