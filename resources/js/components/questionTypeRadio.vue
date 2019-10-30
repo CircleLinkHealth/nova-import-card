@@ -333,11 +333,27 @@
 
 
     @media (max-width: 490px) {
+        /*Radio buttons*/
         .btn.radio  {
-            height: 40px;
+            height: 35px;
             width: 100%;
             text-align: left;
-            padding: 6px;
+            padding: 4px;
+        }
+        /*Other buttons*/
+        .text-field.small, input.text-field.small{
+            height: 35px;
+            width: 45%;
+            text-align: left;
+            padding: 4px;
+            font-size: xx-small;
+        }
+        /*Yes or No*/
+        .btn.radio.small{
+            height: 35px;
+            width: 45%;
+            text-align: left;
+            padding: 3px;
         }
     }
 

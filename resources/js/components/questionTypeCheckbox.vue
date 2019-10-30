@@ -288,4 +288,17 @@
         border-color: #4aa5d2;
     }
 
+    @media (max-width: 490px) {
+        .scrollable label{
+            height: 35px;
+            padding: 6px;
+            font-size: 83%;
+            font-weight: 400;
+        }
+        .scrollable label input[type=checkbox] + span:before{
+            font-size: 1em;
+        }
+
+    }
+
 </style>
