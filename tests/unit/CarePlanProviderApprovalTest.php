@@ -22,6 +22,7 @@ use Tests\TestCase;
 class CarePlanProviderApprovalTest extends TestCase
 {
     use CarePlanHelpers;
+    
     use UserHelpers;
 
     /**
@@ -38,6 +39,10 @@ class CarePlanProviderApprovalTest extends TestCase
      * @var
      */
     protected $patient;
+    
+    /**
+     * @var Practice
+     */
     protected $practice;
 
     /**
