@@ -22,7 +22,10 @@ class AddendumObserver
     {
         if (is_a($addendum->addendumable, Note::class)) {
             $noteAuthorUser = $addendum->addendumable->author;
-            Notification::send($noteAuthorUser, new AddendumCreated($addendum, auth()->user()));
+
+            if (is_a($noteAuthorUser, User::class) && auth()->id() !== optional($noteAuthorUser)->id) {
+                Notification::send($noteAuthorUser, new AddendumCreated($addendum, auth()->user()));
+            }
         }
     }
 }
