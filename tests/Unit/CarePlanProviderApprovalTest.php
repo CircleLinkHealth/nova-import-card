@@ -14,7 +14,11 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
+<<<<<<< Updated upstream
+use Illuminate\Support\Facades\Notification;
+=======
 use Notification;
+>>>>>>> Stashed changes
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
