@@ -7,6 +7,7 @@
 namespace Tests\Unit;
 
 use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Faker\Factory;
 use Tests\Helpers\CarePlanHelpers;
@@ -26,7 +27,10 @@ class CareTeamReceivesAlertsTest extends TestCase
      * @var
      */
     protected $patient;
-
+    
+    /**
+     * @var Practice
+     */
     protected $practice;
 
     /**
@@ -38,8 +42,7 @@ class CareTeamReceivesAlertsTest extends TestCase
     {
         parent::setUp();
 
-        $data           = $this->createTestCustomerData(1);
-        $this->practice = $data['practice'];
+        $this->practice = Practice::first() ?? \factory(Practice::class)->create([]);
 
         $this->faker = Factory::create();
 
