@@ -201,7 +201,7 @@ class PatientCareplanController extends Controller
             }
 
             $pageCount                     = 0;
-            $practiceNameToCheck           = 'Rocky Mountains';
+            $practiceNameToCheck           = 'rocky-mountain-health-centers-south';
             $patientPracticeNameEvaluation = $this->checkPatientPracticeName($user->primaryPractice->name, $practiceNameToCheck);
 
             if ($request->filled('render') && 'html' == $request->input('render')) {
