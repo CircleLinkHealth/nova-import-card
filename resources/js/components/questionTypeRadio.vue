@@ -331,4 +331,15 @@
         color: white;
     }
 
+
+    @media (max-width: 490px) {
+        .btn.radio  {
+            height: 40px;
+            width: 100%;
+            text-align: left;
+            padding: 6px;
+        }
+    }
+
+
 </style>
