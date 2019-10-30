@@ -43,7 +43,7 @@ function getStringValue($val, $default = '')
             <hr>
         </div>
         <div class="report-data">
-            Patient Name: <span style="color: #50b2e2">{{$patient->display_name}}</span> <br>
+            Patient Name: <strong><span style="color: #50b2e2">{{$patient->display_name}}</span></strong> <br>
             Date of Birth (records): <strong>{{$patient->patientInfo->birth_date}}</strong><br>
             Age (self-reported): <strong>{{getStringValue($patientPppData->answers_for_eval['age'])}}</strong> <br>
             Address: <strong>{{$patient->address}}</strong> <br>
@@ -58,7 +58,7 @@ function getStringValue($val, $default = '')
         <div class="report-data">
             Weight: <strong>{{getStringValue($patientPppData->answers_for_eval['weight'])}} </strong><br>
             Height: <strong>{{getStringValue($patientPppData->answers_for_eval['height']['feet'])}}
-                ' {{getStringValue($patientPppData->answers_for_eval['height']['inches'])}}' </strong><br>
+                ' {{getStringValue($patientPppData->answers_for_eval['height']['inches'])}}" </strong><br>
             Body Mass Index (BMI): <strong>{{getStringValue($patientPppData->answers_for_eval['bmi'])}}</strong> <br>
             Blood Pressure:
             <strong>{{getStringValue($patientPppData->answers_for_eval['blood_pressure']['first_metric'])}}
