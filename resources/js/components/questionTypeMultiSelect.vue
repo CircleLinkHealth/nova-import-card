@@ -190,4 +190,13 @@
     .select-title.active {
         color: #1a1a1a;
     }
+
+    @media (max-width: 490px) {
+        .select-title {
+            font-size: 19px;
+        }
+        .select-container:nth-child(odd) {
+            padding-right: unset;
+        }
+        }
 </style>

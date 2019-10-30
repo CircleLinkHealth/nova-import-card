@@ -18,297 +18,304 @@ Add global CSS here
  */
 
 * {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
 html, body, #app {
-    min-height: 100% !important;
-    height: 100%;
-    background-color: #f2f6f9;
+  min-height: 100% !important;
+  height: 100%;
+  background-color: #f2f6f9;
 }
 
 .main-container {
-    height: 100%;
+  height: 100%;
 }
 
 .survey-container {
-    width: 100%;
-    overflow-y: hidden;
-    height: calc(100% - 56px);
+  width: 100%;
+  overflow-y: hidden;
+  height: calc(100% - 56px);
 }
 
 .survey-container.read-only {
-    overflow-y: auto;
+  overflow-y: auto;
 }
 
 .survey-container.max {
-    height: 100%;
+  height: 100%;
 }
 
 @media (min-width: 519px) {
-    .survey-container {
-        height: calc(100% - 100px);
-    }
+  .survey-container {
+    height: calc(100% - 100px);
+  }
 }
 
 .by-circlelink {
-    font-family: Poppins, serif;
-    font-size: 10px;
-    font-weight: 600;
-    margin-top: 20px;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 0.56px;
-    color: $primary-color;
+  font-family: Poppins, serif;
+  font-size: 10px;
+  font-weight: 600;
+  margin-top: 20px;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 0.56px;
+  color: $primary-color;
 }
 
 .progress {
-    width: 100%;
-    margin-top: 2px;
-    height: 5px;
-    border-radius: 5px;
-    border: solid 1px #d2e8f3;
-    background-color: #a7d9f1;
+  width: 100%;
+  margin-top: 2px;
+  height: 5px;
+  border-radius: 5px;
+  border: solid 1px #d2e8f3;
+  background-color: #a7d9f1;
 }
 
 @media (min-width: 519px) {
-    .by-circlelink {
-        font-size: 18px;
-        letter-spacing: 1px;
-    }
-    .progress {
-        margin-top: 9px;
-        height: 10px;
-    }
+  .by-circlelink {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+  .progress {
+    margin-top: 9px;
+    height: 10px;
+  }
 }
 
 .progress-bar {
-    background-color: $primary-color !important;
+  background-color: $primary-color !important;
 }
 
 .navbar-laravel {
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 .next-btn {
-    font-size: 18px;
-    font-family: Poppins, serif;
-    font-weight: 500;
-    font-style: normal;
-    font-stretch: normal;
-    padding: 6px 40px;
-    line-height: normal;
-    letter-spacing: 1px;
-    color: #ffffff;
-    text-transform: none;
-    height: 40px;
-    border-radius: 5px;
-    border: solid 1px #4aa5d2;
-    background-color: $primary-color;
-    margin: 0 0 10px 0;
+  font-size: 18px;
+  font-family: Poppins, serif;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  padding: 6px 40px;
+  line-height: normal;
+  letter-spacing: 1px;
+  color: #ffffff;
+  text-transform: none;
+  height: 40px;
+  border-radius: 5px;
+  border: solid 1px #4aa5d2;
+  background-color: $primary-color;
+  margin: 0 0 10px 0;
 }
 
 .questions-box {
-    padding-top: 15px;
-    padding-left: 9%;
-    overflow-y: auto;
-    max-height: 100%;
+  padding-top: 15px;
+  padding-left: 9%;
+  overflow-y: auto;
+  max-height: 100%;
 }
 
 .practice-title {
-    font-family: Poppins, serif;
-    font-size: 18px;
-    letter-spacing: 1.5px;
-    text-align: center;
-    margin-top: 20px;
-    color: $primary-color;
+  font-family: Poppins, serif;
+  font-size: 18px;
+  letter-spacing: 1.5px;
+  text-align: center;
+  margin-top: 20px;
+  color: $primary-color;
 }
 
 .practice-title .text-style-1 {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .survey-main-title {
-    font-family: Poppins, serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.67px;
-    text-align: center;
-    margin-top: 30px;
-    color: #1a1a1a;
+  font-family: Poppins, serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.67px;
+  text-align: center;
+  margin-top: 30px;
+  color: #1a1a1a;
 }
 
 .survey-sub-welcome-text {
-    font-family: Poppins, serif;
-    font-size: 10px;
-    font-weight: normal;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 0.56px;
-    text-align: left;
-    margin-top: 10px;
-    margin-left: 5%;
-    margin-right: 5%;
-    color: #1a1a1a;
+  font-family: Poppins, serif;
+  font-size: 10px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 0.56px;
+  text-align: left;
+  margin-top: 10px;
+  margin-left: 5%;
+  margin-right: 5%;
+  color: #1a1a1a;
+}
+
+//end card of HRA and VITALS
+@media (max-width: 490px) {
+  #app > div > div > div > div.align-items-center > div {
+    font-size: 76%;
+  }
 }
 
 @media (min-width: 519px) {
-    .survey-main-title {
-        font-size: 24px;
-        letter-spacing: 1.5px;
-    }
+  .survey-main-title {
+    font-size: 24px;
+    letter-spacing: 1.5px;
+  }
 
-    .survey-sub-welcome-text {
-        margin-top: 25px;
-        font-size: 18px;
-        letter-spacing: 1px;
-    }
+  .survey-sub-welcome-text {
+    margin-top: 25px;
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
 }
 
 .questions-title {
-    width: 83%;
-    font-family: Poppins, serif;
-    font-size: 14px;
-    font-weight: 500;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 1.3px;
-    color: #1a1a1a;
+  width: 83%;
+  font-family: Poppins, serif;
+  font-size: 14px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 1.3px;
+  color: #1a1a1a;
 }
 
 .margin-bottom-10 {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 @media (min-width: 519px) {
-    .questions-title {
-        font-size: 24px;
-        letter-spacing: 0.78px;
-    }
+  .questions-title {
+    font-size: 24px;
+    letter-spacing: 0.78px;
+  }
 }
 
 .question-answer-type {
-    width: 83%;
-    //margin bottom to make room for the shadows on the buttons
-    margin-bottom: 10px;
-    height: calc(100% - 90px);
-    font-size: initial;
-    font-weight: 500;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 1.3px;
-    color: #1a1a1a;
+  width: 83%;
+  //margin bottom to make room for the shadows on the buttons
+  margin-bottom: 10px;
+  height: calc(100% - 90px);
+  font-size: initial;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 1.3px;
+  color: #1a1a1a;
 }
 
 .welcome-icon-container {
-    margin: auto;
-    text-align: center;
+  margin: auto;
+  text-align: center;
 }
 
 .welcome-icon {
-    width: 190px;
+  width: 190px;
 }
 
 .btn {
-    text-transform: initial;
+  text-transform: initial;
 }
 
 .btn-start-container {
-    text-align: center;
+  text-align: center;
 }
 
 .btn-start {
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-top: 30px;
-    font-family: Poppins, serif;
-    font-size: 10px;
-    font-weight: 500;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 0.6px;
-    text-align: center;
-    border-radius: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 30px;
+  font-family: Poppins, serif;
+  font-size: 10px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 0.6px;
+  text-align: center;
+  border-radius: 5px;
 }
 
 @media (min-width: 519px) {
-    .btn-start {
-        padding-left: 65px;
-        padding-right: 65px;
-        margin-top: 60px;
-        margin-bottom: 20px;
-        font-size: 18px;
-        letter-spacing: 1px;
-    }
+  .btn-start {
+    padding-left: 65px;
+    padding-right: 65px;
+    margin-top: 60px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
 }
 
 .no-padding {
-    padding: 0;
+  padding: 0;
 }
 
 .no-margin-side {
-    margin-left: 0;
-    margin-right: 0;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 .scroll-container {
-    height: 100%;
+  height: 100%;
 }
 
 .scrollable {
-    overflow-y: auto;
-    //height: 100%;
-    max-height: calc(100% - 80px);
+  overflow-y: auto;
+  //height: 100%;
+  max-height: calc(100% - 80px);
 }
 
 .select-dropdown ::placeholder {
-    color: #d5dadd !important;
+  color: #d5dadd !important;
 }
 
 .select-dropdown.active ::placeholder {
-    color: #1a1a1a !important;
+  color: #1a1a1a !important;
 }
 
 .select-dropdown .vs__dropdown-toggle,
 .select-dropdown .vs__dropdown-menu {
-    border: none;
-    border-radius: 0;
-    border-bottom: 1px solid #d5dadd;
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid #d5dadd;
 }
 
 .select-dropdown .vs__dropdown-option:before {
-    color: #50b2e2;
-    font-family: FontAwesome, serif;
-    display: inline-block;
-    content: "\f10c";
-    letter-spacing: 5px;
-    position: relative;
-    font-size: 1.3em;
-    top: 2px;
+  color: #50b2e2;
+  font-family: FontAwesome, serif;
+  display: inline-block;
+  content: "\f10c";
+  letter-spacing: 5px;
+  position: relative;
+  font-size: 1.3em;
+  top: 2px;
 }
 
 .select-dropdown .vs__dropdown-option.vs__dropdown-option--selected {
-    color: #50b2e2;
+  color: #50b2e2;
 }
 
 .select-dropdown .vs__dropdown-option.vs__dropdown-option--selected:before {
-    content: "\f058";
+  content: "\f058";
 }
 
 .select-dropdown .vs__dropdown-option--highlight {
-    background: transparent;
-    color: #50b2e2;
+  background: transparent;
+  color: #50b2e2;
 }
 
 /*.survey-container::-webkit-scrollbar {*/
@@ -316,232 +323,254 @@ html, body, #app {
 /*}*/
 
 .bottom-navbar {
-    background-color: #ffffff;
-    height: 56px;
+  background-color: #ffffff;
+  height: 56px;
 }
 
 @media (min-width: 519px) {
-    .bottom-navbar {
-        height: 100px;
-    }
+  .bottom-navbar {
+    height: 100px;
+  }
 }
 
 .scroll-buttons .btn {
-    padding: 0;
-    margin-top: 13px;
-    width: 30px;
-    height: 30px;
+  padding: 0;
+  margin-top: 13px;
+  width: 30px;
+  height: 30px;
 }
 
 .scroll-buttons .btn:first-child {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .scroll-buttons .btn:last-child {
-    margin-right: 20px;
+  margin-right: 20px;
 }
 
 .scroll-buttons .fas {
-    font-size: 15px;
+  font-size: 15px;
 }
 
 @media (min-width: 519px) {
-    .scroll-buttons .btn {
-        margin-top: 20px;
-        width: 60px;
-        height: 60px;
-    }
+  .scroll-buttons .btn {
+    margin-top: 20px;
+    width: 60px;
+    height: 60px;
+  }
 
-    .scroll-buttons .btn:last-child {
-        margin-right: 30px;
-    }
+  .scroll-buttons .btn:last-child {
+    margin-right: 30px;
+  }
 
-    .scroll-buttons .fas {
-        font-size: 30px;
-    }
+  .scroll-buttons .fas {
+    font-size: 30px;
+  }
 }
 
 /**
 When two rows, we have less margin-top (in the col- screens)
  */
 .progress-container {
-    margin-top: 8px;
+  margin-top: 8px;
 }
 
 .progress-text {
-    font-family: Poppins, serif;
-    font-size: 10px;
-    font-weight: 500;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 0.56px;
-    text-align: right;
-    color: #1a1a1a;
-    white-space: nowrap;
+  font-family: Poppins, serif;
+  font-size: 10px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 0.56px;
+  text-align: right;
+  color: #1a1a1a;
+  white-space: nowrap;
 }
 
 /**
 When progress text and bar are in one line (col-sm screens)
  */
 @media (min-width: 519px) {
-    .progress-container {
-        margin-top: 26px;
-    }
+  .progress-container {
+    margin-top: 26px;
+  }
 
-    .progress-text {
-        font-size: 18px;
-        letter-spacing: 1px;
-    }
+  .progress-text {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
 }
 
 @media (min-width: 766px) {
-    .progress-container {
-        margin-top: 36px;
-    }
+  .progress-container {
+    margin-top: 36px;
+  }
 }
 
 .active {
-    opacity: 1;
-    transition: opacity 0.5s linear;
+  opacity: 1;
+  transition: opacity 0.5s linear;
 }
 
 .question-scroll-container {
-    color: $primary-color;
-    text-align: center;
+  color: $primary-color;
+  text-align: center;
 }
 
 .question-scroll {
-    padding: 0;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    background: url("../images/scroll-button.svg");
+  padding: 0;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  background: url("../images/scroll-button.svg");
 }
 
 .fa-chevron-circle-down, .fa-phone-alt, .fa-times {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 .call-assistance {
-    position: fixed;
+  position: fixed;
 }
 
 .call-btn-round {
-    margin-left: 40px;
-    margin-right: 0 !important;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+  margin-left: 40px;
+  margin-right: 0 !important;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
 }
 
 .btn-toggle-edit {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    padding: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  padding: 0;
 }
 
 .watermark {
-    opacity: 0.1;
-    transition: opacity 0.5s linear;
+  opacity: 0.1;
+  transition: opacity 0.5s linear;
 }
 
 .non-visible {
-    opacity: 0.02;
-    transition: opacity 0.5s linear;
+  opacity: 0.02;
+  transition: opacity 0.5s linear;
 }
 
 .error {
-    color: darkred;
+  color: darkred;
 }
 
 .survey-sub-welcome-text {
-    font-family: Poppins;
-    font-size: 18px;
-    font-weight: normal;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 1px;
-    text-align: center;
-    margin-top: 25px;
-    margin-left: 13%;
-    width: 75%;
-    color: #1a1a1a;
+  font-family: Poppins;
+  font-size: 18px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 1px;
+  text-align: center;
+  margin-top: 25px;
+  margin-left: 13%;
+  width: 75%;
+  color: #1a1a1a;
 }
 
 .welcome-icon {
-    width: 108px;
-    margin: auto;
+  width: 108px;
+  margin: auto;
 }
 
 .card-body {
-    text-align: center;
+  text-align: center;
 }
 
 .by-circlelink {
-    font-family: Poppins, serif;
-    font-size: 18px;
-    font-weight: 600;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 1px;
-    margin-top: 10px;
-    color: #50b2e2;
+  font-family: Poppins, serif;
+  font-size: 18px;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 1px;
+  margin-top: 10px;
+  color: #50b2e2;
 }
 
 .by-circlelink .text-style-1 {
-    font-weight: normal;
-    color: #1a1a1a;
+  font-weight: normal;
+  color: #1a1a1a;
 }
 
 .navbar {
-    background: linear-gradient(to right, #4fb2e2 0, #0170b5 100%);
-    color: #fff !important;
-    border-radius: 0;
-    height: 50px;
-    border: 1px solid transparent;
-    padding: 0;
+  background: linear-gradient(to right, #4fb2e2 0, #0170b5 100%);
+  color: #fff !important;
+  border-radius: 0;
+  height: 50px;
+  border: 1px solid transparent;
+  padding: 0;
 }
 
 .navbar .container {
-    max-width: 100%;
+  max-width: 100%;
 }
 
 a.navbar-title {
-    font-family: "Roboto Slab", Georgia, Times, "Times New Roman", serif;
-    font-weight: 300;
-    font-size: 24px;
-    color: #fafafa;
-    line-height: 0;
-    padding: 11px 11px 11px 0;
+  font-family: "Roboto Slab", Georgia, Times, "Times New Roman", serif;
+  font-weight: 300;
+  font-size: 24px;
+  color: #fafafa;
+  line-height: 0;
+  padding: 11px 11px 11px 0;
 }
 
 a.navbar-title:hover {
-    color: #fafafa;
+  color: #fafafa;
 }
 
 .top-left-fixed {
-    position: fixed;
-    top: 15px;
-    left: 30px;
+  position: fixed;
+  top: 15px;
+  left: 30px;
 }
 
 .top-right-fixed {
-    position: fixed;
-    top: 15px;
-    right: 30px;
+  position: fixed;
+  top: 15px;
+  right: 30px;
+}
+
+
+@media (max-width: 490px) {
+  //pencil button circle (toggle view)
+  #app > div > div.top-right-fixed > button {
+    width: 90%;
+    height: 43px;
+    padding: 1%;
+  }
+  //pencil in circle
+  #app > div > div.top-right-fixed > button > svg{
+    height: 55%;
+  }
+
+  #app > div > div.top-left-fixed > button {
+
+  }
+
+  .top-left-fixed {
+
+  }
 }
 
 .spinner-overlay {
-    position: absolute;
-    width: 100%;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-color: rgba(255, 255, 255, 0.7);
-    z-index: 9999;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 9999;
 }

@@ -11620,6 +11620,12 @@ body,
   color: #1a1a1a;
 }
 
+@media (max-width: 490px) {
+  #app > div > div > div > div.align-items-center > div {
+    font-size: 76%;
+  }
+}
+
 @media (min-width: 519px) {
   .survey-main-title {
     font-size: 24px;
@@ -12033,6 +12039,18 @@ a.navbar-title:hover {
   position: fixed;
   top: 15px;
   right: 30px;
+}
+
+@media (max-width: 490px) {
+  #app > div > div.top-right-fixed > button {
+    width: 90%;
+    height: 43px;
+    padding: 1%;
+  }
+
+  #app > div > div.top-right-fixed > button > svg {
+    height: 55%;
+  }
 }
 
 .spinner-overlay {

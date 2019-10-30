@@ -234,8 +234,7 @@
                         this.subParts.push(fields);
                     });
 
-                }
-                else {
+                } else {
                     const fields = extraFieldSubParts.map((x) => {
                         return Object.assign({}, x, {value: '', active: false});
                     });
@@ -301,8 +300,7 @@
                 if (this.questionHasSubParts) {
                     this.subParts = [];
                     this.addInputFields(this.questionOptions[0].sub_parts, this.question.answer.value);
-                }
-                else {
+                } else {
                     let placeholder = "";
                     if (this.extraFieldButtonNames && this.extraFieldButtonNames.length) {
                         placeholder = this.extraFieldButtonNames[0].placeholder;
@@ -312,8 +310,7 @@
                         this.addInputField(placeholder, answer[SINGLE_INPUT_KEY_NAME]);
                     });
                 }
-            }
-            else {
+            } else {
                 /*get placeholder for single question input*/
                 if (this.questionHasPlaceHolderInSubParts && !this.questionHasPlaceHolderInOptions) {
                     const placeholder = this.questionOptions[0].sub_parts.map(q => q.placeholder);
@@ -407,5 +404,11 @@
 
     .button-text-only.remove {
         color: #ff6e6e;
+    }
+
+    @media (max-width: 490px) {
+        .label {
+            font-size: 19px;
+        }
     }
 </style>
