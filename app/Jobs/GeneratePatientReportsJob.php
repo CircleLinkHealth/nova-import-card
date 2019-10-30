@@ -111,7 +111,6 @@ class GeneratePatientReportsJob implements ShouldQueue
         Redis::publish('awv-patient-report-created',
             json_encode([
                 'patient_id'      => $patient->id,
-                'report_type'     => 'provider report',
                 'report_media_id' => $providerReportMedia->id,
             ]));
 
@@ -126,7 +125,6 @@ class GeneratePatientReportsJob implements ShouldQueue
         Redis::publish('awv-patient-report-created',
             json_encode([
                 'patient_id'      => $patient->id,
-                'report_type'     => 'ppp',
                 'report_media_id' => $pppMedia->id,
             ]));
 
