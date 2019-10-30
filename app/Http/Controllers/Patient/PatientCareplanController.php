@@ -46,6 +46,13 @@ class PatientCareplanController extends Controller
         $this->pdfService            = $pdfService;
     }
 
+    public function checkPatientPracticeName($practiceName, $practiceNameToCheck)
+    {
+        $demoPractice = 'demo';
+
+        return $practiceName === $practiceNameToCheck || $demoPractice;
+    }
+
     public function createPatientDemographics(Request $request)
     {
         return $this->editOrCreateDemographics($request);
@@ -193,19 +200,21 @@ class PatientCareplanController extends Controller
                 return false;
             }
 
-            $pageCount = 0;
+            $pageCount                     = 0;
+            $practiceNameToCheck           = 'Rocky Mountains';
+            $patientPracticeNameEvaluation = $this->checkPatientPracticeName($user->primaryPractice->name, $practiceNameToCheck);
 
             if ($request->filled('render') && 'html' == $request->input('render')) {
                 return view(
                     'wpUsers.patient.multiview',
                     [
-                        'careplans'    => [$user_id => $careplan],
-                        'isPdf'        => true,
-                        'letter'       => $letter,
-                        'problemNames' => $careplan['problem'],
-                        'careTeam'     => $user->careTeamMembers,
-                        'practiceName' => optional($user->primaryPractice)->name,
-                        'data'         => $careplanService->careplan($user_id),
+                        'careplans'                     => [$user_id => $careplan],
+                        'isPdf'                         => true,
+                        'letter'                        => $letter,
+                        'problemNames'                  => $careplan['problem'],
+                        'careTeam'                      => $user->careTeamMembers,
+                        'patientPracticeNameEvaluation' => $patientPracticeNameEvaluation,
+                        'data'                          => $careplanService->careplan($user_id),
                     ]
                 );
             }
@@ -218,14 +227,14 @@ class PatientCareplanController extends Controller
             $fileNameWithPath = $this->pdfService->createPdfFromView(
                 'wpUsers.patient.multiview',
                 [
-                    'careplans'    => [$user_id => $careplan],
-                    'isPdf'        => true,
-                    'letter'       => $letter,
-                    'problemNames' => $careplan['problem'],
-                    'careTeam'     => $user->careTeamMembers,
-                    'data'         => $careplanService->careplan($user_id),
-                    'practiceName' => optional($user->primaryPractice)->name,
-                    'pdfCareplan'  => $pdfCareplan,
+                    'careplans'                     => [$user_id => $careplan],
+                    'isPdf'                         => true,
+                    'letter'                        => $letter,
+                    'problemNames'                  => $careplan['problem'],
+                    'careTeam'                      => $user->careTeamMembers,
+                    'data'                          => $careplanService->careplan($user_id),
+                    'patientPracticeNameEvaluation' => $patientPracticeNameEvaluation,
+                    'pdfCareplan'                   => $pdfCareplan,
                 ],
                 null,
                 Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
@@ -295,8 +304,6 @@ class PatientCareplanController extends Controller
 
         return redirect()->route('patient.pdf.careplan.print', ['patientId' => $cp->user_id]);
     }
-
-    //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
 
     /**
      * Change CarePlan Mode to Web.
@@ -482,6 +489,8 @@ class PatientCareplanController extends Controller
             )
         );
     }
+
+    //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
 
     private function storeOrUpdateDemographics(
         Request $request

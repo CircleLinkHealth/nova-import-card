@@ -226,14 +226,14 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                             </li>
                                         </ul>
                                     </div>
-{{--                                    @if($patientPractice === 'Rocky Mountains ???')--}}
-{{--                                        <div class="row gutter" style="line-height: 1.0em;">--}}
-{{--                                            As a reminder this program is covered under Medicare Part B.--}}
-{{--                                            However, some health insurance plans may charge a co-payment. You can contact--}}
-{{--                                            your health plan if you are not sure or you can ask for assistance from your--}}
-{{--                                            care coach when they reach out to you.--}}
-{{--                                        </div>--}}
-{{--                                    @endif--}}
+                                    @if($patientPracticeNameEvaluation)
+                                        <div class="row gutter" style="line-height: 1.0em;">
+                                            As a reminder this program is covered under Medicare Part B.
+                                            However, some health insurance plans may charge a co-payment. You can contact
+                                            your health plan if you are not sure or you can ask for assistance from your
+                                            care coach when they reach out to you.
+                                        </div>
+                                    @endif
                                     <div class="row gutter" style="line-height: 1.0em;">
                                         Enclosed please find a copy of your personalized care plan. Please take a few
                                         minutes to review the care plan and call us if you have any questions. You can
