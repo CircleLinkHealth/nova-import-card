@@ -27,7 +27,10 @@ class CareTeamReceivesAlertsTest extends TestCase
      * @var
      */
     protected $patient;
-
+    
+    /**
+     * @var Practice
+     */
     protected $practice;
 
     /**
