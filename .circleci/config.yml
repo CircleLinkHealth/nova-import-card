@@ -22,7 +22,7 @@ jobs:
       environment:
         MYSQL_ROOT_PASSWORD: rootpw
         MYSQL_DATABASE: cpm_tests
-        MYSQL_USER: root
+        MYSQL_USER: mysqluser
         MYSQL_PASSWORD: secret
 
     steps:
