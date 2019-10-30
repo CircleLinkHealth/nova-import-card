@@ -12051,6 +12051,10 @@ a.navbar-title:hover {
   #app > div > div.top-right-fixed > button > svg {
     height: 55%;
   }
+
+  #app > div > div.top-left-fixed > button {
+    border: none;
+  }
 }
 
 .spinner-overlay {
