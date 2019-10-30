@@ -1,5 +1,10 @@
+html, body, #app {
+    letter-spacing: 0.78px;
+    font-size: 14px;
+    font-family: Poppins, sans-serif;
+}
+
 .section-title {
-    font-family: Poppins;
     background-color: #50b2e2;
     font-size: 20px;
     font-weight: 600;
@@ -14,14 +19,12 @@
 }
 
 .section-body {
-    font-family: Poppins;
     padding-top: 20px;
 }
 
 .health-advice-title {
-    font-family: Poppins;
     font-size: 24px;
-    font-weight: 600;
+    font-weight: 500;
     font-style: normal;
     font-stretch: normal;
     line-height: normal;
@@ -30,7 +33,6 @@
 }
 
 .report {
-    font-family: Poppins;
     padding-left: 5%;
     padding-right: 5%;
     padding-top: 5%;
@@ -38,9 +40,8 @@
 }
 
 .recommendation-title {
-    font-family: Poppins;
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 500;
     font-style: normal;
     font-stretch: normal;
     line-height: normal;
@@ -59,7 +60,10 @@
 .table.table thead th {
     padding-left: 1%;
     width: 250px;
+}
 
+.table thead {
+    border-bottom: 1px solid rgba(0,0,0,.1);
 }
 
 .suggested-list {
@@ -67,11 +71,23 @@
 }
 
 .report-title {
+    font-weight: 500;
+    font-size: 24px;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 1.33px;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+}
 
+.report-data {
+    margin-bottom: 20px;
 }
 
 .side-title {
-    padding-top: 1%;
+    margin-left: 20px;
+    margin-top: 11px;
 }
 
 .suggested-list-body {
