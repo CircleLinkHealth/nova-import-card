@@ -8,6 +8,8 @@ namespace App\Jobs;
 
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
+use App\Notifications\SendCareDocument;
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,7 +27,6 @@ class AwvPatientReportNotify implements ShouldQueue
 
     protected $keysShouldExist = [
         'patient_id',
-        'report_type',
         'report_media_id',
     ];
 
@@ -33,10 +34,12 @@ class AwvPatientReportNotify implements ShouldQueue
 
     /**
      * Create a new job instance.
+     *
+     * @param mixed $patientReportdata
      */
-    public function __construct(array $patientReportdata)
+    public function __construct($patientReportdata)
     {
-        $this->patientReportData = $patientReportdata;
+        $this->patientReportData = (array) json_decode($patientReportdata);
     }
 
     /**
@@ -60,7 +63,16 @@ class AwvPatientReportNotify implements ShouldQueue
             ->with('primaryPractice.settings')
             ->findOrFail($this->patientReportData['patient_id']);
 
-        //check if media exists
+        $media = Media::where('collection_name', 'patient-care-documents')
+            ->where('model_id', $patient->id)
+            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->find($this->patientReportData['report_media_id']);
+
+        if ( ! $media) {
+            \Log::error("Media with id: {$this->patientReportData['report_media_id']} not found for patient with id: {$patient->id}");
+
+            return;
+        }
 
         $billingProvider = $patient->billingProviderUser();
 
@@ -76,7 +88,7 @@ class AwvPatientReportNotify implements ShouldQueue
             return;
         }
 
-        $settings = $patient->primaryPractice->settings;
+        $settings = $patient->primaryPractice->settings->first();
 
         $channels = [];
 
@@ -96,6 +108,6 @@ class AwvPatientReportNotify implements ShouldQueue
             return;
         }
 
-        $billingProvider->notify();
+        $billingProvider->notify(new SendCareDocument($media, $patient, $channels));
     }
 }

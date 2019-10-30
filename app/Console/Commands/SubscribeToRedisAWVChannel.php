@@ -33,7 +33,7 @@ class SubscribeToRedisAWVChannel extends Command
     public function handle()
     {
         Redis::subscribe(['awv-patient-report-created'], function ($patientReportdata) {
-            AwvPatientReportNotify::dispatch(json_decode($patientReportdata));
+            AwvPatientReportNotify::dispatch($patientReportdata);
         });
     }
 }
