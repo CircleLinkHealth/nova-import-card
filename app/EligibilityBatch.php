@@ -28,7 +28,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\User                                       $initiatorUser
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                              $practice
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch query()
@@ -43,7 +42,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property int|null $eligibility_jobs_count
  * @property int|null $revision_history_count
  */
