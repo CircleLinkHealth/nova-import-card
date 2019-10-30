@@ -32,17 +32,8 @@ class SubscribeToRedisAWVChannel extends Command
      */
     public function handle()
     {
-        Redis::subscribe(['test-channel'], function ($message) {
-            echo $message;
-
-            \Log::channel('logdna')->info('Recording test-channel message', [
-                'batch_id' => \Carbon::now()->toDateTimeString(),
-            ]);
-        });
-
         Redis::subscribe(['awv-patient-report-created'], function ($patientReportdata) {
-            echo $patientReportdata;
-//            AwvPatientReportNotify::dispatch(json_decode($patientReportdata));
+            AwvPatientReportNotify::dispatch(json_decode($patientReportdata));
         });
     }
 }

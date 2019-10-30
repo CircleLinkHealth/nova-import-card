@@ -138,12 +138,12 @@ if ( ! function_exists('activeNurseNames')) {
                         $q->where('is_demo', '!=', true);
                     },
                 ]
-                   )->whereHas(
+            )->whereHas(
                        'nurseInfo',
                        function ($q) {
                            $q->where('is_demo', '!=', true);
                        }
-            )->where('user_status', 1)
+                   )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -1028,7 +1028,7 @@ if ( ! function_exists('validProblemName')) {
                 'prediabetes',
                 'check',
             ]
-            ) && ! in_array(
+        ) && ! in_array(
                 strtolower($name),
                 [
                     'fu',
@@ -1265,7 +1265,7 @@ if ( ! function_exists('array_keys_exist')) {
      *
      * @param string[] $keys    keys to check
      * @param array    $array   an array with keys to check
-     * @param mixed    $missing reference to a variable that that contains the missing keys
+     * @param mixed    $missing reference to a variable that contains the missing keys
      *
      * @return bool true if all given keys exist in the given array, false if not
      *
