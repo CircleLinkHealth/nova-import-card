@@ -139,11 +139,11 @@ if ( ! function_exists('activeNurseNames')) {
                     },
                 ]
             )->whereHas(
-                       'nurseInfo',
-                       function ($q) {
-                           $q->where('is_demo', '!=', true);
-                       }
-                   )->where('user_status', 1)
+                'nurseInfo',
+                function ($q) {
+                    $q->where('is_demo', '!=', true);
+                }
+            )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -1029,11 +1029,11 @@ if ( ! function_exists('validProblemName')) {
                 'check',
             ]
         ) && ! in_array(
-                strtolower($name),
-                [
-                    'fu',
-                ]
-            );
+            strtolower($name),
+            [
+                'fu',
+            ]
+        );
     }
 }
 
@@ -1265,7 +1265,7 @@ if ( ! function_exists('array_keys_exist')) {
      *
      * @param string[] $keys    keys to check
      * @param array    $array   an array with keys to check
-     * @param mixed    $missing reference to a variable that contains the missing keys
+     * @param mixed    $missing reference to a variable that that contains the missing keys
      *
      * @return bool true if all given keys exist in the given array, false if not
      *
@@ -1507,5 +1507,24 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
             \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
         }
+    }
+}
+
+if ( ! function_exists('convertValidatorMessagesToString')) {
+    /**
+     * Formats Validator messages to return string.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     *
+     * @return string
+     */
+    function convertValidatorMessagesToString(Illuminate\Validation\Validator $validator): string
+    {
+        return implode('\n', collect($validator->getMessageBag()->toArray())->transform(function ($item, $key) {
+            $errors = implode(', ', $item);
+            $key = ucfirst($key);
+
+            return "{$key}: $errors";
+        })->toArray());
     }
 }

@@ -18,6 +18,7 @@ if (isset($patient) && ! empty($patient)) {
 
 @section('content')
     @push('styles')
+        <link href="https://fonts.googleapis.com/css?family=Roboto:500&display=swap" rel="stylesheet">
         <style>
             .patient-details {
                 height: 158px;
@@ -37,8 +38,15 @@ if (isset($patient) && ! empty($patient)) {
                 width: 80%;
                 text-align: center;
             }
-
-
+            body {
+                font-family: 'Roboto', sans-serif !important;
+            }
+            h4 {
+                font-family: 'Roboto', sans-serif !important;
+            }
+            b {
+                font-weight: bolder;
+            }
         </style>
     @endpush
     <div>

@@ -248,8 +248,8 @@ class NurseFinder
         $isPreviousCallNurseActive = false;
         $previousCallUser          = User::ofType('care-center')
             ->whereHas('nurseInfo', function ($q) {
-                                             $q->where('status', 'active');
-                                         })
+                $q->where('status', 'active');
+            })
             ->with('nurseInfo')
             ->find($this->previousCall['outbound_cpm_id']);
 
@@ -327,10 +327,10 @@ class NurseFinder
                 ->where('attempt_note', '=', '')
                 ->where('outbound_cpm_id', '!=', $nurseToIgnore)
                 ->whereHas('outboundUser', function ($q) {
-                $q->whereHas('nurseInfo', function ($q2) {
-                    $q2->where('status', '=', 'active');
-                });
-            })
+                    $q->whereHas('nurseInfo', function ($q2) {
+                        $q2->where('status', '=', 'active');
+                    });
+                })
                 ->orderBy('called_date', 'desc')
                 ->first())->outboundUser;
 
