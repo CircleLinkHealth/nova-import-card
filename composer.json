@@ -193,16 +193,16 @@
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
             "@php artisan nova:publish"
         ],
-        "test": [
-            "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p1"
+        "paratest": [
+            "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p8"
         ],
         "unit-tests": [
-            "php artisan --env=testing test:create-sqlite-db",
+            "php artisan --env=testing test:prepare-test_suite-db",
             "./vendor/phpunit/phpunit/phpunit --testsuite=Unit --testdox"
         ],
         "profile-unit-tests": [
-            "php artisan --env=testing test:create-sqlite-db",
-            "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner SqliteRunner -p3 --log-junit tests_profiles.xml"
+            "php artisan --env=testing test:prepare-test_suite-db",
+            "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --log-junit tests_profiles.xml"
         ],
         "clear": [
             "php artisan clear-compiled",

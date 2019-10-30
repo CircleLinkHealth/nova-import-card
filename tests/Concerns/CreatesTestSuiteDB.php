@@ -7,31 +7,16 @@
 namespace Tests\Concerns;
 
 use Symfony\Component\Process\Process;
-use Tests\CreatesApplication;
 
-trait CreatesSqliteDB
+trait CreatesTestSuiteDB
 {
-    use CreatesApplication;
-
-    public function createDB($dbNameSuffix = '')
+    public function createDB()
     {
-        $app = $this->createApplication();
-
-        if ( ! empty($dbNameSuffix)) {
-            $dbNameSuffix = "-$dbNameSuffix";
-        }
-
-        $dbname = base_path("tests/data/sqlite/test_db$dbNameSuffix.sqlite");
-
-        $this->createDatabase($dbname);
+        $this->createDatabase();
     }
 
-    private function createDatabase($dbPath)
+    private function createDatabase()
     {
-        if ( ! file_exists($dbPath)) {
-            touch($dbPath);
-        }
-
         $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh', '--env=testing']);
         $testSuiteSeederCommand = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed', '--class=TestSuiteSeeder', '--env=testing']);
     }
