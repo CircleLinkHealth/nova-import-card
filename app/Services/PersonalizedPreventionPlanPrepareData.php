@@ -621,11 +621,25 @@ class PersonalizedPreventionPlanPrepareData
         $emotional['emotional_depressed'] = $this->getStringValue($patientPppData->answers_for_eval, 'emotional_depressed');
         $depressionScoresArray = ProviderReportService::depressionScoreArray();
 
-        $depressionScore = $depressionScoresArray[strtolower(ProviderReportService::checkInputValueIsNotEmpty($emotional['emotional_little_interest'],
-                '22.1', []))] + $depressionScoresArray[strtolower(ProviderReportService::checkInputValueIsNotEmpty($emotional['emotional_depressed'],
-                '22.2', []))];
+        $depressionScore = $this->getDepressionScore($depressionScoresArray, $emotional);
 
         return $depressionScore >= 5 ? $this->getTaskRecommendations($title, $index) : [];
+    }
+
+    /**
+     * @param $depressionScoresArray
+     * @param $emotional
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getDepressionScore($depressionScoresArray, $emotional)
+    {
+        $littleInterestScore = $depressionScoresArray[strtolower(ProviderReportService::checkInputValueIsNotEmpty($emotional['emotional_little_interest'],
+            '22.1', []))];
+        $depressionScore = $depressionScoresArray[strtolower(ProviderReportService::checkInputValueIsNotEmpty($emotional['emotional_depressed'],
+            '22.2', []))];
+
+        return $littleInterestScore + $depressionScore;
     }
 
     /**
