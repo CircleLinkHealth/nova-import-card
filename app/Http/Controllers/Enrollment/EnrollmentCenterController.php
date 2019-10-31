@@ -247,4 +247,5 @@ class EnrollmentCenterController extends Controller
 
         return redirect()->route('enrollment-center.dashboard');
     }
+
 }
