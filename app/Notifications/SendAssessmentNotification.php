@@ -51,9 +51,9 @@ class SendAssessmentNotification extends Notification
     {
         return [
             'channels'     => $this->channels,
-            'sender_id'    => auth()->user()->id,
+            'sender_id'    => optional(auth()->user())->id,
             'sender_type'  => SendAssessmentNotification::class,
-            'sender_email' => auth()->user()->email,
+            'sender_email' => optional(auth()->user())->email,
 
             'receiver_type'  => $notifiable->id,
             'receiver_id'    => get_class($notifiable),
