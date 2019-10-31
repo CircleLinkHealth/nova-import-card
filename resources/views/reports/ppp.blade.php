@@ -38,9 +38,12 @@ function getStringValue($val, $default = '')
 
     <div class="container report">
 
+        <!-- this magic line here is needed for the pdf generation -->
+        <!-- it turns out that if the first character is <strong>, the rest of the document is <strong> -->
+        <!-- so I added this before "Patient Info" which is <strong> -->
+        <div>&nbsp;</div>
         <div class="report-title">
-            <div>Patient Info</div>
-            <hr>
+            <div><strong>Patient Info</strong></div>
         </div>
         <div class="report-data">
             Patient Name: <strong><span style="color: #50b2e2">{{$patient->display_name}}</span></strong> <br>
@@ -52,8 +55,7 @@ function getStringValue($val, $default = '')
         </div>
 
         <div class="report-title">
-            <div>Vitals</div>
-            <hr>
+            <div><strong>Vitals</strong></div>
         </div>
         <div class="report-data">
             Weight: <strong>{{getStringValue($patientPppData->answers_for_eval['weight'])}} </strong><br>
@@ -66,22 +68,20 @@ function getStringValue($val, $default = '')
         </div>
 
         <div class="suggested-list">
-            <span class="report-title">
-                Suggested CheckList
+            <span class="report-title no-border no-margin">
+                <strong>Suggested CheckList</strong>
             </span>
             <span class="side-title">
                 Ask your doctor about:
             </span>
         </div>
 
-        <hr>
-
         <table class="table table-borderless">
             <thead>
             <tr>
-                <th scope="col"><span style="color: #50b2e2">Task Recommendation</span></th>
-                <th scope="col"><span style="color: #50b2e2">Time Frame</span></th>
-                <th scope="col"><span style="color: #50b2e2">Billing Code</span></th>
+                <th class="table-col-1"><span style="color: #50b2e2">Task Recommendation</span></th>
+                <th class="table-col-2"><span style="color: #50b2e2">Time Frame</span></th>
+                <th class="table-col-3"><span style="color: #50b2e2">Billing Code</span></th>
             </tr>
             </thead>
             <tbody>
@@ -90,7 +90,9 @@ function getStringValue($val, $default = '')
                 @if(! empty($tasks['tasks']))
                     @foreach($tasks['table_data'] as $table)
                         <tr>
-                            <td class="suggested-list-body">{{$table[0]['body']}}</td>
+                            <td class="suggested-list-body">
+                                <strong>{{$table[0]['body']}}</strong>
+                            </td>
                             <td>{{$table[0]['time_frame']}}</td>
                             <td style="font-weight: 500">{{$table[0]['code']}}</td>
                         </tr>
@@ -102,49 +104,51 @@ function getStringValue($val, $default = '')
         <br>
         <div class="row">
             <div class="col">
+
+                <div class="report-title page-break-before">
+                    <strong>
+                        Personalized Health Advice
+                    </strong>
+                </div>
+
                 @foreach($personalizedHealthAdvices as $key => $tasks)
-                    <div class="avoid-page-break">
-
-                        <!-- keeping this here so it sticks with the first item in case it goes over a page break -->
-                        @if($loop->index === 0)
-                            <div class="health-advice-title">
-                                <div>Personalized Health Advice</div>
-                            </div>
-                            <hr>
-                        @endif
-
-                        @if(array_filter($tasks['tasks']))
-                            <br>
+                    @empty(array_filter($tasks['tasks']))
+                        @continue
+                    @else
+                        <div class="avoid-page-break">
                             <div class="recommendation-title">
-                                <div class="image {{$tasks['image']}}"></div> {{$tasks['title']}}
+                                <div class="image {{$tasks['image']}}"></div>
+                                <strong>
+                                    {{$tasks['title']}}
+                                </strong>
                             </div>
-                        @endif
-                        <br>
-                        @foreach($tasks['tasks'] as $key => $recommendations)
-                            @if(! empty($recommendations) && isset($recommendations['qualitative_trigger']))
-                                <div class="recommendations-area">
-                                    <div><strong>{{$recommendations['qualitative_trigger']}}</strong></div>
-                                    <div>{{$recommendations['task_body']}}</div>
-                                    <br>
-                                    @if (is_array($recommendations['recommendation_body']))
-                                        @foreach($recommendations['recommendation_body'] as $recBodyItem)
+                            <br>
+                            @foreach($tasks['tasks'] as $key => $recommendations)
+                                @if(! empty($recommendations) && isset($recommendations['qualitative_trigger']))
+                                    <div class="recommendations-area">
+                                        <div><strong>{{$recommendations['qualitative_trigger']}}</strong></div>
+                                        <div>{{$recommendations['task_body']}}</div>
+                                        <br>
+                                        @if (is_array($recommendations['recommendation_body']))
                                             <ul>
-                                                <li style="font-weight: 400; margin-left: 7%;"><i>{{$recBodyItem}}</i>
+                                                @foreach($recommendations['recommendation_body'] as $recBodyItem)
+                                                    <li style="font-weight: 400; margin-left: 7%;">
+                                                        <i>{{$recBodyItem}}</i>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @else
+                                            <ul>
+                                                <li style="font-weight: 400; margin-left: 7%;">
+                                                    <i>{{$recommendations['recommendation_body']}}</i>
                                                 </li>
                                             </ul>
-                                        @endforeach
-                                    @else
-                                        <ul>
-                                            <li style="font-weight: 400; margin-left: 7%;">
-                                                <i>{{$recommendations['recommendation_body']}}</i>
-                                            </li>
-                                        </ul>
-                                    @endif
-                                    <br>
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
+                                        @endif
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endempty
                 @endforeach
             </div>
         </div>

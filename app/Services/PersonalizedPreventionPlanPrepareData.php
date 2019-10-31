@@ -17,11 +17,11 @@ class PersonalizedPreventionPlanPrepareData
     const EMOTIONAL_TITLE = 'Emotional Health';
     const FALL_RISK_TITLE = 'Fall Risk';
     const HEARING_TITLE = 'Hearing Impairment';
-    const COGNITIVE_TITLE = 'Cognitive Impairment:';
+    const COGNITIVE_TITLE = 'Cognitive Impairment';
     const ADL_TITLE = 'ADL';
-    const VACCINES_TITLE = 'Immunizations/Vaccines:';
-    const SCREENINGS_TITLE = 'Screenings:';
-    const OTHER_TITLE = 'Other misc:';
+    const VACCINES_TITLE = 'Immunizations/Vaccines';
+    const SCREENINGS_TITLE = 'Screenings';
+    const OTHER_TITLE = 'Other misc';
     const VITALS_TITLE = 'Vitals';
 //indexes
     const FRUIT_VEGGIES = 'fruits_veggies';
