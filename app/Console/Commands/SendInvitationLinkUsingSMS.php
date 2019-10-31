@@ -111,8 +111,25 @@ class SendInvitationLinkUsingSMS extends Command
             throw new \Exception("Could not find user[$phoneNumber] in the system.");
         }
 
+        //in case notifiable user is not the patient
+        $providerFullName = "PROVIDER";
+        if ( ! $targetNotifiable->is($user)) {
+            $practiceName     = $user->primaryPractice->display_name;
+
+            $billingProviderUser = $user->billingProviderUser();
+            if ($billingProviderUser) {
+                $providerFullName = $billingProviderUser->getFullName();
+            }
+        } else {
+            $practiceName     = $targetNotifiable->primaryPractice->display_name;
+            $billingProviderUser = $targetNotifiable->billingProviderUser();
+            if ($billingProviderUser) {
+                $providerFullName = $billingProviderUser->getFullName();
+            }
+        }
+
         $notifiableUser = new NotifiableUser($targetNotifiable, null, $phoneNumber);
-        $invitation     = new SurveyInvitationLink($url, $surveyName, 'sms');
+        $invitation     = new SurveyInvitationLink($url, $surveyName, 'sms', $practiceName, $providerFullName);
 
         try {
             if ($this->isDryRun()) {
@@ -123,7 +140,6 @@ class SendInvitationLinkUsingSMS extends Command
                 $this->info('Sending notification');
             }
             $this->info("Done");
-
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }

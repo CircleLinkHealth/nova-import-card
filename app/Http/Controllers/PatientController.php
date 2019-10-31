@@ -58,29 +58,36 @@ class PatientController extends Controller
 
     public function getPatientContactInfo(Request $request, $userId)
     {
-        $user = User::with('phoneNumbers')->findOrFail($userId);
+        $user = User::with([
+            'phoneNumbers',
+        ])->findOrFail($userId);
+
+        $filteredPhoneNumbers = $user->phoneNumbers->filter(function ($phone){
+            return !empty(trim($phone->number));
+        });
 
         return response()->json([
             'user_id'       => $userId,
-            'phone_numbers' => $user->phoneNumbers,
+            'phone_numbers' => $filteredPhoneNumbers,
             'email'         => $user->email,
         ]);
     }
 
-    public function getPatientReport($patienId, $reportType, $year){
+    public function getPatientReport($patienId, $reportType, $year)
+    {
 
-        if ($reportType == 'ppp'){
+        if ($reportType == 'ppp') {
             return redirect()->route('get-ppp-report', [
                 'userId' => $patienId,
-                'year'   => $year
+                'year'   => $year,
 
             ]);
         }
 
-        if ($reportType == 'provider-report'){
+        if ($reportType == 'provider-report') {
             return redirect()->route('get-provider-report', [
                 'userId' => $patienId,
-                'year'   => $year
+                'year'   => $year,
 
             ]);
         }

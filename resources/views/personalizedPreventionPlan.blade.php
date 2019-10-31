@@ -40,8 +40,8 @@ function getStringValue($val, $default = '')
         </div>
         <div>
             Patient Name: <span style="color: #50b2e2">{{$patient->display_name}}</span> <br>
-            Date of Birth: <strong>{{$patient->patientInfo->birth_date}}</strong><br>
-            Age: <strong>{{getStringValue($patientPppData->answers_for_eval['age'])}}</strong> <br>
+            Date of Birth (records): <strong>{{$patient->patientInfo->birth_date}}</strong><br>
+            Age (self-reported): <strong>{{getStringValue($patientPppData->answers_for_eval['age'])}}</strong> <br>
             Address: <strong>{{$patient->address}}</strong> <br>
             City, State, Zip: <strong>{{$patient->city}}, {{$patient->state}}, {{$patient->zip}}</strong> <br>
             Provider: <strong>{{$patient->getBillingProviderName()}}</strong>

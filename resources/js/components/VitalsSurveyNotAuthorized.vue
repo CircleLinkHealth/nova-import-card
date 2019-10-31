@@ -15,7 +15,7 @@
                     <div class="survey-sub-welcome-text">
                         Thank you for completing your routine Wellness Assessment. If you don't already have an
                         in-person appointment scheduled, {{doctorsName}}'s office will reach out soon via a call or e-mail.
-                        Please contact {{doctorsName}}'s office if you don't receive either.
+                        Please contact {{doctorsName}}'s office if you don't hear from us.
                     </div>
                 </div>
 

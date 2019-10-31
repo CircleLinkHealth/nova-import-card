@@ -6,7 +6,7 @@ namespace App\Services;
 use App\TaskRecommendations;
 
 class PersonalizedPreventionPlanPrepareData
-{
+{//titles
     const NUTRITION_TITLE = 'Nutrition';
     const TOBACCO_TITLE = 'Tobacco/Smoking';
     const ALCOHOL_TITLE = 'Alcohol';
@@ -23,6 +23,57 @@ class PersonalizedPreventionPlanPrepareData
     const SCREENINGS_TITLE = 'Screenings:';
     const OTHER_TITLE = 'Other misc:';
     const VITALS_TITLE = 'Vitals';
+//indexes
+    const FRUIT_VEGGIES = 'fruits_veggies';
+    const WHOLE_GRAIN = 'whole_grain';
+    const FATTY_FRIED_FOODS = 'fatty_fried_foods';
+    const CANDY_SUGARY_BEVERAGES = 'candy_sugary_beverages';
+
+    const CURRENT_SMOKER = 'current_smoker';
+    const CURRENT_MALE_SMOKER = 'current_male_smoker';
+    const FORMER_SMOKER = 'former_smoker';
+
+    const ALCOHOL_DEPENDENT = 'alcohol_dependent';
+
+    const RECREATIONAL_DRUGS = 'recreational_drugs';
+
+    const LESS_THREE_WEEK_YOUNG = 'less_three_week_young';
+    const LESS_THREE_WEEK_OLDER = 'less_three_week_older';
+
+    const BMI_LOW = 'bmi_low';
+    const BMI_HIGH = 'bmi_high';
+
+    const UNPROTECTED_SEX = 'unprotected_sex';
+    const REPRODUCTIVE_AGE = 'reproductive_age';
+    const EMOTIONAL_HEALTH = 'emotional_health';
+    const FALL_RISK = 'fall_risk';
+    const HEARING_IMPAIRMENT = 'hearing_impairment';
+    const MODERATE_COGNITIVE_IMPAIRMENT = 'moderate_cognitive_impairment';
+    const MILD_COGNITIVE_IMPAIRMENT = 'mild_cognitive_impairment';
+    const ADL_ISSUES = 'adl_issues';
+    //vaccines
+    const FLU = 'flu';
+    const TETANUS = 'tetanus';
+    const CHICKEN_POX = 'chicken_pox';
+    const HEPATITIS_B = 'hepatitis_b';
+    const MMR = 'mmr';
+    const HPV = 'hpv';
+    const HERPES_ZOSTER = 'herpes_zoster';
+    const PNEUMONOCOCCAL_VACCINE = 'pneumococcal_vaccine';
+    //screenings
+    const MAMMOGRAM = 'mammogram';
+    const CERVICAL_CANCER_YOUNG = 'cervical_cancer';
+    const CERVICAL_CANCER_ELDER = 'cervical_cancer_elder';
+    const PROSTATE_CANCER = 'prostate_cancer';
+    const COLORECTAL_CANCER = 'colorectal_cancer';
+    const SKIN_CANCER = 'skin_cancer';
+    const OSTEOPOROSIS ='osteoporosis';
+    const GLAUCOMA = 'glaucoma';
+    const DIABETES = 'diabetes';
+    const CHOLESTEROL = 'cholesterol';
+    // Advanced Care Planning
+    const NMPA = 'nmpa';
+    const NLWAD = 'nlwad';
 
 
     /*
@@ -34,117 +85,117 @@ class PersonalizedPreventionPlanPrepareData
         $nutritionRecommendations = [
             $title = PersonalizedPreventionPlanPrepareData::NUTRITION_TITLE,
             $image = 'carrot',
-            $fruitVeggies = $this->fruitVeggies($patientPppData, $title),
-            $wholeGrain = $this->wholeGrain($patientPppData, $title),
-            $fattyFriedFoods = $this->fattyFriedFoods($patientPppData, $title),
-            $candySugaryBeverages = $this->candySugaryBeverages($patientPppData, $title),
+            $fruitVeggies = $this->fruitVeggies($patientPppData, $title, self::FRUIT_VEGGIES),
+            $wholeGrain = $this->wholeGrain($patientPppData, $title, self::WHOLE_GRAIN),
+            $fattyFriedFoods = $this->fattyFriedFoods($patientPppData, $title, self::FATTY_FRIED_FOODS),
+            $candySugaryBeverages = $this->candySugaryBeverages($patientPppData, $title, self::CANDY_SUGARY_BEVERAGES),
         ];
 
         $smokingRecommendations = [
             $title = PersonalizedPreventionPlanPrepareData::TOBACCO_TITLE,
             $image = 'cigarette',
-            $currentSmoker = $this->currentSmoker($patientPppData, $title),
-            $currentSmokerAge = $this->currentSmokerMale($patientPppData, $title),
-            $formerSmoker = $this->formerSmoker($patientPppData, $title),
+            $currentSmoker = $this->currentSmoker($patientPppData, $title, self::CURRENT_SMOKER),
+            $currentSmokerAge = $this->currentSmokerMale($patientPppData, $title, self::CURRENT_MALE_SMOKER),
+            $formerSmoker = $this->formerSmoker($patientPppData, $title, self::FORMER_SMOKER),
         ];
 
         $alcoholRecommendations = [
             $title = PersonalizedPreventionPlanPrepareData::ALCOHOL_TITLE,
             $image = 'wine',
-            $alcoholUse = $this->alcoholUse($patientPppData, $title),
+            $alcoholUse = $this->alcoholUse($patientPppData, $title, self::ALCOHOL_DEPENDENT),
         ];
 
         $recreationalDrugsRecommendations = [
             $title = PersonalizedPreventionPlanPrepareData::DRUGS_TITLE,
             $image = 'flower-3',
-            $recreationalDrugs = $this->recreationalDrugs($patientPppData, $title),
+            $recreationalDrugs = $this->recreationalDrugs($patientPppData, $title, self::RECREATIONAL_DRUGS),
         ];
 
         $physicalActivity = [
             $title = PersonalizedPreventionPlanPrepareData::PHYSICAL_TITLE,
             $image = 'dumbell',
-            $physicalActivity = $this->physicalActivity($patientPppData, $title),
+            $physicalActivityYounger = $this->physicalActivityYounger($patientPppData, $title, self::LESS_THREE_WEEK_YOUNG),
+            $physicalActivityOlder = $this->physicalActivityOlder($patientPppData, $title, self::LESS_THREE_WEEK_OLDER)
         ];
 
         $weightBmi = [
             $title = PersonalizedPreventionPlanPrepareData::WEIGHT_BMI_TITLE,
             $image = 'weight-scale',
-            $weightBmiUnderweight = $this->weightBmiUnderweight($patientPppData, $title),
-            $weightBmiOverweight = $this->weightBmiOverweight($patientPppData, $title),
+            $weightBmiUnderweight = $this->weightBmiUnderweight($patientPppData, $title, self::BMI_LOW),
+            $weightBmiOverweight = $this->weightBmiOverweight($patientPppData, $title, self::BMI_HIGH),
         ];
 
         $sexualPractices = [
             $title = PersonalizedPreventionPlanPrepareData::SEXUAL_TITLE,
             $image = 'hearts',
-            $unprotectedSex = $this->unprotectedSex($patientPppData, $title),
-            $womanOfReproductiveAge = $this->womanOfReproductiveAge($patientPppData, $title),
+            $unprotectedSex = $this->unprotectedSex($patientPppData, $title, self::UNPROTECTED_SEX),
+            $womanOfReproductiveAge = $this->womanOfReproductiveAge($patientPppData, $title, self::REPRODUCTIVE_AGE),
         ];
 
         $emotionalHealth = [
             $title = PersonalizedPreventionPlanPrepareData::EMOTIONAL_TITLE,
             $image = 'happy-face',
-            $depression = $this->depression($patientPppData, $title),
+            $depression = $this->depression($patientPppData, $title, self::EMOTIONAL_HEALTH),
         ];
 
         $fallRisk = [
             $title = PersonalizedPreventionPlanPrepareData::FALL_RISK_TITLE,
             $image = 'patch',
-            $patientHasFallen = $this->patientHasFallen($patientPppData, $title),
+            $patientHasFallen = $this->patientHasFallen($patientPppData, $title, self::FALL_RISK),
         ];
 
         $hearingImpairment = [
             $title = PersonalizedPreventionPlanPrepareData::HEARING_TITLE,
             $image = 'volume-half',
-            $patientHasHearingImper = $this->hearingImpairment($patientPppData, $title),
+            $patientHasHearingImper = $this->hearingImpairment($patientPppData, $title, self::HEARING_IMPAIRMENT),
         ];
 
         $cognitiveImpairment = [
             $title = PersonalizedPreventionPlanPrepareData::COGNITIVE_TITLE,
             $image = 'thought-bubble',
-            $mildCognitiveImpairment = $this->mildCognitiveImpairment($patientPppData, $title),
-            $modToSevNeurocognitiveImpairment = $this->modToSevNeurocognitiveImpairment($patientPppData, $title),
+            $mildCognitiveImpairment = $this->mildCognitiveImpairment($patientPppData, $title, self::MILD_COGNITIVE_IMPAIRMENT),
+            $modToSevNeurocognitiveImpairment = $this->modToSevNeurocognitiveImpairment($patientPppData, $title, self::MODERATE_COGNITIVE_IMPAIRMENT),
         ];
 
         $adl = [
             $title = PersonalizedPreventionPlanPrepareData::ADL_TITLE,
             $image = 'raised-hand',
-            $adlWithNoHelp = $this->adlWithNoHelp($patientPppData, $title),
+            $adlWithNoHelp = $this->adlWithNoHelp($patientPppData, $title, self::ADL_ISSUES),
         ];
 
         $immunizationsVaccines = [
             $title = PersonalizedPreventionPlanPrepareData::VACCINES_TITLE,
             $image = 'syringe',
-            $fluInfluenza = $this->fluInfluenza($patientPppData, $title),
-            $tetanusDiphtheria = $this->tetanusDiphtheria($patientPppData, $title),
-            $chickenPox = $this->chickenPoxVaricella($patientPppData, $title),
-            $hepatitisB = $this->hepatitisB($patientPppData, $title),
-            $measlesMumpsRubella = $this->measlesMumpsRubella($patientPppData, $title),
-            $humanPapillomavirus = $this->humanPapillomavirus($patientPppData, $title),
-            $shingles = $this->shingles($patientPppData, $title),
-            $pneumococcalVaccine = $this->pneumococcalVaccine($patientPppData, $title),
+            $fluInfluenza = $this->fluInfluenza($patientPppData, $title, self::FLU),
+            $tetanusDiphtheria = $this->tetanusDiphtheria($patientPppData, $title, self::TETANUS),
+            $chickenPox = $this->chickenPoxVaricella($patientPppData, $title, self::CHICKEN_POX),
+            $hepatitisB = $this->hepatitisB($patientPppData, $title, self::HEPATITIS_B),
+            $measlesMumpsRubella = $this->measlesMumpsRubella($patientPppData, $title, self::MMR),
+            $humanPapillomavirus = $this->humanPapillomavirus($patientPppData, $title, self::HPV),
+            $shingles = $this->shingles($patientPppData, $title, self::HERPES_ZOSTER),
+            $pneumococcalVaccine = $this->pneumococcalVaccine($patientPppData, $title, self::PNEUMONOCOCCAL_VACCINE),
         ];
 
         $screenings = [
             $title = PersonalizedPreventionPlanPrepareData::SCREENINGS_TITLE,
             $image = 'clipboard-list',
-            $breastCancerMammogram = $this->breastCancerMammogram($patientPppData, $title),
-            $cervicalCancerYoung = $this->cervicalCancerYoung($patientPppData, $title),
-            $cervicalCancerElder = $this->cervicalCancerElder($patientPppData, $title),
-            $prostateCancer = $this->prostateCancer($patientPppData, $title),
-            $colorectalCancer = $this->colorectalCancer($patientPppData, $title),
-            $skinCancer = $this->skinCancer($patientPppData, $title),
-
+            $breastCancerMammogram = $this->breastCancerMammogram($patientPppData, $title, self::MAMMOGRAM),
+            $cervicalCancerYoung = $this->cervicalCancerYoung($patientPppData, $title, self::CERVICAL_CANCER_YOUNG),
+            $cervicalCancerElder = $this->cervicalCancerElder($patientPppData, $title, self::CERVICAL_CANCER_ELDER),
+            $prostateCancer = $this->prostateCancer($patientPppData, $title, self::PROSTATE_CANCER),
+            $colorectalCancer = $this->colorectalCancer($patientPppData, $title, self::COLORECTAL_CANCER),
+            $skinCancer = $this->skinCancer($patientPppData, $title, self::SKIN_CANCER),
+            $osteoporosis = $this->osteoporosis($patientPppData, $title, self::OSTEOPOROSIS),
+            $glaukoma = $this->glaukoma($patientPppData, $title, self::GLAUCOMA),
+            $diabetes = $this->diabetes($patientPppData, $title, self::DIABETES),
+            $cholesterolDyslipidemia = $this->cholesterolDyslipidemia($patientPppData, $title, self::CHOLESTEROL),
         ];
 
         $otherMisc = [
             $title = PersonalizedPreventionPlanPrepareData::OTHER_TITLE,
             $image = 'layout-4-blocks',
-            $osteoporosis = $this->osteoporosis($patientPppData, $title),
-            $glaukoma = $this->glaukoma($patientPppData, $title),
-            $diabetes = $this->diabetes($patientPppData, $title),
-            $cholesterolDyslipidemia = $this->cholesterolDyslipidemia($patientPppData, $title),
-            $noMedicalPowerOfAttorney = $this->noMedicalPowerOfAttorney($patientPppData, $title),
-            $livingWill = $this->noLivingWillAdvanceDirective($patientPppData, $title),
+            $noMedicalPowerOfAttorney = $this->noMedicalPowerOfAttorney($patientPppData, $title, self::NMPA),
+            $livingWill = $this->noLivingWillAdvanceDirective($patientPppData, $title, self::NLWAD),
         ];
 
         $recommendationsData = collect([
@@ -194,9 +245,8 @@ class PersonalizedPreventionPlanPrepareData
         return $personalizedHealthAdvices;
     }
 
-    public function fruitVeggies($patientPppData, $title)
+    public function fruitVeggies($patientPppData, $title, $index)
     {
-        $index = 0;
         $nutritionData['fruit_veggies'] = $this->getStringValue($patientPppData->answers_for_eval, 'fruit_veggies');
         if ($nutritionData['fruit_veggies'] !== '4+') {
             return $this->getTaskRecommendations($title, $index);
@@ -228,10 +278,8 @@ class PersonalizedPreventionPlanPrepareData
         return $taskRec;
     }
 
-    public function wholeGrain($patientPppData, $title)
+    public function wholeGrain($patientPppData, $title, $index)
     {
-        $index = 1;
-
         $nutritionData['whole_grain'] = $this->getStringValue($patientPppData->answers_for_eval, 'whole_grain');
         $nutritionData['multipleQuestion16'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
             ? $patientPppData->answers_for_eval['multipleQuestion16']
@@ -270,9 +318,8 @@ class PersonalizedPreventionPlanPrepareData
         return in_array($condition, $answers);
     }
 
-    public function fattyFriedFoods($patientPppData, $title)
+    public function fattyFriedFoods($patientPppData, $title, $index)
     {
-        $index = 2;
         $nutritionData['fatty_fried_foods'] = $this->getStringValue($patientPppData->answers_for_eval,
             'fatty_fried_foods');
 
@@ -283,9 +330,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function candySugaryBeverages($patientPppData, $title)
+    public function candySugaryBeverages($patientPppData, $title, $index)
     {
-        $index = 3;
         $nutritionData['candy_sugary_beverages'] = $this->getStringValue($patientPppData->answers_for_eval,
             'candy_sugary_beverages');
 
@@ -296,9 +342,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function currentSmoker($patientPppData, $title)
+    public function currentSmoker($patientPppData, $title, $index)
     {
-        $index = 0;
         $smokingData['current_smoker'] = $this->getStringValue($patientPppData->answers_for_eval,
             'current_smoker');
         $smokingData['smoker_interested_quitting'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -311,9 +356,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function currentSmokerMale($patientPppData, $title)
+    public function currentSmokerMale($patientPppData, $title, $index)
     {
-        $index = 1;
         $smokingData['current_smoker'] = $this->getStringValue($patientPppData->answers_for_eval, 'current_smoker');
         $smokingData['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
         $smokingData['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
@@ -325,9 +369,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function formerSmoker($patientPppData, $title)
+    public function formerSmoker($patientPppData, $title, $index)
     {
-        $index = 2;
         $smokingData['current_smoker'] = $this->getStringValue($patientPppData->answers_for_eval, 'current_smoker');
         $smokingData['smoker_interested_quitting'] = $this->getStringValue($patientPppData->answers_for_eval,
             'smoker_interested_quitting');
@@ -339,9 +382,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function alcoholUse($patientPppData, $title)
+    public function alcoholUse($patientPppData, $title, $index)
     {
-        $index = 0;
         $alcoholData['alcohol_use'] = $this->getStringValue($patientPppData->answers_for_eval, 'alcohol_use');
         $alcoholData['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
 
@@ -355,9 +397,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function recreationalDrugs($patientPppData, $title)
+    public function recreationalDrugs($patientPppData, $title, $index)
     {
-        $index = 0;
         $recreationalDrugs['recreational_drugs'] = $this->getStringValue($patientPppData->answers_for_eval,
             'recreational_drugs');
 
@@ -368,16 +409,15 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function physicalActivity($patientPppData, $title)
+    public function physicalActivityYounger($patientPppData, $title, $index)
     {
-        $index = 0;
         $physicalActivity['physical_activity'] = $this->getStringValue($patientPppData->answers_for_eval,
             'physical_activity');
 
         $physicalActivity['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
 
         if ($physicalActivity['age'] < '65' && ($physicalActivity['physical_activity'] === 'Never'
-                || $physicalActivity['physical_activity'] === '<3 times a week')){
+                || $physicalActivity['physical_activity'] === '<3 times a week')) {
 
             return $this->getTaskRecommendations($title, $index);
         };
@@ -385,9 +425,24 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function weightBmiUnderweight($patientPppData, $title)
+    public function physicalActivityOlder($patientPppData, $title, $index)
     {
-        $index = 0;
+        $physicalActivity['physical_activity'] = $this->getStringValue($patientPppData->answers_for_eval,
+            'physical_activity');
+
+        $physicalActivity['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
+
+        if ($physicalActivity['age'] >= '65' && ($physicalActivity['physical_activity'] === 'Never'
+                || $physicalActivity['physical_activity'] === '<3 times a week')) {
+
+            return $this->getTaskRecommendations($title, $index);
+        };
+
+        return [];
+    }
+
+    public function weightBmiUnderweight($patientPppData, $title, $index)
+    {
         $weightBmi['bmi'] = $this->getStringValue($patientPppData->answers_for_eval, 'bmi');
 
         if ($weightBmi['bmi'] <= '13.5') {
@@ -397,9 +452,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function weightBmiOverweight($patientPppData, $title)
+    public function weightBmiOverweight($patientPppData, $title, $index)
     {
-        $index = 1;
         $weightBmi['bmi'] = $this->getStringValue($patientPppData->answers_for_eval, 'bmi');
 
         if ($weightBmi['bmi'] >= '25') {
@@ -409,9 +463,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function unprotectedSex($patientPppData, $title)
+    public function unprotectedSex($patientPppData, $title, $index)
     {
-        $index = 0;
         $sexualLife['sexually_active'] = $this->getStringValue($patientPppData->answers_for_eval, 'sexually_active');
         $sexualLife['multiple_partners'] = $this->getStringValue($patientPppData->answers_for_eval,
             'multiple_partners');
@@ -431,9 +484,8 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
-    public function womanOfReproductiveAge($patientPppData, $title)
+    public function womanOfReproductiveAge($patientPppData, $title, $index)
     {
-        $index = 1;
         $sexualLife['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
         $sexualLife['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
         $sexualLife['domestic_violence_screen'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -449,9 +501,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function depression($patientPppData, $title)
+    public function depression($patientPppData, $title, $index)
     {
-        $index = 0;
         $emotional['emotional'] = $this->getStringValue($patientPppData->answers_for_eval, 'emotional');
         if ($emotional['emotional'] >= '5') {
             return $this->getTaskRecommendations($title, $index);
@@ -461,9 +512,8 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
-    public function patientHasFallen($patientPppData, $title)
+    public function patientHasFallen($patientPppData, $title, $index)
     {
-        $index = 0;
         $fallRisk['fall_risk'] = $this->getStringValue($patientPppData->answers_for_eval, 'fall_risk');
         if ($fallRisk['fall_risk'] !== 'Yes') {
             return $this->getTaskRecommendations($title, $index);
@@ -472,9 +522,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function hearingImpairment($patientPppData, $title)
+    public function hearingImpairment($patientPppData, $title, $index)
     {
-        $index = 0;
         $hearingImpairment['hearing_impairment'] = $this->getStringValue($patientPppData->answers_for_eval,
             'hearing_impairment');
 
@@ -487,9 +536,8 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
-    public function mildCognitiveImpairment($patientPppData, $title)
+    public function mildCognitiveImpairment($patientPppData, $title, $index)
     {
-        $index = 0;
         $cognitiveAssessment['cognitive_assessment'] = $this->getStringValue($patientPppData->answers_for_eval,
             'cognitive_assessment');
 
@@ -500,9 +548,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function modToSevNeurocognitiveImpairment($patientPppData, $title)
+    public function modToSevNeurocognitiveImpairment($patientPppData, $title, $index)
     {
-        $index = 1;
         $cognitiveAssessment['cognitive_assessment'] = $this->getStringValue($patientPppData->answers_for_eval,
             'cognitive_assessment');
 
@@ -513,9 +560,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function adlWithNoHelp($patientPppData, $title)
+    public function adlWithNoHelp($patientPppData, $title, $index)
     {
-        $index = 0;
         $adl['adl'] = $this->getStringValue($patientPppData->answers_for_eval, 'adl');
         $adl['assistance_in_daily_activities'] = $this->getStringValue($patientPppData->answers_for_eval,
             'assistance_in_daily_activities');
@@ -527,9 +573,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function fluInfluenza($patientPppData, $title)
+    public function fluInfluenza($patientPppData, $title, $index)
     {
-        $index = 0;
         $vaccines['flu_influenza'] = $this->getStringValue($patientPppData->answers_for_eval, 'flu_influenza');
         if ($vaccines['flu_influenza'] === 'No'
             //unsure does not in exist in answers options (HRA Q26.). Im waiting for Raph's feedback on this.
@@ -541,9 +586,8 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
-    public function tetanusDiphtheria($patientPppData, $title)
+    public function tetanusDiphtheria($patientPppData, $title, $index)
     {
-        $index = 1;
         $vaccines['tetanus_diphtheria'] = $this->getStringValue($patientPppData->answers_for_eval,
             'tetanus_diphtheria');
         $vaccines['rubella'] = $this->getStringValue($patientPppData->answers_for_eval, 'rubella');
@@ -557,9 +601,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function chickenPoxVaricella($patientPppData, $title)
+    public function chickenPoxVaricella($patientPppData, $title, $index)
     {
-        $index = 2;
         $vaccines['chicken_pox'] = $this->getStringValue($patientPppData->answers_for_eval, 'chicken_pox');
         if ($vaccines['chicken_pox'] === 'No'
             || $vaccines['chicken_pox'] === 'Unsure') {
@@ -569,9 +612,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function hepatitisB($patientPppData, $title)
+    public function hepatitisB($patientPppData, $title, $index)
     {
-        $index = 3;
         $vaccines['hepatitis_b'] = $this->getStringValue($patientPppData->answers_for_eval, 'hepatitis_b');
         if ($vaccines['hepatitis_b'] === 'No'
             || $vaccines['hepatitis_b'] === 'Unsure') {
@@ -582,9 +624,8 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
-    public function measlesMumpsRubella($patientPppData, $title)
+    public function measlesMumpsRubella($patientPppData, $title, $index)
     {
-        $index = 4;;
         $vaccines['measles_mumps_rubella'] = $this->getStringValue($patientPppData->answers_for_eval,
             'measles_mumps_rubella');
         if ($vaccines['measles_mumps_rubella'] === 'No'
@@ -595,9 +636,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function humanPapillomavirus($patientPppData, $title)
+    public function humanPapillomavirus($patientPppData, $title, $index)
     {
-        $index = 5;
         $vaccines['human_papillomavirus'] = $this->getStringValue($patientPppData->answers_for_eval,
             'human_papillomavirus');
         $vaccines['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
@@ -610,9 +650,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function shingles($patientPppData, $title)
+    public function shingles($patientPppData, $title, $index)
     {
-        $index = 6;
         $vaccines['shingles'] = $this->getStringValue($patientPppData->answers_for_eval, 'shingles');
         $vaccines['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
 
@@ -623,9 +662,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function pneumococcalVaccine($patientPppData, $title)
+    public function pneumococcalVaccine($patientPppData, $title, $index)
     {
-        $index = 7;
         $vaccines['pneumococcal_vaccine'] = $this->getStringValue($patientPppData->answers_for_eval,
             'pneumococcal_vaccine');
         if ($vaccines['pneumococcal_vaccine'] === 'No'
@@ -636,9 +674,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function breastCancerMammogram($patientPppData, $title)
+    public function breastCancerMammogram($patientPppData, $title, $index)
     {
-        $index = 0;
         $screenings['breast_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['breast_cancer_screening'])
             ? $patientPppData->answers_for_eval['breast_cancer_screening']
             : 'N/A';
@@ -668,9 +705,8 @@ class PersonalizedPreventionPlanPrepareData
     }
 
 
-    public function cervicalCancerYoung($patientPppData, $title)
+    public function cervicalCancerYoung($patientPppData, $title, $index)
     {
-        $index = 1;
         $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
         $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
         $screenings['cervical_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['cervical_cancer_screening'])
@@ -692,9 +728,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function cervicalCancerElder($patientPppData, $title)
+    public function cervicalCancerElder($patientPppData, $title, $index)
     {
-        $index = 2;
         $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
         $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
         $screenings['cervical_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['cervical_cancer_screening'])
@@ -716,9 +751,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function prostateCancer($patientPppData, $title)
+    public function prostateCancer($patientPppData, $title, $index)
     {
-        $index = 3;
         $screenings['race'] = $this->getStringValue($patientPppData->answers_for_eval, 'race');
         $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
         $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
@@ -748,9 +782,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function colorectalCancer($patientPppData, $title)
+    public function colorectalCancer($patientPppData, $title, $index)
     {
-        $index = 4;
         $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
         $screenings['colorectal_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['colorectal_cancer_screening'])
             ? $patientPppData->answers_for_eval['colorectal_cancer_screening']
@@ -773,9 +806,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function skinCancer($patientPppData, $title)
+    public function skinCancer($patientPppData, $title, $index)
     {
-        $index = 5;
         $screenings['multipleQuestion16'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
             ? $patientPppData->answers_for_eval['multipleQuestion16']
             : 'N/A';
@@ -859,9 +891,8 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
-    public function osteoporosis($patientPppData, $title)
+    public function osteoporosis($patientPppData, $title, $index)
     {
-        $index = 0;
         $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
 
         $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
@@ -887,9 +918,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function glaukoma($patientPppData, $title)
+    public function glaukoma($patientPppData, $title, $index)
     {
-        $index = 1;
         $screenings['glaukoma_screening'] = $this->getStringValue($patientPppData->answers_for_eval,
             'glaukoma_screening');
         if ($screenings['glaukoma_screening'] !== 'In the last year') {
@@ -899,9 +929,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function diabetes($patientPppData, $title)
+    public function diabetes($patientPppData, $title, $index)
     {
-        $index = 2;
         $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
         $screenings['bmi'] = $this->getStringValue($patientPppData->answers_for_eval, 'bmi');
 
@@ -912,9 +941,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function cholesterolDyslipidemia($patientPppData, $title)
+    public function cholesterolDyslipidemia($patientPppData, $title, $index)
     {
-        $index = 3;
         $screenings['blood_pressure'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['blood_pressure'])
             ? $patientPppData->answers_for_eval['blood_pressure']
             : 'N/A';
@@ -978,11 +1006,9 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
-    public function noMedicalPowerOfAttorney($patientPppData, $title)
+    public function noMedicalPowerOfAttorney($patientPppData, $title, $index)
     {
-
-        $index = 4;
-        $screenings[' medical_attorney'] = $this->getStringValue($patientPppData->answers_for_eval, 'medical_attorney');
+        $screenings['medical_attorney'] = $this->getStringValue($patientPppData->answers_for_eval, 'medical_attorney');
 
         if ($screenings[' medical_attorney'] === 'No') {
             return $this->getTaskRecommendations($title, $index);
@@ -991,9 +1017,8 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-    public function noLivingWillAdvanceDirective($patientPppData, $title)
+    public function noLivingWillAdvanceDirective($patientPppData, $title, $index)
     {
-        $index = 5;
         $screenings['living_will'] = $this->getStringValue($patientPppData->answers_for_eval, 'living_will');
 
         if ($screenings['living_will'] === 'No') {

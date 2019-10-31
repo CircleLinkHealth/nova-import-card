@@ -200,7 +200,7 @@ class SurveySeeder extends Seeder
                 'sub_order'             => 'a',
                 'question_body'         => 'Word Recall (1 point for each word spontaneously recalled without cueing)',
                 'question_type'         => QuestionType::RADIO,
-                'question_group'        => 'Based off of the Mini-Cog(c) assessment, how did your patient score? http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf',
+                'question_group'        => 'Based off of the <a target="_blank" href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?',
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 0,
@@ -221,7 +221,7 @@ class SurveySeeder extends Seeder
                 'sub_order'             => 'b',
                 'question_body'         => 'Clock Draw (Normal clock = 2 points. A normal clock has all numbers placed in the cor-rect sequence and approximately correct position (e.g., 12, 3, 6 and 9 are in anchor positions) with no missing or duplicate numbers. Hands are point-ing to the 11 and 2 (11:10). Hand length is not scored.Inability or refusal to draw a clock (abnormal) = 0 points.)',
                 'question_type'         => QuestionType::RADIO,
-                'question_group'        => 'Based off of the Mini-Cog(c) assessment, how did your patient score? http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf',
+                'question_group'        => 'Based off of the <a target="_blank" href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?',
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 0,
@@ -249,7 +249,7 @@ class SurveySeeder extends Seeder
                         ],
                     ],
                 ],
-                'question_group'        => 'Based off of the Mini-Cog(c) assessment, how did your patient score? http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf',
+                'question_group'        => 'Based off of the <a target="_blank" href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?',
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 0,
@@ -1246,7 +1246,7 @@ class SurveySeeder extends Seeder
             ],
             [
                 'order'                 => 26,
-                'question_body'         => 'Have you had a flu shot this year or are you planning to receive one this year?',
+                'question_body'         => 'Have you had a flu shot this year or do you have serious plans to get one this year?',
                 'question_type'         => QuestionType::RADIO,
                 'question_type_answers' => [
                     [
@@ -1344,9 +1344,16 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'order'                 => 32,
-                'question_body'         => 'Have you received 2 doses of Human Papillomavirus (HPV) Vaccination before age 15 OR 3 doses between ages 15 and 26?',
-                'question_type'         => QuestionType::RADIO,
+                'order' => 32,
+                'question_body' => 'Have you received 2 doses of Human Papillomavirus (HPV) Vaccination before age 15 OR 3 doses between ages 15 and 26?',
+                'question_type' => QuestionType::RADIO,
+                'conditions' => [
+                    [
+                        'operator' => 'greater_or_equal_than',
+                        'related_question_order_number' => 2,
+                        'related_question_expected_answer' => 26
+                    ],
+                ],
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'Yes',
@@ -1588,9 +1595,16 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'order'                 => 42,
-                'question_body'         => 'When was the last time you had an Intimate Partner Violence/Domestic Violence Screening?',
-                'question_type'         => QuestionType::RADIO,
+                'order' => 42,
+                'question_body' => 'When was the last time you had an Intimate Partner Violence/Domestic Violence Screening?',
+                'question_type' => QuestionType::RADIO,
+                'conditions' => [
+                    [
+                        'operator' => 'greater_or_equal_than',
+                        'related_question_order_number' => 2,
+                        'related_question_expected_answer' => 44
+                    ],
+                ],
                 'question_type_answers' => [
                     [
                         'type_answer_body' => 'In the last year',
@@ -1702,10 +1716,12 @@ class SurveySeeder extends Seeder
                     ],
                 ],
             ],
+
             [
-                'order'                 => 46,
-                'question_body'         => 'Do you have any other questions or concerns that you would like to speak to your provider about at your next Annual Wellness Visit?',
-                'question_type'         => QuestionType::TEXT,
+                'order' => 46,
+                'question_body' => 'Do you have any other questions or concerns that you would like to speak to your provider about at your next Annual Wellness Visit?',
+                'question_type' => QuestionType::TEXT,
+                'optional' => true,
                 'question_type_answers' => [
                     [
                         'options' => [

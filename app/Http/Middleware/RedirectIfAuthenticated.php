@@ -14,9 +14,9 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
-     * @param  string|null $guard
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
+     * @param string|null $guard
      *
      *
      * @return mixed
@@ -28,23 +28,29 @@ class RedirectIfAuthenticated
         }
 
         /** @var User $user */
-        $user = auth()->user();
+        $user          = auth()->user();
         $isParticipant = $user->hasRole('participant');
 
         $isSignedLogin = Route::is('auth.login.signed');
+        $isHome = Route::is('home');
 
         if ( ! $isSignedLogin) {
             if ($isParticipant) {
                 //show a welcome message and ask patient to open AWV with the link provided
                 return redirect()->route('home');
             } else {
+
                 return redirect()->route('patient.list');
             }
         }
 
+        $patientId = SurveyInvitationLinksService::getPatientIdFromSignedUrl($request->url());
+        if ($isParticipant && $patientId != $user->id) {
+            abort(401);
+        }
+
         $surveyId = SurveyInvitationLinksService::getSurveyIdFromSignedUrl($request->url());
         $name     = Survey::find($surveyId, ['name'])->name;
-        $patientId = $isParticipant ? $user->id : SurveyInvitationLinksService::getPatientIdFromSignedUrl($request->url());
 
         if (Survey::HRA === $name) {
             return redirect()
@@ -62,8 +68,7 @@ class RedirectIfAuthenticated
                         [
                             'patientId' => $patientId,
                         ]);
-            }
-            else {
+            } else {
                 return redirect()
                     ->route('survey.vitals',
                         [
