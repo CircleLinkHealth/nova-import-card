@@ -244,7 +244,7 @@ class ReportsController extends Controller
                 foreach ($value as $key => $value) {
                     $biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval(
                         $value->Avg
-                        ).'} ,';
+                    ).'} ,';
                     ++$count;
                 }
             } else {
@@ -439,7 +439,7 @@ class ReportsController extends Controller
                     }
                     $biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval(
                         $value->Avg
-                        ).'} ,';
+                    ).'} ,';
                     ++$count;
                 }
             } else {
@@ -758,6 +758,89 @@ class ReportsController extends Controller
         $patient = User::find($patientId);
 
         return view('patient.care-docs.index', compact(['patient']));
+    }
+
+    public function viewPatientCareplan(
+        CcdInsurancePolicyService $insurances,
+        CareplanService $careplanService,
+        Request $request
+    ) {
+        $patientId = auth()->user()->id;
+
+        $patient = User::with(PatientCareplanRelations::get())->findOrFail($patientId);
+
+        if (CarePlan::PDF == $patient->getCareplanMode()) {
+            return redirect()->route('patient.pdf.careplan.print', ['patientId' => $patientId]);
+        }
+
+        $careplan = $this->formatter->formatDataForViewPrintCareplanReport($patient);
+
+        if ( ! $careplan) {
+            return 'Careplan not found...';
+        }
+
+        $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
+
+        $skippedAssessment = $request->has('skippedAssessment');
+
+        $recentSubmission = $request->input('recentSubmission') ?? false;
+
+        $ccmSeconds     = $patient->getCcmTime();
+        $monthlyTime    = $patient->formattedTime($ccmSeconds);
+        $monthlyBhiTime = $patient->formattedBhiTime();
+
+        $ccm_above = false;
+        if ($ccmSeconds > 1199) {
+            $ccm_above = true;
+        }
+
+        $regularDoctor = $patient->regularDoctorUser();
+        $billingDoctor = $patient->billingProviderUser();
+
+        $provider = optional($billingDoctor)->getFullName() ?? 'No Provider Selected';
+
+        $location = empty($patient->getPreferredLocationName())
+            ? 'Not Set'
+            : $patient->getPreferredLocationName();
+
+        $args = [
+            'monthlyTime'             => $monthlyTime,
+            'monthlyBhiTime'          => $monthlyBhiTime,
+            'ccmSeconds'              => $ccmSeconds,
+            'ccm_above'               => $ccm_above,
+            'billingDoctor'           => $billingDoctor,
+            'provider'                => $provider,
+            'location'                => $location,
+            'regularDoctor'           => $regularDoctor,
+            'patient'                 => $patient,
+            'problems'                => $careplan[$patientId]['problems'],
+            'problemNames'            => $careplan[$patientId]['problem'],
+            'biometrics'              => $careplan[$patientId]['bio_data'],
+            'symptoms'                => $careplan[$patientId]['symptoms'],
+            'lifestyle'               => $careplan[$patientId]['lifestyle'],
+            'medications_monitor'     => $careplan[$patientId]['medications'],
+            'taking_medications'      => $careplan[$patientId]['taking_meds'],
+            'allergies'               => $careplan[$patientId]['allergies'],
+            'social'                  => $careplan[$patientId]['social'],
+            'appointments'            => $careplan[$patientId]['appointments'],
+            'other'                   => $careplan[$patientId]['other'],
+            'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
+            'skippedAssessment'       => $skippedAssessment,
+            'recentSubmission'        => $recentSubmission,
+            'careplan'                => array_merge(
+                $careplanService->careplan($patient),
+                //vue front end expects this format
+                ['other' => [
+                    ['name' => $careplan[$patientId]['other']],
+                ],
+                ]
+            ),
+        ];
+
+        return view(
+            'wpUsers.patient.careplan.print-patient',
+            $args
+        );
     }
 
     public function viewPdfCarePlan(

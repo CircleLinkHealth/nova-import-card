@@ -72,6 +72,10 @@ class WelcomeController extends Controller
             );
         }
 
+        if ($user->hasRole('participant')) {
+            return \App::call('App\Http\Controllers\ReportsController@viewPatientCareplan');
+        }
+
         return \App::call('App\Http\Controllers\Patient\PatientController@showDashboard');
     }
 }

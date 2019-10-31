@@ -64,6 +64,11 @@ Route::group([
     ]);
 });
 
+Route::get('patient/view-careplan', [
+    'uses' => 'PatientCareplanController@viewPatientCareplan',
+    'as'   => 'patient.own.careplan',
+])->middleware(['auth', 'role:participant']);
+
 //
 //
 //    AUTH ROUTES
