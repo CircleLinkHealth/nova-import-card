@@ -18,6 +18,7 @@ use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\View;
 use LynX39\LaraPdfMerger\Facades\PdfMerger;
 
 class GeneratePatientReportsJob implements ShouldQueue
@@ -222,6 +223,12 @@ class GeneratePatientReportsJob implements ShouldQueue
         /** @var PdfWrapper $pdf */
         $pdf = App::make('snappy.pdf.wrapper');
         $this->setPdfOptions($pdf);
+
+        $headerHtml = View::make('reports.pppHeader', [
+            'patientName' => $patient->display_name,
+            'patientDob' => $patient->patientInfo->dob()
+        ])->render();
+        $pdf->setOption('header-html', $headerHtml);
 
         $pdf->loadView('reports.ppp', [
             'patientPppData'            => $ppp,

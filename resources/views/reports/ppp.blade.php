@@ -44,10 +44,11 @@ function getStringValue($val, $default = '')
         <div>&nbsp;</div>
         <div class="report-title">
             <div><strong>Patient Info</strong></div>
+            <hr/>
         </div>
         <div class="report-data">
             Patient Name: <strong><span style="color: #50b2e2">{{$patient->display_name}}</span></strong> <br>
-            Date of Birth (records): <strong>{{$patient->patientInfo->birth_date}}</strong><br>
+            Date of Birth (records): <strong>{{$patient->patientInfo->dob()}}</strong><br>
             Age (self-reported): <strong>{{getStringValue($patientPppData->answers_for_eval['age'])}}</strong> <br>
             Address: <strong>{{$patient->address}}</strong> <br>
             City, State, Zip: <strong>{{$patient->city}}, {{$patient->state}}, {{$patient->zip}}</strong> <br>
@@ -56,6 +57,7 @@ function getStringValue($val, $default = '')
 
         <div class="report-title">
             <div><strong>Vitals</strong></div>
+            <hr/>
         </div>
         <div class="report-data">
             Weight: <strong>{{getStringValue($patientPppData->answers_for_eval['weight'])}} </strong><br>
@@ -74,6 +76,7 @@ function getStringValue($val, $default = '')
             <span class="side-title">
                 Ask your doctor about:
             </span>
+            <hr/>
         </div>
 
         <table class="table table-borderless">
@@ -109,6 +112,7 @@ function getStringValue($val, $default = '')
                     <strong>
                         Personalized Health Advice
                     </strong>
+                    <hr/>
                 </div>
 
                 @foreach($personalizedHealthAdvices as $key => $tasks)
@@ -116,7 +120,7 @@ function getStringValue($val, $default = '')
                         @continue
                     @else
                         <div class="avoid-page-break">
-                            <div class="recommendation-title">
+                            <div class="recommendation-title avoid-page-break">
                                 <div class="image {{$tasks['image']}}"></div>
                                 <strong>
                                     {{$tasks['title']}}
