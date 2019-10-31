@@ -12,6 +12,21 @@ class ProviderReportService
     const NO = 'No';
 
     /**
+     * @return array
+     */
+    public static function depressionScoreArray()
+    {
+        return [
+            'not at all' => 0,
+            'several days' => 1,
+            'more than half the days' => 2,
+            'nearly every day' => 3,
+        ];
+    }
+
+//@todo: At some point move all helper functions to a different file
+
+    /**
      * @param $report
      * @return \Illuminate\Support\Collection
      * @throws Exception
