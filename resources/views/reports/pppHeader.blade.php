@@ -28,6 +28,7 @@
 
     <script>
         function subst() {
+            //http://biostall.com/wkhtmltopdf-add-header-footer-to-only-first-last-page/
             var vars = {};
 
             // explode the URL query string
