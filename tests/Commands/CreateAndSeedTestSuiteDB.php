@@ -7,11 +7,11 @@
 namespace Tests\Commands;
 
 use Illuminate\Console\Command;
-use Tests\Concerns\CreatesSqliteDB;
+use Tests\Concerns\CreatesTestSuiteDB;
 
-class CreateAndSeedSqliteDB extends Command
+class CreateAndSeedTestSuiteDB extends Command
 {
-    use CreatesSqliteDB;
+    use CreatesTestSuiteDB;
     /**
      * The console command description.
      *
@@ -24,7 +24,7 @@ class CreateAndSeedSqliteDB extends Command
      *
      * @var string
      */
-    protected $signature = 'test:create-sqlite-db';
+    protected $signature = 'test:prepare-test_suite-db';
 
     public function handle()
     {
