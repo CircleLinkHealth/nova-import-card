@@ -221,11 +221,9 @@
             if (this.question.answer && this.question.answer.value) {
                 if (typeof this.question.answer.value === "string") {
                     this.selectedAnswer = this.question.answer.value;
-                }
-                else if (Array.isArray(this.question.answer.value)) {
+                } else if (Array.isArray(this.question.answer.value)) {
                     this.selectedAnswer = this.question.answer.value[0];
-                }
-                else {
+                } else {
                     //assume object
                     this.selectedAnswer = Object.values(this.question.answer.value)[0];
                 }
@@ -334,26 +332,36 @@
 
     @media (max-width: 490px) {
         /*Radio buttons*/
-        .btn.radio  {
+        .btn.radio {
             height: 35px;
             width: 100%;
             text-align: left;
             padding: 4px;
         }
-        /*Other buttons*/
-        .text-field.small, input.text-field.small{
+
+        /*Other buttons eg question order 11a in HRA*/
+        .text-field.small, input.text-field.small {
             height: 35px;
             width: 45%;
             text-align: left;
             padding: 4px;
             font-size: xx-small;
         }
+
         /*Yes or No*/
-        .btn.radio.small{
+        .btn.radio.small {
             height: 35px;
             width: 45%;
             text-align: left;
             padding: 3px;
+        }
+
+        #app div > div.question-answer-type > div > div > input{
+            height: 35px;
+            width: 45%;
+            text-align: left;
+            padding: 4px;
+            font-size: xx-small;
         }
     }
 

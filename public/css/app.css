@@ -12043,8 +12043,8 @@ a.navbar-title:hover {
 
 @media (max-width: 490px) {
   #app > div > div.top-right-fixed > button {
-    width: 90%;
-    height: 43px;
+    width: 84%;
+    height: 38px;
     padding: 1%;
   }
 
@@ -12052,8 +12052,32 @@ a.navbar-title:hover {
     height: 55%;
   }
 
+  #app > div > div.top-right-fixed {
+    left: unset;
+    top: unset;
+  }
+
+  /*Left button return back arrow*/
+
   #app > div > div.top-left-fixed > button {
-    border: none;
+    height: 36px;
+    width: 36px;
+  }
+
+  /*arrow in circle*/
+
+  #app > div > div.top-left-fixed > button > svg {
+    padding-right: 6px;
+    height: 30px;
+  }
+
+  #app > div > div.top-left-fixed {
+    left: 0px;
+    top: unset;
+  }
+
+  .text-center {
+    left: 32%;
   }
 }
 
