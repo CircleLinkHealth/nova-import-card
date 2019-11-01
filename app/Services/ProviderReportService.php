@@ -111,42 +111,42 @@ class ProviderReportService
         if (!self::filterAnswer($report->screenings)) {
 
             $breastCancer = $this->getStringValue($report->screenings['breast_cancer']);
-            if ($breastCancer !== '10+ years ago/Never/Unsure') {
+            if (!empty($breastCancer) && $breastCancer !== '10+ years ago/Never/Unsure') {
                 $screenings['Breast cancer'] = " (Mammogram): Had " . $breastCancer . '.';
             }
 
             $cervicalCancer = $this->getStringValue($report->screenings['cervical_cancer']);
-            if ($cervicalCancer !== '10+ years ago/Never/Unsure') {
+            if (!empty($cervicalCancer) && $cervicalCancer !== '10+ years ago/Never/Unsure') {
                 $screenings['Cervical cancer'] = " (Pap smear): Had " . $cervicalCancer . '.';
             }
 
             $colorectalCancer = self::checkInputValueIsNotEmpty($report->screenings['colorectal_cancer'], 'colorectal_cancer', []);
-            if ($colorectalCancer !== '10+ years ago/Never/Unsure') {
+            if (!empty($colorectalCancer) && $colorectalCancer !== '10+ years ago/Never/Unsure') {
                 $screenings['Colorectal cancer'] = " (e.g. Fecal Occult Blood Test (FOBT), Fecal Immunohistochemistry Test (FIT) Sigmoidoscopy, Colonoscopy): Had " . $colorectalCancer . '.';
             }
 
             $skinCancer = self::checkInputValueIsNotEmpty($report->screenings['skin_cancer'], 'skin_cancer', []);
-            if ($skinCancer !== '10+ years ago/Never/Unsure') {
+            if (!empty($skinCancer) && $skinCancer !== '10+ years ago/Never/Unsure') {
                 $screenings['Skin cancer'] = ": Had " . $skinCancer . '.';
             }
 
             $prostateCancer = $this->getStringValue($report->screenings['prostate_cancer']);
-            if ($prostateCancer !== '10+ years ago/Never/Unsure') {
+            if (!empty($prostateCancer) && $prostateCancer !== '10+ years ago/Never/Unsure') {
                 $screenings['Prostate cancer'] = " (Prostate screening Test): Had " . $prostateCancer . '.';
             }
 
             $glaucoma = self::checkInputValueIsNotEmpty($report->screenings['glaucoma'], 'glaucoma', []);
-            if ($glaucoma !== '10+ years ago/Never/Unsure') {
+            if (!empty($glaucoma) && $glaucoma !== '10+ years ago/Never/Unsure') {
                 $screenings['Glaucoma'] = ": Had " . $glaucoma . '.';
             }
 
             $osteoporosis = self::checkInputValueIsNotEmpty($report->screenings['osteoporosis'], 'osteoporosis', []);
-            if ($osteoporosis !== '10+ years ago/Never/Unsure') {
+            if (!empty($osteoporosis) && $osteoporosis !== '10+ years ago/Never/Unsure') {
                 $screenings['Osteoporosis'] = " (Bone Density Test): Had " . $osteoporosis . '.';
             }
 
             $violence = $this->getStringValue($report->screenings['violence']);
-            if ($violence !== '10+ years ago/Never/Unsure') {
+            if (!empty($violence) && $violence !== '10+ years ago/Never/Unsure') {
                 $screenings['Intimate Partner Violence/Domestic Violence'] = ": Had " . $violence . '.';
             }
         }
