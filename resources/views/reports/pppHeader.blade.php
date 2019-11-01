@@ -22,7 +22,12 @@
             line-height: normal;
             letter-spacing: 0.78px;
             color: rgba(26, 26, 26, 0.25);
-            border-bottom: 1px solid rgba(0, 0, 0, .1);
+        }
+
+        hr {
+            margin: 0;
+            padding: 0;
+            color: rgba(26, 26, 26, 0.25);
         }
     </style>
 
