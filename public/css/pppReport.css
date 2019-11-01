@@ -122,3 +122,8 @@ hr {
     letter-spacing: 0.78px;
     color: #1a1a1a;
 }
+
+.margins-20 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}

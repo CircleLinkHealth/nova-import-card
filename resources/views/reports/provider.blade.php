@@ -1,4 +1,31 @@
 @extends('layouts.surveysMaster')
+<?php
+function getStringValue($val, $default = '')
+{
+    if (empty($val)) {
+        return $default;
+    }
+
+    if (is_string($val)) {
+        return $val;
+    }
+
+    if (is_array($val)) {
+
+        if (array_key_exists('name', $val)) {
+            return getStringValue($val['name']);
+        }
+
+        if (array_key_exists('value', $val)) {
+            return getStringValue($val['value']);
+        }
+
+        return getStringValue($val[0]);
+    }
+
+    return $val;
+}
+?>
 @section('content')
 
     @if (isset($isPdf) && $isPdf)
@@ -7,36 +34,51 @@
         <link href="{{ asset('css/pdf.css') }}" rel="stylesheet">
     @endif
 
-    <link href="{{ asset('css/providerReport.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/pppReport.css') }}" rel="stylesheet">
 
     <div class="container report">
+
+        <!-- this magic line here is needed for the pdf generation -->
+        <!-- it turns out that if the first character is <strong>, the rest of the document is <strong> -->
+        <!-- so I added this before "Patient Info" which is <strong> -->
+        <div>&nbsp;</div>
         <div class="report-title">
-            <h3>Patient Info</h3>
-            <hr>
+            <div><strong>Patient Info</strong></div>
+            <hr/>
         </div>
-        <div>
-            Patient Name: <span style="color: #50b2e2">{{$patient->display_name}}</span> <br>
-            Date of Birth: <strong>{{$patient->patientInfo->birth_date}} </strong><br>
-            Age: <strong>{{$patient->getAge()}}</strong> <br>
+        <div class="report-data">
+            Patient Name: <strong><span style="color: #50b2e2">{{$patient->display_name}}</span></strong> <br>
+            Date of Birth (records): <strong>{{$patient->patientInfo->dob()}}</strong><br>
+            Age (self-reported): <strong>{{$patient->getAge()}}</strong> <br>
             Address: <strong>{{$patient->address}}</strong> <br>
             City, State, Zip: <strong>{{$patient->city}}, {{$patient->state}}, {{$patient->zip}}</strong> <br>
             Provider: <strong>{{$patient->getBillingProviderName()}}</strong>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Reason for Visit</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Reason for Visit</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 {{$reportData['reason_for_visit']}} Annual Wellness Visit.
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Demographic Data</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Demographic Data</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 The patient reports that they are a {{$reportData['demographic_data']['age']}} year
                 old
                 @if($reportData['demographic_data']['ethnicity'] === 'No')
@@ -46,13 +88,18 @@
                 {{lcfirst($reportData['demographic_data']['race'])}} {{$reportData['demographic_data']['gender']}}.
                 In general, the patient has self-assessed their health as {{$reportData['demographic_data']['health']}}.
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Allergy History</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Allergy History</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 The patient has reported allergies to the following:
                 @if(! empty($reportData['allergy_history']))
                     @foreach($reportData['allergy_history'] as $allergy)
@@ -62,13 +109,18 @@
                     NKA.
                 @endif
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Medical History</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Medical History</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 @if(empty($reportData['medical_history']) && empty($reportData['medical_history_other']))
                     None.
                 @else
@@ -88,13 +140,18 @@
                     @endif
                 @endif
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Medication History</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Medication History</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 The patient has indicated they use
                 @if(! empty($reportData['medication_history']))
                     @foreach($reportData['medication_history'] as $medication)
@@ -105,13 +162,18 @@
                     None.
                 @endif
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Family Medical History</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Family Medical History</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 The patient reports family history as follows:
 
                 @if($reportData['family_medical_history'])
@@ -123,13 +185,18 @@
                     Nothing.
                 @endif
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Immunization History</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Immunization History</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 The patient's immunization history is as follows:
                 <br>
                 The patient HAS received the
@@ -145,13 +212,18 @@
                 @endforeach
                 vaccinations.
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Screenings</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Screenings</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 The patient's screening history is as follows:
                 <br>
                 @if(! empty($reportData['screenings']))
@@ -162,24 +234,33 @@
                     N/A
                 @endif
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Mental State & Potential for Depression</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Mental State & Potential for Depression</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 The patient has a PHQ-2 score of {{$reportData['mental_state']['score']}}. This indicates a
                 diagnosis of {{$reportData['mental_state']['diagnosis']}}.
-
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Vitals</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Vitals</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 <strong>Blood pressure: </strong> {{$reportData['vitals']['blood_pressure']['first_metric']}}
                 /{{$reportData['vitals']['blood_pressure']['second_metric']}} mmHg <br>
                 <strong>Height: </strong> {{$reportData['vitals']['height']['feet']}}
@@ -189,13 +270,18 @@
                 As the patient has a {{$reportData['vitals']['bmi_diagnosis']}} BMI of {{$reportData['vitals']['bmi']}},
                 they are considered {{$reportData['vitals']['body_diagnosis']}}.
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Diet</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Diet</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 The patient's diet consists of {{$reportData['diet']['fruits_vegetables']}} servings of fresh fruits and
                 vegetables, {{$reportData['diet']['grain_fiber']}} servings of whole grain or high fiber foods,
                 and {{$reportData['diet']['fried_fatty']}} servings of fried or high fat foods on average each day. Over
@@ -205,13 +291,18 @@
                 In the past two weeks, they {{$reportData['diet']['have_changed_diet']}} experienced a change in the
                 amount they eat.
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Social Factors</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Social Factors</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 @if($reportData['social_factors']['tobacco']['has_used'] === 'No') The patient has never smoked or used
                 tobacco products. @else
                     The patient last smoked or used tobacco
@@ -241,13 +332,18 @@
                     They have not used recreational drugs in the past year.
                 @endif
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Sexual Activity</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Sexual Activity</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 @if(strtolower($reportData['sexual_activity']['active']) === 'yes')
                     The patient is sexually active. The
                     patient @if(strtolower($reportData['sexual_activity']['multiple_partners']) === 'yes')does @else
@@ -258,23 +354,33 @@
                     The patient is not sexually active.
                 @endif
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Exercise & Activity Levels</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Exercise & Activity Levels</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 The patient exercises or reaches a moderate activity
                 level {{$reportData['exercise_activity_levels']}}.
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Functional Capacity and (ADL)</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Functional Capacity and (ADL)</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 @if(empty($reportData['functional_capacity']['needs_help_for_tasks']))
                     The patient does not need any help performing any daily tasks.
                 @else
@@ -306,13 +412,18 @@
                 <br>
                 The patient {{$reportData['functional_capacity']['hearing_difficulty']}} difficulty with their hearing.
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Current Providers of Medical Care</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Current Providers of Medical Care</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 Patient indicates they have the following providers and suppliers of medical care:
                 <br>
                 @if(! empty($reportData['current_providers']))
@@ -325,13 +436,18 @@
                     None.
                 @endif
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Advanced Care Planning</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Advanced Care Planning</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 The patient {{$reportData['advanced_care_planning']['has_attorney']}} a Medical Power of Attorney.
                 The patient @if($reportData['advanced_care_planning']['living_will'] === 'yes') has a living
                 will/advance
@@ -341,20 +457,26 @@
                 available on file at the moment.
                 @else does not have a living will/advance directive. @endif
             </div>
-            <hr>
         </div>
-        <div>
-            <div class="section-title">
-                <h4>Specific Patient Requests</h4>
+
+        <hr class="margins-20"/>
+
+        <div class="avoid-page-break">
+            <div class="recommendation-title avoid-page-break">
+                <strong>Specific Patient Requests</strong>
             </div>
-            <div class="section-body">
+
+            <br/>
+
+            <div class="recommendations-area">
                 The patient has commented:
                 <br>
                 @if(empty($reportData['specific_patient_requests'])) No further comments.
                 @else {{$reportData['specific_patient_requests']}}
                 @endif
-
             </div>
         </div>
+
+        <hr class="margins-20"/>
     </div>
 @endsection

@@ -62,7 +62,7 @@
 </head>
 <body onload="subst()">
 <div class="report-header">
-    Wellness Visit PPP for&nbsp;<span class="patient-name">{{$patientName}}</span>&nbsp;(DOB: {{$patientDob}})
+    Wellness Visit {{$reportName}} for&nbsp;<span class="patient-name">{{$patientName}}</span>&nbsp;(DOB: {{$patientDob}})
 </div>
 </body>
 </html>

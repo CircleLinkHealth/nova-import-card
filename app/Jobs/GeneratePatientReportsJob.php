@@ -187,6 +187,13 @@ class GeneratePatientReportsJob implements ShouldQueue
         $pdf = App::make('snappy.pdf.wrapper');
         $this->setPdfOptions($pdf);
 
+        $headerHtml = View::make('reports.pppHeader', [
+            'patientName' => $patient->display_name,
+            'patientDob' => $patient->patientInfo->dob(),
+            'reportName' => 'Provider Report'
+        ])->render();
+        $pdf->setOption('header-html', $headerHtml);
+
         $pdf->loadView('reports.provider', [
             'reportData' => $providerReportFormattedData,
             'patient'    => $patient,
@@ -226,7 +233,8 @@ class GeneratePatientReportsJob implements ShouldQueue
 
         $headerHtml = View::make('reports.pppHeader', [
             'patientName' => $patient->display_name,
-            'patientDob' => $patient->patientInfo->dob()
+            'patientDob' => $patient->patientInfo->dob(),
+            'reportName' => 'PPP'
         ])->render();
         $pdf->setOption('header-html', $headerHtml);
 

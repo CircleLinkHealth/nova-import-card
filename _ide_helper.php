@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.7.28 on 2019-10-29 11:05:23.
+ * Generated for Laravel 5.7.28 on 2019-11-01 05:41:28.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -15116,6 +15116,83 @@ namespace Barryvdh\Snappy\Facades {
  
 }
 
+namespace LynX39\LaraPdfMerger\Facades { 
+
+    /**
+     * 
+     *
+     */ 
+    class PdfMerger {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function init()
+        {
+                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
+                        return $instance->init();
+        }
+        
+        /**
+         * Add a PDF for inclusion in the merge with a valid file path. Pages should be formatted: 1,3,6, 12-16.
+         *
+         * @param $filepath
+         * @param $pages
+         * @return \LynX39\LaraPdfMerger\PdfManage 
+         * @throws Exception
+         * @static 
+         */ 
+        public static function addPDF($filepath, $pages = 'all', $orientation = null)
+        {
+                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
+                        return $instance->addPDF($filepath, $pages, $orientation);
+        }
+        
+        /**
+         * Merges your provided PDFs and outputs to specified location.
+         *
+         * @param string $orientation
+         * @return void 
+         * @throws \Exception if there are no PDFs to merge
+         * @static 
+         */ 
+        public static function merge($orientation = null, $meta = array())
+        {
+                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
+                        $instance->merge($orientation, $meta);
+        }
+        
+        /**
+         * Merges your provided PDFs and adds blank pages between documents as needed to allow duplex printing
+         *
+         * @param string $orientation
+         * @return void 
+         * @throws \Exception if there are no PDFs to merge
+         * @static 
+         */ 
+        public static function duplexMerge($orientation = null, $meta = array())
+        {
+                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
+                        $instance->duplexMerge($orientation, $meta);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function save($outputpath = 'newfile.pdf', $outputmode = 'file')
+        {
+                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
+                        return $instance->save($outputpath, $outputmode);
+        }
+         
+    }
+ 
+}
+
 namespace Intervention\Image\Facades { 
 
     /**
@@ -17926,6 +18003,8 @@ namespace  {
     class PDF extends \Barryvdh\Snappy\Facades\SnappyPdf {}
 
     class SnappyImage extends \Barryvdh\Snappy\Facades\SnappyImage {}
+
+    class PdfMerger extends \LynX39\LaraPdfMerger\Facades\PdfMerger {}
 
     class Image extends \Intervention\Image\Facades\Image {}
 
