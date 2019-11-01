@@ -67,7 +67,7 @@ class PersonalizedPreventionPlanPrepareData
     const PROSTATE_CANCER = 'prostate_cancer';
     const COLORECTAL_CANCER = 'colorectal_cancer';
     const SKIN_CANCER = 'skin_cancer';
-    const OSTEOPOROSIS ='osteoporosis';
+    const OSTEOPOROSIS = 'osteoporosis';
     const GLAUCOMA = 'glaucoma';
     const DIABETES = 'diabetes';
     const CHOLESTEROL = 'cholesterol';
@@ -80,6 +80,12 @@ class PersonalizedPreventionPlanPrepareData
      * https://docs.google.com/document/d/1ZC68KlBgKFYZIDd9uTVBAw_P85oO1VjloHw9vZt2Tmc/edit
     each evaluation from this doc belongs to a function
     */
+
+    /**
+     * @param $patientPppData
+     * @return \Illuminate\Support\Collection
+     * @throws \Exception
+     */
     public function prepareRecommendations($patientPppData)
     {
         $nutritionRecommendations = [
@@ -245,6 +251,12 @@ class PersonalizedPreventionPlanPrepareData
         return $personalizedHealthAdvices;
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array
+     */
     public function fruitVeggies($patientPppData, $title, $index)
     {
         $nutritionData['fruit_veggies'] = $this->getStringValue($patientPppData->answers_for_eval, 'fruit_veggies');
@@ -255,6 +267,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $coll
+     * @param $key
+     * @param string $default
+     * @return string
+     */
     private function getStringValue($coll, $key, $default = 'N/A')
     {
         if (!$coll || ProviderReportService::filterAnswer($coll)) {
@@ -268,6 +286,11 @@ class PersonalizedPreventionPlanPrepareData
         return ProviderReportService::getStringValue($coll[$key], $default);
     }
 
+    /**
+     * @param $title
+     * @param $index
+     * @return string
+     */
     public function getTaskRecommendations($title, $index)
     {
         $taskRecommendation = TaskRecommendations::where('title', '=', $title)->first();
@@ -278,6 +301,12 @@ class PersonalizedPreventionPlanPrepareData
         return $taskRec;
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function wholeGrain($patientPppData, $title, $index)
     {
         $nutritionData['whole_grain'] = $this->getStringValue($patientPppData->answers_for_eval, 'whole_grain');
@@ -318,6 +347,12 @@ class PersonalizedPreventionPlanPrepareData
         return in_array($condition, $answers);
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function fattyFriedFoods($patientPppData, $title, $index)
     {
         $nutritionData['fatty_fried_foods'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -330,6 +365,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function candySugaryBeverages($patientPppData, $title, $index)
     {
         $nutritionData['candy_sugary_beverages'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -342,6 +383,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function currentSmoker($patientPppData, $title, $index)
     {
         $smokingData['current_smoker'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -356,6 +403,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function currentSmokerMale($patientPppData, $title, $index)
     {
         $smokingData['current_smoker'] = $this->getStringValue($patientPppData->answers_for_eval, 'current_smoker');
@@ -369,6 +422,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function formerSmoker($patientPppData, $title, $index)
     {
         $smokingData['current_smoker'] = $this->getStringValue($patientPppData->answers_for_eval, 'current_smoker');
@@ -382,6 +441,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function alcoholUse($patientPppData, $title, $index)
     {
         $alcoholData['alcohol_use'] = $this->getStringValue($patientPppData->answers_for_eval, 'alcohol_use');
@@ -397,6 +462,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function recreationalDrugs($patientPppData, $title, $index)
     {
         $recreationalDrugs['recreational_drugs'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -409,6 +480,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function physicalActivityYounger($patientPppData, $title, $index)
     {
         $physicalActivity['physical_activity'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -425,6 +502,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function physicalActivityOlder($patientPppData, $title, $index)
     {
         $physicalActivity['physical_activity'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -441,6 +524,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function weightBmiUnderweight($patientPppData, $title, $index)
     {
         $weightBmi['bmi'] = $this->getStringValue($patientPppData->answers_for_eval, 'bmi');
@@ -452,6 +541,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function weightBmiOverweight($patientPppData, $title, $index)
     {
         $weightBmi['bmi'] = $this->getStringValue($patientPppData->answers_for_eval, 'bmi');
@@ -463,6 +558,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function unprotectedSex($patientPppData, $title, $index)
     {
         $sexualLife['sexually_active'] = $this->getStringValue($patientPppData->answers_for_eval, 'sexually_active');
@@ -484,6 +585,12 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function womanOfReproductiveAge($patientPppData, $title, $index)
     {
         $sexualLife['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
@@ -501,27 +608,58 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     * @throws \Exception
+     */
     public function depression($patientPppData, $title, $index)
     {
-        $emotional['emotional'] = $this->getStringValue($patientPppData->answers_for_eval, 'emotional');
-        if ($emotional['emotional'] >= '5') {
-            return $this->getTaskRecommendations($title, $index);
-        }
+        $emotional['emotional_little_interest'] = $this->getStringValue($patientPppData->answers_for_eval, 'emotional_little_interest');
+        $emotional['emotional_depressed'] = $this->getStringValue($patientPppData->answers_for_eval, 'emotional_depressed');
+        $depressionScoresArray = ProviderReportService::depressionScoreArray();
 
-        return [];
+        $depressionScore = $this->getDepressionScore($depressionScoresArray, $emotional);
 
+        return $depressionScore >= 5 ? $this->getTaskRecommendations($title, $index) : [];
     }
 
+    /**
+     * @param $depressionScoresArray
+     * @param $emotional
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getDepressionScore($depressionScoresArray, $emotional)
+    {
+        $littleInterestScore = $depressionScoresArray[strtolower(ProviderReportService::checkInputValueIsNotEmpty($emotional['emotional_little_interest'],
+            '22.1', []))];
+        $depressionScore = $depressionScoresArray[strtolower(ProviderReportService::checkInputValueIsNotEmpty($emotional['emotional_depressed'],
+            '22.2', []))];
+
+        return $littleInterestScore + $depressionScore;
+    }
+
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function patientHasFallen($patientPppData, $title, $index)
     {
         $fallRisk['fall_risk'] = $this->getStringValue($patientPppData->answers_for_eval, 'fall_risk');
-        if ($fallRisk['fall_risk'] !== 'Yes') {
-            return $this->getTaskRecommendations($title, $index);
-        }
-
-        return [];
+        return $fallRisk['fall_risk'] !== 'No' ? $this->getTaskRecommendations($title, $index) : [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function hearingImpairment($patientPppData, $title, $index)
     {
         $hearingImpairment['hearing_impairment'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -536,6 +674,12 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function mildCognitiveImpairment($patientPppData, $title, $index)
     {
         $cognitiveAssessment['cognitive_assessment'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -548,6 +692,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function modToSevNeurocognitiveImpairment($patientPppData, $title, $index)
     {
         $cognitiveAssessment['cognitive_assessment'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -560,19 +710,44 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function adlWithNoHelp($patientPppData, $title, $index)
     {
-        $adl['adl'] = $this->getStringValue($patientPppData->answers_for_eval, 'adl');
+        $adl['adl'] = collect($patientPppData->answers_for_eval['adl'])->flatten()->toArray();
         $adl['assistance_in_daily_activities'] = $this->getStringValue($patientPppData->answers_for_eval,
             'assistance_in_daily_activities');
-        if ($adl['adl'] !== 'N/A'
-            && $adl['assistance_in_daily_activities'] === 'No') {
-            return $this->getTaskRecommendations($title, $index);
+
+        if (!empty($adl['adl'])
+            && $adl['assistance_in_daily_activities'] !== 'Yes') {
+
+            $getAdlRecommendations = $this->getTaskRecommendations($title, $index);
+            $textToReplace = '{insert all selected tasks in Q26}'; //todo:rename this in seeder and DB
+            $replacementText = implode(", ", $adl['adl']);
+            $adlRecommendationBody = $getAdlRecommendations['task_body'];
+            $newAdlRecommendationBody = str_replace($textToReplace, $replacementText, $adlRecommendationBody);
+
+            return [
+                'task_body' => $newAdlRecommendationBody,
+                'report_table_data' => $getAdlRecommendations['report_table_data'],
+                'qualitative_trigger' => $getAdlRecommendations['qualitative_trigger'],
+                'recommendation_body' => $getAdlRecommendations['recommendation_body'],
+            ];
         }
 
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function fluInfluenza($patientPppData, $title, $index)
     {
         $vaccines['flu_influenza'] = $this->getStringValue($patientPppData->answers_for_eval, 'flu_influenza');
@@ -586,6 +761,12 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function tetanusDiphtheria($patientPppData, $title, $index)
     {
         $vaccines['tetanus_diphtheria'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -601,6 +782,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function chickenPoxVaricella($patientPppData, $title, $index)
     {
         $vaccines['chicken_pox'] = $this->getStringValue($patientPppData->answers_for_eval, 'chicken_pox');
@@ -612,6 +799,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function hepatitisB($patientPppData, $title, $index)
     {
         $vaccines['hepatitis_b'] = $this->getStringValue($patientPppData->answers_for_eval, 'hepatitis_b');
@@ -624,6 +817,12 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function measlesMumpsRubella($patientPppData, $title, $index)
     {
         $vaccines['measles_mumps_rubella'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -636,7 +835,14 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function humanPapillomavirus($patientPppData, $title, $index)
+
     {
         $vaccines['human_papillomavirus'] = $this->getStringValue($patientPppData->answers_for_eval,
             'human_papillomavirus');
@@ -650,6 +856,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function shingles($patientPppData, $title, $index)
     {
         $vaccines['shingles'] = $this->getStringValue($patientPppData->answers_for_eval, 'shingles');
@@ -662,6 +874,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function pneumococcalVaccine($patientPppData, $title, $index)
     {
         $vaccines['pneumococcal_vaccine'] = $this->getStringValue($patientPppData->answers_for_eval,
@@ -674,6 +892,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function breastCancerMammogram($patientPppData, $title, $index)
     {
         $screenings['breast_cancer_screening'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['breast_cancer_screening'])
@@ -704,7 +928,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
-
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function cervicalCancerYoung($patientPppData, $title, $index)
     {
         $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
@@ -728,6 +957,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function cervicalCancerElder($patientPppData, $title, $index)
     {
         $screenings['sex'] = $this->getStringValue($patientPppData->answers_for_eval, 'sex');
@@ -751,6 +986,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function prostateCancer($patientPppData, $title, $index)
     {
         $screenings['race'] = $this->getStringValue($patientPppData->answers_for_eval, 'race');
@@ -782,6 +1023,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function colorectalCancer($patientPppData, $title, $index)
     {
         $screenings['age'] = $this->getStringValue($patientPppData->answers_for_eval, 'age');
@@ -806,6 +1053,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function skinCancer($patientPppData, $title, $index)
     {
         $screenings['multipleQuestion16'] = !ProviderReportService::filterAnswer($patientPppData->answers_for_eval['multipleQuestion16'])
@@ -1006,6 +1259,12 @@ class PersonalizedPreventionPlanPrepareData
 
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function noMedicalPowerOfAttorney($patientPppData, $title, $index)
     {
         $screenings['medical_attorney'] = $this->getStringValue($patientPppData->answers_for_eval, 'medical_attorney');
@@ -1017,6 +1276,12 @@ class PersonalizedPreventionPlanPrepareData
         return [];
     }
 
+    /**
+     * @param $patientPppData
+     * @param $title
+     * @param $index
+     * @return array|string
+     */
     public function noLivingWillAdvanceDirective($patientPppData, $title, $index)
     {
         $screenings['living_will'] = $this->getStringValue($patientPppData->answers_for_eval, 'living_will');
