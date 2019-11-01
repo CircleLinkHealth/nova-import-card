@@ -402,7 +402,7 @@
                 @if(! empty($reportData['current_providers']))
                     @foreach($reportData['current_providers'] as $provider)
                         {{$provider['provider_name']}}, located at {{$provider['location']}} as their
-                        {{$provider['specialty']}}. They can be reached at {{$provider['phone_number']}}.
+                        {{strtoupper($provider['specialty'])}}. They can be reached at {{$provider['phone_number']}}.
                         <br>
                     @endforeach
                 @else
