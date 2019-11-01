@@ -50,6 +50,11 @@ class ProviderReport extends BaseModel
         'specific_patient_requests' => 'array',
     ];
 
+    protected $dates = [
+        'created_at',
+        'updated_at'
+    ];
+
     public function patient()
     {
         return $this->belongsTo(User::class, 'user_id');

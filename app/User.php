@@ -85,6 +85,6 @@ class User extends \CircleLinkHealth\Customer\Entities\User
 
     public function personalizedPreventionPlan()
     {
-        return $this->hasOne(PersonalizedPreventionPlan::class, 'user_id');
+        return $this->hasMany(PersonalizedPreventionPlan::class, 'user_id');
     }
 }
