@@ -1,31 +1,4 @@
 @extends('layouts.surveysMaster')
-<?php
-function getStringValue($val, $default = '')
-{
-    if (empty($val)) {
-        return $default;
-    }
-
-    if (is_string($val)) {
-        return $val;
-    }
-
-    if (is_array($val)) {
-
-        if (array_key_exists('name', $val)) {
-            return getStringValue($val['name']);
-        }
-
-        if (array_key_exists('value', $val)) {
-            return getStringValue($val['value']);
-        }
-
-        return getStringValue($val[0]);
-    }
-
-    return $val;
-}
-?>
 @section('content')
 
     @if (isset($isPdf) && $isPdf)
