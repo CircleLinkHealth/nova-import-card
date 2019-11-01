@@ -67,7 +67,7 @@ class PersonalizedPreventionPlanPrepareData
     const PROSTATE_CANCER = 'prostate_cancer';
     const COLORECTAL_CANCER = 'colorectal_cancer';
     const SKIN_CANCER = 'skin_cancer';
-    const OSTEOPOROSIS ='osteoporosis';
+    const OSTEOPOROSIS = 'osteoporosis';
     const GLAUCOMA = 'glaucoma';
     const DIABETES = 'diabetes';
     const CHOLESTEROL = 'cholesterol';
@@ -562,12 +562,25 @@ class PersonalizedPreventionPlanPrepareData
 
     public function adlWithNoHelp($patientPppData, $title, $index)
     {
-        $adl['adl'] = $this->getStringValue($patientPppData->answers_for_eval, 'adl');
+        $adl['adl'] = collect($patientPppData->answers_for_eval['adl'])->flatten()->toArray();
         $adl['assistance_in_daily_activities'] = $this->getStringValue($patientPppData->answers_for_eval,
             'assistance_in_daily_activities');
-        if ($adl['adl'] !== 'N/A'
-            && $adl['assistance_in_daily_activities'] === 'No') {
-            return $this->getTaskRecommendations($title, $index);
+
+        if (!empty($adl['adl'])
+            && $adl['assistance_in_daily_activities'] !== 'Yes') {
+
+            $getAdlRecommendations = $this->getTaskRecommendations($title, $index);
+            $textToReplace = '{insert all selected tasks in Q26}'; //todo:rename this in seeder and DB
+            $replacementText = implode(", ", $adl['adl']);
+            $adlRecommendationBody = $getAdlRecommendations['task_body'];
+            $newAdlRecommendationBody = str_replace($textToReplace, $replacementText, $adlRecommendationBody);
+
+            return [
+                'task_body' => $newAdlRecommendationBody,
+                'report_table_data' => $getAdlRecommendations['report_table_data'],
+                'qualitative_trigger' => $getAdlRecommendations['qualitative_trigger'],
+                'recommendation_body' => $getAdlRecommendations['recommendation_body'],
+            ];
         }
 
         return [];
