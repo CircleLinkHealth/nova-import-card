@@ -35,9 +35,9 @@ class JsonListMedicationLogger implements Logger
         return [];
     }
 
-    public function shouldHandle($medicationsString): bool
+    public function shouldHandle($medications): bool
     {
-        $check = is_json($medicationsString);
+        $check = is_json($medications);
 
 //        if ($check === false) {
 //            throw new \Exception("The string contains invalid json. String: `$medicationsString`");

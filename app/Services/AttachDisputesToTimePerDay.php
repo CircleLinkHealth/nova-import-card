@@ -7,9 +7,49 @@
 namespace App\Services;
 
 use Carbon\Carbon;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class AttachDisputesToTimePerDay
 {
+    /**
+     * @param $invoice
+     * @param $date
+     *
+     * @return Builder[]|Collection|\Illuminate\Support\Collection
+     */
+    public function checkForBonusesOnThisDate($invoice, $date)
+    {
+        $userId = $this->getUserId($invoice);
+
+        $bonusDates = $this->getBonusMatchedDate($userId, $date);
+
+        $invalidated = $bonusDates->map(function ($q) use ($date) {
+            return $q->where('date', $date)->exists();
+        })->first();
+
+        if ( ! $invalidated) {
+            $invalidated = false;
+        }
+
+        return $invalidated;
+    }
+
+    /**
+     * @param $userId
+     * @param $date
+     *
+     * @return Builder[]|Collection
+     */
+    public function getBonusMatchedDate($userId, $date)
+    {
+        return NurseInvoiceExtra::where([
+            ['user_id', '=', $userId],
+            ['date', '=', $date],
+        ])->select('date')->get();
+    }
+
     /**
      * @param $invoice
      *
@@ -19,14 +59,27 @@ class AttachDisputesToTimePerDay
     {
         $dailyDisputes = [];
         foreach ($invoice->dailyDisputes as $disputes) {
-            $dailyDisputes[Carbon::parse($disputes->disputed_day)->copy()->toDateString()] = [
-                'suggestedTime' => $disputes->suggested_formatted_time,
-                'status'        => $disputes->status,
-                'invalidated'   => $disputes->invalidated,
+            $date = Carbon::parse($disputes->disputed_day)->copy()->toDateString();
+
+            $dailyDisputes[$date] = [
+                'suggestedTime'         => $disputes->suggested_formatted_time,
+                'status'                => $disputes->status,
+                'disputedFormattedTime' => $disputes->disputed_formatted_time,
+                'invalidated'           => $this->checkForBonusesOnThisDate($invoice, $date),
             ];
         }
 
         return $dailyDisputes;
+    }
+
+    /**
+     * @param $invoice
+     *
+     * @return mixed
+     */
+    public function getUserId($invoice)
+    {
+        return $invoice->nurse->user_id;
     }
 
     /**
@@ -42,9 +95,10 @@ class AttachDisputesToTimePerDay
 
         foreach ($dailyDisputes as $day => $disputes) {
             if (array_key_exists($day, $timePerDay)) {
-                $timePerDay[$day]['suggestedTime'] = $disputes['suggestedTime'];
-                $timePerDay[$day]['status']        = $disputes['status'];
-                $timePerDay[$day]['invalidated']   = $disputes['invalidated'];
+                $timePerDay[$day]['suggestedTime']         = $disputes['suggestedTime'];
+                $timePerDay[$day]['disputedFormattedTime'] = $disputes['disputedFormattedTime'];
+                $timePerDay[$day]['status']                = $disputes['status'];
+                $timePerDay[$day]['invalidated']           = $disputes['invalidated'];
             }
         }
 

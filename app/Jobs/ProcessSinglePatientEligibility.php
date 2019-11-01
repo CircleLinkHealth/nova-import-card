@@ -8,14 +8,13 @@ namespace App\Jobs;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
-use App\Services\WelcomeCallListGenerator;
+use App\Services\EligibilityChecker;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Collection;
 
 class ProcessSinglePatientEligibility implements ShouldQueue
 {
@@ -49,11 +48,6 @@ class ProcessSinglePatientEligibility implements ShouldQueue
     private $filterProblems;
 
     /**
-     * @var Collection
-     */
-    private $patient;
-
-    /**
      * @var \CircleLinkHealth\Customer\Entities\Practice
      */
     private $practice;
@@ -61,23 +55,20 @@ class ProcessSinglePatientEligibility implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param Collection                                   $patient
-     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
-     * @param EligibilityBatch                             $batch
      * @param EligibilityJob                               $eligibilityJob
+     * @param EligibilityBatch                             $batch
+     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
      */
     public function __construct(
-        Collection $patient,
         EligibilityJob $eligibilityJob,
         EligibilityBatch $batch,
         Practice $practice
     ) {
-        $this->patient             = $patient;
         $this->practice            = $practice;
         $this->batch               = $batch;
-        $this->filterLastEncounter = (bool) $batch->options['filterLastEncounter'];
-        $this->filterProblems      = (bool) $batch->options['filterProblems'];
-        $this->filterInsurance     = (bool) $batch->options['filterInsurance'];
+        $this->filterLastEncounter = $batch->shouldFilterLastEncounter();
+        $this->filterProblems      = $batch->shouldFilterProblems();
+        $this->filterInsurance     = $batch->shouldFilterInsurance();
         $this->eligibilityJob      = $eligibilityJob;
     }
 
@@ -88,17 +79,14 @@ class ProcessSinglePatientEligibility implements ShouldQueue
     {
         //Only process if EligibilityJob status is 0 (not_started)
         if (0 == $this->eligibilityJob->status) {
-            new WelcomeCallListGenerator(
-                $this->patient,
+            new EligibilityChecker(
+                $this->eligibilityJob,
+                $this->practice,
+                $this->batch,
                 $this->filterLastEncounter,
                 $this->filterInsurance,
                 $this->filterProblems,
-                true,
-                $this->practice,
-                null,
-                null,
-                $this->batch,
-                $this->eligibilityJob
+                true
             );
         }
     }

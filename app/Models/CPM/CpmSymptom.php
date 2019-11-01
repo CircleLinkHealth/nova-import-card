@@ -21,19 +21,21 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $patient
  * @property \App\Models\CPM\CpmSymptomUser[]|\Illuminate\Database\Eloquent\Collection           $users
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom whereCareItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom query()
+ * @property int|null $care_plan_templates_count
+ * @property int|null $cpm_instructions_count
+ * @property int|null $patient_count
+ * @property int|null $revision_history_count
+ * @property int|null $users_count
  */
 class CpmSymptom extends \CircleLinkHealth\Core\Entities\BaseModel
 {

@@ -30,7 +30,6 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @property \App\Models\CPM\CpmProblem[]|\Illuminate\Database\Eloquent\Collection         $cpmProblems
  * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection         $cpmSymptoms
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                             $program
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereDisplayName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereId($value)
@@ -38,12 +37,17 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate query()
+ * @property int|null $cpm_biometrics_count
+ * @property int|null $cpm_lifestyles_count
+ * @property int|null $cpm_medication_groups_count
+ * @property int|null $cpm_miscs_count
+ * @property int|null $cpm_problems_count
+ * @property int|null $cpm_symptoms_count
+ * @property int|null $revision_history_count
  */
 class CarePlanTemplate extends \CircleLinkHealth\Core\Entities\BaseModel
 {

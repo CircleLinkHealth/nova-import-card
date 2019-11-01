@@ -18,7 +18,6 @@ namespace App;
  * @property int      $snomed_code
  * @property string   $snomed_name
  * @property int|null $cpm_problem_id
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map whereAvgUsage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map whereCcmEligible($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map whereCode($value)
@@ -29,12 +28,11 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map whereSnomedCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map whereSnomedName($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\SnomedToICD9Map query()
+ * @property int|null $revision_history_count
  */
 class SnomedToICD9Map extends \CircleLinkHealth\Core\Entities\BaseModel
 {

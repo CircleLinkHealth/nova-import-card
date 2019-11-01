@@ -60,7 +60,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \App\Importer\Models\ItemLogs\MedicationLog[]|\Illuminate\Database\Eloquent\Collection           $medications
  * @property \App\Importer\Models\ItemLogs\ProblemLog[]|\Illuminate\Database\Eloquent\Collection              $problems
  * @property \App\Importer\Models\ItemLogs\ProviderLog[]|\Illuminate\Database\Eloquent\Collection             $providers
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereAddress2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereAllergiesString($value)
@@ -96,10 +95,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereWorkPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereZip($value)
  * @mixin \Eloquent
- *
  * @property string|null                                                                    $deleted_at
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord newQuery()
@@ -109,6 +106,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereDeletedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\TabularMedicalRecord withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\TabularMedicalRecord withoutTrashed()
+ * @property int|null $allergies_count
+ * @property int|null $demographics_count
+ * @property int|null $demographics_imports_count
+ * @property int|null $document_count
+ * @property int|null $medications_count
+ * @property int|null $problems_count
+ * @property int|null $providers_count
+ * @property int|null $revision_history_count
  */
 class TabularMedicalRecord extends MedicalRecordEloquent
 {
@@ -197,7 +202,7 @@ class TabularMedicalRecord extends MedicalRecordEloquent
      */
     public function getPatient(): User
     {
-        // TODO: Implement getPatient() method.
+        // TODO: Implement show() method.
     }
 
     /**

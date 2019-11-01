@@ -3,29 +3,53 @@
         <div @mouseover="mouseOver" @mouseleave="mouseLeave">
 
             <!--Original Formatted Value from NurseInvoice-->
-            <span :class="{strike: strikethroughTime || shouldSetStrikeThroughNow}">
+            <span>
            {{this.formattedTime}}
-            <loader v-show="loader"></loader>
-       </span>
+            </span>
+
             <!--Requested Time From nurse-->
-            <span v-show="showTillRefresh"
+            <span v-if="showTillRefresh && !isInvalidated"
+                  class="dispute-requested-time"
+                  :class="{strike: showDisputeStatus === 'rejected'}">{{setRequestedValue}}</span>
+            <span v-else="strikethroughSuggestedTime || isInvalidated"
+                  class="invalidated">
+                    <span data-tooltip="Your request cannot be accepted due to already having a bonus for this day">{{setRequestedValue}}</span>
+                </span>
+
+            <!--Status glyphicons-->
+            <span v-if="showDisputeStatus !== false"
                   class="dispute-requested-time">
-            {{setRequestedValue}}
+                <span v-if="showDisputeStatus === 'approved' && !isInvalidated"
+                      data-tooltip="Your request has been approved"><i class="glyphicon glyphicon-ok-circle"></i></span>
+               <span v-else-if="showDisputeStatus === 'rejected' && !isInvalidated"
+                     data-tooltip="Your request has been rejected"><i
+                       class="glyphicon glyphicon-remove-sign"></i></span>
+                <span v-else-if="showDisputeStatus === 'pending' && !isInvalidated"
+                      data-tooltip="Your request is pending."><i
+                        class="glyphicon glyphicon-option-horizontal"></i></span>
         </span>
+
+            <span style="float: right;"><loader v-show="loader" class="loader"></loader></span>
             <!--Edit Btn-->
-            <span v-show="editButtonActive"
+            <span v-show="!isInvalidated
+            && editButtonActive
+            && isUserAuthToDailyDispute
+            && canBeDisputed
+            && isUserAuthToDailyDispute
+            && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleEdit()"
                   aria-hidden="true"
                   class="edit-button">
-           <i class="glyphicon glyphicon-pencil"></i> Edit
+           <i class="glyphicon glyphicon-pencil"></i>
         </span>
 
             <!--Delete Btn-->
-            <span v-show="showDeleteBtn && showTillRefresh"
+            <span v-show="(showDeleteBtn && !isInvalidated && isUserAuthToDailyDispute && canBeDisputed && showTillRefresh)
+            && (!showDisputeStatus || showDisputeStatus === 'pending')"
                   @click="handleDelete()"
                   aria-hidden="true"
                   class="delete-button">
-           <i class="glyphicon glyphicon-erase"></i> Delete
+           <i class="glyphicon glyphicon-erase"></i>
         </span>
 
             <!--Input for new time hh:mm with save & dismiss btn-->
@@ -37,7 +61,7 @@
                                :class="{validation: !validateTime}"
                                placeholder="hh:mm"
                                v-model="liveRequestedTime">
-
+                <!--Save Button-->
             <span class="save">
                 <button class="button"
                         @click="saveDispute"
@@ -45,8 +69,8 @@
                         :disabled="disableButton">
                 <i class="glyphicon glyphicon-saved"></i>
                 </button>
-
             </span>
+                <!--Text box-->
                 <span class="dismiss">
                     <button v-show="showDisputeBox"
                             class="button"
@@ -70,6 +94,8 @@
             'invoiceData',
             'invoiceId',
             'day',
+            'isUserAuthToDailyDispute',
+            'canBeDisputed'
         ],
 
         components: {
@@ -84,26 +110,27 @@
                 editButtonActive: false,
                 deleteButtonActive: false,
                 showDisputeBox: false,
-                formattedTime: this.invoiceData.formatted_time,
+                formattedTime: this.invoiceData.disputedFormattedTime ? this.invoiceData.disputedFormattedTime : this.invoiceData.formatted_time,
                 requestedTimeToShow: '',
                 liveRequestedTime: '',
                 requestedTimeFromDb: this.invoiceData.suggestedTime,
                 userDisputedTime: false,
-                strikethroughTime: false,
-                //these are used to force a behavior on an element
-                // eg. show/hide till user refreshes page so component can load the
-                //newly created data from DB.
+                strikethroughSuggestedTime: false,
                 showTillRefresh: true,
-                //
-
                 loader: false,
                 errors: [],
-                temporaryValue: '',
-
+                temporaryTime: '',
+                disputeStatus: this.invoiceData.status,
+                disputeInvalidated: this.invoiceData.invalidated,
             }
         },
 
         computed: {
+
+            isInvalidated() {
+                return !!this.disputeInvalidated;
+            },
+
             requestedTimeIsVisible() {
                 const requestedTimeFromDbExists = this.requestedTimeFromDb !== undefined;
                 const liveRequestedTime = !!this.liveRequestedTime;
@@ -112,9 +139,16 @@
 
             setRequestedValue() {
                 const requestedTimeFromDbExists = this.requestedTimeFromDb === undefined;
-                const temporaryValue = !!this.temporaryValue;
+                const temporaryTime = !!this.temporaryTime;
 
-                return temporaryValue || requestedTimeFromDbExists ? this.temporaryValue : this.requestedTimeFromDb;
+               if (temporaryTime || requestedTimeFromDbExists){
+                   const secondHrDigit = this.temporaryTime.substring(0, 2).charAt(1);
+                   const timeWithLeadingZero = this.temporaryTime.padStart(5, '0'); //add leading zero to time
+
+                   return secondHrDigit === ':' ? timeWithLeadingZero : this.temporaryTime;
+               }
+
+                return this.requestedTimeFromDb;
             },
 
             showDeleteBtn() {
@@ -122,14 +156,9 @@
 
             },
 
-            shouldSetStrikeThroughNow() {
-                return this.showTillRefresh && (this.requestedTimeFromDb === undefined && this.strikethroughTime
-                    || this.requestedTimeFromDb !== undefined && !this.strikethroughTime);
-            },
-
             validateTime() {
                 const inputValue = this.liveRequestedTime;
-                const formatRule = inputValue.match('(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9])');
+                const formatRule = inputValue.match('([0-9]|1[0-9]|2[0-3])(:[0-5][0-9])');
 
                 if (this.liveRequestedTime.length === 0) {
                     return true;
@@ -139,6 +168,18 @@
 
             disableButton() {
                 return this.validateTime !== true || this.liveRequestedTime.length === 0;
+            },
+
+            showDisputeStatus() {
+                if (this.disputeStatus === undefined) {
+                    return false;
+                } else if (this.disputeStatus === 'approved') {
+                    return 'approved';
+                } else if (this.disputeStatus === 'rejected') {
+                    return 'rejected';
+                } else if (this.disputeStatus === 'pending') {
+                    return 'pending';
+                }
             }
         },
 
@@ -167,16 +208,17 @@
                 })
                     .then((resposne) => {
                         this.userDisputedTime = false;
-                        this.strikethroughTime = false;
+
                         this.showTillRefresh = false;
                         this.requestedTimeFromDb = undefined;
                         this.liveRequestedTime = '';
-                        this.temporaryValue = '';
+                        this.temporaryTime = '';
+                        this.disputeStatus = undefined;
                         this.loader = false;
 
                         this.addNotification({
                             title: "Deleted",
-                            text: "Your dispute has been submitted deleted",
+                            text: "Your dispute has been deleted",
                             type: "info",
                             timeout: true
                         });
@@ -197,21 +239,23 @@
                 this.showDisputeBox = false;
             },
             saveDispute() {
+                const defaultDisputeStatus = 'pending';
                 this.loader = true;
                 axios.post('/nurseinvoices/daily-dispute', {
                     invoiceId: this.invoiceId,
                     suggestedFormattedTime: this.liveRequestedTime,
                     disputedFormattedTime: this.formattedTime,
+                    disputeStatus: defaultDisputeStatus,
                     disputedDay: this.day,
                 })
                     .then((response) => {
                         this.deleteButtonActive = true;
                         this.userDisputedTime = true;
-                        this.strikethroughTime = true;
                         this.showTillRefresh = true;
                         this.editButtonActive = false;
                         this.showDisputeBox = false;
-                        this.temporaryValue = this.liveRequestedTime;
+                        this.disputeStatus = defaultDisputeStatus;
+                        this.temporaryTime = this.liveRequestedTime;
                         this.loader = false;
 
                         this.addNotification({
@@ -255,12 +299,12 @@
 <style scoped>
     .edit-button {
         color: #87cefa;
-        padding-left: 10%;
+        padding-left: 22%;
     }
 
     .delete-button {
         color: #ff0000;
-        padding-left: 3%;
+        padding-left: 8%;
     }
 
     .dispute-box {
@@ -279,7 +323,7 @@
 
     .text-box {
         max-width: 24%;
-
+        margin-left: -13%;
     }
 
     .validation {
@@ -305,11 +349,52 @@
         padding-left: 3%;
     }
 
-    .disable{
+    .disable {
         background-color: #f4f6f6;
         color: #d5dbdb;
         cursor: default;
         opacity: 0.7;
+    }
+
+    .invalidated {
+        text-decoration: line-through;
+        color: skyblue;
+        padding-left: 3%;
+    }
+
+    .glyphicon-pencil {
+        float: right;
+        margin-right: 5%;
+    }
+
+    .glyphicon-erase {
+        float: right;
+        margin-right: 5%;
+    }
+
+    .glyphicon-option-horizontal {
+        color: rgb(0, 191, 255);
+        margin-right: 1%;
+    }
+
+    .glyphicon-remove-sign {
+        margin-right: 1%;
+        color: #ff0000;
+    }
+
+    .glyphicon-ok-circle {
+        margin-right: 1%;
+        color: #008000;
+    }
+
+    .loader {
+        width: 17px;
+        height: 17px;
+    }
+
+    .strike {
+        text-decoration: line-through;
+        color: #ff0000;
     }
 
 </style>

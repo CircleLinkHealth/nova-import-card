@@ -8,24 +8,14 @@ namespace App\Services\CPM;
 
 use App\Contracts\Services\CpmModel;
 use App\Models\CCD\Problem;
-use App\Repositories\CpmProblemRepository;
-use App\Repositories\UserRepositoryEloquent;
+use App\Models\CPM\CpmProblem;
 use CircleLinkHealth\Customer\Entities\User;
 
 class CpmProblemService implements CpmModel
 {
-    private $problemRepo;
-    private $userRepo;
-
-    public function __construct(CpmProblemRepository $problemRepo, UserRepositoryEloquent $userRepo)
-    {
-        $this->problemRepo = $problemRepo;
-        $this->userRepo    = $userRepo;
-    }
-
     public function all()
     {
-        $problems = $this->repo()->noDiabetesFilter()->get([
+        $problems = $this->noDiabetesFilter()->withLatestCpmInstruction()->withIcd10Codes()->get([
             'id',
             'name',
             'default_icd_10_code',
@@ -49,34 +39,23 @@ class CpmProblemService implements CpmModel
 
     public function getProblemsWithInstructionsForUser(User $user)
     {
-        $instructions = [];
+        $user->loadMissing('ccdProblems.cpmInstruction', 'ccdProblems.cpmProblem');
 
-        //Get all the User's Problems
-        $problems = $user->cpmProblems()->get()->sortBy('name')->values()->all();
-        if ( ! $problems) {
-            return [];
-        }
+        $instructions = $user->ccdProblems->where('cpm_problem_id', '!=', null)->unique('cpm_problem_id')->sortBy('cpmProblem.name')->mapWithKeys(function ($problem) {
+            return [optional($problem->cpmProblem)->name => optional($problem->cpmInstruction)->name];
+        });
 
-        //For each problem, extract the instructions and
-        //store in a key value pair
-        foreach ($problems as $problem) {
-            if ( ! $problem) {
-                continue;
-            }
+        return $instructions->all();
+    }
 
-            $instruction = \App\Models\CPM\CpmInstruction::find($problem->pivot->cpm_instruction_id);
-
-            if ($instruction) {
-                $instructions[$problem->name] = $instruction->name;
-            }
-        }
-
-        return $instructions;
+    public function noDiabetesFilter()
+    {
+        return CpmProblem::where('name', '!=', 'Diabetes');
     }
 
     public function problem($id)
     {
-        $problem = $this->repo()->model()->find($id);
+        $problem = CpmProblem::withLatestCpmInstruction()->withIcd10Codes()->find($id);
         if ($problem) {
             return $this->setupProblem($problem);
         }
@@ -86,17 +65,12 @@ class CpmProblemService implements CpmModel
 
     public function problems()
     {
-        $problems = $this->repo()->noDiabetesFilter()->paginate(30);
+        $problems = $this->noDiabetesFilter()->withLatestCpmInstruction()->withIcd10Codes()->paginate(30);
         $problems->getCollection()->transform(function ($value) {
             return $this->setupProblem($value);
         });
 
         return $problems;
-    }
-
-    public function repo()
-    {
-        return $this->problemRepo;
     }
 
     public function setupProblem($p)
@@ -106,9 +80,10 @@ class CpmProblemService implements CpmModel
             'name'          => $p->name,
             'code'          => $p->default_icd_10_code,
             'is_behavioral' => $p->is_behavioral,
-            'instruction'   => $p->instruction(),
-            'snomeds'       => $p->snomedMaps()->where('icd_10_name', '!=', '')->groupBy('icd_10_name')
-                ->select(['icd_10_code', 'icd_10_name'])->get(),
+            'instruction'   => optional($p->cpmInstructions)->first(),
+            'snomeds'       => $p->snomedMaps->transform(function ($snomed) {
+                return ['icd_10_code' => $snomed->icd_10_code, 'icd_10_name' => $snomed->icd_10_name];
+            }),
         ];
     }
 

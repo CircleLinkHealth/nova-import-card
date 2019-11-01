@@ -47,6 +47,10 @@ class CarePlanHelper
     public $patientInfo;
     public $probs;
     public $user;
+    /**
+     * @var Enrollee
+     */
+    private $enrollee;
     private $str;
 
     public function __construct(
@@ -132,6 +136,7 @@ class CarePlanHelper
         )->first();
 
         if ($enrollee) {
+            $this->enrollee        = $enrollee;
             $enrollee->user_id     = $this->user->id;
             $enrollee->provider_id = $this->imr->billing_provider_id;
             $enrollee->save();
@@ -352,10 +357,7 @@ class CarePlanHelper
                 ->first();
 
             if ( ! $dataFromPractice) {
-                sendSlackMessage(
-                    '#nbi_rwjbarnabas',
-                    "We could not find patient with id: {$this->user->id} in NBI's supplementary MRN list. Approval process has been locked."
-                );
+                sendNbiPatientMrnWarning($this->user->id);
 
                 $recipients = AppConfig::where('config_key', '=', self::RECEIVES_NBI_EXCEPTIONS_NOTIFICATIONS)->get();
 
@@ -370,11 +372,13 @@ class CarePlanHelper
             }
         }
 
+        $agentDetails = $this->getEnrolleeAgentDetailsIfExist();
+
         $this->patientInfo = Patient::updateOrCreate(
             [
                 'user_id' => $this->user->id,
             ],
-            [
+            array_merge([
                 'imported_medical_record_id' => $this->imr->id,
                 'ccda_id'                    => Ccda::class == $this->imr->medical_record_type
                     ? $this->imr->medical_record_id
@@ -389,7 +393,7 @@ class CarePlanHelper
                 'preferred_contact_method'   => 'CCT',
                 'user_id'                    => $this->user->id,
                 'registration_date'          => $this->user->user_registered,
-            ]
+            ], $agentDetails)
         );
 
         return $this;
@@ -423,7 +427,7 @@ class CarePlanHelper
                 $makePrimary = 0 == strcasecmp(
                     $primaryPhone,
                     PhoneNumber::HOME
-                    ) || $primaryPhone == $number || ! $primaryPhone;
+                ) || $primaryPhone == $number || ! $primaryPhone;
 
                 $homePhone = PhoneNumber::create(
                     [
@@ -453,7 +457,7 @@ class CarePlanHelper
                 $makePrimary = 0 == strcasecmp($primaryPhone, PhoneNumber::MOBILE) || 0 == strcasecmp(
                     $primaryPhone,
                     'cell'
-                    ) || $primaryPhone == $number || ! $primaryPhone;
+                ) || $primaryPhone == $number || ! $primaryPhone;
 
                 $mobilePhone = PhoneNumber::create(
                     [
@@ -681,6 +685,29 @@ class CarePlanHelper
         }
 
         return $this;
+    }
+
+    /**
+     * If Enrollee exists and if agent details are set,
+     * Get array to save in patient info.
+     *
+     * @return array
+     */
+    private function getEnrolleeAgentDetailsIfExist()
+    {
+        if ( ! $this->enrollee) {
+            return [];
+        }
+        if (empty($this->enrollee->agent_details)) {
+            return [];
+        }
+
+        return [
+            'agent_name'         => $this->enrollee->getAgentAttribute(Enrollee::AGENT_NAME_KEY),
+            'agent_telephone'    => $this->enrollee->getAgentAttribute(Enrollee::AGENT_PHONE_KEY),
+            'agent_email'        => $this->enrollee->getAgentAttribute(Enrollee::AGENT_EMAIL_KEY),
+            'agent_relationship' => $this->enrollee->getAgentAttribute(Enrollee::AGENT_RELATIONSHIP_KEY),
+        ];
     }
 
     private function updateTrainingFeatures()

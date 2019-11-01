@@ -7,7 +7,6 @@
 namespace App\Importer\Models\ItemLogs;
 
 use App\Models\CCD\CcdInsurancePolicy;
-use App\Traits\Relationships\BelongsToCcda;
 use App\Traits\Relationships\BelongsToVendor;
 
 /**
@@ -27,7 +26,6 @@ use App\Traits\Relationships\BelongsToVendor;
  * @property \App\Models\MedicalRecords\Ccda    $ccda
  * @property \App\Models\CCD\CcdInsurancePolicy $importedItem
  * @property \App\Models\CCD\CcdVendor          $vendor
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereImport($value)
@@ -40,18 +38,21 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog query()
+ * @property array $raw
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereRaw($value)
+ * @property int|null $revision_history_count
  */
 class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    use BelongsToCcda;
-    use
-        BelongsToVendor;
+    use BelongsToVendor;
+
+    protected $casts = [
+        'raw' => 'array',
+    ];
 
     protected $fillable = [
         'medical_record_id',
@@ -62,6 +63,7 @@ class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
         'relation',
         'subscriber',
         'import',
+        'raw',
     ];
 
     public function importedItem()

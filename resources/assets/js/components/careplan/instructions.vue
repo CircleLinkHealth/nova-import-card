@@ -17,21 +17,6 @@
                 <p v-for="(instruction, index) in (problem.instruction.name || '').split('\n')" :key="index" v-html="instruction || '<br>'"></p>
             </div>
         </div>
-        <!-- <div class="row gutter" v-if="ccdProblems">
-            <div class="col-xs-12">
-                <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">Full Conditions List:
-                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showFullConditionsModal" aria-hidden="true"></span>
-                </h3>
-                <p v-if="ccdProblems.length === 0">
-                    No instructions at this time
-                </p>
-                <ul>
-                    <li v-for="(problem, index) in ccdProblems" :key="index">
-                        <p>{{problem.name}}</p>
-                    </li>
-                </ul>
-            </div>
-        </div> -->
         <full-conditions-modal ref="fullConditionsModal" :patient-id="patientId" :cpm-problems="cpmProblems" :problems="ccdProblems"></full-conditions-modal>
     </div>
 </template>

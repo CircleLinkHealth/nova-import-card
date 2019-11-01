@@ -34,9 +34,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\User|null $patient
  * @property \App\CarePlan|null                            $carePlan
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment query()
@@ -58,6 +56,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereRiskFactors($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereTobaccoMisuseCounseling($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment whereUpdatedAt($value)
+ * @property int|null $revision_history_count
  */
 class CareplanAssessment extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -66,10 +65,11 @@ class CareplanAssessment extends \CircleLinkHealth\Core\Entities\BaseModel
         return $this->belongsTo(User::class, 'provider_approver_id');
     }
 
-    public function carePlan()
-    {
-        return $this->belongsTo(CarePlan::class, 'careplan_id', 'user_id');
-    }
+//    DO NOT UNCOMMENT OUT. THIS IS ACTUALLY STORING USER IDS.
+//    public function carePlan()
+//    {
+//        return $this->belongsTo(CarePlan::class, 'careplan_id', 'user_id');
+//    }
 
     public function note()
     {

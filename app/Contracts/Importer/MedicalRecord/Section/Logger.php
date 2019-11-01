@@ -10,5 +10,5 @@ interface Logger
 {
     public function handle($problemsString): array;
 
-    public function shouldHandle($problemsString);
+    public function shouldHandle($problems);
 }

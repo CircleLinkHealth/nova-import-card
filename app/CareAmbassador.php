@@ -19,7 +19,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Carbon\Carbon|null                                               $updated_at
  * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $logs
  * @property \CircleLinkHealth\Customer\Entities\User                          $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereHourlyRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereId($value)
@@ -27,12 +26,12 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador whereUserId($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassador query()
+ * @property int|null $logs_count
+ * @property int|null $revision_history_count
  */
 class CareAmbassador extends \CircleLinkHealth\Core\Entities\BaseModel
 {

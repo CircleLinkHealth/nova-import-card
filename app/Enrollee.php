@@ -6,7 +6,7 @@
 
 namespace App;
 
-use App\Facades\StringManipulation;
+use App\CLH\Helpers\StringManipulation;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
@@ -143,10 +143,23 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereCareAmbassadorUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereEligibilityJobId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSoftRejectedCallback($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereRequestedCallback($value)
+ *
+ * @property int|null   $revision_history_count
+ * @property array|null $agent_details
+ * @property mixed      $agent
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAgentDetails($value)
  */
 class Enrollee extends BaseModel
 {
     use Filterable;
+
+    // Agent array keys
+    const AGENT_EMAIL_KEY        = 'email';
+    const AGENT_NAME_KEY         = 'name';
+    const AGENT_PHONE_KEY        = 'phone';
+    const AGENT_RELATIONSHIP_KEY = 'relationship';
 
     /**
      * status = consented.
@@ -159,6 +172,11 @@ class Enrollee extends BaseModel
     const ELIGIBLE = 'eligible';
 
     /**
+     * status = engaged. When a care ambassador has viewed an enrollee but hasn't actually performed any action on them.
+     */
+    const ENGAGED = 'engaged';
+
+    /**
      * status = enrolled.
      */
     const ENROLLED = 'enrolled';
@@ -167,6 +185,11 @@ class Enrollee extends BaseModel
      * status = ineligible.
      */
     const INELIGIBLE = 'ineligible';
+
+    /**
+     * status = legacy. These are enrolees who have existed in our system before releasing the care ambassador channel.
+     */
+    const LEGACY = 'legacy';
 
     /**
      * status = rejected.
@@ -212,6 +235,11 @@ class Enrollee extends BaseModel
         'tertiary_insurance',
         'has_copay',
         'email',
+        'agent_details',
+    ];
+
+    protected $casts = [
+        'agent_details' => 'array',
     ];
 
     protected $dates = [
@@ -282,6 +310,9 @@ class Enrollee extends BaseModel
         'cpm_problem_2',
 
         'requested_callback',
+
+        //contains array of agent details, similar to patient_info fields
+        'agent_details',
     ];
 
     protected $table = 'enrollees';
@@ -297,6 +328,21 @@ class Enrollee extends BaseModel
     }
 
     /**
+     * @param mixed $key
+     */
+    public function getAgentAttribute($key)
+    {
+        if (empty($this->agent_details)) {
+            return null;
+        }
+        if ( ! array_key_exists($key, $this->agent_details)) {
+            return null;
+        }
+
+        return $this->agent_details[$key];
+    }
+
+    /**
      * Get Cell Phone.
      *
      * @param $cellPhone
@@ -305,7 +351,7 @@ class Enrollee extends BaseModel
      */
     public function getCellPhoneAttribute($cellPhone)
     {
-        return StringManipulation::formatPhoneNumber($cellPhone);
+        return (new StringManipulation())->formatPhoneNumber($cellPhone);
     }
 
     /**
@@ -315,7 +361,7 @@ class Enrollee extends BaseModel
      */
     public function getCellPhoneE164Attribute()
     {
-        return StringManipulation::formatPhoneNumberE164($this->cell_phone);
+        return (new StringManipulation())->formatPhoneNumberE164($this->cell_phone);
     }
 
     /**
@@ -327,7 +373,7 @@ class Enrollee extends BaseModel
      */
     public function getHomePhoneAttribute($homePhone)
     {
-        return StringManipulation::formatPhoneNumber($homePhone);
+        return (new StringManipulation())->formatPhoneNumber($homePhone);
     }
 
     /**
@@ -337,7 +383,7 @@ class Enrollee extends BaseModel
      */
     public function getHomePhoneE164Attribute()
     {
-        return StringManipulation::formatPhoneNumberE164($this->home_phone);
+        return (new StringManipulation())->formatPhoneNumberE164($this->home_phone);
     }
 
     public function getImportedMedicalRecord()
@@ -345,6 +391,11 @@ class Enrollee extends BaseModel
         return ImportedMedicalRecord::whereMedicalRecordId($this->medical_record_id)
             ->whereMedicalRecordType($this->medical_record_id)
             ->first();
+    }
+
+    public function getLastEncounterAttribute($lastEncounter)
+    {
+        return $lastEncounter ? optional(Carbon::parse($lastEncounter))->toDateString() : null;
     }
 
     /**
@@ -356,7 +407,7 @@ class Enrollee extends BaseModel
      */
     public function getOtherPhoneAttribute($otherPhone)
     {
-        return StringManipulation::formatPhoneNumber($otherPhone);
+        return (new StringManipulation())->formatPhoneNumber($otherPhone);
     }
 
     /**
@@ -366,7 +417,7 @@ class Enrollee extends BaseModel
      */
     public function getOtherPhoneE164Attribute()
     {
-        return StringManipulation::formatPhoneNumberE164($this->other_phone);
+        return (new StringManipulation())->formatPhoneNumberE164($this->other_phone);
     }
 
     public function getPracticeNameAttribute()
@@ -383,7 +434,7 @@ class Enrollee extends BaseModel
      */
     public function getPrimaryPhoneAttribute($primaryPhone)
     {
-        return StringManipulation::formatPhoneNumber($primaryPhone);
+        return (new StringManipulation())->formatPhoneNumber($primaryPhone);
     }
 
     /**
@@ -393,7 +444,7 @@ class Enrollee extends BaseModel
      */
     public function getPrimaryPhoneE164Attribute()
     {
-        return StringManipulation::formatPhoneNumberE164($this->primary_phone);
+        return (new StringManipulation())->formatPhoneNumberE164($this->primary_phone);
     }
 
     public function getProviderFullNameAttribute()
@@ -433,14 +484,7 @@ class Enrollee extends BaseModel
     public function scopeToCall($query)
     {
         //@todo add check for where phones are not all null
-
-        return $query->where('status', self::TO_CALL)
-            ->orWhere(
-                function ($q) {
-                    $q->where('status', '=', 'soft_rejected')
-                        ->where('requested_callback', '<=', Carbon::now()->toDateString());
-                }
-                     );
+        return $query->where('status', self::TO_CALL);
     }
 
     public function scopeToSMS($query)
@@ -494,7 +538,7 @@ class Enrollee extends BaseModel
      */
     public function setCellPhoneAttribute($homePhone)
     {
-        $this->attributes['cell_phone'] = StringManipulation::formatPhoneNumberE164($homePhone);
+        $this->attributes['cell_phone'] = (new StringManipulation())->formatPhoneNumberE164($homePhone);
     }
 
     /**
@@ -516,7 +560,7 @@ class Enrollee extends BaseModel
      */
     public function setHomePhoneAttribute($homePhone)
     {
-        $this->attributes['home_phone'] = StringManipulation::formatPhoneNumberE164($homePhone);
+        $this->attributes['home_phone'] = (new StringManipulation())->formatPhoneNumberE164($homePhone);
     }
 
     /**
@@ -526,7 +570,7 @@ class Enrollee extends BaseModel
      */
     public function setOtherPhoneAttribute($homePhone)
     {
-        $this->attributes['other_phone'] = StringManipulation::formatPhoneNumberE164($homePhone);
+        $this->attributes['other_phone'] = (new StringManipulation())->formatPhoneNumberE164($homePhone);
     }
 
     /**
@@ -536,7 +580,7 @@ class Enrollee extends BaseModel
      */
     public function setPrimaryPhoneNumberAttribute($primaryPhone)
     {
-        $this->attributes['primary_phone'] = StringManipulation::formatPhoneNumber($primaryPhone);
+        $this->attributes['primary_phone'] = (new StringManipulation())->formatPhoneNumber($primaryPhone);
     }
 
     public function targetPatient()

@@ -44,6 +44,10 @@ class EligibilityPhones implements Rule
                 $validator = Validator::make(['phoneNumber' => $phone], [
                     'phoneNumber' => 'required|phone:AUTO,US',
                 ]);
+                
+                if (!isProductionEnv()) {
+                    return false;
+                }
 
                 return $validator->fails();
             })->count();

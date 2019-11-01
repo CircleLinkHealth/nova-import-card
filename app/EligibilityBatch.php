@@ -6,6 +6,7 @@
 
 namespace App;
 
+use App\Jobs\ProcessSinglePatientEligibility;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -42,6 +43,9 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int|null $eligibility_jobs_count
+ * @property int|null $revision_history_count
  */
 class EligibilityBatch extends BaseModel
 {
@@ -97,11 +101,15 @@ class EligibilityBatch extends BaseModel
             ->groupBy('outcome')
             ->get()
             ->mapWithKeys(function ($result) {
-                return [
-                    is_null($result['outcome'])
-                        ? 'Not processed yet.'
-                        : $result['outcome'] => $result['total'],
-                ];
+                if (is_null($result['outcome'])) {
+                    $outcome = ['Not processed yet.' => $result['total'] ?? null];
+                } elseif (EligibilityJob::ELIGIBLE === $result['outcome']) {
+                    $outcome = ['eligible_and_not_in_cpm' => $result['total']];
+                } else {
+                    $outcome = [$result['outcome'] => $result['total']];
+                }
+
+                return $outcome ?? [];
             });
     }
 
@@ -138,6 +146,26 @@ class EligibilityBatch extends BaseModel
             case 3:
                 return 'green';
                 break;
+        }
+    }
+
+    public function getType()
+    {
+        switch ($this->type) {
+            case self::ATHENA_API:
+                return 'Athena';
+                break;
+            case self::TYPE_ONE_CSV:
+                return 'CSV';
+                break;
+            case self::TYPE_GOOGLE_DRIVE_CCDS:
+                return 'CCDs in GoogleDrive';
+                break;
+            case self::CLH_MEDICAL_RECORD_TEMPLATE:
+                return 'CLH Template';
+                break;
+            default:
+                return '';
         }
     }
 
@@ -193,7 +221,7 @@ class EligibilityBatch extends BaseModel
      */
     public function hasJobs(): bool
     {
-        return $this->eligibilityJobs()->count() > 0;
+        return $this->eligibilityJobs()->exists();
     }
 
     public function incrementDuplicateCount()
@@ -243,6 +271,37 @@ class EligibilityBatch extends BaseModel
     public function practice()
     {
         return $this->belongsTo(Practice::class);
+    }
+
+    public function processPendingJobs($pageSize = 100, $onQueue = 'low')
+    {
+        $this->eligibilityJobs()
+            ->where('status', '=', 0)
+            ->inRandomOrder()
+            ->take($pageSize)
+            ->get()
+            ->each(function ($job) use ($onQueue) {
+                ProcessSinglePatientEligibility::dispatch(
+                    $job,
+                    $this,
+                    $this->practice
+                )->onQueue($onQueue);
+            });
+    }
+
+    public function shouldFilterInsurance()
+    {
+        return array_key_exists('filterInsurance', $this->options) ? (bool) $this->options['filterInsurance'] : false;
+    }
+
+    public function shouldFilterLastEncounter()
+    {
+        return array_key_exists('filterLastEncounter', $this->options) ? (bool) $this->options['filterLastEncounter'] : false;
+    }
+
+    public function shouldFilterProblems()
+    {
+        return array_key_exists('filterProblems', $this->options) ? (bool) $this->options['filterProblems'] : true;
     }
 
     /**

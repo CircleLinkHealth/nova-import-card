@@ -33,8 +33,10 @@ class NurseInvoiceDailyDisputeTimeService
                 'disputed_day' => $input['disputedDay'],
             ],
             [
-                'suggested_formatted_time' => $suggestedFormattedTime,
+                //we create a carbon object to validate hours and add leading 0 for uniform formatting
+                'suggested_formatted_time' => \Carbon\Carbon::createFromFormat('H:i', $suggestedFormattedTime)->format('H:i'),
                 'disputed_formatted_time'  => $input['disputedFormattedTime'],
+                'status'                   => $input['disputeStatus'] ?? NurseInvoiceDailyDispute::STATUS_PENDING,
             ]
         );
 

@@ -32,7 +32,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection               $cpmSymptomsToBeActivated
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $patient
  * @property App\Models\CPM\CpmInstructable                                                      $instructable
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereContains($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereDefaultIcd10Code($value)
@@ -44,19 +43,30 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property int                                                                                         $is_behavioral
  * @property int                                                                                         $weight
  * @property \App\Importer\Models\ImportedItems\ProblemImport[]|\Illuminate\Database\Eloquent\Collection $problemImports
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]              $revisionHistory
  * @property \App\CLH\CCD\Importer\SnomedToCpmIcdMap[]|\Illuminate\Database\Eloquent\Collection          $snomedMaps
  * @property \App\Models\CPM\CpmProblemUser[]|\Illuminate\Database\Eloquent\Collection                   $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereIsBehavioral($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereWeight($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem withIcd10Codes()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem withLatestCpmInstruction()
+ * @property int|null $care_plan_templates_count
+ * @property int|null $cpm_biometrics_to_be_activated_count
+ * @property int|null $cpm_instructions_count
+ * @property int|null $cpm_lifestyles_to_be_activated_count
+ * @property int|null $cpm_medication_groups_to_be_activated_count
+ * @property int|null $cpm_symptoms_to_be_activated_count
+ * @property int|null $patient_count
+ * @property int|null $problem_imports_count
+ * @property int|null $revision_history_count
+ * @property int|null $snomed_maps_count
+ * @property int|null $user_count
  */
 class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
@@ -157,6 +167,20 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
     public function problemImports()
     {
         return $this->hasMany(ProblemImport::class);
+    }
+
+    public function scopeWithIcd10Codes($builder)
+    {
+        return $builder->with(['snomedMaps' => function ($q) {
+            return $q->whereNotNull('icd_10_name')->where('icd_10_name', '!=', '')->distinct('icd_10_name')->groupBy('icd_10_name');
+        }]);
+    }
+
+    public function scopeWithLatestCpmInstruction($builder)
+    {
+        return $builder->with(['cpmInstructions' => function ($q) {
+            return $q->latest();
+        }]);
     }
 
     public function snomedMaps()

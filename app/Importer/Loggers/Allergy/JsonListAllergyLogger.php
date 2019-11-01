@@ -29,9 +29,9 @@ class JsonListAllergyLogger implements Logger
         return [];
     }
 
-    public function shouldHandle($allergiesString): bool
+    public function shouldHandle($allergies): bool
     {
-        $check = is_json($allergiesString);
+        $check = is_json($allergies);
 
 //        if ($check === false) {
 //            throw new \Exception("The string contains invalid json. String: `$allergiesString`");

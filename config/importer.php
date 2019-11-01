@@ -23,6 +23,7 @@ return [
     ],
 
     'problem_loggers' => [
+        App\Importer\Loggers\Problem\ArrayOfProblemForEligibilityCheck::class,
         App\Importer\Loggers\Problem\JsonListProblemLogger::class,
         App\Importer\Loggers\Problem\CommaDelimitedListProblemLogger::class,
         App\Importer\Loggers\Problem\ArrayProblemLogger::class,

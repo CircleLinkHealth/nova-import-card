@@ -18,7 +18,6 @@ namespace App\Importer\Models\ItemLogs;
  * @property \Carbon\Carbon|null                           $created_at
  * @property \Carbon\Carbon|null                           $updated_at
  * @property \App\Importer\Models\ItemLogs\ProblemLog|null $problemLog
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereCcdProblemLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereCodeSystemName($value)
@@ -28,14 +27,13 @@ namespace App\Importer\Models\ItemLogs;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property int|null                                                                       $problem_code_system_id
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProblemCodeLog whereProblemCodeSystemId($value)
+ * @property int|null $revision_history_count
  */
 class ProblemCodeLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {

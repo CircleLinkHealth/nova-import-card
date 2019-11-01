@@ -33,6 +33,10 @@
     }
 </style>
 {{--HACK! Duplicating css both in @push, and in <style> above so it works both with PDF, and web--}}
+{{--NOTE! This is causing an Error showing in dev console:
+Templates should only be responsible for mapping the state to the UI.
+Avoid placing tags with side-effects in your templates,
+such as <style>, as they will not be parsed.--}}
 @push('styles')
     <style>
         h1 {
@@ -163,12 +167,13 @@
             @foreach($timePerDay as $date => $row)
                 <tr>
                     <td><b>{{$date}}</b></td>
-
                     <td>
                         <nurse-invoice-daily-dispute
                                 :invoice-data="{{json_encode($row)}}"
                                 :invoice-id="{{$invoiceId}}"
-                                :day="{{json_encode(\Carbon\Carbon::parse($date)->copy()->toDateString())}}">
+                                :day="{{json_encode(\Carbon\Carbon::parse($date)->copy()->toDateString())}}"
+                                :is-user-auth-to-daily-dispute="{{json_encode($isUserAuthToDailyDispute)}}"
+                                :can-be-disputed="{{json_encode($canBeDisputed)}}">
                         </nurse-invoice-daily-dispute>
                     </td>
 

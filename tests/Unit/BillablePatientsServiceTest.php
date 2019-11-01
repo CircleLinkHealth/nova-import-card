@@ -6,13 +6,13 @@
 
 namespace Tests\Unit;
 
-use App\ChargeableService;
 use App\Http\Resources\ApprovableBillablePatient;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;

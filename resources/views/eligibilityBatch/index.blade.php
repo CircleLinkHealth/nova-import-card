@@ -67,23 +67,31 @@
                                 <div class="col-md-3">
                                     <div class="batch-body alert alert-{{$batch->cssClass}}">
                                         <div class="row">
-                                            <h5 class="col-md-12">
+                                            <h5 class="col-md-9">
                                                 <div class="pull-left">
                                                     <h4>{{ $batch->practice->display_name }}</h4>
                                                 </div>
-
+                                            </h5>
+                                            <h5 class="col-md-3">
                                                 <div class="pull-right">
                                                     <span class="alert-{{$batch->cssClass}}">{{ $batch->statusPretty }}</span>
                                                 </div>
                                             </h5>
                                         </div>
 
-                                        <p>Started <b>{{ $batch->created_at }}</b></p>
-                                        <p>Last update <b>{{ $batch->updated_at }}</b>.</p>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p>Type <b>{{ $batch->getType() }}</b></p>
+                                                <p>Started <b>{{ $batch->created_at }}</b></p>
+                                                <p>Last update <b>{{ $batch->updated_at }}</b>.</p>
+                                            </div>
+                                        </div>
 
                                         <br>
                                         <br>
-                                        {{link_to_route('eligibility.batch.show', 'View Batch', [$batch->id], ['class' => 'btn btn-default'])}}
+                                        <div class="pull-right">
+                                            {{link_to_route('eligibility.batch.show', 'View Batch', [$batch->id], ['class' => 'btn btn-info'])}}
+                                        </div>
                                     </div>
                                 </div>
                             @endforeach

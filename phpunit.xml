@@ -9,6 +9,10 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
+        <testsuite name="Eligibility">
+            <directory>./Modules/Eligibility/Tests</directory>
+            <directory suffix="Test.php">./Modules/Eligibility/Tests</directory>
+        </testsuite>
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
@@ -27,9 +31,6 @@
         </testsuite>
         <testsuite name="Calls">
             <directory>./tests/Calls/</directory>
-        </testsuite>
-        <testsuite name="Aprima_Api">
-            <directory>./tests/AprimaApi/</directory>
         </testsuite>
         <testsuite name="Care_Plan">
             <directory>./tests/CarePlan/</directory>

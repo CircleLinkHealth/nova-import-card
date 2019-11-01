@@ -9,7 +9,6 @@ namespace App\Repositories;
 use App\Filters\NoteFilters;
 use App\Note;
 use Carbon\Carbon;
-use Exception;
 
 class NoteRepository
 {
@@ -22,21 +21,21 @@ class NoteRepository
             return $note;
         }
         if ( ! $note) {
-            throw new Exception('invalid $note');
+            throw new \Exception('invalid $note');
         }
         if ( ! $note->patient_id) {
-            throw new Exception('invalid $note->patient_id');
+            throw new \Exception('invalid $note->patient_id');
         }
         if ( ! $note->author_id) {
-            throw new Exception('invalid $note->author_id');
+            throw new \Exception('invalid $note->author_id');
         }
         if ( ! $note->body) {
-            throw new Exception('invalid $note->body');
+            throw new \Exception('invalid $note->body');
         }
         if ( ! $note->type) {
-            throw new Exception('invalid $note->type');
+            throw new \Exception('invalid $note->type');
         }
-        throw new Exception('invalid parameters');
+        throw new \Exception('invalid parameters');
     }
 
     public function addOrEdit(Note $note)

@@ -9,7 +9,7 @@ namespace Tests\Feature;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Services\CCD\ProcessEligibilityService;
-use App\Services\WelcomeCallListGenerator;
+use App\Services\EligibilityChecker;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
 
@@ -40,17 +40,14 @@ class EligibilityProcessingTest extends TestCase
             'data'     => $data,
         ]);
 
-        $list = (new WelcomeCallListGenerator(
-            collect([0 => $data]),
+        $list = (new EligibilityChecker(
+            $job,
+            $practice,
+            $batch,
             false,
             true,
             true,
-            true,
-            $practice,
-            null,
-            null,
-            $batch,
-            $job
+            true
         ));
 
         $this->assertTrue(3 == $list->getEligibilityJob()->status);

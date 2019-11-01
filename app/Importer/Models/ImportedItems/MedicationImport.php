@@ -30,7 +30,6 @@ use App\Models\CPM\CpmMedicationGroup;
  * @property \Carbon\Carbon                              $updated_at
  * @property \App\Importer\Models\ItemLogs\MedicationLog $ccdLog
  * @property \App\Models\CPM\CpmMedicationGroup|null     $cpmMedicationGroup
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport whereCcdMedicationLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport whereCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport whereCodeSystem($value)
@@ -48,12 +47,11 @@ use App\Models\CPM\CpmMedicationGroup;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport whereVendorId($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport query()
+ * @property int|null $revision_history_count
  */
 class MedicationImport extends \CircleLinkHealth\Core\Entities\BaseModel
 {

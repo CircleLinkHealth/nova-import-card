@@ -6,11 +6,7 @@
 
 namespace App\Services;
 
-use App\Contracts\Repositories\InviteRepository;
-use App\Contracts\Repositories\LocationRepository;
-use App\Contracts\Repositories\PracticeRepository;
-use App\Contracts\Repositories\UserRepository;
-use App\Facades\StringManipulation;
+use App\CLH\Helpers\StringManipulation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -20,48 +16,24 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Prettus\Validator\Exceptions\ValidatorException;
+use Illuminate\Validation\ValidationException;
+use Validator;
 
 class OnboardingService
 {
     /**
-     * @var InviteRepository
+     * @var StringManipulation
      */
-    protected $invites;
+    protected $stringManipulation;
 
     /**
-     * @var LocationRepository
-     */
-    protected $locations;
-
-    /**
-     * @var PracticeRepository
-     */
-    protected $practices;
-
-    /**
-     * @var UserRepository
-     */
-    protected $users;
-
-    /**
-     * OnboardingController constructor.
+     * OnboardingService constructor.
      *
-     * @param InviteRepository   $inviteRepository
-     * @param LocationRepository $locationRepository
-     * @param PracticeRepository $practiceRepository
-     * @param UserRepository     $userRepository
+     * @param StringManipulation $stringManipulation
      */
-    public function __construct(
-        InviteRepository $inviteRepository,
-        LocationRepository $locationRepository,
-        PracticeRepository $practiceRepository,
-        UserRepository $userRepository
-    ) {
-        $this->invites   = $inviteRepository;
-        $this->locations = $locationRepository;
-        $this->practices = $practiceRepository;
-        $this->users     = $userRepository;
+    public function __construct(StringManipulation $stringManipulation)
+    {
+        $this->stringManipulation = $stringManipulation;
     }
 
     /**
@@ -100,8 +72,8 @@ class OnboardingService
                     'postal_code'               => $loc->postal_code,
                     'state'                     => $loc->state,
                     'validated'                 => true,
-                    'phone'                     => StringManipulation::formatPhoneNumber($loc->phone),
-                    'fax'                       => StringManipulation::formatPhoneNumber($loc->fax),
+                    'phone'                     => $this->stringManipulation->formatPhoneNumber($loc->phone),
+                    'fax'                       => $this->stringManipulation->formatPhoneNumber($loc->fax),
                     'emr_direct_address'        => $loc->emr_direct_address,
                     'sameClinicalIssuesContact' => $primaryPractice->same_clinical_contact,
                     'sameEHRLogin'              => $primaryPractice->same_ehr_login,
@@ -250,7 +222,7 @@ class OnboardingService
         Request $request
     ) {
         foreach ($request->input('deleteTheseLocations') as $id) {
-            $this->locations->delete($id);
+            Location::delete($id);
         }
 
         $created = [];
@@ -266,54 +238,65 @@ class OnboardingService
 
             try {
                 if (isset($newLocation['id'])) {
-                    $location = $this->locations
-                        ->skipPresenter()
-                        ->update([
-                            'practice_id'    => $primaryPractice->id,
-                            'name'           => $newLocation['name'],
-                            'phone'          => StringManipulation::formatPhoneNumberE164($newLocation['phone']),
-                            'fax'            => StringManipulation::formatPhoneNumberE164($newLocation['fax']),
-                            'address_line_1' => $newLocation['address_line_1'],
-                            'address_line_2' => $newLocation['address_line_2'] ?? null,
-                            'city'           => $newLocation['city'],
-                            'state'          => $newLocation['state'],
-                            'timezone'       => $newLocation['timezone'],
-                            'postal_code'    => $newLocation['postal_code'],
-                            'ehr_login'      => $sameEHRLogin
-                                ? $request->input('locations')[0]['ehr_login']
-                                : $newLocation['ehr_login'] ?? null,
-                            'ehr_password' => $sameEHRLogin
-                                ? $request->input('locations')[0]['ehr_password']
-                                : $newLocation['ehr_password'] ?? null,
-                        ], $newLocation['id']);
+                    $location = Location::update([
+                        'practice_id'    => $primaryPractice->id,
+                        'name'           => $newLocation['name'],
+                        'phone'          => $this->stringManipulation->formatPhoneNumberE164($newLocation['phone']),
+                        'fax'            => $this->stringManipulation->formatPhoneNumberE164($newLocation['fax']),
+                        'address_line_1' => $newLocation['address_line_1'],
+                        'address_line_2' => $newLocation['address_line_2'] ?? null,
+                        'city'           => $newLocation['city'],
+                        'state'          => $newLocation['state'],
+                        'timezone'       => $newLocation['timezone'],
+                        'postal_code'    => $newLocation['postal_code'],
+                        'ehr_login'      => $sameEHRLogin
+                            ? $request->input('locations')[0]['ehr_login']
+                            : $newLocation['ehr_login'] ?? null,
+                        'ehr_password' => $sameEHRLogin
+                            ? $request->input('locations')[0]['ehr_password']
+                            : $newLocation['ehr_password'] ?? null,
+                    ], $newLocation['id']);
                 } else {
-                    $location = $this->locations
-                        ->skipPresenter()
-                        ->create([
-                            'practice_id'    => $primaryPractice->id,
-                            'name'           => $newLocation['name'],
-                            'phone'          => StringManipulation::formatPhoneNumberE164($newLocation['phone']),
-                            'fax'            => StringManipulation::formatPhoneNumberE164($newLocation['fax']),
-                            'address_line_1' => $newLocation['address_line_1'],
-                            'address_line_2' => $newLocation['address_line_2'],
-                            'city'           => $newLocation['city'],
-                            'state'          => $newLocation['state'],
-                            'timezone'       => $newLocation['timezone'],
-                            'postal_code'    => $newLocation['postal_code'],
-                            'ehr_login'      => $sameEHRLogin
-                                ? $request->input('locations')[0]['ehr_login']
-                                : $newLocation['ehr_login'] ?? null,
-                            'ehr_password' => $sameEHRLogin
-                                ? $request->input('locations')[0]['ehr_password']
-                                : $newLocation['ehr_password'] ?? null,
-                        ]);
+                    $args = [
+                        'practice_id'    => $primaryPractice->id,
+                        'name'           => $newLocation['name'],
+                        'phone'          => $this->stringManipulation->formatPhoneNumberE164($newLocation['phone']),
+                        'fax'            => $this->stringManipulation->formatPhoneNumberE164($newLocation['fax']),
+                        'address_line_1' => $newLocation['address_line_1'],
+                        'address_line_2' => $newLocation['address_line_2'],
+                        'city'           => $newLocation['city'],
+                        'state'          => $newLocation['state'],
+                        'timezone'       => $newLocation['timezone'],
+                        'postal_code'    => $newLocation['postal_code'],
+                        'ehr_login'      => $sameEHRLogin
+                            ? $request->input('locations')[0]['ehr_login']
+                            : $newLocation['ehr_login'] ?? null,
+                        'ehr_password' => $sameEHRLogin
+                            ? $request->input('locations')[0]['ehr_password']
+                            : $newLocation['ehr_password'] ?? null,
+                    ];
+
+                    Validator::validate($args, [
+                        'practice_id'    => 'required|exists:practices,id',
+                        'name'           => 'required',
+                        'phone'          => 'required',
+                        'address_line_1' => 'required',
+                        'address_line_2' => '',
+                        'city'           => 'required',
+                        'state'          => 'required',
+                        'timezone'       => 'required',
+                        'postal_code'    => 'required',
+                        'billing_code'   => 'required',
+                    ]);
+
+                    $location = Location::create($args);
 
                     $created[] = $i;
                 }
-            } catch (ValidatorException $e) {
+            } catch (ValidationException $e) {
                 $errors[] = [
                     'index'    => $index,
-                    'messages' => $e->getMessageBag()->getMessages(),
+                    'messages' => $e->errors(),
                     'input'    => $newLocation,
                 ];
             }
@@ -365,13 +348,22 @@ class OnboardingService
 
                 if ( ! $clinicalContactUser) {
                     try {
-                        $clinicalContactUser = $this->users->create([
+                        $args = [
                             'program_id' => $primaryPractice->id,
                             'email'      => $newLocation['clinical_contact']['email'],
                             'first_name' => $newLocation['clinical_contact']['first_name'],
                             'last_name'  => $newLocation['clinical_contact']['last_name'],
                             'password'   => 'password_not_set',
+                        ];
+
+                        Validator::validate($args, [
+                            'email'      => 'required|email|unique:users,email',
+                            'first_name' => 'required',
+                            'last_name'  => 'required',
+                            'password'   => 'required|min:8',
                         ]);
+
+                        $clinicalContactUser = User::create($args);
 
                         $clinicalContactUser->attachPractice($primaryPractice, []);
                         $clinicalContactUser->attachLocation($location);
@@ -382,7 +374,7 @@ class OnboardingService
                         $location->clinicalEmergencyContact()->attach($clinicalContactUser->id, [
                             'name' => $newLocation['clinical_contact']['type'],
                         ]);
-                    } catch (ValidatorException $e) {
+                    } catch (ValidationException $e) {
                         $errors[] = [
                             'index'    => $index,
                             'messages' => $e->getMessageBag()->getMessages(),
@@ -428,30 +420,26 @@ class OnboardingService
                 }
 
                 if (isset($newUser['id'])) {
-                    $user = $this->users
-                        ->skipPresenter()
-                        ->update([
-                            'program_id'   => $primaryPractice->id,
-                            'email'        => $newUser['email'],
-                            'first_name'   => $newUser['first_name'],
-                            'last_name'    => $newUser['last_name'],
-                            'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
-                            'user_status'  => 1,
-                        ], $newUser['id']);
-                } elseif (User::whereEmail($newUser['email'])->first()) {
-                    $user = User::whereEmail($newUser['email'])->first();
+                    $user = User::update([
+                        'program_id'   => $primaryPractice->id,
+                        'email'        => $newUser['email'],
+                        'first_name'   => $newUser['first_name'],
+                        'last_name'    => $newUser['last_name'],
+                        'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
+                        'user_status'  => 1,
+                    ], $newUser['id']);
+                } elseif ($user = User::whereEmail($newUser['email'])->first() && ! empty($user)) {
+                    //assignment happened in else if clause
                 } else {
-                    $user = $this->users
-                        ->skipPresenter()
-                        ->create([
-                            'program_id'   => $primaryPractice->id,
-                            'email'        => $newUser['email'],
-                            'first_name'   => $newUser['first_name'],
-                            'last_name'    => $newUser['last_name'],
-                            'password'     => 'password_not_set',
-                            'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
-                            'user_status'  => 1,
-                        ]);
+                    $user = User::create([
+                        'program_id'   => $primaryPractice->id,
+                        'email'        => $newUser['email'],
+                        'first_name'   => $newUser['first_name'],
+                        'last_name'    => $newUser['last_name'],
+                        'password'     => 'password_not_set',
+                        'display_name' => "{$newUser['first_name']} {$newUser['last_name']}",
+                        'user_status'  => 1,
+                    ]);
 
                     $user->attachGlobalRole($newUser['role_id']);
 

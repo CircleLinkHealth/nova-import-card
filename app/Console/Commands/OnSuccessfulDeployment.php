@@ -25,7 +25,6 @@ class OnSuccessfulDeployment extends Command
                                            {envName : The name of the environment we just deployed to.}
                                            {rollback    : Either 1 or 0 if deployment is a rollback or not.}
                                            {userName    : Name of the user who triggered the deployment.}
-                                           {comment    : Deployment comment or last commit message for automatic deployments.}
                                            {previousRevision?    : The revision deployed before the one just deployed.}
     ';
 
@@ -52,15 +51,21 @@ class OnSuccessfulDeployment extends Command
         $isRollback            = 1 == $this->argument('rollback')
             ? true
             : false;
-        $user    = $this->argument('userName');
-        $comment = $this->argument('comment');
+        $user = $this->argument('userName');
+
+        \Artisan::call(StoreJiraTicketsDeployed::class, [
+            'currentRevision'  => $newlyDeployedRevision,
+            'envName'          => $envName,
+            'rollback'         => $isRollback,
+            'userName'         => $user,
+            'previousRevision' => $lastDeployedRevision,
+        ]);
 
         $this->info('previousRevision: '.$lastDeployedRevision);
         $this->info('currentRevision: '.$newlyDeployedRevision);
         $this->info('envName: '.$envName);
         $this->info('rollback: '.$isRollback);
         $this->info('userName: '.$user);
-        $this->info('comment: '.$comment);
 
         \Artisan::call(NotifyRaygunOfDeployment::class, ['scmIdentifier' => $newlyDeployedRevision]);
         $this->notifySlackOfTicketsDeployed();

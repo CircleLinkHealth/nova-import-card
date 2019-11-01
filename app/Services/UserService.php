@@ -6,7 +6,6 @@
 
 namespace App\Services;
 
-use App\Repositories\UserRepositoryEloquent;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -17,13 +16,6 @@ use CircleLinkHealth\Customer\Entities\User;
  */
 class UserService
 {
-    private $userRepo;
-
-    public function __construct(UserRepositoryEloquent $userRepo)
-    {
-        $this->userRepo = $userRepo;
-    }
-
     /**
      * Get the User's first CarePlan, or relate the User to CLH's default CarePlan.
      *
@@ -37,10 +29,5 @@ class UserService
             'user_id'               => $user->id,
             'care_plan_template_id' => getDefaultCarePlanTemplate()->id,
         ]);
-    }
-
-    public function repo()
-    {
-        return $this->userRepo;
     }
 }

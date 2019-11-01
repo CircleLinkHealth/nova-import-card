@@ -1,19 +1,20 @@
 <tr>
         <th>Name</th>
         <th>Day</th>
-        <th>Assigned<br>Calls</th>
-        <th>Actual<br>Calls</th>
-        <th>Successful<br>Calls</th>
-        <th>Unsuccessful<br>Calls</th>
-        <th>Actual<br>Hrs<br>Worked</th>
-        <th>Committed<br>Hrs</th>
-        <th>Attendance/<br>Calls<br>Completion Rate</th>
-        <th>Efficiency<br>Index</th>
-        <th>Est. Hrs<br>to Complete<br>Case Load</th>
-        <th>Projected Hrs.<br>Left In<br>Month</th>
-        <th>Hrs Committed<br>Rest of Month</th>
-        <th>Hrs Deficit<br>or<br>Surplus</th>
-        <th>% Case Load<br>Complete</th>
+        <th>Assigned Calls</th>
+        <th>Actual Calls</th>
+        <th>Successful Calls</th>
+        <th>Unsuccessful Calls</th>
+        <th>Actual Hrs Worked</th>
+        <th>Committed Hrs</th>
+        <th>Attendance/Calls Completion Rate</th>
+        <th>Efficiency Index</th>
+        <th>Est. Hrs to Complete Case Load</th>
+        <th>Projected Hrs. Left In Month</th>
+        <th>Hrs Committed Rest of Month</th>
+        <th>Hrs Deficit or Surplus</th>
+        <th>Case Load</th>
+        <th>% Case Load Complete</th>
 </tr>
 
 

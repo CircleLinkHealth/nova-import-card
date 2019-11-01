@@ -18,19 +18,19 @@ use App\Models\CCD\CcdVendor;
  * @property \Carbon\Carbon                                                                            $updated_at
  * @property \App\CLH\CCD\ImportRoutine\CcdImportStrategies[]|\Illuminate\Database\Eloquent\Collection $strategies
  * @property \App\Models\CCD\CcdVendor[]|\Illuminate\Database\Eloquent\Collection                      $vendors
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine query()
+ * @property int|null $revision_history_count
+ * @property int|null $strategies_count
+ * @property int|null $vendors_count
  */
 class CcdImportRoutine extends \CircleLinkHealth\Core\Entities\BaseModel
 {

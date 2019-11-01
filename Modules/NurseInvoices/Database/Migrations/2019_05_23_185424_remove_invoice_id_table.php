@@ -23,7 +23,9 @@ class RemoveInvoiceIdTable extends Migration
     public function up()
     {
         Schema::table('disputes', function (Blueprint $table) {
-            $table->dropForeign(['invoice_id']);
+            if ( ! isUnitTestingEnv()) {
+                $table->dropForeign(['invoice_id']);
+            }
             $table->dropColumn('invoice_id');
         });
     }

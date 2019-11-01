@@ -40,7 +40,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\CPRulesQuestions                                                          $question
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User                                       $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation query()
@@ -60,6 +59,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUserId($value)
  * @mixin \Eloquent
+ * @property int|null $meta_count
+ * @property int|null $revision_history_count
  */
 class Observation extends BaseModel
 {

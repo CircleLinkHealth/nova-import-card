@@ -65,7 +65,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null                     $provider_name
  * @property string|null                     $care_ambassador_name
  * @property string|null                     $practice_name
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView newQuery()
@@ -124,6 +123,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereZip($value)
  * @mixin \Eloquent
+ * @property string|null $requested_callback
+ * @property string|null $provider_sex
+ * @property string|null $provider_pronunciation
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereProviderPronunciation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereProviderSex($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereRequestedCallback($value)
  */
 class EnrolleeView extends Model
 {

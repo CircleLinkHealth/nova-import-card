@@ -6,6 +6,7 @@
 
 namespace App\Nova;
 
+use App\Constants;
 use App\Enrollee;
 use App\Nova\Importers\EnroleeStatus as EnroleeStatusImporter;
 use Illuminate\Http\Request;
@@ -17,6 +18,12 @@ use Sparclex\NovaImportCard\NovaImportCard;
 
 class EnroleeStatus extends Resource
 {
+    /**
+     * The logical group associated with the resource.
+     *
+     * @var string
+     */
+    public static $group    = Constants::NOVA_GROUP_ENROLLMENT;
     public static $importer = EnroleeStatusImporter::class;
 
     /**
@@ -95,7 +102,7 @@ class EnroleeStatus extends Resource
             new NovaImportCard(self::class),
             (new LinkableAway())
                 ->title('CSV Template')
-                ->url(route('download.google.csv', ['filename' => 'UpdateEnroleeDataTemplate']))
+                ->url('https://docs.google.com/spreadsheets/d/1hvA5ILwpDTX6D9rh81RUlMivhlfe7PVBDSwF6Td9-QI/edit?usp=sharing')
                 ->subtitle('Click to download.')
                 ->target('_self'),
         ];
@@ -170,7 +177,7 @@ class EnroleeStatus extends Resource
      */
     public static function label()
     {
-        return 'Patients To Enroll - Update Information';
+        return 'Patients - Update Information';
     }
 
     /**

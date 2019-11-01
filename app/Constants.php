@@ -6,6 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\Ehr;
+
 class Constants
 {
     const CACHE_USER_HAS_CCDA = 'user:{$userId}:has_ccda';
@@ -39,7 +41,12 @@ class Constants
 
     const MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS = 1200;
 
-    const NOVA_GROUP_CARE_COACHES       = 'Care Coaches';
+    //Groups for Nova Resources
+    const NOVA_GROUP_CARE_COACHES = 'Care Coaches';
+    const NOVA_GROUP_ENROLLMENT   = 'Enrollment';
+    const NOVA_GROUP_NBI          = 'NBI';
+    const NOVA_GROUP_PRACTICES    = 'Practices';
+
     const PRACTICE_STAFF_ROLE_NAMES     = ['provider', 'office_admin', 'med_assistant', 'registered-nurse', 'specialist'];
     const SAAS_INTERNAL_USER_ROLE_NAMES = ['saas-admin', 'care-center'];
 
@@ -56,4 +63,11 @@ class Constants
     const SNOMED          = 'snomed_code';
     const SNOMED_NAME     = 'SNOMED CT';
     const VIEWING_PATIENT = 'viewing-patient';
+
+    public static function athenaEhrId()
+    {
+        return \Cache::remember('athena_ehr_id_in_cpm', 5, function () {
+            return optional(Ehr::whereName('Athena')->firstOrFail())->id;
+        });
+    }
 }

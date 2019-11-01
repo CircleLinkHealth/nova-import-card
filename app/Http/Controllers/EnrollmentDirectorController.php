@@ -16,7 +16,7 @@ use App\Http\Requests\UpdateMultipleEnrollees;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
 class EnrollmentDirectorController extends Controller
 {
@@ -43,14 +43,11 @@ class EnrollmentDirectorController extends Controller
 
     public function assignCareAmbassadorToEnrollees(UpdateMultipleEnrollees $request)
     {
-        $enrolleeIds  = implode(',', $request->input('enrolleeIds'));
-        $toCall       = Enrollee::TO_CALL;
-        $softDeclined = Enrollee::SOFT_REJECTED;
-
-        DB::statement("UPDATE enrollees
-SET
-    care_ambassador_user_id = ?, status = CASE WHEN status = ? THEN ? ELSE status END
-WHERE id IN (?)", [$request->input('ambassadorId'), $softDeclined, $toCall, $enrolleeIds]);
+        Enrollee::whereIn('id', $request->input('enrolleeIds'))
+            ->update([
+                'status'                  => Enrollee::TO_CALL,
+                'care_ambassador_user_id' => $request->input('ambassadorId'),
+            ]);
 
         return response()->json([], 200);
     }
@@ -139,6 +136,15 @@ END ASC, attempt_count ASC");
         Enrollee::whereIn('id', $request->input('enrolleeIds'))->update(['status' => Enrollee::INELIGIBLE]);
 
         return response()->json([], 200);
+    }
+
+    public function runCreateEnrolleesSeeder(Request $request)
+    {
+        if ( ! isProductionEnv()) {
+            Artisan::call('db:seed', ['--class' => 'EnrolleesSeeder']);
+        }
+
+        return 'Test Patients have been created. Please close this window.';
     }
 
     public function unassignCareAmbassadorFromEnrollees(UpdateMultipleEnrollees $request)
