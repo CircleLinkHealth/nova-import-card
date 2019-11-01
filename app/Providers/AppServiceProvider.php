@@ -21,7 +21,7 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Queue;
-use Tests\Commands\CreateAndSeedSqliteDB;
+use Tests\Commands\CreateAndSeedTestSuiteDB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -145,7 +145,7 @@ class AppServiceProvider extends ServiceProvider
 
         if ($this->app->environment('testing')) {
             $this->commands([
-                CreateAndSeedSqliteDB::class,
+                CreateAndSeedTestSuiteDB::class,
             ]);
         }
 
