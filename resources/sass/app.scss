@@ -249,6 +249,21 @@ html, body, #app {
     }
 }
 
+@media (max-width: 490px) {
+    .btn-start {
+        width: 40%;
+        height: 30px;
+        padding: 1%;
+    }
+    .bottom-navbar {
+        width: 110%;
+        margin-left: -6%;
+    }
+    #app > div > div.bottom-navbar.container > div > div.col-1.col-sm-1.col-md-1.col-lg-1.text-center.no-padding > div > button > svg{
+        width: 62%;
+    }
+}
+
 .no-padding {
     padding: 0;
 }
@@ -455,7 +470,6 @@ When progress text and bar are in one line (col-sm screens)
 .error {
     color: darkred;
 }
-
 .survey-sub-welcome-text {
     font-family: Poppins;
     font-size: 18px;
