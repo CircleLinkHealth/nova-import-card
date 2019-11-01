@@ -694,6 +694,41 @@
             "time": "2019-10-01T13:28:15+00:00"
         },
         {
+                    "name": "circlelinkhealth/import-practice-staff-csv",
+                    "version": "dev-CPM-1613_nova_dropdown",
+                    "dist": {
+                        "type": "path",
+                        "url": "./nova-components/ImportPracticeStaffCsv",
+                        "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5",
+                        "shasum": null
+                    },
+                    "require": {
+                        "php": ">=7.1.0",
+                        "sparclex/nova-import-card": "^2.0"
+                    },
+                    "type": "library",
+                    "extra": {
+                        "laravel": {
+                            "providers": [
+                                "Circlelinkhealth\\ImportPracticeStaffCsv\\CardServiceProvider"
+                            ]
+                        }
+                    },
+                    "autoload": {
+                        "psr-4": {
+                            "Circlelinkhealth\\ImportPracticeStaffCsv\\": "src/"
+                        }
+                    },
+                    "license": [
+                        "MIT"
+                    ],
+                    "description": "A Laravel Nova card.",
+                    "keywords": [
+                        "laravel",
+                        "nova"
+                    ]
+                },
+        {
             "name": "circlelinkhealth/raygun",
             "version": "dev-master",
             "source": {
