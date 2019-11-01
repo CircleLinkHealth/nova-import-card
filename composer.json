@@ -86,6 +86,7 @@
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/timetracking": "1.1.1",
     "circlelinkhealth/twofa": "1.1",
+    "circlelinkhealth/import-practice-staff-csv": "*",
     "daltcore/lara-pdf-merger": "dev-master",
     "dillingham/nova-button": "^1.0",
     "doctrine/dbal": "~2.3",

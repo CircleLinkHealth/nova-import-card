@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bf26d77d098e91c0012bfae3b4abc6d1",
+    "content-hash": "3fadf33a444b8e58bed07bb3e94f3f2a",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -44,8 +44,8 @@
             "authors": [
                 {
                     "name": "Alex Bowers",
-                    "email": "bowersbros@gmail.com",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "bowersbros@gmail.com"
                 }
             ],
             "description": "A tool to allow BelongsTo searchable fields to be pre-populated with data",
@@ -294,9 +294,9 @@
             "authors": [
                 {
                     "name": "Olav van Schie",
+                    "role": "Developer",
                     "email": "hello@appstract.team",
-                    "homepage": "https://appstract.team",
-                    "role": "Developer"
+                    "homepage": "https://appstract.team"
                 }
             ],
             "description": "OPcache helper for Laravel.",
@@ -350,9 +350,9 @@
             "authors": [
                 {
                     "name": "Olav van Schie",
+                    "role": "Developer",
                     "email": "hello@appstract.team",
-                    "homepage": "https://appstract.team",
-                    "role": "Developer"
+                    "homepage": "https://appstract.team"
                 }
             ],
             "description": "Smart Http Client for PHP.",
@@ -694,40 +694,40 @@
             "time": "2019-10-01T13:28:15+00:00"
         },
         {
-                    "name": "circlelinkhealth/import-practice-staff-csv",
-                    "version": "dev-CPM-1613_nova_dropdown",
-                    "dist": {
-                        "type": "path",
-                        "url": "./nova-components/ImportPracticeStaffCsv",
-                        "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5",
-                        "shasum": null
-                    },
-                    "require": {
-                        "php": ">=7.1.0",
-                        "sparclex/nova-import-card": "^2.0"
-                    },
-                    "type": "library",
-                    "extra": {
-                        "laravel": {
-                            "providers": [
-                                "Circlelinkhealth\\ImportPracticeStaffCsv\\CardServiceProvider"
-                            ]
-                        }
-                    },
-                    "autoload": {
-                        "psr-4": {
-                            "Circlelinkhealth\\ImportPracticeStaffCsv\\": "src/"
-                        }
-                    },
-                    "license": [
-                        "MIT"
-                    ],
-                    "description": "A Laravel Nova card.",
-                    "keywords": [
-                        "laravel",
-                        "nova"
+            "name": "circlelinkhealth/import-practice-staff-csv",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./nova-components/ImportPracticeStaffCsv",
+                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5",
+                "shasum": null
+            },
+            "require": {
+                "php": ">=7.1.0",
+                "sparclex/nova-import-card": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Circlelinkhealth\\ImportPracticeStaffCsv\\CardServiceProvider"
                     ]
-                },
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Circlelinkhealth\\ImportPracticeStaffCsv\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova card.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ]
+        },
         {
             "name": "circlelinkhealth/raygun",
             "version": "dev-master",
@@ -3909,8 +3909,8 @@
             "authors": [
                 {
                     "name": "Luís Otávio Cobucci Oblonczyk",
-                    "email": "lcobucci@gmail.com",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "lcobucci@gmail.com"
                 }
             ],
             "description": "A simple library to work with JSON Web Token and JSON Web Signature",
@@ -5942,8 +5942,8 @@
             "authors": [
                 {
                     "name": "Antonio Carlos Ribeiro",
-                    "email": "acr@antoniocarlosribeiro.com",
-                    "role": "Creator & Designer"
+                    "role": "Creator & Designer",
+                    "email": "acr@antoniocarlosribeiro.com"
                 }
             ],
             "description": "Take control over your Laravel app version",
@@ -6002,8 +6002,8 @@
             "authors": [
                 {
                     "name": "Antonio Carlos Ribeiro",
-                    "email": "acr@antoniocarlosribeiro.com",
-                    "role": "Creator & Designer"
+                    "role": "Creator & Designer",
+                    "email": "acr@antoniocarlosribeiro.com"
                 }
             ],
             "description": "Load your Laravel config files using yaml",
@@ -6852,9 +6852,9 @@
             "authors": [
                 {
                     "name": "Freek Van der Herten",
+                    "role": "Developer",
                     "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
+                    "homepage": "https://spatie.be"
                 }
             ],
             "description": "Manipulate images with an expressive API",
@@ -6902,9 +6902,9 @@
             "authors": [
                 {
                     "name": "Freek Van der Herten",
+                    "role": "Developer",
                     "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
+                    "homepage": "https://spatie.be"
                 }
             ],
             "description": "Easily optimize images using PHP",
@@ -9446,9 +9446,9 @@
             "authors": [
                 {
                     "name": "Brian",
+                    "role": "Lead",
                     "email": "scaturrob@gmail.com",
-                    "homepage": "http://brianscaturro.com",
-                    "role": "Lead"
+                    "homepage": "http://brianscaturro.com"
                 }
             ],
             "description": "A dependable php environment",
@@ -10269,8 +10269,8 @@
             "authors": [
                 {
                     "name": "Filipe Dobreira",
-                    "homepage": "https://github.com/filp",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "homepage": "https://github.com/filp"
                 }
             ],
             "description": "php error handling for cool kids",
@@ -11007,18 +11007,18 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 },
                 {
                     "name": "Sebastian Heuer",
-                    "email": "sebastian@phpeople.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpeople.de"
                 },
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Component for reading phar.io manifest information from a PHP Archive (PHAR)",
@@ -12839,8 +12839,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
