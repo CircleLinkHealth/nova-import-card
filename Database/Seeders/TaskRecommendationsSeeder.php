@@ -601,7 +601,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                     'skin_cancer' => [
                         'sub_title'           => 'Skin Cancer Screening:',
                         'qualitative_trigger' => 'Skin Cancer Screening',
-                        'task_body'           => 'Regular skin checks by a doctor are important for people who have already had skin cancer. If you are checking your skin and find a worrisome change, you should report it to your doctor. In addition, your doctor may suggest:',
+                        'task_body'           => 'Regular skin checks by a doctor are important for people who have already had skin cancer or have a family history of skin cancer. If you are checking your skin and find a worrisome change, you should report it to your doctor. In addition, your doctor may suggest:',
                         'recommendation_body' => ['A skin cancer screening in office'],
                     ],
 
