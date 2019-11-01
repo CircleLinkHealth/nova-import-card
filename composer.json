@@ -62,6 +62,10 @@
     },
     {
       "packagist": false
+    },
+    {
+      "type": "path",
+      "url": "./nova-components/ImportPracticeStaffCsv"
     }
   ],
   "require": {
