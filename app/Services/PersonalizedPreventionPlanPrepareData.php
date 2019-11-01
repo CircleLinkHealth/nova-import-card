@@ -515,11 +515,7 @@ class PersonalizedPreventionPlanPrepareData
     public function patientHasFallen($patientPppData, $title, $index)
     {
         $fallRisk['fall_risk'] = $this->getStringValue($patientPppData->answers_for_eval, 'fall_risk');
-        if ($fallRisk['fall_risk'] !== 'Yes') {
-            return $this->getTaskRecommendations($title, $index);
-        }
-
-        return [];
+        return $fallRisk['fall_risk'] !== 'No' ? $this->getTaskRecommendations($title, $index) : [];
     }
 
     public function hearingImpairment($patientPppData, $title, $index)
@@ -650,6 +646,7 @@ class PersonalizedPreventionPlanPrepareData
     }
 
     public function humanPapillomavirus($patientPppData, $title, $index)
+
     {
         $vaccines['human_papillomavirus'] = $this->getStringValue($patientPppData->answers_for_eval,
             'human_papillomavirus');
