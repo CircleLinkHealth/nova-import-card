@@ -43,7 +43,7 @@ class PhaxioService implements Efax
 
         foreach ($files as $file) {
             if (file_exists($file)) {
-                $handles = fopen($file, 'r');
+                $handles[] = fopen($file, 'r');
             }
         }
 
