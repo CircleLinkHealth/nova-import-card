@@ -290,7 +290,7 @@ class GenerateProviderReportService
     {
         $exerciseActivityLevels = [];
         $val = $this->answerForHraQuestionWithOrder(14);
-        $exerciseActivityLevels['value'] = $val;
+        $exerciseActivityLevels['value'] = lcfirst($val);
 
         return $exerciseActivityLevels;
     }
