@@ -177,13 +177,15 @@
                     {{$immunization}} {{$loop->last ? ' ' : ', '}}
                 @endforeach
                 vaccinations.
-                <br>
-                <br>
-                The patient has not, or is unsure if they have received the
-                @foreach($reportData['immunizations_not_received'] as $immunization)
-                    {{$immunization}} {{$loop->last ? ' ' : ', '}}
-                @endforeach
-                vaccinations.
+                @if (!empty($reportData['immunizations_not_received']))
+                    <br>
+                    <br>
+                    The patient has not, or is unsure if they have received the
+                    @foreach($reportData['immunizations_not_received'] as $immunization)
+                        {{$immunization}} {{$loop->last ? ' ' : ', '}}
+                    @endforeach
+                    vaccinations.
+                @endif
             </div>
         </div>
 
