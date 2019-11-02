@@ -27,7 +27,8 @@
         hr {
             margin: 0;
             padding: 0;
-            color: rgba(26, 26, 26, 0.25);
+            border: 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
         }
     </style>
 
@@ -68,6 +69,7 @@
 <body onload="subst()">
 <div class="report-header">
     Wellness Visit {{$reportName}} for&nbsp;<span class="patient-name"><strong>{{$patientName}}</strong></span>&nbsp;(DOB: {{$patientDob}})
+    <hr/>
 </div>
 </body>
 </html>
