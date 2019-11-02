@@ -331,7 +331,7 @@ class ProviderReportService
 
         $filtered = array_filter($val, function ($v) {
             if (is_array($v)) {
-                return self::getArrayValue($v);
+                return ! empty(self::getArrayValue($v));
             } else {
                 return ! self::filterAnswer($v);
             }
