@@ -17,7 +17,7 @@ class EditSkinCancerInQuestionsTable extends Migration
             return;
         }
         $table = 'ppp_task_recommendations';
-        $title = 'Screenings:';
+        $title = 'Screenings';
 
         $dataToUpdate = json_encode(
             [
