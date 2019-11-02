@@ -73,13 +73,13 @@
             <br/>
 
             <div class="recommendations-area">
-                The patient has reported allergies to the following:
                 @if(! empty($reportData['allergy_history']))
+                The patient has reported allergies to the following:
                     @foreach($reportData['allergy_history'] as $allergy)
                         {{$allergy}}{{$loop->last ? '.' : ', '}}
-                    @endforeach()
+                    @endforeach
                 @else
-                    NKA.
+                    Patient indicated that they do not take any medications regularly.
                 @endif
             </div>
         </div>
@@ -104,7 +104,7 @@
                         @else
                             {{$condition['name']}} {{$loop->last ? '.' : ', '}}
                         @endif
-                    @endforeach()
+                    @endforeach
                     @if(! empty($reportData['medical_history_other']))
                         The patient has also reported
                         @foreach($reportData['medical_history_other'] as $otherCondition)
@@ -125,14 +125,14 @@
             <br/>
 
             <div class="recommendations-area">
-                The patient has indicated they use
                 @if(! empty($reportData['medication_history']))
+                    The patient has indicated they use
                     @foreach($reportData['medication_history'] as $medication)
                         {{$medication['dose']}}
                         of {{$medication['drug']}} {{$medication['frequency']}} {{$loop->last ? '.' : ', '}}
-                    @endforeach()
+                    @endforeach
                 @else
-                    None.
+                    Patient has not reported any medication history.
                 @endif
             </div>
         </div>
@@ -153,7 +153,7 @@
                     @foreach($reportData['family_medical_history'] as $condition)
                         {{$condition['name']}} in
                         patient's {{$condition['family']}} {{$loop->last ? '.' : ', '}}
-                    @endforeach()
+                    @endforeach
                 @else
                     Nothing.
                 @endif
