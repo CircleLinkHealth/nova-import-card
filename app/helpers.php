@@ -1465,23 +1465,21 @@ if ( ! function_exists('minutesToHhMm')) {
      */
     function minutesToHhMm($minutes)
     {
-        $H = $inHours = 0;
+        $h = 0;
 
         if ($minutes >= 60) {
-            $inHours = $minutes / 60;
-            $minutes = $minutes - ($inHours * 60);
-            $H       = floor($inHours);
+            $h = floor($minutes / 60);
         }
 
-        $i = round($minutes);
+        $i = round($minutes - ($h * 60));
 
-        //If 59 minutes rounds up to 60 we wnat to add an hour
+        //If 59 minutes rounds up to 60 we want to add an hour
         if (60 == $i) {
             $i = 0;
-            ++$H;
+            ++$h;
         }
 
-        return sprintf('%02d:%02d', $H, $i);
+        return sprintf('%02d:%02d', $h, $i);
     }
 }
 
@@ -1507,36 +1505,5 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
             \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
         }
-    }
-
-    if ( ! function_exists('stripNonTrixTags')) {
-        /**
-         * @param string
-         *
-         * @return string
-         */
-        function stripNonTrixTags(string $trixString)
-        {
-            return strip_tags($trixString, Constants::TRIX_ALLOWABLE_TAGS_STRING);
-        }
-    }
-}
-
-if ( ! function_exists('convertValidatorMessagesToString')) {
-    /**
-     * Formats Validator messages to return string.
-     *
-     * @param \Illuminate\Validation\Validator $validator
-     *
-     * @return string
-     */
-    function convertValidatorMessagesToString(Illuminate\Validation\Validator $validator): string
-    {
-        return implode('\n', collect($validator->getMessageBag()->toArray())->transform(function ($item, $key) {
-            $errors = implode(', ', $item);
-            $key = ucfirst($key);
-
-            return "{$key}: $errors";
-        })->toArray());
     }
 }

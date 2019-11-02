@@ -3,13 +3,15 @@
         font-size: 14px;
     }
 
-    .vue-modal-container {
-        overflow: visible;
-    }
-
     .suffix-element .dropdown-menu {
         max-height: 160px !important;
     }
+
+    .relation-element .dropdown-menu {
+        max-height: 80px !important;
+    }
+
+
     .care-team-dropdown.searchable .dropdown-toggle {
         cursor: text;
     }
@@ -498,7 +500,7 @@
                                 <div class="col-md-12">
                                     <validate auto-label :class="fieldClassName(formstate.typeForDropdown)">
                                         <div class="col-md-12">
-                                            <v-select class="care-team-dropdown"
+                                            <v-select class="care-team-dropdown relation-element"
                                                       label="text"
                                                       index="id"
                                                       :options="relationToPatientOptions.data"
