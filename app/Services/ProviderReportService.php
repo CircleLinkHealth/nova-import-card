@@ -106,6 +106,10 @@ class ProviderReportService
         if ( ! self::filterAnswer($report->immunization_history)) {
             foreach ($report->immunization_history as $immunization => $answer) {
                 $received = $this->checkInputValueIsNotEmpty($answer, $immunization, $report->demographic_data);
+                //Q32 is not always answered.
+                if (empty($received)) {
+                    continue;
+                }
                 strtolower($received) === 'yes'
                     ? $immunizationsReceived[] = $immunization
                     : $immunizationsNotReceived[] = $immunization;
