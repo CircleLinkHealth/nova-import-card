@@ -79,7 +79,7 @@
                         {{$allergy}}{{$loop->last ? '.' : ', '}}
                     @endforeach
                 @else
-                    Patient indicated that they do not take any medications regularly.
+                    NKA.
                 @endif
             </div>
         </div>
@@ -132,7 +132,7 @@
                         of {{$medication['drug']}} {{$medication['frequency']}} {{$loop->last ? '.' : ', '}}
                     @endforeach
                 @else
-                    Patient has not reported any medication history.
+                    Patient indicated that they do not take any medications regularly.
                 @endif
             </div>
         </div>
