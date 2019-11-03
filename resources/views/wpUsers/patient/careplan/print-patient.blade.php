@@ -1,482 +1,809 @@
-@extends('layouts.provider')
-
-@section('app')
-<?php
-if (isset($patient)) {
-    $today = \Carbon\Carbon::now()->toFormattedDateString();
-
-    $alreadyShown = [];
-    //$patient can be a User or Patient model.
-    $seconds     = $patient->getCcmTime();
-    $H           = floor($seconds / 3600);
-    $i           = ($seconds / 60) % 60;
-    $s           = $seconds % 60;
-    $monthlyTime = sprintf('%02d:%02d:%02d', $H, $i, $s);
-} else {
-    $monthlyTime = '';
-}
-$user = auth()->user();
-?>
-
-@push('styles')
-    <style>
-        .full-width {
-            width: 100%;
-        }
-
-        .margin-0 {
-            margin-right: 0;
-            margin-left: 0;
-        }
-
-        .top-nav-item-icon {
-            height: 19px;
-            width: 20px;
-            margin-right: 3px;
-        }
-
-        .top-nav-item {
-            background: none !important;
-            padding: 15px;
-            line-height: 20px;
-            cursor: pointer;
-        }
-
-        .text-white {
-            color: #fff;
-        }
-
-        .search-bar {
-            width: 90%;
-        }
-    </style>
-@endpush
-<nav class="navbar primary-navbar">
-    <div class="container-fluid full-width margin-0">
-        <div class="col-lg-1 col-sm-1 col-xs-1">
-            <a class="navbar-brand" href="{{ url('/') }}" style="border: none"><img
-                        src="{{mix('/img/logos/LogoHorizontal_White.svg')}}"
-                        alt="Care Plan Manager"
-                        style="top:-7px"
-                        width="105px"/></a>
-        </div>
-
-        <div class="col-lg-11 col-sm-11 col-xs-11">
-            <div class="collapse navbar-collapse" id="navbar-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
-                             aria-expanded="false">
-                            <i class="top-nav-item-icon glyphicon glyphicon glyphicon-cog"></i>
-                            {{$user->getFullName()}}
-                            <span class="caret text-white"></span>
-                        </div>
-                        <ul class="dropdown-menu" role="menu" style="background: white !important;">
-
-                            @include('partials.last-login')
-
-                            @impersonating
-                            <li>
-                                <a href="{{ route('impersonate.leave') }}">Leave impersonation</a>
-                            </li>
-                            @endImpersonating
-
-                            @if(auth()->user()->hasRole(['care-center']) && auth()->user()->isNotSaas())
-                                <li class="hidden-xs">
-                                    <a href="{{ route('offline-activity-time-requests.index') }}"
-                                       id="offline-activity-time-requests-index-link">
-                                        Offline Activity Time Requests
-                                    </a>
-                                </li>
-                                <li class="hidden-xs">
-                                    <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
-                                        Work Schedule
-                                    </a>
-                                </li>
-                                @if(!isProductionEnv() || (isProductionEnv() && Carbon\Carbon::now()->gte(Carbon\Carbon::create(2019,6,1,1,0,0))))
-                                    <li class="hidden-xs">
-                                        <a href="{{ route('care.center.invoice.review') }}"
-                                           id="offline-activity-time-requests-index-link">
-                                            Hours/Pay Invoice
-                                        </a>
-                                    </li>
-                                @endif
-                            @endif
-                            @if ( ! auth()->guest() && $user->hasRole(['administrator', 'administrator-view-only']) && $user->isNotSaas())
-                                <li><a style="color: #47beab"
-                                       href="{{ empty($patient->id) ? route('admin.dashboard') : route('admin.users.edit', array('patient' => $patient->id)) }}">
-                                        Admin Panel
-                                    </a>
-                                </li>
-                            @endif
-                            @if(isAllowedToSee2FA())
-                                <li>
-                                    <a href="{{ route('user.settings.manage') }}">
-                                        Account Settings
-                                    </a>
-                                </li>
-                            @endif
-                            <li><a href="{{ route('user.logout') }}">
-                                    Logout
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</nav>
-@yield('content')
+@extends('partials.patientUI')
 <?php
 /**
- * Sometimes, $patient is an instance of User::class,
- * other times, it is an instance of \CircleLinkHealth\Customer\Entities\Patient::class
- * We have to make sure that $user is always an instance of User::class by deriving it from $patient.
+ * Could generate careplan in HTML or PDF
+ * https://cpm-web.dev/manage-patients/careplan-print-multi?letter&users={patientId}.
  */
-$user = null;
-if (isset($patient)) {
-    if (is_a($patient, \CircleLinkHealth\Customer\Entities\Patient::class)) {
-        $user = $patient->user;
-    } else {
-        $user = $patient;
+use Illuminate\Support\Collection;
+
+if ( ! function_exists('checkIfExists')) {
+    //check if exists
+    function checkIfExists(
+        $arr,
+        $val
+    ) {
+        if (isset($arr[$val])) {
+            return $arr[$val];
+        }
+
+        return '';
     }
 }
-?>
-@endsection
 
+$today = \Carbon\Carbon::now()->toFormattedDateString();
+// $provider = CircleLinkHealth\Customer\Entities\User::find($patient->getLeadContactID());
+
+?>
 
 @section('title', 'Care Plan View/Print')
 @section('activity', 'Care Plan View/Print')
-
 @section('content')
-    @push('styles')
-        <style>
-            [v-cloak] > * {
-                display: none
-            }
+    @foreach($careplans as $id => $careplan)
+        <?php
+        $patient       = \CircleLinkHealth\Customer\Entities\User::find($id);
+        $billingDoctor = $patient->billingProviderUser();
+        $regularDoctor = $patient->regularDoctorUser();
+        ?>
+        @push('styles')
+            <style type="text/css">
+                body {
+                    margin: 0;
+                    margin-right: 150px !important;
+                }
 
-            [v-cloak]::before {
-                content: "loading…"
-            }
+                div.address {
+                    line-height: 1.1em;
+                    font-family: 'Roboto', sans-serif;
+                }
 
-            .patient-summary__subtitles span.glyphicon {
-                margin-top: -7px;
-            }
+                div.breakhere {
+                    page-break-after: always;
+                    /*height: 100%;*/
+                }
 
-        </style>
-    @endpush
-    TEST
-    <div id="v-pdf-careplans" class="container" v-cloak>
-        <section class="patient-summary">
-            <div class="patient-info__main">
-                <div class="row">
-                    <div class="col-xs-12 text-right hidden-print">
-                        <div class="col-sm-12" style="text-align: center">
-                            <br/>
-                            <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
-                                        <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
-                                                <div class="color-grey">
-                                                        <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
-                                                            {{$monthlyTime}}
-                                                        </a>
+                .address-height-print {
+                    height: 1in !important;
+                    max-height: 1in !important;
+                }
+
+                .sender-address-print {
+                    font-size: 16px !important;
+                }
+
+                .receiver-address-print {
+                    font-size: 16px !important;
+                    height: 1in !important;
+                }
+
+                .receiver-address-padding {
+                    padding-top: 1.7in !important;
+                    margin-top: 0 !important;
+                    margin-bottom: 0 !important;
+                }
+
+                .welcome-copy {
+                    font-size: 24px;
+                    margin-top: 0.5in !important;
+                }
+
+                .omr-bar {
+                    height: 15px;
+                    background-color: black;
+                    width: 35%;
+                    margin-left: 120%;
+                    margin-top: 15%;
+                }
+
+                /** begin general careplan styles */
+
+                .color-blue {
+                    color: #109ace;
+                }
+
+                .font-22 {
+                    font-size: 22px;
+                }
+
+                .font-18 {
+                    font-size: 18px;
+                }
+
+                .top-10 {
+                    margin-top: 10px;
+                }
+
+                .top-20 {
+                    margin-top: 20px !important;
+                }
+
+                li.list-square {
+                    list-style-type: square;
+                }
+
+                .label-primary {
+                    background-color: #109ace;
+                }
+
+                .label-secondary {
+                    background-color: #47beab;
+                }
+            </style>
+        @endpush
+        <div class="container">
+            <section class="patient-summary">
+                <div class="patient-info__main">
+                    @if($letter)
+                        <div class="patient-info__main ">
+                            <div class="row gutter">
+                                <div class="col-xs-12">
+                                    <div class="row address-height-print">
+                                        <div class="col-xs-12 sender-address-print">
+                                            <div class="row">
+                                                <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
+                                                <div class="col-xs-7 address">
+                                                    <div>
+                                                        @if($billingDoctor)
+                                                            @if($billingDoctor->getFullName()){{$billingDoctor->getFullName()}}@endif
+                                                        @endif
+                                                    </div>
+                                                    <div>
+                                                        {{$patient->primaryPractice->display_name}}
+                                                    </div>
+                                                    <div>
+                                                        @if($patient->getPreferredLocationAddress())
+                                                            <div>{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
+                                                            <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div> -->
+                                                            <div>{{$patient->getPreferredLocationAddress()->city}}
+                                                                , {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
+                                                        @endif
+                                                    </div>
                                                 </div>
-                                        </span>
-                                    </span>
-                        </div>
-                        @if(! empty(optional($errors)->messages()))
-                            <div>
-                                <div class="col-sm-12 alert alert-danger text-left"
+                                                <div class="col-xs-4 col-xs-offset-1 print-row text-right">
+                                                    <div>290 Harbor Drive</div>
+                                                    <div>Stamford, CT 06902</div>
+                                                    <div class="omr-bar"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                     style="line-height: 2; margin-top: 3px">
-                                    <h4>CarePlan cannot be approved because:</h4>
-                                    <ul class="list-group">
-                                        @foreach ($errors->all() as $error)
-                                            <li>
-                                                <span class="glyphicon glyphicon-exclamation-sign"></span> {!! $error !!}
+                                    <div class="row receiver-address-padding">
+                                        <div class="col-xs-12 receiver-address-print">
+                                            <div class="row">
+                                                <div class="col-xs-8">
+                                                    <div class="row">
+                                                        <div class="col-xs-12 address">{{strtoupper($patient->getFullName())}}</div>
+                                                        <div class="col-xs-12 address">{{strtoupper($patient->address)}}</div>
+                                                        <div class="col-xs-12 address"> {{strtoupper($patient->city)}}
+                                                            , {{strtoupper($patient->state)}} {{strtoupper($patient->zip)}}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-4 text-right">
+                                                    <br>
+                                                    <?= date('F d, Y'); ?>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row gutter">
+                                <div class="col-xs-10 welcome-copy">
+                                    <div class="row gutter">
+                                        Dear {{ucfirst(strtolower($patient->first_name))}} {{ucfirst(strtolower($patient->last_name))}}
+                                        ,
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                    <div class="row gutter" style="line-height: 1.0em;">
+                                        Welcome to Dr. {{$billingDoctor->getFullName()}}'s Personalized Care Management
+                                        program!
+                                    </div>
+                                    <br>
+                                    <div class="row gutter" style="line-height: 1.0em;">
+                                        We are happy you have decided to enroll in this invite-only program for
+                                        continued health.
+                                    </div>
+                                    <br>
+                                    <div class="row gutter" style="line-height: 1.0em;">
+                                        As Dr. {{$billingDoctor->getFullName()}} mentioned, this program is an important
+                                        part
+                                        of
+                                        better
+                                        self-management of your health. By participating, you benefit in a number ways:
+                                    </div>
+                                    <div class="row gutter"><BR>
+                                        <ul type="disc" style="line-height: 1.0em;list-style-type: disc;">
+                                            <li style="list-style-type: disc;margin: 15px 0;">Regular calls to check-in
+                                                on behalf of Dr. {{$billingDoctor->getFullName()}}, so (s)he can help
+                                                keep
+                                                you
+                                                healthy between visits
+
+                                            </li>
+                                            <li style="list-style-type: disc;margin: 15px 0;">Avoid the inconvenience of
+                                                frequent office visits and co-pays by using this program's remote care
+                                            </li>
+                                            <li style="list-style-type: disc;margin: 15px 0;">All of the information
+                                                gathered will be available to your doctor and will allow them to see how
+                                                you are doing even when you are not in their office
+                                            </li>
+                                            <li style="list-style-type: disc;margin: 5px 0;">Help you take better care
+                                                of yourself by staying connected to your care team and doctor
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="row gutter" style="line-height: 1.0em;">
+                                        Enclosed please find a copy of your personalized care plan. Please take a few
+                                        minutes to review the care plan and call us if you have any questions. You can
+                                        leave a message for your care team 24/7 at the following number:
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                    <div class="row gutter text-bold text-center">
+                                        (888) 729-4045
+                                    </div>
+                                    <div class="row gutter"><BR><BR>
+                                    </div>
+                                    <div class="row gutter">
+                                        Thanks so much. We are eager to have you benefit from this worthwhile program!
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                    <div class="row gutter">
+                                        <br>Best,<br><br><br>
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                    <div class="row gutter">
+                                        Chelsea Pruett
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="breakhere"></div>
+                        <!-- <div class="row pb-before" style="color:white;">This page left intentionally blank</div> -->
+                    @endif
+                    @if(!isset($generatePdfCareplan))
+
+                        <div class="row gutter">
+                            <div class="col-xs-7">
+                                <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">
+                                    Care
+                                    Plan</h1>
+                            </div>
+
+                            @include('partials.carePlans.approval-box')
+                        </div>
+
+                        <br>
+
+                        <div class="row gutter">
+                            <div class="col-xs-5 print-row text-bold">{{$patient->getFullName()}}
+                                (DOB: {{$patient->patientInfo->dob()}})
+                            </div>
+                            <div class="col-xs-3 print-row">{{$patient->getPhone()}}</div>
+                            <div class="col-xs-4 print-row text-right">{{$today}}</div>
+                        </div>
+                        <div class="row gutter">
+                            @if($billingDoctor)
+                                <div class="col-xs-5 print-row text-bold">
+                                    {{$billingDoctor->getFullName()}} {!! ($billingDoctor->getSpecialty() == '')? '' :  "<br> {$billingDoctor->getSpecialty()}"!!}
+                                </div>
+                                <div class="col-xs-3 print-row">
+                                    {{$billingDoctor->getPhone()}}
+                                </div>
+                            @else
+                                <div class="col-xs-5 print-row text-bold">
+                                    <em>No Billing Dr. Selected</em>
+                                </div>
+                                <div class="col-xs-3 print-row">
+                                </div>
+                            @endif
+                            <div class="col-xs-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
+                        </div>
+
+
+                        @if($regularDoctor)
+                            <div class="row gutter">
+                                <div class="col-xs-5 print-row text-bold">
+                                    {{$regularDoctor->getFullName()}} {!! ($regularDoctor->getSpecialty() == '')? '' :  "<br> {$regularDoctor->getSpecialty()}"!!}
+                                </div>
+                                <div class="col-xs-3 print-row">
+                                    {{$regularDoctor->getPhone()}}
+                                </div>
+                            </div>
+                        @endif
+                    @endif
+                </div>
+            @if(! isset($generatePdfCareplan))
+                <?php
+                $allCpmProblems = new Collection($data['allCpmProblems']);
+                $cpmProblems    = new Collection($data['cpmProblems']);
+                $ccdProblems    = new Collection($data['ccdProblems']);
+                $healthGoals    = new Collection($data['healthGoals']);
+                $baseGoals      = new Collection($data['baseHealthGoals']);
+                $healthNote     = $data['healthGoalNote'];
+                ?>
+                <!-- CARE AREAS -->
+                    <div class="patient-info__subareas">
+                        <?php
+                        $ccdProblems = $ccdProblems->map(function ($problem) use ($allCpmProblems) {
+                            if ( ! $problem['instruction']) {
+                                $cpmProblem = $allCpmProblems->first(function ($cpm) use ($problem) {
+                                    return ($cpm['name'] == $problem['name']) || ($cpm['id'] == $problem['cpm_id']);
+                                });
+                                if ($cpmProblem) {
+                                    $problem['instruction'] = $cpmProblem['instruction'];
+                                }
+                            }
+
+                            return $problem;
+                        });
+
+                        $problemsWithInstructions = $ccdProblems->filter(function ($ccd) {
+                            return $ccd['instruction']['name'];
+                        });
+
+                        $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
+                            return $problem['is_monitored'];
+                        })->groupBy('name')->values()->map(function ($problems) {
+                            return $problems->first();
+                        });
+
+                        $ccdProblemsForListing = $ccdProblems->filter(function ($problem) {
+                            return ! $problem['is_monitored'];
+                        })->groupBy('name')->values()->map(function ($problems) {
+                            return $problems->first();
+                        });
+                        ?>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">We Are
+                                    Managing</h2>
+                            </div>
+                        </div>
+                        <div class="row gutter">
+                            <div class="col-xs-12">
+                                @if (!$ccdMonitoredProblems->count())
+                                    <div class="text-center">No Monitored Problems at this time</div>
+                                @else
+                                    <ul class="row">
+                                        @foreach ($ccdMonitoredProblems as $problem)
+                                            <li class='top-10 col-sm-6'>
+                                                {{$problem['name']}}
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </div>
+                            <!-- Do NOT show other conditions in PRINT. See https://github.com/CircleLinkHealth/cpm-web/issues/1871 -->
+                            @if ($ccdProblemsForListing->count() > 0 && false)
+                                <div class="col-xs-12">
+                                    <h2 class="color-blue">Other Conditions</h2>
+                                    <ul class="row">
+                                        @foreach ($ccdProblemsForListing as $problem)
+                                            <li class='top-10 col-sm-6'>
+                                                {{$problem['name']}}
                                             </li>
                                         @endforeach
                                     </ul>
                                 </div>
-                                <div class="row" style="margin-bottom: 5%;">
-                                    @include('errors.incompatibleBrowser')
+                            @endif
+                        </div>
+                    </div>
+                    <!-- /CARE AREAS -->
+                    <!-- BIOMETRICS -->
+                    <div class="patient-info__subareas">
+                        <?php
+                        $healthGoalsForListing = $healthGoals->sortBy('id')->filter(function ($goal) {
+                            return $goal['enabled'];
+                        })->map(function ($goal) {
+                            $start = $goal['info']['starting'];
+                            $start = (int) ($start
+                                ? explode('/', $start)[0]
+                                : 'N/A');
+                            $end = $goal['info']['target'];
+                            $end = (int) ($end
+                                ? explode('/', $end)[0]
+                                : 0);
+
+                            if ('' == $goal['info']['starting']) {
+                                $goal['info']['starting'] = 'N/A';
+                            }
+
+                            if ('Blood Sugar' == $goal['name']) {
+                                $goal['info']['target'] = $goal['info']['target'] ?? '120';
+                                if ('0' == $goal['info']['target']) {
+                                    $goal['info']['target'] = '120';
+                                }
+                                if ($start > 130) {
+                                    $goal['verb'] = 'Decrease';
+                                } elseif ('N/A' == $goal['info']['starting'] || 'TBD' == $goal['info']['target'] || ! $goal['info']['starting'] || ($start >= 80 && $start <= 130)) {
+                                    $goal['verb'] = 'Regulate';
+                                } else {
+                                    $goal['verb'] = 'Increase';
+                                }
+                            } elseif ('Blood Pressure' == $goal['name']) {
+                                $goal['info']['target'] = $goal['info']['target'] ?? '130/80';
+                                if ('0' == $goal['info']['target']) {
+                                    $goal['info']['target'] = '130/80';
+                                }
+
+                                if ('N/A' == $goal['info']['starting'] || 'TBD' == $goal['info']['target'] || ! $goal['info']['starting'] || ($start < 130)) {
+                                    $goal['verb'] = 'Regulate';
+                                } elseif ($start >= 130) {
+                                    $goal['verb'] = 'Decrease';
+                                }
+                            } else {
+                                if ( ! $goal['info']['starting'] || 'N/A' == $goal['info']['starting'] || ! $goal['info']['target'] || ('Weight' == $goal['name'] && '0' == $goal['info']['target'])) {
+                                    if (('Weight' == $goal['name'] && '0' == $goal['info']['target'])) {
+                                        $goal['info']['target'] = 'N/A';
+                                    }
+                                    $goal['verb'] = 'Regulate';
+                                } else {
+                                    $goal['verb'] = ($start > $end)
+                                        ? 'Decrease'
+                                        :
+                                        (($start < $end)
+                                            ? 'Increase'
+                                            :
+                                            'Regulate');
+                                }
+                            }
+                            $goal['action'] = 'Regulate' == $goal['verb']
+                                ? 'keep under'
+                                : 'to';
+
+                            return $goal;
+                        });
+                        ?>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">Your Health
+                                    Goals</h2>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <?php
+                            $noteIsAvailable = $healthNote && ('' != $healthNote['body']);
+                            ?>
+                            @if ($noteIsAvailable)
+                                <div class="col-xs-12 top-10">
+                                    {{ $healthNote['body'] }}
+                                </div>
+                            @endif
+                            @if (!$healthGoalsForListing->count())
+                                <div class="col-sm-12 text-center top-20">No Health Goals at this time</div>
+                            @else
+                                @if ($noteIsAvailable)
+                                    <br><br>
+                                @endif
+                                <ul class="col-sm-12 subareas__list top-20"
+                                    style="{{ $noteIsAvailable ? 'padding-top:10px !important;' : '' }}">
+                                    <li class="subareas__item subareas__item--wide col-sm-12">
+                                        @foreach($healthGoalsForListing as $goal)
+                                            <div class="col-xs-5 print-row text-bold">{{ $goal['verb'] }} {{$goal['name']}}</div>
+                                            <div class="col-xs-4 print-row text-bold">{{ $goal['action'] }} {{ $goal['info']['target'] }} {{$goal['unit']}}</div>
+                                            <div class="col-xs-3 print-row">
+                                                from {{ $goal['info']['starting'] }} {{$goal['unit']}}</div>
+                                        @endforeach
+                                    </li>
+                                </ul>
+                            @endif
+                        </div>
+                    </div>
+                    <!-- /BIOMETRICS -->
+
+                    <!-- MEDICATIONS -->
+                    <?php
+                    $medications      = new Collection($data['medications']);
+                    $medicationGroups = new Collection($data['medicationGroups']);
+
+                    $medications = $medications
+                        ->filter(function ($med) {
+                            return $med['active'];
+                        })
+                        ->map(function ($medication) use ($medicationGroups) {
+                            $medication['group'] = $medicationGroups->first(function ($group) use (
+                                $medication
+                            ) {
+                                return $group['id'] == $medication['medication_group_id'];
+                            });
+
+                            return $medication;
+                        });
+                    ?>
+                    <div class="patient-info__subareas">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">
+                                    Medications</h2>
+                            </div>
+                            <div class="col-xs-12">
+                                <ul v-if="medications.length">
+                                    @foreach ($medications as $medication)
+                                        <li class="top-10">
+                                            @if ($medication['name'])
+                                                <h4>{{$medication['name']}}
+                                                    @if ($medication['group']['name'])
+                                                        <label class="label label-secondary">{{$medication['group']['name']}}</label>
+                                                    @endif
+                                                </h4>
+                                            @endif
+                                            @if (!$medication['name'])
+                                                <h4>- {{$medication['sig']}}
+                                                    @if ($medication['group']['name'])
+                                                        <label class="label label-primary">{{$medication['group']['name']}}</label>
+                                                    @endif
+                                                </h4>
+                                            @endif
+                                            @if ($medication['name'] && $medication['sig'])
+                                                <ul class="font-18">
+                                                    @foreach (explode('\n', $medication['sig']) as $sig)
+                                                        <li class="list-square">{{$sig}}</li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /MEDICATIONS -->
+
+                    <!-- SYMPTOMS -->
+                    <?php
+                    $symptoms = (new Collection($data['symptoms']))->sortBy('name');
+                    ?>
+                    <div class="patient-info__subareas">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">Watch out
+                                    for:</h2>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <ul class="subareas__list">
+                                    @foreach($symptoms as $symptom)
+                                        <li class='subareas__item inline-block col-xs-6 col-sm-4 print-row top-20'>{{$symptom['name']}}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            @if (empty($symptoms))
+                                <div class="col-xs-12 text-center">
+                                    No Symptoms at this time
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                    <!-- /SYMPTOMS -->
+
+                    <!-- LIFESTYLES -->
+                    <?php
+                    $lifestyles = $data['lifestyles'];
+                    ?>
+                    <div class="patient-info__subareas">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">We Are
+                                    Informing
+                                    You
+                                    About</h2>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <ul class="subareas__list">
+                                    @foreach($lifestyles as $lifestyle)
+                                        <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$lifestyle['name']}}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /LIFESTYLES -->
+
+
+                    <div class="patient-info__subareas pb-before">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">Check In
+                                    Plan</h2>
+                            </div>
+
+                            <div class="col-xs-12">
+                                <p>Your care team will check in with you at {{$patient->getPhone()}} periodically.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- INSTRUCTIONS -->
+                    <div class="patient-info__subareas pb-before">
+                        <div class="row">
+                            <div class="col-xs-12 print-only">
+                                <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">
+                                    Care
+                                    Plan
+                                    Part 2</h1>
+                            </div>
+
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">Follow these
+                                    Instructions:</h2>
+                            </div>
+                            <div class="col-xs-12">
+                                <p></p>
+                            </div>
+                            @foreach ($problemsWithInstructions as $problem)
+                                <div class="col-xs-12">
+                                    <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
+                                        For {{$problem['name']}}:</h3>
+                                    @foreach (explode("\n", $problem['instruction']['name']) as $instruction)
+                                        <p>{!! $instruction == '' ? "<br>" : $instruction !!}</p>
+                                    @endforeach
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- OTHER INFORMATION -->
+                    <div class="row pb-before">
+                        <div class="col-xs-12 print-only">
+                            <h1 class="patient-summary__title patient-summary__title_9  patient-summary--careplan">Care
+                                Plan
+                                Part 3</h1>
+                        </div>
+                        <div class="col-xs-12">
+                            <h1 class="patient-summary__title--secondary patient-summary--careplan"><p>Other
+                                    information</p>
+                            </h1>
+                        </div>
+                    </div>
+
+                    <!-- ALLERGIES -->
+                    <div class="patient-info__subareas">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">
+                                    Allergies:</h2>
+                            </div>
+                            <div class="col-xs-12">
+                                @if($careplan['allergies'])
+                                    <p><?= nl2br($careplan['allergies']); ?></p>
+                                @else
+                                    <p>No instructions at this time</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /ALLERGIES -->
+
+                    <!-- SOCIALSERVICES -->
+                    <div class="patient-info__subareas">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">Social
+                                    Services:</h2>
+                            </div>
+                            <div class="col-xs-12">
+                                @if($careplan['social'])
+                                    <p><?= nl2br($careplan['social']); ?></p>
+                                @else
+                                    <p>No instructions at this time</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /SOCIAL AND OTHER SERVICES -->
+
+                    <!-- CARE TEAM -->
+                    <div class="patient-info__subareas">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">Care
+                                    Team:</h2>
+                            </div>
+                            <div class="col-xs-12">
+                                <ul class="col-xs-12">
+                                    @foreach($careTeam as $carePerson)
+                                        <li class="col-xs-12">
+                                            <div class="col-md-7">
+                                                <p style="margin-left: -10px;">
+                                                    <strong>
+                                                        {{snakeToSentenceCase($carePerson->type)}}:
+                                                    </strong>{{optional($carePerson->user)->getFirstName()}} {{optional($carePerson->user)->getLastName()}} {{ optional($carePerson->user)->getSuffix() }}
+                                                </p>
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /CARE TEAM -->
+                    <!-- Appointments -->
+                    @if(isset($careplan['appointments']['upcoming']) || isset($careplan['appointments']['past'] ))
+
+                        <div class="patient-info__subareas">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <h2 class="patient-summary__subtitles patient-summary--careplan-background">
+                                        Appointments</h2>
+                                </div>
+                                <div class="col-xs-12">
+
+                                    @if(isset($careplan['appointments']['upcoming'] ))
+                                        <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
+                                            Upcoming: </h3>
+                                        <ul style="line-height: 30px">
+                                            @foreach($careplan['appointments']['upcoming'] as $upcoming)
+                                                <li style="list-style: dash">
+
+                                                    - {{$upcoming['type']}}
+                                                    <strong>{{$upcoming['specialty']}} </strong>
+                                                    on {{$upcoming['date']}}
+                                                    at {{$upcoming['time']}} with
+                                                    <strong>{{$upcoming['name']}}</strong>; {{$upcoming['address']}} {{$upcoming['phone']}}
+
+                                                </li>
+                                            @endforeach
+                                            @endif
+                                        </ul>
+                                        @if(isset($careplan['appointments']['past'] ))
+                                            <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
+                                                Past:</h3>
+                                            <ul style="line-height: 30px">
+                                                @foreach($careplan['appointments']['past'] as $past)
+                                                    <li style="list-style: dash">
+
+                                                        - {{$past['type']}}
+                                                        <strong>{{$past['specialty']}} </strong>
+                                                        on {{$past['date']}}
+                                                        at {{$past['time']}} with
+                                                        <strong>{{$past['name']}}</strong>; {{$past['address']}} {{$past['phone']}}
+
+                                                    </li>
+                                                @endforeach
+                                                @endif
+                                            </ul>
                                 </div>
                             </div>
-                        @endif
+                        </div>
+                @endif
+                <!-- /Appointments -->
 
-                        @if($showInsuranceReviewFlag)
-                            <div class="col-sm-12 alert alert-danger text-left" role="alert"
-                                 style="margin-top: 3px">
-                                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                <span class="sr-only">Error:</span>
-                                Insurance plans in record may be expired.
-                                <a class="alert-link"
-                                   href="{{ route('patient.demographics.show', [
-                                           'patientId' => $patient->id,
-                                           'scrollTo' => 'insurance-policies'
-                                           ]) }}">
-                                    Click to edit
-                                </a>
+                    <!-- OTHER NOTES -->
+                    <div class="patient-info__subareas">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">Other
+                                    Notes:</h2>
                             </div>
-                        @endif
-                    </div>
+                            <div class="col-xs-12">
+                                <?php $careplan['other']; ?>
 
-                </div>
-                <div class="row gutter">
-                    <div class="col-lg-12 col-lg-offset-0 col-xs-12 col-xs-offset-2">
-                        <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
-                            Plan</h1>
-                    </div>
-                </div>
-
-                <br>
-
-                <div class="row gutter">
-                    <div class="col-lg-5 col-xs-6 print-row text-bold">{{$patient->getFullName()}}
-                        (DOB: {{$patient->patientInfo->dob()}})
-                    </div>
-                    <div class="col-lg-4 col-xs-4 print-row">{{$patient->getPhone()}}</div>
-                    <div class="col-lg-3 col-xs-6 print-row text-right">{{$today}}</div>
-                </div>
-
-                <div class="row gutter">
-                    @if($billingDoctor)
-                        <div class="col-xs-5 print-row text-bold">
-                            {{ $billingDoctor->getDoctorFullNameWithSpecialty() }}
-                        </div>
-                        <div class="col-xs-3 print-row">
-                            {{$billingDoctor->getPhone()}}
-                        </div>
-                    @else
-                        <div class="col-xs-5 print-row text-bold">
-                            <em>No Billing Dr. Selected</em>
-                        </div>
-                        <div class="col-xs-3 print-row">
-                        </div>
-                    @endif
-                    <div class="col-lg-4 col-xs-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
-                </div>
-
-                @if($regularDoctor)
-                    <div class="row gutter">
-                        <div class="col-xs-5 print-row text-bold">
-                            {{ $regularDoctor->getDoctorFullNameWithSpecialty() }}
-                        </div>
-                        <div class="col-xs-3 print-row">
-                            {{$regularDoctor->getPhone()}}
-                        </div>
-                    </div>
-                @endif
-
-                @if(!isset($isPdf) && !empty($patient->patientInfo->general_comment))
-                    <div class="row"></div>
-                    <div class="row gutter">
-                        <div class="col-xs-12 print-row">
-                            <b>General comment</b>: {{$patient->patientInfo->general_comment}}
-                        </div>
-                    </div>
-                @endif
-            </div>
-            <!-- CARE AREAS -->
-            <care-areas ref="careAreasComponent" patient-id="{{$patient->id}}">
-                <template>
-                    @if($problemNames)
-                        <ul class="subareas__list">
-                            @foreach($problemNames as $prob)
-                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$prob}}</li>
-                            @endforeach
-                        </ul>
-                    @else
-                        <div class="text-center">No Problems at this time</div>
-                    @endif
-                </template>
-            </care-areas>
-            <!-- /CARE AREAS -->
-            <!-- BIOMETRICS -->
-            <health-goals ref="healthGoalsComponent" patient-id="{{$patient->id}}">
-                @if($biometrics)
-                    <ul class="subareas__list">
-                        <li class="subareas__item subareas__item--wide col-sm-12">
-                            @foreach(array_reverse($biometrics) as $key => $value)
-                                @if ($key == 'Blood Pressure')
-
-                                    <div class="col-xs-5 print-row text-bold">{{ $value['verb'] }} {{$key}}</div>
-                                    <div class="col-xs-4 print-row text-bold">{{($value['verb'] == 'Regulate') ? 'keep under' :  'to' }} {{$value['target']}}</div>
-                                    <div class="col-xs-3 print-row">
-                                        from {{$value['starting']}}</div>
-
+                                @if($careplan['other'])
+                                    <p><?= nl2br($careplan['other']); ?></p>
                                 @else
-
-                                    <div class="col-xs-5 print-row text-bold">{{ $value['verb'] }} {{$key}}</div>
-                                    <div class="col-xs-4 print-row text-bold">{{($value['verb'] == 'Maintain') ? 'at' :  'to' }} {{$value['target']}}</div>
-                                    <div class="col-xs-3 print-row">
-                                        from {{$value['starting']}}</div>
-
+                                    <p>No instructions at this time</p>
                                 @endif
-                            @endforeach
-                        </li>
-                    </ul>
-                @endif
-            </health-goals>
-            <!-- /BIOMETRICS -->
-
-            <!-- MEDICATIONS -->
-            <medications ref="medicationsComponent" patient-id="{{$patient->id}}">
-
-                <div class="col-xs-10">
-                    @if(!empty($taking_medications))
-                        @if(is_array($taking_medications))
-                            <ul>
-                                @foreach($taking_medications as $medi)
-                                    <li class='top-10'>
-                                        <h4>{!! $medi !!}</h4>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @else
-                            {{$taking_medications}}
-                        @endif
-                    @endif
-                </div>
-            </medications>
-            <!-- /MEDICATIONS -->
-
-            <!-- SYMPTOMS -->
-            <symptoms ref="symptomsComponent" patient-id="{{$patient->id}}">
-                <ul class="subareas__list">
-                    @foreach($symptoms as $s)
-                        @if($symptoms)
-                            <li class='subareas__item inline-block col-xs-6 col-sm-4 print-row'>{{$s}}</li>
-                        @endif
-                    @endforeach
-                </ul>
-            </symptoms>
-            <!-- /SYMPTOMS -->
-
-            <!-- LIFESTYLES -->
-            <lifestyles ref="lifestylesComponent" patient-id="{{$patient->id}}">
-                <ul class="subareas__list">
-                    @if($lifestyle)
-                        @foreach($lifestyle as $style)
-                            <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$style}}</li>
-                        @endforeach
-                    @endif
-                </ul>
-            </lifestyles>
-            <!-- /LIFESTYLES -->
-
-
-            <div class="patient-info__subareas pb-before">
-                <div class="row">
-                    <div class="col-xs-12 print-only">
-                        <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
-                            Plan
-                            Part 2</h1>
+                            </div>
+                        </div>
                     </div>
+                    <!-- /OTHER NOTES -->
+                    <!-- /OTHER INFORMATION -->
+            </section>
+        </div>
+        <div class="row pb-before"></div>
+        @endif
 
-                    <div class="col-xs-12">
-                        <h2 class="patient-summary__subtitles patient-summary--careplan-background">Check In
-                            Plan</h2>
-                    </div>
-
-                    <div class="col-xs-12">
-                        <p>Your care team will check in with you at {{$patient->getPhone()}} periodically.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- INSTRUCTIONS -->
-            <instructions ref="instructionsComponent" patient-id="{{$patient->id}}"></instructions>
-            <!-- /INSTRUCTIONS -->
-
-            <!-- OTHER INFORMATION -->
-            <div class="row pb-before">
-                <div class="col-xs-12 print-only">
-                    <h1 class="patient-summary__title patient-summary__title_9  patient-summary--careplan">Care Plan
-                        Part 3</h1>
-                </div>
-                {{--  <div class="col-xs-12">
-                    <h1 class="patient-summary__title--secondary patient-summary--careplan"><p>Other information</p>
-                    </h1>
-                </div>  --}}
-            </div>
-
-            <!-- ALLERGIES -->
-            <allergies ref="allergiesComponent" patient-id="{{$patient->id}}">
-                <div class="col-xs-12">
-                    @if($allergies)
-                        <p><?= nl2br($allergies); ?></p>
-                    @else
-                        <p>No allergies at this time</p>
-                    @endif
-                </div>
-            </allergies>
-            <!-- /ALLERGIES -->
-
-            <!-- SOCIALSERVICES -->
-            <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}">
-                @if($social)
-                    <p><?= nl2br($social); ?></p>
-                @else
-                    <p>No instructions at this time</p>
-                @endif
-            </social-services>
-            <misc-modal ref="miscModal" :patient-id="{{$patient->id}}"></misc-modal>
-            <!-- /SOCIAL AND OTHER SERVICES -->
-
-            <!-- CARE TEAM -->
-            <care-team ref="careTeamComponent"></care-team>
-            <!-- /CARE TEAM -->
-
-            <!-- Appointments -->
-            <appointments ref="appointmentsComponent" patient-id="{{$patient->id}}">
-                @if(isset($appointments['upcoming'] ))
-                    <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
-                        Upcoming: </h3>
-                    <ul style="line-height: 30px">
-                        @foreach($appointments['upcoming'] as $upcoming)
-                            <li style="list-style: dash">
-
-                                - {{$upcoming['type']}}
-                                <strong>{{$upcoming['specialty']}} </strong>
-                                on {{$upcoming['date']}}
-                                at {{$upcoming['time']}} with
-                                <strong>{{$upcoming['name']}}</strong>; {{$upcoming['address']}} {{$upcoming['phone']}}
-
-                            </li>
-                        @endforeach
-                    </ul>
-                @endif
-                @if(isset($appointments['past'] ))
-                    <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
-                        Past:</h3>
-                    <ul style="line-height: 30px">
-                        @foreach($appointments['past'] as $past)
-                            <li style="list-style: dash">
-
-                                - {{$past['type']}}
-                                <strong>{{$past['specialty']}} </strong>
-                                on {{$past['date']}}
-                                at {{$past['time']}} with
-                                <strong>{{$past['name']}}</strong>; {{$past['address']}} {{$past['phone']}}
-
-                            </li>
-                        @endforeach
-                    </ul>
-                @endif
-            </appointments>
-            <!-- /Appointments -->
-
-            <!-- OTHER NOTES -->
-            <others ref="othersComponent" patient-id="{{$patient->id}}">
-                @if($other)
-                    <p><?= nl2br($other); ?></p>
-                @else
-                    <p>No instructions at this time</p>
-                @endif
-            </others>
-            <!-- /OTHER NOTES -->
-            <!-- /OTHER INFORMATION -->
-        </section>
-    </div>
+        @push('styles')
+            <script>
+                var careplan = (<?php
+                    echo json_encode($data);
+                    ?>) || {}
+            </script>
+        @endpush
+    @endforeach
 @stop
