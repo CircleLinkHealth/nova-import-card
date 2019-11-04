@@ -211,6 +211,15 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
             'approve_own_care_plans' => $approveOwn,
         ]);
 
+        $user = User::whereEmail($row['email'])
+            ->where('first_name', $row['first_name'])
+            ->where('last_name', $row['last_name'])
+            ->first();
+
+        if ( ! $user) {
+            $user = new User();
+        }
+
         return $this->repo->createNewUser(new User(), $bag);
     }
 
