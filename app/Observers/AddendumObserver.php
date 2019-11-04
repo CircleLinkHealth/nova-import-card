@@ -9,6 +9,7 @@ namespace App\Observers;
 use App\Models\Addendum;
 use App\Note;
 use App\Notifications\AddendumCreated;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Notification;
 
 class AddendumObserver

@@ -209,7 +209,7 @@ trait UserHelpers
         //create a user
         $user = (new UserRepository())->createNewUser(new User(), $bag);
 
-        $practice = Practice::find($practiceId);
+        $practice = Practice::with('locations')->find($practiceId);
 
         $locations = $practice->locations
             ->pluck('id')
