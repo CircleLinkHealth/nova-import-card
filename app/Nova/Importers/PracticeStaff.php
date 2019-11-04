@@ -220,7 +220,7 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
             $user = new User();
         }
 
-        return $this->repo->createNewUser(new User(), $bag);
+        return $this->repo->createNewUser($user, $bag);
     }
 
     private function validateRow($row)
