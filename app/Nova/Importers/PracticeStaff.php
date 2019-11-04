@@ -147,7 +147,10 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
 
         $locations = [];
         foreach ($locationNames as $locationName) {
-            $locations[] = LocationByName::first($locationName);
+            $location = LocationByName::first($locationName);
+            if ($location) {
+                $locations[] = $location;
+            }
         }
 
         $user->attachLocation($locations);
@@ -182,7 +185,7 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         $role = RoleByName::first($row['role']);
 
         if ( ! $role) {
-            return null;
+            throw new \Exception("Role: {$row['role']} not found.");
         }
 
         $approveOwn = false;
