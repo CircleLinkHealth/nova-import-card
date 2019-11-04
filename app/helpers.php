@@ -1465,23 +1465,21 @@ if ( ! function_exists('minutesToHhMm')) {
      */
     function minutesToHhMm($minutes)
     {
-        $H = $inHours = 0;
+        $h = 0;
 
         if ($minutes >= 60) {
-            $inHours = $minutes / 60;
-            $minutes = $minutes - ($inHours * 60);
-            $H       = floor($inHours);
+            $h = floor($minutes / 60);
         }
 
-        $i = round($minutes);
+        $i = round($minutes - ($h * 60));
 
-        //If 59 minutes rounds up to 60 we wnat to add an hour
+        //If 59 minutes rounds up to 60 we want to add an hour
         if (60 == $i) {
             $i = 0;
-            ++$H;
+            ++$h;
         }
 
-        return sprintf('%02d:%02d', $H, $i);
+        return sprintf('%02d:%02d', $h, $i);
     }
 }
 

@@ -7,8 +7,8 @@
 namespace App\Providers;
 
 use App\Contracts\ReportFormatter;
-use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Formatters\WebixFormatter;
+use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Services\AWV\DirectPatientDocument;
 use App\Services\AWV\EmailPatientDocument;
 use App\Services\AWV\FaxPatientDocument;
@@ -25,7 +25,7 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Queue;
-use Tests\Commands\CreateAndSeedSqliteDB;
+use Tests\Commands\CreateAndSeedTestSuiteDB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -149,7 +149,7 @@ class AppServiceProvider extends ServiceProvider
 
         if ($this->app->environment('testing')) {
             $this->commands([
-                CreateAndSeedSqliteDB::class,
+                CreateAndSeedTestSuiteDB::class,
             ]);
         }
 
