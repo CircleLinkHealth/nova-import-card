@@ -10,7 +10,6 @@ use App\Constants;
 use App\Exceptions\CsvFieldNotFoundException;
 use App\Jobs\SendSlackMessage;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -133,17 +132,17 @@ if ( ! function_exists('activeNurseNames')) {
     {
         return User::ofType('care-center')
             ->with(
-                [
-                    'nurseInfo' => function ($q) {
-                        $q->where('is_demo', '!=', true);
-                    },
-                ]
-            )->whereHas(
-                'nurseInfo',
-                function ($q) {
-                    $q->where('is_demo', '!=', true);
-                }
-            )->where('user_status', 1)
+                       [
+                           'nurseInfo' => function ($q) {
+                               $q->where('is_demo', '!=', true);
+                           },
+                       ]
+                   )->whereHas(
+                       'nurseInfo',
+                       function ($q) {
+                           $q->where('is_demo', '!=', true);
+                       }
+                   )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -1029,11 +1028,11 @@ if ( ! function_exists('validProblemName')) {
                 'check',
             ]
         ) && ! in_array(
-            strtolower($name),
-            [
-                'fu',
-            ]
-        );
+                strtolower($name),
+                [
+                    'fu',
+                ]
+            );
     }
 }
 
@@ -1505,5 +1504,36 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
             \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
         }
+    }
+}
+
+if ( ! function_exists('stripNonTrixTags')) {
+    /**
+     * @param string
+     *
+     * @return string
+     */
+    function stripNonTrixTags(string $trixString)
+    {
+        return strip_tags($trixString, Constants::TRIX_ALLOWABLE_TAGS_STRING);
+    }
+}
+
+if ( ! function_exists('convertValidatorMessagesToString')) {
+    /**
+     * Formats Validator messages to return string.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     *
+     * @return string
+     */
+    function convertValidatorMessagesToString(Illuminate\Validation\Validator $validator): string
+    {
+        return implode('\n', collect($validator->getMessageBag()->toArray())->transform(function ($item, $key) {
+            $errors = implode(', ', $item);
+            $key = ucfirst($key);
+
+            return "{$key}: $errors";
+        })->toArray());
     }
 }
