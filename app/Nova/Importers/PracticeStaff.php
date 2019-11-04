@@ -148,9 +148,11 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         $locations = [];
         foreach ($locationNames as $locationName) {
             $location = LocationByName::first($locationName);
-            if ($location) {
-                $locations[] = $location;
+
+            if ( ! $location) {
+                throw new \Exception("Location: '{$locationName}' not found. ");
             }
+            $locations[] = $location;
         }
 
         $user->attachLocation($locations);
