@@ -201,27 +201,31 @@ function formatTime($time)
                                         @if (count($calls) > 0)
                                             @foreach($calls as $key => $call)
                                                 <?php
-                                                $curTime = \Carbon\Carbon::now();
-                                                $curDate = $curTime->toDateString();
-                                                $curTime = $curTime->toTimeString();
-                                                $rowBg   = '';
-                                                $boldRow = '';
+                                                $curTime   = \Carbon\Carbon::now();
+                                                $curDate   = $curTime->toDateString();
+                                                $curTime   = $curTime->toTimeString();
+                                                $rowBg     = '';
+                                                $boldRow   = '';
+                                                $textBlack = '';
                                                 if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime) {
                                                     $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                 }
-                                                if ('Call Back' === $call->type || $call->asap) {
-                                                    $boldRow = 'bold-row';
+                                                if ('Call Back' === $call->type || $call->asap && 'reached' !== $call->status && 'done' !== $call->status) {
+                                                    $boldRow   = 'bold-row';
+                                                    $textBlack = 'color:black;';
                                                 }
                                                 ?>
-                                                <tr class="{{$boldRow}}" style="{{ $rowBg }}">
+                                                <tr class="{{$boldRow}}" style="{{ $rowBg . $textBlack }}">
                                                     <td class="vert-align" style="text-align:center">
                                                         @if(empty($call->type) || $call->type === 'call')
                                                             <i class="fas fa-phone"></i>
                                                         @elseif ($call->type === 'Call Back')
-                                                            <img style="text-align: center" src="img/scheduled_activities_callback.svg"
+                                                            <img style="text-align: center"
+                                                                 src="img/scheduled_activities_callback.svg"
                                                                  alt="callback image">
                                                         @elseif ($call->type === 'addendum_response')
-                                                            <img style="text-align: center" src="img/scheduled_activities_message.svg"
+                                                            <img style="text-align: center"
+                                                                 src="img/scheduled_activities_message.svg"
                                                                  alt="callback image">
                                                         @else
                                                             <span>{{$call->type}}</span>
