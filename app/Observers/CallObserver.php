@@ -9,6 +9,7 @@ namespace App\Observers;
 use App\Call;
 use App\Notifications\CallCreated;
 use App\Services\ActivityService;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
@@ -20,10 +21,15 @@ class CallObserver
      * @var ActivityService
      */
     private $activityService;
+    /**
+     * @var NotificationService
+     */
+    private $notificationService;
 
-    public function __construct(ActivityService $activityService)
+    public function __construct(ActivityService $activityService, NotificationService $notificationService)
     {
-        $this->activityService = $activityService;
+        $this->activityService     = $activityService;
+        $this->notificationService = $notificationService;
     }
 
     /**
@@ -73,6 +79,11 @@ class CallObserver
                     'no_of_successful_calls' => $no_of_successful_calls,
                 ]);
         }
+        //Mark as 'read'in notifications table  - so it will disappear from live-notifications dropdown and count.
+        if ('reached' === $call->status || 'done' === $call->status) {
+            $this->notificationService->markAsRead($call->outboundUser->id, $call->id);
+        }
+
         //If sub_type = "addendum_response" means it has already been created by AddendumObserver
         if (true === $call->asap && 'addendum_response' !== $call->sub_type) {
             $this->createNotificationAndSendToPusher($call);

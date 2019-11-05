@@ -65,7 +65,7 @@ function formatTime($time)
                     scrollX: true,
                     fixedHeader: true,
                     dom: '<"top"fi>rt<"bottom"flp><"clear">',
-                    pageLength: 10,
+                    pageLength: 50,
 
 
                 });
