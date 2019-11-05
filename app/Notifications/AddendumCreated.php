@@ -81,7 +81,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
 
     public function getSubject(): string
     {
-        return 'has created an addendum for';
+        return 'responded to a note on'; //todo:write a migration to update this
     }
 
     /**

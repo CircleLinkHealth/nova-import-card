@@ -28,7 +28,7 @@ class PatientCallListController extends Controller
      * @return Response
      */
     public function index(Request $request, NoteService $noteService)
-    {
+    {//note:here nurseId is actually userId. Even column: nurse_id in Calls table is actually the user_id.
         $nurseId = \Auth::user()->id;
         $today   = Carbon::parse(now())->copy()->toDateString();
 

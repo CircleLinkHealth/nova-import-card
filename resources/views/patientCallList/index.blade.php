@@ -217,7 +217,11 @@ function formatTime($time)
                                                         @if(empty($call->type) || $call->type === 'call')
                                                             <i class="fas fa-phone"></i>
                                                         @elseif ($call->type === 'Call Back')
-                                                            <i class="fas fa-phone"></i> Back
+                                                            <img style="" src="img/scheduled_activities_callback.svg"
+                                                                 class="img-responsive" alt="callback image">
+                                                        @elseif ($call->type === 'addendum_response')
+                                                            <img style="" src="img/scheduled_activities_message.svg"
+                                                                 class="img-responsive" alt="callback image">
                                                         @else
                                                             <span>{{$call->type}}</span>
                                                         @endif
@@ -244,8 +248,8 @@ function formatTime($time)
                                                     <td class="{{ \Carbon\Carbon::parse($call->scheduled_date)->lessThan(\Carbon\Carbon::today()) ? 'red' : '' }}">
                                                         {{ presentDate($call->scheduled_date, false) }}
                                                     </td>
-                                                    {{--What do we want to do here? show ASAP forever or??--}}
-                                                    @if($call->asap === 1 && $curDate <= $call->scheduled_date && $call->status !== 'reached')
+
+                                                    @if($call->asap === 1 && $call->status !== 'reached')
                                                         <td>{{ 'ASAP' }}</td>
                                                         <td>{{ 'N/A' }}</td>
                                                     @else

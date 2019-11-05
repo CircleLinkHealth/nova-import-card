@@ -26,7 +26,10 @@ class CallObserver
         $this->activityService = $activityService;
     }
 
-    public function createSendPusherNotification($call)
+    /**
+     * @param $call
+     */
+    public function createNotificationAndSendToPusher($call)
     {
         $notify = $call->outboundUser;
         Notification::send($notify, new CallCreated($call, auth()->user()));
@@ -70,9 +73,9 @@ class CallObserver
                     'no_of_successful_calls' => $no_of_successful_calls,
                 ]);
         }
-        //Create and send notification to pusher only if if its marked as 'ASAP'.
-        if (true === $call->asap) {
-            $this->createSendPusherNotification($call);
+        //If sub_type = "addendum_response" means it has already been created by AddendumObserver
+        if (true === $call->asap && 'addendum_response' !== $call->sub_type) {
+            $this->createNotificationAndSendToPusher($call);
         }
     }
 }
