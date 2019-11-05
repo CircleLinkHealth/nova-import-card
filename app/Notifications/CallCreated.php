@@ -55,11 +55,19 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
     }
 
     /**
+     * @return int
+     */
+    public function getPatientId()
+    {
+        return  $this->call->inbound_cpm_id;
+    }
+
+    /**
      * @return JsonResponse
      */
     public function getPatientName(): string
     {
-        $patientId = $this->call->inbound_cpm_id;
+        $patientId = $this->getPatientId();
 
         return NotificationService::getPatientName($patientId);
     }
@@ -73,7 +81,9 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
 
     public function redirectLink(): string
     {
-        return route('patientCallList.index');
+        $patientId = $this->getPatientId();
+
+        return route('patient.careplan.print', ['patient' => $patientId]);
     }
 
     /**
