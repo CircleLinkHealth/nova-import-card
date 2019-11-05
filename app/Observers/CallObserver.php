@@ -39,6 +39,7 @@ class CallObserver
     {
         $notify = $call->outboundUser;
         //@todo: if multiple notifications are dispatched because of multi activities entry, then pusher works 50%-50%
+        //sometimes will receive just the first while on others all..nedd to check this again
         Notification::send($notify, new CallCreated($call, auth()->user()));
     }
 
