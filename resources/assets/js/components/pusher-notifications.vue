@@ -82,9 +82,9 @@
                 const notificationSubject = notification.data.subject;
                 const patientName = notification.data.patient_name;
                 const notificationElapsedTime = notification.elapsed_time;
-
-                return `<strong>${senderName}</strong> ${notificationSubject}<strong> ${patientName}</strong>
-                        <span style="float: right;padding-top: 4%; color: #90949c">${notificationElapsedTime}</span>`;
+                //@todo: use normal classes in html here
+                return `${notificationSubject}<br>
+                        <span style="float: right; color: #90949c">${notificationElapsedTime}</span>`;
 
             },
 

@@ -59,7 +59,7 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
      */
     public function getPatientId()
     {
-        return  $this->call->inbound_cpm_id;
+        return $this->call->inbound_cpm_id;
     }
 
     /**
@@ -74,9 +74,10 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
 
     public function getSubject(): string
     {
-        $activity = $this->call->sub_type;
+        $activity    = ! empty($this->call->sub_type) ? $this->call->sub_type : $this->call->type;
+        $patientName = $this->getPatientName();
 
-        return "has assigned a $activity for";
+        return "Patient <strong>$patientName</strong> requires a $activity"; //todo:write a migration to update this
     }
 
     public function redirectLink(): string
