@@ -6,9 +6,8 @@
 
 namespace App\Notifications;
 
+use App\Call;
 use App\Contracts\PusherLiveNotifications;
-use App\Models\Addendum;
-use App\Note;
 use App\Services\NotificationService;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
@@ -19,28 +18,32 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQueue, PusherLiveNotifications
+class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, PusherLiveNotifications
 {
     use Queueable;
-    public $addendum;
+
     public $attachment;
+    /**
+     * @var Call
+     */
+    private $call;
     /**
      * @var User
      */
-    protected $sender;
+    private $sender;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Addendum $addendum, User $sender)
+    public function __construct(Call $call, User $sender)
     {
-        $this->attachment = $this->addendum = $addendum;
+        $this->attachment = $this->call = $call;
         $this->sender     = $sender;
     }
 
     public function description(): string
     {
-        return 'Addendum';
+        return 'Activity';
     }
 
     /**
@@ -52,46 +55,25 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     }
 
     /**
-     * @return mixed
-     */
-    public function getNoteId()
-    {
-        return $this->getAttachment()->addendumable_id;
-    }
-
-    /**
-     * Get patient_id that the addendum was written for.
-     *
-     * @return mixed
-     */
-    public function getPatientId(): ?int
-    {
-        return $this->getAttachment()->addendumable->patient_id;
-    }
-
-    /**
      * @return JsonResponse
      */
     public function getPatientName(): string
     {
-        $patientId = $this->getPatientId();
+        $patientId = $this->call->inbound_cpm_id;
 
         return NotificationService::getPatientName($patientId);
     }
 
     public function getSubject(): string
     {
-        return 'has created an addendum for';
+        $activity = $this->call->sub_type;
+
+        return "has assigned a $activity for";
     }
 
-    /**
-     * @return mixed
-     */
     public function redirectLink(): string
     {
-        $note = Note::where('id', $this->getNoteId())->first();
-
-        return $note->link();
+        return route('patientCallList.index');
     }
 
     /**
@@ -105,20 +87,19 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
             $notifiable,
             $this->sender->id,
             $this->getPatientName(),
-            $this->getNoteId(),
+            $this->call->note_id,
             $this->getAttachment()->id,
             $this->redirectLink(),
             $this->description(),
-            Addendum::class,
+            Call::class,
             $this->getSubject(),
             $this->sender->display_name
         );
     }
 
     /**
-     * Get the broadcastable representation of the notification.
-     *
-     * Returns by default -  ONLY the notification id & the notification type
+     *Get the broadcastable representation of the notification.
+     *Returns by default -  ONLY the notification id & the notification type.
      *
      * @param mixed $notifiable
      *

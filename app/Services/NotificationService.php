@@ -60,6 +60,46 @@ class NotificationService
     }
 
     /**
+     * @param $notifiable
+     * @param $senderId
+     * @param $patientName
+     * @param $noteId
+     * @param $attachmentId
+     * @param $redirectLink
+     * @param $description
+     * @param $class
+     * @param $subject
+     * @param $senderName
+     *
+     * @return array
+     */
+    public static function getNotificationArrayRepresentation(
+        $notifiable,
+        $senderId,
+        $patientName,
+        $noteId,
+        $attachmentId,
+        $redirectLink,
+        $description,
+        $class,
+        $subject,
+        $senderName
+    ) {
+        return [
+            'sender_id'       => $senderId,
+            'receiver_id'     => $notifiable->id,
+            'patient_name'    => $patientName,
+            'note_id'         => $noteId,
+            'attachment_id'   => $attachmentId,
+            'redirect_link'   => $redirectLink,
+            'attachment_type' => $class,
+            'description'     => $description,
+            'subject'         => $subject,
+            'sender_name'     => $senderName,
+        ];
+    }
+
+    /**
      * @param $patientId
      *
      * @return mixed|string
@@ -99,8 +139,6 @@ class NotificationService
     }
 
     /**
-     * @param Carbon $createdDateTime
-     *
      * @return string
      */
     public function notificationElapsedTime(Carbon $createdDateTime)
@@ -109,8 +147,6 @@ class NotificationService
     }
 
     /**
-     * @param Collection $notifications
-     *
      * @return Collection
      */
     public function prepareNotifications(Collection $notifications)

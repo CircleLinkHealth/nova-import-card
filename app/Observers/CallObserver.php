@@ -7,10 +7,12 @@
 namespace App\Observers;
 
 use App\Call;
+use App\Notifications\CallCreated;
 use App\Services\ActivityService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Facades\Notification;
 
 class CallObserver
 {
@@ -22,6 +24,12 @@ class CallObserver
     public function __construct(ActivityService $activityService)
     {
         $this->activityService = $activityService;
+    }
+
+    public function createSendPusherNotification($call)
+    {
+        $notify = $call->outboundUser;
+        Notification::send($notify, new CallCreated($call, auth()->user()));
     }
 
     public function saved(Call $call)
@@ -61,6 +69,10 @@ class CallObserver
                     'no_of_calls'            => $no_of_calls->count(),
                     'no_of_successful_calls' => $no_of_successful_calls,
                 ]);
+        }
+        //Create and send notification to pusher only if if its marked as 'ASAP'.
+        if (true === $call->asap) {
+            $this->createSendPusherNotification($call);
         }
     }
 }
