@@ -89,7 +89,7 @@ class NotificationService
             'sender_id'       => $senderId,
             'receiver_id'     => $notifiable->id,
             'patient_name'    => $patientName,
-            'note_id'         => $noteId,
+            'note_id'         => $noteId, //Need to rename to a more generic name. Not all notif. will have note_id
             'attachment_id'   => $attachmentId,
             'redirect_link'   => $redirectLink,
             'attachment_type' => $class,
