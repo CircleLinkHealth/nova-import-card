@@ -135,7 +135,8 @@ function formatTime($time)
                                                        class="col-sm-1 control-label"
                                                        style="margin-left: -24%;">Status: </label>
                                                 <div class="col-sm-4">
-                                                    {!! Form::select('filterStatus', array('all' => 'See All', 'scheduled' => 'Scheduled', 'reached' => 'Completed'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']) !!}
+                                                    {{--@todo: This is what i need to do here: ['reached', 'done'] => 'Completed'. I need reached and done under 'Completed'--}}
+                                                    {!! Form::select('filterStatus', array('all' => 'See All', 'scheduled' => 'Scheduled', 'reached' => 'Completed', 'done' => 'Done Tasks'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']) !!}
                                                 </div>
                                                 <div class="col-sm-2">
 
@@ -217,11 +218,11 @@ function formatTime($time)
                                                         @if(empty($call->type) || $call->type === 'call')
                                                             <i class="fas fa-phone"></i>
                                                         @elseif ($call->type === 'Call Back')
-                                                            <img style="" src="img/scheduled_activities_callback.svg"
-                                                                 class="img-responsive" alt="callback image">
+                                                            <img style="text-align: center" src="img/scheduled_activities_callback.svg"
+                                                                 alt="callback image">
                                                         @elseif ($call->type === 'addendum_response')
-                                                            <img style="" src="img/scheduled_activities_message.svg"
-                                                                 class="img-responsive" alt="callback image">
+                                                            <img style="text-align: center" src="img/scheduled_activities_message.svg"
+                                                                 alt="callback image">
                                                         @else
                                                             <span>{{$call->type}}</span>
                                                         @endif
@@ -249,7 +250,7 @@ function formatTime($time)
                                                         {{ presentDate($call->scheduled_date, false) }}
                                                     </td>
 
-                                                    @if($call->asap === 1 && $call->status !== 'reached')
+                                                    @if($call->asap === 1 && $call->status !== 'reached' && $call->status !== 'done')
                                                         <td>{{ 'ASAP' }}</td>
                                                         <td>{{ 'N/A' }}</td>
                                                     @else
