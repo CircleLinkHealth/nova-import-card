@@ -760,34 +760,6 @@ class ReportsController extends Controller
         return view('patient.care-docs.index', compact(['patient']));
     }
 
-    public function viewPatientCareplan(
-        Request $request
-    ) {
-        $patient = User::with(PatientCareplanRelations::get())->findOrFail(auth()->user()->id);
-
-        $reportFormatter = app(ReportFormatter::class);
-        $careplanService = app(CareplanService::class);
-
-        $careplan = $reportFormatter->formatDataForViewPrintCareplanReport($patient);
-        $careplan = $careplan[$patient->id];
-
-        if (empty($careplan)) {
-            throw new \Exception("Could not get CarePlan info for CarePlan with ID: {$patient->id}");
-        }
-
-        return view(
-            'wpUsers.patient.careplan.print-patient',
-            [
-                'careplans'    => [$patient->id => $careplan],
-                'isPdf'        => true,
-                'letter'       => false,
-                'problemNames' => $careplan['problem'],
-                'careTeam'     => $patient->careTeamMembers,
-                'data'         => $careplanService->careplan($patient->id),
-            ]
-        );
-    }
-
     public function viewPdfCarePlan(
         Request $request,
         $patientId = false

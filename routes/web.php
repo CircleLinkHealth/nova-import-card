@@ -64,11 +64,6 @@ Route::group([
     ]);
 });
 
-Route::get('patient/view-careplan', [
-    'uses' => 'PatientCareplanController@viewPatientCareplan',
-    'as'   => 'patient.own.careplan',
-])->middleware(['auth', 'role:participant']);
-
 //
 //
 //    AUTH ROUTES
@@ -139,6 +134,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('google-drive', [
             'uses' => 'EhrReportWriterController@redirectToGoogleDriveFolder',
             'as'   => 'report-writer.google-drive',
+        ]);
+    });
+
+    Route::group([
+        'prefix'     => 'patient-user',
+        'middleware' => 'role:participant',
+    ], function () {
+        Route::get('view-careplan', [
+            'uses' => 'PatientUserController@viewCareplan',
+            'as'   => 'patient-user.careplan',
         ]);
     });
 
