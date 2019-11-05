@@ -761,13 +761,9 @@ class ReportsController extends Controller
     }
 
     public function viewPatientCareplan(
-        CcdInsurancePolicyService $insurances,
-        CareplanService $careplanService,
         Request $request
     ) {
-        $patientId = auth()->user()->id;
-
-        $patient = User::with(PatientCareplanRelations::get())->findOrFail($patientId);
+        $patient = User::with(PatientCareplanRelations::get())->findOrFail(auth()->user()->id);
 
         $reportFormatter = app(ReportFormatter::class);
         $careplanService = app(CareplanService::class);

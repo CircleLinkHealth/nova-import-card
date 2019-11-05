@@ -1,8 +1,6 @@
 @extends('layouts.provider')
 
 @section('app')
-
-    @include('partials.providerUI.primarynav')
-
+    @include('partials.patientUI.primarynav')
     @yield('content')
 @endsection
