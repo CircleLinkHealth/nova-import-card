@@ -24,7 +24,7 @@ class AddendumObserver
     public function createActivityTaskForAddendum($addendum, $patientId, $noteAuthorUser)
     {
         Call::create([
-            'type'            => 'task',
+            'type'            => 'addendum',
             'sub_type'        => 'addendum_response',
             'note_id'         => $addendum->addendumable_id,
             'service'         => 'phone',
