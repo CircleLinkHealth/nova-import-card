@@ -40,8 +40,6 @@ class PatientUserController extends Controller
             'wpUsers.patient.careplan.print-patient',
             [
                 'careplans'    => [$patient->id => $careplan],
-                'isPdf'        => true,
-                'letter'       => false,
                 'problemNames' => $careplan['problem'],
                 'careTeam'     => $patient->careTeamMembers,
                 'data'         => $this->careplanService->careplan($patient->id),

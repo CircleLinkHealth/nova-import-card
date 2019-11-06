@@ -1,4 +1,4 @@
-@extends('layouts.provider')
+@extends('layouts.patient')
 
 @section('app')
     @include('partials.patientUI.primarynav')
