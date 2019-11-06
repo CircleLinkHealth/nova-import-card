@@ -136,7 +136,7 @@ function formatTime($time)
                                                        style="margin-left: -24%;">Status: </label>
                                                 <div class="col-sm-4">
                                                     {{--@todo: This is what i need to do here: ['reached', 'done'] => 'Completed'. I need reached and done under 'Completed'--}}
-                                                    {!! Form::select('filterStatus', array('all' => 'See All', 'scheduled' => 'Scheduled', 'reached' => 'Completed', 'done' => 'Done Tasks'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']) !!}
+                                                    {!! Form::select('filterStatus', array('all' => 'See All', 'scheduled' => 'Scheduled', 'completed' => 'Completed'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']) !!}
                                                 </div>
                                                 <div class="col-sm-2">
 

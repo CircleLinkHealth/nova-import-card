@@ -35,7 +35,7 @@ class PatientCallListController extends Controller
         $draftNotes = $noteService->getUserDraftNotes($nurseId);
 
         $calls = CallView::where('nurse_id', '=', $nurseId);
-
+        //@todo:filtering is weird. i think is related to bug that raph reports
         $filterStatus = 'scheduled';
         if ( ! empty($request->input('filterStatus'))) {
             $filterStatus = $request->input('filterStatus');
@@ -47,7 +47,10 @@ class PatientCallListController extends Controller
         }
 
         if ('all' != $filterStatus) {
-            $calls->where('status', '=', $filterStatus);
+            if ('completed' === $filterStatus) {
+                $calls->where('status', '=', 'reached')
+                    ->orWhere('status', '=', 'done');
+            }
         }
 
         if ('all' !== $filterPriority) {
