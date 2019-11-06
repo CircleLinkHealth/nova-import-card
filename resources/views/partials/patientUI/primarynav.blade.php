@@ -45,7 +45,11 @@ $user = auth()->user();
                         width="105px"/></a>
         </div>
         <div class="col-lg-6 col-sm-6 col-xs-6">
-            @include('partials.user-account-dropdown')
+            <div class="collapse navbar-collapse" id="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    @include('partials.user-account-dropdown')
+                </ul>
+            </div>
         </div>
     </div>
 </nav>
