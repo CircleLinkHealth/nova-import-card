@@ -84,7 +84,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
         $senderName  = $this->sender->display_name;
         $patientName = $this->getPatientName();
 
-        return "<strong>$senderName</strong> responded to a note on $patientName"; //todo:write a migration to update this
+        return "<strong>$senderName</strong> responded to a note on $patientName"; //todo:write a migration to update this?
     }
 
     /**

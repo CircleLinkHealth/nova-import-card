@@ -77,7 +77,9 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
         $activity    = ! empty($this->call->sub_type) ? $this->call->sub_type : $this->call->type;
         $patientName = $this->getPatientName();
 
-        return "Patient <strong>$patientName</strong> requires a $activity"; //todo:write a migration to update this
+        return 'call' === $activity
+            ? "Patient <strong>$patientName</strong> has a scheduled $activity"
+            : "Patient <strong>$patientName</strong> requires a $activity"; //todo:write a migration to update this?
     }
 
     public function redirectLink(): string
