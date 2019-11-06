@@ -81,7 +81,7 @@ class CallObserver
                     'no_of_successful_calls' => $no_of_successful_calls,
                 ]);
         }
-        //Mark as 'read'in notifications table  - so it will disappear from live-notifications dropdown and count.
+        //Mark as 'read'in notifications table  - so it will fade out from live-notifications dropdown and ignored from count.
         if ('reached' === $call->status || 'done' === $call->status) {
             $this->notificationService->markAsRead($call->outboundUser->id, $call->id);
         }
