@@ -11712,7 +11712,7 @@ body,
   }
 }
 
-@media (max-width: 490px) {
+@media (max-width: 400px) {
   .btn-start {
     width: 40%;
     height: 30px;
