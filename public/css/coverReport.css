@@ -54,3 +54,8 @@
     width: 100%;
     bottom: 60px;
 }
+
+.cover .watermarked {
+    color: rgb(189, 191, 193);
+    letter-spacing: 1px;
+}
