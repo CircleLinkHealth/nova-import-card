@@ -12,6 +12,7 @@ use App\Models\Pdf;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
+use App\Notifications\NotifyPatientCarePlanApproved;
 use App\Rules\HasAtLeast2CcmOr1BhiProblems;
 use App\Rules\HasValidNbiMrn;
 use App\Services\CareplanService;
@@ -46,6 +47,7 @@ use Validator;
  * @property \CircleLinkHealth\Customer\Entities\User                   $patient
  * @property \App\Models\Pdf[]|\Illuminate\Database\Eloquent\Collection $pdfs
  * @property \CircleLinkHealth\Customer\Entities\User|null              $providerApproverUser
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCarePlanTemplateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereId($value)
@@ -60,16 +62,19 @@ use Validator;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereUserId($value)
  * @mixin \Eloquent
+ *
  * @property int|null                                                                                                        $first_printed_by
  * @property \Illuminate\Support\Carbon|null                                                                                 $first_printed
  * @property string                                                                                                          $provider_approver_name
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                                  $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereFirstPrinted($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereFirstPrintedBy($value)
+ *
  * @property int|null $notifications_count
  * @property int|null $pdfs_count
  * @property int|null $revision_history_count
@@ -168,6 +173,8 @@ class CarePlan extends BaseModel implements PdfReport
         }
 
         $location->notify(new CarePlanProviderApproved($this, $channels));
+        //notify the patient, check if this is used elsewhere
+        $this->patient->notify(new NotifyPatientCarePlanApproved($this));
     }
 
     public static function getNumberOfCareplansPendingApproval(User $user)
