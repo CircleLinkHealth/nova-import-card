@@ -292,7 +292,7 @@
         .scrollable label{
             height: fit-content;
             padding: 6px;
-            font-size: 83%;
+            font-size: 14px;
             font-weight: 400;
         }
         .scrollable label input[type=checkbox] + span:before{

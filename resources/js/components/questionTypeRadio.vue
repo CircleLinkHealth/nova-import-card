@@ -342,7 +342,7 @@
         /*Other buttons eg question order 11a in HRA*/
         .text-field.small, input.text-field.small {
             height: 35px;
-            width: 45%;
+            width: 115px;
             text-align: left;
             padding: 4px;
             font-size: xx-small;
@@ -351,14 +351,13 @@
         /*Yes or No*/
         .btn.radio.small {
             height: 35px;
-            width: 45%;
+            width: 115px;
             text-align: left;
             padding: 3px;
         }
 
         #app div > div.question-answer-type > div > div > input{
             height: 35px;
-            width: 45%;
             text-align: left;
             padding: 4px;
             font-size: xx-small;
