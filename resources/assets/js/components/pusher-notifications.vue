@@ -78,9 +78,7 @@
         },
         methods: {
             show(notification) {
-                const senderName = notification.data.sender_name;
                 const notificationSubject = notification.data.subject;
-                const patientName = notification.data.patient_name;
                 const notificationElapsedTime = notification.elapsed_time;
                 //@todo: use normal classes in html here
                 return `${notificationSubject}<br>

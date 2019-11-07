@@ -93,7 +93,6 @@ function formatTime($time)
                 }
 
                 addClickListener();
-
                 //make sure we add the click listener when we change the page
                 table.on('page.dt', function () {
                     setTimeout(addClickListener, 500);
@@ -135,7 +134,7 @@ function formatTime($time)
                                                        class="col-sm-1 control-label"
                                                        style="margin-left: -24%;">Status: </label>
                                                 <div class="col-sm-4">
-                                                    {!! Form::select('filterStatus', array('all' => 'See All', 'scheduled' => 'Scheduled', 'completed' => 'Completed'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']) !!}
+                                                    {!! Form::select('filterStatus', array('all' => 'See All', 'scheduled' => 'Scheduled', 'completed' => 'Completed'), $dropdownStatus, $dropdownStatusClass) !!}
                                                 </div>
                                                 <div class="col-sm-2">
 
