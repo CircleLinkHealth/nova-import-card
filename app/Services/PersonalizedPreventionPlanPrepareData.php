@@ -727,7 +727,12 @@ class PersonalizedPreventionPlanPrepareData
 
             $getAdlRecommendations = $this->getTaskRecommendations($title, $index);
             $textToReplace = '{insert all selected tasks in Q26}'; //todo:rename this in seeder and DB
-            $replacementText = implode(", ", $adl['adl']);
+            $adlAnswers = $adl['adl'];
+            $answersUnCapitalized = collect($adlAnswers)->map(function ($answer){
+               return lcfirst($answer);
+            })->toArray();
+
+            $replacementText = implode(", ", $answersUnCapitalized);
             $adlRecommendationBody = $getAdlRecommendations['task_body'];
             $newAdlRecommendationBody = str_replace($textToReplace, $replacementText, $adlRecommendationBody);
 
