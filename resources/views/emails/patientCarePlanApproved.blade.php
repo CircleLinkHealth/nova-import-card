@@ -7,15 +7,13 @@ CircleLink Health
 
 {{ $body }}
 
-@component('mail::button', ['url' => $home_url])
-Go to Care Plan Manager
+@component('mail::button', ['url' => $action_url])
+{{$action_text}}
 @endcomponent
 
-{{ $instructions }}
-
-@component('mail::button', ['url' => $reset_url])
-Setup/reset password
-@endcomponent
+@if($is_followup)
+Haven't setup your password yet? Click here: [Setup password]({{$reset_url}})
+@endif
 
 Regards,
 
@@ -23,9 +21,9 @@ CircleLink Team
 
 @slot('subcopy')
 @component('mail::subcopy')
-If you're having trouble clicking the "Go to Care Plan Manager" button, copy and past the URL below into your web browser: {{$home_url}}.
 
-If you're having trouble clicking the "Setup/reset password button, copy and past the URL below into your web browser:{{$reset_url}}.
+If you're having trouble clicking the "{{$action_text}}" button, copy and past the URL below into your web browser: {{$action_url}}.
+
 @endcomponent
 @endslot
 @slot('footer')

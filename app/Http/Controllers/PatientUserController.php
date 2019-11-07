@@ -26,8 +26,7 @@ class PatientUserController extends Controller
     public function viewCareplan(
         Request $request
     ) {
-        $patient = User::with(PatientCareplanRelations::get())
-            ->findOrFail(auth()->user()->id);
+        $patient = auth()->user()->load(PatientCareplanRelations::get());
 
         $careplan = collect($this->reportFormatter->formatDataForViewPrintCareplanReport($patient))->first();
 

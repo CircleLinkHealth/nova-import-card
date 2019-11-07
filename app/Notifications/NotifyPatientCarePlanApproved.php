@@ -20,6 +20,12 @@ class NotifyPatientCarePlanApproved extends Notification
     private $channels = ['database'];
 
     /**
+     * This notification is sent to the patient both when Careplan is QA approved by CLH, and when it's Provider approved.
+     * The first case we send the patient a button link to the password reset page, while on the second we send them a link to
+     * CPM, with a hyperlink of the reset page below.
+     */
+
+    /**
      * Create a new notification instance.
      *
      * @param CarePlan $carePlan
@@ -29,6 +35,16 @@ class NotifyPatientCarePlanApproved extends Notification
     {
         $this->channels = array_merge($channels, $this->channels);
         $this->carePlan = $carePlan;
+    }
+
+    public function getActionText()
+    {
+        return CarePlan::PROVIDER_APPROVED != $this->carePlan->status ? 'Setup Password' : 'Go to Care Plan Manager';
+    }
+
+    public function getActionUrl()
+    {
+        return CarePlan::PROVIDER_APPROVED != $this->carePlan->status ? url('auth/password/reset') : url('/');
     }
 
     /**
@@ -50,11 +66,9 @@ class NotifyPatientCarePlanApproved extends Notification
 
             return $message;
         }
-    }
 
-    public function getLoginInstructions()
-    {
-        return 'Click below to setup a password for Care Plan Manager, or reset your existing password.
+        return 'Your Care Plan is pending Dr. approval. 
+        Please click on the button below to setup a password for Care Plan Manager. 
         This will send a password reset email to your address.';
     }
 
@@ -100,10 +114,11 @@ class NotifyPatientCarePlanApproved extends Notification
             ->from('noreply@circlelinkhealth.com')
             ->subject($this->getSubject())
             ->markdown('emails.patientCarePlanApproved', [
-                'home_url'     => config('app.url'),
-                'reset_url'    => url('auth/password/reset'),
-                'body'         => $this->getBody(),
-                'instructions' => $this->getLoginInstructions(),
+                'action_url'  => $this->getActionUrl(),
+                'action_text' => $this->getActionText(),
+                'reset_url'   => url('auth/password/reset'),
+                'body'        => $this->getBody(),
+                'is_followup' => CarePlan::PROVIDER_APPROVED === $this->carePlan->status,
             ]);
     }
 
