@@ -38,16 +38,18 @@ class NotifyPatientCarePlanApproved extends Notification
      */
     public function getBody()
     {
-        $message = 'Please click below button to see your Care Plan, which was approved on '
-                   .$this->carePlan->provider_date->toFormattedDateString();
+        if (CarePlan::PROVIDER_APPROVED === $this->carePlan->status) {
+            $message = 'Please click below button to see your Care Plan, which was approved on '
+                       .$this->carePlan->provider_date->toFormattedDateString();
 
-        $approver = optional($this->carePlan->providerApproverUser);
+            $approver = optional($this->carePlan->providerApproverUser);
 
-        if ($approver) {
-            $message .= ' by '.$approver->getFullName().'.';
+            if ($approver) {
+                $message .= ' by '.$approver->getFullName().'.';
+            }
+
+            return $message;
         }
-
-        return $message;
     }
 
     public function getLoginInstructions()

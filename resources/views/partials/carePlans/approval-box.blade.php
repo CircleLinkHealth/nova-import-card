@@ -10,7 +10,7 @@
         @elseif($patient->carePlan->status == App\CarePlan::DRAFT)
         <div class="col-xs-12">
             <div class="pull-right print-row text-right" style="background: hsla(10, 50%, 50%, .10); padding: 10px">
-                <i class="fas fa-exclamation" style="color: red"></i> This Care Plan has <strong>not</strong> been approved yet.
+                <i class="fas fa-exclamation" style="color: red"></i> This Care Plan is pending Dr. approval
             </div>
         </div>
         @endif

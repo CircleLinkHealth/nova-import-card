@@ -119,6 +119,11 @@ class CarePlan extends BaseModel implements PdfReport
         'updated_at',
     ];
 
+    public function alertPatientAboutApproval()
+    {
+        $this->patient->notify(new NotifyPatientCarePlanApproved($this));
+    }
+
     public function carePlanTemplate()
     {
         return $this->belongsTo(CarePlanTemplate::class);
@@ -173,8 +178,6 @@ class CarePlan extends BaseModel implements PdfReport
         }
 
         $location->notify(new CarePlanProviderApproved($this, $channels));
-        //notify the patient, check if this is used elsewhere
-        $this->patient->notify(new NotifyPatientCarePlanApproved($this));
     }
 
     public static function getNumberOfCareplansPendingApproval(User $user)
