@@ -71,7 +71,7 @@ function getStringValue($val, $default = '')
 
         <div class="suggested-list">
             <span class="report-title no-border no-margin">
-                <strong>Suggested CheckList</strong>
+                <strong>Suggested Checklist</strong>
             </span>
             <span class="side-title">
                 Ask your doctor about:
