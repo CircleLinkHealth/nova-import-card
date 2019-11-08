@@ -197,7 +197,7 @@ class PracticeReportsService
                 : $chargeableService->description,
             'LineUnitPrice' => (string) '$'.' '.$lineUnitPrice,
             'Msg'           => 'Send Check Payments to:
-CircleLink Health
+CircleLink Health Inc.
 1178 Broadway
 3rd floor #1265
 New York, NY 10001
