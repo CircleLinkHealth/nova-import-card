@@ -24,6 +24,10 @@
                 position: relative;
             }
 
+            .select2-container {
+                width: 100% !important;;
+            }
+
             .margin-20 {
                 margin-top: 10px;
                 margin-bottom: 10px;
