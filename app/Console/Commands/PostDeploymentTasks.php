@@ -40,13 +40,13 @@ class PostDeploymentTasks extends Command
     {
         collect(
             [
+                'horizon:terminate',
                 'nova:publish',
                 'view:clear',
                 'route:cache',
                 'config:cache',
                 'opcache:clear',
                 'opcache:optimize',
-                'horizon:terminate',
                 'queue:restart',
             ]
         )->each(
@@ -57,7 +57,7 @@ class PostDeploymentTasks extends Command
                         'horizon:terminate',
                         'queue:restart',
                     ]
-                    )) {
+                )) {
                     //@todo: start using envoyer scripts
                     //Do not run Queue commands on production, as Worker now takes care of Prod jobs
                     return;
