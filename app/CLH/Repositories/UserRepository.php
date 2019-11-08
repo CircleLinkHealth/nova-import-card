@@ -72,6 +72,12 @@ class UserRepository
     ) {
         $user = $user->createNewUser($params->get('email'), $params->get('password'));
 
+        if ( ! $user || is_null($user->id)) {
+            \Log::channel('logdna')->error('User has not been created.', [
+                'email_exists_in_parameters' => ! is_null($params->get('email')),
+            ]);
+        }
+
         $this->saveOrUpdatePasswordsHistory($user, $params);
 
         // set registration date field on users
@@ -83,6 +89,11 @@ class UserRepository
         // roles
         $this->saveOrUpdateRoles($user, $params);
 
+        if ( ! empty($params->get('roles')) && 0 == $user->roles()->count()) {
+            \Log::channel('logdna')->error('User roles have not been attached.', [
+                'user_id' => $user->id,
+            ]);
+        }
         // phone numbers
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
