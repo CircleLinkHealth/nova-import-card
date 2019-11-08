@@ -21,7 +21,7 @@
             font-style: normal;
             line-height: normal;
             letter-spacing: 0.78px;
-            color: rgb(189, 191, 193);
+            color: rgb(132, 134, 135);
         }
 
         hr {
