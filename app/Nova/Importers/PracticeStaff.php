@@ -214,6 +214,10 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         ]);
 
         $user = User::whereEmail($row['email'])
+            ->ofPractice($this->practice->id)
+            ->whereDoesntHave('roles', function ($q) {
+                $q->whereIn('name', ['participant', 'administrator']);
+            })
             ->where('first_name', $row['first_name'])
             ->where('last_name', $row['last_name'])
             ->first();
