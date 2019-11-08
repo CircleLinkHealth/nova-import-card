@@ -139,7 +139,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group([
         'prefix'     => 'patient-user',
-        'middleware' => 'role:participant',
+        'middleware' => ['auth', 'checkPatientUserData'],
     ], function () {
         Route::get('view-careplan', [
             'uses' => 'PatientUserController@viewCareplan',

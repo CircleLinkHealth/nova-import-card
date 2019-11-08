@@ -11,6 +11,7 @@ use App\Http\Middleware\AddResponseOriginal;
 use App\Http\Middleware\CheckCarePlanMode;
 use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\CheckOnboardingInvite;
+use App\Http\Middleware\CheckPatientUserData;
 use App\Http\Middleware\CheckWebSocketServer;
 use App\Http\Middleware\DummyPlaceholder;
 use App\Http\Middleware\EncryptCookies;
@@ -102,5 +103,6 @@ class Kernel extends HttpKernel
         'check.careplan.mode'    => CheckCarePlanMode::class,
         'doNotCacheResponse'     => DummyPlaceholder::class,
         'cacheResponse'          => DummyPlaceholder::class,
+        'checkPatientUserData'   => CheckPatientUserData::class,
     ];
 }
