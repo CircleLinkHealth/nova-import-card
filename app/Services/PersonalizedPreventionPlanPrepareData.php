@@ -915,7 +915,7 @@ class PersonalizedPreventionPlanPrepareData
             : 'N/A';
         $breastCancerSelected = $this->checkForConditionSelected($screenings, $condition = 'Breast Cancer',
             $checkInCategory = 'family_conditions');
-
+//@todo:also add if other or trans
         if ($screenings['sex'] === 'Female' && '50' < $screenings['age'] && $screenings['age'] < '74') {
             return $this->getTaskRecommendations($title, $index);
 
@@ -1084,7 +1084,7 @@ class PersonalizedPreventionPlanPrepareData
         $checkSkinCancerIsSelectedInQ16 = $this->checkSkinCancerIsSelectedInQ16($screenings,
             'multipleQuestion16',
             'Cancer',
-            'Skin');
+            'skin');
 
         $countFamilyMembersWithSkinCancerFromQ18 = $this->countFamilyMembersWithSkinCancer($screenings, $condition = 'Skin Cancer');
 
@@ -1120,7 +1120,7 @@ class PersonalizedPreventionPlanPrepareData
                     && array_key_exists('name', $data)
                     && isset($data['name'])
                     && $data['name'] === $conditionName) {
-                    return $data['type'] === $conditionType;
+                    return lcfirst($data['type']) === $conditionType;
                 }
             }
         }
