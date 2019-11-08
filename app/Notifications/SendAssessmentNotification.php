@@ -18,7 +18,7 @@ class SendAssessmentNotification extends Notification
     private $approver;
 
     private $attachment;
-    private $channels = ['mail', 'database'];
+    private $channels = ['database'];
     private $patient;
     private $practice;
 
