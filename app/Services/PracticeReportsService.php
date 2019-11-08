@@ -197,10 +197,10 @@ class PracticeReportsService
                 : $chargeableService->description,
             'LineUnitPrice' => (string) '$'.' '.$lineUnitPrice,
             'Msg'           => 'Send Check Payments to:
-CircleLink Health Inc. 
-C/O I2BF Ventures
-304 Park Avenue South, 9th FLoor
-New York, NY 10010
+CircleLink Health
+1178 Broadway
+3rd floor #1265
+New York, NY 10001
 
 ACH Payments: JPMorgan Chase Bank 
 Routing Number (ABA): 02110361 
