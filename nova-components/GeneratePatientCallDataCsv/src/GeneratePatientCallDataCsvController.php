@@ -6,18 +6,30 @@
 
 namespace Circlelinkhealth\GeneratePatientCallDataCsv;
 
-use Illuminate\Http\Request;
+use App\Exports\FromArray;
 
 class GeneratePatientCallDataCsvController
 {
-    public function handle(Request $request)
+    public function handle($month)
     {
-        //validate input - custom request class?
-        $date = \Carbon\Carbon::parse($request->input('month'));
+        $fileName = 'test.xls';
 
-        $data = $this->getData();
+        $headings = [
+            '1',
+            '2',
+            '3',
+            '4',
+            '5',
+        ];
+
+        $rows = [
+            ['a', 'b', 'c', 'd', 'e'],
+            ['a1', 'b1', 'c1', 'd1', 'e1'],
+            ['a2', 'b2', 'c2', 'd2', 'e2'],
+        ];
+
+        return (new FromArray($fileName, $rows, $headings))->download($fileName);
         //return media download
-        return ['message' => 'test'];
     }
 
     private function getData()

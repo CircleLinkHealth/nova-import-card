@@ -97,6 +97,7 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _rootUrl_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../rootUrl.js */ "./resources/js/rootUrl.js");
 //
 //
 //
@@ -128,13 +129,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['card' // The following props are only available on resource detail cards...
@@ -162,32 +157,34 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     generateCsv: function generateCsv() {
-      var _this = this;
-
-      this.working = true;
-      var formData = new FormData();
-      formData.append('month', this.month);
-      Nova.request().post('/nova-vendor/generate-patient-call-data-csv/generate-csv-for-month/', formData).then(function (_ref) {
-        var data = _ref.data;
-
-        _this.$toasted.success(data.message);
-
-        _this.errors = null;
-      })["catch"](function (_ref2) {
-        var response = _ref2.response;
-
-        if (response.data.danger) {
-          _this.$toasted.error(response.data.danger);
-
-          _this.errors = null;
-        } else {
-          _this.errors = response.data.errors;
-        }
-      })["finally"](function () {
-        _this.working = false;
-
-        _this.$refs.form.reset();
-      });
+      var url = Object(_rootUrl_js__WEBPACK_IMPORTED_MODULE_1__["rootUrl"])("/nova-vendor/generate-patient-call-data-csv/generate-csv-for-month/".concat(this.month));
+      console.log('calls:excel', url);
+      document.location.href = url; // this.working = true;
+      // let formData = new FormData();
+      // formData.append('month', this.month);
+      //
+      // return
+      // Nova.request()
+      //     .post(
+      //         '/nova-vendor/generate-patient-call-data-csv/generate-csv-for-month/',
+      //         formData
+      //     )
+      //     .then(({ data }) => {
+      //         this.$toasted.success(data.message);
+      //         this.errors = null;
+      //     })
+      //     .catch(({ response }) => {
+      //         if (response.data.danger) {
+      //             this.$toasted.error(response.data.danger);
+      //             this.errors = null;
+      //         } else {
+      //             this.errors = response.data.errors;
+      //         }
+      //     })
+      //     .finally(() => {
+      //         this.working = false;
+      //         this.$refs.form.reset();
+      //     });
     }
   },
   mounted: function mounted() {
@@ -17833,7 +17830,6 @@ var render = function() {
             on: {
               submit: function($event) {
                 $event.preventDefault()
-                return _vm.generateCsv($event)
               }
             }
           },
@@ -17909,17 +17905,12 @@ var render = function() {
                 : _vm._e(),
               _vm._v(" "),
               _c(
-                "button",
+                "a",
                 {
                   staticClass: "btn btn-default btn-primary ml-auto mt-auto",
-                  attrs: { disabled: _vm.working, type: "submit" }
+                  on: { click: _vm.generateCsv }
                 },
-                [
-                  _vm.working
-                    ? _c("loader", { attrs: { width: "30" } })
-                    : _c("span", [_vm._v(_vm._s(_vm.__("Generate CSV")))])
-                ],
-                1
+                [_vm._v("Generate CSV")]
               )
             ])
           ]
@@ -18154,6 +18145,39 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Card_vue_vue_type_template_id_b9bc2c0a___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
+
+/***/ }),
+
+/***/ "./resources/js/rootUrl.js":
+/*!*********************************!*\
+  !*** ./resources/js/rootUrl.js ***!
+  \*********************************/
+/*! exports provided: rootUrl */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "rootUrl", function() { return rootUrl; });
+function rootUrl(url, nameVal) {
+  var bases = Array.from(document.getElementsByTagName('base'));
+  var baseElem = bases.filter(function (elem) {
+    return elem.getAttribute('name') == (nameVal || 'root');
+  })[0];
+  if (!baseElem) baseElem = bases.filter(function (elem) {
+    return !elem.getAttribute('name');
+  })[0];
+  if (!baseElem) baseElem = document.querySelector('meta[name="base-url"]');
+
+  if (baseElem) {
+    var ret = baseElem.getAttribute('href') || baseElem.getAttribute('content'); //add the slash
+
+    if (ret.charAt(ret.length - 1) !== '/') ret += '/'; //make sure the slash is not at the url
+
+    if (url.charAt(0) === '/') url = url.substring(1);
+    ret += url;
+    return ret;
+  } else return url.charAt(0) === "/" ? url : '/' + url;
+}
 
 /***/ }),
 

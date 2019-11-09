@@ -1,8 +1,8 @@
 <template>
     <card class="flex flex-col items-center justify-center">
         <div class="px-3 py-3">
-            <h1 class="text-xl font-light">Generate Patient Call Data Csv</h1>
-            <form @submit.prevent="generateCsv" ref="form">
+            <h1 class="text-xl font-light">Generate Patient Call Data Sheet</h1>
+            <form @submit.prevent="" ref="form">
                 <div class="py-4">
                     <span class="flex ">
                         <label for="months">
@@ -12,24 +12,10 @@
                             <option v-for="month in this.months" v-bind:value="month">{{month}}</option>
                         </select>
                     </span>
-                    <span class="text-gray-50">
-                        {{ currentLabel }}
-                    </span>
-
                 </div>
 
                 <div class="flex">
-                    <div v-if="errors">
-                        <p class="text-danger mb-1" v-for="error in errors">{{error[0]}}</p>
-                    </div>
-                    <button
-                            :disabled="working"
-                            type="submit"
-                            class="btn btn-default btn-primary ml-auto mt-auto"
-                    >
-                        <loader v-if="working" width="30"></loader>
-                        <span v-else>{{__('Generate CSV')}}</span>
-                    </button>
+                    <a class="btn btn-default btn-primary ml-auto mt-auto" @click="generateCsv">Generate Sheet</a>
                 </div>
             </form>
         </div>
@@ -38,21 +24,14 @@
 
 <script>
     import moment from 'moment';
+    import {rootUrl} from '../rootUrl.js'
 
 export default {
     props: [
         'card',
-
-        // The following props are only available on resource detail cards...
-        // 'resource',
-        // 'resourceId',
-        // 'resourceName',
     ],
     data() {
         return {
-            label: 'test label',
-            working: false,
-            errors: null,
             month : null,
             months : []
         };
@@ -68,30 +47,10 @@ export default {
             }
         },
         generateCsv() {
-            this.working = true;
-            let formData = new FormData();
-            formData.append('month', this.month);
-            Nova.request()
-                .post(
-                    '/nova-vendor/generate-patient-call-data-csv/generate-csv-for-month/',
-                    formData
-                )
-                .then(({ data }) => {
-                    this.$toasted.success(data.message);
-                    this.errors = null;
-                })
-                .catch(({ response }) => {
-                    if (response.data.danger) {
-                        this.$toasted.error(response.data.danger);
-                        this.errors = null;
-                    } else {
-                        this.errors = response.data.errors;
-                    }
-                })
-                .finally(() => {
-                    this.working = false;
-                    this.$refs.form.reset();
-                });
+
+            const url = rootUrl(`/nova-vendor/generate-patient-call-data-csv/generate-csv-for-month/${this.month}`);
+            console.log('calls:excel', url);
+            document.location.href = url;
         },
     },
 
