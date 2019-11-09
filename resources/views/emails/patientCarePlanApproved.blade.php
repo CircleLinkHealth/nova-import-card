@@ -1,7 +1,7 @@
 @component('mail::layout')
 @slot('header')
-@component('mail::header', ['url' => config('app.url')])
-CircleLink Health
+@component('mail::header', ['url' => ''])
+{{$practice_name}}
 @endcomponent
 @endslot
 
@@ -17,7 +17,7 @@ Haven't setup your password yet? Click here: [Setup password]({{$reset_url}})
 
 Regards,
 
-CircleLink Team
+{{$practice_name}}
 
 @slot('subcopy')
 @component('mail::subcopy')
@@ -28,7 +28,7 @@ If you're having trouble clicking the "{{$action_text}}" button, copy and past t
 @endslot
 @slot('footer')
 @component('mail::footer')
-&copy; [CircleLink Health]({{url('/')}}) All rights reserved.
+{{$practice_name}}
 @endcomponent
 @endslot
 @endcomponent

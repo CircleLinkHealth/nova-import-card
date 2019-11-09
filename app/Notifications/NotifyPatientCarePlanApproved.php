@@ -20,9 +20,9 @@ class NotifyPatientCarePlanApproved extends Notification
     private $channels = ['database'];
 
     /**
-     * This notification is sent to the patient both when Careplan is QA approved by CLH, and when it's Provider approved.
-     * The first case we send the patient a button link to the password reset page, while on the second we send them a link to
-     * CPM, with a hyperlink of the reset page below.
+     * This notification is sent to the patient both when Careplan is QA approved by CLH, and when it's Provider
+     * approved. The first case we send the patient a button link to the password reset page, while on the second we
+     * send them a link to CPM, with a hyperlink of the reset page below.
      */
 
     /**
@@ -39,12 +39,16 @@ class NotifyPatientCarePlanApproved extends Notification
 
     public function getActionText()
     {
-        return CarePlan::PROVIDER_APPROVED != $this->carePlan->status ? 'Setup Password' : 'Go to Care Plan Manager';
+        return CarePlan::PROVIDER_APPROVED != $this->carePlan->status
+            ? 'Setup Password'
+            : 'Login to View Care Plan';
     }
 
     public function getActionUrl()
     {
-        return CarePlan::PROVIDER_APPROVED != $this->carePlan->status ? url('auth/password/reset') : url('/');
+        return CarePlan::PROVIDER_APPROVED != $this->carePlan->status
+            ? url('auth/password/reset')
+            : url('/');
     }
 
     /**
@@ -55,21 +59,10 @@ class NotifyPatientCarePlanApproved extends Notification
     public function getBody()
     {
         if (CarePlan::PROVIDER_APPROVED === $this->carePlan->status) {
-            $message = 'Please click below button to see your Care Plan, which was approved on '
-                       .$this->carePlan->provider_date->toFormattedDateString();
-
-            $approver = optional($this->carePlan->providerApproverUser);
-
-            if ($approver) {
-                $message .= ' by '.$approver->getFullName().'.';
-            }
-
-            return $message;
+            return 'Your Care Plan is now approved and can be viewed by logging in!';
         }
 
-        return 'Your Care Plan is pending Dr. approval. 
-        Please click on the button below to setup a password for Care Plan Manager. 
-        This will send a password reset email to your address.';
+        return 'Thanks for joining our Wellness Program! Your Care Plan has been sent to your doctor for approval. To view, please click below button to setup a password.';
     }
 
     /**
@@ -79,7 +72,11 @@ class NotifyPatientCarePlanApproved extends Notification
      */
     public function getSubject()
     {
-        return 'Your CarePlan has just been approved';
+        if (CarePlan::PROVIDER_APPROVED === $this->carePlan->status) {
+            return 'Your CarePlan has just been approved';
+        }
+
+        return 'Your Care Plan has been sent to your doctor for approval';
     }
 
     /**
@@ -110,15 +107,18 @@ class NotifyPatientCarePlanApproved extends Notification
      */
     public function toMail($notifiable)
     {
+        $practice = $this->carePlan->patient->primaryPractice;
+
         return (new MailMessage())
             ->from('noreply@circlelinkhealth.com')
             ->subject($this->getSubject())
             ->markdown('emails.patientCarePlanApproved', [
-                'action_url'  => $this->getActionUrl(),
-                'action_text' => $this->getActionText(),
-                'reset_url'   => url('auth/password/reset'),
-                'body'        => $this->getBody(),
-                'is_followup' => CarePlan::PROVIDER_APPROVED === $this->carePlan->status,
+                'action_url'    => $this->getActionUrl(),
+                'action_text'   => $this->getActionText(),
+                'practice_name' => $practice->display_name,
+                'reset_url'     => url('auth/password/reset'),
+                'body'          => $this->getBody(),
+                'is_followup'   => CarePlan::PROVIDER_APPROVED === $this->carePlan->status,
             ]);
     }
 
