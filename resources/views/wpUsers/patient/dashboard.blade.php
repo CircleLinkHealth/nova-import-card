@@ -30,8 +30,7 @@
                                 </div>
                                 <div>
                                     <p class="text-medium-big text--menu text-serif">
-                                        AWV Patient List
-                                        <br/>
+                                        Wellness Visit Patient List
                                         <br/>
                                         <br/>
                                     </p>
