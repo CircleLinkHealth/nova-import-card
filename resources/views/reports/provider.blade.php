@@ -57,7 +57,7 @@
                 @if($reportData['demographic_data']['ethnicity'] === 'No')
                     non
                 @endif
-                hispanic/latino
+                hispanic&nbsp;/&nbsp;latino
                 {{lcfirst($reportData['demographic_data']['race'])}} {{$reportData['demographic_data']['gender']}}.
                 In general, the patient has self-assessed their health as {{$reportData['demographic_data']['health']}}.
             </div>
@@ -132,7 +132,7 @@
                         of {{$medication['drug']}} {{$medication['frequency']}} {{$loop->last ? '.' : ', '}}
                     @endforeach
                 @else
-                    Patient indicated that they do not take any medications regularly.
+                    The patient has indicated that they do not take any medications regularly.
                 @endif
             </div>
         </div>
@@ -236,8 +236,10 @@
             <br/>
 
             <div class="recommendations-area">
-                <strong>Blood pressure: </strong> {{$reportData['vitals']['blood_pressure']['first_metric']}}
-                /{{$reportData['vitals']['blood_pressure']['second_metric']}} mmHg <br>
+                <strong>Blood pressure: </strong>
+                {{$reportData['vitals']['blood_pressure']['first_metric']}}
+                &nbsp;/&nbsp;
+                {{$reportData['vitals']['blood_pressure']['second_metric']}} mmHg <br>
                 <strong>Height: </strong> {{$reportData['vitals']['height']['feet']}}
                 feet, {{$reportData['vitals']['height']['inches']}} inches <br>
                 <strong>Weight: </strong> {{$reportData['vitals']['weight']}} lbs <br>
@@ -368,7 +370,7 @@
                 @endif
                 <br>
                 <br>
-                <strong>MCI/Cognitive</strong>
+                <strong>MCI&nbsp;/&nbsp;Cognitive</strong>
                 <br>
                 The patient was {{$reportData['functional_capacity']['mci_cognitive']['clock']}} to put in the hour
                 markers and the time at ten minutes past eleven o'clock.
@@ -383,7 +385,7 @@
                 the past 6 months.
                 <br>
                 <br>
-                <strong>Hearing/Auditory Function</strong>
+                <strong>Hearing&nbsp;/&nbsp;Auditory Function</strong>
                 <br>
                 The patient {{$reportData['functional_capacity']['hearing_difficulty']}} difficulty with their hearing.
             </div>
@@ -425,12 +427,12 @@
             <div class="recommendations-area">
                 The patient {{$reportData['advanced_care_planning']['has_attorney']}} a Medical Power of Attorney.
                 The patient @if($reportData['advanced_care_planning']['living_will'] === 'yes') has a living
-                will/advance
+                will&nbsp;/&nbsp;advance
                 directive.
                 A copy of the patient's advance
                 directive {{$reportData['advanced_care_planning']['existing_copy'] === 'yes'}}
                 available on file at the moment.
-                @else does not have a living will/advance directive. @endif
+                @else does not have a living will&nbsp;/&nbsp;advance directive. @endif
             </div>
         </div>
 
