@@ -113,13 +113,13 @@ class GenerateProviderReportService
 
     }
 
-    private function answerForHraQuestionWithOrder($order, $subOrder = null)
+    private function answerForHraQuestionWithOrder($order, $subOrder = null, $default = [])
     {
         $question = $this->hraQuestions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
 
         $answer = $this->hraAnswers->where('question_id', $question->id)->first();
 
-        return $this->sanitizedValue($answer);
+        return $this->sanitizedValue($answer, $default);
     }
 
     private function getAllergyHistory()
@@ -275,7 +275,7 @@ class GenerateProviderReportService
         $socialFactors = [];
 
         $socialFactors['tobacco']['has_used']             = $this->answerForHraQuestionWithOrder(11);
-        $socialFactors['tobacco']['last_smoked']          = $this->answerForHraQuestionWithOrder(11, 'b');
+        $socialFactors['tobacco']['last_smoked']          = lcfirst($this->answerForHraQuestionWithOrder(11, 'b', ''));
         $socialFactors['tobacco']['amount']               = $this->answerForHraQuestionWithOrder(11, 'c');
         $socialFactors['tobacco']['interest_in_quitting'] = $this->answerForHraQuestionWithOrder(11, 'd');
 

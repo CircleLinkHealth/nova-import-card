@@ -32,7 +32,7 @@
             <div>
                 <p>Patient:&nbsp;<span class="font-weight-bold patient-name">{{$patient->display_name}}</span></p>
                 <p>Date of Birth:&nbsp;<span class="font-weight-bold">{{$patient->patientInfo->dob()}}</span></p>
-                <p class="watermark">Generated:&nbsp;{{$generatedAt}}</p>
+                <p class="watermarked">Generated:&nbsp;<span class="font-weight-bold">{{$generatedAt}}</span></p>
             </div>
             <div class="footer text-center">
                 <img src="{{ asset('/images/lightning_bolt.png')}}" height="28px"/>&nbsp;by&nbsp;<span class="by-circlelink">CircleLink Health</span>

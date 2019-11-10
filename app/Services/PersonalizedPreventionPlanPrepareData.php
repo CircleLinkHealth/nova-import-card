@@ -8,18 +8,18 @@ use App\TaskRecommendations;
 class PersonalizedPreventionPlanPrepareData
 {//titles
     const NUTRITION_TITLE = 'Nutrition';
-    const TOBACCO_TITLE = 'Tobacco/Smoking';
+    const TOBACCO_TITLE = 'Tobacco / Smoking';
     const ALCOHOL_TITLE = 'Alcohol';
     const DRUGS_TITLE = 'Recreational Drug Use';
     const PHYSICAL_TITLE = 'Physical Activity';
-    const WEIGHT_BMI_TITLE = 'Weight/BMI';
+    const WEIGHT_BMI_TITLE = 'Weight / BMI';
     const SEXUAL_TITLE = 'Sexual Practices';
     const EMOTIONAL_TITLE = 'Emotional Health';
     const FALL_RISK_TITLE = 'Fall Risk';
     const HEARING_TITLE = 'Hearing Impairment';
     const COGNITIVE_TITLE = 'Cognitive Impairment';
     const ADL_TITLE = 'ADL';
-    const VACCINES_TITLE = 'Immunizations/Vaccines';
+    const VACCINES_TITLE = 'Immunizations / Vaccines';
     const SCREENINGS_TITLE = 'Screenings';
     const OTHER_TITLE = 'Other misc';
     const VITALS_TITLE = 'Vitals';
@@ -727,7 +727,12 @@ class PersonalizedPreventionPlanPrepareData
 
             $getAdlRecommendations = $this->getTaskRecommendations($title, $index);
             $textToReplace = '{insert all selected tasks in Q26}'; //todo:rename this in seeder and DB
-            $replacementText = implode(", ", $adl['adl']);
+            $adlAnswers = $adl['adl'];
+            $answersUnCapitalized = collect($adlAnswers)->map(function ($answer){
+               return lcfirst($answer);
+            })->toArray();
+
+            $replacementText = implode(", ", $answersUnCapitalized);
             $adlRecommendationBody = $getAdlRecommendations['task_body'];
             $newAdlRecommendationBody = str_replace($textToReplace, $replacementText, $adlRecommendationBody);
 

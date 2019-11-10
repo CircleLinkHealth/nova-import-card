@@ -65,8 +65,11 @@ function getStringValue($val, $default = '')
                 ' {{getStringValue($patientPppData->answers_for_eval['height']['inches'])}}" </strong><br>
             Body Mass Index (BMI): <strong>{{getStringValue($patientPppData->answers_for_eval['bmi'])}}</strong> <br>
             Blood Pressure:
-            <strong>{{getStringValue($patientPppData->answers_for_eval['blood_pressure']['first_metric'])}}
-                / {{getStringValue($patientPppData->answers_for_eval['blood_pressure']['second_metric'])}}</strong><br>
+            <strong>
+                {{getStringValue($patientPppData->answers_for_eval['blood_pressure']['first_metric'])}}
+                &nbsp;/&nbsp;
+                {{getStringValue($patientPppData->answers_for_eval['blood_pressure']['second_metric'])}}
+            </strong><br>
         </div>
 
         <div class="suggested-list">
@@ -205,7 +208,7 @@ function getStringValue($val, $default = '')
 
     .image.volume-half {
         background: url({{asset('/images/volume-half@3x.png')}}) no-repeat;
-        margin-top: 1px;
+        margin-top: 2px;
     }
 
     .image.thought-bubble {

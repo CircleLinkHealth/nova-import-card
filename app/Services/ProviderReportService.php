@@ -137,7 +137,7 @@ class ProviderReportService
 
             $skinCancer = self::checkInputValueIsNotEmpty($report->screenings['skin_cancer'], 'skin_cancer', []);
             if ( ! empty($skinCancer) && $skinCancer !== '10+ years ago/Never/Unsure') {
-                $screenings['Skin cancer'] = ": Had " . $skinCancer . '.';
+                $screenings['Skin cancer screening'] = ": Had " . $skinCancer . '.';
             }
 
             $prostateCancer = $this->getStringValue($report->screenings['prostate_cancer']);
@@ -157,7 +157,7 @@ class ProviderReportService
 
             $violence = $this->getStringValue($report->screenings['violence']);
             if ( ! empty($violence) && $violence !== '10+ years ago/Never/Unsure') {
-                $screenings['Intimate Partner Violence/Domestic Violence'] = ": Had " . $violence . '.';
+                $screenings['Intimate Partner Violence / Domestic Violence'] = ": Had " . $violence . '.';
             }
         }
 
