@@ -12,13 +12,13 @@
 */
 
 Route::get('/', 'HomeController@index')
-    ->name('home');
+     ->name('home');
 
 Auth::routes();
 
 Route::post('/logout', 'Auth\LoginController@logout')
-    ->name('logout')
-    ->middleware('auth');
+     ->name('logout')
+     ->middleware('auth');
 
 Route::group([
     'prefix' => 'auth',
@@ -76,9 +76,36 @@ Route::group([
 
     Route::get('{userId}/{surveyName}/{channel}/send-assessment-link', [
             'uses' => 'InvitationLinksController@showSendAssessmentLinkForm',
-            'as'   => 'patient.assessment-link-form'
+            'as'   => 'patient.assessment-link-form',
         ]
     );
+
+    Route::group([
+        'prefix' => 'providers',
+    ], function () {
+
+        Route::post('add', [
+            'uses' => 'ProviderController@add',
+            'as'   => 'provider.add',
+        ]);
+
+        Route::get('search', [
+            'uses' => 'ProviderController@search',
+            'as'   => 'provider.search',
+        ]);
+
+    });
+
+    Route::group([
+        'prefix' => 'practices',
+    ], function () {
+
+        Route::get('search', [
+            'uses' => 'PracticeController@search',
+            'as'   => 'practice.search',
+        ]);
+
+    });
 });
 
 Route::group([
@@ -109,7 +136,7 @@ Route::group([
     });
 
     Route::group([
-        'prefix' => 'vitals',
+        'prefix'     => 'vitals',
         'middleware' => ['permission:vitals-survey-complete'],
     ], function () {
         Route::get('{patientId}', [
@@ -156,7 +183,6 @@ Route::group([
 
     Route::get('get-ppp-data/{userId}/{year?}', 'PersonalizedPreventionPlanController@getPppForUser')
          ->name('get-ppp-report');
-
 
 
 });
