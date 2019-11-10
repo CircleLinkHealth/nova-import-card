@@ -85,12 +85,10 @@ class NotificationService
      */
     public function markAsRead($receiverId, $attachmentId)
     {
-        $user = User::find($receiverId);
-
-        $user->unreadNotifications()
-            ->where('attachment_id', '=', $attachmentId)
-            ->get()
-            ->markAsRead();
+        $notification = DatabaseNotification::whereAttachmentId($attachmentId)->first();
+        if (empty($notification->read_at)) {
+            $notification->markAsRead();
+        }
     }
 
     public function notificationCreatedAt($notification)
@@ -99,6 +97,8 @@ class NotificationService
     }
 
     /**
+     * @param Carbon $createdDateTime
+     *
      * @return string
      */
     public function notificationElapsedTime(Carbon $createdDateTime)

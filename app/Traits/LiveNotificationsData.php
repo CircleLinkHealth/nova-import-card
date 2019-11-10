@@ -14,7 +14,7 @@ trait LiveNotificationsData
             'sender_id'       => $this->sendersId(),
             'receiver_id'     => $notifiable->id,
             'patient_name'    => $this->getPatientName(),
-            'note_id'         => $this->noteId(),
+            'note_id'         => $this->noteId(), //for activities will be null till task is completed. then will be updated
             'attachment_id'   => $this->getAttachment()->id,
             'redirect_link'   => $this->redirectLink(),
             'description'     => $this->description(),
