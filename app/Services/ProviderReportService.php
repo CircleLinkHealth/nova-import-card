@@ -157,7 +157,7 @@ class ProviderReportService
 
             $violence = $this->getStringValue($report->screenings['violence']);
             if ( ! empty($violence) && $violence !== '10+ years ago/Never/Unsure') {
-                $screenings['Intimate Partner Violence/Domestic Violence'] = ": Had " . $violence . '.';
+                $screenings['Intimate Partner Violence / Domestic Violence'] = ": Had " . $violence . '.';
             }
         }
 
