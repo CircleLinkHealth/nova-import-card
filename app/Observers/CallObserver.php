@@ -38,8 +38,6 @@ class CallObserver
     public function createNotificationAndSendToPusher($call)
     {
         $notify = $call->outboundUser;
-        //@todo: if multiple notifications are dispatched because of multi activities entry, then pusher works 50%-50%
-        //sometimes will receive just the first while on others all..nedd to check this again
         Notification::send($notify, new CallCreated($call, auth()->user()));
     }
 
@@ -81,9 +79,10 @@ class CallObserver
                     'no_of_successful_calls' => $no_of_successful_calls,
                 ]);
         }
-        //Mark as 'read'in notifications table  - so it will fade out from live-notifications dropdown and ignored from count.
+
         if ('reached' === $call->status || 'done' === $call->status) {
             $this->notificationService->markAsRead($call->outboundUser->id, $call->id);
+            Call::where('id', $call->id)->update(['asap' => false]);
         }
 
         //If sub_type = "addendum_response" means it has already been created by AddendumObserver
