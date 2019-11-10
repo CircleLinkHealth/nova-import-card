@@ -163,10 +163,11 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      */
     public function toMail($notifiable)
     {
+        $senderName = $this->sender->display_name;
+
         return (new MailMessage())
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+            ->line("Dr. $senderName has commented on a note")
+            ->action('View Comment', url($this->redirectLink()));
     }
 
     /**
@@ -178,6 +179,6 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      */
     public function via($notifiable)
     {
-        return ['database', 'broadcast'];
+        return ['database', 'broadcast', 'mail'];
     }
 }
