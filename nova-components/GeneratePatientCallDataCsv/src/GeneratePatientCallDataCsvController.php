@@ -7,35 +7,27 @@
 namespace Circlelinkhealth\GeneratePatientCallDataCsv;
 
 use App\Exports\FromArray;
+use Carbon\Carbon;
 
 class GeneratePatientCallDataCsvController
 {
-    public function handle($month)
+    public function handle($monthYear)
     {
-        $fileName = 'test.xls';
+        $date = Carbon::parse($monthYear);
+
+        $rows = PatientCallData::get($date);
+
+        $fileName = 'patient-call-data-'.$date->toDateString().'.xls';
 
         $headings = [
-            '1',
-            '2',
-            '3',
-            '4',
-            '5',
-        ];
-
-        $rows = [
-            ['a', 'b', 'c', 'd', 'e'],
-            ['a1', 'b1', 'c1', 'd1', 'e1'],
-            ['a2', 'b2', 'c2', 'd2', 'e2'],
+            'Patient ID',
+            'CCM Time',
+            'BHI Time',
+            'Successful Call with Patient',
+            'Nurse Name',
+            'Practice',
         ];
 
         return (new FromArray($fileName, $rows, $headings))->download($fileName);
-        //return media download
-    }
-
-    private function getData()
-    {
-        //for current month get from calls view
-        //for the past create custom query
-        return [];
     }
 }

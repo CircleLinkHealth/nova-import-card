@@ -18,4 +18,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/generate-csv-for-month/{month}', GeneratePatientCallDataCsvController::class.'@handle');
+Route::get('/generate-csv-for-month/{monthYear}', GeneratePatientCallDataCsvController::class.'@handle');
