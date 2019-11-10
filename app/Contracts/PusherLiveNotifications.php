@@ -8,6 +8,8 @@ namespace App\Contracts;
 
 interface PusherLiveNotifications
 {
+    public function attachmentType(): string;
+
     public function description(): string;
 
     public function getAttachment();
@@ -16,7 +18,13 @@ interface PusherLiveNotifications
 
     public function getSubject(): string;
 
+    public function noteId(): ?int;
+
     public function redirectLink(): string;
+
+    public function sendersId(): int;
+
+    public function sendersName(): string;
 
     public function toArray($notifiable): array;
 

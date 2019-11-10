@@ -9,6 +9,7 @@ namespace App\Notifications;
 use App\Call;
 use App\Contracts\PusherLiveNotifications;
 use App\Services\NotificationService;
+use App\Traits\LiveNotificationsData;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -20,6 +21,7 @@ use Illuminate\Notifications\Notification;
 
 class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, PusherLiveNotifications
 {
+    use LiveNotificationsData;
     use Queueable;
 
     public $attachment;
@@ -34,11 +36,19 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
 
     /**
      * Create a new notification instance.
+     *
+     * @param Call $call
+     * @param User $sender
      */
     public function __construct(Call $call, User $sender)
     {
         $this->attachment = $this->call = $call;
         $this->sender     = $sender;
+    }
+
+    public function attachmentType(): string
+    {
+        return Call::class;
     }
 
     public function description(): string
@@ -79,7 +89,12 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
 
         return 'call' === $activity
             ? "Patient <strong>$patientName</strong> has a scheduled $activity"
-            : "Patient <strong>$patientName</strong> requires a $activity"; //todo:write a migration to update this?
+            : "Patient <strong>$patientName</strong> requires a $activity";
+    }
+
+    public function noteId(): ?int
+    {
+        return $this->attachment->note_id;
     }
 
     public function redirectLink(): string
@@ -89,25 +104,29 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
         return route('patient.careplan.print', ['patient' => $patientId]);
     }
 
+    public function sendersId(): int
+    {
+        return $this->sender->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function sendersName(): string
+    {
+        return $this->sender->display_name;
+    }
+
     /**
      * Get the array representation of the notification.
      *
      * @param mixed $notifiable
+     *
+     * @return array
      */
     public function toArray($notifiable): array
     {
-        return NotificationService::getNotificationArrayRepresentation(
-            $notifiable,
-            $this->sender->id,
-            $this->getPatientName(),
-            $this->call->note_id,
-            $this->getAttachment()->id,
-            $this->redirectLink(),
-            $this->description(),
-            Call::class,
-            $this->getSubject(),
-            $this->sender->display_name
-        );
+        return $this->notificationData($notifiable);
     }
 
     /**

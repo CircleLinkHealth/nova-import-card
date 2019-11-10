@@ -10,6 +10,7 @@ use App\Contracts\PusherLiveNotifications;
 use App\Models\Addendum;
 use App\Note;
 use App\Services\NotificationService;
+use App\Traits\LiveNotificationsData;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -21,7 +22,9 @@ use Illuminate\Notifications\Notification;
 
 class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQueue, PusherLiveNotifications
 {
+    use LiveNotificationsData; // this name sucks. help?
     use Queueable;
+
     public $addendum;
     public $attachment;
     /**
@@ -31,11 +34,22 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
 
     /**
      * Create a new notification instance.
+     *
+     * @param Addendum $addendum
+     * @param User     $sender
      */
     public function __construct(Addendum $addendum, User $sender)
     {
         $this->attachment = $this->addendum = $addendum;
         $this->sender     = $sender;
+    }
+
+    /**
+     * @return string
+     */
+    public function attachmentType(): string
+    {
+        return Addendum::class;
     }
 
     public function description(): string
@@ -49,14 +63,6 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     public function getAttachment()
     {
         return $this->attachment;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getNoteId()
-    {
-        return $this->getAttachment()->addendumable_id;
     }
 
     /**
@@ -88,13 +94,37 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     }
 
     /**
+     * @return int
+     */
+    public function noteId(): ?int
+    {
+        return $this->getAttachment()->addendumable_id;
+    }
+
+    /**
      * @return mixed
      */
     public function redirectLink(): string
     {
-        $note = Note::where('id', $this->getNoteId())->first();
+        $note = Note::where('id', $this->noteId())->first();
 
         return $note->link();
+    }
+
+    /**
+     * @return int
+     */
+    public function sendersId(): int
+    {
+        return $this->sender->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function sendersName(): string
+    {
+        return $this->sender->display_name;
     }
 
     /**
@@ -106,18 +136,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      */
     public function toArray($notifiable): array
     {
-        return NotificationService::getNotificationArrayRepresentation(
-            $notifiable,
-            $this->sender->id,
-            $this->getPatientName(),
-            $this->getNoteId(),
-            $this->getAttachment()->id,
-            $this->redirectLink(),
-            $this->description(),
-            Addendum::class,
-            $this->getSubject(),
-            $this->sender->display_name
-        );
+        return $this->notificationData($notifiable);
     }
 
     /**

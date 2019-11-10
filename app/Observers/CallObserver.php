@@ -87,6 +87,7 @@ class CallObserver
         }
 
         //If sub_type = "addendum_response" means it has already been created by AddendumObserver
+        //@todo:come up with a better solution for this
         if (true === $call->asap && 'addendum_response' !== $call->sub_type) {
             $this->createNotificationAndSendToPusher($call);
         }

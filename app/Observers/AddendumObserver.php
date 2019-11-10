@@ -43,7 +43,9 @@ class AddendumObserver
      */
     public function created(Addendum $addendum)
     {
-        $patientId = $addendum->load('addendumable')->addendumable->patient_id;
+        $addendum->loadMissing('addendumable');
+        $addendumable = $addendum->addendumable;
+        $patientId    = optional($addendumable)->patient_id;
 
         if (is_a($addendum->addendumable, Note::class)) {
             $noteAuthorUser = $addendum->addendumable->author;

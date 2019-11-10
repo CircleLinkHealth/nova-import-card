@@ -219,11 +219,11 @@ function formatTime($time)
                                                             <i class="fas fa-phone"></i>
                                                         @elseif ($call->type === 'Call Back')
                                                             <img style="text-align: center"
-                                                                 src="img/scheduled_activities_callback.svg"
+                                                                 src="img/callback_image.svg"
                                                                  alt="callback image">
                                                         @elseif ($call->type === 'addendum_response')
                                                             <img style="text-align: center"
-                                                                 src="img/scheduled_activities_message.svg"
+                                                                 src="img/addendum_image.svg"
                                                                  alt="callback image">
                                                         @else
                                                             <span>{{$call->type}}</span>
