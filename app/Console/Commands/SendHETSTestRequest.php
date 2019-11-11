@@ -48,10 +48,6 @@ class SendHETSTestRequest extends Command
         $c = new \GuzzleHttp\Client();
 
         $resp = $c->post(self::ENDPOINT, [
-            'headers' => [
-                'Content-Type' => 'multipart/form-data',
-                'Host'         => self::HOST,
-            ],
             'multipart' => [
                 [
                     'name'     => 'PayloadType',
