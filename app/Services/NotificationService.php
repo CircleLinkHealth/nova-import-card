@@ -97,8 +97,6 @@ class NotificationService
     }
 
     /**
-     * @param Carbon $createdDateTime
-     *
      * @return string
      */
     public function notificationElapsedTime(Carbon $createdDateTime)

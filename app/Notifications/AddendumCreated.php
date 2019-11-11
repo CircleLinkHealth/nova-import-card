@@ -6,11 +6,11 @@
 
 namespace App\Notifications;
 
-use App\Contracts\PusherLiveNotifications;
+use App\Contracts\LiveNotification;
 use App\Models\Addendum;
 use App\Note;
 use App\Services\NotificationService;
-use App\Traits\LiveNotificationsData;
+use App\Traits\ArrayableNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -20,9 +20,9 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQueue, PusherLiveNotifications
+class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQueue, LiveNotification
 {
-    use LiveNotificationsData; // this name sucks. help?
+    use ArrayableNotification;
     use Queueable;
 
     public $addendum;
@@ -114,7 +114,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     /**
      * @return int
      */
-    public function sendersId(): int
+    public function senderId(): int
     {
         return $this->sender->id;
     }
@@ -122,7 +122,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     /**
      * @return string
      */
-    public function sendersName(): string
+    public function senderName(): string
     {
         return $this->sender->display_name;
     }

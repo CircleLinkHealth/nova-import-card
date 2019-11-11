@@ -7,9 +7,9 @@
 namespace App\Notifications;
 
 use App\Call;
-use App\Contracts\PusherLiveNotifications;
+use App\Contracts\LiveNotification;
 use App\Services\NotificationService;
-use App\Traits\LiveNotificationsData;
+use App\Traits\ArrayableNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -19,9 +19,9 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, PusherLiveNotifications
+class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, LiveNotification
 {
-    use LiveNotificationsData;
+    use ArrayableNotification;
     use Queueable;
 
     public $attachment;
@@ -104,7 +104,7 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
         return route('patient.careplan.print', ['patient' => $patientId]);
     }
 
-    public function sendersId(): int
+    public function senderId(): int
     {
         return $this->sender->id;
     }
@@ -112,7 +112,7 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
     /**
      * @return string
      */
-    public function sendersName(): string
+    public function senderName(): string
     {
         return $this->sender->display_name;
     }
