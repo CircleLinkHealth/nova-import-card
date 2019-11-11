@@ -97,7 +97,7 @@
     import AddPatientProvider from "./AddPatientProvider";
 
     export default {
-        name: "SendLinkModal",
+        name: "AddPatientModal",
         components: {
             FontAwesomeIcon,
             mdbModal,

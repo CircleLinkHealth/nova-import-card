@@ -11,26 +11,41 @@
             </mdb-col>
         </mdb-row>
 
-        <mdb-row v-if="!isCreatingNew">
+        <mdb-row v-if="!isCreatingNew && !(provider && provider.id)">
             <mdb-col>
                 <mdb-input label="Provider" :value="searchValue" @input="onSearchValueChanged"></mdb-input>
             </mdb-col>
         </mdb-row>
 
-        <div v-if="!waiting && !isCreatingNew">
-            <mdb-list-group>
+        <div v-if="!isCreatingNew && !(provider && provider.id)">
+            <mdb-list-group class="providers-list">
                 <mdb-list-group-item v-for="result in searchResults"
                                      :action="true"
-                                     :key="result.it"
-                                     @click.native="onSelectProvider">
+                                     :key="result.id"
+                                     @click.native="onSelectProvider(result.id)">
                     {{result.display_name}}
                 </mdb-list-group-item>
             </mdb-list-group>
             <p v-show="searchResults.length === 0 && searchValue.length > MIN_SEARCH_VALUE">
                 Cannot find provider.
-                <mdb-btn flat darkWaves @click.native="toggleCreateNew">Click here to create new.</mdb-btn>
-
             </p>
+            <p v-show="searchValue.length > MIN_SEARCH_VALUE">
+                <mdb-btn flat darkWaves @click.native="toggleCreateNew" :disabled="waiting">Click here to create new.
+                </mdb-btn>
+            </p>
+        </div>
+
+        <div v-if="provider.id && !isCreatingNew">
+            <mdb-row>
+                <mdb-col>
+                    <mdb-btn flat @click.native="toggleSearchAgain">Search again</mdb-btn>
+                </mdb-col>
+            </mdb-row>
+            <mdb-list-group>
+                <mdb-list-group-item :active="true">
+                    {{provider.display_name}}
+                </mdb-list-group-item>
+            </mdb-list-group>
         </div>
 
         <div v-if="isCreatingNew">
@@ -43,10 +58,10 @@
 
             <mdb-row>
                 <mdb-col md="6">
-                    <mdb-input label="First Name" :model="provider.first_name" :required="true"></mdb-input>
+                    <mdb-input label="First Name" v-model="provider.first_name" :required="true"></mdb-input>
                 </mdb-col>
                 <mdb-col md="6">
-                    <mdb-input label="Last Name" :model="provider.last_name" :required="true"></mdb-input>
+                    <mdb-input label="Last Name" v-model="provider.last_name" :required="true"></mdb-input>
                 </mdb-col>
             </mdb-row>
 
@@ -149,7 +164,6 @@
     import {faSpinner} from '@fortawesome/free-solid-svg-icons';
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
     import specialties from './specialties-options';
-    import {debounce} from "lodash";
 
     library.add(faSpinner);
 
@@ -214,7 +228,7 @@
         },
         methods: {
 
-            resetForm() {
+            getNewProvider() {
                 return {
                     id: null,
                     email: null,
@@ -270,7 +284,12 @@
                 axios.get(this.getSearchUrl(searchVal))
                     .then(resp => {
                         this.waiting = false;
-                        this.searchResults = resp.data.results;
+                        this.searchResults = resp.data.results.map(p => {
+                            if (!p.display_name || p.display_name.length === 0) {
+                                p.display_name = `${p.first_name} ${p.last_name}`;
+                            }
+                            return p;
+                        });
                     })
                     .catch(error => {
                         this.waiting = false;
@@ -278,36 +297,49 @@
                     });
             },
 
+            toggleSearchAgain() {
+                this.isCreatingNew = false;
+                this.searchValue = "";
+                this.searchResults = [];
+                this.provider = this.getNewProvider();
+            },
+
             toggleCreateNew() {
                 this.isCreatingNew = !this.isCreatingNew;
 
                 if (this.isCreatingNew) {
-                    this.resetForm();
-                    this.provider.first_name = this.searchValue;
+                    this.getNewProvider();
                 }
 
                 this.searchValue = "";
             },
 
             onSearchValueChanged(val) {
+
+                if (this.waiting) {
+                    setTimeout(() => this.onSearchValueChanged(val), 500);
+                    return;
+                }
+
                 this.searchValue = val;
-                debounce(() => {
-                    if (this.searchValue.length > this.MIN_SEARCH_VALUE) {
-                        this.getProviders(this.searchValue);
-                    }
-                }, 1000)();
+                if (this.searchValue.length > this.MIN_SEARCH_VALUE) {
+                    this.getProviders(this.searchValue);
+                }
             },
 
-            onSelectSpecialty(id) {
-
+            onSelectSpecialty(event) {
+                this.provider.provider_info.specialty = event.currentTarget.value;
             },
 
-            onSelectPractice(id) {
-
+            onSelectPractice(event) {
+                this.provider.primary_practice.id = event.currentTarget.value;
             },
 
             onSelectProvider(id) {
-
+                const provider = this.searchResults.find(p => p.id === id);
+                this.provider.id = id;
+                this.provider.display_name = provider.display_name;
+                this.isCreatingNew = false;
             },
 
             cancel() {
@@ -344,3 +376,10 @@
         }
     }
 </script>
+
+<style scoped>
+    .providers-list {
+        overflow-y: auto;
+        max-height: 150px;
+    }
+</style>

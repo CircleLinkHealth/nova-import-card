@@ -1,5 +1,6 @@
 <template>
     <mdb-container>
+        <add-patient-modal v-if="addPatientModalOptions.show" :options="addPatientModalOptions"></add-patient-modal>
         <mdb-row class="no-gutters">
             <mdb-col md="8" sm="12">
                 <h1>AWV Patient List</h1>
@@ -44,9 +45,7 @@
                 </template>
             </v-server-table>
             <send-link-modal v-if="sendLinkModalOptions.show" :options="sendLinkModalOptions"></send-link-modal>
-            <add-patient-modal v-if="addPatientModalOptions.show" :options="addPatientModalOptions"></add-patient-modal>
         </mdb-row>
-
     </mdb-container>
 </template>
 

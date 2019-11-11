@@ -43,8 +43,8 @@ class ProviderController
             ->with('primaryPractice')
             ->with('providerInfo')
             ->with('phoneNumbers')
-            ->where('first_name', 'like', "${searchTerm}%")
-            ->where('last_name', 'like', "${searchTerm}%")
+            ->where('first_name', 'like', "%$searchTerm%")
+            ->orWhere('last_name', 'like', "%$searchTerm%")
             ->get();
 
         return response()->json(['results' => $users]);
