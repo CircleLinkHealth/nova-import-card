@@ -102,7 +102,6 @@ EQ**HC|G0117~
 SE*15*000000001~
 GE*1*5014~
 IEA*1*000005014~',
-                    'filename' => 'MIMETest.txt',
                 ],
             ],
             'cert'    => '/cryptdata/var/deploy/certificates/hets_careplanmanager_com.pem',
@@ -110,6 +109,7 @@ IEA*1*000005014~',
             'ssl_key' => '/cryptdata/var/deploy/certificates/hets_careplanmanager_com.key',
         ]);
         $responseBody = (string) $resp->getBody();
+        echo $resp->getStatusCode().PHP_EOL;
         dd($responseBody);
     }
 }
