@@ -49,7 +49,7 @@ class SendHETSTestRequest extends Command
 
         $resp = $c->post(self::ENDPOINT, [
             'headers' => [
-                'Content-Type' => ' multipart/form-data',
+                'Content-Type' => 'multipart/form-data',
                 'Host'         => self::HOST,
             ],
             'multipart' => [
