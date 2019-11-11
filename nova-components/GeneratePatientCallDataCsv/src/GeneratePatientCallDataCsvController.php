@@ -15,9 +15,9 @@ class GeneratePatientCallDataCsvController
     {
         $date = Carbon::parse($monthYear);
 
-        $rows = PatientCallData::get($date);
+        $rows = PatientCallData::get($date->startOfMonth(), $date->endOfMonth());
 
-        $fileName = 'patient-call-data-'.$date->toDateString().'.xls';
+        $fileName = 'patient-call-data-'.$date->format('F_Y').'.xls';
 
         $headings = [
             'Patient ID',
