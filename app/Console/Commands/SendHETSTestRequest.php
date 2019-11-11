@@ -86,7 +86,7 @@ class SendHETSTestRequest extends Command
                 ],
             ],
             'cert'    => '/cryptdata/var/deploy/certificates/hets_careplanmanager_com.pem',
-            'verify'  => '/cryptdata/var/deploy/certificates/ca-bundle.crt',
+            'verify'  => '/cryptdata/var/deploy/certificates/',
             'ssl_key' => '/cryptdata/var/deploy/certificates/hets_careplanmanager_com.key',
         ]);
         $responseBody = (string) $resp->getBody();
