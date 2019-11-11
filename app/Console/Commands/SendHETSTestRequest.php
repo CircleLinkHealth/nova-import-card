@@ -83,6 +83,7 @@ class SendHETSTestRequest extends Command
                     //X12 Request
                     'name'     => 'Payload',
                     'contents' => 'test',
+                    'filename' => 'test_filename.txt',
                 ],
             ],
             'cert'    => '/cryptdata/var/deploy/certificates/hets_careplanmanager_com.pem',
