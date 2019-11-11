@@ -138,6 +138,7 @@ class Practice extends BaseModel implements HasMedia
         'name',
         'display_name',
         'active',
+        'is_demo',
         'federal_tax_id',
         'user_id',
         'same_clinical_contact',
@@ -616,7 +617,7 @@ class Practice extends BaseModel implements HasMedia
         }
 
         return $q->whereActive(1)
-                 ->whereNotIn('name', ['demo', 'testdrive', 'mdally-demo']);
+                 ->whereIsDemo(0);
     }
 
     public function scopeAuthUserCanAccess($q, $softwareOnly = false)
