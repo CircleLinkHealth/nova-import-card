@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App;
+namespace App\Contracts;
 
 /**
  * This interface is to be implemented by any Model that can be attached to a Notification.

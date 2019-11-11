@@ -6,6 +6,7 @@
 
 namespace App;
 
+use App\Contracts\AttachableToNotification;
 use App\Contracts\PdfReport;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;

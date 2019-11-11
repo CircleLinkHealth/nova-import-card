@@ -6,6 +6,7 @@
 
 namespace App;
 
+use App\Contracts\AttachableToNotification;
 use App\Traits\NotificationAttachable;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
