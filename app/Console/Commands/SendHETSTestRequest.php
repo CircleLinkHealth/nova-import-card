@@ -86,7 +86,7 @@ class SendHETSTestRequest extends Command
                 ],
             ],
             'cert'    => '/cryptdata/var/deploy/certificates/hets_careplanmanager_com.pem',
-            'verify'  => '/cryptdata/var/deploy/certificates/',
+            'verify'  => false, //this works, but it defeats the whole point of using SSL as it leaves us vulnerable to MITM attacks
             'ssl_key' => '/cryptdata/var/deploy/certificates/hets_careplanmanager_com.key',
         ]);
         $responseBody = (string) $resp->getBody();
