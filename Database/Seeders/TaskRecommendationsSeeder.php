@@ -67,13 +67,13 @@ class TaskRecommendationsSeeder extends Seeder
 
             // Tobacco Smoking
             [
-                'title' => 'Tobacco/Smoking',
+                'title' => 'Tobacco / Smoking',
                 'data'  => [
                     'current_smoker' => [
                         'qualitative_trigger' => 'Current Smoker',
                         'task_body'           => 'Smoking, or the use of any tobacco products harms nearly every organ of the body, causes many diseases, and reduces the health of smokers in general. Smokers are more likely than nonsmokers to develop heart disease, stroke, and lung cancer. Cigarette smoking is the leading preventable cause of death in the United States, causing more than 480,000 deaths domestically each year. This includes about 90% of all lung cancer deaths, and about 80% of all deaths from chronic obstructive pulmonary disease (COPD). Quitting smoking lowers your risk for smoking-related diseases and can add years to your life. Talk to your doctor about what interventions you may be able to use to help you quit. These may include:',
                         'recommendation_body' => [
-                            'Counseling and/or pharmacotherapy interventions',
+                            'Counseling and / or pharmacotherapy interventions',
                             'Lung cancer screening (precautionary)', ],
 
                         'report_table_data' => [
@@ -127,7 +127,7 @@ class TaskRecommendationsSeeder extends Seeder
                 'data'  => [
                     'alcohol_dependent' => [
                         'qualitative_trigger' => 'Alcohol',
-                        'task_body'           => 'Drinking too much – on a single occasion or over time – can take a serious toll on your health.Having more than a 7 drinks a week for females, or more than 14 drinks a week for males may result in health complications including liver disease, pancreatitis, cancer, and ulcers/other GI problems.Talk to your doctor about ways to cut down on alcohol consumption, they may prescribe :',
+                        'task_body'           => 'Drinking too much – on a single occasion or over time – can take a serious toll on your health.Having more than a 7 drinks a week for females, or more than 14 drinks a week for males may result in health complications including liver disease, pancreatitis, cancer, and ulcers / other GI problems.Talk to your doctor about ways to cut down on alcohol consumption, they may prescribe:',
                         'recommendation_body' => [
                             'Counseling ranging from brief single contact to extended multicontact counseling',
                             'Liver disease screening',
@@ -188,17 +188,17 @@ If you cannot do this because of chronic conditions, be as physically active as 
 
             // Weight/BMI
             [
-                'title'       => 'Weight/BMI',
+                'title'       => 'Weight / BMI',
                 'task_titles' => [],
                 'data'        => [
                     'bmi_low' => [
-                        'qualitative_trigger' => 'Weight/BMI',
+                        'qualitative_trigger' => 'Weight / BMI',
                         'task_body'           => 'Because many of the health problems in America are associated with the high prevalence of obesity, it is easy to forget that being underweight also carries health risks. Although there are many reasons for being underweight, the condition suggests that your body is not obtaining sufficient nutrients to sustain proper function. A body mass index, or BMI, below 18.5 means a person is underweight and this is associated with health complications such as bone loss, decreased immunity, cardiac problems, and infertility. Since you have a BMI on the lower side, you should consider gaining weight and monitor your weight once a month. Your doctor:',
                         'recommendation_body' => ['Can tell you about healthy ways to gain weight gradually',
                             'May require tests like a basic metabolic panel', ],
                     ],
                     'bmi_high' => [
-                        'qualitative_trigger' => 'Weight/BMI',
+                        'qualitative_trigger' => 'Weight / BMI',
                         'task_body'           => 'BMI is an estimate of body fat and a good gauge of your risk for diseases that can occur with more body fat. The higher your BMI, the higher your risk for certain diseases such as heart disease, high blood pressure, type 2 diabetes, gallstones, breathing problems, and certain cancers.  Since you have a BMI on the higher side, you should work on reducing your weight. Even a small weight loss (between 5 and 10 percent of your current weight) will lower your risk of developing diseases associated with obesity. Your provider can recommend some lifestyle changes and routine tests, such as:',
                         'recommendation_body' => ['Changes to diet, exercise, counseling, or certain drugs',
                             'Diabetes and cholesterol blood tests', ],
@@ -216,7 +216,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         'task_body'           => 'If you are sexually active with multiple sexual partners, you should be diligent in protecting yourself from sexually transmitted infections (STI) and diseases. Vaginal or anal penetration by an infected partner who isn\'t wearing a latex condom significantly increases the risk of getting an STI. Improper or inconsistent use of condoms can also increase your risk. When being sexually active, make sure to use protection or ask your partner to use protection. Your doctor may suggest:',
                         'recommendation_body' => [
                             'Enrolling in sexual health counseling',
-                            'And/or taking HIV and/or STI tests ',
+                            'And / or taking HIV and / or STI tests ',
                         ],
                         'report_table_data' => [
                             [
@@ -272,7 +272,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         'qualitative_trigger' => 'Fall Risk',
                         'task_body'           => 'If you have fallen in the last 6 months, you\'re not alone. More than one in three people age 65 years or older falls each year. The risk of falling—and fall-related problems—rises with age. But don\'t let a fear of falling keep you from being active. Simple treatments and overcoming this fear can help you stay active, maintain your physical health, and prevent future falls. Since you have fallen in the last six months, it is important to work on strengthening your bones. Your doctor may recommend:',
                         'recommendation_body' => [
-                            'Counseling and/or physical therapy',
+                            'Counseling and / or physical therapy',
                             'Calcium or vitamin D supplements',
                             'Bone density test',
                             'Home fall risk evaluation by home health (may include physical therapy, occupational  therapy, home inspection to determine if your house (rugs, cords, etc) are hazards for falls etc.)',
@@ -321,20 +321,20 @@ If you cannot do this because of chronic conditions, be as physically active as 
 
             // Cognitive Impairment:
             [
-                'title'       => 'Cognitive Impairment:',
+                'title'       => 'Cognitive Impairment',
                 'task_titles' => [],
                 'data'        => [
                     'mild_cognitive_impairment' => [
                         'qualitative_trigger' => 'Cognitive Overview',
                         'task_body'           => 'Mild cognitive impairment (MCI) is the stage between normal aging and moderate and severe neurocognitive impairment. It can involve problems with memory, language, thinking and judgment that are greater than normal age-related changes. If you have mild cognitive impairment, you may be aware that your memory or mental function has "slipped." Your family and close friends also may notice a change. But these changes aren\'t severe enough to significantly interfere with your daily life and usual activities. Approximately 15 to 20 percent of people age 65 or older have MCI, and it may increase your risk of progression to more severe stages and other neurological conditions. But some people with mild cognitive impairment never get worse, and a few eventually get better. As you have shown initial signs of MCI, your doctor may recommend:',
                         'recommendation_body' => [
-                            'Laboratory and/or brain imaging evaluations',
-                            'Cognitive training, lifestyle behavioral interventions, exercise, educational interventions, and/or multidisciplinary care interventions',
+                            'Laboratory and / or brain imaging evaluations',
+                            'Cognitive training, lifestyle behavioral interventions, exercise, educational interventions, and / or multidisciplinary care interventions',
                             'Medications',
                         ],
                         'report_table_data' => [
                             [
-                                'body'       => 'Cognitive training, lifestyle behavioral interventions, exercise, educational interventions, and/or multidisciplinary care interventions',
+                                'body'       => 'Cognitive training, lifestyle behavioral interventions, exercise, educational interventions, and / or multidisciplinary care interventions',
                                 'code'       => 'Various',
                                 'time_frame' => 'As Needed',
                             ],
@@ -344,18 +344,18 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         'qualitative_trigger' => 'Cognitive Overview',
                         'task_body'           => ' Moderate to severe neurocognitive impairment is the loss of cognitive functioning—thinking, remembering, and reasoning—and behavioral abilities to such an extent that it interferes with a person\'s daily life and activities. These functions include memory, language skills, visual perception, problem solving, self-management, and the ability to focus and pay attention. Some people with dementia cannot control their emotions, and their personalities may change. Dementia ranges in severity from the mildest stage, when it is just beginning to affect a person\'s functioning, to the most severe stage, when the person must depend completely on others for basic activities of living.  As you may have shown the initial signs of moderate to severe neurocognitive impairment, your doctor might recommend:',
                         'recommendation_body' => [
-                            'Laboratory and/or brain imaging evaluations',
-                            'Cognitive training, lifestyle behavioral interventions, exercise, educational interventions, and/or multidisciplinary care interventions',
+                            'Laboratory and / or brain imaging evaluations',
+                            'Cognitive training, lifestyle behavioral interventions, exercise, educational interventions, and / or multidisciplinary care interventions',
                             'Pharmacological treatments',
                         ],
                         'report_table_data' => [
                             [
-                                'body'       => 'Laboratory and/or brain imaging',
+                                'body'       => 'Laboratory and / or brain imaging',
                                 'code'       => 'Various',
                                 'time_frame' => 'As Needed',
                             ],
                             [
-                                'body'       => 'Cognitive training, lifestyle behavioral interventions, exercise, educational interventions, and/or multidisciplinary care interventions',
+                                'body'       => 'Cognitive training, lifestyle behavioral interventions, exercise, educational interventions, and / or multidisciplinary care interventions',
                                 'code'       => 'Various',
                                 'time_frame' => 'As Needed',
                             ],
@@ -394,12 +394,12 @@ If you cannot do this because of chronic conditions, be as physically active as 
 
             // Immunizations/Vaccines:
             [
-                'title'       => 'Immunizations/Vaccines:',
+                'title'       => 'Immunizations / Vaccines',
                 'task_titles' => [],
                 'data'        => [
                     // Flu/Influenza
                     'flu' => [
-                        'sub_title'           => 'Flu/Influenza',
+                        'sub_title'           => 'Flu / Influenza',
                         'qualitative_trigger' => 'Flu Shot',
                         'task_body'           => 'You indicated you are not planning on receiving a flu shot this year. Influenza is a potentially serious disease that can lead to hospitalization and sometimes even death. Every flu season is different, and influenza infection can affect people differently, but millions of people get the flu every year, and  an annual seasonal flu vaccine is the best way to help protect against flu.  Flu vaccines cause antibodies to develop in the body about two weeks after vaccination. These antibodies provide protection against infection with the viruses that are in the vaccine. Your doctor should advise you to get a:',
                         'recommendation_body' => ['Flu vaccine yearly'],
@@ -413,7 +413,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                     ],
                     // Tetanus Diphtheria (initial and/or booster)
                     'tetanus' => [
-                        'sub_title'           => 'Tetanus Diphtheria (initial and/or booster)',
+                        'sub_title'           => 'Tetanus Diphtheria (initial and / or booster)',
                         'qualitative_trigger' => 'TDaP or DTaP Immunization',
                         'task_body'           => 'You have indicated you have not received, or are unsure of having received, either an initial Tetanus Diphtheria (DTaP) vaccine or a booster (TDaP) vaccination in the past 10 years.The Td vaccine is used to protect against Tetanus and diphtheria, both infections caused by bacteria. Tetanus (Lockjaw) causes painful muscle tightening and stiffness, and kills 1 out of every 10 people who are infected. Diphtheria can cause a thick coating to form in the back of the throat, and can lead to breathing problems, heart failure, paralysis, and death. Since vaccination began, reports of cases for both diseases have dropped by about 99%. Your doctor should advise you to receive:',
                         'recommendation_body' => ['One dose of Tdap (if you have never gotten it before), and a Tdap booster every 10 years at your next visit'],
@@ -432,13 +432,13 @@ If you cannot do this because of chronic conditions, be as physically active as 
                     ],
                     // Chicken Pox/Varicella
                     'chicken_pox' => [
-                        'sub_title'           => 'Chicken Pox/Varicella',
+                        'sub_title'           => 'Chicken Pox / Varicella',
                         'qualitative_trigger' => 'Varicella vaccination',
                         'task_body'           => 'Chickenpox is a very contagious disease caused by the varicella-zoster virus (VZV). It causes a blister-like rash, itching, tiredness, and fever. Each year, chickenpox caused about 10,600 hospitalizations and 100 to 150 deaths. Two doses of the vaccine are about 90% effective at preventing chickenpox. When you get vaccinated, you protect yourself and others in your community. This is especially important for people who cannot get vaccinated, such as those with weakened immune systems or pregnant women. At your next visit, your doctor should advise a:',
                         'recommendation_body' => ['Varicella Vaccination'],
                         'report_table_data'   => [
                             [
-                                'body'       => 'Chicken Pox/Varicella Vaccine',
+                                'body'       => 'Chicken Pox / Varicella Vaccine',
                                 'code'       => '90396 / 90471',
                                 'time_frame' => '1x per lifetime',
                             ],
@@ -476,7 +476,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                     'hpv' => [
                         'sub_title'           => 'Human Papillomavirus (HPV)',
                         'qualitative_trigger' => 'Human Papillomavirus (HPV)',
-                        'task_body'           => 'Human Papillomavirus is a group of more than 150 related viruses which are transmitted through intimate skin-to-skin contact, most commonly vaginal, anal, or oral sex. Some HPV types can cause genital warts (papillomas). Some other HPV types can lead to cancer, including cancer of mouth/ throat, anus/rectum, penis in males, and cervix, vagina, and vulva in females. At your next visit, if you are female or a homosexual male, your doctor should advise a:',
+                        'task_body'           => 'Human Papillomavirus is a group of more than 150 related viruses which are transmitted through intimate skin-to-skin contact, most commonly vaginal, anal, or oral sex. Some HPV types can cause genital warts (papillomas). Some other HPV types can lead to cancer, including cancer of mouth / throat, anus / rectum, penis in males, and cervix, vagina, and vulva in females. At your next visit, if you are female or a homosexual male, your doctor should advise a:',
                         'recommendation_body' => ['An appropriate number of doses of Human Papillomavirus (HPV) Vaccination (2 if under age 15, 3 if under age 26)'],
                         'report_table_data'   => [
                             [
@@ -519,7 +519,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
 
             // Screenings:
             [
-                'title'       => 'Screenings:',
+                'title'       => 'Screenings',
                 'task_titles' => [],
                 'data'        => [
                     // Breast Cancer- Mammogram
@@ -580,7 +580,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                     ],
                     // Colorectal Cancer Screening:
                     'colorectal_cancer' => [
-                        'sub_title'           => 'Colorectal Cancer Screening:',
+                        'sub_title'           => 'Colorectal Cancer Screening',
                         'qualitative_trigger' => 'Colorectal Cancer Screening',
                         'task_body'           => 'Colorectal cancer almost always develops from precancerous polyps (abnormal growths) in the colon or rectum. Screening tests can find precancerous polyps, so that they can be removed before they turn into cancer. Screening tests can also find colorectal cancer early, when treatment works best. Your doctor may suggest any one of the following screening tests:',
                         'recommendation_body' => [
@@ -599,7 +599,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                     ],
                     // Skin Cancer Screening:
                     'skin_cancer' => [
-                        'sub_title'           => 'Skin Cancer Screening:',
+                        'sub_title'           => 'Skin Cancer Screening',
                         'qualitative_trigger' => 'Skin Cancer Screening',
                         'task_body'           => 'Regular skin checks by a doctor are important for people who have already had skin cancer or have a family history of skin cancer. If you are checking your skin and find a worrisome change, you should report it to your doctor. In addition, your doctor may suggest:',
                         'recommendation_body' => ['A skin cancer screening in office'],
@@ -657,8 +657,8 @@ If you cannot do this because of chronic conditions, be as physically active as 
                     ],
                     // Cholesterol/Dyslipidemia
                     'cholesterol' => [
-                        'sub_title'           => 'Cholesterol/Dyslipidemia',
-                        'qualitative_trigger' => 'Cholesterol/Dyslipidemia',
+                        'sub_title'           => 'Cholesterol / Dyslipidemia',
+                        'qualitative_trigger' => 'Cholesterol / Dyslipidemia',
                         'task_body'           => 'Cholesterol is a dense, fatty substance found in every cell of your body. High cholesterol is a condition that occurs when levels of cholesterol in your blood are elevated enough to cause health problems such as heart disease. You may be at risk of High Cholesterol. Your provider may encourage you to:',
                         'recommendation_body' => ['Test your blood for dyslipidemia (high cholesterol)'],
                         'report_table_data'   => [
@@ -673,19 +673,19 @@ If you cannot do this because of chronic conditions, be as physically active as 
             ],
             // Other misc:
             [
-                'title'       => 'Other misc:',
+                'title'       => 'Other misc',
                 'task_titles' => [],
                 'data'        => [
                     // Advanced Care Planning
                     'nmpa' => [// No Medical Power of Attorney = NMPA
-                        'sub_title'           => 'Advanced Care Planning/NMPA',
+                        'sub_title'           => 'Advanced Care Planning / NMPA',
                         'qualitative_trigger' => 'No Medical Power of Attorney',
                         'task_body'           => 'A Medical Power of Attorney is a legal instrument (separate from a durable power of attorney) that allows you to select the person that you want to make healthcare decisions for you if and when you become unable to make them for yourself. The person you pick is your representative in that situation for purposes of healthcare decision-making. You could limit your representative to certain types of decisions, or allow your representative to make any healthcare decision that might come up. Talk to your doctor about taking steps to:',
                         'recommendation_body' => ['Set up a Medical Power of Attorney'],
                         'report_table_data'   => [
                             [
                                 'body'       => 'Set up a Medical Power of Attorney (NOTE: $0 co-pay if done during AWV)',
-                                'code'       => '99497/99498 (if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)',
+                                'code'       => '99497 / 99498 (if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)',
                                 'time_frame' => 'As Needed',
                             ],
                         ],
@@ -694,11 +694,11 @@ If you cannot do this because of chronic conditions, be as physically active as 
                         'sub_title'           => 'Living Will',
                         'qualitative_trigger' => 'Living Will',
                         'task_body'           => 'Living wills and other advance directives are written, legal instructions regarding your preferences for medical care if you are unable to make decisions for yourself. Advance directives guide choices for doctors and caregivers if you\'re terminally ill, seriously injured, in a coma, in the late stages of dementia or near the end of life. By planning ahead, you can get the medical care you want, avoid unnecessary suffering and relieve caregivers of decision-making burdens during moments of crisis or grief. You also help reduce confusion or disagreement about the choices you would want people to make on your behalf. Advance directives aren\'t just for older adults. Unexpected end-of-life situations can happen at any age, so it\'s important for all adults to prepare these documents. Talk to your doctor about taking steps to:',
-                        'recommendation_body' => ['Set up a living will/advance directive'],
+                        'recommendation_body' => ['Set up a living will / advance directive'],
                         'report_table_data'   => [
                             [
-                                'body'       => 'Set up a living will/advance directive (NOTE: $0 co-pay if done during AWV)',
-                                'code'       => '99497/99498 (if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)',
+                                'body'       => 'Set up a living will / advance directive (NOTE: $0 co-pay if done during AWV)',
+                                'code'       => '99497 / 99498 (if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)',
                                 'time_frame' => 'As Needed',
                             ],
                         ],
