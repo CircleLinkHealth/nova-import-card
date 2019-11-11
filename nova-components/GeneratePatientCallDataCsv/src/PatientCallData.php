@@ -41,16 +41,15 @@ class PatientCallData
             ->selectRaw('calls.inbound_cpm_id as patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls, nurse_users.display_name as nurse, practices.display_name as practice')
             ->leftJoin('users as patient_users', 'patient_users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('users as nurse_users', 'nurse_users.id', '=', 'calls.outbound_cpm_id')
-            ->leftJoinSub($this->patientSummarySubquery(), 'pms', function ($join) {
-                     $join->on('calls.inbound_cpm_id', '=', 'pms.patient_id');
-                 })
-            ->leftJoin('patient_info', 'patient_users.id', '=', 'patient_info.user_id')
+            ->leftJoinSub($this->patientSummarySubQuery(), 'pms', function ($join) {
+                $join->on('calls.inbound_cpm_id', '=', 'pms.patient_id');
+            })
             ->leftJoin('practices', 'patient_users.program_id', '=', 'practices.id')
             ->whereRaw(
-                     "DATE(calls.called_date)  >= DATE('{$start}')
-AND 
+                "DATE(calls.called_date)  >= DATE('{$start}')
+                     AND 
 DATE(calls.called_date) <= DATE('{$end}')"
-                 )
+            )
             ->get()
             ->toArray();
     }
@@ -64,7 +63,7 @@ DATE(calls.called_date) <= DATE('{$end}')"
         return $this->forCurrentMonth();
     }
 
-    private function patientSummarySubquery()
+    private function patientSummarySubQuery()
     {
         return DB::table('patient_monthly_summaries')
             ->select('patient_id', 'ccm_time', 'bhi_time', 'no_of_successful_calls')
