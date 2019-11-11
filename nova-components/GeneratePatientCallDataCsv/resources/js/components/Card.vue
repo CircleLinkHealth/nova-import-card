@@ -1,5 +1,5 @@
 <template>
-    <card class="flex flex-col items-center justify-center">
+    <card class="flex flex-col h-auto">
         <div class="px-3 py-3">
             <h2 class="text-xl font-light">Generate Patient/Nurse Call Data Sheet</h2>
             <form @submit.prevent="" ref="form">
@@ -15,7 +15,10 @@
                 </div>
 
                 <div class="flex">
-                    <a class="btn btn-default btn-primary ml-auto mt-auto" @click="generateCsv">Generate Sheet</a>
+                    <div v-if="errors">
+                        <p class="text-danger mb-1" v-for="error in errors">{{error}}</p>
+                    </div>
+                        <a class="btn btn-default btn-primary ml-auto mt-auto" style="cursor: pointer;" @click="generateCsv">Generate Sheet</a>
                 </div>
             </form>
         </div>
@@ -32,6 +35,7 @@ export default {
     ],
     data() {
         return {
+            errors : null,
             month : null,
             months : []
         };
@@ -47,9 +51,11 @@ export default {
             }
         },
         generateCsv() {
-
+            if (! this.month){
+                this.errors = ['Please select a month'];
+                return;
+            }
             const url = rootUrl(`/nova-vendor/generate-patient-call-data-csv/generate-csv-for-month/${this.month}`);
-            console.log('calls:excel', url);
             document.location.href = url;
         },
     },

@@ -122,12 +122,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['card'],
   data: function data() {
     return {
+      errors: null,
       month: null,
       months: []
     };
@@ -143,8 +147,12 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     generateCsv: function generateCsv() {
+      if (!this.month) {
+        this.errors = ['Please select a month'];
+        return;
+      }
+
       var url = Object(_rootUrl_js__WEBPACK_IMPORTED_MODULE_1__["rootUrl"])("/nova-vendor/generate-patient-call-data-csv/generate-csv-for-month/".concat(this.month));
-      console.log('calls:excel', url);
       document.location.href = url;
     }
   },
@@ -17775,90 +17783,99 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "card",
-    { staticClass: "flex flex-col items-center justify-center" },
-    [
-      _c("div", { staticClass: "px-3 py-3" }, [
-        _c("h2", { staticClass: "text-xl font-light" }, [
-          _vm._v("Generate Patient/Nurse Call Data Sheet")
-        ]),
-        _vm._v(" "),
-        _c(
-          "form",
-          {
-            ref: "form",
-            on: {
-              submit: function($event) {
-                $event.preventDefault()
-              }
+  return _c("card", { staticClass: "flex flex-col h-auto" }, [
+    _c("div", { staticClass: "px-3 py-3" }, [
+      _c("h2", { staticClass: "text-xl font-light" }, [
+        _vm._v("Generate Patient/Nurse Call Data Sheet")
+      ]),
+      _vm._v(" "),
+      _c(
+        "form",
+        {
+          ref: "form",
+          on: {
+            submit: function($event) {
+              $event.preventDefault()
             }
-          },
-          [
-            _c("div", { staticClass: "py-4" }, [
-              _c("span", { staticClass: "flex " }, [
-                _c("label", { attrs: { for: "months" } }, [
-                  _vm._v(
-                    "\n                        " +
-                      _vm._s(_vm.__("Select month: ")) +
-                      "\n                    "
-                  )
-                ]),
-                _vm._v(" "),
-                _c(
-                  "select",
-                  {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.month,
-                        expression: "month"
-                      }
-                    ],
-                    staticStyle: { "margin-left": "10px" },
-                    attrs: { name: "months", id: "months" },
-                    on: {
-                      change: function($event) {
-                        var $$selectedVal = Array.prototype.filter
-                          .call($event.target.options, function(o) {
-                            return o.selected
-                          })
-                          .map(function(o) {
-                            var val = "_value" in o ? o._value : o.value
-                            return val
-                          })
-                        _vm.month = $event.target.multiple
-                          ? $$selectedVal
-                          : $$selectedVal[0]
-                      }
+          }
+        },
+        [
+          _c("div", { staticClass: "py-4" }, [
+            _c("span", { staticClass: "flex " }, [
+              _c("label", { attrs: { for: "months" } }, [
+                _vm._v(
+                  "\n                        " +
+                    _vm._s(_vm.__("Select month: ")) +
+                    "\n                    "
+                )
+              ]),
+              _vm._v(" "),
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.month,
+                      expression: "month"
                     }
-                  },
-                  _vm._l(this.months, function(month) {
-                    return _c("option", { domProps: { value: month } }, [
-                      _vm._v(_vm._s(month))
+                  ],
+                  staticStyle: { "margin-left": "10px" },
+                  attrs: { name: "months", id: "months" },
+                  on: {
+                    change: function($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function(o) {
+                          return o.selected
+                        })
+                        .map(function(o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.month = $event.target.multiple
+                        ? $$selectedVal
+                        : $$selectedVal[0]
+                    }
+                  }
+                },
+                _vm._l(this.months, function(month) {
+                  return _c("option", { domProps: { value: month } }, [
+                    _vm._v(_vm._s(month))
+                  ])
+                }),
+                0
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "flex" }, [
+            _vm.errors
+              ? _c(
+                  "div",
+                  _vm._l(_vm.errors, function(error) {
+                    return _c("p", { staticClass: "text-danger mb-1" }, [
+                      _vm._v(_vm._s(error))
                     ])
                   }),
                   0
                 )
-              ])
-            ]),
+              : _vm._e(),
             _vm._v(" "),
-            _c("div", { staticClass: "flex" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "btn btn-default btn-primary ml-auto mt-auto",
-                  on: { click: _vm.generateCsv }
-                },
-                [_vm._v("Generate Sheet")]
-              )
-            ])
-          ]
-        )
-      ])
-    ]
-  )
+            _c(
+              "a",
+              {
+                staticClass: "btn btn-default btn-primary ml-auto mt-auto",
+                staticStyle: { cursor: "pointer" },
+                on: { click: _vm.generateCsv }
+              },
+              [_vm._v("Generate Sheet")]
+            )
+          ])
+        ]
+      )
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
