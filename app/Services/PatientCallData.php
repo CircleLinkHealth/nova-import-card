@@ -94,7 +94,7 @@ class PatientCallData
     private function patientSummarySubQuery()
     {
         return DB::table('patient_monthly_summaries')
-            ->select('patient_id', 'ccm_time', 'bhi_time', 'no_of_successful_calls')
+            ->select('patient_id', 'ccm_time', 'bhi_time', 'no_of_calls', 'no_of_successful_calls')
             ->where('month_year', $this->start);
     }
 
@@ -110,21 +110,22 @@ class PatientCallData
                  calls.inbound_cpm_id as patient_id, 
                  if (pms.ccm_time is null, \'0\', pms.ccm_time/60) as ccm_time, 
                  if (pms.bhi_time is null, \'0\', pms.bhi_time/60) as bhi_time, 
+                 if (pms.no_of_calls is null OR pms.no_of_calls=0, \'0\', pms.no_of_calls) as total_calls,
                  if (pms.no_of_successful_calls is null OR pms.no_of_successful_calls=0, \'0\', pms.no_of_successful_calls) as successful_calls, 
                  nurse_users.display_name as nurse, 
                  practices.display_name as practice')
             ->leftJoin('users as patient_users', 'patient_users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoin('users as nurse_users', 'nurse_users.id', '=', 'calls.outbound_cpm_id')
             ->leftJoinSub($this->patientSummarySubQuery(), 'pms', function ($join) {
-                     $join->on('calls.inbound_cpm_id', '=', 'pms.patient_id');
-                 })
+                $join->on('calls.inbound_cpm_id', '=', 'pms.patient_id');
+            })
             ->leftJoin('practices', 'patient_users.program_id', '=', 'practices.id')
             ->whereRaw(
-                     "(DATE(calls.called_date)  >= DATE('{$this->start}') AND DATE(calls.called_date) <= DATE('{$this->end}'))"
-                 )
+                "(DATE(calls.called_date)  >= DATE('{$this->start}') AND DATE(calls.called_date) <= DATE('{$this->end}'))"
+            )
             ->when($getForCurrentMonth, function ($query) {
-                     $query->whereRaw("(DATE(calls.scheduled_date)  >= DATE('{$this->start}') AND DATE(calls.scheduled_date) <= DATE('{$this->end}'))");
-                 })
+                $query->whereRaw("(DATE(calls.scheduled_date)  >= DATE('{$this->start}') AND DATE(calls.scheduled_date) <= DATE('{$this->end}'))");
+            })
             ->orderBy('patient_id')
             ->get()
             ->groupBy('patient_id');
@@ -133,9 +134,9 @@ class PatientCallData
     private function separatingRows()
     {
         return [
-            [null, null, null, null, null, null],
-            ['Some patients were assigned to more than one nurse. See below:', null, null, null, null, null],
-            [null, null, null, null, null, null],
+            [null, null, null, null, null, null, null],
+            ['Some patients were assigned to more than one nurse. See below:', null, null, null, null, null, null],
+            [null, null, null, null, null, null, null],
         ];
     }
 }

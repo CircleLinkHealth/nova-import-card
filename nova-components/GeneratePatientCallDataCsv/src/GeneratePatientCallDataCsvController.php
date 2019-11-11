@@ -24,6 +24,7 @@ class GeneratePatientCallDataCsvController
             'Patient ID',
             'CCM Time (mins)',
             'BHI Time (mins)',
+            'Total Calls with Patient',
             'Successful Calls with Patient',
             'Nurse Name',
             'Practice',
