@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 class SendHETSTestRequest extends Command
 {
     const ENDPOINT     = 'https://mime.hets-270-271.cms.gov/eligibility/realtime/mime';
+    const HOST         = ' mime.hets-270-271.cms.gov';
     const SENDER_ID    = 'W236F83300';
     const SUBMITTER_ID = 'W236F833';
 
@@ -47,6 +48,10 @@ class SendHETSTestRequest extends Command
         $c = new \GuzzleHttp\Client();
 
         $resp = $c->post(self::ENDPOINT, [
+            'headers' => [
+                'Content-Type' => ' multipart/form-data',
+                'Host'         => self::HOST,
+            ],
             'multipart' => [
                 [
                     'name'     => 'PayloadType',
