@@ -8,7 +8,7 @@ namespace App\Traits;
 
 use App\Models\Addendum;
 
-trait IsAddendumable
+trait Addendumable
 {
     public function addendums()
     {

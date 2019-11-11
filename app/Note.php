@@ -10,7 +10,7 @@ use App\Contracts\PdfReport;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;
-use App\Traits\IsAddendumable;
+use App\Traits\Addendumable;
 use App\Traits\NotificationAttachable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
@@ -39,6 +39,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \CircleLinkHealth\Customer\Entities\User                        $patient
  * @property \CircleLinkHealth\Customer\Entities\User                        $program
  * @property string                                                          $status
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereCreatedAt($value)
@@ -51,8 +52,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Customer\Entities\User|null                                  $logger
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note emergency($yes = true)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note forwarded(\Carbon\Carbon $from = null, \Carbon\Carbon $to = null, $excludePatientSupport = true)
@@ -61,9 +64,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note patientPractice($practiceId)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note query()
+ *
  * @property string|null                                                                                                     $summary_type
  * @property string|null                                                                                                     $deleted_at
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Note onlyTrashed()
  * @method static bool|null restore()
@@ -73,14 +78,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereSummaryType($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Note withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Note withoutTrashed()
+ *
  * @property int|null $addendums_count
  * @property int|null $notifications_count
  * @property int|null $revision_history_count
  */
-class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport
+class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport, AttachableToNotification
 {
+    use Addendumable;
     use Filterable;
-    use IsAddendumable;
     use NotificationAttachable;
     use PdfReportTrait;
     use SoftDeletes;
