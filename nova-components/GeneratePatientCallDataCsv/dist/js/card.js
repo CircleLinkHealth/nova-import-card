@@ -122,26 +122,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['card' // The following props are only available on resource detail cards...
-  // 'resource',
-  // 'resourceId',
-  // 'resourceName',
-  ],
+  props: ['card'],
   data: function data() {
     return {
-      label: 'test label',
-      working: false,
-      errors: null,
       month: null,
       months: []
     };
@@ -151,7 +137,7 @@ __webpack_require__.r(__webpack_exports__);
       var dateStart = moment__WEBPACK_IMPORTED_MODULE_0___default()().subtract(10, 'months');
       var dateEnd = moment__WEBPACK_IMPORTED_MODULE_0___default()();
 
-      while (dateEnd.diff(dateStart, 'months') >= 0) {
+      while (dateEnd.diff(dateStart) >= 0) {
         this.months.push(dateStart.format('MMM YYYY'));
         dateStart.add(1, 'months');
       }
@@ -159,32 +145,7 @@ __webpack_require__.r(__webpack_exports__);
     generateCsv: function generateCsv() {
       var url = Object(_rootUrl_js__WEBPACK_IMPORTED_MODULE_1__["rootUrl"])("/nova-vendor/generate-patient-call-data-csv/generate-csv-for-month/".concat(this.month));
       console.log('calls:excel', url);
-      document.location.href = url; // this.working = true;
-      // let formData = new FormData();
-      // formData.append('month', this.month);
-      //
-      // return
-      // Nova.request()
-      //     .post(
-      //         '/nova-vendor/generate-patient-call-data-csv/generate-csv-for-month/',
-      //         formData
-      //     )
-      //     .then(({ data }) => {
-      //         this.$toasted.success(data.message);
-      //         this.errors = null;
-      //     })
-      //     .catch(({ response }) => {
-      //         if (response.data.danger) {
-      //             this.$toasted.error(response.data.danger);
-      //             this.errors = null;
-      //         } else {
-      //             this.errors = response.data.errors;
-      //         }
-      //     })
-      //     .finally(() => {
-      //         this.working = false;
-      //         this.$refs.form.reset();
-      //     });
+      document.location.href = url;
     }
   },
   mounted: function mounted() {
@@ -17819,8 +17780,8 @@ var render = function() {
     { staticClass: "flex flex-col items-center justify-center" },
     [
       _c("div", { staticClass: "px-3 py-3" }, [
-        _c("h1", { staticClass: "text-xl font-light" }, [
-          _vm._v("Generate Patient Call Data Csv")
+        _c("h2", { staticClass: "text-xl font-light" }, [
+          _vm._v("Generate Patient/Nurse Call Data Sheet")
         ]),
         _vm._v(" "),
         _c(
@@ -17880,37 +17841,17 @@ var render = function() {
                   }),
                   0
                 )
-              ]),
-              _vm._v(" "),
-              _c("span", { staticClass: "text-gray-50" }, [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(_vm.currentLabel) +
-                    "\n                "
-                )
               ])
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "flex" }, [
-              _vm.errors
-                ? _c(
-                    "div",
-                    _vm._l(_vm.errors, function(error) {
-                      return _c("p", { staticClass: "text-danger mb-1" }, [
-                        _vm._v(_vm._s(error[0]))
-                      ])
-                    }),
-                    0
-                  )
-                : _vm._e(),
-              _vm._v(" "),
               _c(
                 "a",
                 {
                   staticClass: "btn btn-default btn-primary ml-auto mt-auto",
                   on: { click: _vm.generateCsv }
                 },
-                [_vm._v("Generate CSV")]
+                [_vm._v("Generate Sheet")]
               )
             ])
           ]

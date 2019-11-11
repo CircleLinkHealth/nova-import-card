@@ -1,7 +1,7 @@
 <template>
     <card class="flex flex-col items-center justify-center">
         <div class="px-3 py-3">
-            <h1 class="text-xl font-light">Generate Patient Call Data Sheet</h1>
+            <h2 class="text-xl font-light">Generate Patient/Nurse Call Data Sheet</h2>
             <form @submit.prevent="" ref="form">
                 <div class="py-4">
                     <span class="flex ">
@@ -41,7 +41,7 @@ export default {
             let dateStart = moment().subtract(10, 'months');
             let dateEnd = moment();
 
-            while (dateEnd.diff(dateStart, 'months') >= 0) {
+            while (dateEnd.diff(dateStart) >= 0) {
                 this.months.push(dateStart.format('MMM YYYY'));
                 dateStart.add(1, 'months');
             }

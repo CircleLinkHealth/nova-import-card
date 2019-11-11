@@ -18,7 +18,7 @@ class GeneratePatientCallDataCsvController
 
         $rows = PatientCallData::get($date);
 
-        $fileName = 'patient-call-data-'.$date->format('F_Y').'.xls';
+        $fileName = 'patient-call-data-'.$date->format('f_Y').'.xls';
 
         $headings = [
             'Patient ID',
