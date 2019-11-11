@@ -34,39 +34,25 @@ class PatientCallData
 
     private function forPastMonths()
     {
-        //needs fix
-        try {
-            return DB::table('calls')
-                ->select(
-                         DB::raw('calls.inbound_cpm_id as patient_id')
-//                         DB::raw(
-//                             'pms.ccm_time'
-//                         ),
-//                         DB::raw(
-//                             "pms.bhi_time"
-//                         ),
-//                         DB::raw(
-//                             'pms.no_of_successful_calls'
-//                         ),
-//                         DB::raw(
-//                             'nurse_users.display_name as nurse'
-//                         ),
-//                         DB::raw(
-//                             'practices.display_name as practice'
-//                         )
-                     )
-//                     ->leftJoin('users as patient_users', 'patient_users.id', '=', 'calls.inbound_cpm_id')
-//                     ->leftJoin('users as nurse_users', 'nurse_users.id', '=', 'calls.outbound_cpm_id')
-//                     ->leftJoinSub($this->patientSummarySubquery(), 'pms', function ($join) {
-//                         $join->on('calls.inbound_cpm_id', '=', 'pms.patient_id');
-//                     })
-//                     ->leftJoin('patient_info', 'patient_users.id', '=', 'patient_info.user_id')
-//                     ->leftJoin('practices', 'patient_users.program_id', '=', 'practices.id')
-                ->get();
-//                     ->toArray();
-        } catch (\Exception $exception) {
-            return $exception->getMessage();
-        }
+        $start = $this->date->copy()->startOfMonth()->toDateString();
+        $end   = $this->date->copy()->endOfMonth()->toDateString();
+
+        return DB::table('calls')
+            ->selectRaw('calls.inbound_cpm_id as patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls, nurse_users.display_name as nurse, practices.display_name as practice')
+            ->leftJoin('users as patient_users', 'patient_users.id', '=', 'calls.inbound_cpm_id')
+            ->leftJoin('users as nurse_users', 'nurse_users.id', '=', 'calls.outbound_cpm_id')
+            ->leftJoinSub($this->patientSummarySubquery(), 'pms', function ($join) {
+                     $join->on('calls.inbound_cpm_id', '=', 'pms.patient_id');
+                 })
+            ->leftJoin('patient_info', 'patient_users.id', '=', 'patient_info.user_id')
+            ->leftJoin('practices', 'patient_users.program_id', '=', 'practices.id')
+            ->whereRaw(
+                     "DATE(calls.called_date)  >= DATE('{$start}')
+AND 
+DATE(calls.called_date) <= DATE('{$end}')"
+                 )
+            ->get()
+            ->toArray();
     }
 
     private function getForDate()
