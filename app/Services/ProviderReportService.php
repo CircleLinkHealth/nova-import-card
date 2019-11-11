@@ -17,11 +17,11 @@ class ProviderReportService
     public static function depressionScoreArray()
     {
         return [
-            'not at all' => 0,
-            'several days' => 1,
-            'more than half the days' => 2,
-            'nearly every day' => 3,
-        ];
+                'not at all' => 0,
+                'several days' => 1,
+                'more than half the days' => 2,
+                'nearly every day' => 3,
+            ];
     }
 
 //@todo: At some point move all helper functions to a different file
@@ -213,7 +213,8 @@ class ProviderReportService
 
             $skinCancer = self::checkInputValueIsNotEmpty($report->screenings['skin_cancer'], 'skin_cancer', []);
             $patientCheckedConditionInQ16 = collect($report->medical_history['conditions'])->map(function ($condition) {
-                return $condition['name'] === 'Cancer' && lcfirst($condition['type']) === 'skin';
+                $comparison = self::caseInsensitiveComparison($condition['type'], 'skin');
+                return $condition['name'] === 'Cancer' && $comparison;
             });
             $skinCancerSelectedInQ18 = in_array('Skin Cancer', $conditionsSelectedInQ18);
             $familyMembersWithSkinCancer = collect($report->family_medical_history)->firstWhere('name', '=', 'Skin Cancer');
@@ -253,14 +254,14 @@ class ProviderReportService
             if (!empty($osteoporosis)) {
                 if ($gender === 'Female'
                     && $age >= '65'
-                    && $osteoporosis !== 'In the last year'){
+                    && $osteoporosis !== 'In the last year') {
                     $screenings['Osteoporosis'] = " (Bone Density Test): Had " . $osteoporosis . '.';
-                }elseif ($age === 'Male'
+                } elseif ($age === 'Male'
                     && $age >= '70'
-                    && $osteoporosis !== 'In the last year'){
+                    && $osteoporosis !== 'In the last year') {
                     $screenings['Osteoporosis'] = " (Bone Density Test): Had " . $osteoporosis . '.';
-                }elseIf($answerToQ24 === 'Yes'
-                    && $osteoporosis !== 'In the last year'){
+                } elseIf ($answerToQ24 === 'Yes'
+                    && $osteoporosis !== 'In the last year') {
                     $screenings['Osteoporosis'] = " (Bone Density Test): Had " . $osteoporosis . '.';
                 }
 
@@ -270,7 +271,7 @@ class ProviderReportService
             if (!empty($violence) && $gender === 'Female') {
                 if ($violence === '10+ years ago/Never/Unsure'
                     && '15' <= $age
-                    && $age <= '44'){
+                    && $age <= '44') {
                     $screenings['Intimate Partner Violence/Domestic Violence'] = ": Had " . $violence . '.';
                 }
             }
@@ -528,6 +529,16 @@ class ProviderReportService
     {
         $fileName = ProviderReportService::class;
         throw new Exception("Empty answer in: $errorDescription in $fileName");
+    }
+
+    /**
+     * @param $string1
+     * @param $string2
+     * @return bool
+     */
+    public static function caseInsensitiveComparison($string1, $string2)
+    {
+        return strcasecmp($string1, $string2) === 0;
     }
 
     /**
