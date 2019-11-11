@@ -6,15 +6,17 @@
 
 namespace App\Notifications;
 
+use App\Contracts\HasAttachment;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NoteForwarded extends Notification implements ShouldQueue
+class NoteForwarded extends Notification implements ShouldQueue, HasAttachment
 {
     use Queueable;
     public $attachment;
@@ -37,17 +39,19 @@ class NoteForwarded extends Notification implements ShouldQueue
         Note $note,
         $channels = ['mail']
     ) {
-        $this->attachment = $this->note = $note;
+        $this->note = $note;
 
         $this->channels = array_merge($this->channels, $channels);
     }
 
     /**
-     * @return mixed
+     * Returns an Eloquent model.
+     *
+     * @return Model|null
      */
-    public function getAttachment()
+    public function getAttachment(): ?Model
     {
-        return $this->attachment;
+        return $this->note;
     }
 
     /**
