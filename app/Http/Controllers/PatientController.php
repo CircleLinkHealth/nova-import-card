@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Filters\PatientListFilters;
+use App\Http\Requests\StorePatientRequest;
 use App\PatientAwvSurveyInstanceStatusView;
 use App\User;
 use Illuminate\Http\Request;
@@ -23,6 +24,19 @@ class PatientController extends Controller
     public function index()
     {
         return view('patientList');
+    }
+
+    public function store(StorePatientRequest $request)
+    {
+        $user = new User();
+        $user->createNewUser($request->input('email'), str_random());
+        // set registration date field on users
+        $user->user_registered = date('Y-m-d H:i:s');
+
+        return response()->json([
+            'user_id' => $user->id,
+        ]);
+
     }
 
     public function getPatientList(Request $request, PatientListFilters $filters)
@@ -62,8 +76,8 @@ class PatientController extends Controller
             'phoneNumbers',
         ])->findOrFail($userId);
 
-        $filteredPhoneNumbers = $user->phoneNumbers->filter(function ($phone){
-            return !empty(trim($phone->number));
+        $filteredPhoneNumbers = $user->phoneNumbers->filter(function ($phone) {
+            return ! empty(trim($phone->number));
         });
 
         return response()->json([

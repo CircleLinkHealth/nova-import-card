@@ -44,6 +44,11 @@ Route::group([
         'as'   => 'patient.list',
     ]);
 
+    Route::post('store', [
+        'uses' => 'PatientController@store',
+        'as'   => 'patient.store',
+    ]);
+
     Route::get('list', [
         'uses' => 'PatientController@getPatientList',
         'as'   => 'patient.list.ajax',

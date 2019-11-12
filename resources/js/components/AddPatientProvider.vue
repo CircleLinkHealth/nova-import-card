@@ -30,7 +30,7 @@
                 Cannot find provider.
             </p>
             <p v-show="searchValue.length > MIN_SEARCH_VALUE">
-                <mdb-btn flat darkWaves @click.native="toggleCreateNew" :disabled="waiting">Click here to create new.
+                <mdb-btn size="sm" flat darkWaves @click.native="toggleCreateNew" :disabled="waiting">Click here to create new.
                 </mdb-btn>
             </p>
         </div>
@@ -38,7 +38,7 @@
         <div v-if="provider.id && !isCreatingNew">
             <mdb-row>
                 <mdb-col>
-                    <mdb-btn flat @click.native="toggleSearchAgain">Search again</mdb-btn>
+                    <mdb-btn size="sm" flat @click.native="toggleSearchAgain">Search again</mdb-btn>
                 </mdb-col>
             </mdb-row>
             <mdb-list-group>
@@ -52,7 +52,7 @@
 
             <mdb-row>
                 <mdb-col>
-                    <mdb-btn flat @click.native="toggleCreateNew">Search again</mdb-btn>
+                    <mdb-btn size="sm" flat @click.native="toggleCreateNew">Search again</mdb-btn>
                 </mdb-col>
             </mdb-row>
 
@@ -131,6 +131,19 @@
 
             <mdb-row>
                 <mdb-col>
+                    <select class="browser-default custom-select" required @change="onSelectClinicalType">
+                        <option selected>Select clinical type</option>
+                        <option v-for="suffix in suffixes"
+                                :value="suffix.id"
+                                :key="suffix.id">
+                            {{suffix.text}}
+                        </option>
+                    </select>
+                </mdb-col>
+            </mdb-row>
+
+            <mdb-row>
+                <mdb-col>
                     <mdb-alert v-if="error" color="danger">
                         {{error}}
                     </mdb-alert>
@@ -160,10 +173,11 @@
         mdbRow
     } from 'mdbvue';
 
+    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
     import {library} from '@fortawesome/fontawesome-svg-core';
     import {faSpinner} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
     import specialties from './specialties-options';
+    import suffixes from './suffix-options';
 
     library.add(faSpinner);
 
@@ -197,6 +211,7 @@
                 isCreatingNew: false,
                 practices: [],
                 specialties,
+                suffixes,
                 provider: {
                     id: null,
                     email: null,
@@ -333,6 +348,13 @@
 
             onSelectPractice(event) {
                 this.provider.primary_practice.id = event.currentTarget.value;
+            },
+
+            onSelectClinicalType(event) {
+                const id = event.currentTarget.value;
+                const suffix = suffixes.find(s => s.id === id);
+                this.provider.provider_info.is_clinical = id !== "non-clinical";
+                this.provider.suffix = suffix.text;
             },
 
             onSelectProvider(id) {
