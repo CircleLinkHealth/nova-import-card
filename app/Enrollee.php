@@ -145,15 +145,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSoftRejectedCallback($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereRequestedCallback($value)
  *
- * @property int|null   $revision_history_count
- * @property array|null $agent_details
- * @property mixed      $agent
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAgentDetails($value)
- *
- * @property int|null $family_enrollee_id
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereFamilyEnrolleeId($value)
+ * @property int|null $revision_history_count
  */
 class Enrollee extends BaseModel
 {
