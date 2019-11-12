@@ -20,7 +20,8 @@
             </div>
 
             <div class="search-filter">
-                <vue-select multiple v-model="searchFilter"
+                <vue-select v-if="this.authIsAdmin"
+                            multiple v-model="searchFilter"
                             :options="dataForSearchFilter"
                             placeholder="Filter RN"
                             required>
@@ -77,7 +78,7 @@
                             <!--  Filter Options-->
                             <div v-if="!clickedToViewEvent" class="filter-options">
                                 <h5>Add Work Window:</h5>
-                                <div>
+                                <div v-if="authIsAdmin">
                                     <vue-select :options="dataForDropdown"
                                                 v-model="nurseData"
                                                 placeholder="Choose RN"
@@ -190,12 +191,7 @@
         name: "NurseScheduleCalendar",
 
         props: [
-            // 'calendarData',
-            // 'dataForDropdown',
-            // 'today',
-            // 'startOfMonth',
-            // 'endOfMonth',
-            // 'endOfYear'
+            'authIsAdmin',
         ],
 
         components: {
@@ -502,6 +498,7 @@
                 return [year, month, day].join('-');
             },
             addNewEvent() {
+                debugger;
                 this.loader = true;
                 const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
                 const workDate = this.addNewEventMainClicked ? this.selectedDate : this.workEventDate;
@@ -512,19 +509,22 @@
                     ? this.repeatUntil
                     : null;
 
-                if (nurseId === null || nurseId === undefined) {
-                    this.loader = false;
-                    this.addNotification({
-                        title: "Warning!",
-                        text: "Choose an RN field is required",
-                        type: "danger",
-                        timeout: true
-                    });
+              if (this.authIsAdmin){
+                  if (nurseId === null
+                      || nurseId === undefined) {
+                      this.loader = false;
+                      this.addNotification({
+                          title: "Warning!",
+                          text: "Choose an RN field is required",
+                          type: "danger",
+                          timeout: true
+                      });
 
-                    alert("Choose an RN field is required");
-                    return;
+                      alert("Choose an RN field is required");
+                      return;
 
-                }
+                  }
+              }
 
                 if (this.workRangeStarts === '') {
                     this.loader = false;
@@ -602,7 +602,7 @@
                         }
                     }
                     this.workEventsToConfirm.push(...eventsToConfirmTemporary);
-
+//lines 606 - 615. clean it up.
                     if (eventsToConfirmTemporary.length !== 0) {
                         if (confirm("There are windows overlapping at ...pass dates here...Do you want to replace existing windows with new?")) {
                             this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, true);
@@ -610,15 +610,17 @@
                     } else {
                         this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
                     }
+                }else{
+                    this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
                 }
 
 
             },
             updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, updateCollisionWindow = null) {
-
                 const updateCollidedWindows = updateCollisionWindow === null ? false : updateCollisionWindow;
+                const nurseInfoId = !! nurseId ? nurseId : '';
                 axios.post('/care-center/work-schedule', {
-                    nurse_info_id: nurseId,
+                    nurse_info_id: nurseInfoId,
                     date: workDate,
                     day_of_week: this.dayOfWeek.dayOfWeek, //this is actually empty but is needed to pass validation. im creating this var in php
                     work_hours: this.hoursToWork,
@@ -631,8 +633,9 @@
                 }).then((response => {
                         this.loader = false;
                         this.toggleModal();
-                        const newEvent = this.prepareLiveData(response.data); //to show in UI before page reload.
-                        this.eventsAddedNow.push(newEvent);
+                        //@todo: Will fix refetchEvents() for this. so i disabled it
+                        // const newEvent = this.prepareLiveData(response.data); //to show in UI before page reload.
+                        // this.eventsAddedNow.push(newEvent);
                         this.addNotification({
                             title: "Success!",
                             text: "Event has been created.",
@@ -643,10 +646,10 @@
                 ))
                     .catch((error) => {
                         if (error.response.status === 422) {
-                            console.log(error.response.data.validator.window_time_start);
-                            this.errors = error;
-                            alert(this.errors.response.data.validator.window_time_start);
-                        }
+                                console.log(error.response.data.validator.window_time_start);
+                                this.errors = error;
+                                alert(this.errors.response.data.validator.window_time_start);
+                            }
                     });
             },
             prepareLiveData(newEventData) {

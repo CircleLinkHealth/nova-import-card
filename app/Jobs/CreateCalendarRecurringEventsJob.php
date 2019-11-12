@@ -46,7 +46,7 @@ class CreateCalendarRecurringEventsJob implements ShouldQueue
             if ($updateOrInsert) {
                 $this->updateOriginalWindowAndInsertNew($event);
             } else {
-                $this->window->insert($event);
+                $this->window::create($event);
             }
         }
     }
@@ -56,7 +56,7 @@ class CreateCalendarRecurringEventsJob implements ShouldQueue
      */
     public function updateOriginalWindowAndInsertNew($event)
     {
-        $this->window->updateOrInsert(
+        $this->window::updateOrCreate(
             [
                 'nurse_info_id' => $event['nurse_info_id'],
                 'date'          => $event['date'],

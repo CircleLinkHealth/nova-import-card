@@ -1278,7 +1278,7 @@ Route::group(['middleware' => 'auth'], function () {
         ])->middleware('permission:careplan-pdf.create,careplan-pdf.read,patient.read');
 
         Route::get('nurses/windows', [
-            'uses' => 'CareCenter\WorkScheduleController@getAllNurseSchedules',
+            'uses' => 'CareCenter\WorkScheduleController@showAllNurseSchedules',
             'as'   => 'get.admin.nurse.schedules',
         ])->middleware('permission:nurse.read');
 
@@ -1859,11 +1859,15 @@ Route::group(['middleware' => 'auth'], function () {
             ],
         ])->middleware('permission:nurseContactWindow.read,nurseContactWindow.create');
 
-
         Route::get('work-schedule/get-calendar-data', [
             'uses' => 'CareCenter\WorkScheduleController@getCalendarData',
-            'as'   => 'care.center.work.schedule.destroy',
+            'as'   => 'care.center.work.schedule.getCalendarData',
         ])->middleware('permission:nurseContactWindow.read');
+
+//        Route::get('work-schedule/get-nurse-calendar-data', [
+//            'uses' => 'CareCenter\WorkScheduleController@getCalendarDataForAuthNurse',
+//            'as'   => 'care.center.work.schedule.getCalendarDataForAuthNurse',
+//        ])->middleware('permission:nurseContactWindow.read');
 
         Route::get('work-schedule/destroy/{id}', [
             'uses' => 'CareCenter\WorkScheduleController@destroy',

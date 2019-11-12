@@ -8,7 +8,9 @@
 
     <div class="container">
 
-        <nurse-schedule-calendar></nurse-schedule-calendar>
+        <nurse-schedule-calendar
+                :auth-is-admin="{{$authIsAdmin}}">
+        </nurse-schedule-calendar>
     </div>
 @endsection
 

@@ -271,15 +271,41 @@ class NurseCalendarService
 
     /**
      * @param $nurse
-     * @param mixed $startOfThisYear
      *
      * @return \Illuminate\Support\Collection
      */
-    public function prepareData($nurse)
+    public function getWindows($nurse)
     {
-        return collect($nurse->nurseInfo->windows)
+        return $nurse->nurseInfo->windows;
+    }
+
+    /**
+     * @param Collection $nurses
+     *
+     * @return Collection|\Illuminate\Support\Collection
+     */
+    public function prepareCalendarDataForAllActiveNurses(Collection $nurses)
+    {
+        return $nurses->map(function ($nurse) {
+            $windows = $this->getWindows($nurse);
+
+            return $this->prepareDataForEachNurse($windows, $nurse);
+        })->flatten(1);
+    }
+
+    /**
+     * @param $windows
+     * @param $nurse
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function prepareDataForEachNurse($windows, $nurse)
+    {
+        return collect($windows)
             ->where('repeat_frequency', '!=', null)
-            ->map(function ($window) use ($nurse) {
+            ->chunk(10)
+            ->flatten()
+            ->transform(function ($window) use ($nurse) {
                 $givenDateWeekMap = createWeekMap($window->date); //see comment in helpers.php
                 $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
                 $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
@@ -315,17 +341,5 @@ class NurseCalendarService
                     ]
                 );
             });
-    }
-
-    /**
-     * @param Collection $nurses
-     *
-     * @return Collection|\Illuminate\Support\Collection
-     */
-    public function prepareDataForCalendar(Collection $nurses)
-    {
-        return $nurses->map(function ($nurse) {
-            return $this->prepareData($nurse);
-        })->flatten(1);
     }
 }

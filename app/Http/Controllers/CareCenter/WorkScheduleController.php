@@ -157,14 +157,6 @@ class WorkScheduleController extends Controller
         return $workScheduleData[0];
     }
 
-    /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function getAllNurseSchedules()
-    {
-        return view('admin.nurse.schedules.index');
-    }
-
     public function getCalendarData()
     {
         $today        = Carbon::parse(now())->toDateString();
@@ -172,11 +164,16 @@ class WorkScheduleController extends Controller
         $endOfMonth   = Carbon::parse($today)->endOfMonth()->copy()->toDateString();
         $endOfYear    = Carbon::parse($today)->endOfYear()->copy()->toDateString();
 
-        $nurses     = $this->getActiveNurses();
-        $windowData = $this->fullCalendarService->prepareDataForCalendar($nurses);
+        if (auth()->user()->isAdmin()) {
+            $nurses          = $this->getActiveNurses();
+            $windowData      = $this->fullCalendarService->prepareCalendarDataForAllActiveNurses($nurses);
+            $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
+        } else {
+            $windowData      = $this->getCalendarDataForAuthNurse();
+            $dataForDropdown = '';
+        }
 
-        $tzAbbr          = auth()->user()->timezone_abbr ?? 'EDT';
-        $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
+        $tzAbbr = auth()->user()->timezone_abbr ?? 'EDT';
 
         $calendarData = [
             'workEvents'      => $windowData,
@@ -191,6 +188,23 @@ class WorkScheduleController extends Controller
             'success'      => true,
             'calendarData' => $calendarData,
         ], 200);
+    }
+
+    public function getCalendarDataForAuthNurse()
+    {
+        $nurse       = auth()->user();
+        $authIsAdmin = false;
+        $windows     = $this->nurseContactWindows
+            ->whereNurseInfoId($nurse->nurseInfo->id)
+            ->get()
+            ->sortBy(function ($item) {
+                return Carbon::createFromFormat(
+                    'H:i:s',
+                    "{$item->window_time_start}"
+                );
+            });
+
+        return $this->fullCalendarService->prepareDataForEachNurse($windows, $nurse);
     }
 
     /**
@@ -213,35 +227,37 @@ class WorkScheduleController extends Controller
 
     public function index()
     {
-        $nurse = auth()->user()->nurseInfo;
+        $authIsAdmin = json_encode(false);
 
-        $windows = $this->nurseContactWindows
-            ->whereNurseInfoId($nurse->id)
-            ->get()
-            ->sortBy(function ($item) {
-                return Carbon::createFromFormat(
-                    'H:i:s',
-                    "{$item->window_time_start}"
-                );
-            });
+//        $holidays = $nurse->nurseInfo->upcoming_holiday_dates;
+//        $holidaysThisWeek = $nurse->nurseInfo->holidays_this_week;
 
-        $holidays         = $nurse->upcoming_holiday_dates;
-        $holidaysThisWeek = $nurse->holidays_this_week;
-
-        $tzAbbr = auth()->user()->timezone_abbr;
+//        $tzAbbr = auth()->user()->timezone_abbr;
 
         //I think time tracking submits along with the form, thus messing up sessions.
         //Temporary fix
-        $disableTimeTracking = true;
+        $disableTimeTracking = true; // we need this
+        return view('care-center.work-schedule', compact('authIsAdmin'));
+//        return view('care-center.work-schedule', compact([
+//            'disableTimeTracking',
+//            'holidays',
+//            'holidaysThisWeek',
+//            'windows',
+//            'tzAbbr',
+//            'nurse',
+//            'authIsAdmin'
+//        ]));
+    }
 
-        return view('care-center.work-schedule', compact([
-            'disableTimeTracking',
-            'holidays',
-            'holidaysThisWeek',
-            'windows',
-            'tzAbbr',
-            'nurse',
-        ]));
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function showAllNurseSchedules()
+    {
+        $authIsAdmin = auth()->user()->isAdmin();
+        $authUserId  = auth()->id();
+
+        return view('admin.nurse.schedules.index', compact('authIsAdmin', 'authUserId'));
     }
 
     public function store(Request $request)
@@ -290,16 +306,16 @@ class WorkScheduleController extends Controller
                     'H:i:s',
                     $window->window_time_end
                 )->diffInHours(Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_start
-                    ));
+                    'H:i:s',
+                    $window->window_time_start
+                ));
             }) + Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_end']
             )->diffInHours(Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_start']
-                ));
+                'H:i',
+                $workScheduleData['window_time_start']
+            ));
 
         $invalidWorkHoursNumber = false;
 
@@ -338,7 +354,6 @@ class WorkScheduleController extends Controller
         if ($isAdmin) {
             $user = auth()->user();
             if ('does_not_repeat' !== $repeatFrequency) {
-//                $window                   = NurseContactWindow::first(); //@todo: Try and fix this
                 $recurringEventsToSave    = $this->fullCalendarService->createRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency, $windowRepeatUntil);
                 $confirmationNeededEvents = $this->fullCalendarService->getEventsToAskConfirmation($recurringEventsToSave);
 
@@ -355,34 +370,41 @@ class WorkScheduleController extends Controller
                     ], 422);
                 }
 
-                CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $updateCollisions)->onQueue('low');
-            } else {
-                $window = $this->nurseContactWindows->create([
-                    'nurse_info_id' => $nurseInfoId,
-                    'date'          => $dataRequest['date'],
-                    //                                'date'              => Carbon::now()->format('Y-m-d'),
-                    'day_of_week'       => $workScheduleData['day_of_week'],
-                    'window_time_start' => $workScheduleData['window_time_start'],
-                    'window_time_end'   => $workScheduleData['window_time_end'],
-                    'repeat_frequency'  => $workScheduleData['repeat_freq'],
-                    'until'             => $workScheduleData['until'],
-                ]);
+                CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, NurseContactWindow::class, $updateCollisions)->onQueue('low');
 
-                $nurseUser = Nurse::find($nurseInfoId)->user;
-
-                $dayName      = clhDayOfWeekToDayName($window->day_of_week);
-                $nurseMessage = "Admin {$user->display_name} assigned Nurse {$nurseUser->display_name} to work for";
-                $message      = "${nurseMessage} {$workScheduleData['work_hours']} hours on ${dayName} between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
-                sendSlackMessage('#carecoachscheduling', $message);
+                return response()->json([
+                    'success' => true,
+                    'window'  => $recurringEventsToSave,
+                ], 200);
             }
+            $window = $this->nurseContactWindows->create([
+                'nurse_info_id' => $nurseInfoId,
+                'date'          => $dataRequest['date'],
+                //                                'date'              => Carbon::now()->format('Y-m-d'),
+                'day_of_week'       => $workScheduleData['day_of_week'],
+                'window_time_start' => $workScheduleData['window_time_start'],
+                'window_time_end'   => $workScheduleData['window_time_end'],
+                'repeat_frequency'  => $workScheduleData['repeat_freq'],
+                'until'             => $workScheduleData['until'],
+            ]);
+
+            $nurseUser = Nurse::find($nurseInfoId)->user;
+
+            $dayName      = clhDayOfWeekToDayName($window->day_of_week);
+            $nurseMessage = "Admin {$user->display_name} assigned Nurse {$nurseUser->display_name} to work for";
+            $message      = "${nurseMessage} {$workScheduleData['work_hours']} hours on ${dayName} between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
+            sendSlackMessage('#carecoachscheduling', $message);
         } else {
             $user = auth()->user();
 
             $window = $user->nurseInfo->windows()->create([
-                'date'              => Carbon::now()->format('Y-m-d'),
+                //                'date'              => Carbon::now()->format('Y-m-d'),
+                'date'              => $dataRequest['date'],
                 'day_of_week'       => $workScheduleData['day_of_week'],
                 'window_time_start' => $workScheduleData['window_time_start'],
                 'window_time_end'   => $workScheduleData['window_time_end'],
+                'repeat_frequency'  => $workScheduleData['repeat_freq'],
+                'until'             => $workScheduleData['until'],
             ]);
         }
 
@@ -402,7 +424,7 @@ class WorkScheduleController extends Controller
             ], 200);
         }
 
-        return redirect()->back()->with(['editedNurseId' => $nurseInfoId]);
+//        return redirect()->back()->with(['editedNurseId' => $nurseInfoId]);
     }
 
     public function storeHoliday(Request $request)
