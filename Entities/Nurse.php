@@ -72,6 +72,8 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @property-read int|null $summary_count
  * @property-read int|null $windows_count
  * @property-read int|null $workhourables_count
+ * @property int|null $case_load_capacity
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereCaseLoadCapacity($value)
  */
 class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 {
