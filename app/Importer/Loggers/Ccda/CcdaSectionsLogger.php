@@ -220,7 +220,11 @@ class CcdaSectionsLogger implements MedicalRecordLogger
                 $data['location_id'] = optional($searchProvider->loadMissing('locations')->locations->first())->id;
             }
 
-            $saved = ProviderLog::create(
+            $saved = ProviderLog::updateOrCreate(
+                array_merge([
+                    'first_name' => $data['first_name'],
+                    'last_name'  => $data['last_name'],
+                ], $this->foreignKeys),
                 array_merge($data, $this->foreignKeys)
             );
         }
