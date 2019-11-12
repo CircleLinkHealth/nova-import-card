@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StorePatientRequest extends FormRequest
 {
@@ -26,6 +27,9 @@ class StorePatientRequest extends FormRequest
      */
     public function rules()
     {
-        return [];
+        return [
+            'patient'  => 'required|json',
+            'provider' => 'required|json',
+        ];
     }
 }

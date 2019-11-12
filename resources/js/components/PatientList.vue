@@ -1,6 +1,7 @@
 <template>
     <mdb-container>
         <add-patient-modal v-if="addPatientModalOptions.show" :options="addPatientModalOptions"></add-patient-modal>
+        <send-link-modal v-if="sendLinkModalOptions.show" :options="sendLinkModalOptions"></send-link-modal>
         <mdb-row class="no-gutters">
             <mdb-col md="8" sm="12">
                 <h1>AWV Patient List</h1>
@@ -44,7 +45,6 @@
                     </mdb-dropdown>
                 </template>
             </v-server-table>
-            <send-link-modal v-if="sendLinkModalOptions.show" :options="sendLinkModalOptions"></send-link-modal>
         </mdb-row>
     </mdb-container>
 </template>
@@ -209,7 +209,12 @@
                 this.addPatientModalOptions.show = true;
                 this.addPatientModalOptions.onDone = () => {
                     this.addPatientModalOptions.show = false;
+                    this.refresh();
                 }
+            },
+
+            refresh() {
+                this.$refs.table.refresh();
             }
         },
         created() {

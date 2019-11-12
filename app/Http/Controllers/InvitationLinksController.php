@@ -94,6 +94,7 @@ class InvitationLinksController extends Controller
 
             $user = User
                 ::with([
+                    'patientInfo',
                     'surveyInstances' => function ($query) use ($forYear) {
                         $query->forYear($forYear);
                     },

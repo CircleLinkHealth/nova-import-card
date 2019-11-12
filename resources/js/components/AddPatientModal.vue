@@ -50,7 +50,7 @@
 
                 <mdb-row class="provider-container">
                     <mdb-col>
-                        <add-patient-provider></add-patient-provider>
+                        <add-patient-provider ref="providerComponent"></add-patient-provider>
                     </mdb-col>
                 </mdb-row>
 
@@ -157,7 +157,11 @@
                     return true;
                 }
 
-                return this.validateEmail(this.customEmail);
+                if (!this.patient.email) {
+                    return true;
+                }
+
+                return this.validateEmail(this.patient.email);
             },
 
             validateEmail(email) {
@@ -174,28 +178,16 @@
                 this.error = null;
                 this.waiting = true;
 
-                const url = `/manage-patients/${this.patientId}/send-link/${this.isVitals ? 'vitals' : 'hra'}`;
-                let target;
-                if (this.selectedChannel === CHANNEL_MAIL) {
-                    target = this.selectedEmail === 'other' ? this.customEmail : this.selectedEmail;
-                } else {
-                    target = this.selectedPhoneNumber === 'other' ? this.customPhoneNumber : this.selectedPhoneNumber;
-                    target = this.sanitizePhoneNumber(target);
-                }
+                const url = `/manage-patients/store`;
 
                 const req = {
-                    target_patient_id: this.patientId,
-                    channel: this.selectedChannel,
-                    channel_value: target,
+                    patient: this.patient,
+                    provider: this.$refs.providerComponent.getUser()
                 };
 
                 axios.post(url, req)
                     .then(resp => {
                         this.waiting = false;
-                        if (typeof this.options.success !== 'undefined') {
-                            //this is for send assessmen link component, so we trigger the success alert
-                            this.options.success();
-                        }
                         this.options.onDone();
                     })
                     .catch(error => {

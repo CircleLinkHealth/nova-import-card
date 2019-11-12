@@ -94,10 +94,12 @@ class PatientListFilters extends QueryFilters
             return $this->builder;
         }
 
-        return $this->builder->whereIn('year', $value);
+        return $this->builder->whereIn('year', $value)
+                             ->orWhereNull('year');
     }
 
-    public function practiceIds(array $value) {
+    public function practiceIds(array $value)
+    {
         if (empty($value)) {
             return $this->builder;
         }
@@ -119,7 +121,7 @@ class PatientListFilters extends QueryFilters
         }
 
         /** @var User $user */
-        $user = auth()->user();
+        $user                    = auth()->user();
         $filtered['practiceIds'] = $user->viewableProgramIds();
 
         return $filtered->all();

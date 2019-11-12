@@ -168,6 +168,11 @@ class SurveyInvitationLinksService
                  ]);
         }
 
+        if (!$user->patientInfo->is_awv) {
+            $user->patientInfo->is_awv = true;
+            $user->patientInfo->save();
+        }
+
         return [
             Survey::HRA    => $hraSurvey->id,
             Survey::VITALS => $vitalsSurvey->id,

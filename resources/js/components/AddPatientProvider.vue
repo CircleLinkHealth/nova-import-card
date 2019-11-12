@@ -243,6 +243,15 @@
         },
         methods: {
 
+            /**
+             * Called from parent component.
+             *
+             * @returns {provider|{zip, address, address2, city, last_name, suffix, phone_numbers, id, state, primary_practice, first_name, email, provider_info}}
+             */
+            getUser() {
+                return this.provider;
+            },
+
             getNewProvider() {
                 return {
                     id: null,
