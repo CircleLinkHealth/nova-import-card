@@ -18,6 +18,7 @@ use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Search\ProviderByName;
 use App\Services\Eligibility\Entities\Problem as ProblemEntity;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {
