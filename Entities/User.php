@@ -3645,7 +3645,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function shouldBeSearchable()
     {
-        return $this->isProvider();
+        return $this->loadMissing('roles')->isProvider();
     }
 
     /**
