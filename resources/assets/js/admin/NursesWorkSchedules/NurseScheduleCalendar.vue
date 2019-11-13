@@ -240,6 +240,7 @@
                 config: {
                     defaultView: viewDefault,
                     editable: false,
+                    // eventOverlap: false,
 
                     header: {
                         left: 'prev, next, today',
@@ -509,22 +510,22 @@
                     ? this.repeatUntil
                     : null;
 
-              if (this.authIsAdmin){
-                  if (nurseId === null
-                      || nurseId === undefined) {
-                      this.loader = false;
-                      this.addNotification({
-                          title: "Warning!",
-                          text: "Choose an RN field is required",
-                          type: "danger",
-                          timeout: true
-                      });
+                if (this.authIsAdmin) {
+                    if (nurseId === null
+                        || nurseId === undefined) {
+                        this.loader = false;
+                        this.addNotification({
+                            title: "Warning!",
+                            text: "Choose an RN field is required",
+                            type: "danger",
+                            timeout: true
+                        });
 
-                      alert("Choose an RN field is required");
-                      return;
+                        alert("Choose an RN field is required");
+                        return;
 
-                  }
-              }
+                    }
+                }
 
                 if (this.workRangeStarts === '') {
                     this.loader = false;
@@ -593,15 +594,16 @@
                     const eventsToConfirmTemporary = [];
                     for (var i = 0; i < recurringDates.length; i++) {
                         const date = this.formatDate(recurringDates[i]);
-                        //i was expecting filter to give me arrays that satisfy the condition however i was gettin also empty arrays
+                        //i was expecting filter to give me arrays that satisfy the condition however i im gettin also the empty arrays
                         const eventsToAskConfirmation = events.filter(event => event.data.date === date && event.data.nurseId === nurseId);
-
+                        // That's why i  use conditional here
                         if (eventsToAskConfirmation.length !== 0) {
                             this.loader = false;
                             eventsToConfirmTemporary.push(...eventsToAskConfirmation);
                         }
                     }
                     this.workEventsToConfirm.push(...eventsToConfirmTemporary);
+
 //lines 606 - 615. clean it up.
                     if (eventsToConfirmTemporary.length !== 0) {
                         if (confirm("There are windows overlapping at ...pass dates here...Do you want to replace existing windows with new?")) {
@@ -610,7 +612,7 @@
                     } else {
                         this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
                     }
-                }else{
+                } else {
                     this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
                 }
 
@@ -618,7 +620,7 @@
             },
             updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, updateCollisionWindow = null) {
                 const updateCollidedWindows = updateCollisionWindow === null ? false : updateCollisionWindow;
-                const nurseInfoId = !! nurseId ? nurseId : '';
+                const nurseInfoId = !!nurseId ? nurseId : '';
                 axios.post('/care-center/work-schedule', {
                     nurse_info_id: nurseInfoId,
                     date: workDate,
@@ -646,10 +648,10 @@
                 ))
                     .catch((error) => {
                         if (error.response.status === 422) {
-                                console.log(error.response.data.validator.window_time_start);
-                                this.errors = error;
-                                alert(this.errors.response.data.validator.window_time_start);
-                            }
+                            console.log(error.response.data.validator.window_time_start);
+                            this.errors = error;
+                            alert(this.errors.response.data.validator.window_time_start);
+                        }
                     });
             },
             prepareLiveData(newEventData) {
