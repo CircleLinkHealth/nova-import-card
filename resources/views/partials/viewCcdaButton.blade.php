@@ -12,7 +12,7 @@
         <div style="padding-top: 10px;">
             <a href="{{ route('get.CCDViewerController.exportAllCCDs', [ 'userId' => $patient->id]) }}"
                class="btn btn-warning btn-xs"
-               target="_blank" style="font-size: 15px"
+               style="font-size: 15px"
             >
                 Export all CCDAs
             </a>
