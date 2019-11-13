@@ -27,7 +27,7 @@ class AddendumObserver
             'type'            => 'addendum',
             'sub_type'        => 'addendum_response',
             'note_id'         => $addendum->addendumable_id,
-            'service'         => 'phone', //is this correct. should it be call?
+            'service'         => 'phone', //all records in the DB have phone.
             'status'          => 'scheduled',
             'asap'            => true,
             'scheduled_date'  => Carbon::parse(now())->toDateString(),

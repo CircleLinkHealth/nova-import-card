@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
 use App\Models\Addendum;
 use App\Note;
@@ -15,12 +16,13 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQueue, LiveNotification
+class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQueue, LiveNotification, HasAttachment
 {
     use ArrayableNotification;
     use Queueable;
@@ -34,9 +36,6 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
 
     /**
      * Create a new notification instance.
-     *
-     * @param Addendum $addendum
-     * @param User     $sender
      */
     public function __construct(Addendum $addendum, User $sender)
     {
@@ -44,9 +43,6 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
         $this->sender     = $sender;
     }
 
-    /**
-     * @return string
-     */
     public function attachmentType(): string
     {
         return Addendum::class;
@@ -58,11 +54,11 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     }
 
     /**
-     * @return mixed
+     * Returns an Eloquent model.
      */
-    public function getAttachment()
+    public function getAttachment(): ?Model
     {
-        return $this->attachment;
+        return $this->addendum;
     }
 
     /**
@@ -90,7 +86,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
         $senderName  = $this->sender->display_name;
         $patientName = $this->getPatientName();
 
-        return "<strong>$senderName</strong> responded to a note on $patientName"; //todo:write a migration to update this?
+        return "<strong>$senderName</strong> responded to a note on $patientName";
     }
 
     /**
@@ -111,17 +107,11 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
         return $note->link();
     }
 
-    /**
-     * @return int
-     */
     public function senderId(): int
     {
         return $this->sender->id;
     }
 
-    /**
-     * @return string
-     */
     public function senderName(): string
     {
         return $this->sender->display_name;
@@ -131,8 +121,6 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      * Get the array representation of the notification.
      *
      * @param mixed $notifiable
-     *
-     * @return array
      */
     public function toArray($notifiable): array
     {

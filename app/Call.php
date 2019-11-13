@@ -80,7 +80,9 @@ use CircleLinkHealth\Customer\Entities\User;
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAsap($value)
  *
- * @property int|null $revision_history_count
+ * @property int|null                                                                                                        $revision_history_count
+ * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ * @property int|null                                                                                                        $notifications_count
  */
 class Call extends BaseModel implements AttachableToNotification
 {

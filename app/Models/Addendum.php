@@ -6,6 +6,8 @@
 
 namespace App\Models;
 
+use App\Contracts\AttachableToNotification;
+use App\Traits\NotificationAttachable;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -20,6 +22,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Carbon\Carbon|null                           $updated_at
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $addendumable
  * @property \CircleLinkHealth\Customer\Entities\User      $author
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereAddendumableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereAddendumableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereAuthorUserId($value)
@@ -28,14 +31,19 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum query()
+ *
  * @property int|null $revision_history_count
  */
-class Addendum extends \CircleLinkHealth\Core\Entities\BaseModel
+class Addendum extends \CircleLinkHealth\Core\Entities\BaseModel implements AttachableToNotification
 {
+    use NotificationAttachable;
+
     protected $fillable = [
         'addendumable_type',
         'addendumable_id',

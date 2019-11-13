@@ -7,6 +7,7 @@
 namespace App\Notifications;
 
 use App\Call;
+use App\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
 use App\Services\NotificationService;
 use App\Traits\ArrayableNotification;
@@ -14,12 +15,13 @@ use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, LiveNotification
+class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, LiveNotification, HasAttachment
 {
     use ArrayableNotification;
     use Queueable;
@@ -36,9 +38,6 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
 
     /**
      * Create a new notification instance.
-     *
-     * @param Call $call
-     * @param User $sender
      */
     public function __construct(Call $call, User $sender)
     {
@@ -57,11 +56,11 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
     }
 
     /**
-     * @return mixed
+     *  Attachments model.
      */
-    public function getAttachment()
+    public function getAttachment(): ?Model
     {
-        return $this->attachment;
+        return $this->call;
     }
 
     /**
@@ -109,9 +108,6 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
         return $this->sender->id;
     }
 
-    /**
-     * @return string
-     */
     public function senderName(): string
     {
         return $this->sender->display_name;
@@ -121,8 +117,6 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
      * Get the array representation of the notification.
      *
      * @param mixed $notifiable
-     *
-     * @return array
      */
     public function toArray($notifiable): array
     {

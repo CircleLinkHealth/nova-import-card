@@ -29,7 +29,6 @@ class NotificationObserver
             Call::where('type', $type)
                 ->where('note_id', $notification->attachment->addendumable->id)
                 ->where('outbound_cpm_id', $notification->notifiable_id)
-                ->where('scheduler', $notification->data['sender_id'])
                 ->update($toUpdate);
         }
     }
