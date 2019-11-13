@@ -51,7 +51,7 @@ class AddendumObserver
             $noteAuthorUser = $addendum->addendumable->author;
 
             if (is_a($noteAuthorUser, User::class) && auth()->id() !== optional($noteAuthorUser)->id) {
-                Notification::send($noteAuthorUser, new AddendumCreated($addendum, auth()->user()));
+                Notification::send($noteAuthorUser, new AddendumCreated($addendum));
                 $this->createActivityTaskForAddendum($addendum, $patientId, $noteAuthorUser);
             }
         }
