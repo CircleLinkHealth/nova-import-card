@@ -12,7 +12,6 @@ use App\Models\Addendum;
 use App\Note;
 use App\Services\NotificationService;
 use App\Traits\ArrayableNotification;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -26,21 +25,21 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
 {
     use ArrayableNotification;
     use Queueable;
-
-    public $addendum;
-    public $attachment;
     /**
-     * @var User
+     * @var
      */
-    protected $sender;
+    public $addendum;
+    /**
+     * @var Addendum
+     */
+    public $attachment;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Addendum $addendum, User $sender)
+    public function __construct(Addendum $addendum)
     {
         $this->attachment = $this->addendum = $addendum;
-        $this->sender     = $sender;
     }
 
     public function attachmentType(): string
@@ -83,7 +82,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
 
     public function getSubject(): string
     {
-        $senderName  = $this->sender->display_name;
+        $senderName  = $this->senderName();
         $patientName = $this->getPatientName();
 
         return "<strong>$senderName</strong> responded to a note on $patientName";
@@ -107,14 +106,22 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
         return $note->link();
     }
 
+    /**
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     */
+    public function sender()
+    {
+        return auth()->user();
+    }
+
     public function senderId(): int
     {
-        return $this->sender->id;
+        return $this->sender()->id;
     }
 
     public function senderName(): string
     {
-        return $this->sender->display_name;
+        return $this->sender()->display_name;
     }
 
     /**
@@ -151,7 +158,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      */
     public function toMail($notifiable)
     {
-        $senderName = $this->sender->display_name;
+        $senderName = $this->senderName();
 
         return (new MailMessage())
             ->line("Dr. $senderName has commented on a note")

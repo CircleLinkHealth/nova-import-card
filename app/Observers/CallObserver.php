@@ -38,7 +38,7 @@ class CallObserver
     public function createNotificationAndSendToPusher($call)
     {
         $notify = $call->outboundUser;
-        Notification::send($notify, new CallCreated($call, auth()->user()));
+        Notification::send($notify, new CallCreated($call));
     }
 
     public function saved(Call $call)

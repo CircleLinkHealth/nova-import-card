@@ -18,11 +18,6 @@ interface LiveNotification
      */
     public function description(): string;
 
-//    /**
-//     *  Attachments model.
-//     */
-//    public function getAttachment();
-
     public function getPatientName(): string;
 
     /**

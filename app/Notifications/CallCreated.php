@@ -11,7 +11,6 @@ use App\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
 use App\Services\NotificationService;
 use App\Traits\ArrayableNotification;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -31,18 +30,13 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
      * @var Call
      */
     private $call;
-    /**
-     * @var User
-     */
-    private $sender;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Call $call, User $sender)
+    public function __construct(Call $call)
     {
         $this->attachment = $this->call = $call;
-        $this->sender     = $sender;
     }
 
     public function attachmentType(): string
@@ -103,14 +97,22 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
         return route('patient.careplan.print', ['patient' => $patientId]);
     }
 
+    /**
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     */
+    public function sender()
+    {
+        return auth()->user();
+    }
+
     public function senderId(): int
     {
-        return $this->sender->id;
+        return $this->sender()->id;
     }
 
     public function senderName(): string
     {
-        return $this->sender->display_name;
+        return $this->sender()->display_name;
     }
 
     /**
