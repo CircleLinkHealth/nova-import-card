@@ -36,6 +36,9 @@ import {ClientTable, ServerTable} from 'vue-tables-2';
 import $ from 'jquery';
 import 'lodash';
 import 'popper.js';
+import '@fortawesome/fontawesome-free/css/all.min.css'
+import 'bootstrap-css-only/css/bootstrap.min.css'
+import 'mdbvue/lib/css/mdb.min.css'
 
 Vue.component('survey-questions', SurveyQuestions);
 Vue.component('vitals-survey', VitalsSurvey);

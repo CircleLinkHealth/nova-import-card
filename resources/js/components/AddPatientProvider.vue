@@ -30,7 +30,8 @@
                 Cannot find provider.
             </p>
             <p v-show="searchValue.length > MIN_SEARCH_VALUE">
-                <mdb-btn size="sm" flat darkWaves @click.native="toggleCreateNew" :disabled="waiting">Click here to create new.
+                <mdb-btn size="sm" flat darkWaves @click.native="toggleCreateNew" :disabled="waiting">Click here to
+                    create new.
                 </mdb-btn>
             </p>
         </div>
@@ -67,14 +68,8 @@
 
             <mdb-row>
                 <mdb-col>
-                    <select class="browser-default custom-select" required @change="onSelectSpecialty">
-                        <option selected>Select a specialty</option>
-                        <option v-for="specialty in specialties"
-                                :value="specialty.id"
-                                :key="specialty.id">
-                            {{specialty.text}}
-                        </option>
-                    </select>
+                    <mdb-select v-model="specialties" placeholder="Select a specialty" :required="true"
+                                @change="onSelectSpecialty"/>
                 </mdb-col>
             </mdb-row>
 
@@ -110,14 +105,8 @@
 
             <mdb-row>
                 <mdb-col>
-                    <select class="browser-default custom-select" required @change="onSelectPractice">
-                        <option selected>Select a practice</option>
-                        <option v-for="practice in practices"
-                                :value="practice.id"
-                                :key="practice.id">
-                            {{practice.display_name}}
-                        </option>
-                    </select>
+                    <mdb-select v-model="practices" placeholder="Select a practice" :required="true"
+                                @change="onSelectPractice"/>
                 </mdb-col>
             </mdb-row>
 
@@ -131,14 +120,8 @@
 
             <mdb-row>
                 <mdb-col>
-                    <select class="browser-default custom-select" required @change="onSelectClinicalType">
-                        <option selected>Select clinical type</option>
-                        <option v-for="suffix in suffixes"
-                                :value="suffix.id"
-                                :key="suffix.id">
-                            {{suffix.text}}
-                        </option>
-                    </select>
+                    <mdb-select v-model="suffixes" placeholder="Select clinical type" :required="true"
+                                @change="onSelectClinicalType"/>
                 </mdb-col>
             </mdb-row>
 
@@ -170,7 +153,8 @@
         mdbModalFooter,
         mdbModalHeader,
         mdbModalTitle,
-        mdbRow
+        mdbRow,
+        mdbSelect
     } from 'mdbvue';
 
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
@@ -197,7 +181,8 @@
             mdbCol,
             mdbRow,
             mdbListGroup,
-            mdbListGroupItem
+            mdbListGroupItem,
+            mdbSelect
         },
         props: [],
         data() {
@@ -210,8 +195,12 @@
                 searchResults: [],
                 isCreatingNew: false,
                 practices: [],
-                specialties,
-                suffixes,
+                specialties: specialties.map(s => {
+                    return {text: s.text, value: s.id};
+                }),
+                suffixes: suffixes.map(s => {
+                    return {text: s.text, value: s.id};
+                }),
                 provider: {
                     id: null,
                     email: null,
@@ -295,7 +284,9 @@
                 axios.get(url)
                     .then(resp => {
                         this.waiting = false;
-                        this.practices = resp.data;
+                        this.practices = (resp.data || []).map(p => {
+                            return {text: p.display_name, value: p.id}
+                        });
                     })
                     .catch(error => {
                         this.waiting = false;
@@ -351,16 +342,15 @@
                 }
             },
 
-            onSelectSpecialty(event) {
-                this.provider.provider_info.specialty = event.currentTarget.value;
+            onSelectSpecialty(id) {
+                this.provider.provider_info.specialty = id;
             },
 
-            onSelectPractice(event) {
-                this.provider.primary_practice.id = event.currentTarget.value;
+            onSelectPractice(id) {
+                this.provider.primary_practice.id = id;
             },
 
-            onSelectClinicalType(event) {
-                const id = event.currentTarget.value;
+            onSelectClinicalType(id) {
                 const suffix = suffixes.find(s => s.id === id);
                 this.provider.provider_info.is_clinical = id !== "non-clinical";
                 this.provider.suffix = suffix.text;
