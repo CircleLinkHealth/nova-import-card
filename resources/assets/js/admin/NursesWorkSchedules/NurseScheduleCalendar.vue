@@ -594,9 +594,9 @@
                     const eventsToConfirmTemporary = [];
                     for (var i = 0; i < recurringDates.length; i++) {
                         const date = this.formatDate(recurringDates[i]);
-                        //i was expecting filter to give me arrays that satisfy the condition however i im gettin also the empty arrays
                         const eventsToAskConfirmation = events.filter(event => event.data.date === date && event.data.nurseId === nurseId);
-                        // That's why i  use conditional here
+                        //I was expecting filter to return only arrays that satisfy the condition however i im getting also the empty arrays
+                        // That's why i  use this conditional here
                         if (eventsToAskConfirmation.length !== 0) {
                             this.loader = false;
                             eventsToConfirmTemporary.push(...eventsToAskConfirmation);
@@ -606,7 +606,7 @@
 
 //lines 606 - 615. clean it up.
                     if (eventsToConfirmTemporary.length !== 0) {
-                        if (confirm("There are windows overlapping at ...pass dates here...Do you want to replace existing windows with new?")) {
+                        if (confirm("There are some windows overlapping. Do you want to replace the existing windows with the new?")) {
                             this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, true);
                         }
                     } else {

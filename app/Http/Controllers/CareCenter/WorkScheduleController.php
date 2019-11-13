@@ -250,6 +250,44 @@ class WorkScheduleController extends Controller
     }
 
     /**
+     * @param $eventDate
+     * @param $nurseInfoId
+     * @param $windowTimeStart
+     * @param $windowTimeEnd
+     * @param $repeatFrequency
+     * @param $windowRepeatUntil
+     * @param bool                                       $updateCollisions
+     * @param \Illuminate\Contracts\Validation\Validator $validator
+     *
+     * @return JsonResponse
+     */
+    public function saveRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency, $windowRepeatUntil, bool $updateCollisions, \Illuminate\Contracts\Validation\Validator $validator): JsonResponse
+    {
+        $recurringEventsToSave    = $this->fullCalendarService->createRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency, $windowRepeatUntil);
+        $confirmationNeededEvents = $this->fullCalendarService->getEventsToAskConfirmation($recurringEventsToSave);
+
+        if ( ! empty($confirmationNeededEvents) && ! $updateCollisions) {
+            $collidingDates = $this->fullCalendarService->getCollidingDates($confirmationNeededEvents);
+
+            return response()->json([
+                'errors'    => 'Validation Failed',
+                'validator' => $validator->getMessageBag()->add(
+                    'window_time_start',
+                    "This window is overlapping with an already existing window in $collidingDates."
+                ),
+                'collidingEvents' => $confirmationNeededEvents,
+            ], 422);
+        }
+
+        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, NurseContactWindow::class, $updateCollisions)->onQueue('low');
+
+        return response()->json([
+            'success' => true,
+            'window'  => $recurringEventsToSave,
+        ], 200);
+    }
+
+    /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function showAllNurseSchedules()
@@ -354,28 +392,8 @@ class WorkScheduleController extends Controller
         if ($isAdmin) {
             $user = auth()->user();
             if ('does_not_repeat' !== $repeatFrequency) {
-                $recurringEventsToSave    = $this->fullCalendarService->createRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency, $windowRepeatUntil);
-                $confirmationNeededEvents = $this->fullCalendarService->getEventsToAskConfirmation($recurringEventsToSave);
-
-                if ( ! empty($confirmationNeededEvents) && ! $updateCollisions) {
-                    $collidingDates = $this->fullCalendarService->getCollidingDates($confirmationNeededEvents);
-
-                    return response()->json([
-                        'errors'    => 'Validation Failed',
-                        'validator' => $validator->getMessageBag()->add(
-                            'window_time_start',
-                            "This window is overlapping with an already existing window in $collidingDates."
-                        ),
-                        'collidingEvents' => $confirmationNeededEvents,
-                    ], 422);
-                }
-
-                CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, NurseContactWindow::class, $updateCollisions)->onQueue('low');
-
-                return response()->json([
-                    'success' => true,
-                    'window'  => $recurringEventsToSave,
-                ], 200);
+                //@todo: lots of parameters. revisit this.
+                return $this->saveRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency, $windowRepeatUntil, $updateCollisions, $validator);
             }
             $window = $this->nurseContactWindows->create([
                 'nurse_info_id' => $nurseInfoId,
@@ -392,11 +410,15 @@ class WorkScheduleController extends Controller
 
             $dayName      = clhDayOfWeekToDayName($window->day_of_week);
             $nurseMessage = "Admin {$user->display_name} assigned Nurse {$nurseUser->display_name} to work for";
-            $message      = "${nurseMessage} {$workScheduleData['work_hours']} hours on ${dayName} between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
+            //@todo: These mesaages needs to adapted.
+            $message = "${nurseMessage} {$workScheduleData['work_hours']} hours on ${dayName} between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
             sendSlackMessage('#carecoachscheduling', $message);
         } else {
             $user = auth()->user();
-
+            if ('does_not_repeat' !== $repeatFrequency) {
+                //@todo: lots of parameters. revisit this.
+                return $this->saveRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency, $windowRepeatUntil, $updateCollisions, $validator);
+            }
             $window = $user->nurseInfo->windows()->create([
                 //                'date'              => Carbon::now()->format('Y-m-d'),
                 'date'              => $dataRequest['date'],
