@@ -16,7 +16,7 @@ trait NotificationAttachable
     public function markAttachmentNotificationAsRead($notifiable)
     {
         $notifiable->unreadNotifications()
-            ->hasNotifiableType($notifiable)
+            ->hasNotifiableType(get_class($notifiable))
             ->hasAttachmentType(self::class)
             ->where('attachment_id', '=', $this->id)
             ->get()

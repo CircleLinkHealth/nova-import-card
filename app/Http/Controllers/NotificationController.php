@@ -20,8 +20,6 @@ class NotificationController extends Controller
 
     /**
      * NotificationController constructor.
-     *
-     * @param NotificationService $notificationService
      */
     public function __construct(NotificationService $notificationService)
     {
@@ -45,11 +43,11 @@ class NotificationController extends Controller
 
     /**
      * @param $receiverId
-     * @param $attachmentId
+     * @param $notificationId
      */
-    public function markNotificationAsRead($receiverId, $attachmentId)
+    public function markNotificationAsRead($receiverId, $notificationId)
     {
-        $this->service->markAsRead($receiverId, $attachmentId);
+        $this->service->markAsRead($receiverId, $notificationId);
     }
 
     /**

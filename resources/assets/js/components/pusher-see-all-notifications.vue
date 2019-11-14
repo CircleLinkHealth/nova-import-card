@@ -29,7 +29,7 @@
 
             }
         },
-
+        // @todo: im using the same methods as pusher-notifications.vue
         methods: {
             showAll(notification) { //this is the same function as in pusher-notifications.vue, it should be  extracted
                 const getNotificationSubject = notification.data.subject;
@@ -40,7 +40,7 @@
             },
 
             redirectAndMarkAsRead(notification) {
-                axios.post(`/redirect-mark-read/${notification.data.receiver_id}/${notification.data.attachment_id}`)
+                axios.post(`/redirect-mark-read/${notification.data.receiver_id}/${notification.id}`)
                     .then(response => {
                             this.redirectTo(notification);
                         }

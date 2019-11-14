@@ -6,8 +6,9 @@
 
 namespace App\Models;
 
-use App\Contracts\AttachableToNotification;
-use App\Traits\NotificationAttachable;
+use App\Call;
+use App\Contracts\RelatesToActivity;
+use App\Traits\ActivityRelatable;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -38,11 +39,13 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum query()
  *
- * @property int|null $revision_history_count
+ * @property int|null                                                                                                        $revision_history_count
+ * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ * @property int|null                                                                                                        $notifications_count
  */
-class Addendum extends \CircleLinkHealth\Core\Entities\BaseModel implements AttachableToNotification
+class Addendum extends \CircleLinkHealth\Core\Entities\BaseModel implements RelatesToActivity
 {
-    use NotificationAttachable;
+    use ActivityRelatable;
 
     protected $fillable = [
         'addendumable_type',
@@ -62,5 +65,24 @@ class Addendum extends \CircleLinkHealth\Core\Entities\BaseModel implements Atta
     public function author()
     {
         return $this->belongsTo(User::class, 'author_user_id');
+    }
+
+    /**
+     * Return a call object.
+     *
+     * @return mixed
+     */
+
+    /**
+     * Return a call object.
+     *
+     * @return mixed
+     */
+    public function getActivities()
+    {
+        return Call::where('note_id', $this->addendumable_id)
+            ->where('type', 'addendum')
+            ->where('outbound_cpm_id', auth()->id())
+            ->where('scheduler', $this->author_user_id);
     }
 }

@@ -6,6 +6,8 @@
 
 namespace App\Services;
 
+use App\Contracts\RelatesToActivity;
+use App\Traits\NotificationAttachable;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
@@ -14,6 +16,8 @@ use Illuminate\Support\Collection;
 
 class NotificationService
 {
+    use NotificationAttachable;
+
     /**
      * @param $notification
      * @param $createdDateTime
@@ -81,13 +85,16 @@ class NotificationService
 
     /**
      * @param $receiverId
-     * @param $attachmentId
+     * @param $notificationId
+     *
+     * @return void
      */
-    public function markAsRead($receiverId, $attachmentId)
+    public function markAsRead($receiverId, $notificationId)
     {
-        $notification = DatabaseNotification::whereAttachmentId($attachmentId)->first();
-        if (empty($notification->read_at)) {
-            $notification->markAsRead();
+        $notification = DatabaseNotification::findOrFail($notificationId);
+        $notification->markAsRead();
+        if ($notification->attachment instanceof RelatesToActivity) {
+            $notification->attachment->markActivityAsDone();
         }
     }
 

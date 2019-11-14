@@ -81,9 +81,8 @@ class CallObserver
         }
 
         if ('reached' === $call->status || 'done' === $call->status) {
-            $this->notificationService->markAsRead($call->outboundUser->id, $call->id);
-            // $call->markAttachmentNotificationAsRead($call->outboundUser);
             Call::where('id', $call->id)->update(['asap' => false]);
+            $call->markAttachmentNotificationAsRead($call->outboundUser);
         }
 
         //If sub_type = "addendum_response" means it has already been created by AddendumObserver

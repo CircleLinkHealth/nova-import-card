@@ -87,7 +87,7 @@
             },
 
             redirectAndMarkAsRead(notification) {
-                axios.post(`/redirect-mark-read/${notification.data.receiver_id}/${notification.data.attachment_id}`)
+                axios.post(`/redirect-mark-read/${notification.data.receiver_id}/${notification.id}`)
                     .then(response => {
                             this.redirectTo(notification);
                         }
