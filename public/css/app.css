@@ -10215,11 +10215,11 @@ body.scrollable {
 }
 
 .carousel .carousel-control-prev-icon {
-  background-image: url(/images/arrow_left.svg?11911410dca2de148f30954eb2fd5eab);
+  background-image: url(/images/arrow_left.svg?270f72df47e036d9cfa11f91f0a94a60);
 }
 
 .carousel .carousel-control-next-icon {
-  background-image: url(/images/arrow_right.svg?8ef6a08cdc1154920165680a4edde771);
+  background-image: url(/images/arrow_right.svg?d9ccc77c8240ad0dc2724cf333c0479e);
 }
 
 .carousel .carousel-indicators li {
@@ -27823,5 +27823,10 @@ a.navbar-title:hover {
   bottom: 0;
   background-color: rgba(255, 255, 255, 0.7);
   z-index: 9999;
+}
+
+.list-group-item.active {
+  background-color: #50b2e2;
+  border-color: #50b2e2;
 }
 

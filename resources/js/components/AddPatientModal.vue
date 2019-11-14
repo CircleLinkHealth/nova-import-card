@@ -66,8 +66,8 @@
 
         </mdb-modal-body>
         <mdb-modal-footer>
-            <mdb-btn color="warning" @click.native="cancel">Cancel</mdb-btn>
-            <mdb-btn color="primary" @click.native="save" :disabled="waiting">Save</mdb-btn>
+            <mdb-btn color="warning" icon="ban" @click.native="cancel">Cancel</mdb-btn>
+            <mdb-btn color="primary" icon="save" @click.native="save" :disabled="waiting">Save</mdb-btn>
         </mdb-modal-footer>
     </mdb-modal>
 </template>

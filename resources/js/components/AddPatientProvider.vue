@@ -13,7 +13,21 @@
 
         <mdb-row v-if="!isCreatingNew && !(provider && provider.id)">
             <mdb-col>
-                <mdb-input label="Provider" :value="searchValue" @input="onSearchValueChanged"></mdb-input>
+                <mdb-input class="mt-0 mb-3"
+                           placeholder="Provider"
+                           :value="searchValue"
+                           @input="onSearchValueChanged"
+                           ariaDescribedBy="button-addon2">
+                    <mdb-btn color="primary" size="md"
+                             icon="plus"
+                             group slot="append"
+                             v-show="searchValue.length > MIN_SEARCH_VALUE"
+                             @click.native="toggleCreateNew"
+                             :disabled="waiting"
+                             id="button-addon2">
+                        Create New
+                    </mdb-btn>
+                </mdb-input>
             </mdb-col>
         </mdb-row>
 
@@ -29,17 +43,12 @@
             <p v-show="searchResults.length === 0 && searchValue.length > MIN_SEARCH_VALUE">
                 Cannot find provider.
             </p>
-            <p v-show="searchValue.length > MIN_SEARCH_VALUE">
-                <mdb-btn size="sm" flat darkWaves @click.native="toggleCreateNew" :disabled="waiting">Click here to
-                    create new.
-                </mdb-btn>
-            </p>
         </div>
 
         <div v-if="provider.id && !isCreatingNew">
             <mdb-row>
-                <mdb-col>
-                    <mdb-btn size="sm" flat @click.native="toggleSearchAgain">Search again</mdb-btn>
+                <mdb-col class="text-right">
+                    <mdb-btn size="sm" icon="search" color="primary" @click.native="toggleSearchAgain">Search again</mdb-btn>
                 </mdb-col>
             </mdb-row>
             <mdb-list-group>
@@ -52,8 +61,8 @@
         <div v-if="isCreatingNew">
 
             <mdb-row>
-                <mdb-col>
-                    <mdb-btn size="sm" flat @click.native="toggleCreateNew">Search again</mdb-btn>
+                <mdb-col class="text-right">
+                    <mdb-btn size="sm" icon="search" color="primary" @click.native="toggleSearchAgain">Search again</mdb-btn>
                 </mdb-col>
             </mdb-row>
 
@@ -145,6 +154,7 @@
         mdbBtn,
         mdbCol,
         mdbContainer,
+        mdbIcon,
         mdbInput,
         mdbListGroup,
         mdbListGroupItem,
@@ -154,8 +164,7 @@
         mdbModalHeader,
         mdbModalTitle,
         mdbRow,
-        mdbSelect,
-        mdbIcon
+        mdbSelect
     } from 'mdbvue';
 
     import specialties from './specialties-options';
