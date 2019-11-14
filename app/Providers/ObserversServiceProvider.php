@@ -77,7 +77,6 @@ class ObserversServiceProvider extends ServiceProvider
         Problem::observe(ProblemObserver::class);
         NurseInvoiceDailyDispute::observe(NurseInvoiceDailyDisputeObserver::class);
         Addendum::observe(AddendumObserver::class);
-        DatabaseNotification::observe(NotificationObserver::class);
     }
 
     /**

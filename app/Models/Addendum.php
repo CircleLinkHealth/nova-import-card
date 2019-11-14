@@ -7,9 +7,12 @@
 namespace App\Models;
 
 use App\Call;
+use App\Contracts\AttachableToNotification;
 use App\Contracts\RelatesToActivity;
 use App\Traits\ActivityRelatable;
+use App\Traits\NotificationAttachable;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * App\Models\Addendum.
@@ -43,9 +46,10 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
  */
-class Addendum extends \CircleLinkHealth\Core\Entities\BaseModel implements RelatesToActivity
+class Addendum extends \CircleLinkHealth\Core\Entities\BaseModel implements RelatesToActivity, AttachableToNotification
 {
     use ActivityRelatable;
+    use NotificationAttachable;
 
     protected $fillable = [
         'addendumable_type',
@@ -62,6 +66,9 @@ class Addendum extends \CircleLinkHealth\Core\Entities\BaseModel implements Rela
         return $this->morphTo();
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function author()
     {
         return $this->belongsTo(User::class, 'author_user_id');
@@ -72,17 +79,22 @@ class Addendum extends \CircleLinkHealth\Core\Entities\BaseModel implements Rela
      *
      * @return mixed
      */
-
-    /**
-     * Return a call object.
-     *
-     * @return mixed
-     */
     public function getActivities()
     {
         return Call::where('note_id', $this->addendumable_id)
             ->where('type', 'addendum')
-            ->where('outbound_cpm_id', auth()->id())
-            ->where('scheduler', $this->author_user_id);
+            ->where('outbound_cpm_id', auth()->id());
+    }
+
+    /**
+     * @return mixed
+     */
+    public function markAsReadInNotifications()
+    {
+        $addendumAuthor = $this->author_user_id;
+
+        return $this->addendumable->addendums()
+            ->where('author_user_id', $addendumAuthor)
+            ->get();
     }
 }

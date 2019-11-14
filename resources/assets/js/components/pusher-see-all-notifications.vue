@@ -14,11 +14,10 @@
 </template>
 
 <script>
-    // import PusherNotifications from './pusher-notifications';
     export default {
         name: "pusher-see-all-notifications",
         components: {
-            // 'pusher-notifications': PusherNotifications,
+
         },
         props: [
             'notifications'
@@ -40,7 +39,7 @@
             },
 
             redirectAndMarkAsRead(notification) {
-                axios.post(`/redirect-mark-read/${notification.data.receiver_id}/${notification.id}`)
+                axios.post(`/redirect-mark-read/${notification.id}`)
                     .then(response => {
                             this.redirectTo(notification);
                         }

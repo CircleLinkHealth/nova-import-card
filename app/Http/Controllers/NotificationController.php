@@ -42,12 +42,11 @@ class NotificationController extends Controller
     }
 
     /**
-     * @param $receiverId
      * @param $notificationId
      */
-    public function markNotificationAsRead($receiverId, $notificationId)
+    public function markNotificationAsRead($notificationId)
     {
-        $this->service->markAsRead($receiverId, $notificationId);
+        $this->service->markAsRead($notificationId);
     }
 
     /**

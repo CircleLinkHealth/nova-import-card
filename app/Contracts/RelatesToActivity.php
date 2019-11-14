@@ -15,5 +15,19 @@ interface RelatesToActivity
      */
     public function getActivities();
 
-    public function markActivityAsDone();
+    /**
+     *  Many "read only" Activities(in this case = addendums) might exist for the same note.
+     *  We are marking all Activities(type addendum) for the same note as read.
+     *
+     * @return mixed
+     */
+    public function markActivitiesAsDone();
+
+    /**
+     * Many "read only" Notifications(in this case = addendums) might exist for the same note.
+     * We are marking all Notifications(type addendum) for the same note as read.
+     *
+     * @return mixed
+     */
+    public function markNotificationsForActivitiesAsRead();
 }

@@ -36,7 +36,6 @@
     export default {
         name: "pusher-notifications",
         components: {
-            // 'pusher-see-all-notifications': PusherSeeAllNotifications,
             'loader': LoaderComponent,
         },
         props: [
@@ -87,7 +86,7 @@
             },
 
             redirectAndMarkAsRead(notification) {
-                axios.post(`/redirect-mark-read/${notification.data.receiver_id}/${notification.id}`)
+                axios.post(`/redirect-mark-read/${notification.id}`)
                     .then(response => {
                             this.redirectTo(notification);
                         }

@@ -84,20 +84,29 @@ class NotificationService
     }
 
     /**
-     * @param $receiverId
      * @param $notificationId
      *
      * @return void
      */
-    public function markAsRead($receiverId, $notificationId)
+    public function markAsRead($notificationId)
     {
+// is it better if i pass 'read_at' from vue and us it in if() to avoid the $notification::findOrFail() if not needed?
         $notification = DatabaseNotification::findOrFail($notificationId);
-        $notification->markAsRead();
-        if ($notification->attachment instanceof RelatesToActivity) {
-            $notification->attachment->markActivityAsDone();
+        if (empty($notification->read_at)) {
+            if ($notification->attachment instanceof RelatesToActivity) {
+                $notification->attachment->markActivitiesAsDone();
+                $notification->attachment->markNotificationsForActivitiesAsRead();
+            } else {
+                $notification->markAsRead();
+            }
         }
     }
 
+    /**
+     * @param $notification
+     *
+     * @return Carbon
+     */
     public function notificationCreatedAt($notification)
     {
         return Carbon::parse($notification->created_at);

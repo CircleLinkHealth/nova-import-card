@@ -8,7 +8,7 @@ namespace App\Traits;
 
 trait ActivityRelatable
 {
-    public function markActivityAsDone()
+    public function markActivitiesAsDone()
     {
         $toUpdate = [
             'asap'   => false,
@@ -17,5 +17,12 @@ trait ActivityRelatable
 
         $activities = $this->getActivities();
         $activities->update($toUpdate);
+    }
+
+    public function markNotificationsForActivitiesAsRead()
+    {
+        $this->markAsReadInNotifications()->map(function ($activity) {
+            return $activity->markAttachmentNotificationAsRead(auth()->user());
+        });
     }
 }
