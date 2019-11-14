@@ -39,8 +39,9 @@ class CreatePatientInfoTable extends Migration
             $table->date('consent_date')->nullable();
             $table->integer('cur_month_activity_time')->unsigned()->nullable();
             $table->string('gender')->nullable();
-            $table->string('date_paused')->nullable();
-            $table->string('date_withdrawn')->nullable();
+            $table->dateTime('date_paused')->nullable();
+            $table->dateTime('date_withdrawn')->nullable();
+            $table->dateTime('date_unreachable')->nullable();
             $table->string('mrn_number')->nullable();
             $table->string('preferred_cc_contact_days')->nullable();
             $table->string('preferred_contact_language')->nullable();
