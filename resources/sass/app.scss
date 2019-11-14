@@ -1,9 +1,18 @@
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Nunito');
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
+
 // Variables
 @import 'variables';
 
 $primary-color: #50b2e2;
+
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
+@import '~bootstrap-css-only/css/bootstrap.min.css';
+@import '~mdbvue/lib/mdbvue.css';
+
+$image-path: '~@/../../mdb/mdbvue/img';
+@import '~@/../../mdb/mdbvue/scss/mdb.scss';
 
 @import "~vue-select/dist/vue-select.css";
 

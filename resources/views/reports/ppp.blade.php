@@ -29,6 +29,10 @@ function getStringValue($val, $default = '')
 @section('content')
 
     @if (isset($isPdf) && $isPdf)
+        <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+
         <!-- found in surveysMaster but for some reason dompdf has issues with it -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         <link href="{{ asset('css/pdf.css') }}" rel="stylesheet">

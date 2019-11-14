@@ -11,7 +11,7 @@
                     <mdb-col>
                         <div class="spinner-overlay" v-show="waiting">
                             <div class="text-center">
-                                <font-awesome-icon icon="spinner" :spin="true"/>
+                                <mdb-icon icon="spinner" :spin="true"/>
                             </div>
                         </div>
                     </mdb-col>
@@ -80,26 +80,21 @@
         mdbCol,
         mdbContainer,
         mdbInput,
-        mdbModal,
         mdbModalBody,
         mdbModalFooter,
         mdbModalHeader,
         mdbModalTitle,
-        mdbRow
+        mdbRow,
+        mdbIcon
     } from 'mdbvue';
-
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
-    library.add(faSpinner);
+    import mdbModal from 'mdbvue/lib/components/mdbModal';
 
     import AddPatientProvider from "./AddPatientProvider";
 
     export default {
         name: "AddPatientModal",
         components: {
-            FontAwesomeIcon,
+            mdbIcon,
             mdbModal,
             mdbModalBody,
             mdbModalFooter,
