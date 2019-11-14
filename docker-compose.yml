@@ -7,7 +7,6 @@ services:
     build:
       context: docker/php
       dockerfile: dev.Dockerfile
-    container_name: app
     depends_on:
     - mysql
     - redis
@@ -15,7 +14,6 @@ services:
     networks:
     - app-network
     restart: unless-stopped
-    tty: true
     volumes:
     - .:/var/www
     - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
@@ -23,14 +21,16 @@ services:
 
   # mysql db
   mysql:
-    build:
-      context: docker/mysql
-      dockerfile: dev.Dockerfile
+    image: mysql:5.7.28
+#    build:
+#      context: docker/mysql
+#      dockerfile: dev.Dockerfile
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     networks:
     - app-network
     ports:
@@ -38,6 +38,8 @@ services:
     restart: unless-stopped
     volumes:
     - dbdata:/var/lib/mysql
+    - ./docker/mysql/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
+  #    - ./docker/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
 
   redis:
     image: redis
