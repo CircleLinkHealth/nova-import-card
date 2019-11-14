@@ -23,12 +23,14 @@ services:
 
   # mysql db
   mysql:
+    build:
+      context: docker/mysql
+      dockerfile: dev.Dockerfile
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-    image: mysql:5.7.28
     networks:
     - app-network
     ports:
@@ -36,7 +38,6 @@ services:
     restart: unless-stopped
     volumes:
     - dbdata:/var/lib/mysql
-    - ./docker/mysql/my.cnf:/etc/mysql/conf.d/custom.cnf
 
   redis:
     image: redis

@@ -3,6 +3,8 @@ FROM php:7.2-fpm
 # Set working directory
 WORKDIR /var/www
 
+USER root
+
 #install composer
 RUN cd /usr/bin && curl -s http://getcomposer.org/installer | php && ln -s /usr/bin/composer.phar /usr/bin/composer
 
@@ -21,6 +23,17 @@ RUN apt-get update && apt-get install -y \
     && pecl install redis-4.0.1 \
     && pecl install xdebug-2.6.0 \
     && docker-php-ext-enable redis xdebug
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gnupg && \
+    curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends nodejs && \
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends yarn && \
+    npm install -g npm
 
 # Add user for laravel application
 RUN groupadd -g 1000 www
