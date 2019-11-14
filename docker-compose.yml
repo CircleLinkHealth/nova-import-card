@@ -11,14 +11,25 @@ services:
     build:
       context: docker/php
       dockerfile: dev.Dockerfile
-  db:
-    image: mariadb
+    depends_on:
+      - mysql
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: 1
       MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+  mysql:
+    image: mysql:5.7.28
+    restart: unless-stopped
+    command: --explicit_defaults_for_timestamp
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     ports:
-    - 3306:3306
+    - "33060:3306"
     volumes:
-    - "db-data:/var/lib/mysql/data"
+    - "mysql-data:/var/lib/mysql:rw"
 volumes:
-  db-data: {}
+  mysql-data: {}
