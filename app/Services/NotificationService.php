@@ -7,7 +7,6 @@
 namespace App\Services;
 
 use App\Contracts\RelatesToActivity;
-use App\Traits\NotificationAttachable;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
@@ -16,8 +15,6 @@ use Illuminate\Support\Collection;
 
 class NotificationService
 {
-    use NotificationAttachable;
-
     /**
      * @param $notification
      * @param $createdDateTime
@@ -90,7 +87,7 @@ class NotificationService
      */
     public function markAsRead($notificationId)
     {
-// is it better if i pass 'read_at' from vue and us it in if() to avoid the $notification::findOrFail() if not needed?
+        // is it better if i pass 'read_at' from vue and us it in if() to avoid the $notification::findOrFail() if not needed?
         $notification = DatabaseNotification::findOrFail($notificationId);
         if (empty($notification->read_at)) {
             if ($notification->attachment instanceof RelatesToActivity) {
