@@ -212,7 +212,7 @@ function getStringValue($val, $default = '')
 
     .image.volume-half {
         background: url({{asset('/images/volume-half@3x.png')}}) no-repeat;
-        margin-top: 2px;
+        margin-top: 4px;
     }
 
     .image.thought-bubble {

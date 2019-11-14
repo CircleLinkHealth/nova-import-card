@@ -36,18 +36,25 @@ class GeneratePatientReportsJob implements ShouldQueue
 
     protected $currentDate;
 
+    /**
+     * Choose whether to save in Media and therefore cloud, or keep as a local file (for debugging)
+     * @var bool
+     */
+    protected $debug;
 
     /**
      * Create a new job instance.
      *
      * @param $patientId
      * @param $instanceYear
+     * @param bool $debug
      */
-    public function __construct($patientId, $instanceYear)
+    public function __construct($patientId, $instanceYear, $debug = false)
     {
         $this->instanceYear = Carbon::parse($instanceYear);
         $this->patientId    = $patientId;
         $this->currentDate  = Carbon::now();
+        $this->debug  = $debug;
 
     }
 
@@ -106,7 +113,7 @@ class GeneratePatientReportsJob implements ShouldQueue
         }
 
         //Create PDFs for reports and upload the to S3 Media
-        $providerReportUploaded = $this->createAndUploadPdfProviderReport($providerReport, $patient);
+        $providerReportUploaded = $this->createAndUploadPdfProviderReport($providerReport, $patient, $this->debug);
 
         if ( ! $providerReportUploaded) {
             \Log::error("Something went wrong while uploading Provider Report for patient with id:{$patient->id} ");
@@ -114,11 +121,15 @@ class GeneratePatientReportsJob implements ShouldQueue
             return;
         }
 
-        $pppUploaded = $this->createAndUploadPdfPPP($pppReport, $patient);
+        $pppUploaded = $this->createAndUploadPdfPPP($pppReport, $patient, $this->debug);
 
         if ( ! $pppUploaded) {
             \Log::error("Something went wrong while uploading PPP for patient with id:{$patient->id} ");
 
+            return;
+        }
+
+        if ($this->debug) {
             return;
         }
 
@@ -171,10 +182,12 @@ class GeneratePatientReportsJob implements ShouldQueue
      * @param $providerReport
      * @param $patient
      *
+     * @param bool $saveLocally
+     *
      * @return bool
      * @throws \Exception
      */
-    private function createAndUploadPdfProviderReport($providerReport, $patient)
+    private function createAndUploadPdfProviderReport($providerReport, $patient, $saveLocally = false)
     {
         $pathToCoverPage = $this->getCoverPagePdf($patient, $providerReport->updated_at, 'Provider Report');
         if ( ! $pathToCoverPage) {
@@ -189,8 +202,8 @@ class GeneratePatientReportsJob implements ShouldQueue
 
         $headerHtml = View::make('reports.pppHeader', [
             'patientName' => $patient->display_name,
-            'patientDob' => $patient->patientInfo->dob(),
-            'reportName' => 'Provider Report'
+            'patientDob'  => $patient->patientInfo->dob(),
+            'reportName'  => 'Provider Report',
         ])->render();
         $pdf->setOption('header-html', $headerHtml);
 
@@ -213,12 +226,16 @@ class GeneratePatientReportsJob implements ShouldQueue
             return false;
         }
 
+        if ($saveLocally) {
+            return $saved;
+        }
+
         return $patient->addMedia($path)
                        ->withCustomProperties(['doc_type' => 'Provider Report'])
                        ->toMediaCollection('patient-care-documents');
     }
 
-    private function createAndUploadPdfPPP(PersonalizedPreventionPlan $ppp, User $patient)
+    private function createAndUploadPdfPPP(PersonalizedPreventionPlan $ppp, User $patient, $saveLocally = false)
     {
         $pathToCoverPage = $this->getCoverPagePdf($patient, $ppp->updated_at, 'Personalized', 'Prevention Plan');
         if ( ! $pathToCoverPage) {
@@ -233,8 +250,8 @@ class GeneratePatientReportsJob implements ShouldQueue
 
         $headerHtml = View::make('reports.pppHeader', [
             'patientName' => $patient->display_name,
-            'patientDob' => $patient->patientInfo->dob(),
-            'reportName' => 'PPP'
+            'patientDob'  => $patient->patientInfo->dob(),
+            'reportName'  => 'PPP',
         ])->render();
         $pdf->setOption('header-html', $headerHtml);
 
@@ -256,6 +273,10 @@ class GeneratePatientReportsJob implements ShouldQueue
 
         if ( ! $saved) {
             return false;
+        }
+
+        if ($saveLocally) {
+            return $saved;
         }
 
         return $patient->addMedia($path)
