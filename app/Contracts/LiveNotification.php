@@ -40,7 +40,7 @@ interface LiveNotification
     public function senderName(): string;
 
     /**
-     * Json array. Keeps all data needed to represent notification in vue.
+     * Holds all data needed to represent notification in vue.
      *
      * @param mixed $notifiable
      */
