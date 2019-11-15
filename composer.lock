@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.117.0",
+            "version": "3.117.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "3fc3d2c1962f34becc4313c839ed8b659d045114"
+                "reference": "6951cd08326d939f1fd1097a490fccb9751a59d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3fc3d2c1962f34becc4313c839ed8b659d045114",
-                "reference": "3fc3d2c1962f34becc4313c839ed8b659d045114",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6951cd08326d939f1fd1097a490fccb9751a59d7",
+                "reference": "6951cd08326d939f1fd1097a490fccb9751a59d7",
                 "shasum": ""
             },
             "require": {
@@ -495,7 +495,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-11-13T19:14:25+00:00"
+            "time": "2019-11-14T19:27:06+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -1702,16 +1702,16 @@
         },
         {
             "name": "fourstacks/nova-checkboxes",
-            "version": "v0.1.5",
+            "version": "v0.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fourstacks/nova-checkboxes.git",
-                "reference": "56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9"
+                "reference": "f8aeccd0cc437254674661af6374288573eb064b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fourstacks/nova-checkboxes/zipball/56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9",
-                "reference": "56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9",
+                "url": "https://api.github.com/repos/fourstacks/nova-checkboxes/zipball/f8aeccd0cc437254674661af6374288573eb064b",
+                "reference": "f8aeccd0cc437254674661af6374288573eb064b",
                 "shasum": ""
             },
             "require": {
@@ -1744,7 +1744,7 @@
                 "laravel",
                 "nova"
             ],
-            "time": "2019-03-08T07:46:14+00:00"
+            "time": "2019-11-15T08:00:48+00:00"
         },
         {
             "name": "fzaninotto/faker",
