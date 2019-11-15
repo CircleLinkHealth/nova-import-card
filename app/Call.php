@@ -227,7 +227,6 @@ class Call extends BaseModel implements AttachableToNotification
      * Scope for calls for the given month.
      *
      * @param $builder
-     * @param Carbon $monthYear
      */
     public function scopeOfMonth($builder, Carbon $monthYear)
     {

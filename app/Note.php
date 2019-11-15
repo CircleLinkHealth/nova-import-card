@@ -227,7 +227,6 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
      * Scope for notes that were emergencies (or not if you pass $yes = false).
      *
      * @param $builder
-     * @param bool $yes
      */
     public function scopeEmergency($builder, bool $yes = true)
     {
@@ -238,9 +237,6 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
      * Scope for notes that were forwarded.
      *
      * @param $builder
-     * @param Carbon|null $from
-     * @param Carbon|null $to
-     * @param bool        $excludePatientSupport
      */
     public function scopeForwarded($builder, Carbon $from = null, Carbon $to = null, bool $excludePatientSupport = true)
     {
@@ -271,8 +267,6 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
      * @param $builder
      * @param $notifiableType
      * @param $notifiableId
-     * @param Carbon|null $from
-     * @param Carbon|null $to
      */
     public function scopeForwardedTo($builder, $notifiableType, $notifiableId, Carbon $from = null, Carbon $to = null)
     {
@@ -311,8 +305,6 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
      * Create a PDF of this resource and return the path to it.
      *
      * @param null $scale
-     *
-     * @return string
      */
     public function toPdf($scale = null): string
     {
