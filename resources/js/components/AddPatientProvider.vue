@@ -48,7 +48,8 @@
         <div v-if="provider.id && !isCreatingNew">
             <mdb-row>
                 <mdb-col class="text-right">
-                    <mdb-btn size="sm" icon="search" color="primary" @click.native="toggleSearchAgain">Search again</mdb-btn>
+                    <mdb-btn size="sm" icon="search" color="primary" @click.native="toggleSearchAgain">Search again
+                    </mdb-btn>
                 </mdb-col>
             </mdb-row>
             <mdb-list-group>
@@ -62,7 +63,8 @@
 
             <mdb-row>
                 <mdb-col class="text-right">
-                    <mdb-btn size="sm" icon="search" color="primary" @click.native="toggleSearchAgain">Search again</mdb-btn>
+                    <mdb-btn size="sm" icon="search" color="primary" @click.native="toggleSearchAgain">Search again
+                    </mdb-btn>
                 </mdb-col>
             </mdb-row>
 
@@ -75,13 +77,7 @@
                 </mdb-col>
             </mdb-row>
 
-            <mdb-row>
-                <mdb-col>
-                    <mdb-select v-model="specialties" placeholder="Select a specialty" :required="true"
-                                @change="onSelectSpecialty"/>
-                </mdb-col>
-            </mdb-row>
-
+            <!--
             <mdb-row>
                 <mdb-col md="8">
                     <mdb-input label="Line 1" v-model="provider.address"></mdb-input>
@@ -102,20 +98,32 @@
                     <mdb-input label="Zip" v-model="provider.zip"></mdb-input>
                 </mdb-col>
             </mdb-row>
+            -->
 
             <mdb-row>
-                <mdb-col>
+                <mdb-col md="6">
                     <mdb-input label="Phone number" v-model="provider.phone_numbers[0]"
                                type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                                :required="true">
                     </mdb-input>
                 </mdb-col>
+                <mdb-col md="6">
+                    <mdb-select v-model="specialties" placeholder="Select a specialty"
+                                label="Specialty" :required="true"
+                                @change="onSelectSpecialty"/>
+                </mdb-col>
             </mdb-row>
 
             <mdb-row>
                 <mdb-col>
-                    <mdb-select v-model="practices" placeholder="Select a practice" :required="true"
+                    <mdb-select v-model="practices" placeholder="Select a practice"
+                                label="Practice" :required="true"
                                 @change="onSelectPractice"/>
+                </mdb-col>
+                <mdb-col>
+                    <mdb-select v-model="suffixes" placeholder="Select clinical type"
+                                label="Clinical Type" :required="true"
+                                @change="onSelectClinicalType"/>
                 </mdb-col>
             </mdb-row>
 
@@ -124,13 +132,6 @@
                     <mdb-input label="Email" v-model="provider.email"
                                type="email">
                     </mdb-input>
-                </mdb-col>
-            </mdb-row>
-
-            <mdb-row>
-                <mdb-col>
-                    <mdb-select v-model="suffixes" placeholder="Select clinical type" :required="true"
-                                @change="onSelectClinicalType"/>
                 </mdb-col>
             </mdb-row>
 
@@ -169,6 +170,10 @@
 
     import specialties from './specialties-options';
     import suffixes from './suffix-options';
+
+    import * as _ from  "lodash";
+
+    let self;
 
     export default {
         name: "AddPatientProvider",
@@ -231,6 +236,7 @@
             }
         },
         created() {
+            self = this;
         },
         mounted() {
             this.getPractices();
@@ -334,18 +340,12 @@
                 this.searchValue = "";
             },
 
-            onSearchValueChanged(val) {
-
-                if (this.waiting) {
-                    setTimeout(() => this.onSearchValueChanged(val), 500);
-                    return;
+            onSearchValueChanged: _.debounce((val) => {
+                self.searchValue = val;
+                if (self.searchValue.length > self.MIN_SEARCH_VALUE) {
+                    self.getProviders(self.searchValue);
                 }
-
-                this.searchValue = val;
-                if (this.searchValue.length > this.MIN_SEARCH_VALUE) {
-                    this.getProviders(this.searchValue);
-                }
-            },
+            }, 1000),
 
             onSelectSpecialty(id) {
                 this.provider.provider_info.specialty = id;
@@ -370,10 +370,6 @@
 
             cancel() {
                 this.options.onDone();
-            },
-
-            save() {
-                this.waiting = true;
             },
 
             handleError(error) {

@@ -28,16 +28,13 @@
 
                 <mdb-row>
                     <mdb-col>
-                        <mdb-input label="DOB" v-model="patient.dob" type="date" :required="true"></mdb-input>
-                    </mdb-col>
-                </mdb-row>
-
-                <mdb-row>
-                    <mdb-col>
                         <mdb-input label="Phone number" v-model="patient.phoneNumber"
                                    type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                                    :required="true">
                         </mdb-input>
+                    </mdb-col>
+                    <mdb-col>
+                        <mdb-input label="DOB" v-model="patient.dob" type="date" :required="true"></mdb-input>
                     </mdb-col>
                 </mdb-row>
 
