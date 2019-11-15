@@ -2775,9 +2775,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return $builder->whereHas(
                 'primaryPractice',
                 function ($q) use ($practiceNames, $operator) {
-                    $q->{$operator}('name', [
-                        $practiceNames
-                    ]);
+                    $q->{$operator}('name', $practiceNames);
                 }
             );
         });
@@ -2806,13 +2804,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 }
             )
             ->where(function ($q) {
-                $q->ofPracticeRequiringBhiConsent('whereNotIn')->whereHas(
-                    'patientInfo',
-                    function ($q) {
-                        $q->enrolled()
-                          ->where('consent_date', '<', Patient::DATE_CONSENT_INCLUDES_BHI);
-                    }
-                );
+                $q->where(function ($q){
+                    $q->ofPracticeRequiringBhiConsent('whereNotIn')->whereHas(
+                        'patientInfo',
+                        function ($q) {
+                            $q->enrolled()
+                              ->where('consent_date', '<', Patient::DATE_CONSENT_INCLUDES_BHI);
+                        }
+                    );
+                })->orWhere(function ($q){
+                    $q->ofPracticeRequiringBhiConsent('whereIn');
+                });
             })
             ->whereHas(
                 'ccdProblems.cpmProblem',
