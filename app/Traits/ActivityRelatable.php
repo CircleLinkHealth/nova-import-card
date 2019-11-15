@@ -19,7 +19,7 @@ trait ActivityRelatable
         $activities->update($toUpdate);
     }
 
-    public function markNotificationsForActivitiesAsRead()
+    public function markAllAttachmentNotificationsAsRead()
     {
         $this->markAsReadInNotifications()->map(function ($activity) {
             return $activity->markAttachmentNotificationAsRead(auth()->user());

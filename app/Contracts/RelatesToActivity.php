@@ -9,25 +9,23 @@ namespace App\Contracts;
 interface RelatesToActivity
 {
     /**
-     * Return a call object.
+     * Returns a Call collection.
      *
      * @return mixed
      */
     public function getActivities();
 
     /**
-     *  Many "read only" Activities(in this case = addendums) might exist for the same note.
-     *  We are marking all Activities(type addendum) for the same note as read.
+     *  Changes the status of all Activities (App\Call) related to this Model to "Done".
      *
      * @return mixed
      */
     public function markActivitiesAsDone();
 
     /**
-     * Many "read only" Notifications(in this case = addendums) might exist for the same note.
-     * We are marking all Notifications(type addendum) for the same note as read.
+     * Changes the status of all Notifications (DatabaseNotifications) related to this Model to "read(date)".
      *
      * @return mixed
      */
-    public function markNotificationsForActivitiesAsRead();
+    public function markAllAttachmentNotificationsAsRead();
 }

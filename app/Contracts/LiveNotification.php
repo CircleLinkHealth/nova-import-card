@@ -21,14 +21,14 @@ interface LiveNotification
     public function getPatientName(): string;
 
     /**
-     * A sentence to present the notification. eg. Johny "responded to a note on" Bob.
+     * A sentence to present the notification.
      */
     public function getSubject(): string;
 
     public function noteId(): ?int;
 
     /**
-     * On live notification click redirect user to view the call/addendum etc.
+     * Redirect link to activity.
      */
     public function redirectLink(): string;
 

@@ -92,7 +92,7 @@ class NotificationService
         if (empty($notification->read_at)) {
             if ($notification->attachment instanceof RelatesToActivity) {
                 $notification->attachment->markActivitiesAsDone();
-                $notification->attachment->markNotificationsForActivitiesAsRead();
+                $notification->attachment->markAllAttachmentNotificationsAsRead();
             } else {
                 $notification->markAsRead();
             }

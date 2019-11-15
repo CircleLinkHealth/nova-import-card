@@ -275,4 +275,9 @@ class Call extends BaseModel implements AttachableToNotification
             'note',
         ]);
     }
+
+    public function shouldSendLiveNotification(): bool
+    {
+        return true === $this->asap && 'addendum_response' !== $this->sub_type;
+    }
 }
