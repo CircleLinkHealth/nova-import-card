@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ff5560ea41ae166904f9734dce7d7a91",
+    "content-hash": "b59aa6fce3f45638884143b3bc9532cb",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.117.0",
+            "version": "3.117.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "3fc3d2c1962f34becc4313c839ed8b659d045114"
+                "reference": "6951cd08326d939f1fd1097a490fccb9751a59d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3fc3d2c1962f34becc4313c839ed8b659d045114",
-                "reference": "3fc3d2c1962f34becc4313c839ed8b659d045114",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6951cd08326d939f1fd1097a490fccb9751a59d7",
+                "reference": "6951cd08326d939f1fd1097a490fccb9751a59d7",
                 "shasum": ""
             },
             "require": {
@@ -495,7 +495,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-11-13T19:14:25+00:00"
+            "time": "2019-11-14T19:27:06+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -654,11 +654,11 @@
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.1",
+            "version": "v1.4.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "8b71b2143babf9c5553cab44a904833ac20b2e43"
+                "reference": "1a2e66f903c7fad0ad9e7bb804a84ce3f9efbc08"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-01T13:28:15+00:00"
+            "time": "2019-11-15T17:31:53+00:00"
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
@@ -765,14 +765,14 @@
         },
         {
             "name": "circlelinkhealth/timetracking",
-            "version": "1.1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "c21fc6d04970c7d586b98c4e51c762ace438050d"
+                "reference": "acd472d1a0b35242793ede8552134b46f4c6861d"
             },
             "require": {
-                "circlelinkhealth/customer": "v1.1"
+                "circlelinkhealth/customer": "^1.1"
             },
             "type": "library",
             "extra": {
@@ -794,19 +794,19 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-03T17:52:09+00:00"
+            "time": "2019-10-10T08:40:30+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",
-            "version": "v1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "c00affc9081f06c7b10de830eb007d8f960f29ec"
+                "reference": "533b8d192da2f383fb2c4db17eef8a98451502ac"
             },
             "require": {
                 "authy/php": "^3.0",
-                "circlelinkhealth/customer": "1.1"
+                "circlelinkhealth/customer": "^1.1"
             },
             "type": "library",
             "extra": {
@@ -829,7 +829,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-01T13:54:29+00:00"
+            "time": "2019-10-11T10:57:56+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -1074,16 +1074,16 @@
         },
         {
             "name": "doctrine/cache",
-            "version": "1.9.0",
+            "version": "1.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/cache.git",
-                "reference": "c15dcd24b756f9e52ea7c3ae8227354f3628f11a"
+                "reference": "89a5c76c39c292f7798f964ab3c836c3f8192a55"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/cache/zipball/c15dcd24b756f9e52ea7c3ae8227354f3628f11a",
-                "reference": "c15dcd24b756f9e52ea7c3ae8227354f3628f11a",
+                "url": "https://api.github.com/repos/doctrine/cache/zipball/89a5c76c39c292f7798f964ab3c836c3f8192a55",
+                "reference": "89a5c76c39c292f7798f964ab3c836c3f8192a55",
                 "shasum": ""
             },
             "require": {
@@ -1153,7 +1153,7 @@
                 "riak",
                 "xcache"
             ],
-            "time": "2019-11-11T10:31:52+00:00"
+            "time": "2019-11-15T14:31:57+00:00"
         },
         {
             "name": "doctrine/dbal",
@@ -1702,16 +1702,16 @@
         },
         {
             "name": "fourstacks/nova-checkboxes",
-            "version": "v0.1.5",
+            "version": "v0.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fourstacks/nova-checkboxes.git",
-                "reference": "56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9"
+                "reference": "f8aeccd0cc437254674661af6374288573eb064b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fourstacks/nova-checkboxes/zipball/56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9",
-                "reference": "56f7d67cdc7e8327c350a9fa5e91689e8c0dd9d9",
+                "url": "https://api.github.com/repos/fourstacks/nova-checkboxes/zipball/f8aeccd0cc437254674661af6374288573eb064b",
+                "reference": "f8aeccd0cc437254674661af6374288573eb064b",
                 "shasum": ""
             },
             "require": {
@@ -1744,7 +1744,7 @@
                 "laravel",
                 "nova"
             ],
-            "time": "2019-03-08T07:46:14+00:00"
+            "time": "2019-11-15T08:00:48+00:00"
         },
         {
             "name": "fzaninotto/faker",
