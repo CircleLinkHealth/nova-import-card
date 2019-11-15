@@ -38,6 +38,7 @@ use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
 use App\TargetPatient;
+use CircleLinkHealth\Customer\PracticesRequiringBhiConsent;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -2735,19 +2736,51 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             )
             ->where(
                 function ($q) {
-                    $q->whereHas(
-                        'patientInfo',
-                        function ($q) {
-                            $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
-                        }
-                    )->orWhereHas(
-                        'notes',
-                        function ($q) {
-                            $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
-                        }
-                    );
+                    $q->where(function ($q) {
+                        $q->ofPracticeRequiringBhiConsent('whereNotIn')->whereHas(
+                                'patientInfo',
+                                function ($q) {
+                                    $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
+                                }
+                            );
+                    })->orWhere(function ($q) {
+                        $q->orWhereHas(
+                            'notes',
+                            function ($q) {
+                                $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
+                            }
+                        );
+                    });
                 }
             );
+    }
+    
+    /**
+     * Scope for patients who belong or do not belong Practices that have exclusively requested us to show BHI flag for their patients.
+     * Default operator is "whereIn", which will show patients who belong to such practices.
+     * Changet to "whereNotIn", to show patients who do not belong to such practices.
+     *
+     * See ticket https://circlelinkhealth.atlassian.net/browse/CPM-1784
+     *
+     * @param $builder
+     *
+     * @param string $operator
+     *
+     * @return mixed
+     */
+    public function scopeOfPracticeRequiringBhiConsent($builder, $operator = 'whereIn') {
+        $practiceNames = PracticesRequiringBhiConsent::names();
+        
+        return $builder->when(!empty($practiceNames), function ($builder) use ($practiceNames, $operator){
+            return $builder->whereHas(
+                'primaryPractice',
+                function ($q) use ($practiceNames, $operator) {
+                    $q->{$operator}('name', [
+                        $practiceNames
+                    ]);
+                }
+            );
+        });
     }
 
     /**
@@ -2757,6 +2790,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      *      1. Patient is Enrolled
      *      2. Patient's Primary Practice is chargeable for BHI
      *      3. Patient has at least one BHI problem
+     *      4. Patient has NOT consented to receive BHI services yet.
      *
      * @param $builder
      *
@@ -2771,13 +2805,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     $q->hasServiceCode('CPT 99484');
                 }
             )
-            ->whereHas(
-                'patientInfo',
-                function ($q) {
-                    $q->enrolled()
-                        ->where('consent_date', '<', Patient::DATE_CONSENT_INCLUDES_BHI);
-                }
-            )
+            ->where(function ($q) {
+                $q->ofPracticeRequiringBhiConsent('whereNotIn')->whereHas(
+                    'patientInfo',
+                    function ($q) {
+                        $q->enrolled()
+                          ->where('consent_date', '<', Patient::DATE_CONSENT_INCLUDES_BHI);
+                    }
+                );
+            })
             ->whereHas(
                 'ccdProblems.cpmProblem',
                 function ($q) {

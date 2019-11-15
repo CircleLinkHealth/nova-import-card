@@ -7,14 +7,13 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\CareAmbassadorLog;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use App\CLH\Helpers\StringManipulation;
 use App\EnrolleeCustomFilter;
 use App\Repositories\PatientSummaryEloquentRepository;
-use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use App\ValueObjects\PatientReportData;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -89,7 +88,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @mixin \Eloquent
  * @property int|null $saas_account_id
  * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $careAmbassadorLogs
- * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection
+ *     $chargeableServices
  * @property \App\EnrolleeCustomFilter[]|\Illuminate\Database\Eloquent\Collection $enrolleeCustomFilters
  * @property \App\PracticeEnrollmentTips $enrollmentTips
  * @property string $number_with_dashes
@@ -123,7 +123,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property-read int|null $settings_count
  * @property-read int|null $users_count
  * @property int $is_demo
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice whereIsDemo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
+ *     whereIsDemo($value)
  */
 class Practice extends BaseModel implements HasMedia
 {
@@ -134,7 +135,7 @@ class Practice extends BaseModel implements HasMedia
     use SaasAccountable;
     use Searchable;
     use SoftDeletes;
-
+    
     protected $fillable = [
         'saas_account_id',
         'name',
@@ -155,7 +156,7 @@ class Practice extends BaseModel implements HasMedia
         'outgoing_phone_number',
         'term_days',
     ];
-
+    
     public function careAmbassadorLogs()
     {
         return $this->belongsToMany(CareAmbassadorLog::class);
@@ -165,21 +166,21 @@ class Practice extends BaseModel implements HasMedia
     {
         return $this->hasMany('App\CarePlanTemplate', 'patient_id');
     }
-
+    
     public function cpmSettings()
     {
         $this->loadMissing('settings');
-
+        
         return $this->settings->isEmpty()
             ? $this->syncSettings(new Settings())
             : $this->settings->first();
     }
-
+    
     public function ehr()
     {
         return $this->belongsTo(Ehr::class);
     }
-
+    
     public function enrolleeCustomFilters()
     {
         return $this->belongsToMany(
@@ -189,7 +190,7 @@ class Practice extends BaseModel implements HasMedia
             'filter_id'
         );
     }
-
+    
     public function enrollmentByProgram(
         Carbon $start,
         Carbon $end
@@ -202,30 +203,32 @@ class Practice extends BaseModel implements HasMedia
         )
                            ->whereNotNull('ccm_status')
                            ->get();
-
+        
         $data = [
             'withdrawn' => 0,
             'paused'    => 0,
             'added'     => 0,
         ];
-
+        
         foreach ($patients as $patient) {
             if ($patient->created_at > $start->toDateTimeString() && $patient->created_at <= $end->toDateTimeString()) {
                 ++$data['added'];
             }
-
-            if ($patient->date_withdrawn > $start->toDateTimeString() && $patient->date_withdrawn <= $end->toDateTimeString()) {
+            
+            if ($patient->date_withdrawn > $start->toDateTimeString(
+                ) && $patient->date_withdrawn <= $end->toDateTimeString()) {
                 ++$data['withdrawn'];
             }
-
-            if ($patient->date_paused > $start->toDateTimeString() && $patient->date_paused <= $end->toDateTimeString()) {
+            
+            if ($patient->date_paused > $start->toDateTimeString() && $patient->date_paused <= $end->toDateTimeString(
+                )) {
                 ++$data['paused'];
             }
         }
-
+        
         return $data;
     }
-
+    
     /**
      * @return \App\PracticeEnrollmentTips|\Illuminate\Database\Eloquent\Relations\HasOne
      */
@@ -233,7 +236,7 @@ class Practice extends BaseModel implements HasMedia
     {
         return $this->hasOne('App\PracticeEnrollmentTips', 'practice_id');
     }
-
+    
     /**
      * @throws \Exception
      *
@@ -242,25 +245,25 @@ class Practice extends BaseModel implements HasMedia
     public function getAddress()
     {
         $primary = $this->locations()->where('is_primary', 1)->first();
-
+        
         if (is_null($primary)) {
             $primary = $this->locations()->first();
         }
-
+        
         if (is_null($primary)) {
             throw new \Exception('This Practice does not have a location.', 500);
         }
-
+        
         return [
-            'line1' => $primary->address_line_1 . ' ' . $primary->address_line_2,
-            'line2' => $primary->city . ', ' . $primary->state . ' ' . $primary->postal_code,
+            'line1' => $primary->address_line_1.' '.$primary->address_line_2,
+            'line2' => $primary->city.', '.$primary->state.' '.$primary->postal_code,
         ];
     }
-
+    
     public function getCountOfUserTypeAtPractice($role)
     {
         $id = $this->id;
-
+        
         return User
             ::where('user_status', 1)
             ->whereProgramId($this->id)
@@ -274,21 +277,21 @@ class Practice extends BaseModel implements HasMedia
             )
             ->count();
     }
-
+    
     public function getFormattedNameAttribute()
     {
         return ucwords($this->display_name);
     }
-
+    
     public function getInvoiceData($month, $chargeableServiceId = null)
     {
         if ($chargeableServiceId) {
             //if software only exists on summary we bill for that
             //if service is not software only we count summaries that have this chargeableService and NOT software only.
             $chargeableServiceCode = ChargeableService::findOrFail($chargeableServiceId)->code;
-
+            
             $isSoftwareOnly = 'Software-Only' == $chargeableServiceCode;
-
+            
             //for AWV Codes
             if (starts_with($chargeableServiceCode, 'AWV')) {
                 $billable = User::ofType('participant')
@@ -297,15 +300,24 @@ class Practice extends BaseModel implements HasMedia
                                     'patientAWVSummaries',
                                     function ($query) use ($chargeableServiceCode, $month) {
                                         $query->where('is_billable', true)
-                                              ->where('billable_at', '>=',
-                                                  $month->copy()->startOfMonth()->startOfDay())
+                                              ->where(
+                                                  'billable_at',
+                                                  '>=',
+                                                  $month->copy()->startOfMonth()->startOfDay()
+                                              )
                                               ->where('billable_at', '<=', $month->copy()->endOfMonth()->endOfDay())
-                                              ->when($chargeableServiceCode == 'AWV: G0438', function ($query) {
-                                                  $query->where('is_initial_visit', 1);
-                                              })
-                                              ->when($chargeableServiceCode == 'AWV: G0439', function ($query) {
-                                                  $query->where('is_initial_visit', 0);
-                                              });
+                                              ->when(
+                                                  $chargeableServiceCode == 'AWV: G0438',
+                                                  function ($query) {
+                                                      $query->where('is_initial_visit', 1);
+                                                  }
+                                              )
+                                              ->when(
+                                                  $chargeableServiceCode == 'AWV: G0439',
+                                                  function ($query) {
+                                                      $query->where('is_initial_visit', 0);
+                                                  }
+                                              );
                                     }
                                 )
                                 ->count() ?? 0;
@@ -350,7 +362,7 @@ class Practice extends BaseModel implements HasMedia
                             )
                             ->count() ?? 0;
         }
-
+        
         return [
             'clh_address'    => $this->getAddress(),
             'bill_to'        => $this->bill_to_name,
@@ -360,29 +372,29 @@ class Practice extends BaseModel implements HasMedia
             'invoice_num'    => incrementInvoiceNo(),
             'invoice_date'   => Carbon::today()->toDateString(),
             'due_by'         => Carbon::today()->addDays($this->term_days)->toDateString(),
-            'invoice_amount' => number_format(round((float)$this->clh_pppm * $billable, 2), 2),
+            'invoice_amount' => number_format(round((float) $this->clh_pppm * $billable, 2), 2),
             'billable'       => $billable,
         ];
     }
-
+    
     public function getInvoiceRecipients()
     {
         return $this->users()->where('send_billing_reports', '=', true)->get();
     }
-
+    
     public function getInvoiceRecipientsArray()
     {
         return array_values(array_filter(array_map('trim', explode(',', $this->invoice_recipients))));
     }
-
+    
     public function getItemizedPatientData($month)
     {
         $repo = app(PatientSummaryEloquentRepository::class);
-
+        
         $data          = [];
         $data['name']  = $this->display_name;
         $data['month'] = $month->toDateString();
-
+        
         $patients = User::orderBy('first_name', 'asc')
                         ->ofType('participant')
                         ->with(
@@ -409,12 +421,12 @@ class Practice extends BaseModel implements HasMedia
                             function ($patients) use (&$data, $repo, $month) {
                                 foreach ($patients as $u) {
                                     $summary = $u->patientSummaries->first();
-
+                    
                                     if ( ! $repo->hasBillableProblemsNameAndCode($summary)) {
                                         $summary = $repo->fillBillableProblemsNameAndCode($summary);
                                         $summary->save();
                                     }
-
+                    
                                     $patientData = new PatientReportData();
                                     $patientData->setCcmTime(round($summary->ccm_time / 60, 2));
                                     $patientData->setBhiTime(round($summary->bhi_time / 60, 2));
@@ -423,25 +435,25 @@ class Practice extends BaseModel implements HasMedia
                                     $patientData->setPractice($u->program_id);
                                     $patientData->setProvider($u->getBillingProviderName());
                                     $patientData->setBillingCodes($u->billingCodes($month));
-
+                    
                                     $patientData->setProblem1Code($summary->billable_problem1_code);
                                     $patientData->setProblem1($summary->billable_problem1);
-
+                    
                                     $patientData->setProblem2Code($summary->billable_problem2_code);
                                     $patientData->setProblem2($summary->billable_problem2);
-
+                    
                                     $patientData->setBhiCode(
                                         optional(optional($summary->billableProblems->first())->pivot)->icd_10_code
                                     );
                                     $patientData->setBhiProblem(
                                         optional(optional($summary->billableProblems->first())->pivot)->name
                                     );
-
+                    
                                     $data['patientData'][$u->id] = $patientData;
                                 }
                             }
                         );
-
+        
         $data['patientData'] = array_key_exists('patientData', $data)
             ? collect($data['patientData'])->sortBy(
                 function ($data) {
@@ -449,7 +461,7 @@ class Practice extends BaseModel implements HasMedia
                 }
             )
             : null;
-
+        
         $awvPatients = User::ofType('participant')
                            ->ofPractice($this->id)
                            ->whereHas(
@@ -473,19 +485,19 @@ class Practice extends BaseModel implements HasMedia
                                function ($patients) use (&$data) {
                                    foreach ($patients as $u) {
                                        $summary = $u->patientAWVSummaries->first();
-
+                    
                                        $patientData = new PatientReportData();
                                        $patientData->setName($u->getFullName());
                                        $patientData->setDob($u->getBirthDate());
                                        $patientData->setPractice($u->program_id);
                                        $patientData->setProvider($u->getBillingProviderName());
                                        $patientData->setAwvDate($summary->billable_at);
-
+                    
                                        $data['awvPatientData'][$u->id] = $patientData;
                                    }
                                }
                            );
-
+        
         $data['awvPatientData'] = array_key_exists('awvPatientData', $data)
             ? collect($data['awvPatientData'])->sortBy(
                 function ($data) {
@@ -493,10 +505,10 @@ class Practice extends BaseModel implements HasMedia
                 }
             )
             : null;
-
+        
         return $data;
     }
-
+    
     /**
      * Get phone number in this format xxx-xxx-xxxx.
      *
@@ -506,16 +518,16 @@ class Practice extends BaseModel implements HasMedia
     {
         return (new StringManipulation())->formatPhoneNumber($this->outgoing_phone_number);
     }
-
+    
     public function getPrimaryLocationIdAttribute()
     {
         $loc = $this->locations->where('is_primary', '=', true)->first();
-
+        
         return $loc
             ? $loc->id
             : null;
     }
-
+    
     public static function getProviders($practiceId)
     {
         $providers = User::whereHas(
@@ -531,10 +543,10 @@ class Practice extends BaseModel implements HasMedia
                 $q->where('name', '=', 'provider');
             }
         )->get();
-
+        
         return $providers;
     }
-
+    
     /**
      * Get the value used to index the model.
      *
@@ -544,39 +556,39 @@ class Practice extends BaseModel implements HasMedia
     {
         return $this->id;
     }
-
+    
     public function getSubdomainAttribute()
     {
         return explode('.', $this->domain)[0];
     }
-
+    
     public function getWeeklyReportRecipientsArray()
     {
         return array_map('trim', explode(',', $this->weekly_report_recipients));
     }
-
+    
     public function isTwilioEnabled()
     {
         $settings = $this->cpmSettings();
-
+        
         return boolval($settings->twilio_enabled);
     }
-
+    
     public function lead()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-
+    
     public function locationId()
     {
         return $this->location_id;
     }
-
+    
     public function locations()
     {
         return $this->hasMany(Location::class);
     }
-
+    
     public function nurses()
     {
         return $this->users()->whereHas(
@@ -586,60 +598,60 @@ class Practice extends BaseModel implements HasMedia
             }
         );
     }
-
+    
     public function patients()
     {
         return $this->users()->ofType('participant')->whereHas('patientInfo');
     }
-
+    
     public function pcp()
     {
         return $this->hasMany('App\CPRulesPCP', 'prov_id', 'id');
     }
-
+    
     public function primaryLocation()
     {
         return $this->locations->where('is_primary', '=', true)->first();
     }
-
+    
     public function providers()
     {
         return Practice::getProviders($this->id);
     }
-
+    
     public function scopeActive($q)
     {
         return $q->whereActive(1);
     }
-
+    
     public function scopeActiveBillable($q)
     {
         if ( ! isProductionEnv()) {
             return $q->whereActive(1);
         }
-
+        
         return $q->whereActive(1)
                  ->whereIsDemo(0);
     }
-
+    
     public function scopeAuthUserCanAccess($q, $softwareOnly = false)
     {
         $user = auth()->user();
         if ($softwareOnly) {
             $roleIds               = Role::getIdsFromNames(['software-only']);
             $softwareOnlyPractices = $user->practices(true, true, $roleIds)->pluck('id')->all();
-
+            
             return $q->whereIn('id', $softwareOnlyPractices);
         }
-
+        
         return $q->whereIn('id', $user->practices->pluck('id')->all());
     }
-
+    
     public function scopeAuthUserCannotAccess($q)
     {
         return $q->whereNotIn('id', auth()->user()->practices->pluck('id')->all());
     }
-
+    
     public function scopeEnrolledPatients($builder)
     {
         return $builder->with(
@@ -661,7 +673,7 @@ class Practice extends BaseModel implements HasMedia
             ]
         );
     }
-
+    
     /**
      * Get Scout index name for the model.
      *
@@ -671,15 +683,15 @@ class Practice extends BaseModel implements HasMedia
     {
         return 'practices_index';
     }
-
+    
     public function setDirectMailCareplanApprovalReminders($bool)
     {
         $settings = $this->cpmSettings();
-
+        
         $settings->dm_careplan_approval_reminders = $bool;
         $settings->save();
     }
-
+    
     /**
      * Get the indexable data array for the model.
      *
@@ -692,7 +704,7 @@ class Practice extends BaseModel implements HasMedia
             'display_name' => $this->display_name,
         ];
     }
-
+    
     public function users()
     {
         return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
