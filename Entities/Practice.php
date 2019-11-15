@@ -122,6 +122,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property-read int|null $revision_history_count
  * @property-read int|null $settings_count
  * @property-read int|null $users_count
+ * @property int $is_demo
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice whereIsDemo($value)
  */
 class Practice extends BaseModel implements HasMedia
 {
