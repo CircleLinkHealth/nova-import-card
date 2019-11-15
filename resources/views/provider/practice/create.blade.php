@@ -88,10 +88,15 @@
             </div>
 
             <div class="row">
-                <div class="input-field col s4">
+                <div class="input-field col s6">
                     <input name="is_active" type="checkbox" id="is_active"
                            value="1" @if(!!$practice->active){{'checked'}}@endif>
                     <label for="is_active">Is Active</label>
+                </div>
+                <div class="input-field col s6">
+                    <input name="is_demo" type="checkbox" id="is_demo"
+                           value="1" @if(!!$practice->is_demo){{'checked'}}@endif>
+                    <label for="is_demo">Is Demo</label>
                 </div>
             </div>
         @endif

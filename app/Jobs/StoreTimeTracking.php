@@ -26,6 +26,7 @@ class StoreTimeTracking implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     // Do not count time for these routes
     const UNTRACKED_ROUTES = [
         'patient.activity.create',
@@ -34,14 +35,19 @@ class StoreTimeTracking implements ShouldQueue
     ];
 
     /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 2;
+
+    /**
      * @var ParameterBag
      */
     protected $params;
 
     /**
      * Create a new job instance.
-     *
-     * @param ParameterBag $params
      */
     public function __construct(ParameterBag $params)
     {
@@ -50,8 +56,6 @@ class StoreTimeTracking implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @param ActivityService $service
      */
     public function handle(ActivityService $service)
     {
@@ -80,9 +84,7 @@ class StoreTimeTracking implements ShouldQueue
     /**
      * Create an Activity.
      *
-     * @param PageTimer $pageTimer
-     * @param User|null $provider
-     * @param bool      $isBehavioral
+     * @param bool $isBehavioral
      *
      * @return Activity|\Illuminate\Database\Eloquent\Model
      */
@@ -139,10 +141,6 @@ class StoreTimeTracking implements ShouldQueue
         return $pageTimer;
     }
 
-    /**
-     * @param Activity $activity
-     * @param User     $provider
-     */
     private function handleNurseLogs(Activity $activity, User $provider)
     {
         $activity->load('patient.patientInfo');
@@ -159,9 +157,6 @@ class StoreTimeTracking implements ShouldQueue
 
     /**
      * Returns true if an activity should be created, and false if it should not.
-     *
-     * @param PageTimer $pageTimer
-     * @param User|null $provider
      *
      * @return bool
      */
