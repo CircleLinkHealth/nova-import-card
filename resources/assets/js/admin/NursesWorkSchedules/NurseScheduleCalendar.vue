@@ -158,8 +158,15 @@
                             <button v-if="clickedToViewEvent"
                                     type="button"
                                     class="btn btn-primary"
-                                    @click="deleteEvent">Delete
+                                    @click="deleteEvent(false)">Delete selected
                             </button>
+
+                            <button v-if="clickedToViewEvent && isRecurringEvent"
+                                    type="button"
+                                    class="btn btn-primary" style="background-color: crimson; border-color: crimson"
+                                    @click="deleteEvent(true)">Delete all
+                            </button>
+
                             <button v-if="!clickedToViewEvent" type="button"
                                     class="btn btn-primary"
                                     @click="addNewEvent">Save
@@ -235,6 +242,7 @@
                 // selectedMonthInView: this.startOfMonth,
                 repeatUntil: '',
                 workEventsToConfirm: [],
+                isRecurringEvent: false,
 
 
                 config: {
@@ -386,13 +394,13 @@
                 $("#addWorkEvent").modal('toggle');
             },
 
-            deleteEvent() {
+            deleteEvent(shouldDeleteAll) {
                 const event = this.eventToViewData[0];
                 const eventType = event.eventType;
                 const isAddedNow = event.hasOwnProperty('isAddedNow');
 
                 if (eventType !== holidayEventType) {
-                    this.deleteWorkDay(event, isAddedNow);
+                    this.deleteWorkDay(event, isAddedNow, shouldDeleteAll);
                 } else {
                     this.deleteHoliday(event, isAddedNow);
                 }
@@ -438,10 +446,15 @@
                 });
             },
 
-            deleteWorkDay(event, isAddedNow) {
+            deleteWorkDay(event, isAddedNow, shouldDeleteAll) {
                 this.loader = true;
                 const windowId = this.eventToViewData[0].windowId;
-                axios.get(`/care-center/work-schedule/destroy/${windowId}`).then((response => {
+                axios.get(`/care-center/work-schedule/destroy/${windowId}`, {
+                        params: {
+                            deleteRecurringEvents: shouldDeleteAll
+                        },
+                    }
+                ).then((response => {
                     this.loader = false;
                     this.toggleModal();
                     //Delete event from events() - dom
@@ -712,6 +725,10 @@
                 this.workEventDate = '';
                 this.workEventDate = this.eventToViewData[0].date;
 
+                if (arg.repeat_frequency !== 'does_not_repeat') {
+                    this.isRecurringEvent = true;
+                }
+
                 this.toggleModal();
                 this.loader = false;
             },
@@ -752,6 +769,7 @@
                 this.workRangeEnds = '17:00';
                 this.addNewEventMainClicked = false;
                 this.eventFrequency = [];
+                this.isRecurringEvent = false;
             },
         }),
 //@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar

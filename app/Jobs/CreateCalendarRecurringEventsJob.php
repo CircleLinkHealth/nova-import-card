@@ -14,6 +14,11 @@ use Illuminate\Queue\SerializesModels;
 
 class CreateCalendarRecurringEventsJob implements ShouldQueue
 {
+    /*
+     *  Note: This command does NOT delete original data from table. They are left with repeat_frequency == null.
+     * We can delete them later.
+     *
+     */
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
@@ -66,6 +71,7 @@ class CreateCalendarRecurringEventsJob implements ShouldQueue
                 'day_of_week'       => $event['day_of_week'],
                 'window_time_start' => $event['window_time_start'],
                 'window_time_end'   => $event['window_time_end'],
+                'repeat_start'      => $event['repeat_start'],
                 'until'             => $event['until'],
                 'repeat_frequency'  => $event['repeat_frequency'],
                 'validated'         => $event['validated'],

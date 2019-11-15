@@ -58,53 +58,28 @@ class WorkScheduleController extends Controller
     }
 
     /**
+     * @param Request $request
      * @param $windowId
      *
      * @return \Illuminate\Http\RedirectResponse|JsonResponse
      */
-    public function destroy($windowId)
+    public function destroy(Request $request, $windowId)
     {
+        $deleteRecurringEvents = 'true' === $request->deleteRecurringEvents ? true : false;
+
         $window = $this->nurseContactWindows
             ->find($windowId);
 
-        if ( ! $window) {
-            $errors['window'] = 'This window does not exist.';
+        $this->destroyWindowValidation($window);
 
-//            return redirect()->route('care.center.work.schedule.index')
-//                ->withErrors($errors)
-//                ->withInput();
-            return response()->json([
-                'errors'    => 'Validation Failed',
-                'validator' => $errors,
-            ], 422);
-        }
+        $delete = $deleteRecurringEvents ? $this->multipleDelete($window) : $this->singleDelete($window);
 
-        if ( ! auth()->user()->isAdmin()) {
-            if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
-                $errors['window'] = 'This window does not belong to you.';
+        $message = $deleteRecurringEvents ? 'All repeated events have been deleted' : 'Event has been deleted';
 
-                if (request()->expectsJson()) {
-                    return response()->json([
-                        'errors' => $errors,
-                    ], 422);
-                }
-
-                return redirect()->route('care.center.work.schedule.index')
-                    ->withErrors($errors)
-                    ->withInput();
-            }
-        }
-
-        $window->forceDelete();
-
-        if (request()->expectsJson()) {
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Window has been deleted',
-            ], 200);
-        }
-
-        return redirect()->back();
+        return response()->json([
+            'status'  => 'success',
+            'message' => $message,
+        ], 200);
     }
 
     public function destroyHoliday($holidayId)
@@ -140,6 +115,33 @@ class WorkScheduleController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * @param $window
+     *
+     * @return JsonResponse
+     */
+    public function destroyWindowValidation($window)
+    {
+        if ( ! $window) {
+            $errors['window'] = 'This window does not exist.';
+
+            return response()->json([
+                'errors'    => 'Validation Failed',
+                'validator' => $errors,
+            ], 422);
+        }
+
+        if ( ! auth()->user()->isAdmin()) {
+            if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
+                $errors['window'] = 'This window does not belong to you.';
+
+                return response()->json([
+                    'errors' => $errors,
+                ], 422);
+            }
+        }
     }
 
     public function getActiveNurses()
@@ -236,7 +238,7 @@ class WorkScheduleController extends Controller
 
         //I think time tracking submits along with the form, thus messing up sessions.
         //Temporary fix
-        $disableTimeTracking = true; // we need this
+        $disableTimeTracking = true; // @todo: we need this
         return view('care-center.work-schedule', compact('authIsAdmin'));
 //        return view('care-center.work-schedule', compact([
 //            'disableTimeTracking',
@@ -247,6 +249,14 @@ class WorkScheduleController extends Controller
 //            'nurse',
 //            'authIsAdmin'
 //        ]));
+    }
+
+    public function multipleDelete($window)
+    {
+        $this->nurseContactWindows
+            ->where('nurse_info_id', $window->nurse_info_id)
+            ->where('repeat_start', $window->repeat_start)
+            ->forceDelete();
     }
 
     /**
@@ -298,6 +308,36 @@ class WorkScheduleController extends Controller
         return view('admin.nurse.schedules.index', compact('authIsAdmin', 'authUserId'));
     }
 
+    /**
+     * @param $window
+     */
+    public function singleDelete(NurseContactWindow $window)
+    {
+        if ('does_not_repeat' !== $window->repeat_frequency) {
+            $windowsCount = $this->nurseContactWindows
+                ->where('nurse_info_id', $window->nurse_info_id)
+                ->where('repeat_start', $window->repeat_start)
+                ->count();
+
+            if (2 === $windowsCount) {
+                $lastTwoEvents = $this->nurseContactWindows
+                    ->where('nurse_info_id', $window->nurse_info_id)
+                    ->where('repeat_start', $window->repeat_start)
+                    ->get();
+                //Update last event of repeated events frequency to 'does_not_repeat'.
+                foreach ($lastTwoEvents as $event) {
+                    $event->id === $window->id ?
+                        $window->forceDelete()
+                        : $event->update(['repeat_frequency' => 'does_not_repeat']);
+                }
+            } else {
+                $window->forceDelete();
+            }
+        } else {
+            $window->forceDelete();
+        }
+    }
+
     public function store(Request $request)
     {
         $dataRequest = $request->all();
@@ -340,17 +380,17 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                return Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_end
+                    return Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_end
+                    )->diffInHours(Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_start
+                    ));
+                }) + Carbon::createFromFormat(
+                    'H:i',
+                    $workScheduleData['window_time_end']
                 )->diffInHours(Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_start
-                ));
-            }) + Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_end']
-            )->diffInHours(Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_start']
             ));

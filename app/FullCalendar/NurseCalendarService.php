@@ -106,8 +106,6 @@ class NurseCalendarService
      */
     public function createRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $frequency = null, $repeatUntil = null)
     {
-        //converts the date that event was saved to - date that event is scheduled for + transfered to current's week (dow)
-        //So events are starting to repeat from release's date week. This is what we want?
         $repeatFrequency   = null === $frequency ? 'weekly' : $frequency;
         $defaultRepeatDate = Carbon::parse($eventDate)->copy()->addMonths(4)->toDateString();
         $repeatEventUntil  = null === $repeatUntil ? $defaultRepeatDate : $repeatUntil;
@@ -116,7 +114,7 @@ class NurseCalendarService
 
         $recurringDates = $this->createRecurringDates($rangeToRepeat, $eventDate, $repeatFrequency);
 
-        return $this->createWindowsArrays($recurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $repeatFrequency, $repeatEventUntil);
+        return $this->createWindowData($recurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $repeatFrequency, $repeatEventUntil);
     }
 
     /**
@@ -132,7 +130,7 @@ class NurseCalendarService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function createWindowsArrays($defaultRecurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $defaultRepeatFreq, $repeatEventByDefaultUntil)
+    public function createWindowData($defaultRecurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $defaultRepeatFreq, $repeatEventByDefaultUntil)
     {
         return collect($defaultRecurringDates)
             ->map(function ($date) use ($defaultRecurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $defaultRepeatFreq, $repeatEventByDefaultUntil) {
@@ -144,6 +142,7 @@ class NurseCalendarService
                     'window_time_end'   => $windowTimeEnd,
                     'validated'         => $validatedDefault,
                     'repeat_frequency'  => $defaultRepeatFreq,
+                    'repeat_start'      => $eventDate,
                     'until'             => $repeatEventByDefaultUntil,
                     'created_at'        => Carbon::parse(now())->toDateTimeString(),
                     'updated_at'        => Carbon::parse(now())->toDateTimeString(),
@@ -324,6 +323,7 @@ class NurseCalendarService
                         'color'            => $color,
                         'textColor'        => '#fff',
                         'repeat_frequency' => $window->repeat_frequency,
+                        'repeat_start'     => $window->repeat_start,
                         'until'            => $window->until,
                         'allDay'           => true,
                         'data'             => [

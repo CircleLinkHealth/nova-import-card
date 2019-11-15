@@ -173,7 +173,7 @@ class Kernel extends ConsoleKernel
 //                 ->withoutOverlapping()->onOneServer();
 
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
-
+        //@todo:Run this from migration. It should only run once
         $schedule->command(CreateCalendarRecurringEventsCommand::class)->dailyAt('00:01')->onOneServer();
 
         $schedule->command(OverwriteNBIImportedData::class)->everyThirtyMinutes()->onOneServer();

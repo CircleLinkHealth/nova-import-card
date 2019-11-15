@@ -57,7 +57,8 @@ class CreateCalendarRecurringEventsCommand extends Command
         $currentDateWeekMap = createWeekMap($today); //see comment in helpers.php
         NurseContactWindow::with('nurse.user')
             ->whereHas('nurse', function ($q) {
-                $q->where('status', 'active'); //@todo: case of nurse becoming active from inactivity
+                $q->where('status', 'active');
+                //@todo: case of nurse having windows - but are inactive during launch - and then becoming active again
             })
             ->chunk(200, function ($nurseContactWindows) use ($currentDateWeekMap) {
                 collect($nurseContactWindows)
