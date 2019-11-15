@@ -120,7 +120,6 @@
     "predis/predis": "^1.1",
     "propaganistas/laravel-phone": "^3.0",
     "pusher/pusher-php-server": "^4.0",
-    "rap2hpoutre/laravel-log-viewer": "^0.4.0",
     "seld/jsonlint": "^1.7",
     "sparclex/nova-import-card": "^2.0",
     "spatie/laravel-medialibrary": "^7.0.0",
