@@ -6,12 +6,14 @@
 
 namespace Tests\Unit;
 
+use App\AppConfig;
 use App\Models\CPM\CpmProblem;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\PracticesRequiringBhiConsent;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
@@ -27,12 +29,64 @@ class BHIReconsentTest extends TestCase
         $this->assertTrue($bhiPatient->isBhi());
     }
 
+    public function test_it_is_bhi_for_after_cutoff_consent_date_and_practice_requires_consent_and_patient_consented()
+    {
+        $bhiPractice = $this->createPractice(true);
+        $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, true, false);
+        AppConfig::create([
+            'config_key'   => PracticesRequiringBhiConsent::PRACTICE_REQUIRES_BHI_CONSENT_NOVA_KEY,
+            'config_value' => $bhiPractice->name, ]);
+
+        $this->assertTrue($bhiPatient->isBhi());
+    }
+
     public function test_it_is_bhi_for_before_cutoff_consent_date()
     {
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id);
 
         $this->assertTrue($bhiPatient->isBhi());
+    }
+
+    public function test_it_is_bhi_for_before_cutoff_consent_date_and_practice_requires_consent_and_patient_consented()
+    {
+        $bhiPractice = $this->createPractice(true);
+        $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, true, true);
+        AppConfig::create([
+            'config_key'   => PracticesRequiringBhiConsent::PRACTICE_REQUIRES_BHI_CONSENT_NOVA_KEY,
+            'config_value' => $bhiPractice->name, ]);
+
+        $this->assertTrue($bhiPatient->isBhi());
+    }
+
+    public function test_it_is_not_bhi_for_after_cutoff_consent_date_and_practice_requires_consent()
+    {
+        $bhiPractice = $this->createPractice(true);
+        $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, false);
+        AppConfig::create([
+            'config_key'   => PracticesRequiringBhiConsent::PRACTICE_REQUIRES_BHI_CONSENT_NOVA_KEY,
+            'config_value' => $bhiPractice->name, ]);
+
+        $this->assertFalse($bhiPatient->isBhi());
+    }
+
+    public function test_it_is_not_bhi_for_before_cutoff_consent_date()
+    {
+        $bhiPractice = $this->createPractice(true);
+        $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, true);
+
+        $this->assertFalse($bhiPatient->isBhi());
+    }
+
+    public function test_it_is_not_bhi_for_before_cutoff_consent_date_and_practice_requires_consent()
+    {
+        $bhiPractice = $this->createPractice(true);
+        $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, true);
+        AppConfig::create([
+            'config_key'   => PracticesRequiringBhiConsent::PRACTICE_REQUIRES_BHI_CONSENT_NOVA_KEY,
+            'config_value' => $bhiPractice->name, ]);
+
+        $this->assertFalse($bhiPatient->isBhi());
     }
 
     public function test_it_is_not_bhi_if_patient_does_not_have_bhi_consent_note()
@@ -65,6 +119,18 @@ class BHIReconsentTest extends TestCase
         $bhiPatient  = $this->createPatient($bhiPractice->id);
 
         $this->assertFalse($bhiPatient->isBhi());
+    }
+
+    public function test_it_retrieves_practices_that_require_consent()
+    {
+        $bhiPractice = $this->createPractice(true);
+        AppConfig::create([
+            'config_key'   => PracticesRequiringBhiConsent::PRACTICE_REQUIRES_BHI_CONSENT_NOVA_KEY,
+            'config_value' => $bhiPractice->name, ]);
+
+        $needConsent = PracticesRequiringBhiConsent::names();
+
+        $this->assertTrue(in_array($bhiPractice->name, $needConsent));
     }
 
     private function createPatient(
