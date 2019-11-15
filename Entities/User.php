@@ -563,7 +563,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function attachLocation($location)
     {
         if (is_a($location, Collection::class) || is_a($location, EloquentCollection::class)) {
-            $id = $location->all();
+            $location = $location->all();
         }
 
         if (is_array($location)) {
@@ -574,7 +574,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         }
 
         if (is_a($location, Location::class)) {
-            $id = $location->id;
+            $location = $location->id;
         }
 
         try {
@@ -1997,7 +1997,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         return Cache::remember(
             $cacheKey,
-            10,
+            1,
             function () {
                 return $this->ccdas()->exists();
             }
