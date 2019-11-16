@@ -40,13 +40,13 @@ class PostDeploymentTasks extends Command
     {
         collect(
             [
-                'horizon:terminate',
                 'nova:publish',
                 'view:clear',
                 'route:cache',
                 'config:cache',
                 'opcache:clear',
                 'opcache:optimize',
+                'horizon:terminate',
                 'queue:restart',
             ]
         )->each(

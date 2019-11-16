@@ -1,9 +1,9 @@
 {
     "private": true,
     "scripts": {
-        "build": "composer install && php artisan migrate && npm install && npm run bower_install",
-        "build-dev": "npm run build && npm run dev && composer ide && sh ./scripts/install",
-        "build-prod": "npm run build && npm run prod",
+        "build-cpm": "composer install && php artisan migrate && npm install && npm run bower_install",
+        "build-dev": "npm run build-cpm && npm run dev && composer ide && sh ./scripts/install",
+        "build-prod": "npm run build-cpm && npm run prod",
         "dev": "npm run development",
         "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
         "watch": "npm run development -- --watch",
@@ -15,8 +15,7 @@
         "watch-test": "npm run test -- --watch",
         "bower_install": "./node_modules/bower/bin/bower -V install",
         "build-import-practice-staff-csv": "cd nova-components/ImportPracticeStaffCsv && npm run dev",
-        "build-import-practice-staff-csv-prod": "cd nova-components/ImportPracticeStaffCsv && npm run prod",
-        "postinstall": "npm run dev"
+        "build-import-practice-staff-csv-prod": "cd nova-components/ImportPracticeStaffCsv && npm run prod"
     },
     "jest": {
         "verbose": true,
