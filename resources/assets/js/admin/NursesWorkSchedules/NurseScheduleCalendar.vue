@@ -3,20 +3,17 @@
         <div class="calendar-menu">
             <div class="show-holidays">
                 <input id="holidaysCheckbox"
-                       :class="{disable: showWorkAndHolidaysIsChecked}"
-                       :disabled="showWorkAndHolidaysIsChecked"
                        type="checkbox"
                        class="holidays-button"
-                       v-model="holidaysChecked"
-                       @change="showHolidays()">
-                Filter - Holidays
+                       v-model="showHolidays">
+                Holidays
             </div>
-            <div v-show="holidaysChecked" class="show-work-holidays">
-                <input id="workHolidaysCheckbox"
+            <div class="show-work">
+                <input id="workCheckbox"
                        type="checkbox"
-                       class="work-holidays-button"
-                       v-model="showWorkAndHolidaysIsChecked">
-                Work Days and Holidays
+                       class="work-button"
+                       v-model="showWorkEvents">
+                Work Events
             </div>
 
             <div class="search-filter">
@@ -231,8 +228,8 @@
                 clickedToViewEvent: false,
                 eventToViewData: [],
                 eventsAddedNow: [],
-                holidaysChecked: false,
-                showWorkAndHolidaysIsChecked: false,
+                showHolidays: false,
+                showWorkEvents: false,
                 dayInHumanLangForView: '',
                 loader: false,
                 searchFilter: [],
@@ -737,27 +734,13 @@
                 //@todo:do nothing for now.
             },
 
-            showHolidays() {
-                this.config.header.right = 'month';
-                const toggleData = this.holidaysChecked;
-                if (toggleData && this.holidays.length === 0) {
-                    this.getHolidays();
-                } else this.showWorkHours = !(toggleData && this.holidays.length !== 0);
-            },
-
-            getHolidays() {
-                //Im loading holidays when they will be requested.
-                // Then they saty loaded and are hidden or displayed accordingly
-                axios.get('admin/nurses/holidays')
-                    .then((response => {
-                            //loader add
-                            this.showWorkHours = false;
-                            this.holidays.push(...response.data.holidays)
-                        }
-                    )).catch((error) => {
-                    console.log(error);
-                });
-            },
+            // showHolidays() {
+            //     this.config.header.right = 'month';
+            //     const toggleData = this.showHolidays;
+            //     if (toggleData && this.holidays.length === 0) {
+            //         this.getHolidays();
+            //     } else this.showWorkHours = !(toggleData && this.holidays.length !== 0);
+            // },
 
             resetModalValues() {
                 this.clickedToViewEvent = false;
@@ -779,38 +762,41 @@
             },
 
             events() {
-                const events = this.workHours.concat(this.eventsAddedNow);
+                const events = this.workHours;
                 const workEventsWithHolidays = events.concat(this.holidays);
                 if (this.searchFilter === null || this.searchFilter.length === 0) {
-                    if (!this.showWorkAndHolidaysIsChecked) {
-                        return this.showWorkHours ? events : this.holidays;
-                    }
-
-                    if (this.showWorkAndHolidaysIsChecked) {
+                    if (this.showWorkEvents && !this.showHolidays) {
+                        return events;
+                    } else if (this.showHolidays && !this.showWorkEvents) {
+                        return this.holidays;
+                    } else {
                         return workEventsWithHolidays;
                     }
+
                 } else {
-                    if (!this.showWorkAndHolidaysIsChecked) {
+                    if (this.showWorkEvents && !this.showHolidays) {
                         return this.searchFilter.map(q => {
-                            return this.showWorkHours ? events.filter(event => event.data.nurseId === q.nurseId)
-                                : this.holidays.filter(event => event.data.nurseId === q.nurseId);
+                            return events.filter(event => event.data.nurseId === q.nurseId);
                         }).map(arr => arr).flat();
-                    }
-                    if (this.showWorkAndHolidaysIsChecked) {
+                    } else if (this.showHolidays && !this.showWorkEvents) {
+                        return this.searchFilter.map(q => {
+                            return this.holidays.filter(event => event.data.nurseId === q.nurseId);
+                        }).map(arr => arr).flat();
+                    } else{
                         return this.searchFilter.map(q => {
                             return workEventsWithHolidays.filter(event => event.data.nurseId === q.nurseId);
                         }).map(arr => arr).flat();
-
                     }
                 }
             },
 
             dataForSearchFilter() {
-                //array distinct - filtering duplicates
-                return Array.from(new Set(this.workHours.map(event => event.data.nurseId))).map(nurseId => {
+                const events = this.workHours;
+                const workEventsWithHolidays = events.concat(this.holidays);
+                return Array.from(new Set(workEventsWithHolidays.map(event => event.data.nurseId))).map(nurseId => {
                     return {
                         nurseId: nurseId,
-                        label: this.workHours.find(event => event.data.nurseId === nurseId).data.name
+                        label: workEventsWithHolidays.find(event => event.data.nurseId === nurseId).data.name
                     }
                 });
             },
@@ -818,6 +804,7 @@
 
         created() {
             this.loader = true;
+            // Work Events
             axios.get('care-center/work-schedule/get-calendar-data')
                 .then((response => {
                     const calendarData = response.data.calendarData;
@@ -829,6 +816,18 @@
                 })).catch((error) => {
                 this.errors = error;
                 console.log(this.errors);
+            });
+            //    Holiday Events
+
+            axios.get('admin/nurses/holidays')
+                .then((response => {
+                        //loader add
+                        this.showWorkHours = false;
+                        this.holidays.push(...response.data.holidays)
+                        this.loader = false;
+                    }
+                )).catch((error) => {
+                console.log(error);
             });
 
         },
