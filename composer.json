@@ -194,8 +194,13 @@
     "test-mysql": [
       "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner WrapperRunner -p8"
     ],
-    "test": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p8"
+    "coverage": [
+      "php artisan --env=testing test:prepare-test_suite-db",
+      "APP_ENV=testing COMPOSER_PROCESS_TIMEOUT=700 ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --coverage-text"
+    ],
+    "unit-tests": [
+      "php artisan --env=testing test:prepare-test_suite-db",
+      "APP_ENV=testing ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --coverage-html=./zzhell.html"
     ],
     "integration": [
       "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner -p4"
@@ -220,7 +225,8 @@
     "optimize-autoloader": true,
     "github-oauth": {
       "github.com": "e0e31db02693e426dc2be482ecbee4daeafd8196"
-    }
+    },
+    "process-timeout": 500
   },
   "extra": {
     "laravel": {

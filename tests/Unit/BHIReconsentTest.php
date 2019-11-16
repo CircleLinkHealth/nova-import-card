@@ -7,19 +7,58 @@
 namespace Tests\Unit;
 
 use App\AppConfig;
+use App\Call;
 use App\Models\CPM\CpmProblem;
+use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
+use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Customer\PracticesRequiringBhiConsent;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class BHIReconsentTest extends TestCase
 {
     use UserHelpers;
+
+    public function test_it_hides_flag_past_tomorrow_if_patient_has_more_calls_today_and_not_now_was_clicked()
+    {
+        $bhiPractice = $this->createPractice(true);
+        $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, true);
+        $provider    = $this->createUser($bhiPractice->id, 'provider');
+        $nurse       = $this->createUser($bhiPractice->id, 'care-center');
+        //Create 2 calls for today
+        $c1 = $this->createCall($nurse, $bhiPatient, Carbon::now());
+        $c2 = $this->createCall($nurse, $bhiPatient, Carbon::now());
+
+        //Add billing provider
+        $billing = CarePerson::create(
+            [
+                'alert'          => true,
+                'user_id'        => $bhiPatient->id,
+                'member_user_id' => $provider->id,
+                'type'           => CarePerson::BILLING_PROVIDER,
+            ]
+        );
+
+        $this->assertTrue($bhiPatient->isLegacyBhiEligible());
+        $this->assertTrue($nurse->shouldShowBhiFlagFor($bhiPatient));
+
+        //store not now response as a nurse
+        $response = $this->actingAs($nurse)->call('POST', route('legacy-bhi.store', [$bhiPatient->program_id, $bhiPatient->id]), [
+            //"Not Now" response
+            'decision' => 2,
+        ])->assertStatus(302);
+
+        $cacheKey = $nurse->getLegacyBhiNursePatientCacheKey($bhiPatient->id);
+        $this->assertTrue(\Cache::has($cacheKey));
+
+        $timeTillShowAgain = \Cache::get($cacheKey);
+        $this->assertTrue(Carbon::now()->addMinutes($timeTillShowAgain)->isTomorrow());
+    }
 
     public function test_it_is_bhi_for_after_cutoff_consent_date()
     {
@@ -34,7 +73,7 @@ class BHIReconsentTest extends TestCase
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, true, false);
         AppConfig::create([
-            'config_key'   => PracticesRequiringBhiConsent::PRACTICE_REQUIRES_BHI_CONSENT_NOVA_KEY,
+            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
             'config_value' => $bhiPractice->name, ]);
 
         $this->assertTrue($bhiPatient->isBhi());
@@ -53,7 +92,7 @@ class BHIReconsentTest extends TestCase
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, true, true);
         AppConfig::create([
-            'config_key'   => PracticesRequiringBhiConsent::PRACTICE_REQUIRES_BHI_CONSENT_NOVA_KEY,
+            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
             'config_value' => $bhiPractice->name, ]);
 
         $this->assertTrue($bhiPatient->isBhi());
@@ -64,7 +103,7 @@ class BHIReconsentTest extends TestCase
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, false);
         AppConfig::create([
-            'config_key'   => PracticesRequiringBhiConsent::PRACTICE_REQUIRES_BHI_CONSENT_NOVA_KEY,
+            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
             'config_value' => $bhiPractice->name, ]);
 
         $this->assertFalse($bhiPatient->isBhi());
@@ -83,7 +122,7 @@ class BHIReconsentTest extends TestCase
         $bhiPractice = $this->createPractice(true);
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, true);
         AppConfig::create([
-            'config_key'   => PracticesRequiringBhiConsent::PRACTICE_REQUIRES_BHI_CONSENT_NOVA_KEY,
+            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
             'config_value' => $bhiPractice->name, ]);
 
         $this->assertFalse($bhiPatient->isBhi());
@@ -125,12 +164,43 @@ class BHIReconsentTest extends TestCase
     {
         $bhiPractice = $this->createPractice(true);
         AppConfig::create([
-            'config_key'   => PracticesRequiringBhiConsent::PRACTICE_REQUIRES_BHI_CONSENT_NOVA_KEY,
+            'config_key'   => PracticesRequiringSpecialBhiConsent::PRACTICE_REQUIRES_SPECIAL_BHI_CONSENT_NOVA_KEY,
             'config_value' => $bhiPractice->name, ]);
 
-        $needConsent = PracticesRequiringBhiConsent::names();
+        $needConsent = PracticesRequiringSpecialBhiConsent::names();
 
         $this->assertTrue(in_array($bhiPractice->name, $needConsent));
+    }
+
+    private function createCall(User $nurse, User $patient, Carbon $date)
+    {
+        return Call::create([
+            'type'    => SchedulerService::CALL_TYPE,
+            'service' => 'phone',
+            'status'  => 'scheduled',
+
+            'attempt_note' => '',
+
+            'scheduler' => $nurse->id,
+            'is_manual' => 1,
+
+            'inbound_phone_number' => '',
+
+            'outbound_phone_number' => '',
+
+            'inbound_cpm_id'  => $patient->id,
+            'outbound_cpm_id' => $nurse->id,
+
+            'call_time'  => 0,
+            'created_at' => Carbon::now()->toDateTimeString(),
+
+            //make sure we are sending the date correctly formatted
+            'scheduled_date' => $date->format('Y-m-d'),
+            'window_start'   => '09:00',
+            'window_end'     => '17:00',
+
+            'is_cpm_outbound' => true,
+        ]);
     }
 
     private function createPatient(
