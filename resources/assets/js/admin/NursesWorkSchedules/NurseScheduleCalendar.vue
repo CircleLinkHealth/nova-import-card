@@ -191,6 +191,15 @@
     const defaultEventType = 'workDay';
     const holidayEventType = 'holiday';
 
+    function removeDuplicatesFrom(events) {
+        return Array.from(new Set(events.map(event => event.data.nurseId))).map(nurseId => {
+            return {
+                nurseId: nurseId,
+                label: events.find(event => event.data.nurseId === nurseId).data.name
+            }
+        });
+    }
+
     export default {
         name: "NurseScheduleCalendar",
 
@@ -762,11 +771,11 @@
             },
 
             events() {
-                const events = this.workHours;
-                const workEventsWithHolidays = events.concat(this.holidays);
+                const workEvents = this.workHours;
+                const workEventsWithHolidays = workEvents.concat(this.holidays);
                 if (this.searchFilter === null || this.searchFilter.length === 0) {
                     if (this.showWorkEvents && !this.showHolidays) {
-                        return events;
+                        return workEvents;
                     } else if (this.showHolidays && !this.showWorkEvents) {
                         return this.holidays;
                     } else {
@@ -776,13 +785,13 @@
                 } else {
                     if (this.showWorkEvents && !this.showHolidays) {
                         return this.searchFilter.map(q => {
-                            return events.filter(event => event.data.nurseId === q.nurseId);
+                            return workEvents.filter(event => event.data.nurseId === q.nurseId);
                         }).map(arr => arr).flat();
                     } else if (this.showHolidays && !this.showWorkEvents) {
                         return this.searchFilter.map(q => {
                             return this.holidays.filter(event => event.data.nurseId === q.nurseId);
                         }).map(arr => arr).flat();
-                    } else{
+                    } else {
                         return this.searchFilter.map(q => {
                             return workEventsWithHolidays.filter(event => event.data.nurseId === q.nurseId);
                         }).map(arr => arr).flat();
@@ -791,14 +800,16 @@
             },
 
             dataForSearchFilter() {
-                const events = this.workHours;
-                const workEventsWithHolidays = events.concat(this.holidays);
-                return Array.from(new Set(workEventsWithHolidays.map(event => event.data.nurseId))).map(nurseId => {
-                    return {
-                        nurseId: nurseId,
-                        label: workEventsWithHolidays.find(event => event.data.nurseId === nurseId).data.name
-                    }
-                });
+                const workEvents = this.workHours;
+                const workEventsWithHolidays = workEvents.concat(this.holidays);
+
+                if (this.showWorkEvents && !this.showHolidays) {
+                    return removeDuplicatesFrom(workEvents);
+                } else if (!this.showWorkEvents && this.showHolidays) {
+                    return removeDuplicatesFrom(this.holidays);
+                } else {
+                    return removeDuplicatesFrom(workEventsWithHolidays);
+                }
             },
         },
 
