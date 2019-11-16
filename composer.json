@@ -82,7 +82,7 @@
     "appstract/laravel-opcache": "^2.0",
     "barryvdh/laravel-snappy": "0.4.4",
     "circlelinkhealth/core": "1.3",
-    "circlelinkhealth/customer": "1.4.1",
+    "circlelinkhealth/customer": "1.4.4",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/timetracking": "1.1.2",
@@ -120,7 +120,6 @@
     "predis/predis": "^1.1",
     "propaganistas/laravel-phone": "^3.0",
     "pusher/pusher-php-server": "^4.0",
-    "rap2hpoutre/laravel-log-viewer": "^0.4.0",
     "seld/jsonlint": "^1.7",
     "sparclex/nova-import-card": "^2.0",
     "spatie/laravel-medialibrary": "^7.0.0",
@@ -196,9 +195,13 @@
     "paratest": [
       "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p8"
     ],
+    "coverage": [
+      "php artisan --env=testing test:prepare-test_suite-db",
+      "APP_ENV=testing COMPOSER_PROCESS_TIMEOUT=700 ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --coverage-text"
+    ],
     "unit-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",
-      "./vendor/phpunit/phpunit/phpunit --testsuite=Unit --testdox"
+      "APP_ENV=testing ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --coverage-html=./zzhell.html"
     ],
     "profile-unit-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",
@@ -221,7 +224,8 @@
     "optimize-autoloader": true,
     "github-oauth": {
       "github.com": "e0e31db02693e426dc2be482ecbee4daeafd8196"
-    }
+    },
+    "process-timeout": 500
   },
   "extra": {
     "laravel": {

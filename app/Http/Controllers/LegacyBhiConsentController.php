@@ -11,6 +11,7 @@ use App\Http\Requests\CreateLegacyBhiConsentDecision;
 use App\Note;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Support\Facades\Cache;
 
@@ -42,7 +43,7 @@ class LegacyBhiConsentController extends Controller
 
         return Note::create([
             'patient_id'   => $patientId,
-            'author_id'    => 948, //This user is CLH patient support
+            'author_id'    => PatientSupportUser::id(), //This user is CLH patient support
             'body'         => $body,
             'type'         => $type,
             'performed_at' => Carbon::now()->toDateTimeString(),
@@ -56,7 +57,7 @@ class LegacyBhiConsentController extends Controller
      */
     private function getNextCallDate($patientId)
     {
-        $nextCall = SchedulerService::getNextScheduledCall($patientId, false);
+        $nextCall = SchedulerService::getNextScheduledCall($patientId, true);
 
         return null !== $nextCall ? $nextCall->scheduled_date : null;
     }
@@ -71,12 +72,13 @@ class LegacyBhiConsentController extends Controller
      */
     private function remainingTimeToShowBhiBannerAgain($nextScheduledCallDate)
     {
-        $now      = Carbon::now();
-        $tomorrow = $now->copy()->addDay()->startOfDay();
+        $now = Carbon::now();
+        //tomorrow at 7 am
+        $tomorrow = $now->copy()->addDay()->startOfDay()->addHours(7);
 
         return null !== $nextScheduledCallDate
-            ? Carbon::parse($nextScheduledCallDate)->diffInSeconds($now)
-            : $tomorrow->diffInSeconds($now);
+            ? Carbon::parse($nextScheduledCallDate)->diffInMinutes($now)
+            : $tomorrow->diffInMinutes($now);
     }
 
     /**
@@ -87,8 +89,8 @@ class LegacyBhiConsentController extends Controller
         $key                   = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
         $nextScheduledCallDate = $this->getNextCallDate($patientId);
 
-        $remainingTimeToShowBhiBannerAgainInSec = $this->remainingTimeToShowBhiBannerAgain($nextScheduledCallDate);
+        $remainingTimeToShowBhiBannerAgainInMinutes = $this->remainingTimeToShowBhiBannerAgain($nextScheduledCallDate);
 
-        Cache::put($key, true, $remainingTimeToShowBhiBannerAgainInSec);
+        Cache::put($key, $remainingTimeToShowBhiBannerAgainInMinutes, $remainingTimeToShowBhiBannerAgainInMinutes);
     }
 }
