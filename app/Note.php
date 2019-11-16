@@ -16,6 +16,7 @@ use App\Traits\NotificationAttachable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
+use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -166,7 +167,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         }
 
         if ($notifySupport) {
-            $recipients->push(User::find(948));
+            $recipients->push(User::find(PatientSupportUser::id()));
         }
 
         $channelsForLocation = [];
@@ -255,7 +256,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
 
             if ($excludePatientSupport) {
                 $q->where([
-                    ['notifiable_id', '!=', 948], //exclude patient support
+                    ['notifiable_id', '!=', PatientSupportUser::id()], //exclude patient support
                 ]);
             }
         });
