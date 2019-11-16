@@ -80,7 +80,7 @@ jobs:
     - run: cp .env.testing .env
 
       # run tests
-    - run: composer coverage
+    - run: composer unit-test
 #    - store_test_results:
 #        path: tests/_output
 #    - store_artifacts:
