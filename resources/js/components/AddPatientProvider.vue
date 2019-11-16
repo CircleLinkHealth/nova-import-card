@@ -63,53 +63,40 @@
 
             <mdb-row>
                 <mdb-col class="text-right">
-                    <mdb-btn size="sm" icon="search" color="primary" @click.native="toggleSearchAgain">Search again
+                    <mdb-btn size="sm" icon="search" color="primary" @click.native="toggleSearchAgain">
+                        Search again
                     </mdb-btn>
                 </mdb-col>
             </mdb-row>
 
             <mdb-row>
                 <mdb-col md="6">
-                    <mdb-input label="First Name" v-model="provider.first_name" :required="true"></mdb-input>
+                    <mdb-input label="Provider First Name" v-model="provider.firstName"
+                               :customValidation="validation.firstName.validated"
+                               :isValid="validation.firstName.valid"
+                               @change="validate('firstName', $event)" invalidFeedback="Please set a first name."/>
                 </mdb-col>
                 <mdb-col md="6">
-                    <mdb-input label="Last Name" v-model="provider.last_name" :required="true"></mdb-input>
+                    <mdb-input label="Last Name" v-model="provider.lastName"
+                               :customValidation="validation.lastName.validated"
+                               :isValid="validation.lastName.valid"
+                               @change="validate('lastName', $event)" invalidFeedback="Please set a last name."/>
                 </mdb-col>
             </mdb-row>
-
-            <!--
-            <mdb-row>
-                <mdb-col md="8">
-                    <mdb-input label="Line 1" v-model="provider.address"></mdb-input>
-                </mdb-col>
-                <mdb-col md="4">
-                    <mdb-input label="Line 2" v-model="provider.address2"></mdb-input>
-                </mdb-col>
-            </mdb-row>
-
-            <mdb-row>
-                <mdb-col md="4">
-                    <mdb-input label="City" v-model="provider.city"></mdb-input>
-                </mdb-col>
-                <mdb-col md="4">
-                    <mdb-input label="State" v-model="provider.state"></mdb-input>
-                </mdb-col>
-                <mdb-col md="4">
-                    <mdb-input label="Zip" v-model="provider.zip"></mdb-input>
-                </mdb-col>
-            </mdb-row>
-            -->
 
             <mdb-row>
                 <mdb-col md="6">
-                    <mdb-input label="Phone number" v-model="provider.phone_numbers[0]"
-                               type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                               :required="true">
-                    </mdb-input>
+                    <mdb-input label="Phone number" v-model="provider.phoneNumber"
+                               :customValidation="validation.phoneNumber.validated"
+                               :isValid="validation.phoneNumber.valid"
+                               @change="validate('phoneNumber', $event)"
+                               invalidFeedback="Please set a valid phone number."/>
                 </mdb-col>
                 <mdb-col md="6">
                     <mdb-select v-model="specialties" placeholder="Select a specialty"
-                                label="Specialty" :required="true"
+                                label="Specialty"
+                                :customValidation="validation.specialty.validated"
+                                :isValid="validation.specialty.valid"
                                 @change="onSelectSpecialty"/>
                 </mdb-col>
             </mdb-row>
@@ -117,12 +104,16 @@
             <mdb-row>
                 <mdb-col>
                     <mdb-select v-model="practices" placeholder="Select a practice"
-                                label="Practice" :required="true"
+                                label="Practice"
+                                :customValidation="validation.primaryPracticeId.validated"
+                                :isValid="validation.primaryPracticeId.valid"
                                 @change="onSelectPractice"/>
                 </mdb-col>
                 <mdb-col>
                     <mdb-select v-model="suffixes" placeholder="Select clinical type"
-                                label="Clinical Type" :required="true"
+                                label="Clinical Type"
+                                :customValidation="validation.suffix.validated"
+                                :isValid="validation.suffix.valid"
                                 @change="onSelectClinicalType"/>
                 </mdb-col>
             </mdb-row>
@@ -130,12 +121,16 @@
             <mdb-row>
                 <mdb-col>
                     <mdb-input label="Email" v-model="provider.email"
-                               type="email">
-                    </mdb-input>
+                               type="email"
+                               :customValidation="validation.email.validated"
+                               :isValid="validation.email.valid"
+                               @change="validate('email', $event)"
+                               invalidFeedback="Please set a valid email."/>
                 </mdb-col>
             </mdb-row>
 
-            <mdb-row>
+            <mdb-row style="margin-top: 5px">
+                <input type="hidden" v-model="isFormValid"/>
                 <mdb-col>
                     <mdb-alert v-if="error" color="danger">
                         {{error}}
@@ -171,7 +166,7 @@
     import specialties from './specialties-options';
     import suffixes from './suffix-options';
 
-    import * as _ from  "lodash";
+    import * as _ from "lodash";
 
     let self;
 
@@ -199,7 +194,6 @@
             return {
                 MIN_SEARCH_VALUE: 2,
                 waiting: false,
-                typing: false, //used to debounce the search
                 error: null,
                 searchValue: '',
                 searchResults: [],
@@ -211,26 +205,35 @@
                 suffixes: suffixes.map(s => {
                     return {text: s.text, value: s.id};
                 }),
-                provider: {
-                    id: null,
-                    email: null,
-                    first_name: null,
-                    last_name: null,
-                    suffix: null,
-                    address: null,
-                    address2: null,
-                    city: null,
-                    state: null,
-                    zip: null,
-                    phone_numbers: [],
-                    primary_practice: {
-                        id: null,
-                        display_name: null,
+                provider: this.getNewProvider(),
+                validation: {
+                    email: {
+                        valid: false,
+                        validated: false
                     },
-                    provider_info: {
-                        id: null,
-                        is_clinical: null,
-                        specialty: null,
+                    firstName: {
+                        valid: false,
+                        validated: false
+                    },
+                    lastName: {
+                        valid: false,
+                        validated: false
+                    },
+                    suffix: {
+                        valid: false,
+                        validated: false
+                    },
+                    phoneNumber: {
+                        valid: false,
+                        validated: false
+                    },
+                    primaryPracticeId: {
+                        valid: false,
+                        validated: false
+                    },
+                    specialty: {
+                        valid: false,
+                        validated: false
                     }
                 }
             }
@@ -241,7 +244,25 @@
         mounted() {
             this.getPractices();
         },
+        computed: {
+            isFormValid() {
+
+                //in case user selected a provider,
+                //no need to check further
+                if (this.provider.id) {
+                    return true;
+                }
+
+                for (let i in this.validation) {
+                    if (!this.validation[i].valid) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        },
         methods: {
+
 
             /**
              * Called from parent component.
@@ -252,28 +273,37 @@
                 return this.provider;
             },
 
+            validate(key, value) {
+                switch (key) {
+                    case "firstName":
+                    case "lastName":
+                        this.validation[key].valid = value.length > 0;
+                        break;
+                    case "phoneNumber":
+                        const phoneRe = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+                        this.validation[key].valid = phoneRe.test(value);
+                        break;
+                    case "email":
+                        const re = /\S+@\S+\.\S+/;
+                        this.validation[key].valid = re.test(value);
+                        break;
+                    default:
+                        this.validation[key].valid = true;
+                }
+                this.validation[key].validated = true;
+            },
+
             getNewProvider() {
                 return {
                     id: null,
                     email: null,
-                    first_name: null,
-                    last_name: null,
+                    firstName: null,
+                    lastName: null,
                     suffix: null,
-                    address: null,
-                    address2: null,
-                    city: null,
-                    state: null,
-                    zip: null,
-                    phone_numbers: [],
-                    primary_practice: {
-                        id: null,
-                        display_name: null,
-                    },
-                    provider_info: {
-                        id: null,
-                        is_clinical: null,
-                        specialty: null,
-                    }
+                    phoneNumber: null,
+                    primaryPracticeId: null,
+                    specialty: null,
+                    isClinical: null,
                 };
             },
 
@@ -348,17 +378,20 @@
             }, 1000),
 
             onSelectSpecialty(id) {
-                this.provider.provider_info.specialty = id;
+                this.provider.specialty = id;
+                this.validate('specialty', id);
             },
 
             onSelectPractice(id) {
-                this.provider.primary_practice.id = id;
+                this.provider.primaryPracticeId = id;
+                this.validate('primaryPracticeId', id);
             },
 
             onSelectClinicalType(id) {
                 const suffix = suffixes.find(s => s.id === id);
-                this.provider.provider_info.is_clinical = id !== "non-clinical";
+                this.provider.isClinical = id !== "non-clinical";
                 this.provider.suffix = suffix.text;
+                this.validate('suffix', id);
             },
 
             onSelectProvider(id) {
