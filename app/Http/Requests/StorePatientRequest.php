@@ -28,8 +28,8 @@ class StorePatientRequest extends FormRequest
     public function rules()
     {
         return [
-            'patient'  => 'required|json',
-            'provider' => 'required|json',
+            'patient'  => 'required',
+            'provider' => 'required',
         ];
     }
 }

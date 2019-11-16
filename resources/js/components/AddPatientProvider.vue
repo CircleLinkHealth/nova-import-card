@@ -398,6 +398,7 @@
                 const provider = this.searchResults.find(p => p.id === id);
                 this.provider.id = id;
                 this.provider.display_name = provider.display_name;
+                this.provider.primaryPracticeId = provider.primary_practice.id;
                 this.isCreatingNew = false;
             },
 

@@ -16,6 +16,7 @@ use App\User;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
+use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;
 
 class PatientController extends Controller
@@ -69,32 +70,36 @@ class PatientController extends Controller
         if ( ! empty($providerInput['id'])) {
             $providerUserId = $providerInput['id'];
         } else {
+            $isClinical = $providerInput['suffix'] === 'non-clinical';
             //need to create the $providerUser
-            $providerUser = User::create([
-                'first_name' => $providerInput['first_name'],
-                'last_name'  => $providerInput['last_name'],
-                'suffix'     => $providerInput['suffix'] !== 'non-clinical'
-                    ? $providerInput['suffix']
-                    : null,
-                'address'    => $providerInput['address'],
-                'address2'   => $providerInput['address2'],
-                'city'       => $providerInput['city'],
-                'state'      => $providerInput['state'],
-                'zip'        => $providerInput['zip'],
-                'email'      => $providerInput['email'],
-                'program_id' => $providerInput['primary_practice']['id'],
+            $providerUser = new User([
+                'suffix'               => $isClinical
+                    ? null
+                    : $providerInput['suffix'],
+                'program_id'           => $providerInput['primaryPracticeId'],
+                'auto_attach_programs' => 0,
+                'address'              => '',
+                'address2'             => '',
+                'city'                 => '',
+                'state'                => '',
+                'zip'                  => '',
             ]);
-            $providerUser->save();
+
+            $providerUser->status          = 'Active';
+            $providerUser->access_disabled = 1;
+            $providerUser->setFirstName($providerInput['firstName']);
+            $providerUser->setLastName($providerInput['lastName']);
+            $providerUser->createNewUser($providerInput['email'], str_random());
 
             ProviderInfo::updateOrCreate([
                 'user_id' => $providerUser->id,
             ], [
-                'is_clinical' => $providerInput['suffix'] !== 'non-clinical',
+                'is_clinical' => $isClinical,
                 'specialty'   => $providerInput['specialty'],
             ]);
 
-            if (isset($providerInput['phone_numbers'][0])) {
-                $providerUser->clearAllPhonesAndAddNewPrimary($providerInput['phone_numbers'][0], null, true);
+            if (isset($providerInput['phoneNumber'])) {
+                $providerUser->clearAllPhonesAndAddNewPrimary($providerInput['phoneNumber'], null, true);
             }
 
             $providerUserId = $providerUser->id;
@@ -113,15 +118,36 @@ class PatientController extends Controller
     private function createPatient(StorePatientRequest $request)
     {
         $patientInput = $request->input('patient');
-        $user         = User::create([
-            'first_name'      => $patientInput['first_name'],
-            'last_name'       => $patientInput['last_name'],
-            'email'           => $patientInput['email'],
-            'user_registered' => date('Y-m-d H:i:s'),
-        ]);
-        $user->createNewUser($patientInput['email'], str_random());
-        $user->clearAllPhonesAndAddNewPrimary($patientInput['phone_number'], null, true);
 
+        //BASIC
+        if (empty($patientInput['email'])) {
+            $patientInput['email'] = $this->getRandomEmail();
+        }
+
+        $user = new User([
+            'email'                => $patientInput['email'],
+            'user_registered'      => date('Y-m-d H:i:s'),
+            'auto_attach_programs' => 0,
+            'address'              => '',
+            'address2'             => '',
+            'city'                 => '',
+            'state'                => '',
+            'zip'                  => '',
+        ]);
+
+        $user->status          = 'Active';
+        $user->access_disabled = 1;
+        $user->setFirstName($patientInput['firstName']);
+        $user->setLastName($patientInput['lastName']);
+        $user->createNewUser($patientInput['email'], str_random());
+        $user->clearAllPhonesAndAddNewPrimary($patientInput['phoneNumber'], null, true);
+
+        //ROLES
+        $providerUser = $request->input('provider');
+        $roles        = Role::getIdsFromNames(['participant']);
+        $user->attachRoleForPractice($roles, $providerUser['primaryPracticeId']);
+
+        //PATIENT INFO
         Patient::updateOrCreate([
             'user_id' => $user->id,
         ], [
@@ -131,6 +157,16 @@ class PatientController extends Controller
         ]);
 
         return $user->id;
+    }
+
+    /**
+     * Generate a random email. Needed when email for user is not supplied.
+     *
+     * @return string
+     */
+    private function getRandomEmail()
+    {
+        return 'awv_' . str_random(20) . '@careplanmanager.com';
     }
 
     public function getPatientList(Request $request, PatientListFilters $filters)
