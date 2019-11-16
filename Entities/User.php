@@ -38,7 +38,7 @@ use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
 use App\TargetPatient;
-use CircleLinkHealth\Customer\PracticesRequiringBhiConsent;
+use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -2737,7 +2737,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->where(
                 function ($q) {
                     $q->where(function ($q) {
-                        $q->ofPracticeRequiringBhiConsent('whereNotIn')->whereHas(
+                        $q->notOfPracticeRequiringSpecialBhiConsent()
+                          ->whereHas(
                                 'patientInfo',
                                 function ($q) {
                                     $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
@@ -2756,7 +2757,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
     
     /**
-     * Scope for patients who belong or do not belong Practices that have exclusively requested us to show BHI flag for their patients.
+     * Scope for patients who belong to Practices that have exclusively requested us to show BHI flag for their patients.
      * Default operator is "whereIn", which will show patients who belong to such practices.
      * Changet to "whereNotIn", to show patients who do not belong to such practices.
      *
@@ -2768,9 +2769,31 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      *
      * @return mixed
      */
-    public function scopeOfPracticeRequiringBhiConsent($builder, $operator = 'whereIn') {
-        $practiceNames = PracticesRequiringBhiConsent::names();
-        
+    public function scopeOfPracticeRequiringSpecialBhiConsent($builder) {
+        return $this->queryOfPracticesRequiringSpecialBhiConsent($builder, 'whereIn');
+    }
+    
+    /**
+     * Scope for patients who do not belong Practices that have exclusively requested us to show BHI flag for their patients.
+     * Default operator is "whereIn", which will show patients who belong to such practices.
+     * Changet to "whereNotIn", to show patients who do not belong to such practices.
+     *
+     * See ticket https://circlelinkhealth.atlassian.net/browse/CPM-1784
+     *
+     * @param $builder
+     *
+     * @param string $operator
+     *
+     * @return mixed
+     */
+    public function scopeNotOfPracticeRequiringSpecialBhiConsent($builder) {
+        return $this->queryOfPracticesRequiringSpecialBhiConsent($builder, 'whereNotIn');
+    }
+    
+    
+    private function queryOfPracticesRequiringSpecialBhiConsent($builder, $operator) {
+        $practiceNames = PracticesRequiringSpecialBhiConsent::names();
+    
         return $builder->when(!empty($practiceNames), function ($builder) use ($practiceNames, $operator){
             return $builder->whereHas(
                 'primaryPractice',
@@ -2805,7 +2828,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             )
             ->where(function ($q) {
                 $q->where(function ($q){
-                    $q->ofPracticeRequiringBhiConsent('whereNotIn')->whereHas(
+                    $q->notOfPracticeRequiringSpecialBhiConsent()
+                      ->whereHas(
                         'patientInfo',
                         function ($q) {
                             $q->enrolled()
@@ -2813,7 +2837,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                         }
                     );
                 })->orWhere(function ($q){
-                    $q->ofPracticeRequiringBhiConsent('whereIn');
+                    $q->ofPracticeRequiringSpecialBhiConsent();
                 });
             })
             ->whereHas(
