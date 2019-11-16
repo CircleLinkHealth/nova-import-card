@@ -71,13 +71,13 @@
 
             <mdb-row>
                 <mdb-col md="6">
-                    <mdb-input label="Provider First Name" v-model="provider.firstName"
+                    <mdb-input label="First Name *" v-model="provider.firstName"
                                :customValidation="validation.firstName.validated"
                                :isValid="validation.firstName.valid"
                                @change="validate('firstName', $event)" invalidFeedback="Please set a first name."/>
                 </mdb-col>
                 <mdb-col md="6">
-                    <mdb-input label="Last Name" v-model="provider.lastName"
+                    <mdb-input label="Last Name *" v-model="provider.lastName"
                                :customValidation="validation.lastName.validated"
                                :isValid="validation.lastName.valid"
                                @change="validate('lastName', $event)" invalidFeedback="Please set a last name."/>
@@ -86,7 +86,7 @@
 
             <mdb-row>
                 <mdb-col md="6">
-                    <mdb-input label="Phone number" v-model="provider.phoneNumber"
+                    <mdb-input label="Phone number *" v-model="provider.phoneNumber"
                                :customValidation="validation.phoneNumber.validated"
                                :isValid="validation.phoneNumber.valid"
                                @change="validate('phoneNumber', $event)"
@@ -94,7 +94,7 @@
                 </mdb-col>
                 <mdb-col md="6">
                     <mdb-select v-model="specialties" placeholder="Select a specialty"
-                                label="Specialty"
+                                label="Specialty *"
                                 :customValidation="validation.specialty.validated"
                                 :isValid="validation.specialty.valid"
                                 @change="onSelectSpecialty"/>
@@ -104,14 +104,14 @@
             <mdb-row>
                 <mdb-col>
                     <mdb-select v-model="practices" placeholder="Select a practice"
-                                label="Practice"
+                                label="Practice *"
                                 :customValidation="validation.primaryPracticeId.validated"
                                 :isValid="validation.primaryPracticeId.valid"
                                 @change="onSelectPractice"/>
                 </mdb-col>
                 <mdb-col>
                     <mdb-select v-model="suffixes" placeholder="Select clinical type"
-                                label="Clinical Type"
+                                label="Clinical Type *"
                                 :customValidation="validation.suffix.validated"
                                 :isValid="validation.suffix.valid"
                                 @change="onSelectClinicalType"/>
@@ -120,7 +120,7 @@
 
             <mdb-row>
                 <mdb-col>
-                    <mdb-input label="Email" v-model="provider.email"
+                    <mdb-input label="Email *" v-model="provider.email"
                                type="email"
                                :customValidation="validation.email.validated"
                                :isValid="validation.email.valid"

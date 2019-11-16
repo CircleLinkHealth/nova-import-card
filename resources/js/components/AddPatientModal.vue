@@ -19,7 +19,7 @@
 
                     <mdb-row>
                         <mdb-col md="6">
-                            <mdb-input label="First Name"
+                            <mdb-input label="First Name *"
                                        v-model="patient.firstName"
                                        :customValidation="validation.firstName.validated"
                                        :isValid="validation.firstName.valid"
@@ -27,7 +27,7 @@
                                        invalidFeedback="Please set a first name."/>
                         </mdb-col>
                         <mdb-col md="6">
-                            <mdb-input label="Last Name"
+                            <mdb-input label="Last Name *"
                                        v-model="patient.lastName"
                                        :customValidation="validation.lastName.validated"
                                        :isValid="validation.lastName.valid"
@@ -38,7 +38,7 @@
 
                     <mdb-row>
                         <mdb-col>
-                            <mdb-input label="Phone number" v-model="patient.phoneNumber"
+                            <mdb-input label="Phone number *" v-model="patient.phoneNumber"
                                        type="tel"
                                        :customValidation="validation.phoneNumber.validated"
                                        :isValid="validation.phoneNumber.valid"
@@ -46,7 +46,7 @@
                                        invalidFeedback="Please set a valid phone number."/>
                         </mdb-col>
                         <mdb-col>
-                            <mdb-input label="DOB"
+                            <mdb-input label="DOB *"
                                        v-model="patient.dob"
                                        :customValidation="validation.dob.validated"
                                        :isValid="validation.dob.valid"
