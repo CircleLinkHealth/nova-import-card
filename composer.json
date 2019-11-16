@@ -201,7 +201,7 @@
     ],
     "unit-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",
-      "APP_ENV=testing ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --coverage-html=./zzhell.html"
+      "APP_ENV=testing ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3"
     ],
     "profile-unit-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",
