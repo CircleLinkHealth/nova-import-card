@@ -32,10 +32,6 @@ class PracticeInvoiceController extends Controller
 
     /**
      * PracticeInvoiceController constructor.
-     *
-     * @param ApproveBillablePatientsService   $service
-     * @param PatientSummaryEloquentRepository $patientSummaryDBRepository
-     * @param PracticeReportsService           $practiceReportsService
      */
     public function __construct(
         ApproveBillablePatientsService $service,
@@ -137,8 +133,6 @@ class PracticeInvoiceController extends Controller
 
     /**
      * Get approvable patients for a practice for a month.
-     *
-     * @param Request $request
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
@@ -255,8 +249,6 @@ class PracticeInvoiceController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
      * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
      *
@@ -318,8 +310,6 @@ class PracticeInvoiceController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return string
      */
     public function send(Request $request)
@@ -491,8 +481,6 @@ class PracticeInvoiceController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updatePracticeChargeableServices(Request $request)
@@ -601,7 +589,6 @@ class PracticeInvoiceController extends Controller
 
     /**
      * @param $practice_id
-     * @param Carbon $date
      *
      * @return \CircleLinkHealth\Customer\Entities\PatientMonthlySummary|\Illuminate\Database\Eloquent\Builder
      */

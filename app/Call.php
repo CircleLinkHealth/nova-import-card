@@ -227,7 +227,6 @@ class Call extends BaseModel implements AttachableToNotification
      * Scope for calls for the given month.
      *
      * @param $builder
-     * @param Carbon $monthYear
      */
     public function scopeOfMonth($builder, Carbon $monthYear)
     {
@@ -275,5 +274,10 @@ class Call extends BaseModel implements AttachableToNotification
             'outboundUser.nurseInfo',
             'note',
         ]);
+    }
+
+    public function shouldSendLiveNotification(): bool
+    {
+        return true === $this->asap && 'addendum_response' !== $this->sub_type;
     }
 }

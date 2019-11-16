@@ -1,0 +1,56 @@
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Contracts;
+
+interface LiveNotification
+{
+    /**
+     * Gets the notification attachment type. eg. App\Models\Addendum.
+     */
+    public function attachmentType(): string;
+
+    /**
+     * A string with the attachments name. eg. "Addendum".
+     */
+    public function description(): string;
+
+    public function getPatientName(): string;
+
+    /**
+     * A sentence to present the notification.
+     */
+    public function getSubject(): string;
+
+    public function noteId(): ?int;
+
+    /**
+     * Redirect link to activity.
+     */
+    public function redirectLink(): string;
+
+    /**
+     * User id who sends the notification.
+     */
+    public function senderId(): int;
+
+    public function senderName(): string;
+
+    /**
+     * Holds all data needed to represent notification in vue.
+     *
+     * @param mixed $notifiable
+     */
+    public function toArray($notifiable): array;
+
+    /**
+     * Returns by default -  ONLY the notification id & the notification type to be used in broadcasting the notification
+     * Broadcast will be listened by BroadcastServiceProvider.
+     *
+     * @param mixed $notifiable
+     */
+    public function toBroadcast($notifiable): object;
+}
