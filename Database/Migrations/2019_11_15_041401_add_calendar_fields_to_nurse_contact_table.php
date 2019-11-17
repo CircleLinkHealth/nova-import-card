@@ -25,7 +25,7 @@ class AddCalendarFieldsToNurseContactTable extends Migration
     public function up()
     {
         Schema::table('nurse_contact_window', function (Blueprint $table) {
-            $table->enum('repeat_frequency', ['daily', 'monthly', 'weekly', 'does_not_repeat'])->nullable();
+            $table->enum('repeat_frequency', ['daily', 'weekly', 'does_not_repeat'])->nullable();
             $table->date('repeat_start')->nullable();
             $table->date('until')->nullable();
             $table->enum('validated', ['not_checked', 'worked', 'not_worked'])->default('not_checked');
