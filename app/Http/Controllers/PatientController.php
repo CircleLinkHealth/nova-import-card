@@ -15,6 +15,7 @@ use App\PatientAwvSurveyInstanceStatusView;
 use App\User;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\Role;
 use Illuminate\Http\Request;
@@ -70,38 +71,7 @@ class PatientController extends Controller
         if ( ! empty($providerInput['id'])) {
             $providerUserId = $providerInput['id'];
         } else {
-            $isClinical = $providerInput['suffix'] === 'non-clinical';
-            //need to create the $providerUser
-            $providerUser = new User([
-                'suffix'               => $isClinical
-                    ? null
-                    : $providerInput['suffix'],
-                'program_id'           => $providerInput['primaryPracticeId'],
-                'auto_attach_programs' => 0,
-                'address'              => '',
-                'address2'             => '',
-                'city'                 => '',
-                'state'                => '',
-                'zip'                  => '',
-            ]);
-
-            $providerUser->status          = 'Active';
-            $providerUser->access_disabled = 1;
-            $providerUser->setFirstName($providerInput['firstName']);
-            $providerUser->setLastName($providerInput['lastName']);
-            $providerUser->createNewUser($providerInput['email'], str_random());
-
-            ProviderInfo::updateOrCreate([
-                'user_id' => $providerUser->id,
-            ], [
-                'is_clinical' => $isClinical,
-                'specialty'   => $providerInput['specialty'],
-            ]);
-
-            if (isset($providerInput['phoneNumber'])) {
-                $providerUser->clearAllPhonesAndAddNewPrimary($providerInput['phoneNumber'], null, true);
-            }
-
+            $providerUser   = $this->createUser($providerInput, 'provider', $providerInput['primaryPracticeId']);
             $providerUserId = $providerUser->id;
         }
 
@@ -117,44 +87,9 @@ class PatientController extends Controller
      */
     private function createPatient(StorePatientRequest $request)
     {
-        $patientInput = $request->input('patient');
-
-        //BASIC
-        if (empty($patientInput['email'])) {
-            $patientInput['email'] = $this->getRandomEmail();
-        }
-
-        $user = new User([
-            'email'                => $patientInput['email'],
-            'user_registered'      => date('Y-m-d H:i:s'),
-            'auto_attach_programs' => 0,
-            'address'              => '',
-            'address2'             => '',
-            'city'                 => '',
-            'state'                => '',
-            'zip'                  => '',
-        ]);
-
-        $user->status          = 'Active';
-        $user->access_disabled = 1;
-        $user->setFirstName($patientInput['firstName']);
-        $user->setLastName($patientInput['lastName']);
-        $user->createNewUser($patientInput['email'], str_random());
-        $user->clearAllPhonesAndAddNewPrimary($patientInput['phoneNumber'], null, true);
-
-        //ROLES
-        $providerUser = $request->input('provider');
-        $roles        = Role::getIdsFromNames(['participant']);
-        $user->attachRoleForPractice($roles, $providerUser['primaryPracticeId']);
-
-        //PATIENT INFO
-        Patient::updateOrCreate([
-            'user_id' => $user->id,
-        ], [
-            'ccm_status' => Patient::NA,
-            'birth_date' => Carbon::parse($patientInput['dob']),
-            'is_awv'     => true,
-        ]);
+        $patientInput      = $request->input('patient');
+        $primaryPracticeId = $request->input('provider')['primaryPracticeId'];
+        $user              = $this->createUser($patientInput, 'participant', $primaryPracticeId);
 
         return $user->id;
     }
@@ -167,6 +102,85 @@ class PatientController extends Controller
     private function getRandomEmail()
     {
         return 'awv_' . str_random(20) . '@careplanmanager.com';
+    }
+
+    private function formatPhoneNumber(string $numberString)
+    {
+        preg_match_all('/([\d]+)/', $numberString, $match);
+        $sanitized = implode($match[0]);
+        if (strlen($sanitized) < 10) {
+            return '';
+        }
+
+        if (strlen($sanitized) > 10) {
+            $sanitized = substr($sanitized, -10);
+        }
+
+        return substr($sanitized, 0, 3) . '-' . substr($sanitized, 3, 3) . '-' . substr($sanitized, 6, 4);
+    }
+
+    private function createUser(array $input, string $roleName, $primaryPracticeId): User
+    {
+        //BASIC
+        if (empty($input['email'])) {
+            $input['email'] = $this->getRandomEmail();
+        }
+
+        $user = new User([
+            'email'                => $input['email'],
+            'user_registered'      => date('Y-m-d H:i:s'),
+            'auto_attach_programs' => 0,
+            'address'              => '',
+            'address2'             => '',
+            'city'                 => '',
+            'state'                => '',
+            'zip'                  => '',
+            'program_id'           => $primaryPracticeId,
+        ]);
+
+        $user->status          = 'Active';
+        $user->access_disabled = 1;
+        $user->setFirstName($input['firstName']);
+        $user->setLastName($input['lastName']);
+        $user->createNewUser($input['email'], str_random());
+        if ( ! empty($input['phoneNumber'])) {
+            $phoneNumber = new PhoneNumber();
+            $phoneNumber->setRawAttributes([
+                'user_id'     => $user->id,
+                'location_id' => 0, //not sure about this
+                'type'        => null,
+                'is_primary'  => false,
+                'extension'   => null,
+                'number'      => $this->formatPhoneNumber($input['phoneNumber']),
+            ]);
+            $phoneNumber->save();
+        }
+
+        //ROLES
+        $roles = Role::getIdsFromNames([$roleName]);
+        $user->attachRoleForPractice($roles, $primaryPracticeId);
+
+        if ($roleName === 'participant') {
+            //PATIENT INFO
+            Patient::updateOrCreate([
+                'user_id' => $user->id,
+            ], [
+                'general_comment' => '',
+                'ccm_status'      => Patient::NA,
+                'birth_date'      => Carbon::parse($input['dob']),
+                'is_awv'          => true,
+            ]);
+        } else {
+            $isClinical = $input['suffix'] === 'non-clinical';
+            ProviderInfo::updateOrCreate([
+                'user_id' => $user->id,
+            ], [
+                'is_clinical' => $isClinical,
+                'specialty'   => $input['specialty'],
+            ]);
+        }
+
+        return $user;
     }
 
     public function getPatientList(Request $request, PatientListFilters $filters)
