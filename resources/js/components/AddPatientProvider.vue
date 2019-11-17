@@ -409,14 +409,14 @@
             handleError(error) {
                 console.log(error);
                 if (error.response && error.response.status === 504) {
-                    this.error = "Server took too long to respond. Please try again.";
+                    this.error = `Server took too long to respond [${error.response.status}]. Please try again.`;
                 } else if (error.response && error.response.status === 500) {
-                    this.error = "There was an error with our servers. Please contact CLH support.";
+                    this.error = `There was an error with our servers [${error.response.status}]. Please contact CLH support.`;
                     console.error(error.response.data);
                 } else if (error.response && error.response.status === 404) {
-                    this.error = "Not Found [404]";
-                } else if (error.response && error.response.status === 419) {
-                    this.error = "Not Authenticated [419]";
+                    this.error = `Not Found [${error.response.status}]`;
+                } else if (error.response && (error.response.status === 401 || error.response.status === 419)) {
+                    this.error = `Not Authenticated [${error.response.status}]`;
                     //reload the page which will redirect to login
                     window.location.reload();
                 } else if (error.response && error.response.data) {

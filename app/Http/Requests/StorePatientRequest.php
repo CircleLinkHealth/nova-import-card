@@ -28,8 +28,19 @@ class StorePatientRequest extends FormRequest
     public function rules()
     {
         return [
-            'patient'  => 'required',
-            'provider' => 'required',
+            'patient.firstName'          => 'required|string',
+            'patient.lastName'           => 'required|string',
+            'patient.dob'                => 'required|date',
+            'patient.phoneNumber'        => 'required|string',
+            'patient.email'              => 'sometimes|unique:users,email',
+            'provider.id'                => 'nullable',
+            'provider.firstName'         => 'nullable|string',
+            'provider.lastName'          => 'nullable|string',
+            'provider.suffix'            => 'nullable|string',
+            'provider.phoneNumber'       => 'nullable|string',
+            'provider.primaryPracticeId' => 'required',
+            'provider.specialty'         => 'nullable|string',
+            'provider.isClinical'        => 'nullable|boolean',
         ];
     }
 }

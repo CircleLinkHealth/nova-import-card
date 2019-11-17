@@ -152,7 +152,7 @@ class InvitationLinksController extends Controller
             ->where('id', '=', $target_user_id)
             ->firstOrFail();
 
-        $url = $this->service->createAndSaveUrl($user, $surveyName, $forYear, false);
+        $url = $this->service->createAndSaveUrl($user, $surveyName, $forYear, true);
 
         /** @var User $targetNotifiable */
         $targetNotifiable = null;
