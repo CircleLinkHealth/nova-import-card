@@ -6,15 +6,17 @@
 
 namespace App;
 
+use App\Contracts\AttachableToNotification;
 use App\Contracts\PdfReport;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;
-use App\Traits\IsAddendumable;
+use App\Traits\Addendumable;
 use App\Traits\NotificationAttachable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
+use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -39,6 +41,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \CircleLinkHealth\Customer\Entities\User                        $patient
  * @property \CircleLinkHealth\Customer\Entities\User                        $program
  * @property string                                                          $status
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereCreatedAt($value)
@@ -51,8 +54,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Customer\Entities\User|null                                  $logger
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note emergency($yes = true)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note forwarded(\Carbon\Carbon $from = null, \Carbon\Carbon $to = null, $excludePatientSupport = true)
@@ -61,9 +66,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note patientPractice($practiceId)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note query()
+ *
  * @property string|null                                                                                                     $summary_type
  * @property string|null                                                                                                     $deleted_at
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Note onlyTrashed()
  * @method static bool|null restore()
@@ -73,14 +80,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereSummaryType($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Note withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Note withoutTrashed()
+ *
  * @property int|null $addendums_count
  * @property int|null $notifications_count
  * @property int|null $revision_history_count
  */
-class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport
+class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport, AttachableToNotification
 {
+    use Addendumable;
     use Filterable;
-    use IsAddendumable;
     use NotificationAttachable;
     use PdfReportTrait;
     use SoftDeletes;
@@ -159,7 +167,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         }
 
         if ($notifySupport) {
-            $recipients->push(User::find(948));
+            $recipients->push(User::find(PatientSupportUser::id()));
         }
 
         $channelsForLocation = [];
@@ -220,7 +228,6 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
      * Scope for notes that were emergencies (or not if you pass $yes = false).
      *
      * @param $builder
-     * @param bool $yes
      */
     public function scopeEmergency($builder, bool $yes = true)
     {
@@ -231,9 +238,6 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
      * Scope for notes that were forwarded.
      *
      * @param $builder
-     * @param Carbon|null $from
-     * @param Carbon|null $to
-     * @param bool        $excludePatientSupport
      */
     public function scopeForwarded($builder, Carbon $from = null, Carbon $to = null, bool $excludePatientSupport = true)
     {
@@ -252,7 +256,7 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
 
             if ($excludePatientSupport) {
                 $q->where([
-                    ['notifiable_id', '!=', 948], //exclude patient support
+                    ['notifiable_id', '!=', PatientSupportUser::id()], //exclude patient support
                 ]);
             }
         });
@@ -264,8 +268,6 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
      * @param $builder
      * @param $notifiableType
      * @param $notifiableId
-     * @param Carbon|null $from
-     * @param Carbon|null $to
      */
     public function scopeForwardedTo($builder, $notifiableType, $notifiableId, Carbon $from = null, Carbon $to = null)
     {
@@ -304,8 +306,6 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
      * Create a PDF of this resource and return the path to it.
      *
      * @param null $scale
-     *
-     * @return string
      */
     public function toPdf($scale = null): string
     {

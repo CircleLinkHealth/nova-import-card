@@ -57,7 +57,7 @@ class PostDeploymentTasks extends Command
                         'horizon:terminate',
                         'queue:restart',
                     ]
-                    )) {
+                )) {
                     //@todo: start using envoyer scripts
                     //Do not run Queue commands on production, as Worker now takes care of Prod jobs
                     return;

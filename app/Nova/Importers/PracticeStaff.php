@@ -78,9 +78,6 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         );
     }
 
-    /**
-     * @return int
-     */
     public function chunkSize(): int
     {
         return 200;
@@ -147,7 +144,12 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
 
         $locations = [];
         foreach ($locationNames as $locationName) {
-            $locations[] = LocationByName::first($locationName);
+            $location = LocationByName::first($locationName);
+
+            if ( ! $location) {
+                throw new \Exception("Location: '{$locationName}' not found. ");
+            }
+            $locations[] = $location;
         }
 
         $user->attachLocation($locations);
@@ -182,7 +184,7 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         $role = RoleByName::first($row['role']);
 
         if ( ! $role) {
-            return null;
+            throw new \Exception("Role: {$row['role']} not found.");
         }
 
         $approveOwn = false;
@@ -208,7 +210,20 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
             'approve_own_care_plans' => $approveOwn,
         ]);
 
-        return $this->repo->createNewUser(new User(), $bag);
+        $user = User::whereEmail($row['email'])
+            ->ofPractice($this->practice->id)
+            ->whereDoesntHave('roles', function ($q) {
+                $q->whereIn('name', ['participant', 'administrator']);
+            })
+            ->where('first_name', $row['first_name'])
+            ->where('last_name', $row['last_name'])
+            ->first();
+
+        if ( ! $user) {
+            $user = new User();
+        }
+
+        return $this->repo->createNewUser($user, $bag);
     }
 
     private function validateRow($row)

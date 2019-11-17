@@ -545,6 +545,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'get.CCDViewerController.showByUserId',
     ])->middleware('permission:ccda.read');
 
+    Route::get('ccd/export/user/{userId}', [
+        'uses' => 'CCDViewer\CCDViewerController@exportAllCcds',
+        'as'   => 'get.CCDViewerController.exportAllCCDs',
+    ])->middleware('permission:ccda.read');
+
     Route::get('ccd/show/{ccdaId}', [
         'uses' => 'CCDViewer\CCDViewerController@show',
         'as'   => 'get.CCDViewerController.show',
@@ -2276,7 +2281,7 @@ Route::get('notifications', [
     'as'   => 'notifications.index',
 ])->middleware('permission:provider.read,note.read');
 
-Route::post('/redirect-mark-read/{receiverId}/{attachmentId}', [
+Route::post('/redirect-mark-read/{notificationId}', [
     'uses' => 'NotificationController@markNotificationAsRead',
     'as'   => 'notification.redirect',
 ]);

@@ -7,10 +7,13 @@
 namespace App\Observers;
 
 use App\Call;
+use App\Notifications\CallCreated;
 use App\Services\ActivityService;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Facades\Notification;
 
 class CallObserver
 {
@@ -18,10 +21,24 @@ class CallObserver
      * @var ActivityService
      */
     private $activityService;
+    /**
+     * @var NotificationService
+     */
+    private $notificationService;
 
-    public function __construct(ActivityService $activityService)
+    public function __construct(ActivityService $activityService, NotificationService $notificationService)
     {
-        $this->activityService = $activityService;
+        $this->activityService     = $activityService;
+        $this->notificationService = $notificationService;
+    }
+
+    /**
+     * @param $call
+     */
+    public function createNotificationAndSendToPusher($call)
+    {
+        $notify = $call->outboundUser;
+        Notification::send($notify, new CallCreated($call, auth()->user()));
     }
 
     public function saved(Call $call)
@@ -61,6 +78,17 @@ class CallObserver
                     'no_of_calls'            => $no_of_calls->count(),
                     'no_of_successful_calls' => $no_of_successful_calls,
                 ]);
+        }
+
+        if ('reached' === $call->status || 'done' === $call->status) {
+            Call::where('id', $call->id)->update(['asap' => false]);
+            $call->markAttachmentNotificationAsRead($call->outboundUser);
+        }
+
+        //If sub_type = "addendum_response" means it has already been created by AddendumObserver
+        //@todo:come up with a better solution for this
+        if ($call->shouldSendLiveNotification()) {
+            $this->createNotificationAndSendToPusher($call);
         }
     }
 }

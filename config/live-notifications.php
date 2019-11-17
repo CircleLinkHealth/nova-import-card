@@ -14,5 +14,6 @@ return [
     // Only show notifications of the following classes in Live Notifications count.
     'classes' => [
         App\Notifications\AddendumCreated::class,
+        App\Notifications\CallCreated::class,
     ],
 ];
