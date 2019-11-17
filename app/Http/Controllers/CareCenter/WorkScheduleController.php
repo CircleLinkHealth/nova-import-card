@@ -194,9 +194,8 @@ class WorkScheduleController extends Controller
 
     public function getCalendarDataForAuthNurse()
     {
-        $nurse       = auth()->user();
-        $authIsAdmin = false;
-        $windows     = $this->nurseContactWindows
+        $nurse   = auth()->user();
+        $windows = $this->nurseContactWindows
             ->whereNurseInfoId($nurse->nurseInfo->id)
             ->get()
             ->sortBy(function ($item) {
@@ -214,12 +213,18 @@ class WorkScheduleController extends Controller
      */
     public function getHolidays()
     {
-        $nurses = $this->getActiveNurses();
+        if (auth()->user()->isAdmin()) {
+            $nurses = $this->getActiveNurses();
 
-        if ( ! $nurses) {
-            return response()->json(['errors' => 'Nurses not found'], 400);
+            if ( ! $nurses) {
+                return response()->json(['errors' => 'Nurses not found'], 400);
+            }
+            $holidays = $this->fullCalendarService->getHolidays($nurses)->toArray();
         }
-        $holidays = $this->fullCalendarService->getHolidays($nurses)->toArray();
+
+        if (auth()->user()->isCareCoach()) {
+            $holidays = auth()->user()->holidays;
+        }
 
         return response()->json([
             'success'  => true,
@@ -229,7 +234,7 @@ class WorkScheduleController extends Controller
 
     public function index()
     {
-        $authIsAdmin = json_encode(false);
+        $authIsAdmin = json_encode(auth()->user()->isAdmin());
 
 //        $holidays = $nurse->nurseInfo->upcoming_holiday_dates;
 //        $holidaysThisWeek = $nurse->nurseInfo->holidays_this_week;
@@ -251,12 +256,20 @@ class WorkScheduleController extends Controller
 //        ]));
     }
 
-    public function multipleDelete($window)
+    /**
+     * @param NurseContactWindow $window
+     */
+    public function multipleDelete(NurseContactWindow $window)
     {
         $this->nurseContactWindows
             ->where('nurse_info_id', $window->nurse_info_id)
             ->where('repeat_start', $window->repeat_start)
             ->forceDelete();
+    }
+
+    public function nurseHolidays()
+    {
+//        return $nurse->nurseInfo->upcoming_holiday_dates;
     }
 
     /**
@@ -268,11 +281,22 @@ class WorkScheduleController extends Controller
      * @param $windowRepeatUntil
      * @param bool                                       $updateCollisions
      * @param \Illuminate\Contracts\Validation\Validator $validator
+     * @param mixed                                      $workScheduleData
      *
      * @return JsonResponse
      */
-    public function saveRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency, $windowRepeatUntil, bool $updateCollisions, \Illuminate\Contracts\Validation\Validator $validator): JsonResponse
-    {
+    public function saveRecurringEvents(
+        $eventDate,
+        $nurseInfoId,
+        $windowTimeStart,
+        $windowTimeEnd,
+        $repeatFrequency,
+        $windowRepeatUntil,
+        bool $updateCollisions,
+        \Illuminate\Contracts\Validation\Validator $validator,
+        $workScheduleData
+    ): JsonResponse {
+//        @todo: Im Passing 7 parameters here. Have a look again
         $recurringEventsToSave    = $this->fullCalendarService->createRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency, $windowRepeatUntil);
         $confirmationNeededEvents = $this->fullCalendarService->getEventsToAskConfirmation($recurringEventsToSave);
 
@@ -290,6 +314,7 @@ class WorkScheduleController extends Controller
         }
 
         CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, NurseContactWindow::class, $updateCollisions)->onQueue('low');
+        $this->updateWorkHours($nurseInfoId, $workScheduleData);
 
         return response()->json([
             'success' => true,
@@ -380,17 +405,17 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                    return Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_end
-                    )->diffInHours(Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_start
-                    ));
-                }) + Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_end']
+                return Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_end
                 )->diffInHours(Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_start
+                ));
+            }) + Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_end']
+            )->diffInHours(Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_start']
             ));
@@ -433,7 +458,7 @@ class WorkScheduleController extends Controller
             $user = auth()->user();
             if ('does_not_repeat' !== $repeatFrequency) {
                 //@todo: lots of parameters. revisit this.
-                return $this->saveRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency, $windowRepeatUntil, $updateCollisions, $validator);
+                return $this->saveRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency, $windowRepeatUntil, $updateCollisions, $validator, $workScheduleData);
             }
             $window = $this->nurseContactWindows->create([
                 'nurse_info_id' => $nurseInfoId,
@@ -457,7 +482,7 @@ class WorkScheduleController extends Controller
             $user = auth()->user();
             if ('does_not_repeat' !== $repeatFrequency) {
                 //@todo: lots of parameters. revisit this.
-                return $this->saveRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency, $windowRepeatUntil, $updateCollisions, $validator);
+                return $this->saveRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $repeatFrequency, $windowRepeatUntil, $updateCollisions, $validator, $workScheduleData);
             }
             $window = $user->nurseInfo->windows()->create([
                 //                'date'              => Carbon::now()->format('Y-m-d'),
@@ -470,12 +495,7 @@ class WorkScheduleController extends Controller
             ]);
         }
 
-        $workHours = $this->workHours->updateOrCreate([
-            'workhourable_type' => Nurse::class,
-            'workhourable_id'   => $nurseInfoId,
-        ], [
-            strtolower(clhDayOfWeekToDayName($workScheduleData['day_of_week'])) => $workScheduleData['work_hours'],
-        ]);
+        $workHours = $this->updateWorkHours($nurseInfoId, $workScheduleData);
 
         if (request()->expectsJson()) {
             return response()->json([
@@ -485,8 +505,6 @@ class WorkScheduleController extends Controller
                 'workHours'     => $workHours,
             ], 200);
         }
-
-//        return redirect()->back()->with(['editedNurseId' => $nurseInfoId]);
     }
 
     public function storeHoliday(Request $request)
@@ -528,6 +546,22 @@ class WorkScheduleController extends Controller
         $workHours->save();
 
         return response()->json();
+    }
+
+    /**
+     * @param $nurseInfoId
+     * @param array $workScheduleData
+     *
+     * @return \Illuminate\Database\Eloquent\Model|WorkHours
+     */
+    public function updateWorkHours($nurseInfoId, array $workScheduleData)
+    {
+        return $this->workHours->updateOrCreate([
+            'workhourable_type' => Nurse::class,
+            'workhourable_id'   => $nurseInfoId,
+        ], [
+            strtolower(clhDayOfWeekToDayName($workScheduleData['day_of_week'])) => $workScheduleData['work_hours'],
+        ]);
     }
 
     protected function canAddNewWindow(Carbon $date)

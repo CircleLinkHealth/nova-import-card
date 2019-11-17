@@ -49,7 +49,7 @@ class CreateCalendarRecurringEventsJob implements ShouldQueue
         foreach ($this->recurringEventsToSave as $event) {
             $updateOrInsert = empty($this->updateOriginalWindow) ? false : $this->updateOriginalWindow;
             if ($updateOrInsert) {
-                $this->updateOriginalWindowAndInsertNew($event);
+                $this->updateOrCreateWindow($event);
             } else {
                 $this->window::create($event);
             }
@@ -59,7 +59,7 @@ class CreateCalendarRecurringEventsJob implements ShouldQueue
     /**
      * @param $event
      */
-    public function updateOriginalWindowAndInsertNew($event)
+    public function updateOrCreateWindow($event)
     {
         $this->window::updateOrCreate(
             [

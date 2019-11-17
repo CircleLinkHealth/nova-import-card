@@ -79,12 +79,6 @@ class NurseCalendarService
             }
         }
 
-        if ('monthly' === $repeatFrequency) {
-            for ($i = 0; $i < $diffRange; ++$i) {
-                $defaultRecurringDates[] = Carbon::parse($eventDate)->copy()->addMonth($i)->toDateString();
-            }
-        }
-
         if ('daily' === $repeatFrequency) {
             for ($i = 0; $i < $diffRange; ++$i) { //@todo:should exclude weekedns option
                 $defaultRecurringDates[] = Carbon::parse($eventDate)->copy()->addDay($i)->toDateString();
@@ -130,14 +124,29 @@ class NurseCalendarService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function createWindowData($defaultRecurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $defaultRepeatFreq, $repeatEventByDefaultUntil)
-    {
+    public function createWindowData(
+        $defaultRecurringDates,
+        $nurseInfoId,
+        $windowTimeStart,
+        $windowTimeEnd,
+        $eventDate,
+        $validatedDefault,
+        $defaultRepeatFreq,
+        $repeatEventByDefaultUntil
+    ) {
         return collect($defaultRecurringDates)
-            ->map(function ($date) use ($defaultRecurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $defaultRepeatFreq, $repeatEventByDefaultUntil) {
+            ->map(function ($date) use ($defaultRecurringDates,
+                $nurseInfoId,
+                $windowTimeStart,
+                $windowTimeEnd,
+                $eventDate,
+                $validatedDefault,
+                $defaultRepeatFreq,
+                $repeatEventByDefaultUntil) {
                 return [
                     'nurse_info_id'     => $nurseInfoId,
                     'date'              => $date,
-                    'day_of_week'       => Carbon::parse($eventDate)->dayOfWeek,
+                    'day_of_week'       => Carbon::parse($date)->dayOfWeek,
                     'window_time_start' => $windowTimeStart,
                     'window_time_end'   => $windowTimeEnd,
                     'validated'         => $validatedDefault,
@@ -263,9 +272,11 @@ class NurseCalendarService
      */
     public function getWeeksOrDaysToRepeat($eventDate, $repeatUntil, $repeatFrequency)
     {
+        $dailyRepeatLimit = Carbon::parse($eventDate)->copy()->addDays(7)->toDateString();
+
         return 'daily' !== $repeatFrequency
             ? Carbon::parse($eventDate)->diffInWeeks($repeatUntil)
-            : Carbon::parse($eventDate)->diffInDays($repeatUntil);
+            : Carbon::parse($eventDate)->diffInDays($dailyRepeatLimit);
     }
 
     /**

@@ -1,14 +1,16 @@
 <template>
     <div>
         <div class="calendar-menu">
-            <div class="show-holidays">
+            <div v-if="this.authIsAdmin"
+                 class="show-holidays">
                 <input id="holidaysCheckbox"
                        type="checkbox"
                        class="holidays-button"
                        v-model="showHolidays">
                 Holidays
             </div>
-            <div class="show-work">
+            <div v-if="this.authIsAdmin"
+                 class="show-work">
                 <input id="workCheckbox"
                        type="checkbox"
                        class="work-button"
@@ -107,14 +109,17 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="repeat-until">
-                                    <input type="date" name="until"
-                                           v-model="repeatUntil">
+                            <div class="choose-event-date">
+                                <div v-if="addNewEventMainClicked">
+                                    <h5>Date:</h5>
+                                    <input type="date" name="event_date"
+                                           v-model="selectedDate">
                                 </div>
                             </div>
 
-                            <div v-if="!clickedToViewEvent" style="margin-top: 20%;">
+                            <div v-if="!clickedToViewEvent" style="margin-top: 8%;">
                                 <div class="repeat-day-frequency">
                                     <vue-select :options="frequency"
                                                 v-model="eventFrequency"
@@ -122,12 +127,16 @@
                                     </vue-select>
                                 </div>
 
-                                <div v-if="addNewEventMainClicked">
-                                    <div class="choose-event-date">
-                                        <input type="date" name="event_date"
-                                               v-model="selectedDate">
-                                    </div>
+                                <div class="repeat-until">
+                                    <h5>Repeat Until</h5>
+                                    <input type="date"
+                                           :class="{disable: !repeatFrequencyHasSelected}"
+                                           :disabled="!repeatFrequencyHasSelected"
+                                           name="until"
+                                           v-model="repeatUntil">
                                 </div>
+
+
                             </div>
 
                             <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'holiday'"
@@ -219,7 +228,7 @@
             return {
                 // calendarData:[],
                 dataForDropdown: [],
-                today: '',
+                today: '', //pushed from created()
                 startOfMonth: [],
                 endOfMonth: [],
                 endOfYear: [],
@@ -316,10 +325,6 @@
                     {
                         label: 'Repeat Weekly',
                         value: 'weekly'
-                    },
-                    {
-                        label: 'Repeat Monthly on same date',
-                        value: 'monthly'
                     },
                 ],
 
@@ -591,10 +596,6 @@
                         frequency.push(RRule.WEEKLY);
                         until.push(new Date(repeatUntil))
                     }
-                    if (repeatFreq === 'monthly') {
-                        frequency.push(RRule.MONTHLY);
-                        until.push(new Date(repeatUntil))
-                    }
                     if (repeatFreq === 'daily') {
                         frequency.push(RRule.DAILY);
                         until.push(new Date(repeatUntil))
@@ -725,11 +726,19 @@
 
 
             handleEventCLick(arg) {
+                const today = Date.parse(this.today);
+                const clickedDate = Date.parse(arg.data.date);
+                // Dont allow delete of a past event
+                if (clickedDate <= today) {
+                    return;
+                }
                 this.loader = true;
                 this.clickedToViewEvent = true;
                 this.eventToViewData.push(arg.data);
                 this.workEventDate = '';
                 this.workEventDate = this.eventToViewData[0].date;
+
+
 
                 if (arg.repeat_frequency !== 'does_not_repeat') {
                     this.isRecurringEvent = true;
@@ -762,10 +771,15 @@
                 this.addNewEventMainClicked = false;
                 this.eventFrequency = [];
                 this.isRecurringEvent = false;
+                this.workEventDate = '';
             },
         }),
 //@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
         computed: {
+            repeatFrequencyHasSelected() {
+                return this.eventFrequency !== null && this.eventFrequency.length !== 0;
+            },
+
             modalTitle() {
                 return this.clickedToViewEvent ? 'View / Delete Event' : 'Add new work window';
             },
@@ -815,7 +829,7 @@
 
         created() {
             this.loader = true;
-            // Work Events
+            // All Work Events
             axios.get('care-center/work-schedule/get-calendar-data')
                 .then((response => {
                     const calendarData = response.data.calendarData;
@@ -828,13 +842,12 @@
                 this.errors = error;
                 console.log(this.errors);
             });
-            //    Holiday Events
-
+            //    All Holiday Events
             axios.get('admin/nurses/holidays')
                 .then((response => {
                         //loader add
                         this.showWorkHours = false;
-                        this.holidays.push(...response.data.holidays)
+                        this.holidays.push(...response.data.holidays);
                         this.loader = false;
                     }
                 )).catch((error) => {
@@ -852,6 +865,10 @@
 </script>
 
 <style>
+    .add-event-main {
+        margin-bottom: 30px;
+    }
+
     .disable {
         background-color: #f4f6f6;
         color: #d5dbdb;
@@ -929,7 +946,7 @@
     }
 
     .choose-event-date {
-        margin-top: 4%;
+        margin-top: 19%;
     }
 
     .modal-inputs {
