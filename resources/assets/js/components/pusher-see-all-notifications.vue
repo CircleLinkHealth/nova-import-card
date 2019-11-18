@@ -77,6 +77,7 @@
 
     a.list-group-item:hover {
         background: #ecf8ff;
+        cursor: pointer;
     }
 
     .greyOut {
