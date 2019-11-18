@@ -41,8 +41,15 @@ class CreateOrReplaceCallsViewTable extends Command
         $startOfMonthQuery = safeStartOfMonthQuery();
 
         $viewName = 'calls_view';
-        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
-        \DB::statement("
+        $dropped  = \DB::statement("DROP VIEW IF EXISTS ${viewName}");
+
+        if ($dropped) {
+            $this->line("$viewName DROPPED.");
+        } else {
+            $this->error("$viewName NOT DROPPED.");
+        }
+
+        $created = \DB::statement("
         CREATE VIEW ${viewName}
         AS
         SELECT
@@ -106,5 +113,11 @@ class CreateOrReplaceCallsViewTable extends Command
         // calls table is now an actions table.
         // we have tasks that may be due in the past
         // assuming that re-scheduler service is dropping past calls, we will only have type `task` that are in the past
+
+        if ($created) {
+            $this->line("$viewName CREATED.");
+        } else {
+            $this->error("$viewName NOT CREATED.");
+        }
     }
 }

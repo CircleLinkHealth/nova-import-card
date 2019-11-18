@@ -17,6 +17,7 @@ trait CreatesTestSuiteDB
 
     private function createDatabase()
     {
+        $migrateInstallCommand  = $this->runCommand(['php', 'artisan', '-vvv', 'mysql:createdb', 'cpm_tests', '--env=testing']);
         $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh', '--env=testing']);
         $testSuiteSeederCommand = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed', '--class=TestSuiteSeeder', '--env=testing']);
     }
