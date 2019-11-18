@@ -98,6 +98,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
 
         $reportRows->push(["Ops Report from: {$this->date->copy()->subDay()->setTimeFromTimeString('23:30')->toDateTimeString()} to: {$this->date->toDateTimeString()}"]);
         $reportRows->push(["HoursBehind: {$hoursBehind}"]);
+
         //empty row
         $reportRows->push(['']);
 
