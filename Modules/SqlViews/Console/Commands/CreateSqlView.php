@@ -161,6 +161,6 @@ class CreateSqlView extends Command
 
     private function stubPath()
     {
-        return database_path('stubs/sqlview.stub');
+        return __DIR__.'/../../stubs/sqlview.stub';
     }
 }
