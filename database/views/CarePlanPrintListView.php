@@ -4,25 +4,20 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\SqlViews\Contracts\SqlViewInterface;
+use CircleLinkHealth\SqlViews\BaseSqlView;
 
-class CarePlanPrintListView implements SqlViewInterface
+class CarePlanPrintListView extends BaseSqlView
 {
     /**
-     * Drop and create Sql Views.
-     *
-     * @return mixed
+     * Create the sql view.
      */
-    public static function dropAndCreate()
+    public function createSqlView(): bool
     {
         $startOfMonthQuery = safeStartOfMonthQuery();
 
-        $viewName = 'careplan_print_list_view';
-        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
-        \DB::statement("
-        CREATE VIEW
-${viewName}
-AS
+        return \DB::statement("
+        CREATE VIEW {$this->getViewName()}
+        AS
 SELECT
 c.id as care_plan_id,
 c.status as care_plan_status,
@@ -58,6 +53,14 @@ LEFT JOIN (select ct.user_id, ct.member_user_id, ct.type, CONCAT_WS(' ', u.first
 LEFT JOIN (select pms.id, pms.patient_id, pms.month_year, pms.ccm_time as patient_ccm_time from patient_monthly_summaries pms where pms.month_year={$startOfMonthQuery}) as pms on pms.patient_id = u1.patient_id
 
 WHERE pi.patient_ccm_status = 'enrolled'
-        ");
+      ");
+    }
+
+    /**
+     * Get the name of the sql view.
+     */
+    public function getViewName(): string
+    {
+        return 'careplan_print_list_view';
     }
 }

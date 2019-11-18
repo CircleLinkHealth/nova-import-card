@@ -4,21 +4,17 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\SqlViews\Contracts\SqlViewInterface;
+use CircleLinkHealth\SqlViews\BaseSqlView;
 
-class EnrolleesView implements SqlViewInterface
+class EnrolleesView extends BaseSqlView
 {
     /**
-     * Drop and create Sql Views.
-     *
-     * @return mixed
+     * Create the sql view.
      */
-    public static function dropAndCreate()
+    public function createSqlView(): bool
     {
-        $viewName = 'enrollees_view';
-        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
-        \DB::statement("
-        CREATE VIEW ${viewName}
+        return \DB::statement("
+        CREATE VIEW {$this->getViewName()}
         AS
         SELECT e.*,
         u.display_name AS provider_name,
@@ -44,5 +40,13 @@ AND NOT (LOWER(e.primary_insurance) IN (SELECT name FROM enrollee_custom_filters
 e.secondary_insurance IS NULL AND
 e.tertiary_insurance IS NULL);
         ");
+    }
+
+    /**
+     * Get the name of the sql view.
+     */
+    public function getViewName(): string
+    {
+        return 'enrollees_view';
     }
 }

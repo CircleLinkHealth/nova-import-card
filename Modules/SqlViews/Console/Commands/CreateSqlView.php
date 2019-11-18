@@ -125,7 +125,7 @@ class CreateSqlView extends Command
      */
     protected function populateStub($name, $stub)
     {
-        return str_replace('DummyClass', $this->getClassName($name), $stub);
+        return str_replace('dummy_view_name', $this->getViewName($name), str_replace('DummyClass', $this->getClassName($name), $stub));
     }
 
     /**
@@ -157,6 +157,11 @@ class CreateSqlView extends Command
     private function getPath(string $name)
     {
         return $this->getViewsDir()."/$name.php";
+    }
+
+    private function getViewName(string $name)
+    {
+        return Str::snake($name);
     }
 
     private function stubPath()

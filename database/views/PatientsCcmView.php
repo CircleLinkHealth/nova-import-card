@@ -4,21 +4,17 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\SqlViews\Contracts\SqlViewInterface;
+use CircleLinkHealth\SqlViews\BaseSqlView;
 
-class PatientsCcmView implements SqlViewInterface
+class PatientsCcmView extends BaseSqlView
 {
     /**
-     * Drop and create Sql Views.
-     *
-     * @return mixed
+     * Create the sql view.
      */
-    public static function dropAndCreate()
+    public function createSqlView(): bool
     {
-        $viewName = 'patients_ccm_view';
-        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
-        \DB::statement("
-        CREATE VIEW ${viewName}
+        return \DB::statement("
+        CREATE VIEW {$this->getViewName()}
         AS
         SELECT DISTINCT u.id
         FROM users u
@@ -26,6 +22,14 @@ class PatientsCcmView implements SqlViewInterface
         JOIN cpm_problems cpm on ccd.cpm_problem_id = cpm.id
         WHERE u.deleted_at is null and ccd.deleted_at is null and ccd.is_monitored = 1 and cpm.is_behavioral = 0
         ORDER BY u.id;
-		");
+      ");
+    }
+
+    /**
+     * Get the name of the sql view.
+     */
+    public function getViewName(): string
+    {
+        return 'patients_ccm_view';
     }
 }

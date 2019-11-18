@@ -4,21 +4,17 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\SqlViews\Contracts\SqlViewInterface;
+use CircleLinkHealth\SqlViews\BaseSqlView;
 
-class PatientsBhiChargeableView implements SqlViewInterface
+class PatientsBhiChargeableView extends BaseSqlView
 {
     /**
-     * Drop and create Sql Views.
-     *
-     * @return mixed
+     * Create the sql view.
      */
-    public static function dropAndCreate()
+    public function createSqlView(): bool
     {
-        $viewName = 'patients_bhi_chargeable_view';
-        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
-        \DB::statement("
-        CREATE VIEW ${viewName}
+        return \DB::statement("
+        CREATE VIEW {$this->getViewName()}
         AS
         SELECT
             u.id
@@ -46,6 +42,14 @@ class PatientsBhiChargeableView implements SqlViewInterface
 		        where c.chargeable_type = 'App\\\\Practice' and code = 'CPT 99484' and u.program_id = p.id and p.active = 1
             )
         ORDER BY u.id
-		");
+      ");
+    }
+
+    /**
+     * Get the name of the sql view.
+     */
+    public function getViewName(): string
+    {
+        return 'patients_bhi_chargeable_view';
     }
 }

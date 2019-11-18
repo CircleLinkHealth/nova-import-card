@@ -57,7 +57,7 @@ class MigrateSqlViews extends Command
         $this->getViewFiles(scandir($this->getViewsDir()))->each(function ($className) {
             if (class_implements($className, SqlViewInterface::class)) {
                 $this->warn("Running $className");
-                $className::dropAndCreate();
+                $className::run();
                 $this->line("Ran $className");
             }
         });

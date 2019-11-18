@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\SqlViews\Contracts\SqlViewInterface;
+use CircleLinkHealth\SqlViews\BaseSqlView;
 
 /**
  * Created by PhpStorm.
@@ -12,18 +12,19 @@ use CircleLinkHealth\SqlViews\Contracts\SqlViewInterface;
  * Date: 11/18/19
  * Time: 4:02 PM.
  */
-class CallsView implements SqlViewInterface
+class CallsView extends BaseSqlView
 {
-    public static function dropAndCreate()
+    /**
+     * Create the sql view.
+     */
+    public function createSqlView(): bool
     {
         $startOfMonthQuery = 'mysql' === config('database.connections')[config('database.default')]['driver']
             ? "DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)"
             : "date('now','start of month')"; //sqlite
 
-        $viewName = 'calls_view';
-        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
-        \DB::statement("
-        CREATE VIEW ${viewName}
+        return \DB::statement("
+        CREATE VIEW {$this->getViewName()}
         AS
         SELECT
             c.id,
@@ -91,5 +92,13 @@ class CallsView implements SqlViewInterface
         // calls table is now an actions table.
         // we have tasks that may be due in the past
         // assuming that re-scheduler service is dropping past calls, we will only have type `task` that are in the past
+    }
+
+    /**
+     * Get the name of the sql view.
+     */
+    public function getViewName(): string
+    {
+        return 'calls_view';
     }
 }
