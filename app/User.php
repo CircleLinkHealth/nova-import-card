@@ -159,6 +159,7 @@ namespace App;
  * @property int|null                                                                                                        $tokens_count
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                                                      $ucp
  * @property int|null                                                                                                        $ucp_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User exceptType($type)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\App\Filters\QueryFilters $filters)
@@ -208,7 +209,11 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereZip($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withCareTeamOfType($type)
  * @mixin \Eloquent
+ *
  * @property mixed $full_name_with_id
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User notOfPracticeRequiringSpecialBhiConsent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofPracticeRequiringSpecialBhiConsent()
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
 {
