@@ -25,8 +25,12 @@ class AddAsapFieldToCallsViewsTable extends Migration
             : "date('now','start of month')"; //sqlite
 
         $viewName = 'calls_view';
-        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
-        \DB::statement("
+        $dropped  = \DB::statement("DROP VIEW IF EXISTS ${viewName}");
+
+        if ( ! $dropped) {
+            throw new \Exception("VIEW $viewName not dropped");
+        }
+        $created = \DB::statement("
         CREATE VIEW ${viewName}
         AS
         SELECT
@@ -85,6 +89,9 @@ class AddAsapFieldToCallsViewsTable extends Migration
             c.scheduled_date is not null
       ");
 
+        if ( ! $created) {
+            throw new \Exception("VIEW $viewName not created");
+        }
         // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()
         // because we store scheduled_date in New York time (EST), but we the timezone in database can be anything (UTC or local)
 
