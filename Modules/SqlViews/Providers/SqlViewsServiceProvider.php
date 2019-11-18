@@ -17,7 +17,7 @@ class SqlViewsServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = false;
+    protected $defer = true;
 
     /**
      * Boot the application events.
