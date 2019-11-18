@@ -11,11 +11,12 @@ use App\Notifications\Channels\DirectMailChannel;
 use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\View;
 
-class CarePlanApprovalReminder extends Notification
+class CarePlanApprovalReminder extends Notification implements ShouldQueue
 {
     use Queueable;
 

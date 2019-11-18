@@ -6,19 +6,48 @@
 
 namespace App\Services;
 
-use App\Repositories\CallRepository;
+use App\CallView;
 
 class CallService
 {
-    private $callRepo;
-
-    public function __construct(CallRepository $callRepo)
+    /**
+     * @param $dropdownStatus
+     * @param $filterPriority
+     * @param mixed $nurseId
+     *
+     * @return Builder[]|Collection
+     */
+    public function filterCalls($dropdownStatus, $filterPriority, string $today, $nurseId)
     {
-        $this->callRepo = $callRepo;
-    }
+        $calls = CallView::where('nurse_id', '=', $nurseId);
 
-    public function repo()
-    {
-        return $this->callRepo;
+        if ('completed' === $dropdownStatus && 'all' === $filterPriority) {
+            $calls->whereIn('status', ['reached', 'done']);
+        }
+
+        if ('scheduled' === $dropdownStatus && 'all' === $filterPriority) {
+            $calls->where('status', '=', 'scheduled');
+        }
+
+        if ('all' !== $filterPriority) {
+            // Case 1. Is scheduled but NOT asap with scheduled date <= today
+            // Case 2. Is ASAP(asap is always status 'scheduled')
+            $calls->where(function ($query) use ($today) {
+                $query->where(
+                    [
+                        ['status', '=', 'scheduled'],
+                        ['scheduled_date', '<=', $today],
+                    ]
+                )->orWhere(
+                    [
+                        ['asap', '=', true],
+                    ]
+                );
+            });
+        }
+
+        $calls->orderByRaw('FIELD(type, "Call Back") desc, scheduled_date desc, call_time_start asc, call_time_end asc');
+
+        return $calls->get();
     }
 }
