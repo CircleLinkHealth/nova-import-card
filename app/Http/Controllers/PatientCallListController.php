@@ -27,12 +27,11 @@ class PatientCallListController extends Controller
     /**
      * @param $dropdownStatus
      * @param $filterPriority
-     * @param Builder $calls
-     * @param string  $today
+     * @param mixed $nurseId
      *
      * @return Builder[]|Collection
      */
-    public function filterCalls($dropdownStatus, $filterPriority, Builder $calls, string $today)
+    public function filterCalls($dropdownStatus, $filterPriority, Builder $calls, string $today, $nurseId)
     {
         if ('completed' === $dropdownStatus && 'all' === $filterPriority) {
             $calls->whereIn('status', ['reached', 'done']);
@@ -43,11 +42,15 @@ class PatientCallListController extends Controller
         }
 
         if ('all' !== $filterPriority) {
-            $calls->where('status', '=', 'scheduled')
-                ->orWhere(function ($call) {
-                    $call->where('asap', '=', true)
-                        ->where('status', '=', 'scheduled');
-                })->where('scheduled_date', '=', $today);
+            // Case 1. Is scheduled but NOT asap with scheduled date <= today
+            // Case 2. Is ASAP(asap is always status 'scheduled')
+            $calls->where([
+                ['status', '=', 'scheduled'],
+                ['scheduled_date', '<=', $today],
+            ])->orWhere(function ($call) use ($nurseId) {
+                $call->where('asap', true)
+                    ->where('nurse_id', $nurseId);
+            });
         }
 
         $calls->orderByRaw('FIELD(type, "Call Back") desc, scheduled_date desc, call_time_start asc, call_time_end asc');
@@ -81,7 +84,7 @@ class PatientCallListController extends Controller
             ? ['disabled' => 'disable', 'class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']
             : ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;'];
 
-        $calls = $this->filterCalls($dropdownStatus, $filterPriority, $calls, $today);
+        $calls = $this->filterCalls($dropdownStatus, $filterPriority, $calls, $today, $nurseId);
 
         return view('patientCallList.index', compact([
             'draftNotes',
