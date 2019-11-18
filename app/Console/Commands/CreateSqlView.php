@@ -151,7 +151,7 @@ class CreateSqlView extends Command
             PATHINFO_FILENAME
         );
 
-        $this->line("<info>Created MySql View:</info> {$file}");
+        $this->line("<info>Created MySql View:</info> {$this->getPath($file)}");
     }
 
     private function getPath(string $name)
