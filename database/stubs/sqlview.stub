@@ -1,0 +1,19 @@
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+use App\Contracts\SqlViewInterface;
+
+class DummyClass implements SqlViewInterface
+{
+    /**
+     * Drop and create Sql Views.
+     *
+     * @return mixed
+     */
+    public static function dropAndCreate()
+    {
+    }
+}
