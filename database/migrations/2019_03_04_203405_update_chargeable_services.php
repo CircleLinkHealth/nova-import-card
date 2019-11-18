@@ -20,10 +20,8 @@ class UpdateChargeableServices extends Migration
      */
     public function up()
     {
-        if ( ! isUnitTestingEnv()) {
             Artisan::call('db:seed', [
                 '--class' => 'ChargeableServiceSeeder',
             ]);
-        }
     }
 }

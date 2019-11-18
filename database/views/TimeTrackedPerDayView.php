@@ -4,31 +4,17 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use Illuminate\Database\Migrations\Migration;
+use CircleLinkHealth\SqlViews\BaseSqlView;
 
-class TimeTrackedPerDayView extends Migration
+class TimeTrackedPerDayView extends BaseSqlView
 {
-    const VIEW_NAME = 'time_tracked_per_day_view';
-
     /**
-     * Reverse the migrations.
+     * Create the sql view.
      */
-    public function down()
+    public function createSqlView(): bool
     {
-        $viewName = self::VIEW_NAME;
-        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
-    }
-
-    /**
-     * Run the migrations.
-     */
-    public function up()
-    {
-        $viewName = self::VIEW_NAME;
-
-        \DB::statement("DROP VIEW IF EXISTS ${viewName}");
-        $ran = \DB::statement("
-        CREATE VIEW ${viewName}
+        return \DB::statement("
+        CREATE VIEW {$this->getViewName()}
         AS
         
         SELECT
@@ -63,12 +49,16 @@ class TimeTrackedPerDayView extends Migration
             GROUP BY user_id, `date`
 
 
-          ) activities          
+          ) activities
         GROUP BY user_id, `date`, is_billable;
-        ");
+      ");
+    }
 
-        if ( ! $ran) {
-            throw new \Exception('Could not create mysql view');
-        }
+    /**
+     * Get the name of the sql view.
+     */
+    public function getViewName(): string
+    {
+        return 'time_tracked_per_day_view';
     }
 }
