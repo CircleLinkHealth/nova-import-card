@@ -19,6 +19,12 @@ use Illuminate\Support\Facades\View;
 class CarePlanApprovalReminder extends Notification implements ShouldQueue
 {
     use Queueable;
+    /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 3;
 
     /**
      * Create a new notification instance.
