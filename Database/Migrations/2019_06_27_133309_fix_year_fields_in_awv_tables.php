@@ -13,7 +13,6 @@ class FixYearFieldsInAwvTables extends Migration
      */
     public function up()
     {
-        if (isUnitTestingEnv()) return;
         Schema::table('survey_instances', function (Blueprint $table) {
             if (Schema::hasColumn('survey_instances', 'name')) {
                 $table->dropColumn('name');
