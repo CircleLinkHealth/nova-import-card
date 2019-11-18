@@ -71,13 +71,13 @@
 
             <mdb-row>
                 <mdb-col md="6">
-                    <mdb-input label="First Name *" v-model="provider.firstName"
+                    <mdb-input label="Provider First Name *" v-model="provider.firstName"
                                :customValidation="validation.firstName.validated"
                                :isValid="validation.firstName.valid"
                                @change="validate('firstName', $event)" invalidFeedback="Please set a first name."/>
                 </mdb-col>
                 <mdb-col md="6">
-                    <mdb-input label="Last Name *" v-model="provider.lastName"
+                    <mdb-input label="Provider Last Name *" v-model="provider.lastName"
                                :customValidation="validation.lastName.validated"
                                :isValid="validation.lastName.valid"
                                @change="validate('lastName', $event)" invalidFeedback="Please set a last name."/>
@@ -85,14 +85,7 @@
             </mdb-row>
 
             <mdb-row>
-                <mdb-col md="6">
-                    <mdb-input label="Phone number *" v-model="provider.phoneNumber"
-                               :customValidation="validation.phoneNumber.validated"
-                               :isValid="validation.phoneNumber.valid"
-                               @change="validate('phoneNumber', $event)"
-                               invalidFeedback="Please set a valid phone number."/>
-                </mdb-col>
-                <mdb-col md="6">
+                <mdb-col>
                     <mdb-select v-model="specialties" placeholder="Select a specialty"
                                 label="Specialty *"
                                 :customValidation="validation.specialty.validated"
@@ -126,6 +119,17 @@
                                :isValid="validation.email.valid"
                                @change="validate('email', $event)"
                                invalidFeedback="Please set a valid email."/>
+                </mdb-col>
+            </mdb-row>
+
+            <mdb-row>
+                <mdb-col>
+                    <mdb-input label="EMR Direct Address" v-model="provider.emrDirect"
+                               type="email"
+                               :customValidation="validation.emrDirect.validated"
+                               :isValid="validation.emrDirect.valid"
+                               @change="validate('emrDirect', $event)"
+                               invalidFeedback="Please set a valid EMR Direct Address."/>
                 </mdb-col>
             </mdb-row>
 
@@ -234,6 +238,11 @@
                     specialty: {
                         valid: false,
                         validated: false
+                    },
+                    emrDirect: {
+                        //optional
+                        valid: true,
+                        validated: false
                     }
                 }
             }
@@ -284,6 +293,7 @@
                         this.validation[key].valid = phoneRe.test(value);
                         break;
                     case "email":
+                    case "emrDirect":
                         const re = /\S+@\S+\.\S+/;
                         this.validation[key].valid = re.test(value);
                         break;
@@ -300,10 +310,10 @@
                     firstName: null,
                     lastName: null,
                     suffix: null,
-                    phoneNumber: null,
                     primaryPracticeId: null,
                     specialty: null,
                     isClinical: null,
+                    emrDirect: null
                 };
             },
 

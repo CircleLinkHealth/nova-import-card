@@ -37,10 +37,10 @@ class StorePatientRequest extends FormRequest
             'provider.firstName'         => 'nullable|string',
             'provider.lastName'          => 'nullable|string',
             'provider.suffix'            => 'nullable|string',
-            'provider.phoneNumber'       => 'nullable|string',
             'provider.primaryPracticeId' => 'required',
             'provider.specialty'         => 'nullable|string',
             'provider.isClinical'        => 'nullable|boolean',
+            'provider.emrDirect'         => 'nullable|string',
         ];
     }
 }

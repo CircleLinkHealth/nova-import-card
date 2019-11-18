@@ -156,6 +156,10 @@ class PatientController extends Controller
             $phoneNumber->save();
         }
 
+        if (!empty($input['emrDirect'])) {
+            $user->emr_direct_address = $input['emrDirect'];
+        }
+
         //ROLES
         $roles = Role::getIdsFromNames([$roleName]);
         $user->attachRoleForPractice($roles, $primaryPracticeId);
