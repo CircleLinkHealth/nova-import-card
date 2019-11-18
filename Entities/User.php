@@ -2609,7 +2609,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     /**
      *For the moment we will just check if primary practice is not demo.
-     * May implement something else in the future
+     * May implement something else in the future.
      *
      */
     public function scopeIsNotDemo($query)
