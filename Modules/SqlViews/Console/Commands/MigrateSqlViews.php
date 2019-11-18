@@ -4,9 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\Commands;
+namespace CircleLinkHealth\SqlViews\Console\Commands;
 
-use App\Contracts\SqlViewInterface;
+use CircleLinkHealth\SqlViews\Contracts\SqlViewInterface;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;

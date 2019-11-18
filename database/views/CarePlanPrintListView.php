@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Contracts\SqlViewInterface;
+use CircleLinkHealth\SqlViews\Contracts\SqlViewInterface;
 
 class CarePlanPrintListView implements SqlViewInterface
 {
