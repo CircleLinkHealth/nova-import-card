@@ -31,8 +31,10 @@ class PatientCallListController extends Controller
      *
      * @return Builder[]|Collection
      */
-    public function filterCalls($dropdownStatus, $filterPriority, Builder $calls, string $today, $nurseId)
+    public function filterCalls($dropdownStatus, $filterPriority, string $today, $nurseId)
     {
+        $calls = CallView::where('nurse_id', '=', $nurseId);
+
         if ('completed' === $dropdownStatus && 'all' === $filterPriority) {
             $calls->whereIn('status', ['reached', 'done']);
         }
@@ -44,12 +46,17 @@ class PatientCallListController extends Controller
         if ('all' !== $filterPriority) {
             // Case 1. Is scheduled but NOT asap with scheduled date <= today
             // Case 2. Is ASAP(asap is always status 'scheduled')
-            $calls->where([
-                ['status', '=', 'scheduled'],
-                ['scheduled_date', '<=', $today],
-            ])->orWhere(function ($call) use ($nurseId) {
-                $call->where('asap', true)
-                    ->where('nurse_id', $nurseId);
+            $calls->where(function ($query) use ($today) {
+                $query->where(
+                    [
+                        ['status', '=', 'scheduled'],
+                        ['scheduled_date', '<=', $today],
+                    ]
+                )->orWhere(
+                    [
+                        ['asap', '=', true],
+                    ]
+                );
             });
         }
 
@@ -68,7 +75,6 @@ class PatientCallListController extends Controller
         $nurseId        = \Auth::user()->id;
         $today          = Carbon::parse(now())->copy()->toDateString();
         $draftNotes     = $noteService->getUserDraftNotes($nurseId);
-        $calls          = CallView::where('nurse_id', '=', $nurseId);
         $filterPriority = 'all';
         $dropdownStatus = 'scheduled';
 
@@ -84,7 +90,7 @@ class PatientCallListController extends Controller
             ? ['disabled' => 'disable', 'class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']
             : ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;'];
 
-        $calls = $this->filterCalls($dropdownStatus, $filterPriority, $calls, $today, $nurseId);
+        $calls = $this->filterCalls($dropdownStatus, $filterPriority, $today, $nurseId);
 
         return view('patientCallList.index', compact([
             'draftNotes',
