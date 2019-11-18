@@ -60,12 +60,12 @@ function formatTime($time)
             $(document).ready(function () {
                 const table = $('#cpmEditableTable');
                 table.DataTable({
-                    order: [[3, "desc"]],
+                    order: [[2, "desc"]],
                     processing: true,
                     scrollX: true,
                     fixedHeader: true,
-                    dom: '<"top"fi>rt<"bottom"flp><"clear">',
-                    pageLength: 10,
+                    dom: '<"top"fi>rt<"bottom"lp>',
+                    pageLength: 50,
 
 
                 });
@@ -93,7 +93,6 @@ function formatTime($time)
                 }
 
                 addClickListener();
-
                 //make sure we add the click listener when we change the page
                 table.on('page.dt', function () {
                     setTimeout(addClickListener, 500);
@@ -135,7 +134,7 @@ function formatTime($time)
                                                        class="col-sm-1 control-label"
                                                        style="margin-left: -24%;">Status: </label>
                                                 <div class="col-sm-4">
-                                                    {!! Form::select('filterStatus', array('all' => 'See All', 'scheduled' => 'Scheduled', 'reached' => 'Completed'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']) !!}
+                                                    {!! Form::select('filterStatus', array('all' => 'See All', 'scheduled' => 'Scheduled', 'completed' => 'Completed'), $dropdownStatus, $dropdownStatusClass) !!}
                                                 </div>
                                                 <div class="col-sm-2">
 
@@ -200,24 +199,32 @@ function formatTime($time)
                                         @if (count($calls) > 0)
                                             @foreach($calls as $key => $call)
                                                 <?php
-                                                $curTime = \Carbon\Carbon::now();
-                                                $curDate = $curTime->toDateString();
-                                                $curTime = $curTime->toTimeString();
-                                                $rowBg   = '';
-                                                $boldRow = '';
+                                                $curTime   = \Carbon\Carbon::now();
+                                                $curDate   = $curTime->toDateString();
+                                                $curTime   = $curTime->toTimeString();
+                                                $rowBg     = '';
+                                                $boldRow   = '';
+                                                $textBlack = '';
                                                 if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime) {
                                                     $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                 }
-                                                if ('Call Back' === $call->type || $call->asap) {
-                                                    $boldRow = 'bold-row';
+                                                if ('Call Back' === $call->type || $call->asap && 'reached' !== $call->status && 'done' !== $call->status) {
+                                                    $boldRow   = 'bold-row';
+                                                    $textBlack = 'color:black;';
                                                 }
                                                 ?>
-                                                <tr class="{{$boldRow}}" style="{{ $rowBg }}">
+                                                <tr class="{{$boldRow}}" style="{{ $rowBg . $textBlack }}">
                                                     <td class="vert-align" style="text-align:center">
                                                         @if(empty($call->type) || $call->type === 'call')
                                                             <i class="fas fa-phone"></i>
                                                         @elseif ($call->type === 'Call Back')
-                                                            <i class="fas fa-phone"></i> Back
+                                                            <img style="text-align: center"
+                                                                 src="img/callback_image.svg"
+                                                                 alt="callback image">
+                                                        @elseif ($call->type === 'addendum_response')
+                                                            <img style="text-align: center"
+                                                                 src="img/addendum_image.svg"
+                                                                 alt="callback image">
                                                         @else
                                                             <span>{{$call->type}}</span>
                                                         @endif
@@ -244,8 +251,8 @@ function formatTime($time)
                                                     <td class="{{ \Carbon\Carbon::parse($call->scheduled_date)->lessThan(\Carbon\Carbon::today()) ? 'red' : '' }}">
                                                         {{ presentDate($call->scheduled_date, false) }}
                                                     </td>
-                                                    {{--What do we want to do here? show ASAP forever or??--}}
-                                                    @if($call->asap === 1 && $curDate <= $call->scheduled_date && $call->status !== 'reached')
+
+                                                    @if($call->asap === 1 && $call->status !== 'reached' && $call->status !== 'done')
                                                         <td>{{ 'ASAP' }}</td>
                                                         <td>{{ 'N/A' }}</td>
                                                     @else

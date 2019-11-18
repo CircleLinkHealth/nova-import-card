@@ -32,7 +32,6 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment
     /**
      * Create a new notification instance.
      *
-     * @param Note  $note
      * @param array $channels
      */
     public function __construct(
@@ -46,8 +45,6 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment
 
     /**
      * Returns an Eloquent model.
-     *
-     * @return Model|null
      */
     public function getAttachment(): ?Model
     {

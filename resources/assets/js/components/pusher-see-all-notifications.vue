@@ -14,11 +14,10 @@
 </template>
 
 <script>
-    // import PusherNotifications from './pusher-notifications';
     export default {
         name: "pusher-see-all-notifications",
         components: {
-            // 'pusher-notifications': PusherNotifications,
+
         },
         props: [
             'notifications'
@@ -29,21 +28,18 @@
 
             }
         },
-
+        // @todo: im using the same methods as pusher-notifications.vue
         methods: {
-            showAll(notification) {
-                const getSenderName = notification.data.sender_name;
+            showAll(notification) { //this is the same function as in pusher-notifications.vue, it should be  extracted
                 const getNotificationSubject = notification.data.subject;
-                const getPatientName = notification.data.patient_name;
                 const getNotificationElapsedTime = notification.elapsed_time;
-
-                return `<strong>${getSenderName}</strong> ${getNotificationSubject}<strong> ${getPatientName}</strong>
+                return `${getNotificationSubject}
                         <br><div style="padding-top: 1%">${getNotificationElapsedTime}</div>`;
 
             },
 
             redirectAndMarkAsRead(notification) {
-                axios.post(`/redirect-mark-read/${notification.data.receiver_id}/${notification.data.attachment_id}`)
+                axios.post(`/redirect-mark-read/${notification.id}`)
                     .then(response => {
                             this.redirectTo(notification);
                         }

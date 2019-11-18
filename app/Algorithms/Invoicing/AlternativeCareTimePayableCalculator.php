@@ -27,8 +27,6 @@ class AlternativeCareTimePayableCalculator
 
     /**
      * AlternativeCareTimePayableCalculator constructor.
-     *
-     * @param Nurse $nurse
      */
     public function __construct(Nurse $nurse)
     {
@@ -98,11 +96,6 @@ class AlternativeCareTimePayableCalculator
 
     /**
      * NOTE: We never actually started storing call data.
-     *
-     * @param int    $toAddToAccruedTowardsCCM
-     * @param int    $toAddToAccruedAfterCCM
-     * @param int    $activityId
-     * @param Carbon $monthYear
      *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
      */

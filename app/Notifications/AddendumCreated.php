@@ -6,55 +6,64 @@
 
 namespace App\Notifications;
 
+use App\Contracts\HasAttachment;
+use App\Contracts\LiveNotification;
 use App\Models\Addendum;
 use App\Note;
 use App\Services\NotificationService;
+use App\Traits\ArrayableNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQueue
+class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQueue, LiveNotification, HasAttachment
 {
+    use ArrayableNotification;
     use Queueable;
-
+    /**
+     * @var
+     */
     public $addendum;
+    /**
+     * @var Addendum
+     */
     public $attachment;
     /**
      * @var User
      */
-    protected $sender;
+    private $sender;
 
     /**
      * Create a new notification instance.
-     *
-     * @param Addendum $addendum
-     * @param User     $sender
      */
     public function __construct(Addendum $addendum, User $sender)
     {
-        $this->attachment = $this->addendum = $addendum;
-        $this->sender     = $sender;
+        $this->addendum = $addendum;
+        $this->sender   = $sender;
+    }
+
+    public function attachmentType(): string
+    {
+        return Addendum::class;
+    }
+
+    public function description(): string
+    {
+        return 'Addendum';
     }
 
     /**
-     * @return mixed
+     * Returns an Eloquent model.
      */
-    public function getAttachment()
+    public function getAttachment(): ?Model
     {
-        return $this->attachment;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getNoteId()
-    {
-        return $this->getAttachment()->addendumable_id;
+        return $this->addendum;
     }
 
     /**
@@ -70,46 +79,57 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     /**
      * @return JsonResponse
      */
-    public function getPatientName()
+    public function getPatientName(): string
     {
         $patientId = $this->getPatientId();
 
         return NotificationService::getPatientName($patientId);
     }
 
+    public function getSubject(): string
+    {
+        $senderName  = $this->senderName();
+        $patientName = $this->getPatientName();
+
+        return "<strong>$senderName</strong> responded to a note on $patientName";
+    }
+
+    /**
+     * @return int
+     */
+    public function noteId(): ?int
+    {
+        return $this->getAttachment()->addendumable_id;
+    }
+
     /**
      * @return mixed
      */
-    public function redirectLink()
+    public function redirectLink(): string
     {
-        $note = Note::where('id', $this->getNoteId())->first();
+        $note = Note::where('id', $this->noteId())->first();
 
         return $note->link();
     }
 
+    public function senderId(): int
+    {
+        return $this->sender->id;
+    }
+
+    public function senderName(): string
+    {
+        return $this->sender->display_name;
+    }
+
     /**
      * Get the array representation of the notification.
-     * $notifiable = User who wrote the note.
-     * This function should contain the same data(key => values) in all notifications.
      *
      * @param mixed $notifiable
-     *
-     * @return array
      */
-    public function toArray($notifiable)
+    public function toArray($notifiable): array
     {
-        return [
-            'sender_id'       => $this->sender->id,
-            'receiver_id'     => $notifiable->id,
-            'patient_name'    => $this->getPatientName(),
-            'note_id'         => $this->getNoteId(),
-            'attachment_id'   => $this->getAttachment()->id,
-            'redirect_link'   => $this->redirectLink(),
-            'attachment_type' => Addendum::class,
-            'description'     => 'Addendum',
-            'subject'         => 'has created an addendum for',
-            'sender_name'     => $this->sender->display_name,
-        ];
+        return $this->notificationData($notifiable);
     }
 
     /**
@@ -121,7 +141,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      *
      * @return BroadcastMessage
      */
-    public function toBroadcast($notifiable)
+    public function toBroadcast($notifiable): object
     {
         return new BroadcastMessage([
         ]);
@@ -136,7 +156,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      */
     public function toMail($notifiable)
     {
-        $senderName = $this->sender->display_name;
+        $senderName = $this->senderName();
 
         return (new MailMessage())
             ->line("Dr. $senderName has commented on a note")
