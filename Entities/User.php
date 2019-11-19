@@ -1380,8 +1380,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             $careplanMode = $this->carePlan->mode;
         }
 
-        if ( ! $careplanMode && $this->primaryPractice && $this->primaryPractice->settings) {
-            $careplanMode = $this->primaryPractice->settings->first()->careplan_mode;
+        if ( ! $careplanMode && $this->primaryPractice && $this->primaryPractice->settings->isNotEmpty()) {
+            $careplanMode = $this->primaryPractice->cpmSettings()->careplan_mode;
         }
 
         if ( ! $careplanMode) {
