@@ -6,7 +6,7 @@
 
 namespace App\Composer;
 
-use Illuminate\Support\Facades\Artisan;
+use Symfony\Component\Process\Process;
 
 class Scripts
 {
@@ -20,10 +20,37 @@ class Scripts
             return;
         }
 
-        Artisan::call('migrate', [
-            '--force' => true,
-        ]);
+        $static = new static();
 
-        Artisan::call('deploy:post');
+        $static->runCommand(['php', 'artisan', '-vvv', 'migrate', '--force']);
+        $static->runCommand(['php', 'artisan', '-vvv', 'deploy:post']);
+    }
+
+    private function runCommand(array $command, bool $echoOutput = true)
+    {
+        $process = new Process($command);
+
+        echo PHP_EOL.'Running command:';
+
+        foreach ($command as $c) {
+            echo " $c ";
+        }
+
+        echo PHP_EOL;
+
+        $process->run();
+
+        $output = (string) trim($process->getOutput());
+
+        if (true === $echoOutput) {
+            echo $output;
+        }
+
+        if (0 !== $process->getExitCode()) {
+            echo $process->getErrorOutput();
+            throw new \Exception($process->getExitCodeText().' when executing '.$process->getCommandLine());
+        }
+
+        return $process;
     }
 }
