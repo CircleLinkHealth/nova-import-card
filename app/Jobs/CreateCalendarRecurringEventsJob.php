@@ -6,6 +6,9 @@
 
 namespace App\Jobs;
 
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -26,6 +29,7 @@ class CreateCalendarRecurringEventsJob implements ShouldQueue
     private $recurringEventsToSave;
     private $updateOriginalWindow;
     private $window;
+    private $workHours;
 
     /**
      * Create a new job instance.
@@ -33,12 +37,14 @@ class CreateCalendarRecurringEventsJob implements ShouldQueue
      * @param $recurringEventsToSave
      * @param $window
      * @param $updateOriginalWindow
+     * @param $workHours
      */
-    public function __construct($recurringEventsToSave, $window, $updateOriginalWindow = null)
+    public function __construct($recurringEventsToSave, $window, $updateOriginalWindow = null, $workHours)
     {
         $this->recurringEventsToSave = $recurringEventsToSave;
         $this->window                = $window;
         $this->updateOriginalWindow  = $updateOriginalWindow;
+        $this->workHours             = $workHours;
     }
 
     /**
@@ -53,6 +59,7 @@ class CreateCalendarRecurringEventsJob implements ShouldQueue
             } else {
                 $this->window::create($event);
             }
+            $this->workHoursMultipleUpdateOrCreate($event);
         }
     }
 
@@ -61,13 +68,13 @@ class CreateCalendarRecurringEventsJob implements ShouldQueue
      */
     public function updateOrCreateWindow($event)
     {
+//        why does $this->>window::updateOrCreate() works? $this->windows->updteORCreate() is NOT working.
         $this->window::updateOrCreate(
             [
                 'nurse_info_id' => $event['nurse_info_id'],
                 'date'          => $event['date'],
             ],
             [
-                'date'              => $event['date'],
                 'day_of_week'       => $event['day_of_week'],
                 'window_time_start' => $event['window_time_start'],
                 'window_time_end'   => $event['window_time_end'],
@@ -77,6 +84,27 @@ class CreateCalendarRecurringEventsJob implements ShouldQueue
                 'validated'         => $event['validated'],
                 'created_at'        => $event['created_at'],
                 'updated_at'        => $event['updated_at'],
+            ]
+        );
+    }
+
+    /**
+     * @param $event
+     *
+     * @return
+     */
+    public function workHoursMultipleUpdateOrCreate($event)
+    {
+        $workWeekStart = Carbon::parse($event['date'])->startOfWeek();
+
+        return WorkHours::updateOrCreate(
+            [
+                'workhourable_type' => Nurse::class,
+                'workhourable_id'   => $event['nurse_info_id'],
+                'work_week_start'   => Carbon::parse($workWeekStart)->toDateString(),
+            ],
+            [
+                strtolower(clhDayOfWeekToDayName($event['day_of_week'])) => $this->workHours,
             ]
         );
     }

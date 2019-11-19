@@ -54,11 +54,6 @@ class NurseCalendarService
                 '=',
                 $windowDate,
             ],
-            //            [
-            //                'day_of_week',
-            //                '=',
-            //                $windowDayOfWeek,
-            //            ],
         ])->first();
     }
 
@@ -89,26 +84,21 @@ class NurseCalendarService
     }
 
     /**
-     * @param $eventDate
      * @param $nurseInfoId
-     * @param $windowTimeStart
-     * @param $windowTimeEnd
-     * @param null $frequency
-     * @param null $repeatUntil
+     * @param $workScheduleData
      *
      * @return \Illuminate\Support\Collection
      */
-    public function createRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $frequency = null, $repeatUntil = null)
+    public function createRecurringEvents($nurseInfoId, $workScheduleData)
     {
-        $repeatFrequency   = null === $frequency ? 'weekly' : $frequency;
-        $defaultRepeatDate = Carbon::parse($eventDate)->copy()->addMonths(4)->toDateString();
-        $repeatEventUntil  = null === $repeatUntil ? $defaultRepeatDate : $repeatUntil;
-        $rangeToRepeat     = $this->getWeeksOrDaysToRepeat($eventDate, $repeatEventUntil, $repeatFrequency);
+        $repeatFrequency   = null === $workScheduleData['repeat_freq'] ? 'weekly' : $workScheduleData['repeat_freq'];
+        $defaultRepeatDate = Carbon::parse($workScheduleData['date'])->copy()->addMonths(4)->toDateString();
+        $repeatEventUntil  = null === $workScheduleData['until'] ? $defaultRepeatDate : $workScheduleData['until'];
+        $rangeToRepeat     = $this->getWeeksOrDaysToRepeat($workScheduleData['date'], $repeatEventUntil, $repeatFrequency);
         $validatedDefault  = 'not_checked';
+        $recurringDates    = $this->createRecurringDates($rangeToRepeat, $workScheduleData['date'], $repeatFrequency);
 
-        $recurringDates = $this->createRecurringDates($rangeToRepeat, $eventDate, $repeatFrequency);
-
-        return $this->createWindowData($recurringDates, $nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate, $validatedDefault, $repeatFrequency, $repeatEventUntil);
+        return  $this->createWindowData($recurringDates, $nurseInfoId, $workScheduleData, $validatedDefault, $repeatFrequency, $repeatEventUntil);
     }
 
     /**
@@ -121,42 +111,40 @@ class NurseCalendarService
      * @param mixed $nurseInfoId
      * @param mixed $windowTimeStart
      * @param mixed $windowTimeEnd
+     * @param mixed $workScheduleData
      *
      * @return \Illuminate\Support\Collection
      */
     public function createWindowData(
         $defaultRecurringDates,
         $nurseInfoId,
-        $windowTimeStart,
-        $windowTimeEnd,
-        $eventDate,
+        $workScheduleData,
         $validatedDefault,
         $defaultRepeatFreq,
         $repeatEventByDefaultUntil
     ) {
-        return collect($defaultRecurringDates)
-            ->map(function ($date) use ($defaultRecurringDates,
+        return collect($defaultRecurringDates)->map(function ($date) use (
                 $nurseInfoId,
-                $windowTimeStart,
-                $windowTimeEnd,
-                $eventDate,
+                $workScheduleData,
                 $validatedDefault,
                 $defaultRepeatFreq,
                 $repeatEventByDefaultUntil) {
-                return [
-                    'nurse_info_id'     => $nurseInfoId,
-                    'date'              => $date,
-                    'day_of_week'       => Carbon::parse($date)->dayOfWeek,
-                    'window_time_start' => $windowTimeStart,
-                    'window_time_end'   => $windowTimeEnd,
-                    'validated'         => $validatedDefault,
-                    'repeat_frequency'  => $defaultRepeatFreq,
-                    'repeat_start'      => $eventDate,
-                    'until'             => $repeatEventByDefaultUntil,
-                    'created_at'        => Carbon::parse(now())->toDateTimeString(),
-                    'updated_at'        => Carbon::parse(now())->toDateTimeString(),
-                ];
-            });
+            $newWindowDayOfWeek = Carbon::parse($date)->dayOfWeek;
+
+            return  [
+                'nurse_info_id'     => $nurseInfoId,
+                'date'              => $date,
+                'day_of_week'       => carbonToClhDayOfWeek($newWindowDayOfWeek),
+                'window_time_start' => $workScheduleData['window_time_start'],
+                'window_time_end'   => $workScheduleData['window_time_end'],
+                'validated'         => $validatedDefault,
+                'repeat_frequency'  => $defaultRepeatFreq,
+                'repeat_start'      => Carbon::parse($workScheduleData['date'])->toDateString(),
+                'until'             => $repeatEventByDefaultUntil,
+                'created_at'        => Carbon::parse(now())->toDateTimeString(),
+                'updated_at'        => Carbon::parse(now())->toDateTimeString(),
+            ];
+        });
     }
 
     /**
@@ -272,11 +260,9 @@ class NurseCalendarService
      */
     public function getWeeksOrDaysToRepeat($eventDate, $repeatUntil, $repeatFrequency)
     {
-        $dailyRepeatLimit = Carbon::parse($eventDate)->copy()->addDays(7)->toDateString();
-
         return 'daily' !== $repeatFrequency
             ? Carbon::parse($eventDate)->diffInWeeks($repeatUntil)
-            : Carbon::parse($eventDate)->diffInDays($dailyRepeatLimit);
+            : Carbon::parse($eventDate)->diffInDays($repeatUntil);
     }
 
     /**
@@ -316,12 +302,19 @@ class NurseCalendarService
             ->chunk(10)
             ->flatten()
             ->transform(function ($window) use ($nurse) {
-                $givenDateWeekMap = createWeekMap($window->date); //see comment in helpers.php
+                $currentWeekMap = createWeekMap($window->date);
                 $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
-                $workHoursForDay = WorkHours::where('workhourable_id', $nurse->nurseInfo->id)->pluck($dayInHumanLang)->first();
+                $windowDate = Carbon::parse($window->date)->toDateString();
+                $workWeekStart = Carbon::parse($windowDate)->startOfWeek()->toDateString();
+                $workHoursForDay = WorkHours::where(
+                    [
+                        ['workhourable_id', $nurse->nurseInfo->id],
+                        ['work_week_start', $workWeekStart],
+                    ]
+                )->pluck($dayInHumanLang)->first();
+
                 $windowStartForView = Carbon::parse($window->window_time_start)->format('H:i');
                 $windowEndForView = Carbon::parse($window->window_time_end)->format('H:i');
-                $windowDate = Carbon::parse($window->date)->toDateString();
                 $hoursAbrev = 'h';
                 $color = '#5bc0ded6';
 
@@ -329,20 +322,20 @@ class NurseCalendarService
                     [
                         self::TITLE => "$nurse->display_name ({$workHoursForDay}$hoursAbrev)
                         {$windowStartForView}-{$windowEndForView}",
-                        self::START        => "{$windowDate}T{$window->window_time_start}",
-                        self::END          => "{$windowDate}T{$window->window_time_end}",
-                        'color'            => $color,
-                        'textColor'        => '#fff',
-                        'repeat_frequency' => $window->repeat_frequency,
-                        'repeat_start'     => $window->repeat_start,
-                        'until'            => $window->until,
-                        'allDay'           => true,
-                        'data'             => [
+                        self::START => "{$windowDate}T{$window->window_time_start}",
+                        self::END   => "{$windowDate}T{$window->window_time_end}",
+                        'color'     => $color,
+                        'textColor' => '#fff',
+                        //                        'repeat_frequency' => $window->repeat_frequency,
+                        //                        'repeat_start'     => $window->repeat_start,
+                        //                        'until'            => $window->until,
+                        'allDay' => true,
+                        'data'   => [
                             'nurseId'      => $nurse->nurseInfo->id,
                             'windowId'     => $window->id,
                             'name'         => $nurse->display_name,
                             'day'          => $dayInHumanLang,
-                            'date'         => $givenDateWeekMap[$window->day_of_week],
+                            'date'         => $windowDate,
                             'start'        => $window->window_time_start,
                             'end'          => $window->window_time_end,
                             'workHours'    => $workHoursForDay,

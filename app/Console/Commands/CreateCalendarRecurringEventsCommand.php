@@ -53,22 +53,36 @@ class CreateCalendarRecurringEventsCommand extends Command
         //Should i check now for past events and mark them in different color
         // OR we ll start this functionality (checking if past committed events have activity) from development date and later?
 
-        $today              = Carbon::parse(now())->toDateString();
-        $currentDateWeekMap = createWeekMap($today); //see comment in helpers.php
-        NurseContactWindow::with('nurse.user')
+        $today          = Carbon::parse(now())->toDateString();
+        $currentWeekMap = createWeekMap($today);
+
+        NurseContactWindow::with('nurse.user', 'nurse.workhourables')
             ->whereHas('nurse', function ($q) {
                 $q->where('status', 'active');
                 //@todo: case of nurse having windows - but are inactive during launch - and then becoming active again
-            })
-            ->chunk(200, function ($nurseContactWindows) use ($currentDateWeekMap) {
+            })->chunk(200, function ($nurseContactWindows) use ($currentWeekMap) {
                 collect($nurseContactWindows)
-                    ->map(function ($window) use ($currentDateWeekMap) {
-                        $eventDate = $currentDateWeekMap[$window->day_of_week];
+                    ->map(function ($window) use ($currentWeekMap) {
+//                        If we re showing events from release date and after then use $newEventOriginalDate ELSE use $window->date
+//                        $newEventOriginalDate = projection of oriiginal's event scheduled date to current's week date.
+//                        I suggest using the 'newEventOriginalDate'. we have events with scheduled_date 2017-10-11 and we dont need them repeating till today.
+//                         Also past events submitted work_hours cant be qualified as worked.
+                        $projectionEventDate = $currentWeekMap[$window->day_of_week];
                         $nurseInfoId = $window->nurse->id;
-                        $windowTimeStart = $window->window_time_start;
-                        $windowTimeEnd = $window->window_time_end;
-                        $recurringEventsToSave = $this->service->createRecurringEvents($eventDate, $nurseInfoId, $windowTimeStart, $windowTimeEnd);
-                        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window)->onQueue('low');
+                        $eventDateToDayName = clhDayOfWeekToDayName($window->day_of_week);
+                        $workHours = $window->nurse->workhourables->where('workhourable_id', $nurseInfoId)->pluck(lcfirst($eventDateToDayName))->first();
+
+                        $windowData = [
+                            'repeat_freq'       => $window->repeat_frequency,
+                            'date'              => $projectionEventDate,
+                            'until'             => $window->until,
+                            'window_time_start' => $window->window_time_start,
+                            'window_time_end'   => $window->window_time_end,
+                            'work_hours'        => $workHours,
+                        ];
+
+                        $recurringEventsToSave = $this->service->createRecurringEvents($nurseInfoId, $windowData);
+                        CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours'])->onQueue('low');
                     });
             });
 
