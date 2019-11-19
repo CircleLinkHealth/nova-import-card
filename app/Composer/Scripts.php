@@ -10,7 +10,7 @@ class Scripts
 {
     public function postDeploy()
     {
-        if ( ! isProductionEnv()) {
+        if ( ! in_array(getenv('APP_ENV'), ['local', 'testing'])) {
             return;
         }
         \Artisan::call('migrate', [
