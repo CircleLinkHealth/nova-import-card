@@ -75,7 +75,7 @@ class RequiredPermissionsTableSeeder extends Seeder
             ],
             [
                 'name'         => 'legacy-bhi-consent-decision.create',
-                'display_name' => 'BHI Eligible Patients who consented before '.Patient::DATE_CONSENT_INCLUDES_BHI.' to consent separately for BHI, as it was not listed in CLH Terms and Conditions before that date. Legacy BHI consent is stored as a note with type `'.Patient::BHI_CONSENT_NOTE_TYPE.'``. Legacy BHI rejection is stored as a note with type `'.Patient::BHI_REJECTION_NOTE_TYPE.'``. This permission allows to store a consent or rejection for BHI.',
+                'display_name' => 'Allows to store a consent or rejection for BHI.',
             ],
             [
                 'name'         => 'practice-admin',
