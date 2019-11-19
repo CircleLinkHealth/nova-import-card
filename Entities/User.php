@@ -2907,7 +2907,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $query->whereHas(
             'practices',
             function ($q) use ($practiceId) {
-                $q->whereIn('id', $practiceId);
+                $q->whereIn('practices.id', $practiceId);
             }
         )->orWhere('program_id', $practiceId);
     }
@@ -3808,7 +3808,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             function ($q) use (
                 $programIds
             ) {
-                $q->whereIn('program_id', $programIds);
+                $q->whereIn('practice_role_user.program_id', $programIds);
             }
         );
 
