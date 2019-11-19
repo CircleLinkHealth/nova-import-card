@@ -139,7 +139,7 @@ class CareTeamController extends Controller
                 if ($member->user->practice($patient->primaryPractice->id) && ! in_array(
                     $member->type,
                     [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-                                      )) {
+                )) {
                     $formattedType = $member->user->practiceOrGlobalRole()->display_name.' (Internal)';
                 }
 
@@ -254,8 +254,6 @@ class CareTeamController extends Controller
 
         $patient = User::find($patientId);
 
-        $carePerson = CarePerson::find($request['id']);
-
         $providerUser = User::updateOrCreate([
             'id' => $input['user']['id'],
         ], [
@@ -313,7 +311,7 @@ class CareTeamController extends Controller
         if ($providerUser->practice($patient->primaryPractice->id) && ! in_array(
             $type,
             [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-            )) {
+        )) {
             $type = $providerUser->practiceOrGlobalRole()->display_name.' (Internal)';
         }
 
@@ -396,9 +394,6 @@ class CareTeamController extends Controller
     }
 
     /**
-     * @param string $type
-     * @param User   $patient
-     *
      * @throws \InvalidArgumentException
      *
      * @return \Illuminate\Support\Collection
