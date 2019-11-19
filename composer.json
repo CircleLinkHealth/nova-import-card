@@ -57,10 +57,6 @@
       "url": "https://packagist.org"
     },
     {
-      "type": "git",
-      "url": "git@github.com:SilvertipSoftware/wkhtmltoimage-amd64.git"
-    },
-    {
       "packagist": false
     },
     {
@@ -119,8 +115,6 @@
     "propaganistas/laravel-phone": "^3.0",
     "pusher/pusher-php-server": "^4.0",
     "seld/jsonlint": "^1.7",
-    "silvertipsoftware/wkhtmltopdf-amd64": "0.12.5",
-    "h4cc/wkhtmltoimage-amd64": "dev-master",
     "sparclex/nova-import-card": "^2.0",
     "spatie/laravel-medialibrary": "^7.0.0",
     "spatie/laravel-view-models": "^1.1",

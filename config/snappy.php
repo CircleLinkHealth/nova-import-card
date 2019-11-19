@@ -5,24 +5,18 @@
  */
 
 $localBinPath    = '/usr/local/bin/wkhtmltopdf';
-$composerBinPath = 'vendor/silvertipsoftware/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64';
 
 if (file_exists($localBinPath)) {
     $pdfBinary = $localBinPath;
-} elseif (file_exists($composerBinPath)) {
-    $pdfBinary = $composerBinPath;
 } else {
     throw new \Exception('wkhtmltopdf binary was not found.', 500);
 }
 
 //Img Binary
 $debianImgLib   = '/usr/local/bin/wkhtmltoimage';
-$composerImgLib = base_path('vendor/h4cc/wkhtmltoimage-amd64/bin/wkhtmltoimage-amd64');
 
 if (file_exists($debianImgLib)) {
     $imgBinary = $debianImgLib;
-} elseif (file_exists($composerImgLib)) {
-    $imgBinary = $composerImgLib;
 } else {
     throw new \Exception('wkhtmltoimage binary not found.', 500);
 }
