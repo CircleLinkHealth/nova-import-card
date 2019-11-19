@@ -460,7 +460,6 @@ class PatientCareplanController extends Controller
             compact(
                 [
                     'patient',
-                    'userConfig',
                     'states',
                     'locations',
                     'timezones',
