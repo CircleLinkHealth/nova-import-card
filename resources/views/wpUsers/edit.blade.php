@@ -217,12 +217,13 @@
                                         <button class="btn-primary btn-xs" id="programsCheckAll">Check All</button>
                                         |
                                         <button class="btn-primary btn-xs" id="programsUncheckAll">Uncheck All</button>
+
                                         @foreach( $wpBlogs as $wpBlogId => $domain )
                                             <div class="row" id="program_{{ $wpBlogId }}"
                                                  style="border-bottom:1px solid #000;">
                                                 <div class="col-sm-2">
                                                     <div class="text-right">
-                                                        @if( in_array($wpBlogId, $patient->practices()->pluck('practices.id')->all()) )
+                                                        @if( in_array($wpBlogId, $userPractices) )
                                                             {!! Form::checkbox('programs[]', $wpBlogId, ['checked' => "checked"], ['style' => '', 'class' => 'programs']) !!}
                                                         @else
                                                             {!! Form::checkbox('programs[]', $wpBlogId, [], ['style' => '', 'class' => 'programs']) !!}
