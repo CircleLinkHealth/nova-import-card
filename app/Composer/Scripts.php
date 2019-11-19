@@ -12,11 +12,12 @@ class Scripts
     {
         $env = getenv('APP_ENV');
 
-        if ( ! in_array($env, ['local', 'testing'])) {
-            echo "Not running because env is $env";
+        if (in_array($env, ['local', 'testing'])) {
+            echo "Not running because env is $env. \n\n";
 
             return;
         }
+
         \Artisan::call('migrate', [
             '--force' => true,
         ]);
