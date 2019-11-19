@@ -6,6 +6,8 @@
 
 namespace App\Composer;
 
+use Illuminate\Support\Facades\Artisan;
+
 class Scripts
 {
     public static function postDeploy()
@@ -18,10 +20,10 @@ class Scripts
             return;
         }
 
-        \Artisan::call('migrate', [
+        Artisan::call('migrate', [
             '--force' => true,
         ]);
 
-        \Artisan::call('deploy:post');
+        Artisan::call('deploy:post');
     }
 }
