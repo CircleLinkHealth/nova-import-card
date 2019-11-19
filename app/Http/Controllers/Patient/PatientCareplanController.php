@@ -450,6 +450,7 @@ class PatientCareplanController extends Controller
         $insurancePolicies = $patient->ccdInsurancePolicies()->get();
 
         $contact_days_array = [];
+        $contactWindows     = [];
         if ($patient->patientInfo()->exists()) {
             $contactWindows     = $patient->patientInfo->contactWindows;
             $contact_days_array = $contactWindows->pluck('day_of_week')->toArray();
