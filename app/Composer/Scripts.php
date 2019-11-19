@@ -10,7 +10,11 @@ class Scripts
 {
     public static function postDeploy()
     {
-        if ( ! in_array(getenv('APP_ENV'), ['local', 'testing'])) {
+        $env = getenv('APP_ENV');
+
+        if ( ! in_array($env, ['local', 'testing'])) {
+            echo "Not running because env is $env";
+
             return;
         }
         \Artisan::call('migrate', [
