@@ -268,12 +268,14 @@ class ProviderReportService
             }
 
             $violence = $this->getStringValue($report->screenings['violence']);
-            if (!empty($violence) && $gender === 'Female') {
+
+               if (!empty($violence) && $gender === 'Female') {
                 if ($violence === '10+ years ago/Never/Unsure'
                     && '15' <= $age
                     && $age <= '44') {
                     $screenings['Intimate Partner Violence/Domestic Violence'] = ": Had " . $violence . '.';
                 }
+          
             }
         }
 
