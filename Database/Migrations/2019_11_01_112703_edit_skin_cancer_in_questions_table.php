@@ -13,9 +13,6 @@ class EditSkinCancerInQuestionsTable extends Migration
      */
     public function up()
     {
-        if (isUnitTestingEnv()) {
-            return;
-        }
         $table = 'ppp_task_recommendations';
         $title = 'Screenings';
 
