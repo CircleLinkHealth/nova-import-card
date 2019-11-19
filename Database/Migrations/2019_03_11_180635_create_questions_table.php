@@ -16,10 +16,10 @@ class CreateQuestionsTable extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('survey_id');
-            $table->string('body');
+            $table->text('body');
             $table->boolean('optional');
-            $table->binary('conditions');
-            $table->integer('question_group_id');
+            $table->json('conditions')->nullable();
+            $table->unsignedInteger('question_group_id')->nullable();
             $table->timestamps();
         });
     }

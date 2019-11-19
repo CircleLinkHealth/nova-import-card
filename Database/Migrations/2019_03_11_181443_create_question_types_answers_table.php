@@ -16,8 +16,8 @@ class CreateQuestionTypesAnswersTable extends Migration
         Schema::create('question_types_answers', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('question_type_id');
-            $table->string('value');
-            $table->binary('options');
+            $table->string('value')->nullable();
+            $table->json('options')->nullable();
             $table->timestamps();
 
             $table->foreign('question_type_id')
