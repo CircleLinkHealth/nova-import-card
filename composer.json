@@ -82,7 +82,7 @@
     "appstract/laravel-opcache": "^2.0",
     "barryvdh/laravel-snappy": "0.4.4",
     "circlelinkhealth/core": "1.3",
-    "circlelinkhealth/customer": "1.4.7.3",
+    "circlelinkhealth/customer": "1.4.7.4",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/timetracking": "1.1.2",
@@ -202,7 +202,7 @@
     ],
     "unit-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",
-      "APP_ENV=testing ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3"
+      "APP_ENV=testing ./vendor/phpunit/phpunit/phpunit --testsuite=Unit --testdox"
     ],
     "profile-unit-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",
