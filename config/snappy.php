@@ -4,8 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use h4cc\WKHTMLToPDF\WKHTMLToPDF;
+
 $localBinPath    = '/usr/local/bin/wkhtmltopdf';
-$composerBinPath = base_path('vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64');
+$composerBinPath = WKHTMLToPDF::PATH;
 
 if (file_exists($localBinPath)) {
     $pdfBinary = $localBinPath;

@@ -222,7 +222,7 @@
                                                  style="border-bottom:1px solid #000;">
                                                 <div class="col-sm-2">
                                                     <div class="text-right">
-                                                        @if( in_array($wpBlogId, $patient->practices()->pluck('id')->all()) )
+                                                        @if( in_array($wpBlogId, $patient->practices()->pluck('practices.id')->all()) )
                                                             {!! Form::checkbox('programs[]', $wpBlogId, ['checked' => "checked"], ['style' => '', 'class' => 'programs']) !!}
                                                         @else
                                                             {!! Form::checkbox('programs[]', $wpBlogId, [], ['style' => '', 'class' => 'programs']) !!}
