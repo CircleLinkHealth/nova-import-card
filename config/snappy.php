@@ -4,22 +4,20 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-$localBinPath    = '/usr/local/bin/wkhtmltopdf';
-
+$localBinPath = '/usr/local/bin/wkhtmltopdf';
+$pdfBinary    = null;
 if (file_exists($localBinPath)) {
     $pdfBinary = $localBinPath;
-} else {
-    throw new \Exception('wkhtmltopdf binary was not found.', 500);
 }
+//    throw new \Exception('wkhtmltopdf binary was not found.', 500);
 
 //Img Binary
-$debianImgLib   = '/usr/local/bin/wkhtmltoimage';
-
+$debianImgLib = '/usr/local/bin/wkhtmltoimage';
+$imgBinary    = null;
 if (file_exists($debianImgLib)) {
     $imgBinary = $debianImgLib;
-} else {
-    throw new \Exception('wkhtmltoimage binary not found.', 500);
 }
+//    throw new \Exception('wkhtmltoimage binary not found.', 500);
 
 return [
     'pdf' => [
