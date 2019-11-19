@@ -2712,7 +2712,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             function ($q) use (
                 $viewablePractices
             ) {
-                $q->whereIn('id', $viewablePractices);
+                $q->whereIn('practices.id', $viewablePractices);
             }
         );
     }
