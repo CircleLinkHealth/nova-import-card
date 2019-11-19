@@ -12,7 +12,7 @@ if (file_exists($localBinPath)) {
 } elseif (file_exists($composerBinPath)) {
     $pdfBinary = $composerBinPath;
 } else {
-    throw new \Exception('wkhtmltopdf binary not found.', 500);
+    throw new \Exception('wkhtmltopdf binary was not found.', 500);
 }
 
 //Img Binary
