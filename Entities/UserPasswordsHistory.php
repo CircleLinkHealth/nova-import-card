@@ -27,6 +27,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereUserId($value)
  * @mixin \Eloquent
+ * @property int $force_change
+ * @property string|null $force_change_reason
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereForceChange($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\UserPasswordsHistory whereForceChangeReason($value)
  */
 class UserPasswordsHistory extends Model
 {
