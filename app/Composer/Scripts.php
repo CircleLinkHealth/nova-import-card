@@ -8,7 +8,7 @@ namespace App\Composer;
 
 class Scripts
 {
-    public function postDeploy()
+    public static function postDeploy()
     {
         if ( ! in_array(getenv('APP_ENV'), ['local', 'testing'])) {
             return;
