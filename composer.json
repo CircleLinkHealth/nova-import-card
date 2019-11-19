@@ -188,7 +188,8 @@
     "post-autoload-dump": [
       "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
       "@php artisan package:discover --ansi",
-      "App\\Composer\\Scripts::postDeploy"
+      "@php artisan migrate --force",
+      "@php artisan deploy:post"
     ],
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
