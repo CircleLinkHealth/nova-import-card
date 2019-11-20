@@ -70,7 +70,7 @@ class PracticeStaffController extends Controller
             ->whereHas('practices', function ($q) use (
                                  $primaryPractice
                              ) {
-                $q->where('id', '=', $primaryPractice->id);
+                $q->where('practices.id', '=', $primaryPractice->id);
             })
             ->with('roles')
             ->get()
@@ -115,12 +115,12 @@ class PracticeStaffController extends Controller
                 'name',
                 '=',
                 User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
-                                                            )
+            )
             ->orHaving(
                 'name',
                 '=',
                 User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
-                                                            )
+            )
             ->get()
             ->mapToGroups(function ($user) {
                 return [$user->pivot->name => $user->id];
@@ -140,7 +140,7 @@ class PracticeStaffController extends Controller
             'phone_type'      => array_search(
                 $phone->type ?? '',
                 PhoneNumber::getTypes()
-                                                     ) ?? '',
+            ) ?? '',
             'sendBillingReports'     => $permissions->pivot->send_billing_reports ?? false,
             'canApproveAllCareplans' => $user->canApproveCarePlans(),
             'role_names'             => $roles->map(function ($r) {

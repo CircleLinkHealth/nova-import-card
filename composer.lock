@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "af895283b9e4021a3c701da948fdff38",
+    "content-hash": "a4c49912d93d344ebc1a71b894b6ca89",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.117.1",
+            "version": "3.119.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "6951cd08326d939f1fd1097a490fccb9751a59d7"
+                "reference": "f9baeb6efe99318956d9924696bd2d51ae5ba338"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6951cd08326d939f1fd1097a490fccb9751a59d7",
-                "reference": "6951cd08326d939f1fd1097a490fccb9751a59d7",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f9baeb6efe99318956d9924696bd2d51ae5ba338",
+                "reference": "f9baeb6efe99318956d9924696bd2d51ae5ba338",
                 "shasum": ""
             },
             "require": {
@@ -495,7 +495,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-11-14T19:27:06+00:00"
+            "time": "2019-11-19T19:47:09+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -654,11 +654,11 @@
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "V1.4.4",
+            "version": "v1.4.7.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "0be9c60e1cdb3f53d2e126afcb82305df38694cf"
+                "reference": "438cb8f2a3078b8fc97b6c3574b04e27182685eb"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
@@ -691,7 +691,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-16T05:29:49+00:00"
+            "time": "2019-11-20T03:09:12+00:00"
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
@@ -2305,84 +2305,6 @@
             "time": "2019-07-01T23:21:34+00:00"
         },
         {
-            "name": "h4cc/wkhtmltoimage-amd64",
-            "version": "0.12.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/h4cc/wkhtmltoimage-amd64.git",
-                "reference": "c4e33f635207af89a704205b8902fb5715ca88be"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/h4cc/wkhtmltoimage-amd64/zipball/c4e33f635207af89a704205b8902fb5715ca88be",
-                "reference": "c4e33f635207af89a704205b8902fb5715ca88be",
-                "shasum": ""
-            },
-            "bin": [
-                "bin/wkhtmltoimage-amd64"
-            ],
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL Version 3"
-            ],
-            "authors": [
-                {
-                    "name": "Julius Beckmann",
-                    "email": "github@h4cc.de"
-                }
-            ],
-            "description": "Convert html to image using webkit (qtwebkit). Static linked linux binary for amd64 systems.",
-            "homepage": "http://wkhtmltopdf.org/",
-            "keywords": [
-                "binary",
-                "convert",
-                "image",
-                "snapshot",
-                "thumbnail",
-                "wkhtmltoimage"
-            ],
-            "time": "2018-01-15T07:23:40+00:00"
-        },
-        {
-            "name": "h4cc/wkhtmltopdf-amd64",
-            "version": "0.12.5",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/wkhtmltopdf-amd64.git",
-                "reference": "ebdb1fbf4315c302f24ad16047c7cb396abb25e0"
-            },
-            "bin": [
-                "bin/wkhtmltopdf-amd64"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "h4cc\\WKHTMLToPDF\\": ""
-                }
-            },
-            "license": [
-                "LGPL Version 3"
-            ],
-            "authors": [
-                {
-                    "name": "Julius Beckmann",
-                    "email": "github@h4cc.de"
-                }
-            ],
-            "description": "Convert html to pdf using webkit (qtwebkit). Static linked linux binary for amd64 systems.",
-            "homepage": "http://wkhtmltopdf.org/",
-            "keywords": [
-                "binary",
-                "convert",
-                "pdf",
-                "snapshot",
-                "thumbnail",
-                "wkhtmltopdf"
-            ],
-            "time": "2019-01-03T21:08:37+00:00"
-        },
-        {
             "name": "hubertnnn/laravel-nova-field-dynamic-select",
             "version": "0.2.0",
             "source": {
@@ -2583,16 +2505,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.88",
+            "version": "v1.2.89",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "4ede3431afaa5b77b6d9414935184edbcfffa822"
+                "reference": "374d699ce4944107015eee0798eab072e3c47df9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/4ede3431afaa5b77b6d9414935184edbcfffa822",
-                "reference": "4ede3431afaa5b77b6d9414935184edbcfffa822",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/374d699ce4944107015eee0798eab072e3c47df9",
+                "reference": "374d699ce4944107015eee0798eab072e3c47df9",
                 "shasum": ""
             },
             "require": {
@@ -2628,7 +2550,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2019-11-07T21:06:22+00:00"
+            "time": "2019-11-16T13:47:52+00:00"
         },
         {
             "name": "jenssegers/agent",
@@ -5798,16 +5720,16 @@
         },
         {
             "name": "phpoffice/phpspreadsheet",
-            "version": "1.9.0",
+            "version": "1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-                "reference": "8dea03eaf60a349b6097e4bcad11f894668280df"
+                "reference": "f734783d826bd84c3d54fcf7b71c37ab9bac4b04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/8dea03eaf60a349b6097e4bcad11f894668280df",
-                "reference": "8dea03eaf60a349b6097e4bcad11f894668280df",
+                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/f734783d826bd84c3d54fcf7b71c37ab9bac4b04",
+                "reference": "f734783d826bd84c3d54fcf7b71c37ab9bac4b04",
                 "shasum": ""
             },
             "require": {
@@ -5825,19 +5747,19 @@
                 "ext-zip": "*",
                 "ext-zlib": "*",
                 "markbaker/complex": "^1.4",
-                "markbaker/matrix": "^1.1",
+                "markbaker/matrix": "^1.2",
                 "php": "^7.1",
                 "psr/simple-cache": "^1.0"
             },
             "require-dev": {
-                "dompdf/dompdf": "^0.8.0",
-                "friendsofphp/php-cs-fixer": "@stable",
+                "dompdf/dompdf": "^0.8.3",
+                "friendsofphp/php-cs-fixer": "^2.16",
                 "jpgraph/jpgraph": "^4.0",
-                "mpdf/mpdf": "^7.0.0",
-                "phpcompatibility/php-compatibility": "^8.0",
+                "mpdf/mpdf": "^8.0",
+                "phpcompatibility/php-compatibility": "^9.3",
                 "phpunit/phpunit": "^7.5",
-                "squizlabs/php_codesniffer": "^3.3",
-                "tecnickcom/tcpdf": "^6.2"
+                "squizlabs/php_codesniffer": "^3.5",
+                "tecnickcom/tcpdf": "^6.3"
             },
             "suggest": {
                 "dompdf/dompdf": "Option for rendering PDF with PDF Writer",
@@ -5853,7 +5775,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "LGPL-2.1-or-later"
+                "MIT"
             ],
             "authors": [
                 {
@@ -5887,7 +5809,7 @@
                 "xls",
                 "xlsx"
             ],
-            "time": "2019-08-17T22:24:35+00:00"
+            "time": "2019-11-18T11:33:05+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -12627,16 +12549,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.24.2",
+            "version": "v3.24.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "b91eb3099eabb5b9c35f482b4bb6afd7fee114f6"
+                "reference": "94e101924b84435585896f4ea7c4092182a91f23"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/b91eb3099eabb5b9c35f482b4bb6afd7fee114f6",
-                "reference": "b91eb3099eabb5b9c35f482b4bb6afd7fee114f6",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/94e101924b84435585896f4ea7c4092182a91f23",
+                "reference": "94e101924b84435585896f4ea7c4092182a91f23",
                 "shasum": ""
             },
             "type": "library",
@@ -12680,7 +12602,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2019-11-04T05:05:56+00:00"
+            "time": "2019-11-18T00:04:23+00:00"
         },
         {
             "name": "symfony/dom-crawler",

@@ -15,7 +15,8 @@
         "watch-test": "npm run test -- --watch",
         "bower_install": "./node_modules/bower/bin/bower -V install",
         "build-import-practice-staff-csv": "cd nova-components/ImportPracticeStaffCsv && npm run dev",
-        "build-import-practice-staff-csv-prod": "cd nova-components/ImportPracticeStaffCsv && npm run prod"
+        "build-import-practice-staff-csv-prod": "cd nova-components/ImportPracticeStaffCsv && npm run prod",
+        "postinstall": "npm run bower_install && npm run prod"
     },
     "jest": {
         "verbose": true,

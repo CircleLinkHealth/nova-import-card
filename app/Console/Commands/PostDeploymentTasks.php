@@ -38,6 +38,11 @@ class PostDeploymentTasks extends Command
      */
     public function handle()
     {
+        if (app()->environment(['local', 'testing'])) {
+            echo "Not running because env is ".app()->environment().PHP_EOL;
+            return;
+        }
+        
         collect(
             [
                 'nova:publish',

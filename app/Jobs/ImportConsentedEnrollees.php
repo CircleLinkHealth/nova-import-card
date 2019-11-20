@@ -36,8 +36,6 @@ class ImportConsentedEnrollees implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param array $enrolleeIds
      */
     public function __construct(array $enrolleeIds, EligibilityBatch $batch = null)
     {
@@ -94,12 +92,6 @@ class ImportConsentedEnrollees implements ShouldQueue
                         return $this->importTargetPatient($enrollee);
                     }
 
-                    //import from eligibility jobs
-                    $job = $this->eligibilityJob($enrollee);
-                    if ($job) {
-                        return $this->importFromEligibilityJob($enrollee, $job);
-                    }
-
                     //import ccda
                     if ($importService->isCcda($enrollee->medical_record_type)) {
                         $response = $importService->importExistingCcda($enrollee->medical_record_id);
@@ -107,8 +99,14 @@ class ImportConsentedEnrollees implements ShouldQueue
                         if ($response->imr) {
                             $this->log('The CCD was imported.', $enrollee->id);
 
-                            return;
+                            return $response->imr;
                         }
+                    }
+
+                    //import from eligibility jobs
+                    $job = $this->eligibilityJob($enrollee);
+                    if ($job) {
+                        return $this->importFromEligibilityJob($enrollee, $job);
                     }
 
                     $this->log($response->message ?? 'Sorry. Some random error occured. Please post to #qualityassurance to notify everyone to stop using the importer, and also tag Michalis to fix this asap.', $enrollee->id);
