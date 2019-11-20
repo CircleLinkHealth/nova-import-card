@@ -226,7 +226,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                             </li>
                                         </ul>
                                     </div>
-                                    @if($patientPracticeNameEvaluation)
+                                    @if($shouldShowMedicareDisclaimer)
                                         <div class="row gutter" style="line-height: 1.0em;">
                                             As a reminder this program is covered under Medicare Part B.
                                             However, some health insurance plans may charge a co-payment. You can contact
