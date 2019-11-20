@@ -208,7 +208,7 @@ function formatTime($time)
                                                 if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime && 'addendum_response' !== $call->type) {
                                                     $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                 }
-                                                if ('Call Back' === $call->type || $call->asap && 'reached' !== $call->status && 'done' !== $call->status) {
+                                                if (($call->asap || 'Call Back' === $call->type) && 'reached' !== $call->status && 'done' !== $call->status) {
                                                     $boldRow   = 'bold-row';
                                                     $textBlack = 'color:black;';
                                                 }
