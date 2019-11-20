@@ -410,5 +410,13 @@
         .label {
             font-size: 19px;
         }
+
+        .sub-part{
+            padding-left: 9px;
+        }
+
+        .no-gutters{
+            padding-left: 9px;
+        }
     }
 </style>
