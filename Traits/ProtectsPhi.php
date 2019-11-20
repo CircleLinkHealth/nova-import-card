@@ -3,16 +3,23 @@
 namespace CircleLinkHealth\Core\Traits;
 
 
+use Carbon\Carbon;
+
 trait ProtectsPhi
 {
+    private $hiddenValue = '***';
+
+    private $hiddenDate = '0000-01-01';
+
     /**
      *The trait’s boot method works just like an Eloquent model’s boot method.
      * So you can hook in to any of the Eloquent events from here.
      * The boot method of each associated trait will get called at the same time as the model’s boot method
      *
      */
-    public static function bootProtectsPhi(){
-        static::retrieved(function ($model){
+    public static function bootProtectsPhi()
+    {
+        static::retrieved(function ($model) {
             //this protects phi from getting the model attributes from ->toArray()
             //we could also have overwritten method attributesToArray()
             $model->hidden = array_merge($model->phi, $model->hidden);
@@ -30,23 +37,46 @@ trait ProtectsPhi
     {
         $value = parent::getAttribute($key);
 
-        //check if model is patient?
-        //check if model is same as auth-> user
-        if (in_array($key, $this->phi) && ! $this->authUserShouldSeePhi()) {
-            //check in casts or dates, asterisk breaks carbon/dateTime parsing
-            if (in_array($key, $this->casts)){
-                if ($this->casts[$key] == 'date'){
-                    $value = '';
-                }
+        $user = auth()->user();
+
+        if ($user) {
+            if ( ! $this->authUserShouldSeePhi() && in_array($key, $this->phi) && ! $user->is($this)) {
+                $value = $this->hidePhiAttribute($key);
             }
-            $value = '*';
         }
 
         return $value;
     }
 
-    private function authUserShouldSeePhi(){
-        return auth()->user()->hasPermission('phi.view');
+    private function authUserShouldSeePhi(): bool
+    {
+        return auth()->user()->canSeePhi();
+    }
+
+    private function hidePhiAttribute($key)
+    {
+        if (in_array($key, $this->casts)) {
+            return $this->castHiddenPhiAttribute($key);
+        } else {
+            return $this->hiddenValue;
+        }
+    }
+
+    private function castHiddenPhiAttribute($key)
+    {
+
+        $castAs = $this->hiddenAttributeCasts();
+
+        return $castAs[$this->casts[$key]];
+
+    }
+
+    private function hiddenAttributeCasts()
+    {
+        return [
+            'date'  => Carbon::parse($this->hiddenDate),
+            'array' => [],
+        ];
     }
 
 }
