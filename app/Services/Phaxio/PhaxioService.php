@@ -11,20 +11,42 @@ use Phaxio\Phaxio;
 
 class PhaxioService implements Efax
 {
+    /**
+     * @var Phaxio
+     */
     public $fax;
 
+    /**
+     * PhaxioService constructor.
+     */
     public function __construct(Phaxio $phaxio)
     {
         $this->fax = $phaxio;
     }
 
+    /**
+     * @param $faxId
+     *
+     * @throws \Phaxio\PhaxioException
+     *
+     * @return array|mixed|\Phaxio\PhaxioOperationResult
+     */
     public function getStatus($faxId)
     {
         return $this->fax->faxStatus($faxId);
     }
 
-    public function send($to, $files)
+    /**
+     * @param $to
+     * @param $fileNames
+     * @param array $options
+     *
+     * @throws \Phaxio\PhaxioException
+     *
+     * @return array|mixed|\Phaxio\PhaxioOperationResult
+     */
+    public function send($to, $fileNames, $options = [])
     {
-        return $this->fax->sendFax($to, $files);
+        return $this->fax->sendFax($to, $fileNames, $options);
     }
 }
