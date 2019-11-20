@@ -234,8 +234,7 @@
                         this.subParts.push(fields);
                     });
 
-                }
-                else {
+                } else {
                     const fields = extraFieldSubParts.map((x) => {
                         return Object.assign({}, x, {value: '', active: false});
                     });
@@ -272,6 +271,22 @@
                 }
 
                 this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer, this.isLastQuestion);
+            },
+
+            setInputFieldsFromServer(value) {
+                if (this.questionHasSubParts) {
+                    this.subParts = [];
+                    this.addInputFields(this.questionOptions[0].sub_parts, value);
+                } else {
+                    let placeholder = "";
+                    if (this.extraFieldButtonNames && this.extraFieldButtonNames.length) {
+                        placeholder = this.extraFieldButtonNames[0].placeholder;
+                    }
+
+                    value.forEach(answer => {
+                        this.addInputField(placeholder, answer[SINGLE_INPUT_KEY_NAME]);
+                    });
+                }
             }
         },
 
@@ -298,22 +313,10 @@
             this.singleTitle = this.questionOptions && this.questionOptions.length && this.questionOptions[0].title;
 
             if (this.question.answer && this.question.answer.value) {
-                if (this.questionHasSubParts) {
-                    this.subParts = [];
-                    this.addInputFields(this.questionOptions[0].sub_parts, this.question.answer.value);
-                }
-                else {
-                    let placeholder = "";
-                    if (this.extraFieldButtonNames && this.extraFieldButtonNames.length) {
-                        placeholder = this.extraFieldButtonNames[0].placeholder;
-                    }
-
-                    this.question.answer.value.forEach(answer => {
-                        this.addInputField(placeholder, answer[SINGLE_INPUT_KEY_NAME]);
-                    });
-                }
-            }
-            else {
+                this.setInputFieldsFromServer(this.question.answer.value);
+            } else if (this.question.answer && this.question.answer.suggested_value) {
+                this.setInputFieldsFromServer(this.question.answer.suggested_value);
+            } else {
                 /*get placeholder for single question input*/
                 if (this.questionHasPlaceHolderInSubParts && !this.questionHasPlaceHolderInOptions) {
                     const placeholder = this.questionOptions[0].sub_parts.map(q => q.placeholder);
