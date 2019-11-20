@@ -34,8 +34,6 @@ class AddSuggestedValueInAnswersTable extends Migration
     public function down()
     {
         Schema::table('answers', function (Blueprint $table) {
-            $table->json('value')->nullable(false)->change();
-
             if (Schema::hasColumn('answers', 'suggested_value')) {
                 $table->dropColumn('suggested_value');
             }
