@@ -19,7 +19,11 @@ class PersonalizedPreventionPlan extends BaseModel
         'vitals_answers'   => 'array',
         'hra_answers'      => 'array',
         'answers_for_eval' => 'array',
+    ];
 
+    protected $dates = [
+        'created_at',
+        'updated_at'
     ];
 
     protected $table = 'personalized_prevention_plan';
