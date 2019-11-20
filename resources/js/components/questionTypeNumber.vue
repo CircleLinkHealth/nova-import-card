@@ -318,4 +318,15 @@
     .number-field.parts-2 {
         width: 120px;
     }
+
+    @media (max-width: 490px) {
+        .number-field{
+            padding-left: 9px;
+            width: 325px;
+        }
+
+        .number-field.parts-2 {
+            width: 157px;
+        }
+    }
 </style>
