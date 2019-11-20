@@ -32,21 +32,6 @@
                 <button class="btn btn-primary" @click="openMainEventModal">Add New</button>
             </div>
 
-            <!--            Previous - Next custom Buttons -->
-            <!--            <div class="prev-next-buttons">-->
-            <!--                <button type="button"-->
-            <!--                        class="prev-button"-->
-            <!--                        aria-label="prev" @click="sex('prev')">-->
-            <!--                    <span class="fc-icon fc-icon-left-single-arrow"></span>-->
-            <!--                </button>-->
-
-            <!--                <button type="button"-->
-            <!--                        class="next-button"-->
-            <!--                        aria-label="next" @click="sex('next')">-->
-            <!--                    <span class="fc-icon fc-icon-right-single-arrow"></span>-->
-            <!--                </button>-->
-
-            <!--            </div>-->
         </div>
         <div class="calendar">
             <full-calendar ref="calendar"
@@ -58,7 +43,7 @@
             </full-calendar>
             <!--LOADER-->
             <calendar-loader v-show="loader"></calendar-loader>
-            <!-- Modal --- sorry couldn't make a vue component act as modal here so i dumped this here-->
+            <!-- Modal --- sorry couldn't make a vue component act as modal here so i dumped it here-->
             <div class="modal fade" id="addWorkEvent" tabindex="-1" role="dialog"
                  aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -86,6 +71,15 @@
                                 </div>
 
                                 <div class="modal-inputs col-md-12">
+                                    <div v-if="!this.authIsAdmin"
+                                         class="add-holidays">
+                                        <input id="addHolidays"
+                                               type="checkbox"
+                                               class="add-holidays-button"
+                                               v-model="addHolidays">
+                                        Add Holiday
+                                    </div>
+
                                     <div class="work-hours">
                                         <h5>Work For:</h5>
                                         <input v-model="hoursToWork"
@@ -254,28 +248,21 @@
                 eventFrequency: [],
                 addNewEventMainClicked: false,
                 selectedDate: [],
-                // selectedMonthInView: this.startOfMonth,
                 repeatUntil: '',
                 workEventsToConfirm: [],
                 isRecurringEvent: false,
+                addHolidays:false,
 
 
                 config: {
                     defaultView: viewDefault,
                     editable: false,
-                    // eventOverlap: false,
 
                     header: {
                         left: 'prev, next, today',
                         center: 'title',
                         right: 'month,agendaWeek,agendaDay'
                     },
-
-                    // validRange: {
-                    //     end: this.endOfThisWeek,
-                    //     start: this.startOfThisWeek,
-                    // }
-
 
                 },
 
@@ -523,7 +510,6 @@
                 return [year, month, day].join('-');
             },
             addNewEvent() {
-                debugger;
                 this.loader = true;
                 const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
                 const workDate = this.addNewEventMainClicked ? this.selectedDate : this.workEventDate;
@@ -533,6 +519,10 @@
                 && repeatFreq !== 'does_not_repeat'
                     ? this.repeatUntil
                     : null;
+
+                if (this.addHolidays){
+                    // post to holidays here
+                }
 
                 if (this.authIsAdmin) {
                     if (nurseId === null
@@ -624,7 +614,6 @@
                     }
                     this.workEventsToConfirm.push(...eventsToConfirmTemporary);
 
-//lines 606 - 615. clean it up.
                     if (eventsToConfirmTemporary.length !== 0) {
                         if (confirm("There are some windows overlapping. Do you want to replace the existing windows with the new?")) {
                             this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, true);

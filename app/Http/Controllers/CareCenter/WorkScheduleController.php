@@ -236,24 +236,12 @@ class WorkScheduleController extends Controller
     {
         $authIsAdmin = json_encode(auth()->user()->isAdmin());
 
-//        $holidays = $nurse->nurseInfo->upcoming_holiday_dates;
-//        $holidaysThisWeek = $nurse->nurseInfo->holidays_this_week;
-
 //        $tzAbbr = auth()->user()->timezone_abbr;
 
         //I think time tracking submits along with the form, thus messing up sessions.
         //Temporary fix
         $disableTimeTracking = true; // @todo: we need this
         return view('care-center.work-schedule', compact('authIsAdmin'));
-//        return view('care-center.work-schedule', compact([
-//            'disableTimeTracking',
-//            'holidays',
-//            'holidaysThisWeek',
-//            'windows',
-//            'tzAbbr',
-//            'nurse',
-//            'authIsAdmin'
-//        ]));
     }
 
     /**
@@ -387,27 +375,27 @@ class WorkScheduleController extends Controller
             'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
         ]);
         //  Validator
-        $windowExists = $this->fullCalendarService->checkIfWindowsExists($nurseInfoId, $windowTimeStart, $windowTimeEnd, $eventDate);
+        $windowExists = $this->fullCalendarService->checkIfWindowsExists($nurseInfoId, $windowTimeStart, $windowTimeEnd, $workScheduleData['date']);
         $hoursSum     = NurseContactWindow::where([
             ['nurse_info_id', '=', $nurseInfoId],
             ['day_of_week', '=', $workScheduleData['day_of_week']],
         ])
             ->get()
             ->sum(function ($window) {
-                    return Carbon::createFromFormat(
+                return Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_end
                     )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
-                }) + Carbon::createFromFormat(
+            }) + Carbon::createFromFormat(
                     'H:i',
                     $workScheduleData['window_time_end']
                 )->diffInHours(Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_start']
-            ));
+                    'H:i',
+                    $workScheduleData['window_time_start']
+                ));
 
         $invalidWorkHoursNumber = false;
 
@@ -446,7 +434,7 @@ class WorkScheduleController extends Controller
             }
             $window = $this->nurseContactWindows->create([
                 'nurse_info_id'     => $nurseInfoId,
-                'date'              => $eventDate,
+                'date'              => $workScheduleData['date'],
                 'day_of_week'       => $workScheduleData['day_of_week'],
                 'window_time_start' => $workScheduleData['window_time_start'],
                 'window_time_end'   => $workScheduleData['window_time_end'],
@@ -467,7 +455,7 @@ class WorkScheduleController extends Controller
                 return $this->saveRecurringEvents($nurseInfoId, $updateCollisions, $validator, $workScheduleData);
             }
             $window = $user->nurseInfo->windows()->create([
-                'date'              => $eventDate,
+                'date'              => $workScheduleData['date'],
                 'day_of_week'       => $workScheduleData['day_of_week'],
                 'window_time_start' => $workScheduleData['window_time_start'],
                 'window_time_end'   => $workScheduleData['window_time_end'],

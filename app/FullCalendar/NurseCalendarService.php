@@ -299,10 +299,9 @@ class NurseCalendarService
     {
         return collect($windows)
             ->where('repeat_frequency', '!=', null)
-            ->chunk(10)
+            ->chunk(20)
             ->flatten()
             ->transform(function ($window) use ($nurse) {
-                $currentWeekMap = createWeekMap($window->date);
                 $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
                 $windowDate = Carbon::parse($window->date)->toDateString();
                 $workWeekStart = Carbon::parse($windowDate)->startOfWeek()->toDateString();
@@ -322,15 +321,15 @@ class NurseCalendarService
                     [
                         self::TITLE => "$nurse->display_name ({$workHoursForDay}$hoursAbrev)
                         {$windowStartForView}-{$windowEndForView}",
-                        self::START => "{$windowDate}T{$window->window_time_start}",
-                        self::END   => "{$windowDate}T{$window->window_time_end}",
-                        'color'     => $color,
-                        'textColor' => '#fff',
-                        //                        'repeat_frequency' => $window->repeat_frequency,
-                        //                        'repeat_start'     => $window->repeat_start,
-                        //                        'until'            => $window->until,
-                        'allDay' => true,
-                        'data'   => [
+                        self::START        => "{$windowDate}T{$window->window_time_start}",
+                        self::END          => "{$windowDate}T{$window->window_time_end}",
+                        'color'            => $color,
+                        'textColor'        => '#fff',
+                        'repeat_frequency' => $window->repeat_frequency,
+                        'repeat_start'     => $window->repeat_start,
+                        'until'            => $window->until,
+                        'allDay'           => true,
+                        'data'             => [
                             'nurseId'      => $nurse->nurseInfo->id,
                             'windowId'     => $window->id,
                             'name'         => $nurse->display_name,
