@@ -357,6 +357,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     notOfPracticeRequiringSpecialBhiConsent()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     ofPracticeRequiringSpecialBhiConsent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isNotDemo()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -2605,6 +2606,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'created_at'    => optional($this->created_at)->format('c') ?? null,
             'updated_at'    => optional($this->updated_at)->format('c') ?? null,
         ];
+    }
+
+    public function canSeePhi(){
+        return $this->hasPermission('phi.read');
     }
 
     /**
