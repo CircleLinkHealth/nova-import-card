@@ -11718,7 +11718,7 @@ body,
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 490px) {
   .btn-start {
     width: 40%;
     height: 30px;
@@ -12099,6 +12099,24 @@ a.navbar-title:hover {
 
   .text-center {
     left: 32%;
+  }
+
+  .questions-body {
+    margin-left: -15px;
+  }
+
+  .main-container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .question-answer-type {
+    width: 330px;
+  }
+
+  .questions-title {
+    width: 335px;
+    padding-left: 9px;
   }
 }
 

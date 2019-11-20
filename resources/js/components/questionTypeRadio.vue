@@ -333,16 +333,18 @@
     @media (max-width: 490px) {
         /*Radio buttons*/
         .btn.radio {
-            height: 35px;
-            width: 100%;
+            height: 34px;
+            width: 325px;
             text-align: left;
-            padding: 4px;
+            padding: 3px;
+            padding-left: 1em;
+            font-size: 13px;
         }
 
         /*Other buttons eg question order 11a in HRA*/
         .text-field.small, input.text-field.small {
             height: 35px;
-            width: 115px;
+            width: 152px;
             text-align: left;
             padding: 4px;
             font-size: xx-small;
@@ -351,18 +353,18 @@
         /*Yes or No*/
         .btn.radio.small {
             height: 35px;
-            width: 115px;
+            width: 152px;
             text-align: left;
-            padding: 3px;
+            font-size: 13px;
+            padding-left: 1em;
         }
-
+        /*Other button Q11c.*/
         #app div > div.question-answer-type > div > div > input{
             height: 35px;
             text-align: left;
-            padding: 4px;
+            padding: 1em;
             font-size: xx-small;
         }
     }
-
 
 </style>
