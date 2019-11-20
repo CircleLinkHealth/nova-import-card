@@ -6,15 +6,23 @@
 
 namespace App\Http\Controllers;
 
-use App\CallView;
+use App\Services\CallService;
 use App\Services\NoteService;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class PatientCallListController extends Controller
 {
+    /**
+     * @var CallService
+     */
+    protected $service;
+
+    public function __construct(CallService $service)
+    {
+        $this->service = $service;
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -22,37 +30,6 @@ class PatientCallListController extends Controller
      */
     public function create()
     {
-    }
-
-    /**
-     * @param $dropdownStatus
-     * @param $filterPriority
-     * @param Builder $calls
-     * @param string  $today
-     *
-     * @return Builder[]|Collection
-     */
-    public function filterCalls($dropdownStatus, $filterPriority, Builder $calls, string $today)
-    {
-        if ('completed' === $dropdownStatus && 'all' === $filterPriority) {
-            $calls->whereIn('status', ['reached', 'done']);
-        }
-
-        if ('scheduled' === $dropdownStatus && 'all' === $filterPriority) {
-            $calls->where('status', '=', 'scheduled');
-        }
-
-        if ('all' !== $filterPriority) {
-            $calls->where('status', '=', 'scheduled')
-                ->orWhere(function ($call) {
-                    $call->where('asap', '=', true)
-                        ->where('status', '=', 'scheduled');
-                })->where('scheduled_date', '=', $today);
-        }
-
-        $calls->orderByRaw('FIELD(type, "Call Back") desc, scheduled_date desc, call_time_start asc, call_time_end asc');
-
-        return $calls->get();
     }
 
     /**
@@ -65,7 +42,6 @@ class PatientCallListController extends Controller
         $nurseId        = \Auth::user()->id;
         $today          = Carbon::parse(now())->copy()->toDateString();
         $draftNotes     = $noteService->getUserDraftNotes($nurseId);
-        $calls          = CallView::where('nurse_id', '=', $nurseId);
         $filterPriority = 'all';
         $dropdownStatus = 'scheduled';
 
@@ -81,7 +57,7 @@ class PatientCallListController extends Controller
             ? ['disabled' => 'disable', 'class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']
             : ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;'];
 
-        $calls = $this->filterCalls($dropdownStatus, $filterPriority, $calls, $today);
+        $calls = $this->service->filterCalls($dropdownStatus, $filterPriority, $today, $nurseId);
 
         return view('patientCallList.index', compact([
             'draftNotes',

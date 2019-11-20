@@ -60,11 +60,11 @@ function formatTime($time)
             $(document).ready(function () {
                 const table = $('#cpmEditableTable');
                 table.DataTable({
-                    order: [[3, "desc"]],
+                    order: [[2, "asc"]],
                     processing: true,
                     scrollX: true,
                     fixedHeader: true,
-                    dom: '<"top"fi>rt<"bottom"flp><"clear">',
+                    dom: '<"top"fi>rt<"bottom"lp>',
                     pageLength: 50,
 
 
@@ -205,7 +205,7 @@ function formatTime($time)
                                                 $rowBg     = '';
                                                 $boldRow   = '';
                                                 $textBlack = '';
-                                                if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime) {
+                                                if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime && 'addendum_response' !== $call->type) {
                                                     $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                 }
                                                 if ('Call Back' === $call->type || $call->asap && 'reached' !== $call->status && 'done' !== $call->status) {
@@ -256,8 +256,13 @@ function formatTime($time)
                                                         <td>{{ 'ASAP' }}</td>
                                                         <td>{{ 'N/A' }}</td>
                                                     @else
-                                                        <td>{{ $call->call_time_start }}</td>
-                                                        <td>{{ $call->call_time_end }}</td>
+                                                        @if($call->type !== 'addendum_response')
+                                                            <td>{{ $call->call_time_start }}</td>
+                                                            <td>{{ $call->call_time_end }}</td>
+                                                            @else
+                                                            <td>{{ 'N/A' }}</td>
+                                                            <td>{{ 'N/A' }}</td>
+                                                        @endif
                                                     @endif
 
                                                     <td>

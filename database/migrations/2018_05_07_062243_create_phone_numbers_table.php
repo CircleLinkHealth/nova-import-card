@@ -29,7 +29,7 @@ class CreatePhoneNumbersTable extends Migration
             $table->string('number')->nullable();
             $table->string('extension')->nullable();
             $table->string('type')->nullable();
-            $table->boolean('is_primary');
+            $table->boolean('is_primary')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

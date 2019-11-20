@@ -220,7 +220,7 @@ class PracticeController extends Controller
             ->practices(true, false, $roleIds)
             ->with('locations')
             ->get([
-                'id',
+                'practices.id',
                 'display_name',
             ]);
 

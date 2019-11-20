@@ -167,7 +167,7 @@ class CpmProblemsTableSeeder extends Seeder
                 'contains'            => 'smoking',
                 'is_behavioral'       => 0,
                 'weight'              => 1,
-                'created_at'          => '0000-00-00 00:00:00',
+                'created_at'          => '2017-10-17 10:39:41',
                 'updated_at'          => '2017-10-17 10:39:41',
             ],
             11 => [

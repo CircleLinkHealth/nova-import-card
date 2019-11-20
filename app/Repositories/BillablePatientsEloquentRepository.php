@@ -71,7 +71,7 @@ class BillablePatientsEloquentRepository
             ])
             ->whereHas('patient', function ($q) use ($practiceId) {
                 $q->whereHas('practices', function ($q) use ($practiceId) {
-                    $q->where('id', '=', $practiceId);
+                    $q->where('practices.id', '=', $practiceId);
                 });
             });
 

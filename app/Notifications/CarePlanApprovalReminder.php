@@ -11,13 +11,20 @@ use App\Notifications\Channels\DirectMailChannel;
 use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\View;
 
-class CarePlanApprovalReminder extends Notification
+class CarePlanApprovalReminder extends Notification implements ShouldQueue
 {
     use Queueable;
+    /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 3;
 
     /**
      * Create a new notification instance.
@@ -50,8 +57,6 @@ class CarePlanApprovalReminder extends Notification
     }
 
     /**
-     * @param User $notifiable
-     *
      * @throws \Exception
      *
      * @return array|bool
@@ -69,8 +74,6 @@ class CarePlanApprovalReminder extends Notification
 
     /**
      * Get the mail representation of the notification.
-     *
-     * @param User $notifiable
      *
      * @return CarePlanApprovalReminderMailable
      */

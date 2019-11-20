@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Call;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
@@ -259,5 +260,25 @@ $factory->define(TargetPatient::class, function (Faker\Generator $faker) {
         'ehr_patient_id'    => $faker->numberBetween(1, 2),
         'ehr_practice_id'   => $faker->numberBetween(1, 5000),
         'ehr_department_id' => $faker->numberBetween(1, 10),
+    ];
+});
+
+$factory->define(Call::class, function (Faker\Generator $faker) {
+    return [
+        'type'            => $faker->randomElement(['call', 'task']),
+        'sub_type'        => $faker->randomElement(['Call Back', 'CP Review', 'Get Appt.', 'Other Task', 'Refill', 'Send Info']),
+        'inbound_cpm_id'  => null, // to be filled in during test
+        'outbound_cpm_id' => null, // to be filled in during test
+        'scheduled_date'  => $faker->date(),
+        'window_start'    => '09:00',
+        'window_end'      => '17:00',
+        'attempt_note'    => $faker->text(30),
+        'is_manual'       => $faker->boolean,
+        'asap'            => $faker->boolean,
+        'note_id'         => null,
+        'is_cpm_outbound' => 1,
+        'service'         => 'phone',
+        'status'          => $faker->randomElement(['scheduled', 'reached', 'done']),
+        'scheduler'       => null, // to be filled in during test
     ];
 });

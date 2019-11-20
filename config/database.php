@@ -4,6 +4,29 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+if (getenv('DATABASE_URL')) {
+    $url = parse_url(getenv('DATABASE_URL'));
+
+    $host     = $url['host'];
+    $username = $url['user'];
+    $password = $url['pass'];
+    $database = substr($url['path'], 1);
+
+    $psqlConfig = [
+        'driver'         => 'pgsql',
+        'host'           => $host,
+        'port'           => env('DB_PORT', '5432'),
+        'database'       => $database,
+        'username'       => $username,
+        'password'       => $password,
+        'charset'        => 'utf8',
+        'prefix'         => '',
+        'prefix_indexes' => true,
+        'schema'         => 'public',
+        'sslmode'        => 'prefer',
+    ];
+}
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -76,7 +99,7 @@ return [
             'engine'      => null,
         ],
 
-        'pgsql' => [
+        'pgsql' => $psqlConfig ?? [
             'driver'         => 'pgsql',
             'host'           => env('DB_HOST', '127.0.0.1'),
             'port'           => env('DB_PORT', '5432'),
