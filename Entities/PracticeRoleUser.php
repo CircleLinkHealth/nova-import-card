@@ -34,6 +34,8 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  */
 class PracticeRoleUser extends BaseModel
 {
+    protected $primaryKey = 'key_id';
+    
     protected $fillable = [
         'program_id',
         'user_id',
