@@ -159,7 +159,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
         $senderName = $this->senderName();
 
         return (new MailMessage())
-            ->line("Dr. $senderName has commented on a note")
+            ->line("$senderName has commented on a note")
             ->action('View Comment', url($this->redirectLink()));
     }
 
