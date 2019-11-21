@@ -21,7 +21,7 @@
                          v-for="extraFieldButtonName in extraFieldButtonNames">
                         <div @click="removeSingleInputFields(index)"
                              class="button-text-only remove">
-                            <font-awesome-icon icon="minus-circle"/>
+                            <mdb-icon icon="minus-circle"/>
                             {{extraFieldButtonName.remove_extra_answer_text}}
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                          class="col-md-12">
                     <span class="button-text-only"
                           @click="addInputField(extraFieldButtonName.placeholder)">
-                          <font-awesome-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
+                          <mdb-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
                     </span>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                          v-for="extraFieldButtonName in extraFieldButtonNames">
                         <div @click="removeInputFields(index)"
                              class="button-text-only remove">
-                            <font-awesome-icon icon="minus-circle"/>
+                            <mdb-icon icon="minus-circle"/>
                             {{extraFieldButtonName.remove_extra_answer_text}}
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                          class="col-md-12">
                     <span class="button-text-only"
                           @click="addInputFields(extraFieldButtonName.sub_parts)">
-                          <font-awesome-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
+                          <mdb-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
                     </span>
                     </div>
                 </div>
@@ -103,7 +103,7 @@
                     :disabled="!(isOptional ||hasTypedInAllInputs || hasTypedInSubParts)"
                     @click="handleAnswer()">
                 {{isLastQuestion ? 'Complete' : 'Next'}}
-                <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+                <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
             </mdbBtn>
         </div>
     </div>
@@ -111,22 +111,14 @@
 
 <script>
 
-    import {mdbBtn} from 'mdbvue';
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faMinusCircle, faPlusCircle, faSpinner} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
-    library.add(faSpinner);
-    library.add(faPlusCircle);
-    library.add(faMinusCircle);
+    import {mdbBtn, mdbIcon} from 'mdbvue';
 
     const SINGLE_INPUT_KEY_NAME = "name";
 
     export default {
         name: "questionTypeText",
         props: ['question', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
-        components: {mdbBtn, FontAwesomeIcon},
-
+        components: {mdbBtn, mdbIcon},
 
         data() {
             return {

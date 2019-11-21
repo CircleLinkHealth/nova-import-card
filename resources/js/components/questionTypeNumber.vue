@@ -44,19 +44,14 @@
                 :disabled="!hasAnyInput"
                 @click="handleAnswer()">
             {{isLastQuestion ? 'Complete' : 'Next'}}
-            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+            <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
         </mdbBtn>
     </div>
 </template>
 
 <script>
 
-    import {mdbBtn} from "mdbvue";
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
-    library.add(faSpinner);
+    import {mdbBtn, mdbIcon} from "mdbvue";
 
     const AUTO_GENERATE_FUNCS = {
         'bmi_func': '703 * ($mass$ / Math.pow($height$,2))'
@@ -65,7 +60,7 @@
     export default {
         name: "questionTypeNumber",
         props: ['question', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly', 'getAllQuestionsFunc'],
-        components: {mdbBtn, FontAwesomeIcon},
+        components: {mdbBtn, mdbIcon},
 
         data() {
             return {
@@ -171,8 +166,7 @@
                     }
 
                     return eval(newFunc);
-                }
-                catch (e) {
+                } catch (e) {
                     console.error(e);
                     return "";
                 }
@@ -192,8 +186,7 @@
                 let arr = answer.value;
                 if (Array.isArray(arr)) {
                     return arr.join(joinChar);
-                }
-                else {
+                } else {
                     //todo: read sub-parts and build the string
                     //only taking into account object of feet and inches
                     const feet = arr['feet'];
@@ -208,8 +201,7 @@
                     const func = AUTO_GENERATE_FUNCS[conditions.generate_func];
                     if (!func) {
                         console.error(`could not find ${conditions.generate_func} on auto generation functions`);
-                    }
-                    else {
+                    } else {
                         const placeholders = [];
                         const generateFrom = conditions.generated_from;
                         if (generateFrom) {
@@ -237,8 +229,7 @@
 
                     }
 
-                }
-                else {
+                } else {
                     //todo
                 }
             }
@@ -251,11 +242,9 @@
             if (this.question.answer && this.question.answer.value) {
                 if (typeof this.question.answer.value === "string") {
                     this.inputNumbers.push(this.question.answer.value)
-                }
-                else if (Array.isArray(this.question.answer.value)) {
+                } else if (Array.isArray(this.question.answer.value)) {
                     this.inputNumbers = this.question.answer.value;
-                }
-                else {
+                } else {
                     //assume object
                     this.inputNumbers = Object.values(this.question.answer.value);
                 }

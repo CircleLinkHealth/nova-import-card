@@ -3,13 +3,13 @@
 
         <div class="top-left-fixed" v-if="adminMode">
             <mdb-btn class="btn-toggle-edit" color="primary" @click="goBack">
-                <font-awesome-icon icon="chevron-circle-left" size="3x"/>
+                <mdb-icon icon="chevron-circle-left" size="3x"/>
             </mdb-btn>
         </div>
 
         <div class="top-right-fixed" v-if="adminMode">
             <mdb-btn class="btn-toggle-edit" :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
-                <font-awesome-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
+                <mdb-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
             </mdb-btn>
         </div>
 
@@ -257,7 +257,7 @@
 
 <script>
 
-    import {mdbBtn, mdbProgress} from 'mdbvue';
+    import {mdbBtn, mdbProgress, mdbIcon} from 'mdbvue';
 
     import questionTypeText from "./questionTypeText";
     import questionTypeCheckbox from "./questionTypeCheckbox";
@@ -266,23 +266,12 @@
     import questionTypeRadio from "./questionTypeRadio";
     import questionTypeDate from "./questionTypeDate";
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {
-        faChevronCircleDown,
-        faChevronCircleLeft,
-        faEye,
-        faPencilAlt,
-        faPhoneAlt,
-        faTimes
-    } from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
-    library.add(faChevronCircleLeft, faChevronCircleDown, faPencilAlt, faEye, faPhoneAlt, faTimes);
 
     export default {
         props: ['data', 'adminMode'],
 
         components: {
+            mdbIcon,
             'mdb-btn': mdbBtn,
             'mdb-progress': mdbProgress,
             'question-type-text': questionTypeText,
@@ -291,8 +280,7 @@
             'question-type-number': questionTypeNumber,
             'question-type-radio': questionTypeRadio,
             'question-type-date': questionTypeDate,
-            'question-type-muti-select': questionTypeMultiSelect,
-            'font-awesome-icon': FontAwesomeIcon
+            'question-type-muti-select': questionTypeMultiSelect
         },
 
         data() {
