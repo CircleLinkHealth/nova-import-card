@@ -15,9 +15,9 @@ foreach ($pdfBinaryCandidates as $pdfPath) {
         break;
     }
 }
-if ( ! $pdfBinary) {
-    throw new \Exception('wkhtmltopdf binary was not found.', 500);
-}
+//if ( ! $pdfBinary) {
+//    throw new \Exception('wkhtmltopdf binary was not found.', 500);
+//}
 $imgBinary           = null;
 $imgBinaryCandidates = [
     '/app/bin/wkhtmltoimage',
@@ -29,9 +29,9 @@ foreach ($imgBinaryCandidates as $imgPath) {
         break;
     }
 }
-if ( ! $imgBinary) {
-    throw new \Exception('wkhtmltoimage binary was not found.', 500);
-}
+//if ( ! $imgBinary) {
+//    throw new \Exception('wkhtmltoimage binary was not found.', 500);
+//}
 
 return [
     'pdf' => [
