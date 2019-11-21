@@ -236,6 +236,7 @@ class Patient extends BaseModel
         'next_call_id',
         'family_id',
         'date_welcomed',
+        'is_awv'
     ];
 
     /**
