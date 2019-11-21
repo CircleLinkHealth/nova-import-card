@@ -64,6 +64,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Scout\Searchable;
@@ -2510,6 +2511,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function regularDoctor()
     {
+        DB::table('users')->get();
         return $this->careTeamMembers()->where('type', '=', CarePerson::REGULAR_DOCTOR);
     }
 

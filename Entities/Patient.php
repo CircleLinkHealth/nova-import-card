@@ -183,6 +183,7 @@ class Patient extends BaseModel
     ];
 
     protected $dates = [
+        'birth_date',
         'consent_date',
         'date_withdrawn',
         'date_paused',
