@@ -5,7 +5,7 @@
  */
 
 $localBinPath = '/usr/local/bin/wkhtmltopdf';
-$pdfBinary    = null;
+$pdfBinary    = '/tmp/build_06a1fd5ba23aecc3951d4a058c073e33/bin/wkhtmltopdf';
 if (file_exists($localBinPath)) {
     $pdfBinary = $localBinPath;
 }
