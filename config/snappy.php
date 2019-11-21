@@ -5,7 +5,7 @@
  */
 
 $localBinPath = '/usr/local/bin/wkhtmltopdf';
-$pdfBinary    = '/tmp/build_06a1fd5ba23aecc3951d4a058c073e33/bin/wkhtmltopdf';
+$pdfBinary    = '/bin/wkhtmltopdf';
 if (file_exists($localBinPath)) {
     $pdfBinary = $localBinPath;
 }
@@ -14,7 +14,7 @@ if (file_exists($localBinPath)) {
 
 //Img Binary
 $debianImgLib = '/usr/local/bin/wkhtmltoimage';
-$imgBinary    = null;
+$imgBinary    = '/bin/wkhtmltoimage';
 if (file_exists($debianImgLib)) {
     $imgBinary = $debianImgLib;
 }
