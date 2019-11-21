@@ -633,7 +633,12 @@ class Patient extends BaseModel
     public function setCcmStatusAttribute($value)
     {
         $statusBefore                   = $this->ccm_status;
-        $this->attributes['ccm_status'] = $value;
+
+        if ($value === PATIENT::WITHDRAWN){
+            $this->attributes['ccm_status'] = $this->user->onFirstCall() ? PATIENT::WITHDRAWN_1ST_CALL : PATIENT::WITHDRAWN;
+        }else{
+            $this->attributes['ccm_status'] = $value;
+        }
 
         if ($statusBefore !== $value) {
             if (Patient::ENROLLED == $value) {
@@ -642,7 +647,7 @@ class Patient extends BaseModel
             if (Patient::PAUSED == $value) {
                 $this->attributes['date_paused'] = Carbon::now()->toDateTimeString();
             }
-            if (Patient::WITHDRAWN == $value) {
+            if (in_array($value, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
                 $this->attributes['date_withdrawn'] = Carbon::now()->toDateTimeString();
             }
             if (Patient::UNREACHABLE == $value) {
