@@ -205,13 +205,13 @@ class UserController extends Controller
     ) {
         $messages = \Session::get('messages');
 
-        $patient = User::find($id);
+        $patient = User::with(['practices', 'roles'])->find($id);
         if ( ! $patient) {
             return response('User not found', 401);
         }
 
         $roles = Role::pluck('name', 'id')->all();
-        $role  = $patient->roles()->first();
+        $role  = $patient->roles->first();
         if ( ! $role) {
             $role = Role::first();
         }
@@ -345,6 +345,7 @@ class UserController extends Controller
             'role'          => $role,
             'roles'         => $roles,
             'revisions'     => $revisions,
+            'userPractices'     => $patient->practices->pluck('id')->all(),
         ]);
     }
 
@@ -361,7 +362,7 @@ class UserController extends Controller
         $users            = User::all();
 
         // display view
-        $wpUsers = User::where('program_id', '!=', '')->orderBy('id', 'desc');
+        $wpUsers = User::orderBy('id', 'desc');
 
         // FILTERS
         $params = $request->all();

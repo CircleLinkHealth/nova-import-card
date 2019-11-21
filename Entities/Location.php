@@ -13,6 +13,8 @@ use Laravel\Scout\Searchable;
 
 /**
  * CircleLinkHealth\Customer\Entities\Location.
+ * 
+ * CircleLinkHealth\Customer\Entities\Location.
  *
  * @property int                                                                                             $id
  * @property int                                                                                             $practice_id

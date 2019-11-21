@@ -7,14 +7,13 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\CareAmbassadorLog;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
 use App\CLH\Helpers\StringManipulation;
 use App\EnrolleeCustomFilter;
 use App\Repositories\PatientSummaryEloquentRepository;
-use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use App\ValueObjects\PatientReportData;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -89,7 +88,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @mixin \Eloquent
  * @property int|null $saas_account_id
  * @property \App\CareAmbassadorLog[]|\Illuminate\Database\Eloquent\Collection $careAmbassadorLogs
- * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection $chargeableServices
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection
+ *     $chargeableServices
  * @property \App\EnrolleeCustomFilter[]|\Illuminate\Database\Eloquent\Collection $enrolleeCustomFilters
  * @property \App\PracticeEnrollmentTips $enrollmentTips
  * @property string $number_with_dashes
@@ -122,6 +122,9 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property-read int|null $revision_history_count
  * @property-read int|null $settings_count
  * @property-read int|null $users_count
+ * @property int $is_demo
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
+ *     whereIsDemo($value)
  */
 class Practice extends BaseModel implements HasMedia
 {
@@ -138,6 +141,7 @@ class Practice extends BaseModel implements HasMedia
         'name',
         'display_name',
         'active',
+        'is_demo',
         'federal_tax_id',
         'user_id',
         'same_clinical_contact',
@@ -294,15 +298,24 @@ class Practice extends BaseModel implements HasMedia
                                     'patientAWVSummaries',
                                     function ($query) use ($chargeableServiceCode, $month) {
                                         $query->where('is_billable', true)
-                                              ->where('billable_at', '>=',
-                                                  $month->copy()->startOfMonth()->startOfDay())
+                                              ->where(
+                                                  'billable_at',
+                                                  '>=',
+                                                  $month->copy()->startOfMonth()->startOfDay()
+                                              )
                                               ->where('billable_at', '<=', $month->copy()->endOfMonth()->endOfDay())
-                                              ->when($chargeableServiceCode == 'AWV: G0438', function ($query) {
-                                                  $query->where('is_initial_visit', 1);
-                                              })
-                                              ->when($chargeableServiceCode == 'AWV: G0439', function ($query) {
-                                                  $query->where('is_initial_visit', 0);
-                                              });
+                                              ->when(
+                                                  $chargeableServiceCode == 'AWV: G0438',
+                                                  function ($query) {
+                                                      $query->where('is_initial_visit', 1);
+                                                  }
+                                              )
+                                              ->when(
+                                                  $chargeableServiceCode == 'AWV: G0439',
+                                                  function ($query) {
+                                                      $query->where('is_initial_visit', 0);
+                                                  }
+                                              );
                                     }
                                 )
                                 ->count() ?? 0;
@@ -616,7 +629,30 @@ class Practice extends BaseModel implements HasMedia
         }
 
         return $q->whereActive(1)
-                 ->whereNotIn('name', ['demo', 'testdrive', 'mdally-demo']);
+                 ->whereIsDemo(0);
+    }
+
+    public function scopeOpsDashboardQuery($query, Carbon $startOfMonth, Carbon $revisionsFromDate)
+    {
+        return $query->with([
+            'patients' => function ($p) use ($startOfMonth, $revisionsFromDate) {
+                $p->with([
+                    'patientSummaries'            => function ($s) use ($startOfMonth){
+                        $s->where('month_year', $startOfMonth);
+                    },
+                    'patientInfo.revisionHistory' => function ($r) use ($revisionsFromDate){
+                        $r->where('key', 'ccm_status')
+                          ->where(
+                              'created_at',
+                              '>=',
+                              $revisionsFromDate
+                          );
+                    },
+                ])
+                  ->isNotDemo();
+            },
+        ])
+                     ->whereHas('patients.patientInfo');
     }
 
     public function scopeAuthUserCanAccess($q, $softwareOnly = false)

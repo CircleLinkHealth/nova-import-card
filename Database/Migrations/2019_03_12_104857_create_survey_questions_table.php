@@ -18,8 +18,10 @@ class CreateSurveyQuestionsTable extends Migration
             $table->integer('survey_instance_id');
             $table->integer('question_id');
             $table->integer('order');
-            $table->string('sub_order');
+            $table->string('sub_order')->nullable();
             $table->timestamps();
+            
+            $table->unique(['survey_instance_id', 'order', 'sub_order'], 'survey_instance_order_unique');
         });
     }
 

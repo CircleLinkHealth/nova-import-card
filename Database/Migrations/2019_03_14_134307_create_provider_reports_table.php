@@ -34,7 +34,8 @@ class CreateProviderReportsTable extends Migration
             $table->json('exercise_activity_levels');
             $table->json('functional_capacity');
             $table->json('current_providers');
-            $table->string('specific_patient_requests')->nullable();
+            $table->json('specific_patient_requests')->nullable();
+            $table->json('advanced_care_planning')->nullable();
             $table->timestamps();
 
            /*
