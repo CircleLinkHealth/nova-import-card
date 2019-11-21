@@ -275,7 +275,7 @@ class GenerateProviderReportService
         $socialFactors = [];
 
         $socialFactors['tobacco']['has_used']             = $this->answerForHraQuestionWithOrder(11);
-        $socialFactors['tobacco']['last_smoked']          = lcfirst($this->answerForHraQuestionWithOrder(11, 'b', ''));
+        $socialFactors['tobacco']['last_smoked']          = strtolower($this->answerForHraQuestionWithOrder(11, 'b', ''));
         $socialFactors['tobacco']['amount']               = $this->answerForHraQuestionWithOrder(11, 'c');
         $socialFactors['tobacco']['interest_in_quitting'] = $this->answerForHraQuestionWithOrder(11, 'd');
 
