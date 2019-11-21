@@ -331,7 +331,10 @@
                 let nextHasAnswer = false;
                 if (canProceed) {
                     const nextQuestion = this.getNextQuestion(this.currentQuestionIndex);
-                    nextHasAnswer = nextQuestion != null && nextQuestion.question != null && typeof nextQuestion.question.answer !== "undefined";
+                    nextHasAnswer = nextQuestion != null &&
+                        nextQuestion.question != null &&
+                        typeof nextQuestion.question.answer !== "undefined" &&
+                        !(nextQuestion.question.answer.value === null || typeof nextQuestion.question.answer.value === "undefined");
                 }
 
                 return nextHasAnswer;
@@ -515,7 +518,7 @@
                         const q = this.questions.find(x => x.id === questionId);
 
                         //increment progress only if question was not answered before
-                        const incrementProgress = typeof q.answer === "undefined";
+                        const incrementProgress = typeof q.answer === "undefined" || (typeof q.answer.value === "undefined" || q.answer.value === null);
                         q.answer = {value: answer};
 
                         if (isLastQuestion) {
@@ -587,7 +590,7 @@
                         //For now is OK since we are depending only on ONE related Question
                         const questions = this.getQuestionsOfOrder(prevQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
-                        if (!firstQuestion.answer) {
+                        if (!firstQuestion.answer || !firstQuestion.answer.value) {
                             canGoToPrev = false;
                             break;
                         }
@@ -658,7 +661,7 @@
                         //For now is OK since we are depending only on ONE related Question
                         const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
-                        if (!firstQuestion.answer) {
+                        if (!firstQuestion.answer || !firstQuestion.answer.value) {
                             canGoToNext = false;
                             break;
                         }
@@ -728,7 +731,7 @@
                         //For now is OK since we are depending only on ONE related Question
                         const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
-                        if (!firstQuestion.answer) {
+                        if (!firstQuestion.answer || !firstQuestion.answer.value) {
                             shouldDisable = true;
                             break;
                         }
@@ -909,8 +912,7 @@
                     qScroll.css('top', `${topOffset}px`);
 
                     qScroll.fadeIn();
-                }
-                else {
+                } else {
                     qScroll.hide();
                 }
             },
@@ -936,7 +938,7 @@
                 result.disabled = false; // we will be disabling based on answers
                 return result;
             });
-            const questions = questionsData.filter(question => !question.optional);
+            //const questions = questionsData.filter(question => !question.optional);
             const subQuestions = questionsData.filter(question => question.optional);
             this.questions.push(...questionsData);
             this.subQuestions.push(...subQuestions);
@@ -947,7 +949,8 @@
                     const a = this.surveyData.answers.find(a => a.question_id === q.id);
                     if (a) {
                         q.answer = a;
-                        if (lastOrder !== q.pivot.order) {
+                        //check if answer is actually answered and not just a suggested answer
+                        if (a.value && lastOrder !== q.pivot.order) {
                             this.progress = this.progress + 1;
                         }
                     }
@@ -970,7 +973,10 @@
                 return elem.pivot.order;
             }).length;
 
-            if (this.surveyData.answers && this.surveyData.answers.length === this.questions.length) {
+            const allQuestionsAnswered = this.surveyData.answers &&
+                this.surveyData.answers.filter(a => !(a.value === null || typeof a.value === 'undefined')).length === this.questions.length;
+
+            if (allQuestionsAnswered) {
                 this.stage = "complete";
             }
 

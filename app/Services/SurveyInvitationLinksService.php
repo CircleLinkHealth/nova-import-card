@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use App\InvitationLink;
+use App\Jobs\SurveyAnswersCalculateSuggestionsJob;
 use App\Survey;
 use App\SurveyInstance;
 use App\User;
@@ -168,9 +169,11 @@ class SurveyInvitationLinksService
                  ]);
         }
 
-        if (!$user->patientInfo->is_awv) {
-            $user->patientInfo->is_awv = true;
-            $user->patientInfo->save();
+        //in case job runs synchronously
+        try {
+            SurveyAnswersCalculateSuggestionsJob::dispatch($user->id)->onQueue('high');
+        } catch (\Exception $exception) {
+            \Log::error($exception->getMessage());
         }
 
         return [

@@ -318,7 +318,9 @@
                     const nextQuestionIndex = this.getNextQuestionIndex(this.currentQuestionIndex);
                     if (nextQuestionIndex !== this.currentQuestionIndex) {
                         const nextQuestion = this.questions[nextQuestionIndex];
-                        nextHasAnswer = typeof nextQuestion !== "undefined" && typeof nextQuestion.answer !== "undefined";
+                        nextHasAnswer = typeof nextQuestion !== "undefined" &&
+                            typeof nextQuestion.answer !== "undefined" &&
+                            !(nextQuestion.answer.value === null || typeof nextQuestion.answer.value === "undefined");
                     }
 
                 }
@@ -540,7 +542,7 @@
                         const q = this.questions.find(x => x.id === questionId);
 
                         //increment progress only if question was not answered before
-                        const incrementProgress = typeof q.answer === "undefined";
+                        const incrementProgress = typeof q.answer === "undefined" || (typeof q.answer.value === "undefined" || q.answer.value === null);
                         q.answer = {value: answer};
 
                         this.goToNextQuestion(incrementProgress)
@@ -621,7 +623,7 @@
 
             hasAnsweredAllOfOrder(order) {
                 const questions = this.questions.filter(q => q.pivot.order === order);
-                return questions.every(q => q.answer !== undefined);
+                return questions.every(q => q.answer !== undefined && !(q.answer.value === null || q.answer.value === undefined));
             },
 
             toggleReadOnlyMode() {
@@ -680,7 +682,7 @@
                     const a = this.data.answers.find(a => a.question_id === q.id);
                     if (a) {
                         q.answer = a;
-                        if (lastOrder !== q.pivot.order) {
+                        if (a.value && lastOrder !== q.pivot.order) {
                             this.progress = this.progress + 1;
                         }
                     }
@@ -704,7 +706,10 @@
                 return elem.pivot.order;
             }).length;
 
-            if (this.data.answers && this.data.answers.length === this.questions.length) {
+            const allQuestionsAnswered = this.data.answers &&
+                this.data.answers.filter(a => !(a.value === null || typeof a.value === 'undefined')).length === this.questions.length;
+
+            if (allQuestionsAnswered) {
                 this.stage = "complete";
             }
 

@@ -115,13 +115,17 @@
                     const selectKey = this.options[0].multi_select_key;
 
                     this.selectBoxes = targetQuestion.answer.value.map(v => {
-
                         let selected = [];
+
+                        let valueFromServer;
                         if (this.question.answer && this.question.answer.value) {
-                            const valueFromServer = this.question.answer.value.find(x => x[key] === v[key]);
-                            if (valueFromServer) {
-                                selected = valueFromServer[selectKey];
-                            }
+                            valueFromServer = this.question.answer.value.find(x => x[key] === v[key]);
+                        } else if (this.question.answer && this.question.answer.suggested_value) {
+                            valueFromServer = this.question.answer.suggested_value.find(x => x[key] === v[key]);
+                        }
+
+                        if (valueFromServer) {
+                            selected = valueFromServer[selectKey];
                         }
                         return {key: v[key], options: selectOptions, placeholder, active: false, selected};
                     });
