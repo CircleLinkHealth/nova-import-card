@@ -136,6 +136,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed|null $agent_details
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereAgentDetails($value)
+ *
+ * @property int|null $family_enrollee_id
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereFamilyEnrolleeId($value)
  */
 class EnrolleeView extends Model
 {

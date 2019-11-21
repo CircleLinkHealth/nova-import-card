@@ -7,11 +7,10 @@
                     function onStatusChange(e) {
 
                         let ccmStatus = document.getElementById("ccm_status");
-
-                        if (ccmStatus.value === "withdrawn") {
+                        console.log(ccmStatus.value);
+                        if (ccmStatus.value === "withdrawn" || ccmStatus.value === "withdrawn_1st_call") {
                             $('#header-withdrawn-reason').removeClass('hidden');
                             onReasonChange();
-                            console.log('test');
                         } else {
                             $('#header-withdrawn-reason').addClass('hidden');
                             $('#header-withdrawn-reason-other').addClass('hidden');
@@ -111,7 +110,9 @@
                     </li>
                 </ul>
                 <?php
-                $ccdProblemService = app(App\Services\CCD\CcdProblemService::class);
+                use CircleLinkHealth\Customer\Entities\Patient;
+
+$ccdProblemService = app(App\Services\CCD\CcdProblemService::class);
 
                 $ccdProblems = $ccdProblemService->getPatientProblems($patient);
 
@@ -233,6 +234,12 @@
                                         value="paused" {{$patient->getCcmStatus() == 'paused' ? 'selected' : ''}}>
                                     Paused
                                 </option>
+                                @if($patient->getCcmStatus() == Patient::WITHDRAWN_1ST_CALL)
+                                    <option class="withdrawn_1st_call"
+                                            value="{{Patient::WITHDRAWN_1ST_CALL}}" selected>
+                                        Withdrawn 1st Call
+                                    </option>
+                                @endif
                             </select>
                         </li>
                     @else

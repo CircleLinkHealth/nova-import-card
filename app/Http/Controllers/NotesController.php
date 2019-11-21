@@ -432,8 +432,6 @@ class NotesController extends Controller
      * Also: in some conditions call will be stored for other roles as well.
      * They are never redirected to Schedule Next Call page.
      *
-     * @param SafeRequest      $request
-     * @param SchedulerService $schedulerService
      * @param $patientId
      *
      * @return \Illuminate\Http\RedirectResponse
@@ -837,11 +835,14 @@ class NotesController extends Controller
 
         if (isset($input['ccm_status']) && in_array(
             $input['ccm_status'],
-            [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED]
+            [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL]
         )) {
+            if (Patient::WITHDRAWN == $input['ccm_status'] && $patient->onFirstCall()) {
+                $input['ccm_status'] = Patient::WITHDRAWN_1ST_CALL;
+            }
             $info->ccm_status = $input['ccm_status'];
 
-            if ('withdrawn' == $input['ccm_status']) {
+            if (in_array($input['ccm_status'], [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
                 $withdrawnReason = $input['withdrawn_reason'];
                 if ('Other' == $withdrawnReason) {
                     $withdrawnReason = $input['withdrawn_reason_other'];
