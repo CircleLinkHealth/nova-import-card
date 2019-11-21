@@ -7,11 +7,12 @@
 namespace App\Providers;
 
 use CircleLinkHealth\Core\Facades\Connection;
-use CircleLinkHealth\Core\Facades\SchemaGrammar;
+//use CircleLinkHealth\Core\Facades\SchemaGrammar;
 use Illuminate\Database\Connectors\ConnectionFactory;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\DatabaseServiceProvider as LaravelDatabaseServiceProvider;
-use Illuminate\Database\Query\Grammars\Grammar as QueryGrammar;
+use Illuminate\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
+use Illuminate\Database\Schema\Grammars\MySqlGrammar as SchemaGrammar;
 
 class DatabaseServiceProvider extends LaravelDatabaseServiceProvider
 {
