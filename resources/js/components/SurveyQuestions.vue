@@ -3,13 +3,13 @@
 
         <div class="top-left-fixed" v-if="adminMode">
             <mdb-btn class="btn-toggle-edit" color="primary" @click="goBack">
-                <font-awesome-icon icon="chevron-circle-left" size="3x"/>
+                <mdb-icon icon="chevron-circle-left" size="3x"/>
             </mdb-btn>
         </div>
 
         <div class="top-right-fixed" v-if="adminMode">
             <mdb-btn class="btn-toggle-edit" :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
-                <font-awesome-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
+                <mdb-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
             </mdb-btn>
         </div>
 
@@ -191,8 +191,8 @@
                 <div class="col-1 col-sm-1 col-md-1 col-lg-1 text-center no-padding">
                     <div class="row scroll-buttons" v-show="!readOnlyMode">
                         <mdb-btn color="primary" @click="toggleCallAssistance" class="call-btn-round">
-                            <font-awesome-icon :icon="callAssistance ? 'times' : 'phone-alt'"
-                                               size="2x"></font-awesome-icon>
+                            <mdb-icon :icon="callAssistance ? 'times' : 'phone-alt'"
+                                               size="2x"></mdb-icon>
                         </mdb-btn>
                     </div>
                 </div>
@@ -242,7 +242,7 @@
 
 
 <script>
-    import {mdbBtn, mdbProgress} from 'mdbvue';
+    import {mdbBtn, mdbProgress, mdbIcon} from 'mdbvue';
     import questionTypeText from "./questionTypeText";
     import questionTypeCheckbox from "./questionTypeCheckbox";
     import questionTypeRange from "./questionTypeRange";
@@ -253,23 +253,11 @@
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
     import $ from "jquery";
 
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {
-        faChevronCircleDown,
-        faChevronCircleLeft,
-        faEye,
-        faPencilAlt,
-        faPhoneAlt,
-        faTimes
-    } from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
-    library.add(faChevronCircleLeft, faChevronCircleDown, faPhoneAlt, faTimes, faPencilAlt, faEye);
-
     export default {
         props: ['surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'debug'],
 
         components: {
+            mdbIcon,
             'mdb-btn': mdbBtn,
             'mdb-progress': mdbProgress,
             'question-type-text': questionTypeText,
@@ -279,9 +267,7 @@
             'question-type-radio': questionTypeRadio,
             'question-type-date': questionTypeDate,
             'call-assistance': callAssistance,
-
             'question-type-muti-select': questionTypeMultiSelect,
-            'font-awesome-icon': FontAwesomeIcon
         },
 
         data() {

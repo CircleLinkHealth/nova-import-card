@@ -49,4 +49,8 @@ return [
         'cpm-caller-url' => env('CPM_CALLER_URL', ''),
     ],
 
+    'cpm' => [
+        'wellness_docs_url' => env('CPM_WELLNESS_DOCS_URL', null)
+    ]
+
 ];

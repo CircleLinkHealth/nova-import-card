@@ -94,6 +94,7 @@ class InvitationLinksController extends Controller
 
             $user = User
                 ::with([
+                    'patientInfo',
                     'surveyInstances' => function ($query) use ($forYear) {
                         $query->forYear($forYear);
                     },
@@ -151,7 +152,7 @@ class InvitationLinksController extends Controller
             ->where('id', '=', $target_user_id)
             ->firstOrFail();
 
-        $url = $this->service->createAndSaveUrl($user, $surveyName, $forYear, false);
+        $url = $this->service->createAndSaveUrl($user, $surveyName, $forYear, true);
 
         /** @var User $targetNotifiable */
         $targetNotifiable = null;

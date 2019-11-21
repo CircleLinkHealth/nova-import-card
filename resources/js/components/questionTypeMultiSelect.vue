@@ -26,7 +26,7 @@
                 :disabled="!hasSelections"
                 @click="handleAnswer">
             {{isLastQuestion ? 'Complete' : 'Next'}}
-            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+            <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
         </mdbBtn>
 
     </div>
@@ -35,18 +35,13 @@
 
 <script>
 
-    import {mdbBtn} from 'mdbvue';
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+    import {mdbBtn, mdbIcon} from 'mdbvue';
     import vueSelect from 'vue-select';
-
-    library.add(faSpinner);
 
     export default {
         name: "questionTypeMultiSelect",
         props: ['question', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'getAllQuestionsFunc', 'readOnly'],
-        components: {FontAwesomeIcon, vueSelect, mdbBtn},
+        components: {mdbIcon, vueSelect, mdbBtn},
 
         data() {
             return {

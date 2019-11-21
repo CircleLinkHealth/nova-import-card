@@ -37,7 +37,7 @@
                 :disabled="!answerChecked"
                 @click="handleAnswers">
             {{isLastQuestion ? 'Complete' : 'Next'}}
-            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+            <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
         </mdbBtn>
     </div>
 
@@ -45,18 +45,14 @@
 
 <script>
 
-    import {mdbBtn} from "mdbvue";
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+    import {mdbBtn, mdbIcon} from "mdbvue";
 
-    library.add(faSpinner);
     export default {
         name: "questionTypeCheckbox",
         props: ['question', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
         components: {
             mdbBtn,
-            FontAwesomeIcon
+            mdbIcon
         },
 
         data() {

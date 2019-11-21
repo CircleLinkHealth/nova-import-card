@@ -4,7 +4,7 @@
         <div class="content">
             <div class="header">
                 <mdb-btn @click="handleClick" class="btn-transparent">
-                    <font-awesome-icon icon="angle-left" size="3x"></font-awesome-icon>
+                    <mdb-icon icon="angle-left" size="3x"></mdb-icon>
                 </mdb-btn>
                 <span class="title">Call</span>
             </div>
@@ -13,7 +13,7 @@
 
                 <div class="spinner-overlay" v-show="waiting">
                     <div class="text-center">
-                        <font-awesome-icon icon="spinner" :spin="true"/>
+                        <mdb-icon icon="spinner" :spin="true"/>
                     </div>
                 </div>
 
@@ -25,7 +25,7 @@
                          @click="toggleCall"
                          :disabled="!ready"
                          :color="isCurrentlyOnPhone ? 'danger' : 'success'">
-                    <font-awesome-icon :icon="isCurrentlyOnPhone ? 'phone-slash' : 'phone'"></font-awesome-icon>
+                    <mdb-icon :icon="isCurrentlyOnPhone ? 'phone-slash' : 'phone'"></mdb-icon>
                 </mdb-btn>
 
                 <br/>
@@ -46,18 +46,13 @@
 <script>
 
     import Twilio from 'twilio-client';
-    import {mdbBtn} from 'mdbvue';
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faAngleLeft, faPhone, faPhoneSlash} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
-    library.add(faAngleLeft, faPhone, faPhoneSlash);
+    import {mdbBtn, mdbIcon} from 'mdbvue';
 
     let self;
 
     export default {
         name: "callAssistance",
-        components: {FontAwesomeIcon, mdbBtn},
+        components: {mdbIcon, mdbBtn},
         props: {
             phoneNumber: {
                 type: String,

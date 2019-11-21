@@ -44,19 +44,14 @@
                 :disabled="!hasAnyInput"
                 @click="handleAnswer()">
             {{isLastQuestion ? 'Complete' : 'Next'}}
-            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+            <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
         </mdbBtn>
     </div>
 </template>
 
 <script>
 
-    import {mdbBtn} from "mdbvue";
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
-    library.add(faSpinner);
+    import {mdbBtn, mdbIcon} from "mdbvue";
 
     const AUTO_GENERATE_FUNCS = {
         'bmi_func': '703 * ($mass$ / Math.pow($height$,2))'
@@ -65,7 +60,7 @@
     export default {
         name: "questionTypeNumber",
         props: ['question', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly', 'getAllQuestionsFunc'],
-        components: {mdbBtn, FontAwesomeIcon},
+        components: {mdbBtn, mdbIcon},
 
         data() {
             return {
