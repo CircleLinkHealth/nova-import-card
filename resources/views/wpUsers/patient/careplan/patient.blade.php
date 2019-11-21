@@ -358,7 +358,34 @@ $user_info = [];
                                                     <div class="row">
                                                         <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
                                                         <div id="perform-status-select"
-                                                             class="col-lg-8">{!! Form::select('ccm_status', [ CircleLinkHealth\Customer\Entities\Patient::PAUSED => 'Paused', CircleLinkHealth\Customer\Entities\Patient::ENROLLED => 'Enrolled', CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN => 'Withdrawn', CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE => 'Unreachable' ], $patient->getCcmStatus(), ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                             class="col-lg-8">
+                                                            <select id="ccm_status" name="ccm_status" class="selectpicker form-control"
+                                                                    style="width: 100%">
+                                                                <option value="{{CircleLinkHealth\Customer\Entities\Patient::ENROLLED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::ENROLLED ? 'selected' : ''}}>
+                                                                    Enrolled
+                                                                </option>
+                                                                @if($patient->onFirstCall())
+                                                                    <option class="withdrawn_1st_call"
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL ? 'selected' : ''}}>
+                                                                        Wthdrn 1st Call
+                                                                    </option>
+                                                                @else
+                                                                    <option
+                                                                            class="withdrawn"
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN ? 'selected' : ''}}>
+                                                                        Withdrawn
+                                                                    </option>
+                                                                @endif
+                                                                <option class="paused"
+                                                                        value="{{CircleLinkHealth\Customer\Entities\Patient::PAUSED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::PAUSED ? 'selected' : ''}}>
+                                                                    Paused
+                                                                </option>
+                                                                <option class="unreachable"
+                                                                        value="{{CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE ? 'selected' : ''}}>
+                                                                    Unreachable
+                                                                </option>
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                     <div id="withdrawn-reason" class="row hidden"
                                                          style="margin-top: 20px">
@@ -382,7 +409,6 @@ $user_info = [];
                                                                    value="{{ $patient->getCcmStatus() == '' ? 'enrolled' : $patient->getCcmStatus() }}"
                                                                    name="ccm_status">
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             @endif
@@ -393,7 +419,8 @@ $user_info = [];
 
                                                         let ccmStatus = document.getElementById("ccm_status");
 
-                                                        if (ccmStatus.value === "withdrawn") {
+                                                        console.log(ccmStatus);
+                                                        if (ccmStatus.value === "withdrawn" || ccmStatus.value === "withdrawn_1st_call") {
                                                             $('#withdrawn-reason').removeClass('hidden');
                                                             onReasonChange();
                                                         } else {
