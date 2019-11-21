@@ -9,6 +9,7 @@ $pdfBinary    = null;
 if (file_exists($localBinPath)) {
     $pdfBinary = $localBinPath;
 }
+
 //    throw new \Exception('wkhtmltopdf binary was not found.', 500);
 
 //Img Binary
@@ -17,6 +18,7 @@ $imgBinary    = null;
 if (file_exists($debianImgLib)) {
     $imgBinary = $debianImgLib;
 }
+
 //    throw new \Exception('wkhtmltoimage binary not found.', 500);
 
 return [
