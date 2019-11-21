@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\Services\SurveyAnswerSuggestionsCalculator;
 use App\Services\SurveyService;
 use App\Survey;
-use App\SurveyInstance;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,14 +17,10 @@ class SurveyAnswersCalculateSuggestionsJob implements ShouldQueue
 
     protected $patientId;
 
-    /** @var SurveyService $service */
-    protected $service;
-
     /**
      * Create a new job instance.
      *
      * @param $patientId
-     * @param SurveyService $service
      */
     public function __construct($patientId)
     {
@@ -37,36 +32,21 @@ class SurveyAnswersCalculateSuggestionsJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(SurveyService $service)
+    public function handle()
     {
-        $this->service = $service;
-        $surveys       = Survey::where('name', '=', Survey::HRA)
-                               ->orWhere('name', '=', Survey::VITALS)
-                               ->get()
-                               ->mapWithKeys(function ($survey) {
-                                   return [$survey->name => $survey->id];
-                               });
+        $surveys = Survey::where('name', '=', Survey::HRA)
+                         ->orWhere('name', '=', Survey::VITALS)
+                         ->get()
+                         ->mapWithKeys(function ($survey) {
+                             return [$survey->name => $survey->id];
+                         });
 
-        $this->setSuggestionsForHRA($surveys[Survey::HRA]);
-        $this->setSuggestionsForVitals($surveys[Survey::VITALS]);
-    }
-
-    private function setSuggestionsForHRA($surveyId)
-    {
-        $userSurvey = SurveyService::getSurveyData($this->patientId, $surveyId);
-
-        /** @var SurveyInstance $surveyInstance */
-        $surveyInstance = $userSurvey->surveyInstances->first();
-        if ( ! $surveyInstance) {
-            return;
-        }
-
-        $calculator = new SurveyAnswerSuggestionsCalculator($userSurvey, $surveyInstance);
+        //could optimise these, but I tried to re-use existing code
+        $userWithHraSurvey    = SurveyService::getSurveyData($this->patientId, $surveys[Survey::HRA]);
+        $userWithVitalsSurvey = SurveyService::getSurveyData($this->patientId, $surveys[Survey::VITALS]);
+        $calculator           = new SurveyAnswerSuggestionsCalculator($userWithHraSurvey,
+            $userWithHraSurvey->surveyInstances->first(),
+            $userWithVitalsSurvey->surveyInstances->first());
         $calculator->calculate();
-    }
-
-    private function setSuggestionsForVitals($surveyId)
-    {
-
     }
 }

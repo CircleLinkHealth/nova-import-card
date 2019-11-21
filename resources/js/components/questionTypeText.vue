@@ -16,7 +16,7 @@
                                :placeholder="placeholder"/>
                     </div>
                     <!--remove input fields button-->
-                    <div v-if="placeholderForSingleQuestion.length > 1"
+                    <div v-if="!readOnly && placeholderForSingleQuestion.length > 1"
                          class="col-md-12"
                          v-for="extraFieldButtonName in extraFieldButtonNames">
                         <div @click="removeSingleInputFields(index)"
