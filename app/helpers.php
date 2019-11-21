@@ -139,11 +139,11 @@ if ( ! function_exists('activeNurseNames')) {
                     },
                 ]
             )->whereHas(
-                       'nurseInfo',
-                       function ($q) {
-                           $q->where('is_demo', '!=', true);
-                       }
-                   )->where('user_status', 1)
+                'nurseInfo',
+                function ($q) {
+                    $q->where('is_demo', '!=', true);
+                }
+            )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -303,9 +303,7 @@ if ( ! function_exists('parseCsvToArray')) {
             }
             foreach ($row as $k => $value) {
                 if ( ! array_key_exists($k, $fields)) {
-                    throw new CsvFieldNotFoundException(
-                        "Could not find CSV Field with index $k. Check row number $i for bad data."
-                    );
+                    throw new CsvFieldNotFoundException("Could not find CSV Field with index $k. Check row number $i for bad data.");
                 }
                 $csvArray[$i][$fields[$k]] = trim($value);
             }
@@ -483,8 +481,7 @@ if ( ! function_exists('carbonGetNext')) {
     /**
      * Get carbon instance of the next $day.
      *
-     * @param string      $day
-     * @param Carbon|null $fromDate
+     * @param string $day
      *
      * @return Carbon|false
      */
@@ -773,8 +770,6 @@ if ( ! function_exists('timezones')) {
 if ( ! function_exists('defaultCarePlanTemplate')) {
     /**
      * Returns CircleLink's default CarePlanTemplate.
-     *
-     * @return CarePlanTemplate|null
      */
     function getDefaultCarePlanTemplate(): ?CarePlanTemplate
     {
@@ -786,8 +781,7 @@ if ( ! function_exists('setAppConfig')) {
     /**
      * Save an AppConfig key, value and then return it.
      *
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return CarePlanTemplate
      */
@@ -940,8 +934,6 @@ if ( ! function_exists('getProblemCodeSystemName')) {
     /**
      * Get a problem code system name from an array of clues.
      *
-     * @param array $clues
-     *
      * @return string|null
      */
     function getProblemCodeSystemName(array $clues)
@@ -970,8 +962,6 @@ if ( ! function_exists('getProblemCodeSystemName')) {
 if ( ! function_exists('getProblemCodeSystemCPMId')) {
     /**
      * Get the id of an App\ProblemCodeSystem from an array of clues.
-     *
-     * @param array $clues
      *
      * @return int|null
      */
@@ -1029,11 +1019,11 @@ if ( ! function_exists('validProblemName')) {
                 'check',
             ]
         ) && ! in_array(
-                strtolower($name),
-                [
-                    'fu',
-                ]
-            );
+            strtolower($name),
+            [
+                'fu',
+            ]
+        );
     }
 }
 
@@ -1350,9 +1340,6 @@ if ( ! function_exists('presentDate')) {
      * Due to the fact that we don't have a way to sort dates m-d-Y dates in tables yet, we are using $forceHumanForm so that developers can choose when to "force" m-d-Y format.
      *
      * @param $date
-     * @param bool $withTime
-     * @param bool $withTimezone
-     * @param bool $forceHumanForm
      *
      * @return string
      */
@@ -1505,5 +1492,21 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
             \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
         }
+    }
+}
+
+if ( ! function_exists('getModelFromTable')) {
+    function getModelFromTable($table)
+    {
+        foreach (get_declared_classes() as $class) {
+            if (is_subclass_of($class, 'Illuminate\Database\Eloquent\Model')) {
+                $model = new $class();
+                if ($model->getTable() === $table) {
+                    return $class;
+                }
+            }
+        }
+
+        return false;
     }
 }
