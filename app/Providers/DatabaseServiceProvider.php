@@ -11,8 +11,6 @@ use CircleLinkHealth\Core\Facades\Connection;
 use Illuminate\Database\Connectors\ConnectionFactory;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\DatabaseServiceProvider as LaravelDatabaseServiceProvider;
-use Illuminate\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
-use Illuminate\Database\Schema\Grammars\MySqlGrammar as SchemaGrammar;
 
 class DatabaseServiceProvider extends LaravelDatabaseServiceProvider
 {
@@ -41,17 +39,12 @@ class DatabaseServiceProvider extends LaravelDatabaseServiceProvider
                 //Create default connection from factory
                 $connection = $app['db.factory']->make($config, $name);
                 //Instantiate our connection with the default connection data
-                $new_connection = new Connection(
+                return new Connection(
                     $connection->getPdo(),
                     $connection->getDatabaseName(),
                     $connection->getTablePrefix(),
                     $config
                 );
-                //Set the appropriate grammar object
-                $new_connection->setQueryGrammar(new QueryGrammar());
-                $new_connection->setSchemaGrammar(new SchemaGrammar());
-
-                return $new_connection;
             });
 
             return $dbm;
