@@ -4,22 +4,34 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-$localBinPath = '/usr/local/bin/wkhtmltopdf';
-$pdfBinary    = '/bin/wkhtmltopdf';
-if (file_exists($localBinPath)) {
-    $pdfBinary = $localBinPath;
+$pdfBinary           = null;
+$pdfBinaryCandidates = [
+    '/app/bin/wkhtmltopdf',
+    '/usr/local/bin/wkhtmltopdf',
+];
+foreach ($pdfBinaryCandidates as $pdfPath) {
+    if (file_exists($pdfPath)) {
+        $pdfBinary = $pdfPath;
+        break;
+    }
 }
-
-//    throw new \Exception('wkhtmltopdf binary was not found.', 500);
-
-//Img Binary
-$debianImgLib = '/usr/local/bin/wkhtmltoimage';
-$imgBinary    = '/bin/wkhtmltoimage';
-if (file_exists($debianImgLib)) {
-    $imgBinary = $debianImgLib;
+if ( ! $pdfBinary) {
+    throw new \Exception('wkhtmltopdf binary was not found.', 500);
 }
-
-//    throw new \Exception('wkhtmltoimage binary not found.', 500);
+$imgBinary           = null;
+$imgBinaryCandidates = [
+    '/app/bin/wkhtmltoimage',
+    '/usr/local/bin/wkhtmltoimage',
+];
+foreach ($imgBinaryCandidates as $imgPath) {
+    if (file_exists($imgPath)) {
+        $imgBinary = $imgPath;
+        break;
+    }
+}
+if ( ! $imgBinary) {
+    throw new \Exception('wkhtmltoimage binary was not found.', 500);
+}
 
 return [
     'pdf' => [
