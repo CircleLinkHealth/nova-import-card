@@ -177,11 +177,13 @@
             <div class="recommendations-area">
                 The patient's immunization history is as follows:
                 <br>
-                The patient HAS received the
-                @foreach($reportData['immunizations_received'] as $immunization)
-                    {{$immunization}} {{$loop->last ? ' ' : ', '}}
-                @endforeach
-                vaccinations.
+                @if(!empty($reportData['immunizations_received']))
+                    The patient HAS received the
+                    @foreach($reportData['immunizations_received'] as $immunization)
+                        {{$immunization}} {{$loop->last ? ' ' : ', '}}
+                    @endforeach
+                    vaccinations.
+                @endif
                 @if (!empty($reportData['immunizations_not_received']))
                     <br>
                     <br>

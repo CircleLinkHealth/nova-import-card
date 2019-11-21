@@ -728,8 +728,8 @@ class PersonalizedPreventionPlanPrepareData
             $getAdlRecommendations = $this->getTaskRecommendations($title, $index);
             $textToReplace = '{insert all selected tasks in Q26}'; //todo:rename this in seeder and DB
             $adlAnswers = $adl['adl'];
-            $answersUnCapitalized = collect($adlAnswers)->map(function ($answer){
-               return lcfirst($answer);
+            $answersUnCapitalized = collect($adlAnswers)->map(function ($answer) {
+                return lcfirst($answer);
             })->toArray();
 
             $replacementText = implode(", ", $answersUnCapitalized);
@@ -915,7 +915,7 @@ class PersonalizedPreventionPlanPrepareData
             : 'N/A';
         $breastCancerSelected = $this->checkForConditionSelected($screenings, $condition = 'Breast Cancer',
             $checkInCategory = 'family_conditions');
-
+//@todo:also add if other or trans waiting answer from raph
         if ($screenings['sex'] === 'Female' && '50' < $screenings['age'] && $screenings['age'] < '74') {
             return $this->getTaskRecommendations($title, $index);
 
@@ -1081,14 +1081,14 @@ class PersonalizedPreventionPlanPrepareData
         $hasSkinCancerSelectedInQ18 = $this->checkForConditionSelected($screenings, $condition = 'Skin Cancer',
             $checkInCategory = 'family_conditions');
 
-        $checkSkinCancerIsSelectedInQ16 = $this->checkSkinCancerIsSelectedInQ16($screenings,
+        $skinCancerIsSelectedInQ16 = $this->checkSkinCancerIsSelectedInQ16($screenings,
             'multipleQuestion16',
             'Cancer',
-            'Skin');
+            'skin');
 
         $countFamilyMembersWithSkinCancerFromQ18 = $this->countFamilyMembersWithSkinCancer($screenings, $condition = 'Skin Cancer');
 
-        if (($hasSkinCancerSelectedInQ18 === true && $countFamilyMembersWithSkinCancerFromQ18 >= '2') || $checkSkinCancerIsSelectedInQ16 === true) {
+        if (($hasSkinCancerSelectedInQ18 === true && $countFamilyMembersWithSkinCancerFromQ18 >= '2') || $skinCancerIsSelectedInQ16 === true) {
             return $this->getTaskRecommendations($title, $index);
         }
 
@@ -1120,7 +1120,7 @@ class PersonalizedPreventionPlanPrepareData
                     && array_key_exists('name', $data)
                     && isset($data['name'])
                     && $data['name'] === $conditionName) {
-                    return $data['type'] === $conditionType;
+                    return ProviderReportService::caseInsensitiveComparison($data['type'], $conditionType);
                 }
             }
         }
