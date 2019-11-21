@@ -77,7 +77,11 @@ class CreateSqlView extends Command
     protected function ensureViewDoesntAlreadyExist($name)
     {
         if (class_exists($className = $this->getClassName($name))) {
-            throw new InvalidArgumentException("A {$className} class already exists.");
+            $autoloader = require base_path('vendor/autoload.php');
+            $file       = $autoloader->findFile($className);
+            $classPath  = realpath($file);
+
+            throw new InvalidArgumentException("Class `{$className}` already exists at `$classPath`.");
         }
     }
 
@@ -91,6 +95,16 @@ class CreateSqlView extends Command
     protected function getClassName($name)
     {
         return Str::studly($name);
+    }
+
+    /**
+     * Get the date prefix for the view.
+     *
+     * @return string
+     */
+    protected function getDatePrefix()
+    {
+        return date('Y_m_d_His');
     }
 
     /**
@@ -156,7 +170,7 @@ class CreateSqlView extends Command
 
     private function getPath(string $name)
     {
-        return $this->getViewsDir()."/$name.php";
+        return $this->getViewsDir()."/{$this->getDatePrefix()}_$name.php";
     }
 
     private function getViewName(string $name)
