@@ -9,7 +9,7 @@ trait ProtectsPhi
 {
     private $hiddenValue = '***';
 
-    private $hiddenDate = '0000-01-01';
+    private $hiddenDate = '9999-01-01';
 
     /**
      *The trait’s boot method works just like an Eloquent model’s boot method.
@@ -40,7 +40,7 @@ trait ProtectsPhi
         $user = auth()->user();
 
         if ($user) {
-            if ( ! $this->authUserShouldSeePhi() && in_array($key, $this->phi) && ! $user->is($this)) {
+            if ($key != 'id' && ! $this->authUserShouldSeePhi() && in_array($key, $this->phi) && ! $user->is($this)) {
                 $value = $this->hidePhiAttribute($key);
             }
         }
@@ -57,6 +57,8 @@ trait ProtectsPhi
     {
         if (in_array($key, $this->casts)) {
             return $this->castHiddenPhiAttribute($key);
+        } elseif (in_array($key, $this->dates)){
+            return $this->hiddenAttributeCasts()['date'];
         } else {
             return $this->hiddenValue;
         }
