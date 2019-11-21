@@ -171,6 +171,10 @@ class Patient extends BaseModel
     const TO_ENROLL = 'to_enroll';
     const UNREACHABLE = 'unreachable';
     const WITHDRAWN = 'withdrawn';
+    /**
+     * Withdrawn on 1st Call
+     * */
+    const WITHDRAWN_1ST_CALL = 'withdrawn_1st_call';
 
     public $phi = [
         'agent_name',

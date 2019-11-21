@@ -357,6 +357,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     notOfPracticeRequiringSpecialBhiConsent()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     ofPracticeRequiringSpecialBhiConsent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isNotDemo()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -2044,6 +2045,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function inboundActivities()
     {
         return $this->hasMany(Call::class, 'inbound_cpm_id', 'id');
+    }
+
+    public function onFirstCall() : bool
+    {
+        return $this->inboundCalls()
+                    ->where('status', 'reached')->count() <= 1;
     }
 
     public function inboundScheduledCalls(Carbon $after = null)
