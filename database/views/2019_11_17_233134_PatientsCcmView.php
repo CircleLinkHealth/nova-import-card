@@ -20,7 +20,10 @@ class PatientsCcmView extends BaseSqlView
         FROM users u
         JOIN ccd_problems ccd on u.id = ccd.patient_id
         JOIN cpm_problems cpm on ccd.cpm_problem_id = cpm.id
-        WHERE u.deleted_at is null and ccd.deleted_at is null and ccd.is_monitored = 1 and cpm.is_behavioral = 0
+        WHERE u.deleted_at is null
+        AND ccd.deleted_at is null
+        AND ccd.is_monitored = true
+        AND cpm.is_behavioral = false
         ORDER BY u.id;
       ");
     }
