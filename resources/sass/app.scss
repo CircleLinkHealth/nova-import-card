@@ -156,11 +156,6 @@ html, body, #app {
     color: #1a1a1a;
 }
 
-//end card of HRA and VITALS
-@media (max-width: 490px) {
-
-}
-
 @media (min-width: 519px) {
     .survey-main-title {
         font-size: 24px;
@@ -560,6 +555,7 @@ a.navbar-title:hover {
     #app > div > div.top-right-fixed {
         left: unset;
         top: unset;
+        right: 18px;
     }
 
     /*Left button return back arrow*/
@@ -613,7 +609,7 @@ a.navbar-title:hover {
         padding: 1%;
     }
 
-    .progress-text{
+    .progress-text {
         margin-left: 52px;
     }
 
@@ -621,8 +617,10 @@ a.navbar-title:hover {
         margin-left: 39px;;
     }
 
-    .bottom-navbar {
-
+    .survey-main-title {
+        font-size: 15px;
+        margin-bottom: 15px;
+        margin-top: 45px;
     }
 
     #app > div > div.bottom-navbar.container > div > div.col-1.col-sm-1.col-md-1.col-lg-1.text-center.no-padding > div > button > svg {
@@ -631,14 +629,20 @@ a.navbar-title:hover {
 
     .by-circlelink {
         margin-right: 28px;
+        font-size: 14px;
     }
 
     #app > div > div > div > div.align-items-center > div {
         font-size: 76%;
     }
 
-    .scroll-buttons {
+    .welcome-icon {
+        width: 160px;
+    }
 
+    .survey-sub-welcome-text {
+        font-size: 13px;
+        display: contents;
     }
 
 }
