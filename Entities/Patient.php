@@ -579,7 +579,7 @@ class Patient extends BaseModel
                          ]);
             })
                   ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                      $subQuery->ccmStatus(Patient::WITHDRAWN)
+                      $subQuery->ccmStatus([Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])
                                ->where([
                                    ['date_withdrawn', '>=', $fromDate],
                                    ['date_withdrawn', '<=', $toDate],
@@ -604,7 +604,11 @@ class Patient extends BaseModel
      */
     public function scopeCcmStatus($builder, $status, $operator = '=')
     {
-        $builder->where('ccm_status', $operator, $status);
+        if (is_array($status)){
+            $builder->whereIn('ccm_status', $operator, $status);
+        }else{
+            $builder->where('ccm_status', $operator, $status);
+        }
     }
 
     public function scopeEnrolled($query)
