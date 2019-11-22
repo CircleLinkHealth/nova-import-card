@@ -20,7 +20,7 @@ abstract class BaseSqlView implements SqlViewInterface
      */
     public function dropSqlView(): bool
     {
-        return \DB::statement("DROP VIEW IF EXISTS {$this->getViewName()}");
+        return \DB::statement("DROP VIEW IF EXISTS {$this->getViewName()} CASCADE");
     }
 
     /**

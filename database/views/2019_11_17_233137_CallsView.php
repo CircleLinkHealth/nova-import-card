@@ -19,8 +19,6 @@ class CallsView extends BaseSqlView
      */
     public function createSqlView(): bool
     {
-        $startOfMonthQuery = "cast(date_trunc('month', current_date) as date)";
-
         return \DB::statement("
         CREATE VIEW {$this->getViewName()}
         AS
@@ -97,7 +95,7 @@ class CallsView extends BaseSqlView
             
             left join (select pi.user_id as patient_id, pi.last_contact_time as last_call, pi.no_call_attempts_since_last_success, pi.general_comment, pi.ccm_status from patient_info pi where pi.deleted_at is null and pi.ccm_status in ('enrolled', 'paused')) as u4 on c.inbound_cpm_id = u4.patient_id
             
-            left join (select pms.patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls, pms.no_of_calls from patient_monthly_summaries pms where month_year = ${startOfMonthQuery}) u5 on c.inbound_cpm_id = u5.patient_id
+            left join (select pms.patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls, pms.no_of_calls from patient_monthly_summaries pms where month_year = cast(date_trunc('month', current_date) as date)) u5 on c.inbound_cpm_id = u5.patient_id
             
 			left join (select pi.user_id, string_agg(pcw.day_of_week::TEXT, ',') as preferred_call_days from patient_info pi left join patient_contact_window pcw on pi.id = pcw.patient_info_id where pi.deleted_at is null group by pi.user_id) as u6 on c.inbound_cpm_id = u6.user_id
 			

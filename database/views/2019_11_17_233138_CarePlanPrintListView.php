@@ -13,29 +13,27 @@ class CarePlanPrintListView extends BaseSqlView
      */
     public function createSqlView(): bool
     {
-        $startOfMonthQuery = safeStartOfMonthQuery();
-
         return \DB::statement("
         CREATE VIEW {$this->getViewName()}
         AS
-SELECT
-c.id as care_plan_id,
-c.status as care_plan_status,
-c.last_printed,
-c.provider_date,
-u1.patient_id,
-u1.patient_full_name,
-u1.patient_first_name,
-u1.patient_last_name,
-u1.patient_registered,
-pi.patient_info_id,
-pi.patient_dob,
-pi.patient_ccm_status,
-pra.primary_practice_id,
-pra.practice_name,
-u2.approver_full_name,
-ct.provider_full_name,
-pms.patient_ccm_time
+        SELECT
+            c.id as care_plan_id,
+            c.status as care_plan_status,
+            c.last_printed,
+            c.provider_date,
+            u1.patient_id,
+            u1.patient_full_name,
+            u1.patient_first_name,
+            u1.patient_last_name,
+            u1.patient_registered,
+            pi.patient_info_id,
+            pi.patient_dob,
+            pi.patient_ccm_status,
+            pra.primary_practice_id,
+            pra.practice_name,
+            u2.approver_full_name,
+            ct.provider_full_name,
+            pms.patient_ccm_time
 
 FROM
 care_plans c
@@ -50,7 +48,7 @@ LEFT JOIN (select u.id, CONCAT_WS(' ', u.first_name, u.last_name, u.suffix) as a
 
 LEFT JOIN (select ct.user_id, ct.member_user_id, ct.type, CONCAT_WS(' ', u.first_name, u.last_name, u.suffix) as provider_full_name from patient_care_team_members ct left join users u on ct.member_user_id = u.id where ct.type = 'billing_provider') as ct on ct.user_id=c.user_id
 
-LEFT JOIN (select pms.id, pms.patient_id, pms.month_year, pms.ccm_time as patient_ccm_time from patient_monthly_summaries pms where pms.month_year={$startOfMonthQuery}) as pms on pms.patient_id = u1.patient_id
+LEFT JOIN (select pms.id, pms.patient_id, pms.month_year, pms.ccm_time as patient_ccm_time from patient_monthly_summaries pms where pms.month_year=cast(date_trunc('month', current_date) as date)) as pms on pms.patient_id = u1.patient_id
 
 WHERE pi.patient_ccm_status = 'enrolled'
       ");
