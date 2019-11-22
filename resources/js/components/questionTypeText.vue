@@ -408,15 +408,21 @@
 
     @media (max-width: 490px) {
         .label {
-            font-size: 19px;
+            font-size: 16px;
         }
 
-        .sub-part{
+        .sub-part {
             padding-left: 9px;
+            font-size: 15px;
         }
 
-        .no-gutters{
+        .no-gutters {
             padding-left: 9px;
+            font-size: 15px;
+        }
+
+        .button-text-only {
+            font-size: initial;
         }
     }
 </style>

@@ -193,10 +193,15 @@
 
     @media (max-width: 490px) {
         .select-title {
-            font-size: 19px;
+            font-size: 15px;
+        }
+
+        .select-dropdown{
+            font-size: 15px;
         }
         .select-container:nth-child(odd) {
             padding-right: unset;
         }
+
         }
 </style>

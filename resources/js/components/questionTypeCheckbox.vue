@@ -291,12 +291,16 @@
     @media (max-width: 490px) {
         .scrollable label{
             height: fit-content;
-            padding: 6px;
-            font-size: 14px;
+            padding: 8px;
+            font-size: 13px;
             font-weight: 400;
         }
         .scrollable label input[type=checkbox] + span:before{
             font-size: 1em;
+        }
+
+        .text-field{
+            font-size: 15px;
         }
 
     }

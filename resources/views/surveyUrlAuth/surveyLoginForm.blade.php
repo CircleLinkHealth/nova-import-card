@@ -167,6 +167,8 @@
 
             .by-circlelink{
                 margin-top: -15px;
+                font-size: 12px;
+                margin-left: 19px;
             }
         }
     </style>

@@ -11620,12 +11620,6 @@ body,
   color: #1a1a1a;
 }
 
-@media (max-width: 490px) {
-  #app > div > div > div > div.align-items-center > div {
-    font-size: 76%;
-  }
-}
-
 @media (min-width: 519px) {
   .survey-main-title {
     font-size: 24px;
@@ -11715,27 +11709,6 @@ body,
     margin-bottom: 20px;
     font-size: 18px;
     letter-spacing: 1px;
-  }
-}
-
-@media (max-width: 490px) {
-  .btn-start {
-    width: 40%;
-    height: 30px;
-    padding: 1%;
-  }
-
-  .bottom-navbar {
-    width: 110%;
-    margin-left: -6%;
-  }
-
-  #app > div > div.bottom-navbar.container > div > div.col-1.col-sm-1.col-md-1.col-lg-1.text-center.no-padding > div > button > svg {
-    width: 62%;
-  }
-
-  .by-circlelink {
-    margin-right: 28px;
   }
 }
 
@@ -12097,10 +12070,6 @@ a.navbar-title:hover {
     top: unset;
   }
 
-  .text-center {
-    left: 32%;
-  }
-
   .questions-body {
     margin-left: -15px;
   }
@@ -12108,7 +12077,7 @@ a.navbar-title:hover {
   .main-container {
     padding-left: 0;
     padding-right: 0;
-    height: 810px;
+    height: 100%;
   }
 
   .question-answer-type {
@@ -12116,8 +12085,39 @@ a.navbar-title:hover {
   }
 
   .questions-title {
-    width: 335px;
+    width: 330px;
     padding-left: 9px;
+  }
+
+  .next-btn {
+    height: 34px;
+    padding-top: 2px;
+  }
+
+  .btn-start {
+    width: 40%;
+    height: 30px;
+    padding: 1%;
+  }
+
+  .progress-text {
+    margin-left: 52px;
+  }
+
+  .progress {
+    margin-left: 39px;
+  }
+
+  #app > div > div.bottom-navbar.container > div > div.col-1.col-sm-1.col-md-1.col-lg-1.text-center.no-padding > div > button > svg {
+    width: 62%;
+  }
+
+  .by-circlelink {
+    margin-right: 28px;
+  }
+
+  #app > div > div > div > div.align-items-center > div {
+    font-size: 76%;
   }
 }
 
