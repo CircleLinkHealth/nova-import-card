@@ -9,6 +9,7 @@ namespace App\Observers;
 use App\CarePlan;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
+use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 
@@ -38,10 +39,11 @@ class CarePlanObserver
     /**
      * Listen to the CarePlan saving event.
      */
-    public function saving(CarePlan $carePlan)
+    public function saving(CarePlan $carePlan, SchedulerService $schedulerService)
     {
         if (CarePlan::QA_APPROVED == $carePlan->status) {
             $carePlan->provider_approver_id = null;
+            $schedulerService->ensurePatientHasScheduledCall($carePlan->patient);
         }
 
         if ( ! array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {

@@ -7,6 +7,7 @@
 namespace App\Observers;
 
 use App\Enrollee;
+use App\Services\Calls\SchedulerService;
 use App\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -79,16 +80,27 @@ class PatientObserver
 
     /**
      * Listen to the Patient updated event.
+     * Reset paused_letter_printed_at in case date_paused was changed.
+     * Make sure patient has scheduled call in case status was changed AND is now 'enrolled'.
+     * Make sure call attempts counter is reset in case status was 'unreachable' and is now 'enrolled'.
      */
-    public function updating(Patient $patient)
+    public function updating(Patient $patient, SchedulerService $schedulerService)
     {
         if ($patient->isDirty('date_paused')) {
             $patient->paused_letter_printed_at = null;
         }
 
         if ($patient->isDirty('ccm_status')) {
-            if (Patient::UNREACHABLE == $patient->getOriginal('ccm_status') && Patient::ENROLLED == $patient->ccm_status) {
-                $patient->no_call_attempts_since_last_success = 0;
+            $oldValue = $patient->getOriginal('ccm_status');
+            $newValue = $patient->ccm_status;
+            if (Patient::ENROLLED == $newValue) {
+                if (Patient::UNREACHABLE == $oldValue) {
+                    $patient->no_call_attempts_since_last_success = 0;
+                }
+
+                if (Patient::ENROLLED != $oldValue) {
+                    $schedulerService->ensurePatientHasScheduledCall($patient->user);
+                }
             }
         }
     }
