@@ -638,12 +638,6 @@ class Patient extends BaseModel
     {
         $statusBefore                   = $this->ccm_status;
 
-        if ($value === PATIENT::WITHDRAWN){
-            $this->attributes['ccm_status'] = $this->user->onFirstCall() ? PATIENT::WITHDRAWN_1ST_CALL : PATIENT::WITHDRAWN;
-        }else{
-            $this->attributes['ccm_status'] = $value;
-        }
-
         if ($statusBefore !== $value) {
             if (Patient::ENROLLED == $value) {
                 $this->attributes['registration_date'] = Carbon::now()->toDateTimeString();
