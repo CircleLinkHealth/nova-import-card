@@ -252,7 +252,7 @@
 
             if (this.question.answer) {
                 if (this.question.answer.value) {
-                    this.setValueFromServer(this.question.answer.suggested_value);
+                    this.setValueFromServer(this.question.answer.value);
                 } else if (this.question.answer.suggested_value) {
                     this.setValueFromServer(this.question.answer.suggested_value);
                 }
