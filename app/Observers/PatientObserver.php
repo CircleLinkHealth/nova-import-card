@@ -84,7 +84,7 @@ class PatientObserver
      * Make sure patient has scheduled call in case status was changed AND is now 'enrolled'.
      * Make sure call attempts counter is reset in case status was 'unreachable' and is now 'enrolled'.
      */
-    public function updating(Patient $patient, SchedulerService $schedulerService)
+    public function updating(Patient $patient)
     {
         if ($patient->isDirty('date_paused')) {
             $patient->paused_letter_printed_at = null;
@@ -99,6 +99,8 @@ class PatientObserver
                 }
 
                 if (Patient::ENROLLED != $oldValue) {
+                    /** @var SchedulerService $schedulerService */
+                    $schedulerService = app()->make(SchedulerService::class);
                     $schedulerService->ensurePatientHasScheduledCall($patient->user);
                 }
             }

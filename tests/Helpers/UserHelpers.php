@@ -59,17 +59,17 @@ trait UserHelpers
     /**
      * @param int    $practiceId
      * @param string $roleName
-     *
-     * @return \CircleLinkHealth\Customer\Entities\User
+     * @param mixed  $ccmStatus
      */
     public function createUser(
         $practiceId = 8,
-        $roleName = 'provider'
+        $roleName = 'provider',
+        $ccmStatus = 'enrolled'
     ): User {
         $roles = (array) Role::whereName($roleName)->firstOrFail()->id;
 
         //creates the User
-        $user = $this->setupUser($practiceId, $roles);
+        $user = $this->setupUser($practiceId, $roles, $ccmStatus);
 
         $email     = $user->email;
         $locations = $user->locations->pluck('id')->all();
@@ -164,7 +164,7 @@ trait UserHelpers
         return (app(PatientWriteRepository::class))->updateCallLogs($patient, true);
     }
 
-    public function setupUser($practiceId, $roles)
+    public function setupUser($practiceId, $roles, $ccmStatus = 'enrolled')
     {
         $faker = Factory::create();
 
@@ -202,7 +202,7 @@ trait UserHelpers
                 //phones
                 'home_phone_number' => $workPhone,
 
-                'ccm_status' => 'enrolled',
+                'ccm_status' => $ccmStatus,
             ]
         );
 

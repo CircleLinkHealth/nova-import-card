@@ -39,10 +39,12 @@ class CarePlanObserver
     /**
      * Listen to the CarePlan saving event.
      */
-    public function saving(CarePlan $carePlan, SchedulerService $schedulerService)
+    public function saving(CarePlan $carePlan)
     {
         if (CarePlan::QA_APPROVED == $carePlan->status) {
             $carePlan->provider_approver_id = null;
+            /** @var SchedulerService $schedulerService */
+            $schedulerService = app()->make(SchedulerService::class);
             $schedulerService->ensurePatientHasScheduledCall($carePlan->patient);
         }
 
