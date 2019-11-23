@@ -2286,6 +2286,11 @@ Route::post('/redirect-mark-read/{notificationId}', [
     'as'   => 'notification.redirect',
 ]);
 
+Route::get('/redirect-mark-done/{callId}', [
+    'uses' => 'PatientCallListController@markAddendumActivitiesDone',
+    'as'   => 'redirect.readonly.activity',
+]);
+
 Route::get('see-all-notifications', [
     'uses' => 'NotificationController@seeAllNotifications',
     'as'   => 'notifications.seeAll',
