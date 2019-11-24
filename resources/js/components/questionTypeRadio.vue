@@ -358,12 +358,18 @@
             font-size: 13px;
             padding-left: 1em;
         }
+
         /*Other button Q11c.*/
-        #app div > div.question-answer-type > div > div > input{
+        #app div > div.question-answer-type > div > div > input {
             height: 35px;
             text-align: left;
             padding: 1em;
             font-size: xx-small;
+        }
+        /* Vitals Radios*/
+        .btn.btn-sm {
+            width: 35px;
+            height: 35px;
         }
     }
 

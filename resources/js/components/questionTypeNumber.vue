@@ -322,11 +322,11 @@
     @media (max-width: 490px) {
         .number-field{
             padding-left: 9px;
-            width: 325px;
+            width: 321px;
         }
 
         .number-field.parts-2 {
-            width: 157px;
+            width: 152px;
         }
     }
 </style>
