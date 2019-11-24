@@ -499,7 +499,7 @@ class PatientCareplanController extends Controller
         }
 
         //moving here to cover all cases
-        if ('withdrawn' == $params->get('ccm_status')) {
+        if (in_array($params->get('ccm_status'), [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
             if ('Other' == $params->get('withdrawn_reason')) {
                 $params->set('withdrawn_reason', $params->get('withdrawn_reason_other'));
             }
