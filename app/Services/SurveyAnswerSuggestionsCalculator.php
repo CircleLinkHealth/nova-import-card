@@ -127,22 +127,26 @@ class SurveyAnswerSuggestionsCalculator
     /**
      * TODO: should get questions using a HUMAN-MADE IDENTIFIER, order can change at any time
      *       see ticket CPM-1508
+     *  Raw data found in ccdas table
+     *  BMI - ccda vitals
+     *  find example ccdas in app-cpm-web/storage/ccdas/Samples
+     *
      */
     const HRA_QUESTION_ORDERS = [
-        'race'            => ['order' => 1, 'sub_order' => 'a'],
-        'hispanic-latino' => ['order' => 1, 'sub_order' => 'b'],
+        'race'            => ['order' => 1, 'sub_order' => 'a'], //-> race and ethnicity report ccd_demographics_logs
+        'hispanic-latino' => ['order' => 1, 'sub_order' => 'b'], //-> race and ethnicity report ccd_demographics_logs
         'age'             => ['order' => 2, 'sub_order' => null], //patient_info
-        'height'          => ['order' => 3, 'sub_order' => null],
+        'height'          => ['order' => 3, 'sub_order' => null], //ccda - vitals section ?
         'sex'             => ['order' => 4, 'sub_order' => null], //patient_info
         'alcohol'         => ['order' => 12, 'sub_order' => null],
         'conditions'      => ['order' => 16, 'sub_order' => null], //ccd_problems
-        'medications'     => ['order' => 20, 'sub_order' => null], //ccd_medications
+        'medications'     => ['order' => 20, 'sub_order' => null], //ccd_medications, ccd_instructions (?)
         'allergies'       => ['order' => 21, 'sub_order' => null], //ccd_allergies
     ];
 
     const VITALS_QUESTIONS_ORDER = [
-        'weight' => ['order' => 2, 'sub_order' => null],
-        'height' => ['order' => 3, 'sub_order' => null],
+        'weight' => ['order' => 2, 'sub_order' => null], //ccda - vitals
+        'height' => ['order' => 3, 'sub_order' => null], //ccda - vitals
     ];
 
 }

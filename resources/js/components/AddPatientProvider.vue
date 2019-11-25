@@ -227,10 +227,6 @@
                         valid: false,
                         validated: false
                     },
-                    phoneNumber: {
-                        valid: false,
-                        validated: false
-                    },
                     primaryPracticeId: {
                         valid: false,
                         validated: false
@@ -283,19 +279,21 @@
             },
 
             validate(key, value) {
+                const emailValidation = /\S+@\S+\.\S+/;
                 switch (key) {
                     case "firstName":
                     case "lastName":
                         this.validation[key].valid = value.length > 0;
                         break;
-                    case "phoneNumber":
-                        const phoneRe = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
-                        this.validation[key].valid = phoneRe.test(value);
-                        break;
                     case "email":
+                        this.validation[key].valid = emailValidation.test(value);
+                        break;
                     case "emrDirect":
-                        const re = /\S+@\S+\.\S+/;
-                        this.validation[key].valid = re.test(value);
+                        if (!value || value.length === 0) {
+                            this.validation[key].valid = true;
+                        } else {
+                            this.validation[key].valid = emailValidation.test(value);
+                        }
                         break;
                     default:
                         this.validation[key].valid = true;
