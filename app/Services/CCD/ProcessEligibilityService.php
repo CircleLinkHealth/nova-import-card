@@ -15,6 +15,7 @@ use App\Importer\Loggers\Medication\NumberedMedicationFields;
 use App\Importer\Loggers\Problem\NumberedProblemFields;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
+use App\Jobs\ProcessCcdaFromGoogleDrive;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
 use App\Models\MedicalRecords\Ccda;
 use App\Services\Eligibility\Csv\CsvPatientList;
@@ -239,10 +240,9 @@ class ProcessEligibilityService
 
     public function fromGoogleDrive(EligibilityBatch $batch)
     {
-        $dir                 = $batch->options['dir'];
-        $filterLastEncounter = (bool) $batch->options['filterLastEncounter'];
-        $filterInsurance     = (bool) $batch->options['filterInsurance'];
-        $filterProblems      = (bool) $batch->options['filterProblems'];
+        $cloudDisk = Storage::disk('google');
+        $recursive = false; // Get subdirectories also?
+        $dir       = $batch->options['dir'];
 
         $alreadyProcessed = Media::select('file_name')->whereModelType(Ccda::class)->whereIn('model_id', function ($query) use ($batch) {
             $query->select('id')
@@ -250,62 +250,24 @@ class ProcessEligibilityService
                 ->where('batch_id', $batch->id);
         })->distinct()->pluck('file_name');
 
-        $cloudDisk = Storage::disk('google');
-
-        $practice  = Practice::findOrFail($batch->practice_id);
-        $recursive = false; // Get subdirectories also?
-        $contents  = collect($cloudDisk->listContents($dir, $recursive));
-
-        $ccds = $contents->where('type', '=', 'file')
+        return collect($cloudDisk->listContents($dir, $recursive))
+            ->where('type', '=', 'file')
             ->whereIn('mimetype', [
                 'text/xml',
                 'application/xml',
             ])
             ->whereNotIn('name', $alreadyProcessed->all())
-            ->take(10);
+            ->whenEmpty(function () {
+                return false;
+            })->whenNotEmpty(function ($collection) use ($batch) {
+                $collection->each(function ($file) use (
+                    $batch
+                ) {
+                    ProcessCcdaFromGoogleDrive::dispatch($file, $batch);
+                });
 
-        if ($ccds->isEmpty()) {
-            return false;
-        }
-
-        return $ccds->map(function ($file) use (
-            $cloudDisk,
-            $practice,
-            $dir,
-            $filterLastEncounter,
-            $filterInsurance,
-            $filterProblems,
-            $batch
-        ) {
-            $driveFilePath = $file['path'];
-
-            $rawData = $cloudDisk->get($driveFilePath);
-
-            $ccda = Ccda::create([
-                'batch_id'    => $batch->id,
-                'source'      => Ccda::GOOGLE_DRIVE."_${dir}",
-                'xml'         => $rawData,
-                'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-                'imported'    => false,
-                'practice_id' => (int) $practice->id,
-                'filename'    => $file['name'],
-            ]);
-
-            if ( ! $ccda->practice_id) {
-                //for some reason it doesn't save practice_id when using Ccda::create([])
-                $ccda->practice_id = (int) $practice->id;
-                $ccda->save();
-            }
-
-            ProcessCcda::withChain([
-                (new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch))->onQueue('low'),
-            ])->dispatch($ccda->id)
-                ->onQueue('low');
-
-            return $file;
-        })
-            ->filter()
-            ->values();
+                return true;
+            });
     }
 
     public function handleAlreadyDownloadedZip(
