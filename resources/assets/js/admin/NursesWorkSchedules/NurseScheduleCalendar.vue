@@ -29,7 +29,7 @@
 
             <!-- Add new event - main button-->
             <div class="add-event-main">
-                <button class="btn btn-primary" @click="openMainEventModal">Add New</button>
+                <button class="btn btn-primary" @click="openMainEventModal">Add new window</button>
             </div>
 
         </div>
@@ -61,7 +61,6 @@
 
                             <!--  Filter Options-->
                             <div v-if="!clickedToViewEvent" class="filter-options">
-                                <h5>Add Work Window:</h5>
                                 <div v-if="authIsAdmin">
                                     <vue-select :options="dataForDropdown"
                                                 v-model="nurseData"
@@ -121,6 +120,7 @@
                                     </vue-select>
                                 </div>
 
+                            <div style="display: flex">
                                 <div class="repeat-until">
                                     <h5>Repeat Until</h5>
                                     <input type="date"
@@ -129,7 +129,16 @@
                                            name="until"
                                            v-model="repeatUntil">
                                 </div>
-
+                                <!-- ADD HOLIDAYS-->
+                                <div v-if="this.authIsAdmin === false"
+                                     class="add-holidays">
+                                    <input id="addHolidaysaddHolidays"
+                                           type="checkbox"
+                                           class="add-holidays-button"
+                                           v-model="addHolidays">
+                                    Add holiday window
+                                </div>
+                            </div>
 
                             </div>
 
@@ -761,6 +770,8 @@
                 this.eventFrequency = [];
                 this.isRecurringEvent = false;
                 this.workEventDate = '';
+                this.addHolidays = false;
+                this.selectedDate = '';
             },
         }),
 //@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
@@ -854,6 +865,12 @@
 </script>
 
 <style>
+    h5{
+        font-family: inherit;
+        line-height: 0.2;
+        font-size: 13px;
+    }
+
     .add-event-main {
         margin-bottom: 30px;
     }
@@ -1028,6 +1045,24 @@
 
     #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr > td {
         padding-top: 8px;
+    }
+
+    .add-holidays{
+        font-size: 20px;
+    }
+
+    #addHolidays {
+        display: inline-block;
+        margin-left: 125px;
+        margin-top: 43px;
+    }
+
+    .repeat-until{
+        margin-top: 10px;
+    }
+
+    #addWorkEvent > div.modal-dialog > div > div.modal-header > button{
+        visibility: hidden;
     }
 </style>
 

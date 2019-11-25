@@ -572,6 +572,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'get.CCDViewerController.exportAllCCDs',
     ])->middleware('permission:ccda.read');
 
+    Route::get('ccd/export/user/{userId}', [
+        'uses' => 'CCDViewer\CCDViewerController@exportAllCcds',
+        'as'   => 'get.CCDViewerController.exportAllCCDs',
+    ])->middleware('permission:ccda.read');
+
     Route::get('ccd/show/{ccdaId}', [
         'uses' => 'CCDViewer\CCDViewerController@show',
         'as'   => 'get.CCDViewerController.show',
@@ -1280,11 +1285,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('nurses/windows', [
             'uses' => 'CareCenter\WorkScheduleController@showAllNurseSchedules',
             'as'   => 'get.admin.nurse.schedules',
-        ])->middleware('permission:nurse.read');
-
-        Route::get('nurses/holidays', [
-            'uses' => 'CareCenter\WorkScheduleController@getHolidays',
-            'as'   => 'get.admin.nurse.schedules.holidays',
         ])->middleware('permission:nurse.read');
 
         Route::get('enrollment/list', [
@@ -2348,6 +2348,11 @@ Route::get('see-all-notifications', [
     'uses' => 'NotificationController@seeAllNotifications',
     'as'   => 'notifications.seeAll',
 ])->middleware('permission:provider.read,note.read');
+
+Route::get('nurses/holidays', [
+    'uses' => 'CareCenter\WorkScheduleController@getHolidays',
+    'as'   => 'get.admin.nurse.schedules.holidays',
+])->middleware('permission:nurse.read');
 
 Route::prefix('admin')->group(
     function () {

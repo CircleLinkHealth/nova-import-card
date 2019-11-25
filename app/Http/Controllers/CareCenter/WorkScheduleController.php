@@ -236,11 +236,11 @@ class WorkScheduleController extends Controller
     {
         $authIsAdmin = json_encode(auth()->user()->isAdmin());
 
-//        $tzAbbr = auth()->user()->timezone_abbr;
+//        $tzAbbr = auth()->user()->timezone_abbr; // @todo: we need this ?  it wasnt used in view
 
         //I think time tracking submits along with the form, thus messing up sessions.
         //Temporary fix
-        $disableTimeTracking = true; // @todo: we need this
+        $disableTimeTracking = true; // @todo: we need this ?  it wasnt used in view
         return view('care-center.work-schedule', compact('authIsAdmin'));
     }
 
@@ -253,11 +253,6 @@ class WorkScheduleController extends Controller
             ->where('nurse_info_id', $window->nurse_info_id)
             ->where('repeat_start', $window->repeat_start)
             ->forceDelete();
-    }
-
-    public function nurseHolidays()
-    {
-//        return $nurse->nurseInfo->upcoming_holiday_dates;
     }
 
     /**
@@ -496,9 +491,10 @@ class WorkScheduleController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+            return response()->json([
+                'errors'    => 'Validation Failed',
+                'validator' => $validator, //@todo: Fix message in UI
+            ], 422);
         }
 
         $holiday = $user->nurseInfo->holidays()->create([

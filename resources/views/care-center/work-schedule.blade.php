@@ -7,7 +7,7 @@
     <notifications></notifications>
     @include('errors.errors')
 
-    <div class="container">
+    <div class="container" style="margin-top: 2%">
         <nurse-schedule-calendar
                 :auth-is-admin="{{$authIsAdmin}}">
         </nurse-schedule-calendar>
