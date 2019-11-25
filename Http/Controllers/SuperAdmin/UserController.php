@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Customer\Http\Controllers\SuperAdmin;
 
 use App\CLH\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateMultipleEnrollees;
 use App\Note;
 use Auth;
 use Carbon\Carbon;
@@ -154,7 +155,7 @@ class UserController extends Controller
      *
      * @return Response
      */
-    public function doAction(Request $request)
+    public function doAction(UpdateMultipleEnrollees $request)
     {
         $params = new ParameterBag($request->input());
 

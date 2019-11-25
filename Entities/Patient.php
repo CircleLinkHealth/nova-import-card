@@ -604,9 +604,9 @@ class Patient extends BaseModel
      */
     public function scopeCcmStatus($builder, $status, $operator = '=')
     {
-        if (is_array($status)){
+        if (is_array($status)) {
             $builder->whereIn('ccm_status', $operator, $status);
-        }else{
+        } else {
             $builder->where('ccm_status', $operator, $status);
         }
     }
@@ -637,6 +637,7 @@ class Patient extends BaseModel
     public function setCcmStatusAttribute($value)
     {
         $statusBefore                   = $this->ccm_status;
+        $this->attributes['ccm_status'] = $value;
 
         if ($statusBefore !== $value) {
             if (Patient::ENROLLED == $value) {
