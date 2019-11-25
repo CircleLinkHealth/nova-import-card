@@ -402,6 +402,7 @@ class UserRepository
                     $ccmStatus = Patient::WITHDRAWN_1ST_CALL;
                 }
                 $user->patientInfo->ccm_status = $ccmStatus;
+                continue;
             }
 
             if ($params->get($key)) {
