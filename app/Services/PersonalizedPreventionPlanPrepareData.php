@@ -916,17 +916,17 @@ class PersonalizedPreventionPlanPrepareData
         $breastCancerSelected = $this->checkForConditionSelected($screenings, $condition = 'Breast Cancer',
             $checkInCategory = 'family_conditions');
 //@todo:also add if other or trans waiting answer from raph
-        if ($screenings['sex'] === 'Female' && '50' < $screenings['age'] && $screenings['age'] < '74') {
+        if ($screenings['sex'] !== 'Male' && '50' < $screenings['age'] && $screenings['age'] < '74') {
             return $this->getTaskRecommendations($title, $index);
 
         } elseIf (!($screenings['breast_cancer_screening'] === 'In the last 2-3 years'
                 || $screenings['breast_cancer_screening'] === 'In the last year')
-            && $screenings['sex'] === 'Female'
+            && $screenings['sex'] !== 'Male'
             && $breastCancerSelected === true) {
             return $this->getTaskRecommendations($title, $index);
 
         } elseIf ($screenings['breast_cancer_screening'] !== 'In the last year'
-            && $screenings['sex'] === 'Female'
+            && $screenings['sex'] !== 'Male'
             && $breastCancerSelected === true) {
             return $this->getTaskRecommendations($title, $index);
         }
@@ -947,12 +947,12 @@ class PersonalizedPreventionPlanPrepareData
             ? $patientPppData->answers_for_eval['cervical_cancer_screening']
             : 'N/A';
 
-        if ($screenings['sex'] === 'Female'
+        if ($screenings['sex'] !== 'Male'
             && '21' <= $screenings['age']
             && $screenings['age'] <= '29'
             && $screenings['cervical_cancer_screening'] !== 'In the last 2-3 years') {
             return $this->getTaskRecommendations($title, $index);
-        } elseif ($screenings['sex'] === 'Female'
+        } elseif ($screenings['sex'] !== 'Male'
             && '21' <= $screenings['age']
             && $screenings['age'] <= '29'
             && $screenings['cervical_cancer_screening'] !== 'In the last year') {
@@ -1012,16 +1012,16 @@ class PersonalizedPreventionPlanPrepareData
         $prostateCancerSelected = $this->checkForConditionSelected($screenings, $condition = 'Prostate Cancer',
             $checkInCategory = 'multipleQuestion16');
 
-        if ($screenings['sex'] === 'Male'
+        if ($screenings['sex'] !== 'Female'
             && '55' <= $screenings['age']
             && $screenings['age'] <= '69'
             && $screenings['prostate_cancer_screening'] === '10+ years ago/Never/Unsure') {
             return $this->getTaskRecommendations($title, $index);
-        } elseif ($screenings['sex'] === 'Male'
+        } elseif ($screenings['sex'] !== 'Female'
             && $screenings['race'] === 'Black/African-Ameri.'
             && $screenings['prostate_cancer_screening'] === '10+ years ago/Never/Unsure') {
             return $this->getTaskRecommendations($title, $index);
-        } elseif ($screenings['sex'] === 'Male' && $prostateCancerSelected === true) {
+        } elseif ($screenings['sex'] !== 'Female' && $prostateCancerSelected === true) {
             return $this->getTaskRecommendations($title, $index);
         }
 

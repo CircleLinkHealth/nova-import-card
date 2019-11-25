@@ -161,14 +161,14 @@ class ProviderReportService
             $breastCancer = $this->getStringValue($report->screenings['breast_cancer']);
             $breastCancerSelectedInQ18 = in_array('Breast Cancer', $conditionsSelectedInQ18);
             if (!empty($breastCancer)) {
-                if ($gender === 'Female' && '50' < $age && $age < '74') {
+                if ($gender !== 'Male' && '50' < $age && $age < '74') {
                     $screenings['Breast cancer'] = " (Mammogram): Had " . $breastCancer . '.';
                 } elseIf (!($breastCancer === 'In the last 2-3 years' || $breastCancer === 'In the last year')
-                    && $gender === 'Female'
+                    && $gender !== 'Male'
                     && $breastCancerSelectedInQ18 === true) {
                     $screenings['Breast cancer'] = " (Mammogram): Had " . $breastCancer . '.';
                 } elseif ($breastCancer !== 'In the last year'
-                    && $gender === 'Female'
+                    && $gender !== 'Male'
                     && $breastCancerSelectedInQ18 === true) {
                     $screenings['Breast cancer'] = " (Mammogram): Had " . $breastCancer . '.';
                 }
@@ -181,17 +181,17 @@ class ProviderReportService
                     && $age <= '29'
                     && $cervicalCancer !== 'In the last 2-3 years') {
                     $screenings['Cervical cancer'] = " (Pap smear): Had " . $cervicalCancer . '.';
-                } elseif ($gender === 'Female'
+                } elseif ($gender !== 'Male'
                     && '21' <= $age
                     && $age <= '29'
                     && $cervicalCancer !== 'In the last year') {
                     $screenings['Cervical cancer'] = " (Pap smear): Had " . $cervicalCancer . '.';
-                } elseif ($gender === 'Female'
+                } elseif ($gender !== 'Male'
                     && '30' <= $age
                     && $age <= '65'
                     && $cervicalCancer === 'In the last 6-10 years') {
                     $screenings['Cervical cancer'] = " (Pap smear): Had " . $cervicalCancer . '.';
-                } elseif ($gender === 'Female'
+                } elseif ($gender !== 'Male'
                     && '30' <= $age
                     && $age <= '65'
                     && $cervicalCancer === '10+ years ago/Never/Unsure') {
@@ -230,16 +230,16 @@ class ProviderReportService
             $race = $report->demographic_data['race'];
             $prostateCancerSelectedInQ18 = in_array('Prostate Cancer', $conditionsSelectedInQ18);
             if (!empty($prostateCancer)) {
-                if ($gender === 'Male'
+                if ($gender !== 'Female'
                     && '55' <= $age
                     && $age <= '69'
                     && $prostateCancer === '10+ years ago/Never/Unsure') {
                     $screenings['Prostate cancer'] = " (Prostate screening Test): Had " . $prostateCancer . '.';
-                } elseif ($gender === 'Male'
+                } elseif ($gender !== 'Female'
                     && $race === 'Black/African-Ameri.'
                     && $prostateCancer === '10+ years ago/Never/Unsure') {
                     $screenings['Prostate cancer'] = " (Prostate screening Test): Had " . $prostateCancer . '.';
-                } elseif ($gender === 'Male' && $prostateCancerSelectedInQ18 === true) {
+                } elseif ($gender !== 'Female' && $prostateCancerSelectedInQ18 === true) {
                     $screenings['Prostate cancer'] = " (Prostate screening Test): Had " . $prostateCancer . '.';
                 }
             }
@@ -275,7 +275,7 @@ class ProviderReportService
                     && $age <= '44') {
                     $screenings['Intimate Partner Violence/Domestic Violence'] = ": Had " . $violence . '.';
                 }
-          
+
             }
         }
 
