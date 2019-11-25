@@ -128,7 +128,7 @@ class PatientCcmStatusUpdateTest extends TestCase
     {
         auth()->login($this->admin);
 
-        $this->actingAs($this->admin)->call(
+        $response = $this->actingAs($this->admin)->call(
             'GET',
             route('admin.users.doAction'),
             [

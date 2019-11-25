@@ -364,9 +364,9 @@ $user_info = [];
                                                                 <option value="{{CircleLinkHealth\Customer\Entities\Patient::ENROLLED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::ENROLLED ? 'selected' : ''}}>
                                                                     Enrolled
                                                                 </option>
-                                                                @if($patient->onFirstCall())
+                                                                @if($patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL)
                                                                     <option class="withdrawn_1st_call"
-                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL ? 'selected' : ''}}>
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL}}" selected>
                                                                         Wthdrn 1st Call
                                                                     </option>
                                                                 @else
