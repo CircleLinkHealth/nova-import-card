@@ -259,6 +259,7 @@ class ProcessEligibilityService
                 'text/xml',
                 'application/xml',
             ])
+            ->take(10)
             ->whereNotIn('name', $alreadyProcessed->all())
             ->whenEmpty(function () {
                 return false;
