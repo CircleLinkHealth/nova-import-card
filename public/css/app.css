@@ -12154,10 +12154,6 @@ a.navbar-title:hover {
     width: 35px;
     height: 35px;
   }
-
-  .survey-container {
-    overflow-y: auto;
-  }
 }
 
 .spinner-overlay {
