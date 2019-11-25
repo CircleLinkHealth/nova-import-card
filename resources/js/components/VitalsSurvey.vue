@@ -1,21 +1,22 @@
 <template>
     <div class="container main-container vitals">
 
-        <div class="top-left-fixed" v-if="adminMode">
-            <mdb-btn class="btn-toggle-edit" color="primary" @click="goBack">
-                <font-awesome-icon icon="chevron-circle-left" size="3x"/>
-            </mdb-btn>
-        </div>
+        <div class="top-buttons">
+            <div class="top-left-fixed" v-if="adminMode">
+                <mdb-btn class="btn-toggle-edit" color="primary" @click="goBack">
+                    <font-awesome-icon icon="chevron-circle-left" size="3x"/>
+                </mdb-btn>
+            </div>
 
-        <div class="top-right-fixed" v-if="adminMode">
-            <mdb-btn class="btn-toggle-edit" :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
-                <font-awesome-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
-            </mdb-btn>
+            <div class="top-right-fixed" v-if="adminMode">
+                <mdb-btn class="btn-toggle-edit" :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
+                    <font-awesome-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
+                </mdb-btn>
+            </div>
         </div>
 
         <!--Survey welcome note-->
         <div class="survey-container" :class="{ max: stage === 'complete', 'read-only': readOnlyMode }">
-            <br>
             <template v-if="stage === 'welcome'">
                 <div class="card-body">
                     <div class="welcome-icon-container">

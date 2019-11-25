@@ -542,13 +542,13 @@ a.navbar-title:hover {
 
 @media (max-width: 490px) {
     //pencil button circle (toggle view)
-    #app > div > div.top-right-fixed > button {
+    .top-buttons .top-right-fixed > button {
         width: 84%;
         height: 38px;
         padding: 1%;
     }
     //pencil in circle
-    #app > div > div.top-right-fixed > button > svg {
+    .top-buttons .top-right-fixed > button > svg {
         height: 55%;
     }
 
@@ -559,17 +559,17 @@ a.navbar-title:hover {
     }
 
     /*Left button return back arrow*/
-    #app > div > div.top-left-fixed > button {
+    .top-buttons .top-left-fixed > button {
         height: 36px;
         width: 36px;
     }
     /*arrow in circle*/
-    #app > div > div.top-left-fixed > button > svg {
+    .top-buttons .top-left-fixed > button > svg {
         padding-right: 6px;
         height: 30px;
     }
 
-    #app > div > div.top-left-fixed {
+    .top-buttons .top-left-fixed {
         left: 0px;
         top: unset;
     }
