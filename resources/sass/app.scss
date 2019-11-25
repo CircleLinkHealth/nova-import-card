@@ -88,6 +88,7 @@ html, body, #app {
 }
 
 .progress-bar {
+    height: 100% !important;
     background-color: $primary-color !important;
 }
 

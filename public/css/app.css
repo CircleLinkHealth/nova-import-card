@@ -27324,6 +27324,7 @@ body,
 }
 
 .progress-bar {
+  height: 100% !important;
   background-color: #50b2e2 !important;
 }
 
