@@ -171,8 +171,7 @@
                     }
 
                     return eval(newFunc);
-                }
-                catch (e) {
+                } catch (e) {
                     console.error(e);
                     return "";
                 }
@@ -192,8 +191,7 @@
                 let arr = answer.value;
                 if (Array.isArray(arr)) {
                     return arr.join(joinChar);
-                }
-                else {
+                } else {
                     //todo: read sub-parts and build the string
                     //only taking into account object of feet and inches
                     const feet = arr['feet'];
@@ -208,8 +206,7 @@
                     const func = AUTO_GENERATE_FUNCS[conditions.generate_func];
                     if (!func) {
                         console.error(`could not find ${conditions.generate_func} on auto generation functions`);
-                    }
-                    else {
+                    } else {
                         const placeholders = [];
                         const generateFrom = conditions.generated_from;
                         if (generateFrom) {
@@ -237,8 +234,7 @@
 
                     }
 
-                }
-                else {
+                } else {
                     //todo
                 }
             }
@@ -251,11 +247,9 @@
             if (this.question.answer && this.question.answer.value) {
                 if (typeof this.question.answer.value === "string") {
                     this.inputNumbers.push(this.question.answer.value)
-                }
-                else if (Array.isArray(this.question.answer.value)) {
+                } else if (Array.isArray(this.question.answer.value)) {
                     this.inputNumbers = this.question.answer.value;
-                }
-                else {
+                } else {
                     //assume object
                     this.inputNumbers = Object.values(this.question.answer.value);
                 }
@@ -320,13 +314,21 @@
     }
 
     @media (max-width: 490px) {
-        .number-field{
+        .number-field {
             padding-left: 9px;
-            width: 321px;
+            width: 325px;
         }
 
         .number-field.parts-2 {
-            width: 152px;
+            width: 157px;
+        }
+
+        .vitals .number-field {
+            width: 130px;
+        }
+        .vitals .number-field.parts-2 {
+            width: 151px;
         }
     }
+
 </style>

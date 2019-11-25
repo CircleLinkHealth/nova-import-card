@@ -1,5 +1,5 @@
 <template>
-    <div class="container main-container">
+    <div class="container main-container vitals">
 
         <div class="top-left-fixed" v-if="adminMode">
             <mdb-btn class="btn-toggle-edit" color="primary" @click="goBack">
@@ -15,6 +15,7 @@
 
         <!--Survey welcome note-->
         <div class="survey-container" :class="{ max: stage === 'complete', 'read-only': readOnlyMode }">
+            <br>
             <template v-if="stage === 'welcome'">
                 <div class="card-body">
                     <div class="welcome-icon-container">

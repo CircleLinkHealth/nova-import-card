@@ -15,6 +15,7 @@
 
         <!--Survey welcome note-->
         <div class="survey-container" :class="{ max: stage === 'complete', 'read-only': readOnlyMode }">
+            <br>
             <template v-if="stage === 'welcome'">
                 <div class="practice-title">
                     <label id="title">

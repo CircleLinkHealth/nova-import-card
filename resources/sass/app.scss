@@ -552,10 +552,10 @@ a.navbar-title:hover {
         height: 55%;
     }
 
-    #app > div > div.top-right-fixed {
+    .top-right-fixed {
         left: unset;
         top: unset;
-        right: 18px;
+        right: 22px;
     }
 
     /*Left button return back arrow*/
@@ -572,11 +572,6 @@ a.navbar-title:hover {
     #app > div > div.top-left-fixed {
         left: 0px;
         top: unset;
-    }
-
-    //  progress bar
-    .text-center {
-        //left: 32%;
     }
 
     .questions-body {
@@ -610,11 +605,11 @@ a.navbar-title:hover {
     }
 
     .progress-text {
-        margin-left: 52px;
+        margin-left: 35px;
     }
 
     .progress {
-        margin-left: 39px;;
+        margin-left: 27px;;
     }
 
     .survey-main-title {
@@ -624,7 +619,9 @@ a.navbar-title:hover {
     }
 
     #app > div > div.bottom-navbar.container > div > div.col-1.col-sm-1.col-md-1.col-lg-1.text-center.no-padding > div > button > svg {
-        width: 62%;
+        margin-left: -6px;
+        margin-top: 2px;
+        padding: 2px;
     }
 
     .by-circlelink {
@@ -643,6 +640,26 @@ a.navbar-title:hover {
     .survey-sub-welcome-text {
         font-size: 13px;
         display: contents;
+    }
+
+    .call-btn-round{
+        padding: 3px 27px 37px 13px !important;
+        margin-top: 7px !important;
+    }
+
+    .scroll-buttons{
+        margin-right: -20px;
+        margin-left: -20px;
+    }
+
+    .scroll-buttons .btn{
+        margin-top: 10px;
+        width: 35px;
+        height: 35px
+    }
+
+    .survey-container{
+        overflow-y: auto;
     }
 
 }
