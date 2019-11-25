@@ -259,8 +259,8 @@ class ProcessEligibilityService
                 'text/xml',
                 'application/xml',
             ])
-            ->take(10)
             ->whereNotIn('name', $alreadyProcessed->all())
+            ->take(10)
             ->whenEmpty(function () {
                 return false;
             })->whenNotEmpty(function ($collection) use ($batch) {
