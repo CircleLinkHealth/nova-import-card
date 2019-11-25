@@ -145,6 +145,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read int|null $revision_history_count
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient
  *     whereNurseUserId($value)
+ * @property int $is_awv
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereIsAwv($value)
  */
 class Patient extends BaseModel
 {
@@ -237,6 +239,7 @@ class Patient extends BaseModel
         'next_call_id',
         'family_id',
         'date_welcomed',
+        'is_awv'
     ];
 
     /**

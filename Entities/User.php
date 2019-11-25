@@ -2927,8 +2927,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function scopeOfType(
         $query,
-        $type
-    ) {
+        $type,
+        $excludeAwv = true
+    )
+    {
         $query->whereHas(
             'roles',
             function ($q) use (
@@ -2941,6 +2943,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 }
             }
         );
+
+        $query->when($excludeAwv, function ($q) {
+            $q->whereHas('patientInfo', function ($q2) {
+                $q2->where('is_awv', 0);
+            });
+        });
     }
 
     /**
