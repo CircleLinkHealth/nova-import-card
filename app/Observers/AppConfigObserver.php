@@ -9,6 +9,7 @@ namespace App\Observers;
 use App\AppConfig;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
+use CircleLinkHealth\Customer\AppConfig\PracticesRequiringMedicareDisclaimer;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 
@@ -27,6 +28,10 @@ class AppConfigObserver
 
         if (PatientSupportUser::PATIENT_SUPPORT_USER_ID_NOVA_KEY == $appConfig->config_key) {
             \Cache::forget(PatientSupportUser::PATIENT_SUPPORT_USER_ID_NOVA_KEY);
+        }
+
+        if (PracticesRequiringMedicareDisclaimer::PRACTICE_REQUIRES_MEDICARE_DISCLAIMER_NOVA_KEY == $appConfig->config_key) {
+            \Cache::forget(PracticesRequiringMedicareDisclaimer::PRACTICE_REQUIRES_MEDICARE_DISCLAIMER_NOVA_KEY);
         }
     }
 }

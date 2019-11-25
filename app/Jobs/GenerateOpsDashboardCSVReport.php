@@ -25,7 +25,6 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-
     /**
      * @var Carbon
      */
@@ -35,6 +34,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
      * @var OpsDashboardService
      */
     protected $service;
+
     /**
      * @var User
      */

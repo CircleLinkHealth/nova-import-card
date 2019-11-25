@@ -54,13 +54,29 @@ class MigrateSqlViews extends Command
      */
     public function handle()
     {
-        $this->getViewFiles(scandir($this->getViewsDir()))->each(function ($className) {
-            if (class_implements($className, SqlViewInterface::class)) {
-                $this->warn("Running $className");
-                $className::run();
-                $this->line("Ran $className");
+        $this->getViewFiles(scandir($this->getViewsDir()))->each(function ($filePath) {
+            $class = $this->resolve($filePath);
+
+            if (class_implements($class, SqlViewInterface::class)) {
+                $this->warn("Running $filePath");
+                $class::run();
+                $this->line("Ran $filePath");
             }
         });
+    }
+
+    /**
+     * Resolve a view instance from a file.
+     *
+     * @param string $file
+     *
+     * @return object
+     */
+    public function resolve($file)
+    {
+        $class = Str::studly(implode('_', array_slice(explode('_', $file), 4)));
+
+        return new $class();
     }
 
     private function getViewsDir()

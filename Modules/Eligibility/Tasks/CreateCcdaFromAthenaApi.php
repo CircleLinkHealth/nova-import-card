@@ -24,8 +24,6 @@ class CreateCcdaFromAthenaApi
     }
 
     /**
-     * @param TargetPatient $targetPatient
-     *
      * @return \App\Importer\MedicalRecordEloquent|bool|Ccda|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
      */
     public function handle(TargetPatient &$targetPatient)
@@ -48,7 +46,6 @@ class CreateCcdaFromAthenaApi
             Ccda::create(
                 [
                     'practice_id' => $targetPatient->practice_id,
-                    'vendor_id'   => 1,
                     'xml'         => $ccdaExternal[0]['ccda'],
                     'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
                     'source'      => Ccda::ATHENA_API,
