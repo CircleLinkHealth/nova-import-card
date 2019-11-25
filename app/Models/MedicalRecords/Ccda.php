@@ -144,7 +144,6 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         'billing_provider_id',
         'user_id',
         'patient_id',
-        'vendor_id',
         'source',
         'imported',
         'json',
@@ -202,15 +201,19 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
         $ccda = static::query()->create($attributes);
 
-        \Storage::disk('storage')->put("ccda-{$ccda->id}.xml", $xml);
-        $ccda->addMedia(storage_path("ccda-{$ccda->id}.xml"))->toMediaCollection('ccd');
+        if ($attributes['filename']) {
+            $filename = $attributes['filename'];
+            unset($attributes['filename']);
+        } else {
+            $filename = "ccda-{$ccda->id}.xml";
+        }
+
+        \Storage::disk('storage')->put($filename, $xml);
+        $ccda->addMedia(storage_path($filename))->toMediaCollection('ccd');
 
         return $ccda;
     }
 
-    /**
-     * @return \App\EligibilityJob
-     */
     public function createEligibilityJobFromMedicalRecord(): EligibilityJob
     {
         $adapter = new CcdaToEligibilityJobAdapter($this, $this->practice, $this->batch);
@@ -223,9 +226,6 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         return $this->belongsTo(DirectMailMessage::class);
     }
 
-    /**
-     * @return string
-     */
     public function getDocumentCustodian(): string
     {
         if ($this->document->first()) {
@@ -237,8 +237,6 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
     /**
      * Get the Logger.
-     *
-     * @return MedicalRecordLogger
      */
     public function getLogger(): MedicalRecordLogger
     {
@@ -247,8 +245,6 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
     /**
      * Get the User to whom this record belongs to, if one exists.
-     *
-     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function getPatient(): User
     {
