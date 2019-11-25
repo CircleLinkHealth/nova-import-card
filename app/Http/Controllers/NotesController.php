@@ -10,7 +10,6 @@ use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\NoteFinalSaved;
 use App\Http\Requests\NotesReport;
-use App\Models\Addendum;
 use App\Note;
 use App\Repositories\PatientWriteRepository;
 use App\SafeRequest;
@@ -133,16 +132,16 @@ class NotesController extends Controller
                 ->where('inbound_cpm_id', '=', $patientId)
                 ->where('outbound_cpm_id', '=', $author_id)
                 ->select(
-                    [
-                        'id',
-                        'type',
-                        'sub_type',
-                        'attempt_note',
-                        'scheduled_date',
-                        'window_start',
-                        'window_end',
-                    ]
-                )
+                                           [
+                                               'id',
+                                               'type',
+                                               'sub_type',
+                                               'attempt_note',
+                                               'scheduled_date',
+                                               'window_start',
+                                               'window_end',
+                                           ]
+                                       )
                 ->get();
         }
 
@@ -432,8 +431,6 @@ class NotesController extends Controller
      * Also: in some conditions call will be stored for other roles as well.
      * They are never redirected to Schedule Next Call page.
      *
-     * @param SafeRequest      $request
-     * @param SchedulerService $schedulerService
      * @param $patientId
      *
      * @return \Illuminate\Http\RedirectResponse
@@ -533,16 +530,13 @@ class NotesController extends Controller
                                 ->withInput();
                         }
 
+                        //'reached' | 'not-reached'
                         $call->status = $input['call_status'];
 
                         //Updates when the patient was successfully contacted last
                         //use $note->created_at, in case we are editing a note
                         $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
-
-                        //took this from below :)
-                        if (auth()->user()->hasRole('provider')) {
-                            $this->patientRepo->updateCallLogs($patient->patientInfo, true, true, $note->performed_at);
-                        }
+                        $this->patientRepo->updateCallLogs($patient->patientInfo, true, true, $note->performed_at);
                     } else {
                         $call->status = 'done';
                     }
@@ -809,11 +803,11 @@ class NotesController extends Controller
     {
         return Practice::whereId($patient->program_id)
             ->where(
-                function ($q) {
-                    $q->where('name', '=', 'phoenix-heart')
-                        ->orWhere('name', '=', 'demo');
-                }
-            )
+                           function ($q) {
+                               $q->where('name', '=', 'phoenix-heart')
+                                   ->orWhere('name', '=', 'demo');
+                           }
+                       )
             ->exists();
     }
 

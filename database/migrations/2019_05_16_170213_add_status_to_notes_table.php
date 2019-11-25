@@ -30,9 +30,5 @@ class AddStatusToNotesTable extends Migration
         Schema::table('notes', function (Blueprint $table) {
             $table->string('status')->nullable(true)->default('complete');
         });
-
-        DB::table('notes')
-            ->where('id', 'id')
-            ->update(['status' => 'complete']);
     }
 }

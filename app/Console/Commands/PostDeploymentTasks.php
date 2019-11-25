@@ -38,15 +38,20 @@ class PostDeploymentTasks extends Command
      */
     public function handle()
     {
+        if (app()->environment(['local', 'testing'])) {
+            echo "Not running because env is ".app()->environment().PHP_EOL;
+            return;
+        }
+        
         collect(
             [
-                'horizon:terminate',
                 'nova:publish',
                 'view:clear',
                 'route:cache',
                 'config:cache',
                 'opcache:clear',
                 'opcache:optimize',
+                'horizon:terminate',
                 'queue:restart',
             ]
         )->each(

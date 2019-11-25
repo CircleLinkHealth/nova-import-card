@@ -72,6 +72,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\User|null     $provider
  * @property mixed                                             $primary_phone_number
  * @property \CircleLinkHealth\Customer\Entities\User|null     $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toCall()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee toSMS()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAddress($value)
@@ -122,6 +123,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereZip($value)
  * @mixin \Eloquent
+ *
  * @property int|null                 $batch_id
  * @property int|null                 $eligibility_job_id
  * @property int|null                 $care_ambassador_user_id
@@ -132,6 +134,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property mixed                                                                          $primary_phone_e164
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property \App\TargetPatient                                                             $targetPatient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee newQuery()
@@ -141,10 +144,16 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereEligibilityJobId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereSoftRejectedCallback($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereRequestedCallback($value)
+ *
  * @property int|null   $revision_history_count
  * @property array|null $agent_details
  * @property mixed      $agent
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAgentDetails($value)
+ *
+ * @property int|null $family_enrollee_id
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereFamilyEnrolleeId($value)
  */
 class Enrollee extends BaseModel
 {

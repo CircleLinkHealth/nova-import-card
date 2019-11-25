@@ -32,10 +32,5 @@ class AddActiveFieldInCcdMedicationsTable extends Migration
                 ->nullable(true)
                 ->default(true);
         });
-
-        //https://stackoverflow.com/questions/46657614/laravel-5-4-update-all-records-in-table-without-using-where-clause
-        DB::table('ccd_medications')
-            ->where('id', 'id')
-            ->update(['active' => 1]);
     }
 }

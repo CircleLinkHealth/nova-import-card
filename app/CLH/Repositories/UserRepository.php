@@ -336,9 +336,6 @@ class UserRepository
      * We could implement a change password page and we could use this method
      * to also populate password history.
      * https://www.5balloons.info/setting-up-change-password-with-laravel-authentication/.
-     *
-     * @param \CircleLinkHealth\Customer\Entities\User $user
-     * @param ParameterBag                             $params
      */
     public function saveOrUpdatePasswordsHistory(
         User $user,
@@ -590,8 +587,6 @@ class UserRepository
 
     /**
      * Clear Cerberus roles cache for User.
-     *
-     * @param User $user
      */
     private function clearRolesCache(User $user)
     {

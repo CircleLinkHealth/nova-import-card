@@ -60,12 +60,12 @@ function formatTime($time)
             $(document).ready(function () {
                 const table = $('#cpmEditableTable');
                 table.DataTable({
-                    order: [[3, "desc"]],
+                    order: [[2, "asc"]],
                     processing: true,
                     scrollX: true,
                     fixedHeader: true,
-                    dom: '<"top"fi>rt<"bottom"flp><"clear">',
-                    pageLength: 10,
+                    dom: '<"top"fi>rt<"bottom"lp>',
+                    pageLength: 50,
 
 
                 });
@@ -93,7 +93,6 @@ function formatTime($time)
                 }
 
                 addClickListener();
-
                 //make sure we add the click listener when we change the page
                 table.on('page.dt', function () {
                     setTimeout(addClickListener, 500);
@@ -135,7 +134,7 @@ function formatTime($time)
                                                        class="col-sm-1 control-label"
                                                        style="margin-left: -24%;">Status: </label>
                                                 <div class="col-sm-4">
-                                                    {!! Form::select('filterStatus', array('all' => 'See All', 'scheduled' => 'Scheduled', 'reached' => 'Completed'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']) !!}
+                                                    {!! Form::select('filterStatus', array('all' => 'See All', 'scheduled' => 'Scheduled', 'completed' => 'Completed'), $dropdownStatus, $dropdownStatusClass) !!}
                                                 </div>
                                                 <div class="col-sm-2">
 
@@ -200,24 +199,38 @@ function formatTime($time)
                                         @if (count($calls) > 0)
                                             @foreach($calls as $key => $call)
                                                 <?php
-                                                $curTime = \Carbon\Carbon::now();
-                                                $curDate = $curTime->toDateString();
-                                                $curTime = $curTime->toTimeString();
-                                                $rowBg   = '';
-                                                $boldRow = '';
-                                                if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime) {
+                                                $curTime   = \Carbon\Carbon::now();
+                                                $curDate   = $curTime->toDateString();
+                                                $curTime   = $curTime->toTimeString();
+                                                $rowBg     = '';
+                                                $boldRow   = '';
+                                                $textBlack = '';
+                                                if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime && 'addendum_response' !== $call->type) {
                                                     $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                 }
-                                                if ('Call Back' === $call->type || $call->asap) {
-                                                    $boldRow = 'bold-row';
+                                                if (($call->asap || 'Call Back' === $call->type) && 'reached' !== $call->status && 'done' !== $call->status) {
+                                                    $boldRow   = 'bold-row';
+                                                    $textBlack = 'color:black;';
+                                                }
+
+                                                $route = route('patient.careplan.print', ['patient' => $call->patient_id]);
+
+                                                if ('addendum_response' === $call->type) {
+                                                    $route = route('redirect.readonly.activity', ['callId' => $call->id]);
                                                 }
                                                 ?>
-                                                <tr class="{{$boldRow}}" style="{{ $rowBg }}">
+                                                <tr class="{{$boldRow}}" style="{{ $rowBg . $textBlack }}">
                                                     <td class="vert-align" style="text-align:center">
                                                         @if(empty($call->type) || $call->type === 'call')
                                                             <i class="fas fa-phone"></i>
                                                         @elseif ($call->type === 'Call Back')
-                                                            <i class="fas fa-phone"></i> Back
+                                                            <img style="text-align: center"
+                                                                 src="img/callback_image.svg"
+                                                                 alt="callback image">
+                                                        @elseif ($call->type === 'addendum_response')
+                                                            <img style="text-align: center"
+                                                                 src="img/addendum_image.svg"
+                                                                 alt="callback image">
                                                         @else
                                                             <span>{{$call->type}}</span>
                                                         @endif
@@ -229,7 +242,7 @@ function formatTime($time)
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="{{ route('patient.careplan.print', array('patient' => $call->patient_id)) }}"
+                                                        <a href="{{ route('patient.careplan.print', ['patient' => $call->patient_id]) }}"
                                                            class="patientNameLink" call-id="{{ $call->id }}"
                                                            style="font-weight:bold;"
                                                            data-template='<div class="tooltip" style="text-align:left" role="tooltip"><div class="arrow"></div><div class="tooltip-inner" style="text-align:left"></div></div>'
@@ -244,13 +257,18 @@ function formatTime($time)
                                                     <td class="{{ \Carbon\Carbon::parse($call->scheduled_date)->lessThan(\Carbon\Carbon::today()) ? 'red' : '' }}">
                                                         {{ presentDate($call->scheduled_date, false) }}
                                                     </td>
-                                                    {{--What do we want to do here? show ASAP forever or??--}}
-                                                    @if($call->asap === 1 && $curDate <= $call->scheduled_date && $call->status !== 'reached')
+
+                                                    @if($call->asap === 1 && $call->status !== 'reached' && $call->status !== 'done')
                                                         <td>{{ 'ASAP' }}</td>
                                                         <td>{{ 'N/A' }}</td>
                                                     @else
-                                                        <td>{{ $call->call_time_start }}</td>
-                                                        <td>{{ $call->call_time_end }}</td>
+                                                        @if($call->type !== 'addendum_response')
+                                                            <td>{{ $call->call_time_start }}</td>
+                                                            <td>{{ $call->call_time_end }}</td>
+                                                        @else
+                                                            <td>{{ 'N/A' }}</td>
+                                                            <td>{{ 'N/A' }}</td>
+                                                        @endif
                                                     @endif
 
                                                     <td>
@@ -332,6 +350,15 @@ function formatTime($time)
     <!-- call attempt_note modals -->
     @if (count($calls) > 0)
         @foreach($calls as $call)
+            <?php
+            $route      = route('patient.careplan.print', ['patient' => $call->patient_id]);
+            $buttonName = 'Continue to care plan';
+
+            if ('addendum_response' === $call->type) {
+                $route      = route('redirect.readonly.activity', ['callId' => $call->id]);
+                $buttonName = 'Continue to note';
+            }
+            ?>
             @if ((!empty($call->attempt_note) || !empty($call->general_comment)) )
                 <!-- Modal -->
                 <div id="attemptNoteCall{{ $call->id }}" class="modal fade" role="dialog">
@@ -353,8 +380,8 @@ function formatTime($time)
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <a href="{{ route('patient.careplan.print', array('patient' => $call->patient_id)) }}"
-                                   class="btn btn-primary">Continue to care plan</a>
+                                <a href="{{$route}}"
+                                   class="btn btn-primary">{{$buttonName}}</a>
                             </div>
                         </div>
 
