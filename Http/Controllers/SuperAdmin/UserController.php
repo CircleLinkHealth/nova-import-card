@@ -153,9 +153,11 @@ class UserController extends Controller
     /**
      * Perform actions on multiple users.
      *
+     * @param Request $request
+     *
      * @return Response
      */
-    public function doAction(UpdateMultipleEnrollees $request)
+    public function doAction(Request $request)
     {
         $params = new ParameterBag($request->input());
 
