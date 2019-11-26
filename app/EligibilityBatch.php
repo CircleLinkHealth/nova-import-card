@@ -214,9 +214,6 @@ class EligibilityBatch extends BaseModel
         ];
     }
 
-    /**
-     * @return bool
-     */
     public function hasJobs(): bool
     {
         return $this->eligibilityJobs()->exists();
@@ -250,6 +247,11 @@ class EligibilityBatch extends BaseModel
     public function isCompleted()
     {
         return 'complete' === $this->getStatus();
+    }
+
+    public function isFinishedFetchingFiles()
+    {
+        return array_key_exists('numberOfFiles', $this->options) && (int) $this->options['numberOfFiles'] === (int) $this->eligibilityJobs()->count();
     }
 
     /**
