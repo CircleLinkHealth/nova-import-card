@@ -33,8 +33,6 @@ class CreateCalendarRecurringEventsCommand extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param NurseCalendarService $service
      */
     public function __construct(NurseCalendarService $service)
     {
@@ -44,6 +42,7 @@ class CreateCalendarRecurringEventsCommand extends Command
 
     /**
      * Execute the console command.
+     * //@todo:this breaks...memory exausted.
      *
      * @return mixed
      */
@@ -62,7 +61,7 @@ class CreateCalendarRecurringEventsCommand extends Command
                 //@todo: case of nurse having windows - but are inactive during launch - and then becoming active again
             })->chunk(200, function ($nurseContactWindows) use ($currentWeekMap) {
                 collect($nurseContactWindows)
-                    ->map(function ($window) use ($currentWeekMap) {
+                    ->transform(function ($window) use ($currentWeekMap) {
 //                        If we re showing events from release date and after then use $newEventOriginalDate ELSE use $window->date
 //                        $newEventOriginalDate = projection of oriiginal's event scheduled date to current's week date.
 //                        I suggest using the 'newEventOriginalDate'. we have events with scheduled_date 2017-10-11 and we dont need them repeating till today.

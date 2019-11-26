@@ -324,70 +324,6 @@
                     },
                 ],
 
-                // monthOfYearDates: [
-                //     {
-                //         month: 'September',
-                //         monthAbr: 'Sep',
-                //         date: new Date(this.year, 8, 1)
-                //
-                //     },
-                //     {
-                //         month: 'October',
-                //         monthAbr: 'Oct',
-                //         date: new Date('2019-10-01')
-                //     },
-                //     {
-                //         month: 'November',
-                //         monthAbr: 'Nov',
-                //         date: new Date('2019-11-01')
-                //     },
-                //     {
-                //         month: 'December',
-                //         monthAbr: 'Dec',
-                //
-                //         date: new Date('2019-12-01')
-                //     },
-                //     {
-                //         month: 'January',
-                //         monthAbr: 'Jan',
-                //         date: new Date('2019-01-01')
-                //     },
-                //     {
-                //         month: 'February',
-                //         monthAbr: 'Feb',
-                //         date: new Date('2019-02-01')
-                //     },
-                //     {
-                //         month: 'March',
-                //         monthAbr: 'Mar',
-                //         date: new Date('2019-03-01')
-                //     },
-                //     {
-                //         month: 'April',
-                //         monthAbr: 'Apr',
-                //         date: new Date('2019-04-01')
-                //     },
-                //     {
-                //         month: 'May',
-                //         monthAbr: 'May',
-                //         date: new Date('2019-05-01')
-                //     },
-                //     {
-                //         month: 'June',
-                //         monthAbr: 'Jun',
-                //         date: new Date('2019-06-01')
-                //     },
-                //     {
-                //         month: 'July',
-                //         monthAbr: 'Jul',
-                //         date: new Date('2019-07-01')
-                //     },
-                //     {
-                //         month: 'August',
-                //         monthAbr: 'Aug',
-                //         date: new Date('2019-08-01')
-                //     }
-                // ],
             }
         },
 
@@ -749,14 +685,6 @@
             handleEventDrop(arg) {
                 //@todo:do nothing for now.
             },
-
-            // showHolidays() {
-            //     this.config.header.right = 'month';
-            //     const toggleData = this.showHolidays;
-            //     if (toggleData && this.holidays.length === 0) {
-            //         this.getHolidays();
-            //     } else this.showWorkHours = !(toggleData && this.holidays.length !== 0);
-            // },
 
             resetModalValues() {
                 this.clickedToViewEvent = false;

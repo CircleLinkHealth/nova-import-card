@@ -205,7 +205,7 @@ class WorkScheduleController extends Controller
                 );
             });
 
-        return $this->fullCalendarService->prepareDataForEachNurse($windows, $nurse);
+        return $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse);
     }
 
     /**

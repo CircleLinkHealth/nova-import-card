@@ -285,8 +285,34 @@ class NurseCalendarService
         return $nurses->map(function ($nurse) {
             $windows = $this->getWindows($nurse);
 
-            return $this->prepareDataForEachNurse($windows, $nurse);
+            return $this->prepareWorkDataForEachNurse($windows, $nurse);
         })->flatten(1);
+    }
+
+    public function prepareHolidaysData($holidays, $nurse)
+    {
+        return collect($holidays)->map(function ($holiday) use ($nurse) {
+            $holidayDate = Carbon::parse($holiday->date)->toDateString();
+            $holidayDateInDayOfWeek = Carbon::parse($holidayDate)->dayOfWeek;
+            $holidayInHumanLang = clhDayOfWeekToDayName($holidayDateInDayOfWeek);
+
+            return collect(
+                [
+                    self::TITLE => "$nurse->display_name",
+                    self::START => $holidayDate,
+                    'allDay'    => true,
+                    'color'     => '#ff5b4f',
+                    'data'      => [
+                        'holidayId' => $holiday->id,
+                        'nurseId'   => $nurse->nurseInfo->id,
+                        'name'      => $nurse->display_name,
+                        'date'      => $holidayDate,
+                        'day'       => $holidayInHumanLang,
+                        'eventType' => 'holiday',
+                    ],
+                ]
+            );
+        });
     }
 
     /**
@@ -295,7 +321,7 @@ class NurseCalendarService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function prepareDataForEachNurse($windows, $nurse)
+    public function prepareWorkDataForEachNurse($windows, $nurse)
     {
         return collect($windows)
             ->where('repeat_frequency', '!=', null)
