@@ -35,7 +35,7 @@ class ProtectPHITest extends TestCase
 
     public function test_auth_user_cannot_see_phi_on_pages()
     {
-        $this->login($this->admin);
+        auth()->login($this->admin);
         //visit careplan page
         //assert not see patient name
         $this->assertTrue(true);
@@ -49,5 +49,12 @@ class ProtectPHITest extends TestCase
     public function test_db_query_returns_hidden_phi_fields_to_auth_user()
     {
         $this->assertTrue(true);
+    }
+
+    public function test_trait_hides_phi_fields_correctly()
+    {
+        $this->patient->setShouldHidePhi(true);
+
+        $this->assertEquals('***', $this->patient->first_name);
     }
 }
