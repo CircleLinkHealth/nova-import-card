@@ -33,14 +33,13 @@ class ProviderController
         $searchTerm = $request->input('name');
 
         $users = User
-            //::ofType('provider') //this does not work
-            ::whereHas('providerInfo')
-            ->with('primaryPractice')
-            ->with('phoneNumbers')
+            ::ofType('provider')
             ->where(function ($q) use ($searchTerm) {
                 $q->where('first_name', 'like', "%$searchTerm%")
                   ->orWhere('last_name', 'like', "%$searchTerm%");
             })
+            ->with('primaryPractice')
+            ->with('phoneNumbers')
             ->get();
 
         return response()->json(['results' => $users]);
