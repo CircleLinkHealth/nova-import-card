@@ -54,6 +54,7 @@ class PostDeploymentTasks extends Command
                 'opcache:optimize',
                 'horizon:terminate',
                 'queue:restart',
+                'horizon',
             ]
         )->each(
             function ($command) {
