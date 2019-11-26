@@ -23,11 +23,13 @@ trait ProtectsPhi
      */
     public static function bootProtectsPhi()
     {
-        static::retrieved(function ($model) {
-            //this protects phi from getting the model attributes from ->toArray()
-            //we could also have overwritten method attributesToArray()
-            $model->hidden = array_merge($model->phi, $model->hidden);
-        });
+        if (! optional(auth()->user())->canSeePhi()){
+            static::retrieved(function ($model) {
+                //this protects phi from getting the model attributes from ->toArray()
+                //we could also have overwritten method attributesToArray()
+                $model->hidden = array_merge($model->phi, $model->hidden);
+            });
+        }
     }
 
     /**
