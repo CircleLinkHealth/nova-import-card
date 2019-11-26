@@ -148,8 +148,7 @@
   "autoload": {
     "classmap": [
       "database/seeds",
-      "database/factories",
-      "database/views"
+      "database/factories"
     ],
     "psr-4": {
       "App\\": "app/"

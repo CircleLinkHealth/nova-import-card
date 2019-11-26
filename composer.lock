@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.122.0",
+            "version": "3.123.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "43b4af8179c91d220f6e4bbe1e57588ed5ad4f27"
+                "reference": "3bf671629a3b2a5a5694f8dfee15686e586b33b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/43b4af8179c91d220f6e4bbe1e57588ed5ad4f27",
-                "reference": "43b4af8179c91d220f6e4bbe1e57588ed5ad4f27",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3bf671629a3b2a5a5694f8dfee15686e586b33b6",
+                "reference": "3bf671629a3b2a5a5694f8dfee15686e586b33b6",
                 "shasum": ""
             },
             "require": {
@@ -495,7 +495,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-11-25T19:13:38+00:00"
+            "time": "2019-11-26T19:08:40+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -658,7 +658,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-cpm-migrations.git",
-                "reference": "079b00556c664e9583c8af88119bb711f3737147"
+                "reference": "449ef0b8610eba7a2c1d57da5d953856c9d052a4"
             },
             "type": "laravel-module",
             "extra": {
@@ -680,7 +680,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-26T18:30:01+00:00"
+            "time": "2019-11-26T19:10:58+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -800,7 +800,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
-                "reference": "04194d10dc925f1fe23201f9803d917c14049273"
+                "reference": "59f81019ef6586cf0a0fe87a508e38f7a34f7985"
             },
             "type": "library",
             "extra": {
@@ -822,7 +822,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-26T18:59:06+00:00"
+            "time": "2019-11-26T19:10:59+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
