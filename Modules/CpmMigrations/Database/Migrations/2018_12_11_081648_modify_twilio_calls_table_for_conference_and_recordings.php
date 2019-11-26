@@ -70,7 +70,7 @@ class ModifyTwilioCallsTableForConferenceAndRecordings extends Migration
                 if (Schema::hasColumn('twilio_calls', 'recording_duration') && Schema::hasColumn(
                     'twilio_calls',
                     'recording_url'
-                    )) {
+                )) {
                     //need dial_recording_sid and conference_recording_sid
                     $table->dropColumn(['recording_duration', 'recording_url']);
                 }

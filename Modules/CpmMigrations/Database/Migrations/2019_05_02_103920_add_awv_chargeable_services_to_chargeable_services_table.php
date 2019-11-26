@@ -28,7 +28,7 @@ class AddAwvChargeableServicesToChargeableServicesTable extends Migration
                 'code'        => ChargeableService::AWV_INITIAL,
                 'description' => 'Initial Annual Wellness Visit',
             ]
-       );
+        );
 
         ChargeableService::create([
             'code'        => ChargeableService::AWV_SUBSEQUENT,

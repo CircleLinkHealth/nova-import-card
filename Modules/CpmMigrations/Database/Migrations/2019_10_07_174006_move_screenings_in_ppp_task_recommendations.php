@@ -6,7 +6,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateChargeableServices extends Migration
+class MoveScreeningsInPppTaskRecommendations extends Migration
 {
     /**
      * Reverse the migrations.
@@ -20,8 +20,6 @@ class UpdateChargeableServices extends Migration
      */
     public function up()
     {
-            Artisan::call('db:seed', [
-                '--class' => 'ChargeableServiceSeeder',
-            ]);
+        TaskRecommendationsSeeder::run(); // its updateOrInsert
     }
 }
