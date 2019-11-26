@@ -27,6 +27,7 @@ class SqlViewsServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerConfig();
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
     }
 
     /**

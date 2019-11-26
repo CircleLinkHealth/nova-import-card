@@ -10,5 +10,5 @@ return [
     /**
      * The directory where SQL Views are stored
      */
-    'sql-views-directory' => database_path('views')
+    'sql-views-directory' => __DIR__.'/../Database/Views',
 ];
