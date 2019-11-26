@@ -11,6 +11,10 @@ trait ProtectsPhi
 
     private $hiddenDate = '9999-01-01';
 
+    private $authUser;
+
+    private $shouldHidePhi;
+
     /**
      *The trait’s boot method works just like an Eloquent model’s boot method.
      * So you can hook in to any of the Eloquent events from here.
@@ -37,10 +41,22 @@ trait ProtectsPhi
     {
         $value = parent::getAttribute($key);
 
-        $user = auth()->user();
+        if ( $key === 'id'){
+            return $value;
+        }
 
-        if ($user) {
-            if ($key != 'id' && ! $this->authUserShouldSeePhi() && in_array($key, $this->phi) && ! $user->is($this)) {
+        if (! $this->authUser){
+            $this->authUser = auth()->user();
+        }
+
+        if ($this->authUser) {
+            if ($this->shouldHidePhi === null){
+                $this->shouldHidePhi = ! $this->authUser->canSeePhi();
+            }
+        }
+
+        if ($this->shouldHidePhi){
+            if (in_array($key, $this->phi) && ! $this->authUser->is($this)) {
                 $value = $this->hidePhiAttribute($key);
             }
         }
@@ -48,14 +64,9 @@ trait ProtectsPhi
         return $value;
     }
 
-    private function authUserShouldSeePhi(): bool
-    {
-        return auth()->user()->canSeePhi();
-    }
-
     private function hidePhiAttribute($key)
     {
-        if (in_array($key, $this->casts)) {
+        if (array_key_exists($key, $this->casts)) {
             return $this->castHiddenPhiAttribute($key);
         } elseif (in_array($key, $this->dates)){
             return $this->hiddenAttributeCasts()['date'];
