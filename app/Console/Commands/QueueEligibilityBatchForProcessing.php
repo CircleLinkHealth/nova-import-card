@@ -237,7 +237,7 @@ class QueueEligibilityBatchForProcessing extends Command
 
     private function queueGoogleDriveJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        if ( ! $batch->options['numberOfFiles']) {
+        if ( ! array_key_exists('numberOfFiles', $batch->options)) {
             $result = $this->processEligibilityService->fromGoogleDrive($batch);
 
             if ($result) {
