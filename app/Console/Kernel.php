@@ -27,6 +27,7 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
+use App\Console\Commands\RunScheduler;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
 use Carbon\Carbon;
@@ -44,6 +45,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        RunScheduler::class,
     ];
 
     /**
@@ -66,8 +68,6 @@ class Kernel extends ConsoleKernel
 
     /**
      * Define the application's command schedule.
-     *
-     * @param \Illuminate\Console\Scheduling\Schedule $schedule
      */
     protected function schedule(Schedule $schedule)
     {
@@ -167,7 +167,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckEmrDirectInbox::class)
             ->everyFiveMinutes()
             ->withoutOverlapping()->onOneServer();
-        
+
         //uncomment when ready
 //        $schedule->command(DownloadTwilioRecordings::class)
 //                 ->everyThirtyMinutes()
