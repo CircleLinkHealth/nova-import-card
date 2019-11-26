@@ -6,7 +6,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
  * App\CarePlanPrintListView.
@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $approver_full_name
  * @property string|null $provider_full_name
  * @property int|null    $patient_ccm_time
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView query()
@@ -50,7 +51,13 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereProviderFullName($value)
  * @mixin \Eloquent
  */
-class CarePlanPrintListView extends Model
+class CarePlanPrintListView extends BaseModel
 {
+    public $phi = [
+        'patient_full_name',
+        'patient_first_name',
+        'patient_last_name',
+    ];
+
     protected $table = 'careplan_print_list_view';
 }

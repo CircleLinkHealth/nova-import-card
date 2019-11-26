@@ -6,8 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\EnrolleeView.
@@ -141,9 +141,29 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereFamilyEnrolleeId($value)
  */
-class EnrolleeView extends Model
+class EnrolleeView extends BaseModel
 {
     use Filterable;
+
+    public $phi = [
+        'first_name',
+        'last_name',
+        'address',
+        'address_2',
+        'city',
+        'state',
+        'zip',
+        'primary_phone',
+        'cell_phone',
+        'home_phone',
+        'other_phone',
+        'primary_insurance',
+        'secondary_insurance',
+        'tertiary_insurance',
+        'has_copay',
+        'email',
+        'agent_details',
+    ];
 
     protected $table = 'enrollees_view';
 }
