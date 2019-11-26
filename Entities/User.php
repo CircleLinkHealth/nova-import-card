@@ -2923,8 +2923,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $query,
         $type,
         $excludeAwv = true
-    )
-    {
+    ) {
         $query->whereHas(
             'roles',
             function ($q) use (
@@ -2939,9 +2938,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
 
         $query->when($excludeAwv, function ($q) {
-            $q->whereHas('patientInfo', function ($q2) {
-                $q2->where('is_awv', 0);
+            // we want to exclude only if user has patient info
+            // so we have to make sure that if user does not have patientInfo,
+            // we do not exclude them
+            $q->where(function ($q2) {
+                $q2->whereHas('patientInfo', function ($q3) {
+                    $q3->where('is_awv', 0);
+                })
+                   ->orWhereDoesntHave('patientInfo');
             });
+
         });
     }
 
@@ -3709,7 +3715,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                ->ofNurses(auth()->id())
                                ->exists();
 
-        return $invoice && $now->lte(NurseInvoiceDisputeDeadline::for ($invoiceMonth));
+        return $invoice && $now->lte(NurseInvoiceDisputeDeadline::for($invoiceMonth));
     }
 
     /**
