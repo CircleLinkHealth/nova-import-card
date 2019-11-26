@@ -66,6 +66,11 @@ trait ProtectsPhi
         return $value;
     }
 
+    /**
+     * @param $key
+     *
+     * @return string
+     */
     private function hidePhiAttribute($key)
     {
         if (array_key_exists($key, $this->casts)) {
@@ -77,6 +82,11 @@ trait ProtectsPhi
         }
     }
 
+    /**
+     * @param $key
+     *
+     * @return mixed
+     */
     private function castHiddenPhiAttribute($key)
     {
 
@@ -86,12 +96,26 @@ trait ProtectsPhi
 
     }
 
-    private function hiddenAttributeCasts()
+    /**
+     * @return array
+     */
+    private function hiddenAttributeCasts() : array
     {
         return [
             'date'  => Carbon::parse($this->hiddenDate),
             'array' => [],
         ];
+    }
+
+    /**
+     * This is to help test the trait
+     *
+     * @param bool $bool
+     */
+    public function setShouldHidePhi(Boolean $bool){
+        if (isUnitTestingEnv()){
+            $this->shouldHidePhi = $bool;
+        }
     }
 
 }
