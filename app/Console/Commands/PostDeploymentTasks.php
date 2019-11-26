@@ -39,10 +39,11 @@ class PostDeploymentTasks extends Command
     public function handle()
     {
         if (app()->environment(['local', 'testing'])) {
-            echo "Not running because env is ".app()->environment().PHP_EOL;
+            echo 'Not running because env is '.app()->environment().PHP_EOL;
+
             return;
         }
-        
+
         collect(
             [
                 'nova:publish',
@@ -56,18 +57,6 @@ class PostDeploymentTasks extends Command
             ]
         )->each(
             function ($command) {
-                if ( ! isQueueWorkerEnv() && in_array(
-                    $command,
-                    [
-                        'horizon:terminate',
-                        'queue:restart',
-                    ]
-                )) {
-                    //@todo: start using envoyer scripts
-                    //Do not run Queue commands on production, as Worker now takes care of Prod jobs
-                    return;
-                }
-
                 $this->output->note("Running ${command}");
 
                 \Artisan::call($command);
