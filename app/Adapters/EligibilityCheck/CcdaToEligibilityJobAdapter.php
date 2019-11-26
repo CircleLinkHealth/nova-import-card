@@ -154,7 +154,6 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
         if (EligibilityJob::where([
             ['batch_id', '=', $this->batch->id],
             ['hash', '=', $hash],
-            ['data', '=', $patient],
         ])->exists()) {
             return null;
         }
