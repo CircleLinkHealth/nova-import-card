@@ -247,7 +247,7 @@ class ProcessEligibilityService
         $recursive = false; // Get subdirectories also?
         $dir       = $batch->options['dir'];
 
-        if ($batch->options['numberOfFiles']) {
+        if (array_key_exists('numberOfFiles', $batch->options)) {
             return null;
         }
 
