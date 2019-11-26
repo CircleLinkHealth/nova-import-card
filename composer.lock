@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "67d5aa6142331377c9d04c5f712f42fa",
+    "content-hash": "595226b9000acc6d264e1560938ed888",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -684,21 +684,22 @@
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.5.1",
+            "version": "v1.5.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "c6db4c1dd5d839f0bd2e4fedc7d815c9a1009729"
+                "reference": "79a34f34846baf14bcd4469413c74aaa06263abc"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
                 "circlelinkhealth/cpmmigrations": "dev-master",
+                "circlelinkhealth/sqlviews": "dev-master",
                 "laravel/passport": "^7.0",
                 "laravel/scout": "^7.1",
                 "michalisantoniou6/laravel-cerberus": "dev-master",
                 "spatie/laravel-medialibrary": "^7.0.0"
             },
-            "type": "laravel-module",
+            "type": "library",
             "extra": {
                 "laravel": {
                     "providers": [
@@ -722,7 +723,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-26T18:28:58+00:00"
+            "time": "2019-11-26T19:38:49+00:00"
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
@@ -800,7 +801,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
-                "reference": "59f81019ef6586cf0a0fe87a508e38f7a34f7985"
+                "reference": "1bff96c8c3b53368a63c160a08699f0e284e7d19"
             },
             "type": "library",
             "extra": {
@@ -814,7 +815,10 @@
             "autoload": {
                 "psr-4": {
                     "CircleLinkHealth\\SqlViews\\": ""
-                }
+                },
+                "classmap": [
+                    "Database/Views"
+                ]
             },
             "authors": [
                 {
@@ -822,7 +826,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-26T19:10:59+00:00"
+            "time": "2019-11-26T19:18:36+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
