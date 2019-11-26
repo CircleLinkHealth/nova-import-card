@@ -8,11 +8,8 @@ namespace App\Console\Commands;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
-use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\MakePhoenixHeartWelcomeCallList;
-use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessSinglePatientEligibility;
-use App\Models\MedicalRecords\Ccda;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
@@ -44,8 +41,6 @@ class QueueEligibilityBatchForProcessing extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param ProcessEligibilityService $processEligibilityService
      */
     public function __construct(ProcessEligibilityService $processEligibilityService)
     {
@@ -101,11 +96,7 @@ class QueueEligibilityBatchForProcessing extends Command
     }
 
     /**
-     * @param EligibilityBatch $batch
-     *
      * @throws \League\Flysystem\FileNotFoundException
-     *
-     * @return EligibilityBatch
      */
     private function createEligibilityJobsFromJsonFile(EligibilityBatch $batch): EligibilityBatch
     {
@@ -176,9 +167,6 @@ class QueueEligibilityBatchForProcessing extends Command
         }
     }
 
-    /**
-     * @return EligibilityBatch|null
-     */
     private function getBatch(): ?EligibilityBatch
     {
         return EligibilityBatch::where('status', '<', 2)
@@ -221,11 +209,7 @@ class QueueEligibilityBatchForProcessing extends Command
     }
 
     /**
-     * @param EligibilityBatch $batch
-     *
      * @throws \League\Flysystem\FileNotFoundException
-     *
-     * @return EligibilityBatch
      */
     private function queueClhMedicalRecordTemplateJobs(EligibilityBatch $batch): EligibilityBatch
     {
@@ -252,11 +236,6 @@ class QueueEligibilityBatchForProcessing extends Command
         return $batch;
     }
 
-    /**
-     * @param EligibilityBatch $batch
-     *
-     * @return EligibilityBatch
-     */
     private function queueGoogleDriveJobs(EligibilityBatch $batch): EligibilityBatch
     {
         $result = $this->processEligibilityService->fromGoogleDrive($batch);
@@ -270,22 +249,15 @@ class QueueEligibilityBatchForProcessing extends Command
 
         $practice = Practice::findOrFail($batch->practice_id);
 
-        $unprocessed = Ccda::whereBatchId($batch->id)
-            ->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
+        $unprocessed = EligibilityJob::whereBatchId($batch->id)
+            ->where('status', '<', 2)
             ->inRandomOrder()
             ->take(10)
             ->get()
-            ->map(function ($ccda) use ($batch, $practice) {
-                ProcessCcda::withChain([
-                    (new CheckCcdaEnrollmentEligibility(
-                        $ccda->id,
-                        $practice,
-                        $batch
-                    ))->onQueue('low'),
-                ])->dispatch($ccda->id)
-                    ->onQueue('low');
+            ->map(function (EligibilityJob $ej) {
+                $ej->process();
 
-                return $ccda;
+                return true;
             });
 
         if ($unprocessed->isEmpty()) {
@@ -303,8 +275,6 @@ class QueueEligibilityBatchForProcessing extends Command
 
     /**
      * @param $batch
-     *
-     * @return EligibilityBatch
      */
     private function queuePHXJobs($batch): EligibilityBatch
     {
@@ -327,11 +297,7 @@ class QueueEligibilityBatchForProcessing extends Command
     }
 
     /**
-     * @param EligibilityBatch $batch
-     *
      * @throws \Exception
-     *
-     * @return EligibilityBatch
      */
     private function queueSingleCsvJobs(EligibilityBatch $batch): EligibilityBatch
     {
@@ -396,9 +362,6 @@ class QueueEligibilityBatchForProcessing extends Command
 
     /**
      * Read the file containing patient data for batch type `clh_medical_record_template`, using a generator.
-     *
-     * @param string           $pathToFile
-     * @param EligibilityBatch $batch
      */
     private function readUsingGenerator(string $pathToFile, EligibilityBatch $batch)
     {
