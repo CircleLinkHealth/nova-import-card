@@ -135,7 +135,7 @@
     "jkocik/laravel-profiler": "^1.2",
     "laravel/dusk": "^3.0",
     "mockery/mockery": "^1.0",
-    "nwidart/laravel-modules": "^4.0",
+    "nwidart/laravel-modules": "^6.0",
     "orangehill/iseed": "dev-master",
     "phpunit/phpunit": "^7.0",
     "spatie/phpunit-watcher": "^1.8",
