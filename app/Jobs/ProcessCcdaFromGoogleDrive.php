@@ -1,0 +1,79 @@
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Jobs;
+
+use App\EligibilityBatch;
+use App\Models\MedicalRecords\Ccda;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
+
+class ProcessCcdaFromGoogleDrive implements ShouldQueue
+{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    /**
+     * @var EligibilityBatch
+     */
+    protected $batch;
+
+    /**
+     * @var array
+     */
+    protected $googleDriveFile;
+
+    /**
+     * Create a new job instance.
+     */
+    public function __construct(array $googleDriveFile, EligibilityBatch $batch)
+    {
+        $this->googleDriveFile = $googleDriveFile;
+        $this->batch           = $batch;
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        $cloudDisk = Storage::disk('google');
+
+        $driveFilePath = $this->googleDriveFile['path'];
+
+        $rawData = $cloudDisk->get($driveFilePath);
+
+        $ccda = Ccda::create([
+            'batch_id'    => $this->batch->id,
+            'source'      => Ccda::GOOGLE_DRIVE."_{$this->googleDriveFile['dirname']}",
+            'xml'         => $rawData,
+            'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
+            'imported'    => false,
+            'practice_id' => $this->batch->practice_id,
+            'filename'    => $this->googleDriveFile['name'],
+        ]);
+
+        if ( ! $ccda->practice_id) {
+            //for some reason it doesn't save practice_id when using Ccda::create([])
+            $ccda->practice_id = $this->batch->practice_id;
+            $ccda->save();
+        }
+
+        $this->batch->loadMissing('practice');
+
+        ProcessCcda::withChain([
+            (new CheckCcdaEnrollmentEligibility($ccda->id, $this->batch->practice, $this->batch))->onQueue('low'),
+        ])->dispatch($ccda->id)
+            ->onQueue('low');
+    }
+}

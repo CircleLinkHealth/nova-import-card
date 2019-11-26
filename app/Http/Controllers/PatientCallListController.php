@@ -6,6 +6,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Call;
+use App\Models\Addendum;
 use App\Services\CallService;
 use App\Services\NoteService;
 use Carbon\Carbon;
@@ -67,6 +69,24 @@ class PatientCallListController extends Controller
             'filterPriority',
             'dropdownStatusClass',
         ]));
+    }
+
+    /**
+     * @param $callId
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function markAddendumActivitiesDone($callId)
+    {
+        $call   = Call::findOrFail($callId);
+        $noteId = $call->note_id;
+
+        $addendum = Addendum::where('addendumable_id', $noteId)->first();
+
+        $addendum->markActivitiesAsDone();
+        $addendum->markAllAttachmentNotificationsAsRead();
+
+        return redirect(route('patient.note.view', ['patient_id' => $call->inbound_cpm_id, 'note_id' => $noteId]));
     }
 
     /**

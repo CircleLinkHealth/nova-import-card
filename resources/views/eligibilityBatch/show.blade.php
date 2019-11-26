@@ -91,14 +91,6 @@
                                 @empty
                                     <p>No stats found</p>
                                 @endforelse
-                            @else
-                                Eligible: <span id="eligible">{{ $eligible }}</span>
-                                <br>
-                                Ineligible: <span id="ineligible">{{ $ineligible }}</span>
-                                <br>
-                                Duplicates: <span id="duplicates">{{ $duplicates }}</span>
-                                <br>
-                                Not processed: <span id="unprocessed">{{ $unprocessed }}</span>
                             @endif
                         </div>
 
