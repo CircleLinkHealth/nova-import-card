@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "595226b9000acc6d264e1560938ed888",
+    "content-hash": "69f90a0e3bf33e92bfd5a651cd779889",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -684,7 +684,7 @@
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.5.2",
+            "version": "v1.5.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
@@ -13362,7 +13362,6 @@
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20,
         "circlelinkhealth/cpmmigrations": 20,
-        "circlelinkhealth/sqlviews": 20,
         "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
