@@ -247,13 +247,24 @@ class ProcessEligibilityService
         $recursive = false; // Get subdirectories also?
         $dir       = $batch->options['dir'];
 
+        if ($batch->options['numberOfFiles']) {
+            return null;
+        }
+
+        $collection = collect($cloudDisk->listContents($dir, $recursive));
+
+        $options                  = $batch->options;
+        $options['numberOfFiles'] = $collection->count();
+        $batch->options           = $options;
+        $batch->save();
+
         $alreadyProcessed = Media::select('file_name')->whereModelType(Ccda::class)->whereIn('model_id', function ($query) use ($batch) {
             $query->select('id')
                 ->from((new Ccda())->getTable())
                 ->where('batch_id', $batch->id);
         })->distinct()->pluck('file_name');
 
-        return collect($cloudDisk->listContents($dir, $recursive))
+        return $collection
             ->where('type', '=', 'file')
             ->whereIn('mimetype', [
                 'text/xml',

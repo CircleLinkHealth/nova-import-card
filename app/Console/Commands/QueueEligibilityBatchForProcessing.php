@@ -15,7 +15,6 @@ use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use App\Services\GoogleDrive;
 use App\TargetPatient;
-use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
 use Storage;
 
@@ -238,27 +237,22 @@ class QueueEligibilityBatchForProcessing extends Command
 
     private function queueGoogleDriveJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        $result = $this->processEligibilityService->fromGoogleDrive($batch);
+        if ( ! $batch->options['numberOfFiles']) {
+            $result = $this->processEligibilityService->fromGoogleDrive($batch);
 
-        if ($result) {
-            $batch->status = EligibilityBatch::STATUSES['processing'];
-            $batch->save();
+            if ($result) {
+                $batch->status = EligibilityBatch::STATUSES['processing'];
+                $batch->save();
 
-            return $batch;
+                return $batch;
+            }
         }
-
-        $practice = Practice::findOrFail($batch->practice_id);
 
         $unprocessed = EligibilityJob::whereBatchId($batch->id)
             ->where('status', '<', 2)
             ->inRandomOrder()
-            ->take(10)
-            ->get()
-            ->map(function (EligibilityJob $ej) {
-                $ej->process();
-
-                return true;
-            });
+            ->take(15)
+            ->get();
 
         if ($unprocessed->isEmpty()) {
             $batch->status = EligibilityBatch::STATUSES['complete'];
@@ -266,6 +260,12 @@ class QueueEligibilityBatchForProcessing extends Command
 
             return $batch;
         }
+
+        $unprocessed->map(function (EligibilityJob $ej) {
+            $ej->process();
+
+            return true;
+        });
 
         $batch->status = EligibilityBatch::STATUSES['processing'];
         $batch->save();
