@@ -8,6 +8,7 @@ namespace App\Jobs;
 
 use App\EligibilityBatch;
 use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\Customer\Entities\Media;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -50,6 +51,16 @@ class ProcessCcdaFromGoogleDrive implements ShouldQueue
         $cloudDisk = Storage::disk('google');
 
         $driveFilePath = $this->googleDriveFile['path'];
+
+        $fileExists = Media::whereModelType(Ccda::class)->whereIn('model_id', function ($query) {
+            $query->select('id')
+                ->from((new Ccda())->getTable())
+                ->where('batch_id', $this->batch->id);
+        })->where('file_name', $this->googleDriveFile['name'])->exists();
+
+        if ($fileExists) {
+            return false;
+        }
 
         $rawData = $cloudDisk->get($driveFilePath);
 
