@@ -26,6 +26,7 @@ class SqlViewsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->registerConfig();
     }
 
     /**
@@ -56,5 +57,21 @@ class SqlViewsServiceProvider extends ServiceProvider
                 ]
             );
         }
+    }
+    
+    /**
+     * Register config.
+     *
+     * @return void
+     */
+    protected function registerConfig()
+    {
+        $this->publishes([
+                             __DIR__.'/../Config/config.php' => config_path('sqlviews.php'),
+                         ], 'config');
+        $this->mergeConfigFrom(
+            __DIR__.'/../Config/config.php',
+            'sqlviews'
+        );
     }
 }

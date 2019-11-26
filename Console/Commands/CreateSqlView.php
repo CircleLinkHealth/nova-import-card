@@ -126,7 +126,7 @@ class CreateSqlView extends Command
      */
     protected function getViewsDir()
     {
-        return database_path('views');
+        return \Config::get('sqlviews.sql-views-directory');
     }
 
     /**
