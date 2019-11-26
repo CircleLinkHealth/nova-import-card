@@ -41,7 +41,6 @@ class CcdService
                 'practice_id' => $practice->id,
                 'location_id' => $practice->locations->first()->id,
                 'user_id'     => auth()->user()->id,
-                'vendor_id'   => 1,
                 'xml'         => $ccdaExternal[0]['ccda'],
             ]);
 
