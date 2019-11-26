@@ -42,5 +42,6 @@
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-core.git"
         }
-    ]
+    ],
+    "type": "laravel-module"
 }
