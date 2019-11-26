@@ -38,8 +38,6 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
      * Create a new job instance.
      *
      * @param $ccda
-     * @param Practice         $practice
-     * @param EligibilityBatch $batch
      */
     public function __construct(
         $ccda,
@@ -67,7 +65,13 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             return null;
         }
 
-        return $this->determineEligibility($this->ccda->createEligibilityJobFromMedicalRecord());
+        $ej = $this->ccda->createEligibilityJobFromMedicalRecord();
+
+        if (is_null($ej)) {
+            return false;
+        }
+
+        return $this->determineEligibility($ej);
     }
 
     /**
