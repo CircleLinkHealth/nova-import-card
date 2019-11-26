@@ -48,7 +48,8 @@
         <div v-if="provider.id && !isCreatingNew">
             <mdb-row>
                 <mdb-col class="text-right">
-                    <mdb-btn size="sm" icon="search" color="primary" @click.native="toggleSearchAgain">Search again
+                    <mdb-btn size="md" icon="search" outline="primary" @click.native="toggleSearchAgain">
+                        Search again
                     </mdb-btn>
                 </mdb-col>
             </mdb-row>
@@ -63,7 +64,7 @@
 
             <mdb-row>
                 <mdb-col class="text-right">
-                    <mdb-btn size="sm" icon="search" color="primary" @click.native="toggleSearchAgain">
+                    <mdb-btn size="md" icon="search" outline="primary" @click.native="toggleSearchAgain">
                         Search again
                     </mdb-btn>
                 </mdb-col>
