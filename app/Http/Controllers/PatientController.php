@@ -152,11 +152,12 @@ class PatientController extends Controller
                 'is_primary'  => false,
                 'extension'   => null,
                 'number'      => $this->formatPhoneNumber($input['phoneNumber']),
+                'created_at'  => Carbon::now(),
             ]);
             $phoneNumber->save();
         }
 
-        if (!empty($input['emrDirect'])) {
+        if ( ! empty($input['emrDirect'])) {
             $user->emr_direct_address = $input['emrDirect'];
         }
 
