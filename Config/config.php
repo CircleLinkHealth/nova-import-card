@@ -6,4 +6,9 @@
 
 return [
     'name' => 'CpmMigrations',
+
+    /**
+     * The directory where SQL Views are stored
+     */
+    'sql-views-directory' => ''
 ];
