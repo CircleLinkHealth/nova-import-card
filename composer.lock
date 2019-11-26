@@ -795,6 +795,36 @@
             "time": "2019-10-02T13:24:06+00:00"
         },
         {
+            "name": "circlelinkhealth/sqlviews",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
+                "reference": "04194d10dc925f1fe23201f9803d917c14049273"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\SqlViews\\Providers\\SqlViewsServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\SqlViews\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2019-11-26T18:59:06+00:00"
+        },
+        {
             "name": "circlelinkhealth/timetracking",
             "version": "v1.1.2",
             "source": {
@@ -13328,6 +13358,7 @@
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20,
         "circlelinkhealth/cpmmigrations": 20,
+        "circlelinkhealth/sqlviews": 20,
         "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
