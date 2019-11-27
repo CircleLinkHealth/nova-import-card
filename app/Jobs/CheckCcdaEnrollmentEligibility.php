@@ -105,6 +105,9 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             $check->getEnrollee()->save();
         }
 
+        //to update updated_at
+        $this->batch->save();
+
         return $check;
     }
 }
