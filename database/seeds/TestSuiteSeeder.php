@@ -29,6 +29,7 @@ class TestSuiteSeeder extends Seeder
         $this->call(MedicationGroupsTableSeeder::class);
         $this->call(CpmLifestylesTableSeeder::class);
         $this->call(CpmBiometricsTableSeeder::class);
+        $this->call(CpmSymptomsTableSeeder::class);
         $this->call(PracticeTableSeeder::class);
         $this->call(UserTableSeeder::class);
         $this->call(PatientSeeder::class);
