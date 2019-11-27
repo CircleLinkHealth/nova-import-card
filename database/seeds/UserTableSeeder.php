@@ -4,16 +4,16 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Seeder;
-use Tests\Helpers\UserHelpers;
 
 class UserTableSeeder extends Seeder
 {
     use UserHelpers;
-    
+
     public function run()
     {
         $practice = Practice::first();
@@ -43,16 +43,16 @@ class UserTableSeeder extends Seeder
 
                 $this->command->info("nurse user $nurse->display_name seeded");
             });
-            
-            $provider = $this->createUser($practice, 'provider');
-            $provider->username = 'provider';
-            $provider->password = Hash::make('hello');
+
+            $provider                  = $this->createUser($practice, 'provider');
+            $provider->username        = 'provider';
+            $provider->password        = Hash::make('hello');
             $provider->saas_account_id = $practice->saas_account_id;
             $provider->save();
-            
-            $careCenter = $this->createUser($practice, 'care-center');
-            $careCenter->username = 'care-coach';
-            $careCenter->password = Hash::make('hello');
+
+            $careCenter                  = $this->createUser($practice, 'care-center');
+            $careCenter->username        = 'care-coach';
+            $careCenter->password        = Hash::make('hello');
             $careCenter->saas_account_id = $practice->saas_account_id;
             $careCenter->save();
         } else {
