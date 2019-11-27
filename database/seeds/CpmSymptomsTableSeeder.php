@@ -29,7 +29,7 @@ class CpmSymptomsTableSeeder extends Seeder
             'Swelling in legs/feet',
             'Weakness/dizziness',
         ] as $symptom) {
-            CpmSymptom::create(['name' => $symptom]);
+            CpmSymptom::updateOrCreate(['name' => $symptom]);
         }
     }
 }

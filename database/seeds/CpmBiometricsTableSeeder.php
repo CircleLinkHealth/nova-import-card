@@ -24,7 +24,7 @@ class CpmBiometricsTableSeeder extends Seeder
                 ['Smoking (# per day)', 3, '# per day'],
             ] as $biometric
         ) {
-            CpmBiometric::create(
+            CpmBiometric::updateOrCreate(
                 [
                     'name' => $biometric[0],
                     'type' => $biometric[1],

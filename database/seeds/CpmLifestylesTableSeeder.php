@@ -22,7 +22,7 @@ class CpmLifestylesTableSeeder extends Seeder
             'Healthy Diet',
             'Low Salt Diet',
         ] as $lifestyle) {
-            CpmLifestyle::create(['name' => $lifestyle]);
+            CpmLifestyle::updateOrCreate(['name' => $lifestyle]);
         }
     }
 }

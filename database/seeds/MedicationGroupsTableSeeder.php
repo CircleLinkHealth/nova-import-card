@@ -17,18 +17,18 @@ class MedicationGroupsTableSeeder extends Seeder
     public function run()
     {
         foreach ([
-                     'Blood Pressure Meds',
-                     'Blood Thinners (Plavix, Aspirin)',
-                     'Breathing Meds for Asthma/COPD',
-                     'Cholesterol Meds',
-                     'Dementia Meds',
-                     'Insulin or other Injectable',
-                     'Kidney Disease Meds',
-                     'Mood/Depression Med',
-                     'Oral Diabetes Meds',
-                     'Water Pills/Diuretics',
-                 ] as $name) {
-            CpmMedicationGroup::create(
+            'Blood Pressure Meds',
+            'Blood Thinners (Plavix, Aspirin)',
+            'Breathing Meds for Asthma/COPD',
+            'Cholesterol Meds',
+            'Dementia Meds',
+            'Insulin or other Injectable',
+            'Kidney Disease Meds',
+            'Mood/Depression Med',
+            'Oral Diabetes Meds',
+            'Water Pills/Diuretics',
+        ] as $name) {
+            CpmMedicationGroup::updateOrCreate(
                 [
                     'name' => $name,
                 ]

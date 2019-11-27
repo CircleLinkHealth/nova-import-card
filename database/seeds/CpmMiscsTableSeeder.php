@@ -24,7 +24,7 @@ class CpmMiscsTableSeeder extends Seeder
             'Other',
             'Social Services',
         ] as $misc) {
-            CpmMisc::create(
+            CpmMisc::updateOrCreate(
                 [
                     'name' => $misc,
                 ]
