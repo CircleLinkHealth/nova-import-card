@@ -126,12 +126,12 @@ class StoreTimeTracking implements ShouldQueue
         $pageTimer->duration          = $duration;
         $pageTimer->duration_unit     = 'seconds';
         $pageTimer->patient_id        = $this->params->get('patientId');
-        $pageTimer->provider_id       = $this->params->get('providerId', null);
+        $pageTimer->provider_id       = $this->params->get('providerId', 0);
         $pageTimer->start_time        = $startTime->toDateTimeString();
         $pageTimer->end_time          = $endTime->toDateTimeString();
         $pageTimer->url_full          = $activity['url'];
         $pageTimer->url_short         = $activity['url_short'];
-        $pageTimer->program_id        = $this->params->get('programId');
+        $pageTimer->program_id        = empty($this->params->get('programId', 0)) ? 0 : $this->params->get('programId', 0);
         $pageTimer->ip_addr           = $this->params->get('ipAddr');
         $pageTimer->activity_type     = $activity['name'];
         $pageTimer->title             = $activity['title'];
