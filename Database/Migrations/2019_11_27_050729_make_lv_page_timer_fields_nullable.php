@@ -8,7 +8,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class MakePatientIdNullable extends Migration
+class MakeLvPageTimerFieldsNullable extends Migration
 {
     /**
      * Reverse the migrations.
@@ -28,6 +28,8 @@ class MakePatientIdNullable extends Migration
     {
         Schema::table('lv_page_timer', function (Blueprint $table) {
             $table->unsignedInteger('patient_id')->nullable()->change();
+            $table->unsignedInteger('provider_id')->nullable()->change();
+            $table->unsignedInteger('program_id')->nullable()->change();
         });
     }
 }
