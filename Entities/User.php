@@ -1226,7 +1226,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return '';
         }
 
-        return $this->patientInfo->birth_date;
+        if (! is_null($this->patientInfo->birth_date)){
+            return $this->patientInfo->birth_date->toDateString();
+        }
+
+        return '';
     }
 
     public function getAgentEmail()
@@ -3160,7 +3164,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! $this->patientInfo) {
             return '';
         }
-        $this->patientInfo->birth_date = str_replace('-', '/', $value);
+
+        if (! is_a($value, Carbon::class)){
+            $value = Carbon::parse($value);
+        }
+
+        $this->patientInfo->birth_date = $value;
         $this->patientInfo->save();
 
         return true;
