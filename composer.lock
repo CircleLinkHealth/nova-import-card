@@ -658,7 +658,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-cpm-migrations.git",
-                "reference": "819ca94ec4bd2ab30a3b4656560047188bd20d13"
+                "reference": "9d085fa2d060929279b824bec311eb43cc078287"
             },
             "type": "laravel-module",
             "extra": {
@@ -680,7 +680,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-27T01:48:00+00:00"
+            "time": "2019-11-27T14:21:03+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -4640,7 +4640,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
+                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
                 "reference": "6a42f69cd6dd2e47724879f6234ce81b2cb688a2"
             },
             "dist": {
@@ -13362,7 +13362,8 @@
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20
+        "xethron/migrations-generator": 20,
+        "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

@@ -120,20 +120,18 @@ class StoreTimeTracking implements ShouldQueue
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['start_time']);
         $endTime   = $startTime->copy()->addSeconds($duration);
 
-        $programId = $this->params->get('programId', 0);
-
         $pageTimer                    = new PageTimer();
         $pageTimer->redirect_to       = $this->params->get('redirectLocation', null);
         $pageTimer->billable_duration = $duration;
         $pageTimer->duration          = $duration;
         $pageTimer->duration_unit     = 'seconds';
         $pageTimer->patient_id        = $this->params->get('patientId');
-        $pageTimer->provider_id       = $this->params->get('providerId', 0);
+        $pageTimer->provider_id       = $this->params->get('providerId', null);
         $pageTimer->start_time        = $startTime->toDateTimeString();
         $pageTimer->end_time          = $endTime->toDateTimeString();
         $pageTimer->url_full          = $activity['url'];
         $pageTimer->url_short         = $activity['url_short'];
-        $pageTimer->program_id        = $programId ? $programId : 0;
+        $pageTimer->program_id        = $this->params->get('programId', null);
         $pageTimer->ip_addr           = $this->params->get('ipAddr');
         $pageTimer->activity_type     = $activity['name'];
         $pageTimer->title             = $activity['title'];
