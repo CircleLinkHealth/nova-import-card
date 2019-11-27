@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 
 class PostDeploymentTasks extends Command
 {
@@ -44,9 +45,12 @@ class PostDeploymentTasks extends Command
             return;
         }
 
+        $this->output->note('Running nova:publish --force');
+        Artisan::call('', ['--force' => true]);
+        $this->output->success('Finished running nova:publish --force');
+
         collect(
             [
-                'nova:publish --force',
                 'view:clear',
                 'route:cache',
                 'config:cache',
@@ -59,7 +63,7 @@ class PostDeploymentTasks extends Command
             function ($command) {
                 $this->output->note("Running ${command}");
 
-                \Artisan::call($command);
+                Artisan::call($command);
 
                 $this->output->success("Finished running ${command}");
             }

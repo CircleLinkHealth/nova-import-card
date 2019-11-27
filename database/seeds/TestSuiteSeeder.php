@@ -20,6 +20,7 @@ class TestSuiteSeeder extends Seeder
         Model::unguard();
 
         $this->call(CpmProblemsTableSeeder::class);
+        $this->call(CpmDefaultInstructionSeeder::class);
         $this->call(AddNewDefaultCarePlanTemplate::class);
         $this->call(RequiredRolesPermissionsSeeder::class);
         $this->call(ChargeableServiceSeeder::class);
