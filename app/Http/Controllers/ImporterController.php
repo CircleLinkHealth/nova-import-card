@@ -113,6 +113,7 @@ class ImporterController extends Controller
         }
 
         $records = new Collection();
+        $source  = $request->query('source', null);
 
         foreach ($request->file('file') as $file) {
             \Log::info('Begin processing CCD '.Carbon::now()->toDateTimeString());
@@ -122,7 +123,7 @@ class ImporterController extends Controller
                 'user_id'   => auth()->user()->id,
                 'vendor_id' => 1,
                 'xml'       => $xml,
-                'source'    => Ccda::IMPORTER,
+                'source'    => $source ?? Ccda::IMPORTER,
             ]);
 
             $records->push($ccda->import());
@@ -270,8 +271,6 @@ class ImporterController extends Controller
     /**
      * Receives XML files, saves them in DB, and returns them JSON Encoded.
      *
-     * @param Request $request
-     *
      * @throws \Exception
      *
      * @return string
@@ -287,8 +286,6 @@ class ImporterController extends Controller
      * Route: /api/ccd-importer/import-medical-records.
      *
      * Receives XML and XLSX files, saves them in DB, and returns them JSON Encoded
-     *
-     * @param Request $request
      *
      * @throws \Exception
      *

@@ -7,6 +7,7 @@
 namespace App\CLH\Repositories;
 
 use App\Importer\Models\ImportedItems\DemographicsImport;
+use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -46,6 +47,13 @@ class CCDImporterRepository
             ? ''
             : ucwords(strtolower($fullName));
 
+        //decide whether user is awv only
+        $is_awv = false;
+        if ($imr->medical_record_type === get_class(Ccda::class)) {
+            $ccda   = Ccda::find($imr->medical_record_id);
+            $is_awv = $ccda && Ccda::IMPORTER_AWV === $ccda->source;
+        }
+
         $bag = new ParameterBag([
             'email'             => $email,
             'password'          => str_random(),
@@ -61,6 +69,7 @@ class CCDImporterRepository
             'zip'               => $demographics->zip,
             'is_auto_generated' => true,
             'roles'             => [$role->id],
+            'is_awv'            => $is_awv,
         ]);
 
         return (new UserRepository())->createNewUser(new User(), $bag);

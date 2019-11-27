@@ -122,6 +122,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
     const EMR_DIRECT   = 'emr_direct';
     const GOOGLE_DRIVE = 'google_drive';
     const IMPORTER     = 'importer';
+    const IMPORTER_AWV = 'importer_awv';
     const SFTP_DROPBOX = 'sftp_dropbox';
     const UPLOADED     = 'uploaded';
 
