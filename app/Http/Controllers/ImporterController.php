@@ -46,30 +46,30 @@ class ImporterController extends Controller
             ->with('billingProvider')
             ->get()
             ->transform(function ($summary) {
-                $summary['flag'] = false;
+                                        $summary['flag'] = false;
 
-                $mr = $summary->medicalRecord();
+                                        $mr = $summary->medicalRecord();
 
-                if ( ! $mr) {
-                    return false;
-                }
+                                        if ( ! $mr) {
+                                            return false;
+                                        }
 
-                $providers = $mr->providers()->where([
-                    ['first_name', '!=', null],
-                    ['last_name', '!=', null],
-                    ['ml_ignore', '=', false],
-                ])->get()->unique(function ($m) {
-                    return $m->first_name.$m->last_name;
-                });
+                                        $providers = $mr->providers()->where([
+                                            ['first_name', '!=', null],
+                                            ['last_name', '!=', null],
+                                            ['ml_ignore', '=', false],
+                                        ])->get()->unique(function ($m) {
+                                            return $m->first_name.$m->last_name;
+                                        });
 
-                if ($providers->count() > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
-                    $summary['flag'] = true;
-                }
+                                        if ($providers->count() > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
+                                            $summary['flag'] = true;
+                                        }
 
-                $summary->checkDuplicity();
+                                        $summary->checkDuplicity();
 
-                return $summary;
-            })->filter()
+                                        return $summary;
+                                    })->filter()
             ->values();
     }
 
@@ -113,7 +113,9 @@ class ImporterController extends Controller
         }
 
         $records = new Collection();
-        $source  = $request->query('source', null);
+
+        //example: http://cpm.clh.test/ccd-importer?source=importer_awv
+        $source = $this->getSource();
 
         foreach ($request->file('file') as $file) {
             \Log::info('Begin processing CCD '.Carbon::now()->toDateTimeString());
@@ -300,5 +302,29 @@ class ImporterController extends Controller
         }
 
         return response()->json($records);
+    }
+
+    /**
+     * The source of the importer can be submitted through
+     * the url. In this case we are checking if available through
+     * HTTP_REFERRER (previous url)
+     * i.e http://cpm.clh.test/ccd-importer?source=importer_awv.
+     *
+     * @return mixed|null
+     */
+    private function getSource()
+    {
+        if (empty($_SERVER['HTTP_REFERER'])) {
+            return null;
+        }
+        $url   = $_SERVER['HTTP_REFERER'];
+        $parts = parse_url($url);
+        if (empty($parts['query'])) {
+            return null;
+        }
+
+        parse_str($parts['query'], $query);
+
+        return $query['source'] ?? null;
     }
 }

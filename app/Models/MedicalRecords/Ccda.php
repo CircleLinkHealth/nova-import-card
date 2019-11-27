@@ -89,7 +89,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \App\Media[]|\Illuminate\Database\Eloquent\Collection                          $media
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda exclude($value = array())
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda exclude($value = [])
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda query()
@@ -202,7 +202,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
         $ccda = static::query()->create($attributes);
 
-        if ($attributes['filename']) {
+        if ( ! empty($attributes['filename'])) {
             $filename = $attributes['filename'];
             unset($attributes['filename']);
         } else {
