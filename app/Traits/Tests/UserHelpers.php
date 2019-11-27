@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Helpers;
+namespace App\Traits\Tests;
 
 use App\Call;
 use App\CLH\Helpers\StringManipulation;
@@ -88,7 +88,6 @@ trait UserHelpers
         }
 
         if ($isTest) {
-
             //check that it was created
             $this->assertDatabaseHas('users', ['email' => $email]);
         }

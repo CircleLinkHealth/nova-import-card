@@ -9,11 +9,10 @@ namespace Tests;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Tests\Helpers\UserHelpers;
 
 class CustomerTestCase extends TestCase
 {
-    use UserHelpers;
+    use App\Traits\Tests\UserHelpers;
     /**
      * @var array|User
      */
