@@ -22,6 +22,7 @@ class TestSuiteSeeder extends Seeder
         $this->call(ProblemCodeSystemsSeeder::class);
         $this->call(SaasAccountsSeeder::class);
         $this->call(SnomedToIcd9TestMapTableSeeder::class);
+        $this->call(MedicationGroupsTableSeeder::class);
         $this->call(PracticeTableSeeder::class);
         $this->call(UserTableSeeder::class);
         $this->call(PatientSeeder::class);
