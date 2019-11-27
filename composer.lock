@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "69f90a0e3bf33e92bfd5a651cd779889",
+    "content-hash": "bfc9fd4a8343e571c2aa2cd35401733d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -684,16 +684,14 @@
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.5.3",
+            "version": "v1.5.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "79a34f34846baf14bcd4469413c74aaa06263abc"
+                "reference": "4e3650229e104eacba6fd286d96fad7eeb5fc408"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
-                "circlelinkhealth/cpmmigrations": "dev-master",
-                "circlelinkhealth/sqlviews": "dev-master",
                 "laravel/passport": "^7.0",
                 "laravel/scout": "^7.1",
                 "michalisantoniou6/laravel-cerberus": "dev-master",
@@ -723,7 +721,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-26T19:38:49+00:00"
+            "time": "2019-11-27T01:40:43+00:00"
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
@@ -797,11 +795,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews",
-            "version": "dev-master",
+            "version": "dev-heroku",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
-                "reference": "1bff96c8c3b53368a63c160a08699f0e284e7d19"
+                "reference": "d1bbdde095ed0db6daefa3e80eb6b9cf194abb61"
             },
             "type": "library",
             "extra": {
@@ -826,7 +824,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-26T19:18:36+00:00"
+            "time": "2019-11-27T01:24:44+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
@@ -4642,8 +4640,14 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
-                "reference": "a70637130916aad3f5f4bda25080550f0fef5551"
+                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
+                "reference": "6a42f69cd6dd2e47724879f6234ce81b2cb688a2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/michalisantoniou6/laravel-cerberus/zipball/6a42f69cd6dd2e47724879f6234ce81b2cb688a2",
+                "reference": "6a42f69cd6dd2e47724879f6234ce81b2cb688a2",
+                "shasum": ""
             },
             "require": {
                 "illuminate/cache": "~5.0",
@@ -4676,22 +4680,18 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "autoload-dev": {
-                "classmap": [
-                    "tests/Middleware/MiddlewareTest.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "Zizaco Zizuini",
-                    "email": "zizaco@gmail.com"
-                },
-                {
                     "name": "Andrew Elkins",
                     "homepage": "http://andrewelkins.com"
+                },
+                {
+                    "name": "Zizaco Zizuini",
+                    "email": "zizaco@gmail.com"
                 },
                 {
                     "name": "Ben Batschelet",
@@ -4716,7 +4716,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2019-04-05T19:26:30+00:00"
+            "time": "2019-05-06T11:55:53+00:00"
         },
         {
             "name": "mindscape/raygun4php",
@@ -13357,12 +13357,12 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/raygun": 20,
+        "circlelinkhealth/cpmmigrations": 20,
+        "circlelinkhealth/sqlviews": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20,
-        "circlelinkhealth/cpmmigrations": 20,
-        "michalisantoniou6/laravel-cerberus": 20
+        "xethron/migrations-generator": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
