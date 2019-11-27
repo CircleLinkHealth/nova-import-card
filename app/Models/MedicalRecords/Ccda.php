@@ -214,6 +214,9 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         return $ccda;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function createEligibilityJobFromMedicalRecord(): ?EligibilityJob
     {
         $adapter = new CcdaToEligibilityJobAdapter($this, $this->practice, $this->batch);
