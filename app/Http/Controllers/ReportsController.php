@@ -244,7 +244,7 @@ class ReportsController extends Controller
                 foreach ($value as $key => $value) {
                     $biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval(
                         $value->Avg
-                        ).'} ,';
+                    ).'} ,';
                     ++$count;
                 }
             } else {
@@ -439,7 +439,7 @@ class ReportsController extends Controller
                     }
                     $biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval(
                         $value->Avg
-                        ).'} ,';
+                    ).'} ,';
                     ++$count;
                 }
             } else {
@@ -612,7 +612,7 @@ class ReportsController extends Controller
                                     $end,
                                 ]
                             )
-                            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                            ->groupBy(DB::raw('provider_id, DATE(performed_at),type,lv_activities.id'))
                             ->orderBy('performed_at', 'desc');
                     },
                 ]
