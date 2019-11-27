@@ -46,7 +46,7 @@ class CallService
             });
         }
 
-        $calls->orderByRaw('FIELD(type, "Call Back") desc, scheduled_date desc, call_time_start asc, call_time_end asc');
+        $calls->orderByRaw("CASE WHEN type='Call Back' THEN type END desc, scheduled_date desc, call_time_start asc, call_time_end asc");
 
         return $calls->get();
     }
