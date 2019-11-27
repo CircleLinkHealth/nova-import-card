@@ -120,6 +120,8 @@ class StoreTimeTracking implements ShouldQueue
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $activity['start_time']);
         $endTime   = $startTime->copy()->addSeconds($duration);
 
+        $programId = $this->params->get('programId', 0);
+
         $pageTimer                    = new PageTimer();
         $pageTimer->redirect_to       = $this->params->get('redirectLocation', null);
         $pageTimer->billable_duration = $duration;
@@ -131,7 +133,7 @@ class StoreTimeTracking implements ShouldQueue
         $pageTimer->end_time          = $endTime->toDateTimeString();
         $pageTimer->url_full          = $activity['url'];
         $pageTimer->url_short         = $activity['url_short'];
-        $pageTimer->program_id        = empty($this->params->get('programId', 0)) ? 0 : $this->params->get('programId', 0);
+        $pageTimer->program_id        = $programId ? $programId : 0;
         $pageTimer->ip_addr           = $this->params->get('ipAddr');
         $pageTimer->activity_type     = $activity['name'];
         $pageTimer->title             = $activity['title'];
