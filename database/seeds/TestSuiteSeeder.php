@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use CircleLinkHealth\Customer\Database\Seeders\RequiredRolesPermissionsSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
@@ -14,7 +18,7 @@ class TestSuiteSeeder extends Seeder
     public function run()
     {
         Model::unguard();
-        
+
         $this->call(CpmProblemsTableSeeder::class);
         $this->call(AddNewDefaultCarePlanTemplate::class);
         $this->call(RequiredRolesPermissionsSeeder::class);
@@ -23,6 +27,7 @@ class TestSuiteSeeder extends Seeder
         $this->call(SaasAccountsSeeder::class);
         $this->call(SnomedToIcd9TestMapTableSeeder::class);
         $this->call(MedicationGroupsTableSeeder::class);
+        $this->call(CpmLifestylesTableSeeder::class);
         $this->call(PracticeTableSeeder::class);
         $this->call(UserTableSeeder::class);
         $this->call(PatientSeeder::class);
