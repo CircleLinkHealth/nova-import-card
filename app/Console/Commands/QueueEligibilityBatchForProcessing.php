@@ -237,6 +237,18 @@ class QueueEligibilityBatchForProcessing extends Command
 
     private function queueGoogleDriveJobs(EligibilityBatch $batch): EligibilityBatch
     {
+        $unprocessed = EligibilityJob::whereBatchId($batch->id)
+            ->where('status', '<', 2)
+            ->inRandomOrder()
+            ->take(100)
+            ->get();
+
+        $unprocessed->map(function (EligibilityJob $ej) {
+            $ej->process();
+
+            return true;
+        });
+
         if ( ! $batch->isFinishedFetchingFiles()) {
             $result = $this->processEligibilityService->fromGoogleDrive($batch);
 
@@ -248,24 +260,12 @@ class QueueEligibilityBatchForProcessing extends Command
             }
         }
 
-        $unprocessed = EligibilityJob::whereBatchId($batch->id)
-            ->where('status', '<', 2)
-            ->inRandomOrder()
-            ->take(15)
-            ->get();
-
         if ($unprocessed->isEmpty()) {
             $batch->status = EligibilityBatch::STATUSES['complete'];
             $batch->save();
 
             return $batch;
         }
-
-        $unprocessed->map(function (EligibilityJob $ej) {
-            $ej->process();
-
-            return true;
-        });
 
         $batch->status = EligibilityBatch::STATUSES['processing'];
         $batch->save();

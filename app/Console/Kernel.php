@@ -81,7 +81,7 @@ class Kernel extends ConsoleKernel
             ->dailyAt('04:00')->onOneServer();
 
         $schedule->command(QueueEligibilityBatchForProcessing::class)
-            ->everyMinute()
+            ->everyTenMinutes()
             ->withoutOverlapping()->onOneServer();
 
         $schedule->command(AutoPullEnrolleesFromAthena::class)

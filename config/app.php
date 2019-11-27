@@ -4,11 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Providers\CpmArtisanServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use Circlelinkhealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
-use CircleLinkHealth\SqlViews\Providers\SqlViewsServiceProvider;
 
 return [
     /*
@@ -213,7 +213,7 @@ return [
         NurseInvoicesDeferredBindingsServiceProvider::class,
         EligibilityServiceProvider::class,
         CardServiceProvider::class,
-        SqlViewsServiceProvider::class,
+        CpmArtisanServiceProvider::class,
     ],
 
     /*
