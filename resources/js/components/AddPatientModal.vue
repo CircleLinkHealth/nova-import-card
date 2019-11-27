@@ -220,7 +220,7 @@
             },
 
             getImportFromCcdUrl() {
-                return this.options.ccdImporterUrl ? `${this.options.ccdImporterUrl}?is_awv=true` : '#';
+                return this.options.ccdImporterUrl ? `${this.options.ccdImporterUrl}?source=awv` : '#';
             },
 
             validate(key, value) {
