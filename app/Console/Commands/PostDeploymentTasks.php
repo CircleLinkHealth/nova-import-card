@@ -46,7 +46,7 @@ class PostDeploymentTasks extends Command
 
         collect(
             [
-                'nova:publish',
+                'nova:publish --force',
                 'view:clear',
                 'route:cache',
                 'config:cache',
