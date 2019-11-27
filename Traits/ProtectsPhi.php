@@ -23,7 +23,7 @@ trait ProtectsPhi
      */
     public static function bootProtectsPhi()
     {
-        if (! optional(auth()->user())->canSeePhi()){
+        if ( ! optional(auth()->user())->canSeePhi()) {
             static::retrieved(function ($model) {
                 //this protects phi from getting the model attributes from ->toArray()
                 //we could also have overwritten method attributesToArray()
@@ -43,22 +43,23 @@ trait ProtectsPhi
     {
         $value = parent::getAttribute($key);
 
-        if ( $key === 'id'){
+        if ($key === 'id') {
             return $value;
         }
 
-        if (! $this->authUser){
+        if ( ! $this->authUser) {
             $this->authUser = auth()->user();
         }
 
+
         if ($this->authUser) {
-            if ($this->shouldHidePhi === null){
+            if ($this->shouldHidePhi === null) {
                 $this->shouldHidePhi = ! $this->authUser->canSeePhi();
             }
         }
 
-        if ($this->shouldHidePhi){
-            if (in_array($key, $this->phi) && ! $this->authUser->is($this)) {
+        if ($this->shouldHidePhi) {
+            if (in_array($key, $this->phi) && ! optional($this->authUser)->is($this)) {
                 $value = $this->hidePhiAttribute($key);
             }
         }
@@ -99,7 +100,7 @@ trait ProtectsPhi
     /**
      * @return array
      */
-    private function hiddenAttributeCasts() : array
+    private function hiddenAttributeCasts(): array
     {
         return [
             'date'  => Carbon::parse($this->hiddenDate),
@@ -108,12 +109,13 @@ trait ProtectsPhi
     }
 
     /**
-     * This is to help test the trait
+     * To help test the trait
      *
      * @param bool $bool
      */
-    public function setShouldHidePhi(Boolean $bool){
-        if (isUnitTestingEnv()){
+    public function setShouldHidePhi(bool $bool)
+    {
+        if (isUnitTestingEnv()) {
             $this->shouldHidePhi = $bool;
         }
     }
