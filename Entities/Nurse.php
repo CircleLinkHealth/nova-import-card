@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * CircleLinkHealth\Customer\Entities\Nurse.
@@ -26,18 +27,19 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property int                 $isNLC
- * @property \CircleLinkHealth\Customer\Entities\NurseCareRateLog[]|\Illuminate\Database\Eloquent\Collection
+ * @property \CircleLinkHealth\Customer\Entities\NurseCareRateLog[]|Collection
  *     $careRateLogs
- * @property mixed                                                                                  $holidays_this_week
- * @property mixed                                                                                  $upcoming_holiday_dates
- * @property \CircleLinkHealth\Customer\Entities\Holiday[]|\Illuminate\Database\Eloquent\Collection $holidays
- * @property \CircleLinkHealth\Customer\Entities\State[]|\Illuminate\Database\Eloquent\Collection   $states
- * @property \CircleLinkHealth\Customer\Entities\NurseMonthlySummary[]|\Illuminate\Database\Eloquent\Collection
+ * @property mixed                                                    $holidays_this_week
+ * @property mixed                                                    $upcoming_holiday_dates
+ * @property \CircleLinkHealth\Customer\Entities\Holiday[]|Collection $holidays
+ * @property \CircleLinkHealth\Customer\Entities\State[]|Collection   $states
+ * @property \CircleLinkHealth\Customer\Entities\NurseMonthlySummary[]|Collection
  *     $summary
- * @property \CircleLinkHealth\Customer\Entities\Holiday[]|\Illuminate\Database\Eloquent\Collection            $upcomingHolidays
- * @property \CircleLinkHealth\Customer\Entities\User                                                          $user
- * @property \CircleLinkHealth\Customer\Entities\NurseContactWindow[]|\Illuminate\Database\Eloquent\Collection $windows
- * @property \CircleLinkHealth\Customer\Entities\WorkHours[]|\Illuminate\Database\Eloquent\Collection          $workhourables
+ * @property \CircleLinkHealth\Customer\Entities\Holiday[]|Collection            $upcomingHolidays
+ * @property \CircleLinkHealth\Customer\Entities\User                            $user
+ * @property \CircleLinkHealth\Customer\Entities\NurseContactWindow[]|Collection $windows
+ * @property \CircleLinkHealth\Customer\Entities\WorkHours[]|Collection          $workhourables
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereBillingType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereHighRate($value)
@@ -51,28 +53,34 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereUserId($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse
  *     filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse query()
- * @property int $is_demo
- * @property int $pay_interval
- * @property int $is_variable_rate
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice[] $invoices
+ *
+ * @property int                                                                $is_demo
+ * @property int                                                                $pay_interval
+ * @property int                                                                $is_variable_rate
+ * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoice[]|Collection $invoices
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsDemo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsVariableRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse wherePayInterval($value)
- * @property-read int|null $care_rate_logs_count
- * @property-read int|null $holidays_count
- * @property-read int|null $invoices_count
- * @property-read int|null $revision_history_count
- * @property-read int|null $states_count
- * @property-read int|null $summary_count
- * @property-read int|null $windows_count
- * @property-read int|null $workhourables_count
+ *
+ * @property int|null $care_rate_logs_count
+ * @property int|null $holidays_count
+ * @property int|null $invoices_count
+ * @property int|null $revision_history_count
+ * @property int|null $states_count
+ * @property int|null $summary_count
+ * @property int|null $windows_count
+ * @property int|null $workhourables_count
  * @property int|null $case_load_capacity
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereCaseLoadCapacity($value)
  */
 class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
@@ -104,7 +112,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         'pay_interval',
         'is_variable_rate',
         //"Case Load Capacity" is an integer denoting the target number of patients a nurse should be handling.
-        'case_load_capacity'
+        'case_load_capacity',
     ];
 
     protected $table = 'nurse_info';
@@ -132,17 +140,17 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         return \CircleLinkHealth\TimeTracking\Entities\Activity::where('provider_id', $nurse->user_id)
             ->where('patient_id', $patient->user_id)
             ->where(function ($q) {
-                                                                   $q->where(
-                                                                       'created_at',
-                                                                       '>=',
-                                                                       Carbon::now()->startOfMonth()
-                                                                   )
-                                                                       ->where(
-                                                                         'updated_at',
-                                                                         '<=',
-                                                                         Carbon::now()->endOfMonth()
-                                                                     );
-                                                               })
+                $q->where(
+                    'created_at',
+                    '>=',
+                    Carbon::now()->startOfMonth()
+                )
+                    ->where(
+                        'updated_at',
+                        '<=',
+                        Carbon::now()->endOfMonth()
+                    );
+            })
             ->sum('duration');
     }
 
@@ -183,17 +191,15 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         $holidaysThisWeek = $this->upcomingHolidaysFrom(Carbon::today())
             ->map(function ($holiday) {
-                                     if ($holiday->date->lte(Carbon::now()->endOfWeek()) && $holiday->date->gte(Carbon::now()->startOfWeek())) {
-                                         return clhDayOfWeekToDayName(carbonToClhDayOfWeek($holiday->date->dayOfWeek));
-                                     }
-                                 });
+                if ($holiday->date->lte(Carbon::now()->endOfWeek()) && $holiday->date->gte(Carbon::now()->startOfWeek())) {
+                    return clhDayOfWeekToDayName(carbonToClhDayOfWeek($holiday->date->dayOfWeek));
+                }
+            });
 
         return array_filter($holidaysThisWeek->all());
     }
 
     /**
-     * @param Carbon $date
-     *
      * @return int
      */
     public function getHoursCommittedForCarbonDate(Carbon $date)
@@ -213,11 +219,11 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         return $this->upcomingHolidaysFrom(Carbon::today())
             ->sortBy(function ($item) {
-                        return Carbon::createFromFormat(
-                            'Y-m-d',
-                            "{$item->date->format('Y-m-d')}"
-                        );
-                    });
+                return Carbon::createFromFormat(
+                    'Y-m-d',
+                    "{$item->date->format('Y-m-d')}"
+                );
+            });
     }
 
     /**
@@ -241,10 +247,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     /**
      * Returns true or false if the date passed is a holiday for this nurse.
      *
-     * @param Carbon                $date
      * @param CompanyHoliday[]|null $companyHolidays
-     *
-     * @return bool
      */
     public function isOnHoliday(Carbon $date, $companyHolidays = null): bool
     {
@@ -274,7 +277,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
      * Upcoming days the Nurse is taking off.
      * NOTE: Company holidays included. Those entries do not have an `id`.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function upcomingHolidaysFrom(Carbon $date = null)
     {
@@ -341,9 +344,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     /**
      * Get company holidays from a date.
      *
-     * @param Carbon|null $date
-     *
-     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection
+     * @return Collection|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Support\Collection
      */
     private function companyHolidaysFrom(Carbon $date = null)
     {
@@ -360,12 +361,12 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         $companyHolidays = CompanyHoliday::where('holiday_date', '>=', $dateStr)
             ->get()
             ->map(function (CompanyHoliday $h) {
-                                             $nurseHoliday = new Holiday();
-                                             $nurseHoliday->date = $h->holiday_date;
-                                             $nurseHoliday->nurse_info_id = $this->id;
+                $nurseHoliday = new Holiday();
+                $nurseHoliday->date = $h->holiday_date;
+                $nurseHoliday->nurse_info_id = $this->id;
 
-                                             return $nurseHoliday;
-                                         });
+                return $nurseHoliday;
+            });
 
         $this->companyHolidaysCache[$dateStr] = $companyHolidays;
 
