@@ -57,6 +57,65 @@ class WorkScheduleController extends Controller
         $this->fullCalendarService = $fullCalendarService;
     }
 
+    public function calendarWorkEvents(Request $request)
+    {
+        $startDate = Carbon::parse($request->input('start'))->toDateString();
+        $endDate   = Carbon::parse($request->input('end'))->toDateString();
+        $today     = Carbon::parse(now())->toDateString();
+//        $startOfMonth = Carbon::parse($today)->startOfMonth()->copy()->toDateString();
+//        $endOfMonth   = Carbon::parse($today)->endOfMonth()->copy()->toDateString();
+//        $endOfYear    = Carbon::parse($today)->endOfYear()->copy()->toDateString();
+
+        if (auth()->user()->isAdmin()) {
+            $nurses          = $this->getActiveNurses();
+            $windowData      = $this->fullCalendarService->prepareCalendarDataForAllActiveNurses($nurses, $startDate, $endDate);
+            $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
+        } else {
+            $windowData      = $this->calendarWorkEventsForAuthNurse($startDate, $endDate);
+            $dataForDropdown = '';
+        }
+
+        $tzAbbr = auth()->user()->timezone_abbr ?? 'EDT';
+
+        $calendarData = [
+            'workEvents'      => $windowData->toArray(),
+            'dataForDropdown' => $dataForDropdown,
+            'today'           => $today,
+            //            'startOfMonth'    => $startOfMonth,
+            //            'endOfMonth'      => $endOfMonth,
+            //            'endOfYear'       => $endOfYear,
+        ];
+
+        return response()->json([
+            'success'      => true,
+            'calendarData' => $calendarData,
+        ], 200);
+    }
+
+    /**
+     * @param $startDate
+     * @param $endDate
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function calendarWorkEventsForAuthNurse($startDate, $endDate)
+    {
+        $nurse   = auth()->user();
+        $windows = $this->nurseContactWindows
+            ->whereNurseInfoId($nurse->nurseInfo->id)
+            ->where('date', '>=', $startDate)
+            ->where('date', '<=', $endDate)
+            ->get()
+            ->sortBy(function ($item) {
+                return Carbon::createFromFormat(
+                    'H:i:s',
+                    "{$item->window_time_start}"
+                );
+            });
+
+        return $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse);
+    }
+
     /**
      * @param Request $request
      * @param $windowId
@@ -159,71 +218,27 @@ class WorkScheduleController extends Controller
         return $workScheduleData[0];
     }
 
-    public function getCalendarData()
-    { //@todo: Rename to allCalendarData.
-        $today        = Carbon::parse(now())->toDateString();
-        $startOfMonth = Carbon::parse($today)->startOfMonth()->copy()->toDateString();
-        $endOfMonth   = Carbon::parse($today)->endOfMonth()->copy()->toDateString();
-        $endOfYear    = Carbon::parse($today)->endOfYear()->copy()->toDateString();
-
-        if (auth()->user()->isAdmin()) {
-            $nurses          = $this->getActiveNurses();
-            $windowData      = $this->fullCalendarService->prepareCalendarDataForAllActiveNurses($nurses);
-            $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
-        } else {
-            $windowData      = $this->getCalendarDataForAuthNurse();
-            $dataForDropdown = '';
-        }
-
-        $tzAbbr = auth()->user()->timezone_abbr ?? 'EDT';
-
-        $calendarData = [
-            'workEvents'      => $windowData,
-            'dataForDropdown' => $dataForDropdown,
-            'today'           => $today,
-            'startOfMonth'    => $startOfMonth,
-            'endOfMonth'      => $endOfMonth,
-            'endOfYear'       => $endOfYear,
-        ];
-
-        return response()->json([
-            'success'      => true,
-            'calendarData' => $calendarData,
-        ], 200);
-    }
-
-    public function getCalendarDataForAuthNurse()
-    {
-        $nurse   = auth()->user();
-        $windows = $this->nurseContactWindows
-            ->whereNurseInfoId($nurse->nurseInfo->id)
-            ->get()
-            ->sortBy(function ($item) {
-                return Carbon::createFromFormat(
-                    'H:i:s',
-                    "{$item->window_time_start}"
-                );
-            });
-
-        return $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse);
-    }
-
     /**
      * @return \Illuminate\Contracts\Routing\ResponseFactory|Response
      */
-    public function getHolidays()
+    public function getHolidays(Request $request)
     {
-        if (auth()->user()->isAdmin()) {
+        $startDate = Carbon::parse($request->input('start'))->toDateString();
+        $endDate   = Carbon::parse($request->input('end'))->toDateString();
+
+        $auth = auth()->user();
+        if ($auth->isAdmin()) {
             $nurses = $this->getActiveNurses();
 
             if ( ! $nurses) {
                 return response()->json(['errors' => 'Nurses not found'], 400);
             }
-            $holidays = $this->fullCalendarService->getHolidays($nurses)->toArray();
+            $holidays = $this->fullCalendarService->getHolidays($nurses, $startDate, $endDate)->toArray();
         }
 
-        if (auth()->user()->isCareCoach()) {
-            $holidays = auth()->user()->holidays;
+        if ($auth->isCareCoach()) {
+            $holidaysData = $auth->nurseInfo->holidays;
+            $holidays     = $this->fullCalendarService->prepareHolidaysData($holidaysData, $auth, $startDate, $endDate)->toArray();
         }
 
         return response()->json([
@@ -296,7 +311,7 @@ class WorkScheduleController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showAllNurseSchedules()
+    public function showAllNurseSchedule()
     {
         $authIsAdmin = auth()->user()->isAdmin();
         $authUserId  = auth()->id();

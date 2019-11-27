@@ -234,9 +234,6 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
         return $this->hasMany(ProblemImport::class);
     }
 
-    /**
-     * @return array
-     */
     public function providers(): array
     {
         // TODO: Implement providers() method.

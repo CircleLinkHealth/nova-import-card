@@ -99,7 +99,7 @@
     "ext-simplexml": "*",
     "alexbowers/nova-prepopulate-searchable": "^1.0",
     "algolia/algoliasearch-client-php": "^2.2",
-    "algolia/scout-extended": "^1.8",
+    "algolia/scout-extended": "^1.6",
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "~2.0.4",
     "barryvdh/laravel-snappy": "0.4.4",
@@ -115,7 +115,7 @@
     "circlelinkhealth/twofa": "1.1.2",
     "daltcore/lara-pdf-merger": "dev-master",
     "dillingham/nova-button": "^1.0",
-    "doctrine/dbal": "2.9.2",
+    "doctrine/dbal": "~2.3",
     "fideloper/proxy": "^4.0",
     "fourstacks/nova-checkboxes": "^0.1.5",
     "fzaninotto/faker": "~1.4",
@@ -181,7 +181,8 @@
   "autoload": {
     "classmap": [
       "database/seeds",
-      "database/factories"
+      "database/factories",
+      "database/views"
     ],
     "psr-4": {
       "App\\": "app/"

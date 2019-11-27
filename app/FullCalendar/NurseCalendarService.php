@@ -92,7 +92,7 @@ class NurseCalendarService
     public function createRecurringEvents($nurseInfoId, $workScheduleData)
     {
         $repeatFrequency   = null === $workScheduleData['repeat_freq'] ? 'weekly' : $workScheduleData['repeat_freq'];
-        $defaultRepeatDate = Carbon::parse($workScheduleData['date'])->copy()->addMonths(4)->toDateString();
+        $defaultRepeatDate = Carbon::parse($workScheduleData['date'])->copy()->addMonths(2)->toDateString();
         $repeatEventUntil  = null === $workScheduleData['until'] ? $defaultRepeatDate : $workScheduleData['until'];
         $rangeToRepeat     = $this->getWeeksOrDaysToRepeat($workScheduleData['date'], $repeatEventUntil, $repeatFrequency);
         $validatedDefault  = 'not_checked';
@@ -200,39 +200,19 @@ class NurseCalendarService
     }
 
     /**
-     * @param Collection $nurses
+     * @param $startDate
+     * @param $endDate
      *
      * @return Collection|\Illuminate\Support\Collection
      */
-    public function getHolidays(Collection $nurses)
+    public function getHolidays(Collection $nurses, $startDate, $endDate)
     {
         $limitDate = Carbon::parse(now())->startOfYear()->subMonth(2)->toDate();
 
-        return $nurses->map(function ($nurse) use ($limitDate) {
+        return $nurses->map(function ($nurse) use ($limitDate, $startDate, $endDate) {
             $holidays = $nurse->nurseInfo->holidays->where('date', '>=', $limitDate);
 
-            return collect($holidays)->map(function ($holiday) use ($nurse) {
-                $holidayDate = Carbon::parse($holiday->date)->toDateString();
-                $holidayDateInDayOfWeek = Carbon::parse($holidayDate)->dayOfWeek;
-                $holidayInHumanLang = clhDayOfWeekToDayName($holidayDateInDayOfWeek);
-
-                return collect(
-                    [
-                        self::TITLE => "$nurse->display_name",
-                        self::START => $holidayDate,
-                        'allDay'    => true,
-                        'color'     => '#ff5b4f',
-                        'data'      => [
-                            'holidayId' => $holiday->id,
-                            'nurseId'   => $nurse->nurseInfo->id,
-                            'name'      => $nurse->display_name,
-                            'date'      => $holidayDate,
-                            'day'       => $holidayInHumanLang,
-                            'eventType' => 'holiday',
-                        ],
-                    ]
-                );
-            });
+            return $this->prepareHolidaysData($holidays, $nurse, $startDate, $endDate);
         })->flatten(1);
     }
 
@@ -267,52 +247,58 @@ class NurseCalendarService
 
     /**
      * @param $nurse
+     * @param mixed $startDate
+     * @param mixed $endDate
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getWindows($nurse)
+    public function getWindows($nurse, $startDate, $endDate)
     {
-        return $nurse->nurseInfo->windows;
+        return $nurse->nurseInfo->windows->where('date', '>=', $startDate)->where('date', '<=', $endDate);
     }
 
     /**
-     * @param Collection $nurses
+     * @param mixed $startDate
+     * @param mixed $endDate
      *
      * @return Collection|\Illuminate\Support\Collection
      */
-    public function prepareCalendarDataForAllActiveNurses(Collection $nurses)
+    public function prepareCalendarDataForAllActiveNurses(Collection $nurses, $startDate, $endDate)
     {
-        return $nurses->map(function ($nurse) {
-            $windows = $this->getWindows($nurse);
+        return $nurses->map(function ($nurse) use ($startDate, $endDate) {
+            $windows = $this->getWindows($nurse, $startDate, $endDate);
 
             return $this->prepareWorkDataForEachNurse($windows, $nurse);
         })->flatten(1);
     }
 
-    public function prepareHolidaysData($holidays, $nurse)
+    public function prepareHolidaysData($holidays, $nurse, $startDate, $endDate)
     {
-        return collect($holidays)->map(function ($holiday) use ($nurse) {
-            $holidayDate = Carbon::parse($holiday->date)->toDateString();
-            $holidayDateInDayOfWeek = Carbon::parse($holidayDate)->dayOfWeek;
-            $holidayInHumanLang = clhDayOfWeekToDayName($holidayDateInDayOfWeek);
+        return collect($holidays)
+            ->where('date', '>=', $startDate)
+            ->where('date', '<=', $endDate)
+            ->map(function ($holiday) use ($nurse) {
+                $holidayDate = Carbon::parse($holiday->date)->toDateString();
+                $holidayDateInDayOfWeek = Carbon::parse($holidayDate)->dayOfWeek;
+                $holidayInHumanLang = clhDayOfWeekToDayName($holidayDateInDayOfWeek);
 
-            return collect(
-                [
-                    self::TITLE => "$nurse->display_name",
-                    self::START => $holidayDate,
-                    'allDay'    => true,
-                    'color'     => '#ff5b4f',
-                    'data'      => [
-                        'holidayId' => $holiday->id,
-                        'nurseId'   => $nurse->nurseInfo->id,
-                        'name'      => $nurse->display_name,
-                        'date'      => $holidayDate,
-                        'day'       => $holidayInHumanLang,
-                        'eventType' => 'holiday',
-                    ],
-                ]
-            );
-        });
+                return collect(
+                    [
+                        self::TITLE => "$nurse->display_name",
+                        self::START => $holidayDate,
+                        'allDay'    => true,
+                        'color'     => '#ff5b4f',
+                        'data'      => [
+                            'holidayId' => $holiday->id,
+                            'nurseId'   => $nurse->nurseInfo->id,
+                            'name'      => $nurse->display_name,
+                            'date'      => $holidayDate,
+                            'day'       => $holidayInHumanLang,
+                            'eventType' => 'holiday',
+                        ],
+                    ]
+                );
+            });
     }
 
     /**

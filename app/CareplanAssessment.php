@@ -125,8 +125,6 @@ class CareplanAssessment extends \CircleLinkHealth\Core\Entities\BaseModel
      * Create a PDF of this resource and return the path to it.
      *
      * @param mixed $notifiable
-     *
-     * @return string
      */
     public function toPdf($notifiable): string
     {

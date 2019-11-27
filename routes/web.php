@@ -1283,7 +1283,7 @@ Route::group(['middleware' => 'auth'], function () {
         ])->middleware('permission:careplan-pdf.create,careplan-pdf.read,patient.read');
 
         Route::get('nurses/windows', [
-            'uses' => 'CareCenter\WorkScheduleController@showAllNurseSchedules',
+            'uses' => 'CareCenter\WorkScheduleController@showAllNurseSchedule',
             'as'   => 'get.admin.nurse.schedules',
         ])->middleware('permission:nurse.read');
 
@@ -1861,13 +1861,13 @@ Route::group(['middleware' => 'auth'], function () {
 
         //@todo: Im not sure where to place this Route as is been used by admin and nusrses. Or if i should create 2 seperated routes
         Route::get('work-schedule/get-calendar-data', [
-            'uses' => 'CareCenter\WorkScheduleController@getCalendarData',
+            'uses' => 'CareCenter\WorkScheduleController@calendarWorkEvents',
             'as'   => 'care.center.work.schedule.getCalendarData',
         ])->middleware('permission:nurseContactWindow.read');
 
         Route::get('work-schedule/get-nurse-calendar-data', [
-            'uses' => 'CareCenter\WorkScheduleController@getCalendarDataForAuthNurse',
-            'as'   => 'care.center.work.schedule.getCalendarDataForAuthNurse',
+            'uses' => 'CareCenter\WorkScheduleController@calendarWorkEventsForAuthNurse',
+            'as'   => 'care.center.work.schedule.calendarWorkEventsForAuthNurse',
         ])->middleware('permission:nurseContactWindow.read');
 
         Route::get('work-schedule/destroy/{id}', [

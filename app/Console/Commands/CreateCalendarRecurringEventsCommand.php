@@ -42,9 +42,7 @@ class CreateCalendarRecurringEventsCommand extends Command
 
     /**
      * Execute the console command.
-     * //@todo:this breaks...memory exausted.
-     *
-     * @return mixed
+     * //@return mixed.
      */
     public function handle()
     {// I Can check current past events if they got worked or not by checking PageTimer,
@@ -69,6 +67,7 @@ class CreateCalendarRecurringEventsCommand extends Command
                         $projectionEventDate = $currentWeekMap[$window->day_of_week];
                         $nurseInfoId = $window->nurse->id;
                         $eventDateToDayName = clhDayOfWeekToDayName($window->day_of_week);
+
                         $workHours = $window->nurse->workhourables->where('workhourable_id', $nurseInfoId)->pluck(lcfirst($eventDateToDayName))->first();
 
                         $windowData = [

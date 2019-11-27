@@ -45,8 +45,7 @@ class AppConfig extends \CircleLinkHealth\Core\Entities\BaseModel
     /**
      * Returns the AppConfig value for the given key.
      *
-     * @param string $key
-     * @param null   $default
+     * @param null $default
      *
      * @return string|null
      */

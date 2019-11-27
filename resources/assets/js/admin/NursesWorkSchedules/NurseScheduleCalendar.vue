@@ -19,14 +19,14 @@
             </div>
 
             <div class="search-filter">
-                <vue-select v-if="this.authIsAdmin"
+                <vue-select v-if="this.authIsAdmin && sex"
                             multiple v-model="searchFilter"
-                            :options="dataForSearchFilter"
+
                             placeholder="Filter RN"
                             required>
                 </vue-select>
             </div>
-
+<!--:options="dataForSearchFilter"-->
             <!-- Add new event - main button-->
             <div class="add-event-main">
                 <button class="btn btn-primary" @click="openMainEventModal">Add new window</button>
@@ -34,8 +34,9 @@
 
         </div>
         <div class="calendar">
-            <full-calendar ref="calendar"
-                           :events="events"
+            <full-calendar v-if="sex"
+                           ref="calendar"
+                           :event-sources="eventSources()"
                            :config="config"
                            @day-click="handleDateCLick"
                            @event-selected="handleEventCLick"
@@ -62,27 +63,21 @@
                             <!--  Filter Options-->
                             <div v-if="!clickedToViewEvent" class="filter-options">
                                 <div v-if="authIsAdmin">
-                                    <vue-select :options="dataForDropdown"
+                                    <vue-select v-if="sex"
+
                                                 v-model="nurseData"
                                                 placeholder="Choose RN"
                                                 required>
                                     </vue-select>
                                 </div>
-
+<!--:options="dataForDropdown"-->
                                 <div class="modal-inputs col-md-12">
-                                    <div v-if="!this.authIsAdmin"
-                                         class="add-holidays">
-                                        <input id="addHolidays"
-                                               type="checkbox"
-                                               class="add-holidays-button"
-                                               v-model="addHolidays">
-                                        Add Holiday
-                                    </div>
-
                                     <div class="work-hours">
                                         <h5>Work For:</h5>
                                         <input v-model="hoursToWork"
                                                type="number"
+                                               :class="{disable: addHolidays}"
+                                               :disabled="addHolidays"
                                                class="work-hours-input"
                                                placeholder="5"
                                                min="1" max="12"> <strong>Hours</strong>
@@ -92,12 +87,16 @@
                                             <h5>Between (EDT):</h5>
                                             <input v-model="workRangeStarts"
                                                    type="time"
+                                                   :class="{disable: addHolidays}"
+                                                   :disabled="addHolidays"
                                                    class="time-input">
                                         </div>
                                         <div class="end-time">
                                             <h5>and (EDT):</h5>
                                             <input v-model="workRangeEnds"
                                                    type="time"
+                                                   :class="{disable: addHolidays}"
+                                                   :disabled="addHolidays"
                                                    class="time-input">
                                         </div>
                                     </div>
@@ -107,7 +106,9 @@
                             <div class="choose-event-date">
                                 <div v-if="addNewEventMainClicked">
                                     <h5>Date:</h5>
-                                    <input type="date" name="event_date"
+                                    <input type="date"
+                                           name="event_date"
+                                           :min="calculateMinDate"
                                            v-model="selectedDate">
                                 </div>
                             </div>
@@ -115,30 +116,33 @@
                             <div v-if="!clickedToViewEvent" style="margin-top: 8%;">
                                 <div class="repeat-day-frequency">
                                     <vue-select :options="frequency"
+                                                :class="{disable: addHolidays}"
+                                                :disabled="addHolidays"
                                                 v-model="eventFrequency"
                                                 placeholder="Doesn't Repeat">
                                     </vue-select>
                                 </div>
 
-                            <div style="display: flex">
-                                <div class="repeat-until">
-                                    <h5>Repeat Until</h5>
-                                    <input type="date"
-                                           :class="{disable: !repeatFrequencyHasSelected}"
-                                           :disabled="!repeatFrequencyHasSelected"
-                                           name="until"
-                                           v-model="repeatUntil">
+                                <div style="display: flex">
+                                    <div class="repeat-until">
+                                        <h5>Repeat Until</h5>
+                                        <input type="date"
+                                               :class="{disable: !repeatFrequencyHasSelected || addHolidays}"
+                                               :disabled="!repeatFrequencyHasSelected || addHolidays"
+                                               name="until"
+                                               :min="calculateMinDate"
+                                               v-model="repeatUntil">
+                                    </div>
+                                    <!-- ADD HOLIDAYS-->
+                                    <div v-if="this.authIsAdmin === false"
+                                         class="add-holidays">
+                                        <input id="addHolidays"
+                                               type="checkbox"
+                                               class="add-holidays-button"
+                                               v-model="addHolidays">
+                                        Add holiday window
+                                    </div>
                                 </div>
-                                <!-- ADD HOLIDAYS-->
-                                <div v-if="this.authIsAdmin === false"
-                                     class="add-holidays">
-                                    <input id="addHolidaysaddHolidays"
-                                           type="checkbox"
-                                           class="add-holidays-button"
-                                           v-model="addHolidays">
-                                    Add holiday window
-                                </div>
-                            </div>
 
                             </div>
 
@@ -199,6 +203,8 @@
     import CalendarLoader from './CalendarLoader';
     import axios from "../../bootstrap-axios";
 
+    let self;
+
     const viewDefault = 'agendaWeek';
     const defaultEventType = 'workDay';
     const holidayEventType = 'holiday';
@@ -232,9 +238,9 @@
                 // calendarData:[],
                 dataForDropdown: [],
                 today: '', //pushed from created()
-                startOfMonth: [],
-                endOfMonth: [],
-                endOfYear: [],
+                // startOfMonth: [],
+                // endOfMonth: [],
+                // endOfYear: [],
                 workHours: [],
                 holidays: [],
                 showWorkHours: true,
@@ -242,7 +248,7 @@
                 workEventDate: '',
                 nurseData: [],
                 dayOfWeek: '',
-                hoursToWork: '5',// make this array and save integers NOT strings.
+                hoursToWork: '5',
                 workRangeStarts: '09:00',
                 workRangeEnds: '17:00',
                 errors: [],
@@ -260,8 +266,8 @@
                 repeatUntil: '',
                 workEventsToConfirm: [],
                 isRecurringEvent: false,
-                addHolidays:false,
-
+                addHolidays: false,
+                sex: false,
 
                 config: {
                     defaultView: viewDefault,
@@ -465,112 +471,127 @@
                     ? this.repeatUntil
                     : null;
 
-                if (this.addHolidays){
-                    // post to holidays here
-                }
+                if (this.addHolidays) {
+                    axios.post('care-center/work-schedule/holidays', {
+                        holiday: workDate
+                    }).then((response => {
+                            console.log(response);
 
-                if (this.authIsAdmin) {
-                    if (nurseId === null
-                        || nurseId === undefined) {
+                            this.loader = false;
+                            this.toggleModal();
+                            //@todo: Will fix refetchEvents() for this. so i disabled it
+                            this.addNotification({
+                                title: "Success!",
+                                text: "Holiday has been saved.",
+                                type: "success",
+                                timeout: true
+                            });
+                        }
+                    )).catch((error) => {
+                        console.log(error);
+                    });
+                } else {
+                    if (this.authIsAdmin) {
+                        if (nurseId === null
+                            || nurseId === undefined) {
+                            this.loader = false;
+                            this.addNotification({
+                                title: "Warning!",
+                                text: "Choose an RN field is required",
+                                type: "danger",
+                                timeout: true
+                            });
+
+                            alert("Choose an RN field is required");
+                            return;
+
+                        }
+                    }
+
+                    if (this.workRangeStarts === '') {
                         this.loader = false;
                         this.addNotification({
                             title: "Warning!",
-                            text: "Choose an RN field is required",
+                            text: "Work start time is required",
                             type: "danger",
                             timeout: true
                         });
 
-                        alert("Choose an RN field is required");
+                        alert("Work start time is required");
                         return;
-
                     }
-                }
+                    if (this.workRangeEnds === '') {
+                        this.loader = false;
+                        this.addNotification({
+                            title: "Warning!",
+                            text: "Work end time is required",
+                            type: "danger",
+                            timeout: true
+                        });
 
-                if (this.workRangeStarts === '') {
-                    this.loader = false;
-                    this.addNotification({
-                        title: "Warning!",
-                        text: "Work start time is required",
-                        type: "danger",
-                        timeout: true
-                    });
-
-                    alert("Work start time is required");
-                    return;
-                }
-                if (this.workRangeEnds === '') {
-                    this.loader = false;
-                    this.addNotification({
-                        title: "Warning!",
-                        text: "Work end time is required",
-                        type: "danger",
-                        timeout: true
-                    });
-
-                    alert("Work end time is required");
-                    return;
-                }
-                if (this.hoursToWork === '') {
-                    this.loader = false;
-                    this.addNotification({
-                        title: "Warning!",
-                        text: "Hours to work for this day is required",
-                        type: "danger",
-                        timeout: true
-                    });
-
-                    alert("Hours to work for this day is required");
-                    return;
-                }
-
-                if (repeatFreq !== 'does_not_repeat') {
-                    const until = [];
-                    const frequency = [];
-
-                    if (repeatFreq === 'weekly') {
-                        frequency.push(RRule.WEEKLY);
-                        until.push(new Date(repeatUntil))
+                        alert("Work end time is required");
+                        return;
                     }
-                    if (repeatFreq === 'daily') {
-                        frequency.push(RRule.DAILY);
-                        until.push(new Date(repeatUntil))
+                    if (this.hoursToWork === '') {
+                        this.loader = false;
+                        this.addNotification({
+                            title: "Warning!",
+                            text: "Hours to work for this day is required",
+                            type: "danger",
+                            timeout: true
+                        });
+
+                        alert("Hours to work for this day is required");
+                        return;
                     }
 
+                    if (repeatFreq !== 'does_not_repeat') {
+                        const until = [];
+                        const frequency = [];
 
-                    const recurringDatesToEvent = new RRule({                       //https://github.com/jakubroztocil/rrule
-                        freq: frequency[0],
-                        // byweekday: [q.data.clhDayOfWeek],
-                        dtstart: new Date(workDate),
-                        until: until[0],
-                    });
-                    const recurringDates = recurringDatesToEvent.all();
-                    const events = this.workHours.concat(this.holidays);
-
-                    const eventsToConfirmTemporary = [];
-                    for (var i = 0; i < recurringDates.length; i++) {
-                        const date = this.formatDate(recurringDates[i]);
-                        const eventsToAskConfirmation = events.filter(event => event.data.date === date && event.data.nurseId === nurseId);
-                        //I was expecting filter to return only arrays that satisfy the condition however i im getting also the empty arrays
-                        // That's why i  use this conditional here
-                        if (eventsToAskConfirmation.length !== 0) {
-                            this.loader = false;
-                            eventsToConfirmTemporary.push(...eventsToAskConfirmation);
+                        if (repeatFreq === 'weekly') {
+                            frequency.push(RRule.WEEKLY);
+                            until.push(new Date(repeatUntil))
                         }
-                    }
-                    this.workEventsToConfirm.push(...eventsToConfirmTemporary);
+                        if (repeatFreq === 'daily') {
+                            frequency.push(RRule.DAILY);
+                            until.push(new Date(repeatUntil))
+                        }
 
-                    if (eventsToConfirmTemporary.length !== 0) {
-                        if (confirm("There are some windows overlapping. Do you want to replace the existing windows with the new?")) {
-                            this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, true);
+
+                        const recurringDatesToEvent = new RRule({                       //https://github.com/jakubroztocil/rrule
+                            freq: frequency[0],
+                            // byweekday: [q.data.clhDayOfWeek],
+                            dtstart: new Date(workDate),
+                            until: until[0],
+                        });
+                        const recurringDates = recurringDatesToEvent.all();
+                        const events = this.workHours.concat(this.holidays);
+
+                        const eventsToConfirmTemporary = [];
+                        for (var i = 0; i < recurringDates.length; i++) {
+                            const date = this.formatDate(recurringDates[i]);
+                            const eventsToAskConfirmation = events.filter(event => event.data.date === date && event.data.nurseId === nurseId);
+                            //I was expecting filter to return only arrays that satisfy the condition however i im getting also the empty arrays
+                            // That's why i  use this conditional here
+                            if (eventsToAskConfirmation.length !== 0) {
+                                this.loader = false;
+                                eventsToConfirmTemporary.push(...eventsToAskConfirmation);
+                            }
+                        }
+                        this.workEventsToConfirm.push(...eventsToConfirmTemporary);
+
+                        if (eventsToConfirmTemporary.length !== 0) {
+                            if (confirm("There are some windows overlapping. Do you want to replace the existing windows with the new?")) {
+                                this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, true);
+                            }
+                        } else {
+                            this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
                         }
                     } else {
                         this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
                     }
-                } else {
-                    this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
                 }
-
-
             },
             updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, updateCollisionWindow = null) {
                 const updateCollidedWindows = updateCollisionWindow === null ? false : updateCollisionWindow;
@@ -609,38 +630,51 @@
                     });
             },
             prepareLiveData(newEventData) {
-                return {
-                    allDay: true,
-                    until: newEventData.scheduledData.until,
+                // return {
+                //     allDay: true,
+                //     until: newEventData.scheduledData.until,
+                //
+                //     data: {
+                //         date: this.workEventDate,
+                //         windowId: newEventData.window.id,
+                //         end: this.workRangeEnds,
+                //         start: this.workRangeStarts,
+                //         name: this.nurseData.label,
+                //         nurseId: this.nurseData.nurseId,
+                //         eventType: defaultEventType,
+                //         isAddedNow: true,
+                //     },
+                //     // dow: [newEventData.window.dayOfWeek],
+                //     end: `${this.workEventDate}T${this.workRangeEnds}`,
+                //     start: `${this.workEventDate}T${this.workRangeStarts}`,
+                //     title: `${this.nurseData.label} (${this.hoursToWork}h)
+                //     ${this.workRangeStarts}-${this.workRangeEnds}`,
+                // }
+            },
 
-                    data: {
-                        date: this.workEventDate,
-                        windowId: newEventData.window.id,
-                        end: this.workRangeEnds,
-                        start: this.workRangeStarts,
-                        name: this.nurseData.label,
-                        nurseId: this.nurseData.nurseId,
-                        eventType: defaultEventType,
-                        isAddedNow: true,
-                    },
-                    // dow: [newEventData.window.dayOfWeek],
-                    end: `${this.workEventDate}T${this.workRangeEnds}`,
-                    start: `${this.workEventDate}T${this.workRangeStarts}`,
-                    title: `${this.nurseData.label} (${this.hoursToWork}h)
-                    ${this.workRangeStarts}-${this.workRangeEnds}`,
-                }
+            dataForSearchFilter() {
+                const workEvents = this.workHours;
+                const workEventsWithHolidays = workEvents.concat(this.holidays);
+
+                if (this.showWorkEvents && !this.showHolidays) {
+                        return removeDuplicatesFrom(workEvents);
+                    } else if (!this.showWorkEvents && this.showHolidays) {
+                        return removeDuplicatesFrom(this.holidays);
+                    } else {
+                        return removeDuplicatesFrom(workEventsWithHolidays);
+                    }
             },
 
             handleDateCLick(date, jsEvent, view) {
                 const clickedDate = date;
                 const today = Date.parse(this.today);
 
-                this.workEventDate = '';
-                this.workEventDate = clickedDate.format();
+                // this.workEventDate = '';
+                // this.workEventDate = clickedDate.format();
 
                 if (clickedDate >= today) {
                     this.toggleModal();
-                    const clickedDayOfWeek = new Date(this.workEventDate).getDay();
+                    const clickedDayOfWeek = new Date(clickedDate.format()).getDay();
                     const weekMapDay = this.weekMap.filter(q => q.weekMapClhDayOfWeek === clickedDayOfWeek);
                     this.dayInHumanLangForView = weekMapDay[0].label;
 
@@ -673,7 +707,6 @@
                 this.workEventDate = this.eventToViewData[0].date;
 
 
-
                 if (arg.repeat_frequency !== 'does_not_repeat') {
                     this.isRecurringEvent = true;
                 }
@@ -701,86 +734,131 @@
                 this.addHolidays = false;
                 this.selectedDate = '';
             },
+
+            eventSources() {
+               if (this.sex){
+                   return [
+                       { // has to be 'events()' else it doesnt work
+                           // WorkEvents
+                           events(start, end, timezone, callback) {
+                               axios.get('care-center/work-schedule/get-calendar-data', {
+                                   params: {
+                                       start: new Date(start),
+                                       end: new Date(end),
+                                   }
+                               })
+                                   .then((response => {
+                                       const calendarData = response.data.calendarData;
+                                       self.workHours = [];
+                                       self.workHours.push(...calendarData.workEvents);
+                                       callback(calendarData.workEvents);
+                                       self.dataForDropdown = calendarData.dataForDropdown;
+                                   })).catch((error) => {
+                                   this.errors = error;
+                                   console.log(this.errors);
+                               });
+                           },
+                       },
+                       {
+                           // Holidays Events
+                           events(start, end, timezone, callback) {
+                               axios.get('nurses/holidays', {
+                                   params: {
+                                       start: new Date(start),
+                                       end: new Date(end),
+                                   }
+                               })
+                                   .then((response => {
+                                           const holidays = response.data.holidays;
+                                           self.holidays = [];
+                                           self.holidays.push(...holidays);
+                                           callback(holidays);
+                                       }
+                                   )).catch((error) => {
+                                   console.log(error);
+                               });
+                           }
+                       }
+                   ]
+               }
+            },
         }),
 //@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
         computed: {
+            calculateMinDate() {
+                return this.workEventDate !== '' ? this.workEventDate : this.today;
+            },
+
+            // calculateMaxDate() {
+            //
+            // },
+
             repeatFrequencyHasSelected() {
                 return this.eventFrequency !== null && this.eventFrequency.length !== 0;
             },
 
             modalTitle() {
-                return this.clickedToViewEvent ? 'View / Delete Event' : 'Add new work window';
+                return this.clickedToViewEvent ? 'View / Delete Event' : 'Add new window';
             },
 
-            events() {
-                const workEvents = this.workHours;
-                const workEventsWithHolidays = workEvents.concat(this.holidays);
-                if (this.searchFilter === null || this.searchFilter.length === 0) {
-                    if (this.showWorkEvents && !this.showHolidays) {
-                        return workEvents;
-                    } else if (this.showHolidays && !this.showWorkEvents) {
-                        return this.holidays;
-                    } else {
-                        return workEventsWithHolidays;
-                    }
-
-                } else {
-                    if (this.showWorkEvents && !this.showHolidays) {
-                        return this.searchFilter.map(q => {
-                            return workEvents.filter(event => event.data.nurseId === q.nurseId);
-                        }).map(arr => arr).flat();
-                    } else if (this.showHolidays && !this.showWorkEvents) {
-                        return this.searchFilter.map(q => {
-                            return this.holidays.filter(event => event.data.nurseId === q.nurseId);
-                        }).map(arr => arr).flat();
-                    } else {
-                        return this.searchFilter.map(q => {
-                            return workEventsWithHolidays.filter(event => event.data.nurseId === q.nurseId);
-                        }).map(arr => arr).flat();
-                    }
-                }
-            },
-
-            dataForSearchFilter() {
-                const workEvents = this.workHours;
-                const workEventsWithHolidays = workEvents.concat(this.holidays);
-
-                if (this.showWorkEvents && !this.showHolidays) {
-                    return removeDuplicatesFrom(workEvents);
-                } else if (!this.showWorkEvents && this.showHolidays) {
-                    return removeDuplicatesFrom(this.holidays);
-                } else {
-                    return removeDuplicatesFrom(workEventsWithHolidays);
-                }
-            },
+            // events() {
+            //     const workEvents = this.workHours;
+            //     const workEventsWithHolidays = workEvents.concat(this.holidays);
+            //     if (this.searchFilter === null || this.searchFilter.length === 0) {
+            //         if (this.showWorkEvents && !this.showHolidays) {
+            //             return workEvents;
+            //         } else if (this.showHolidays && !this.showWorkEvents) {
+            //             return this.holidays;
+            //         } else {
+            //             return workEventsWithHolidays;
+            //         }
+            //
+            //     } else {
+            //         if (this.showWorkEvents && !this.showHolidays) {
+            //             return this.searchFilter.map(q => {
+            //                 return workEvents.filter(event => event.data.nurseId === q.nurseId);
+            //             }).map(arr => arr).flat();
+            //         } else if (this.showHolidays && !this.showWorkEvents) {
+            //             return this.searchFilter.map(q => {
+            //                 return this.holidays.filter(event => event.data.nurseId === q.nurseId);
+            //             }).map(arr => arr).flat();
+            //         } else {
+            //             return this.searchFilter.map(q => {
+            //                 return workEventsWithHolidays.filter(event => event.data.nurseId === q.nurseId);
+            //             }).map(arr => arr).flat();
+            //         }
+            //     }
+            // },
         },
 
         created() {
-            this.loader = true;
-            // All Work Events
-            axios.get('care-center/work-schedule/get-calendar-data')
-                .then((response => {
-                    const calendarData = response.data.calendarData;
-                    this.workHours.push(...calendarData.workEvents);
-                    this.dataForDropdown.push(...calendarData.dataForDropdown);
-                    this.today = calendarData.today;
-                    this.loader = false;
-
-                })).catch((error) => {
-                this.errors = error;
-                console.log(this.errors);
-            });
-            //    All Holiday Events
-            axios.get('admin/nurses/holidays')
-                .then((response => {
-                        //loader add
-                        this.showWorkHours = false;
-                        this.holidays.push(...response.data.holidays);
-                        this.loader = false;
-                    }
-                )).catch((error) => {
-                console.log(error);
-            });
+            self = this;
+            this.sex = true;
+            // this.loader = true;
+            // // All Work Events
+            // axios.get('care-center/work-schedule/get-calendar-data')
+            //     .then((response => {
+            //         const calendarData = response.data.calendarData;
+            //         // this.workHours.push(...calendarData.workEvents);
+            //         // this.dataForDropdown.push(...calendarData.dataForDropdown);
+            //         this.today = calendarData.today;
+            //         // this.loader = false;
+            //
+            //     })).catch((error) => {
+            //     this.errors = error;
+            //     console.log(this.errors);
+            // });
+            // //    All Holiday Events
+            // axios.get('nurses/holidays')
+            //     .then((response => {
+            //             //loader add
+            //             this.showWorkHours = false;
+            //             this.holidays.push(...response.data.holidays);
+            //             this.loader = false;
+            //         }
+            //     )).catch((error) => {
+            //     console.log(error);
+            // });
 
         },
 
@@ -793,7 +871,7 @@
 </script>
 
 <style>
-    h5{
+    h5 {
         font-family: inherit;
         line-height: 0.2;
         font-size: 13px;
@@ -975,7 +1053,7 @@
         padding-top: 8px;
     }
 
-    .add-holidays{
+    .add-holidays {
         font-size: 20px;
     }
 
@@ -985,11 +1063,11 @@
         margin-top: 43px;
     }
 
-    .repeat-until{
+    .repeat-until {
         margin-top: 10px;
     }
 
-    #addWorkEvent > div.modal-dialog > div > div.modal-header > button{
+    #addWorkEvent > div.modal-dialog > div > div.modal-header > button {
         visibility: hidden;
     }
 </style>
