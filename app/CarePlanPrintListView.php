@@ -6,7 +6,8 @@
 
 namespace App;
 
-use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Core\Traits\ProtectsPhi;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\CarePlanPrintListView.
@@ -54,8 +55,10 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property int|null                                                                       $revision_history_count
  */
-class CarePlanPrintListView extends BaseModel
+class CarePlanPrintListView extends Model
 {
+    use ProtectsPhi;
+
     public $phi = [
         'patient_full_name',
         'patient_first_name',

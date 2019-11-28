@@ -7,8 +7,9 @@
 namespace App;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
+use CircleLinkHealth\Core\Traits\ProtectsPhi;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\CallView.
@@ -88,9 +89,10 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property int|null                                                                       $revision_history_count
  */
-class CallView extends BaseModel
+class CallView extends Model
 {
     use Filterable;
+    use ProtectsPhi;
 
     public $phi = [
         'patient',

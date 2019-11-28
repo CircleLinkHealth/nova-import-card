@@ -6,8 +6,9 @@
 
 namespace App;
 
-use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
+use CircleLinkHealth\Core\Traits\ProtectsPhi;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\EnrolleeView.
@@ -144,9 +145,10 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property int|null                                                                       $revision_history_count
  */
-class EnrolleeView extends BaseModel
+class EnrolleeView extends Model
 {
     use Filterable;
+    use ProtectsPhi;
 
     public $phi = [
         'first_name',
