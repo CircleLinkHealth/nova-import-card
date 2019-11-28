@@ -60,7 +60,7 @@ function formatTime($time)
             $(document).ready(function () {
                 const table = $('#cpmEditableTable');
                 table.DataTable({
-                    order: [[2, "asc"]],
+                    order: [[3, "desc"]],
                     processing: true,
                     scrollX: true,
                     fixedHeader: true,

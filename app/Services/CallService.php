@@ -46,7 +46,7 @@ class CallService
             });
         }
 
-        $calls->orderByRaw('FIELD(type, "Call Back") desc, scheduled_date desc, call_time_start asc, call_time_end asc');
+        $calls->orderByRaw('FIELD(asap, true) desc, scheduled_date asc, call_time_start asc, call_time_end asc');
 
         return $calls->get();
     }
