@@ -55,6 +55,18 @@ class UserTableSeeder extends Seeder
             $careCenter->password        = Hash::make('hello');
             $careCenter->saas_account_id = $practice->saas_account_id;
             $careCenter->save();
+
+            $p                  = $this->createUser($practice, 'participant');
+            $p->saas_account_id = $practice->saas_account_id;
+            $p->save();
+
+            $p                  = $this->createUser($practice, 'participant');
+            $p->saas_account_id = $practice->saas_account_id;
+            $p->save();
+
+            $p                  = $this->createUser($practice, 'participant');
+            $p->saas_account_id = $practice->saas_account_id;
+            $p->save();
         } else {
             $this->command->error('user-seeder: no practice found');
         }

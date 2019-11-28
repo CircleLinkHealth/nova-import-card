@@ -486,8 +486,10 @@ class OnboardingService
             } catch (\Exception $e) {
                 \Log::alert($e);
                 if ($e instanceof QueryException) {
-                    $errorCode = $e->errorInfo[1];
-                    if (1062 == $errorCode) {
+                    //                    @todo:heroku query to see if it exists, then attach
+
+                    $errorCode = $e->errorInfo[0];
+                    if (23505 == $errorCode) {
                         //do nothing
                         //we don't actually want to terminate the program if we detect duplicates
                         //we just don't wanna add the row again
