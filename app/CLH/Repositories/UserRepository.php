@@ -554,7 +554,7 @@ class UserRepository
             $user->access_disabled = 0; // 0 = good, 1 = disabled
         }
 
-        $user->auto_attach_programs = $params->get('auto_attach_programs');
+        $user->auto_attach_programs = $params->get('auto_attach_programs', false);
         if ($params->get('first_name')) {
             $user->setFirstName($params->get('first_name'));
         }
