@@ -445,8 +445,6 @@ class EligibilityBatchController extends Controller
     /**
      * Show the form to edit EligibilityBatch options for re-processing.
      *
-     * @param EligibilityBatch $batch
-     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function getReprocess(EligibilityBatch $batch)
@@ -485,9 +483,6 @@ class EligibilityBatchController extends Controller
     /**
      * Store updated EligibilityBatch options for re-processing.
      *
-     * @param Request          $request
-     * @param EligibilityBatch $batch
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postReprocess(Request $request, EligibilityBatch $batch)
@@ -518,33 +513,12 @@ class EligibilityBatchController extends Controller
 
     public function show(EligibilityBatch $batch)
     {
-        $unprocessed = '';
-        $ineligible  = '';
-        $duplicates  = '';
-        $eligible    = '';
-        $stats       = '';
-
         $batch->load('practice');
 
         $initiatorUser   = $batch->initiatorUser;
         $validationStats = $batch->getValidationStats();
 
-        if (EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS == $batch->type) {
-            $statuses = Ccda::select(['status', 'deleted_at'])
-                ->withTrashed()
-                ->whereBatchId($batch->id)
-                ->get();
-
-            $unprocessed = $statuses->where('status', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)->where(
-                'deleted_at',
-                null
-            )->count();
-            $ineligible = $statuses->where('status', Ccda::INELIGIBLE)->where('deleted_at', null)->count();
-            $duplicates = $statuses->where('deleted_at', '!=', null)->count();
-            $eligible   = Enrollee::whereBatchId($batch->id)->whereNull('user_id')->count();
-        } else {
-            $stats = $batch->getOutcomes();
-        }
+        $stats = $batch->getOutcomes();
 
         $enrolleesExist = (bool) Enrollee::whereBatchId($batch->id)->whereNull('user_id')->exists();
 
@@ -560,10 +534,6 @@ class EligibilityBatchController extends Controller
             'batch',
             'enrolleesExist',
             'stats',
-            'eligible',
-            'unprocessed',
-            'ineligible',
-            'duplicates',
             'initiatorUser',
             'validationStats',
             'athenaInsurancesExist',

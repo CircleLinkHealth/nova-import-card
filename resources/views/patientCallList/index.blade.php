@@ -242,7 +242,7 @@ function formatTime($time)
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="{{ route('patient.careplan.print', ['patient' => $call->patient_id]) }}"
+                                                        <a href="{{ $route }}"
                                                            class="patientNameLink" call-id="{{ $call->id }}"
                                                            style="font-weight:bold;"
                                                            data-template='<div class="tooltip" style="text-align:left" role="tooltip"><div class="arrow"></div><div class="tooltip-inner" style="text-align:left"></div></div>'

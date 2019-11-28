@@ -56,6 +56,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \App\Importer\Models\ItemLogs\ProblemLog[]|\Illuminate\Database\Eloquent\Collection    $problems
  * @property \App\Importer\Models\ItemLogs\ProviderLog[]|\Illuminate\Database\Eloquent\Collection   $providers
  * @property \App\Models\MedicalRecords\ImportedMedicalRecord                                       $qaSummary
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda onlyTrashed()
  * @method static bool|null restore()
@@ -81,17 +82,20 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda withoutTrashed()
  * @mixin \Eloquent
+ *
  * @property int|null                                                                       $direct_mail_message_id
  * @property int|null                                                                       $batch_id
  * @property \App\DirectMailMessage                                                         $directMessage
  * @property \App\Media[]|\Illuminate\Database\Eloquent\Collection                          $media
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda exclude($value = array())
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereDirectMailMessageId($value)
+ *
  * @property \App\EligibilityBatch|null                        $batch
  * @property \CircleLinkHealth\Customer\Entities\Practice|null $practice
  * @property int|null                                          $allergies_count
@@ -140,7 +144,6 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         'billing_provider_id',
         'user_id',
         'patient_id',
-        'vendor_id',
         'source',
         'imported',
         'json',
@@ -198,16 +201,26 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
         $ccda = static::query()->create($attributes);
 
-        \Storage::disk('storage')->put("ccda-{$ccda->id}.xml", $xml);
-        $ccda->addMedia(storage_path("ccda-{$ccda->id}.xml"))->toMediaCollection('ccd');
+        $filename = null;
+        if (array_key_exists('filename', $attributes)) {
+            $filename = $attributes['filename'];
+            unset($attributes['filename']);
+        }
+
+        if ( ! $filename) {
+            $filename = "ccda-{$ccda->id}.xml";
+        }
+
+        \Storage::disk('storage')->put($filename, $xml);
+        $ccda->addMedia(storage_path($filename))->toMediaCollection('ccd');
 
         return $ccda;
     }
 
     /**
-     * @return \App\EligibilityJob
+     * @throws \Exception
      */
-    public function createEligibilityJobFromMedicalRecord(): EligibilityJob
+    public function createEligibilityJobFromMedicalRecord(): ?EligibilityJob
     {
         $adapter = new CcdaToEligibilityJobAdapter($this, $this->practice, $this->batch);
 
@@ -219,9 +232,6 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         return $this->belongsTo(DirectMailMessage::class);
     }
 
-    /**
-     * @return string
-     */
     public function getDocumentCustodian(): string
     {
         if ($this->document->first()) {
@@ -233,8 +243,6 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
     /**
      * Get the Logger.
-     *
-     * @return MedicalRecordLogger
      */
     public function getLogger(): MedicalRecordLogger
     {
@@ -243,8 +251,6 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
     /**
      * Get the User to whom this record belongs to, if one exists.
-     *
-     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function getPatient(): User
     {

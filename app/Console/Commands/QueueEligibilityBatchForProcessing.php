@@ -8,17 +8,13 @@ namespace App\Console\Commands;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
-use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\MakePhoenixHeartWelcomeCallList;
-use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessSinglePatientEligibility;
-use App\Models\MedicalRecords\Ccda;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use App\Services\GoogleDrive;
 use App\TargetPatient;
-use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Console\Command;
 use Storage;
 
@@ -44,8 +40,6 @@ class QueueEligibilityBatchForProcessing extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param ProcessEligibilityService $processEligibilityService
      */
     public function __construct(ProcessEligibilityService $processEligibilityService)
     {
@@ -101,11 +95,7 @@ class QueueEligibilityBatchForProcessing extends Command
     }
 
     /**
-     * @param EligibilityBatch $batch
-     *
      * @throws \League\Flysystem\FileNotFoundException
-     *
-     * @return EligibilityBatch
      */
     private function createEligibilityJobsFromJsonFile(EligibilityBatch $batch): EligibilityBatch
     {
@@ -176,9 +166,6 @@ class QueueEligibilityBatchForProcessing extends Command
         }
     }
 
-    /**
-     * @return EligibilityBatch|null
-     */
     private function getBatch(): ?EligibilityBatch
     {
         return EligibilityBatch::where('status', '<', 2)
@@ -221,11 +208,7 @@ class QueueEligibilityBatchForProcessing extends Command
     }
 
     /**
-     * @param EligibilityBatch $batch
-     *
      * @throws \League\Flysystem\FileNotFoundException
-     *
-     * @return EligibilityBatch
      */
     private function queueClhMedicalRecordTemplateJobs(EligibilityBatch $batch): EligibilityBatch
     {
@@ -252,41 +235,47 @@ class QueueEligibilityBatchForProcessing extends Command
         return $batch;
     }
 
-    /**
-     * @param EligibilityBatch $batch
-     *
-     * @return EligibilityBatch
-     */
     private function queueGoogleDriveJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        $result = $this->processEligibilityService->fromGoogleDrive($batch);
-
-        if ($result) {
-            $batch->status = EligibilityBatch::STATUSES['processing'];
-            $batch->save();
+        echo "\n queuing {$batch->id}";
+        if ((int) $batch->status > 0 && $batch->updated_at->lt(now()->subMinutes(30))) {
+            echo "\n bail. did nothing for {$batch->id}";
 
             return $batch;
         }
 
-        $practice = Practice::findOrFail($batch->practice_id);
-
-        $unprocessed = Ccda::whereBatchId($batch->id)
-            ->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
+        $unprocessed = EligibilityJob::whereBatchId($batch->id)
+            ->where('status', '<', 2)
             ->inRandomOrder()
-            ->take(10)
-            ->get()
-            ->map(function ($ccda) use ($batch, $practice) {
-                ProcessCcda::withChain([
-                    (new CheckCcdaEnrollmentEligibility(
-                        $ccda->id,
-                        $practice,
-                        $batch
-                    ))->onQueue('low'),
-                ])->dispatch($ccda->id)
-                    ->onQueue('low');
+            ->take(100)
+            ->get();
 
-                return $ccda;
-            });
+        echo "\n unprocessed records found {$unprocessed->count()}";
+
+        $unprocessed->each(function (EligibilityJob $ej) {
+            echo "\n processing ej {$ej->id}";
+
+            $ej->process();
+        });
+
+        if ($unprocessed->isNotEmpty()) {
+            echo "\n batch {$batch->id} has unprocessed ej that will be processed";
+
+            return $batch;
+        }
+
+        if ( ! $batch->isFinishedFetchingFiles()) {
+            echo "\n batch {$batch->id}: fetching CCDs from Drive";
+
+            $result = $this->processEligibilityService->fromGoogleDrive($batch);
+
+            if ($result) {
+                $batch->status = EligibilityBatch::STATUSES['processing'];
+                $batch->save();
+
+                return $batch;
+            }
+        }
 
         if ($unprocessed->isEmpty()) {
             $batch->status = EligibilityBatch::STATUSES['complete'];
@@ -303,8 +292,6 @@ class QueueEligibilityBatchForProcessing extends Command
 
     /**
      * @param $batch
-     *
-     * @return EligibilityBatch
      */
     private function queuePHXJobs($batch): EligibilityBatch
     {
@@ -327,11 +314,7 @@ class QueueEligibilityBatchForProcessing extends Command
     }
 
     /**
-     * @param EligibilityBatch $batch
-     *
      * @throws \Exception
-     *
-     * @return EligibilityBatch
      */
     private function queueSingleCsvJobs(EligibilityBatch $batch): EligibilityBatch
     {
@@ -396,9 +379,6 @@ class QueueEligibilityBatchForProcessing extends Command
 
     /**
      * Read the file containing patient data for batch type `clh_medical_record_template`, using a generator.
-     *
-     * @param string           $pathToFile
-     * @param EligibilityBatch $batch
      */
     private function readUsingGenerator(string $pathToFile, EligibilityBatch $batch)
     {
