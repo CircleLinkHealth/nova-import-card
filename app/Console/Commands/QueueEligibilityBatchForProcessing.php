@@ -237,19 +237,36 @@ class QueueEligibilityBatchForProcessing extends Command
 
     private function queueGoogleDriveJobs(EligibilityBatch $batch): EligibilityBatch
     {
+        echo "\n queuing {$batch->id}";
+        if ((int) $batch->status > 0 && $batch->updated_at->lt(now()->subMinutes(30))) {
+            echo "\n bail. did nothing for {$batch->id}";
+
+            return $batch;
+        }
+
         $unprocessed = EligibilityJob::whereBatchId($batch->id)
             ->where('status', '<', 2)
             ->inRandomOrder()
             ->take(100)
             ->get();
 
-        $unprocessed->map(function (EligibilityJob $ej) {
-            $ej->process();
+        echo "\n unprocessed records found {$unprocessed->count()}";
 
-            return true;
+        $unprocessed->each(function (EligibilityJob $ej) {
+            echo "\n processing ej {$ej->id}";
+
+            $ej->process();
         });
 
+        if ($unprocessed->isNotEmpty()) {
+            echo "\n batch {$batch->id} has unprocessed ej that will be processed";
+
+            return $batch;
+        }
+
         if ( ! $batch->isFinishedFetchingFiles()) {
+            echo "\n batch {$batch->id}: fetching CCDs from Drive";
+
             $result = $this->processEligibilityService->fromGoogleDrive($batch);
 
             if ($result) {
