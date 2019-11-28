@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\CarePlanTemplate;
 use App\Models\CPM\CpmMisc;
 use Illuminate\Database\Seeder;
 
@@ -16,6 +17,7 @@ class CpmMiscsTableSeeder extends Seeder
      */
     public function run()
     {
+        $carePlanTemplates = CarePlanTemplate::get();
         foreach ([
             'Allergies',
             'Appointments',
@@ -24,11 +26,14 @@ class CpmMiscsTableSeeder extends Seeder
             'Other',
             'Social Services',
         ] as $misc) {
-            CpmMisc::updateOrCreate(
+            $m = CpmMisc::updateOrCreate(
                 [
                     'name' => $misc,
                 ]
             );
+            $carePlanTemplates->each(function (CarePlanTemplate $cpt) use ($m) {
+                $cpt->cpmMiscs()->attach($m);
+            });
         }
     }
 }

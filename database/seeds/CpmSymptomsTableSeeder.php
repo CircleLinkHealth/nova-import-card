@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\CarePlanTemplate;
 use App\Models\CPM\CpmSymptom;
 use Illuminate\Database\Seeder;
 
@@ -16,6 +17,7 @@ class CpmSymptomsTableSeeder extends Seeder
      */
     public function run()
     {
+        $carePlanTemplates = CarePlanTemplate::get();
         foreach ([
             'Anxiety',
             'Chest pain/tightness',
@@ -29,7 +31,10 @@ class CpmSymptomsTableSeeder extends Seeder
             'Swelling in legs/feet',
             'Weakness/dizziness',
         ] as $symptom) {
-            CpmSymptom::updateOrCreate(['name' => $symptom]);
+            $s = CpmSymptom::updateOrCreate(['name' => $symptom]);
+            $carePlanTemplates->each(function (CarePlanTemplate $cpt) use ($s) {
+                $cpt->cpmSymptoms()->attach($s);
+            });
         }
     }
 }

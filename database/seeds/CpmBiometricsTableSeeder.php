@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\CarePlanTemplate;
 use App\Models\CPM\CpmBiometric;
 use Illuminate\Database\Seeder;
 
@@ -16,6 +17,7 @@ class CpmBiometricsTableSeeder extends Seeder
      */
     public function run()
     {
+        $carePlanTemplates = CarePlanTemplate::get();
         foreach (
             [
                 ['Weight', 0, 'lbs'],
@@ -24,13 +26,17 @@ class CpmBiometricsTableSeeder extends Seeder
                 ['Smoking (# per day)', 3, '# per day'],
             ] as $biometric
         ) {
-            CpmBiometric::updateOrCreate(
+            $b = CpmBiometric::updateOrCreate(
                 [
                     'name' => $biometric[0],
                     'type' => $biometric[1],
                     'unit' => $biometric[2],
                 ]
             );
+
+            $carePlanTemplates->each(function (CarePlanTemplate $cpt) use ($b) {
+                $cpt->cpmBiometrics()->attach($b);
+            });
         }
     }
 }

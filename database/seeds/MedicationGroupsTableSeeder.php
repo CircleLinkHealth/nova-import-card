@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\CarePlanTemplate;
 use App\Models\CPM\CpmMedicationGroup;
 use Illuminate\Database\Seeder;
 
@@ -16,6 +17,8 @@ class MedicationGroupsTableSeeder extends Seeder
      */
     public function run()
     {
+        $carePlanTemplates = CarePlanTemplate::get();
+
         foreach ([
             'Blood Pressure Meds',
             'Blood Thinners (Plavix, Aspirin)',
@@ -28,11 +31,15 @@ class MedicationGroupsTableSeeder extends Seeder
             'Oral Diabetes Meds',
             'Water Pills/Diuretics',
         ] as $name) {
-            CpmMedicationGroup::updateOrCreate(
+            $g = CpmMedicationGroup::updateOrCreate(
                 [
                     'name' => $name,
                 ]
             );
+
+            $carePlanTemplates->each(function (CarePlanTemplate $cpt) use ($g) {
+                $cpt->cpmMedicationGroups()->attach($g);
+            });
         }
     }
 }
