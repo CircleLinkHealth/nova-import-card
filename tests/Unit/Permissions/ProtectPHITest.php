@@ -6,6 +6,7 @@
 
 namespace Tests\Unit;
 
+use App\Enrollee;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Permission;
@@ -50,7 +51,8 @@ class ProtectPHITest extends TestCase
         $this->admin = $this->createUser($this->practice->id, 'administrator');
         $this->disablePHIForUser($this->admin);
 
-        $this->patient = $this->createUser($this->practice->id, 'participant');
+        $this->patient  = $this->createUser($this->practice->id, 'participant');
+        $this->enrollee = factory(Enrollee::class)->create()->first();
     }
 
     public function test_auth_user_cannot_see_phi_on_pages()
@@ -74,22 +76,19 @@ class ProtectPHITest extends TestCase
 
     public function test_trait_hides_phi_fields_correctly()
     {
-        $models = $this->getModelsThatContainPhi();
+        //User model
+        $this->assertHiddenPhiForModel($this->patient);
 
-        foreach ($models as $model) {
-            $this->assertHiddenPhiForModel($model);
-        }
+        $this->assertHiddenPhiForModel($this->patient->patientInfo);
+
+        $this->assertHiddenPhiForModel($this->enrollee);
     }
 
     private function assertHiddenPhiForModel($model)
     {
-        $model = factory(get_class($model))->create()->first();
-
-        if ($model) {
-            $model->setShouldHidePhi(true);
-            foreach ($model->phi as $phiField) {
-                $this->assertEquals($this->getExpectedValueForKey($model, $phiField), $model->$phiField);
-            }
+        $model->setShouldHidePhi(true);
+        foreach ($model->phi as $phiField) {
+            $this->assertEquals($this->getExpectedValueForKey($model, $phiField), $model->$phiField);
         }
     }
 
@@ -119,6 +118,7 @@ class ProtectPHITest extends TestCase
 
     /**
      * The idea here was to get all models dynamically and loop over them, checking each one.
+     * TODO: FIX models missing + handle sql view models after retrieving them.
      */
     private function getModelsThatContainPhi(): array
     {
