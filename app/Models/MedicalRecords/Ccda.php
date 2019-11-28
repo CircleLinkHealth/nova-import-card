@@ -202,10 +202,13 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
         $ccda = static::query()->create($attributes);
 
-        if ( ! empty($attributes['filename'])) {
+        $filename = null;
+        if (array_key_exists('filename', $attributes)) {
             $filename = $attributes['filename'];
             unset($attributes['filename']);
-        } else {
+        }
+
+        if ( ! $filename) {
             $filename = "ccda-{$ccda->id}.xml";
         }
 
