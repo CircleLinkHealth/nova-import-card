@@ -22,6 +22,7 @@ class UserTableSeeder extends Seeder
             // create admin user
             factory(User::class, 1)->create(['saas_account_id' => $practice->saas_account_id])->each(function ($admin) use ($practice) {
                 $admin->username = 'admin';
+                $admin->auto_attach_programs = true;
                 $admin->email = 'admin@example.org';
                 $admin->attachPractice($practice->id, [Role::whereName('administrator')->value('id')]);
                 $admin->program_id = $practice->id;
