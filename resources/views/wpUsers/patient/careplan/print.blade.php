@@ -431,7 +431,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /ALLERGIES -->
 
                 <!-- SOCIALSERVICES -->
-                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}">
+                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}" misc-id="{{$socialServicesMiscId}}">
                     @if($social)
                         <p><?= nl2br($social); ?></p>
                     @else
@@ -485,7 +485,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /Appointments -->
 
                 <!-- OTHER NOTES -->
-                <others ref="othersComponent" patient-id="{{$patient->id}}">
+                <others ref="othersComponent" patient-id="{{$patient->id}}" misc-id="{{$othersMiscId}}">
                     @if($other)
                         <p><?= nl2br($other); ?></p>
                     @else

@@ -10,6 +10,7 @@ use App\CarePlan;
 use App\Contracts\ReportFormatter;
 use App\Exports\FromArray;
 use App\Http\Requests\GetUnder20MinutesReport;
+use App\Models\CPM\CpmMisc;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanAssessmentService;
 use App\Services\CareplanService;
@@ -801,6 +802,8 @@ class ReportsController extends Controller
 
         $recentSubmission = $request->input('recentSubmission') ?? false;
 
+        $cpmMiscs = CpmMisc::pluck('id', 'name');
+
         $args = [
             'patient'                 => $patient,
             'problems'                => $careplan[$patientId]['problems'],
@@ -825,6 +828,8 @@ class ReportsController extends Controller
             ],
             ]
             ),
+            'socialServicesMiscId' => $cpmMiscs[CpmMisc::SOCIAL_SERVICES],
+            'othersMiscId'         => $cpmMiscs[CpmMisc::OTHER],
         ];
 
         return view(
