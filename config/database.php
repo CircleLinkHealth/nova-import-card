@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+// for heroku
 if (getenv('DATABASE_URL')) {
     $pgsqlUrl = parse_url(getenv('DATABASE_URL'));
 
@@ -27,6 +28,7 @@ if (getenv('DATABASE_URL')) {
     ];
 }
 
+// for heroku
 if (getenv('REDIS_URL')) {
     $redisUrl = parse_url(getenv('REDIS_URL'));
 
