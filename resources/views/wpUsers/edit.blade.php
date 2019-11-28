@@ -164,6 +164,8 @@
                                 <div class="form-group">
                                     <div class="col-xs-1">{!! Form::label('home_phone_number', 'Home Phone Number:') !!}</div>
                                     <div class="col-xs-3">{!! Form::text('home_phone_number', $patient->getHomePhoneNumber(), ['class' => 'form-control']) !!}</div>
+                                    <div class="col-xs-2">{!! Form::label('can_see_phi', 'Grant access to see PHI:') !!}</div>
+                                    <div class="col-xs-1">{!! Form::checkbox('can_see_phi', 0, $patient->canSeePhi(), ['class' => 'form-check-input']) !!}</div>
                                 </div>
 
 

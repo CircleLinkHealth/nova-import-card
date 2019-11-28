@@ -185,8 +185,7 @@ class ProtectPHITest extends TestCase
 
     private function disablePHIForUser(User $user)
     {
-        $phiRead = Permission::whereName('phi.read')->first();
-        $user->attachPermission($phiRead, 0);
+        $user->setCanSeePhi(false);
         $this->assertTrue( ! $user->hasPermission('phi.read'));
     }
 
