@@ -40,6 +40,7 @@ class RemovePatientInfoForeignKeys extends Migration
                         $table->dropForeign($key);
                     });
                 } catch (QueryException $e) {
+//                    @todo:heroku review error code below
                     $errorCode = $e->errorInfo[1];
                     if (1091 == $errorCode) {
                         Log::debug("Key `${key}` does not exist. Nothing to delete.".__FILE__);
