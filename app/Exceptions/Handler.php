@@ -92,8 +92,8 @@ class Handler extends ExceptionHandler
         if ($e instanceof \Illuminate\Database\QueryException) {
             //                    @todo:heroku query to see if it exists, then attach
 
-            $errorCode = $e->errorInfo[0] ?? null;
-            if (23505 == $errorCode) {
+            $errorCode = $e->errorInfo[1] ?? null;
+            if (1062 == $errorCode) {
                 //do nothing
                 //we don't actually want to terminate the program if we detect duplicates
                 //we just don't wanna add the row again

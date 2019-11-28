@@ -49,8 +49,8 @@ class UserObserver
                         if ($e instanceof QueryException) {
                             //                    @todo:heroku query to see if it exists, then attach
 
-                            $errorCode = $e->errorInfo[0];
-                            if (23505 == $errorCode) {
+                            $errorCode = $e->errorInfo[1];
+                            if (1062 == $errorCode) {
                                 return false;
                             }
                         }

@@ -838,8 +838,8 @@ class EligibilityChecker
         } catch (\Illuminate\Database\QueryException $e) {
             //                    @todo:heroku query to see if it exists, then attach
 
-            $errorCode = $e->errorInfo[0];
-            if (23505 == $errorCode) {
+            $errorCode = $e->errorInfo[1];
+            if (1062 == $errorCode) {
                 $duplicateMySqlError = true;
                 $errorMsg            = $e->getMessage();
             } else {

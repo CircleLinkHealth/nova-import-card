@@ -1322,7 +1322,7 @@ if ( ! function_exists('tryDropForeignKey')) {
         } catch (QueryException $e) {
             //                    @todo:heroku review error code below
 
-            $errorCode = $e->errorInfo[0];
+            $errorCode = $e->errorInfo[1];
             if (1091 == $errorCode) {
                 Log::debug("Key `${key}` does not exist. Nothing to delete.".__FILE__);
             }
