@@ -93,7 +93,7 @@
     "circlelinkhealth/timetracking": "1.1.2",
     "circlelinkhealth/twofa": "1.1.2",
     "circlelinkhealth/cpmmigrations": "dev-master",
-    "circlelinkhealth/sqlviews": "dev-heroku",
+    "circlelinkhealth/sqlviews": "dev-master",
     "daltcore/lara-pdf-merger": "dev-master",
     "dillingham/nova-button": "^1.0",
     "doctrine/dbal": "2.9.2",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "952501f781b17826dff155b901cd3331",
+    "content-hash": "f390b761a1a389a1e160e2184db3625c",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -795,11 +795,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews",
-            "version": "dev-heroku",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
-                "reference": "422f1f5875cb3cfc5d0567c5e0c35855df7fb052"
+                "reference": "f261050c53d8eecd351bac2d05499363b72c813c"
             },
             "type": "library",
             "extra": {
@@ -824,7 +824,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-27T01:58:21+00:00"
+            "time": "2019-11-27T01:46:44+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
