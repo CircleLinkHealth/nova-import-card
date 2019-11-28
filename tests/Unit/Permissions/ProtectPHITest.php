@@ -144,6 +144,7 @@ class ProtectPHITest extends TestCase
     private function assertAuthUserCannotSeePatientPhi($response)
     {
         $response->assertOk();
+
         foreach ($this->patientPhi as $phi) {
             if (is_a($phi, Carbon::class)) {
                 $phi = $phi->toDateString();
@@ -167,8 +168,6 @@ class ProtectPHITest extends TestCase
 
     private function collectPatientPhiValues()
     {
-        $this->patient->setShouldHidePhi(false);
-        $this->patient->patientInfo->setShouldHidePhi(false);
         $patientPhi = [];
         foreach ($this->patient->phi as $phi) {
             $patientPhi[] = $this->patient->$phi;
@@ -176,9 +175,6 @@ class ProtectPHITest extends TestCase
         foreach ($this->patient->patientInfo->phi as $phi) {
             $patientPhi[] = $this->patient->patientInfo->$phi;
         }
-
-        $this->patient->setShouldHidePhi(true);
-        $this->patient->patientInfo->setShouldHidePhi(true);
 
         return collect($patientPhi)->filter();
     }
