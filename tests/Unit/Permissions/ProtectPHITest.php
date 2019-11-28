@@ -34,7 +34,7 @@ class ProtectPHITest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        //could not make it work
+        //could not make it work at the moment
 //        $app = m::mock('app')->shouldReceive('instance')->getMock();
 //        $this->facadeMocks['config'] = m::mock('config');
 //        $this->facadeMocks['cache']  = m::mock('cache');
@@ -57,10 +57,26 @@ class ProtectPHITest extends TestCase
 
     public function test_auth_user_cannot_see_phi_on_pages()
     {
+        $patientPhi = $this->collectPatientPhiValues();
+
         auth()->login($this->admin);
-        //visit careplan page
-        //assert not see patient name
-        $this->assertTrue(true);
+
+        $response = $this->actingAs($this->admin)->call('GET', route('patient.careplan.print', [
+            'patientId' => $this->patient->id,
+        ]));
+
+        $response->assertOk();
+        foreach ($patientPhi as $phi) {
+            if (is_a($phi, Carbon::class)) {
+                $phi = $phi->toDateString();
+            }
+            if (in_array($phi, ['MD', 'AL'])) {
+                //this is the suffix and state of the logged in user generated for admins too by default
+                //remember that logged in User can see their own PHI field values.
+                continue;
+            }
+            $response->assertDontSee($phi);
+        }
     }
 
     /**
@@ -90,6 +106,24 @@ class ProtectPHITest extends TestCase
         foreach ($model->phi as $phiField) {
             $this->assertEquals($this->getExpectedValueForKey($model, $phiField), $model->$phiField);
         }
+    }
+
+    private function collectPatientPhiValues()
+    {
+        $this->patient->setShouldHidePhi(false);
+        $this->patient->patientInfo->setShouldHidePhi(false);
+        $patientPhi = [];
+        foreach ($this->patient->phi as $phi) {
+            $patientPhi[] = $this->patient->$phi;
+        }
+        foreach ($this->patient->patientInfo->phi as $phi) {
+            $patientPhi[] = $this->patient->patientInfo->$phi;
+        }
+
+        $this->patient->setShouldHidePhi(true);
+        $this->patient->patientInfo->setShouldHidePhi(true);
+
+        return collect($patientPhi)->filter();
     }
 
     private function disablePHIForUser(User $user)
