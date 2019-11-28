@@ -102,7 +102,7 @@ return [
                 'queue'         => ['default', 'low', 'demanding'],
                 'balance'       => 'auto',
                 'min-processes' => 1,
-                'max-processes' => 2,
+                'max-processes' => 7,
                 'tries'         => 1,
                 'timeout'       => 60,
             ],
