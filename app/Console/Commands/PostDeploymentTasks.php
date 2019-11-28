@@ -45,10 +45,6 @@ class PostDeploymentTasks extends Command
             return;
         }
 
-        $this->output->note('Running nova:publish --force');
-        Artisan::call('nova:publish', ['--force' => true]);
-        $this->output->success('Finished running nova:publish --force');
-
         collect(
             [
                 'view:clear',
