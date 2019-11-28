@@ -23,12 +23,15 @@ trait ProtectsPhi
      */
     public static function bootProtectsPhi()
     {
-        if ( ! optional(auth()->user())->canSeePhi()) {
-            static::retrieved(function ($model) {
-                //this protects phi from getting the model attributes from ->toArray()
-                //we could also have overwritten method attributesToArray()
-                $model->hidden = array_merge($model->phi, $model->hidden);
-            });
+        $user = auth()->user();
+        if ($user) {
+            if (! $user->canSeePhi()) {
+                static::retrieved(function ($model) {
+                    //this protects phi from getting the model attributes from ->toArray()
+                    //we could also have overwritten method attributesToArray()
+                    $model->hidden = array_merge($model->phi, $model->hidden);
+                });
+            }
         }
     }
 
@@ -76,7 +79,7 @@ trait ProtectsPhi
     {
         if (array_key_exists($key, $this->casts)) {
             return $this->castHiddenPhiAttribute($key);
-        } elseif (in_array($key, $this->dates)){
+        } elseif (in_array($key, $this->dates)) {
             return $this->hiddenAttributeCasts()['date'];
         } else {
             return $this->hiddenValue;
@@ -90,11 +93,9 @@ trait ProtectsPhi
      */
     private function castHiddenPhiAttribute($key)
     {
-
         $castAs = $this->hiddenAttributeCasts();
 
         return $castAs[$this->casts[$key]];
-
     }
 
     /**
