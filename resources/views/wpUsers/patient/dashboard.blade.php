@@ -47,7 +47,7 @@
                                 </i>
                             </div>
                             <div>
-                                <p class="text-medium-big text--menu text-serif">CPM Patient List<br><span
+                                <p class="text-medium-big text--menu text-serif">CCM Patient List<br><span
                                             style="color:red;font-style:italic;font-size:85%;" class="text-thin">{{ $pendingApprovals }}
                                         Pending<br>Approvals</span><br></p>
                             </div>
