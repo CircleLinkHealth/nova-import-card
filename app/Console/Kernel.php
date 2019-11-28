@@ -66,8 +66,6 @@ class Kernel extends ConsoleKernel
 
     /**
      * Define the application's command schedule.
-     *
-     * @param \Illuminate\Console\Scheduling\Schedule $schedule
      */
     protected function schedule(Schedule $schedule)
     {
@@ -80,9 +78,9 @@ class Kernel extends ConsoleKernel
         $schedule->command(DetermineTargetPatientEligibility::class)
             ->dailyAt('04:00')->onOneServer();
 
-        $schedule->command(QueueEligibilityBatchForProcessing::class)
-            ->everyMinute()
-            ->withoutOverlapping()->onOneServer();
+//        $schedule->command(QueueEligibilityBatchForProcessing::class)
+//            ->everyTenMinutes()
+//            ->withoutOverlapping()->onOneServer();
 
         $schedule->command(AutoPullEnrolleesFromAthena::class)
             ->monthlyOn(1)->onOneServer();
@@ -167,7 +165,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckEmrDirectInbox::class)
             ->everyFiveMinutes()
             ->withoutOverlapping()->onOneServer();
-        
+
         //uncomment when ready
 //        $schedule->command(DownloadTwilioRecordings::class)
 //                 ->everyThirtyMinutes()

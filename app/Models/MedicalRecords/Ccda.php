@@ -201,10 +201,13 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
         $ccda = static::query()->create($attributes);
 
-        if ($attributes['filename']) {
+        $filename = null;
+        if (array_key_exists('filename', $attributes)) {
             $filename = $attributes['filename'];
             unset($attributes['filename']);
-        } else {
+        }
+
+        if ( ! $filename) {
             $filename = "ccda-{$ccda->id}.xml";
         }
 
@@ -214,6 +217,9 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         return $ccda;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function createEligibilityJobFromMedicalRecord(): ?EligibilityJob
     {
         $adapter = new CcdaToEligibilityJobAdapter($this, $this->practice, $this->batch);
