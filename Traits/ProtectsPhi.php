@@ -24,6 +24,7 @@ trait ProtectsPhi
     public static function bootProtectsPhi()
     {
         $user = auth()->user();
+
         if ($user) {
             if (! $user->canSeePhi()) {
                 static::retrieved(function ($model) {
