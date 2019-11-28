@@ -63,7 +63,10 @@ trait ProtectsPhi
         }
 
         if ($this->shouldHidePhi) {
-            if (in_array($key, $this->phi) && ! optional($this->authUser)->is($this)) {
+            if (in_array($key, $this->phi)) {
+                if (optional($this->authUser)->is($this)){
+                    return $value;
+                }
                 $value = $this->hidePhiAttribute($key);
             }
         }
@@ -80,7 +83,7 @@ trait ProtectsPhi
     {
         if (array_key_exists($key, $this->casts)) {
             return $this->castHiddenPhiAttribute($key);
-        } elseif (in_array($key, $this->dates)) {
+        } elseif (in_array($key, $this->dates)){
             return $this->hiddenAttributeCasts()['date'];
         } else {
             return $this->hiddenValue;
@@ -94,9 +97,11 @@ trait ProtectsPhi
      */
     private function castHiddenPhiAttribute($key)
     {
+
         $castAs = $this->hiddenAttributeCasts();
 
         return $castAs[$this->casts[$key]];
+
     }
 
     /**
