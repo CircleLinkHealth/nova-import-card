@@ -47,36 +47,77 @@ class ProtectPHITest extends TestCase
 
         $this->practice = factory(Practice::class)->create();
 
-        //admin has the phi.read permission so we have to deactivate
         $this->admin = $this->createUser($this->practice->id, 'administrator');
+        //admin has the phi.read permission so we have to deactivate
         $this->disablePHIForUser($this->admin);
 
-        $this->patient  = $this->createUser($this->practice->id, 'participant');
+        $this->patient    = $this->createUser($this->practice->id, 'participant');
+        $this->patientPhi = $this->collectPatientPhiValues();
+
         $this->enrollee = factory(Enrollee::class)->create()->first();
     }
 
     public function test_auth_user_cannot_see_phi_on_pages()
     {
-        $patientPhi = $this->collectPatientPhiValues();
-
+        //login
         auth()->login($this->admin);
 
-        $response = $this->actingAs($this->admin)->call('GET', route('patient.careplan.print', [
-            'patientId' => $this->patient->id,
-        ]));
+        //care-plan
+        $this->assertAuthUserCannotSeePatientPhi(
+            $this->actingAs($this->admin)->call('GET', route('patient.careplan.print', [
+                'patientId' => $this->patient->id,
+            ]))
+        );
 
-        $response->assertOk();
-        foreach ($patientPhi as $phi) {
-            if (is_a($phi, Carbon::class)) {
-                $phi = $phi->toDateString();
-            }
-            if (in_array($phi, ['MD', 'AL'])) {
-                //this is the suffix and state of the logged in user generated for admins too by default
-                //remember that logged in User can see their own PHI field values.
-                continue;
-            }
-            $response->assertDontSee($phi);
-        }
+        //patient listing
+        $this->assertAuthUserCannotSeePatientPhi(
+            $this->actingAs($this->admin)->call('GET', route('patients.listing'))
+        );
+
+        //careplan print list
+        $this->assertAuthUserCannotSeePatientPhi(
+            $this->actingAs($this->admin)->call('GET', route('patients.careplan.printlist'))
+        );
+
+        //under 20 mins report
+        $this->assertAuthUserCannotSeePatientPhi(
+            $this->actingAs($this->admin)->call('GET', route('patient.reports.u20'))
+        );
+
+        //notes
+        $this->assertAuthUserCannotSeePatientPhi(
+            $this->actingAs($this->admin)->call('GET', route('patient.note.index', [
+                'patientId' => $this->patient->id,
+            ]))
+        );
+
+        //profile
+        $this->assertAuthUserCannotSeePatientPhi(
+            $this->actingAs($this->admin)->call('GET', route('patient.demographics.show', [
+                'patientId' => $this->patient->id,
+            ]))
+        );
+
+        //progress
+        $this->assertAuthUserCannotSeePatientPhi(
+            $this->actingAs($this->admin)->call('GET', route('patient.reports.progress', [
+                'patientId' => $this->patient->id,
+            ]))
+        );
+
+        //wellness visit docs
+        $this->assertAuthUserCannotSeePatientPhi(
+            $this->actingAs($this->admin)->call('GET', route('patient.care-docs', [
+                'patientId' => $this->patient->id,
+            ]))
+        );
+
+        //activities
+        $this->assertAuthUserCannotSeePatientPhi(
+            $this->actingAs($this->admin)->call('GET', route('patient.care-docs', [
+                'patientId' => $this->patient->id,
+            ]))
+        );
     }
 
     /**
@@ -98,6 +139,22 @@ class ProtectPHITest extends TestCase
         $this->assertHiddenPhiForModel($this->patient->patientInfo);
 
         $this->assertHiddenPhiForModel($this->enrollee);
+    }
+
+    private function assertAuthUserCannotSeePatientPhi($response)
+    {
+        $response->assertOk();
+        foreach ($this->patientPhi as $phi) {
+            if (is_a($phi, Carbon::class)) {
+                $phi = $phi->toDateString();
+            }
+            if (in_array($phi, ['MD', 'AL'])) {
+                //this is the suffix and state of the logged in user generated for admins too by default
+                //remember that logged in User can see their own PHI field values.
+                continue;
+            }
+            $response->assertDontSee($phi);
+        }
     }
 
     private function assertHiddenPhiForModel($model)
