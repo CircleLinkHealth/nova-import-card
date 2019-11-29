@@ -42,7 +42,7 @@ return [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
-        //Medstack DB
+        //CLH RDS
         'mysql' => [
             'driver'         => 'mysql',
             'host'           => env('DB_HOST', '127.0.0.1'),
@@ -59,7 +59,8 @@ return [
             'engine'         => null,
         ],
 
-        //CLH RDS
+        //Medstack DB
+        //to be phased out
         'remote' => [
             'driver'         => 'mysql',
             'host'           => env('DB_REMOTE_HOST', '127.0.0.1'),
