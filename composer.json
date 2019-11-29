@@ -27,7 +27,7 @@
         ]
     },
     "require": {
-        "venturecraft/revisionable": "dev-master"
+        "venturecraft/revisionable": "*"
     },
     "repositories": [
         {
