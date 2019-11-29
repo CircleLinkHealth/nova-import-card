@@ -8841,7 +8841,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/VentureCraft/revisionable.git",
-                "reference": "40018d189c253eb49ee59ee54ade332ca2cef497"
+                "reference": "eca79f78a13b33b732258b5f1cacb0e56d8c84e7"
             },
             "require": {
                 "illuminate/support": "~4.0|~5.0|~5.1",
