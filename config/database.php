@@ -42,6 +42,7 @@ return [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
+        //Medstack DB
         'mysql' => [
             'driver'         => 'mysql',
             'host'           => env('DB_HOST', '127.0.0.1'),
@@ -58,7 +59,21 @@ return [
             'engine'         => null,
         ],
 
-        [
+        //CLH RDS
+        'remote' => [
+            'driver'         => 'mysql',
+            'host'           => env('DB_REMOTE_HOST', '127.0.0.1'),
+            'port'           => env('DB_REMOTE_PORT', '3306'),
+            'database'       => env('DB_REMOTE_DATABASE', 'forge'),
+            'username'       => env('DB_REMOTE_USERNAME', 'forge'),
+            'password'       => env('DB_REMOTE_PASSWORD', ''),
+            'unix_socket'    => env('DB_REMOTE_SOCKET', ''),
+            'charset'        => 'utf8mb4',
+            'collation'      => 'utf8mb4_unicode_ci',
+            'prefix'         => '',
+            'prefix_indexes' => true,
+            'strict'         => false,
+            'engine'         => null,
         ],
 
         'test_suite' => [
