@@ -27,12 +27,6 @@
         ]
     },
     "require": {
-        "venturecraft/revisionable": "*"
-    },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/revisionable.git"
-        }
-    ]
+       
+    }
 }
