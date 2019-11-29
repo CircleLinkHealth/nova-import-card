@@ -769,7 +769,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-revisionable.git",
-                "reference": "366ba2ba2037d0f027ca88e4da9d8c75f3989f9d"
+                "reference": "39592bed5d2a5eb13ea3b5d17bf2b6a8887487c6"
             },
             "require": {
                 "illuminate/support": "~4.0|~5.0|~5.1",
@@ -817,7 +817,7 @@
                 "source": "https://github.com/VentureCraft/revisionable"
             },
             "abandoned": true,
-            "time": "2019-11-29T15:55:49+00:00"
+            "time": "2019-11-29T16:22:22+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
