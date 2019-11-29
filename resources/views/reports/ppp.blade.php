@@ -96,15 +96,37 @@ function getStringValue($val, $default = '')
             </thead>
             <tbody>
 
+            <?php
+            $emphasizedCodeText = '(if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)';
+            $emphasisedBody = '(NOTE: $0 co-pay if done during AWV)';
+            ?>
+
             @foreach($personalizedHealthAdvices as $key => $tasks)
                 @if(! empty($tasks['tasks']))
                     @foreach($tasks['table_data'] as $table)
                         <tr>
-                            <td class="suggested-list-body">
-                                <strong>{{$table[0]['body']}}</strong>
-                            </td>
-                            <td>{{$table[0]['time_frame']}}</td>
-                            <td style="font-weight: 500">{{$table[0]['code']}}</td>
+                            {{--Emphasize code 99498 and the related body --}}
+                            @if(strpos( $table[0]['code'], $emphasizedCodeText) !== false)
+                                <td class="suggested-list-body">
+                                    <?php
+                                    echo(str_ireplace($emphasisedBody, "<class style='color: #ff2418'>{$emphasisedBody}</class>", $table[0]['body']))
+                                    ?>
+                                </td>
+
+                                <td>{{$table[0]['time_frame']}}</td>
+
+                                <td style="font-weight: 500">
+                                    <?php
+                                    echo(str_ireplace($emphasizedCodeText, "<class style='color: #ff2418'>{$emphasizedCodeText}</class>", $table[0]['code']))
+                                    ?>
+                                </td>
+                            @else
+                                <td class="suggested-list-body">
+                                    <strong>{{$table[0]['body']}}</strong>
+                                </td>
+                                <td>{{$table[0]['time_frame']}}</td>
+                                <td style="font-weight: 500">{{$table[0]['code']}}</td>
+                            @endif
                         </tr>
                     @endforeach
                 @endif
