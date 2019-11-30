@@ -128,12 +128,6 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
     protected $attributes = [
         'imported' => false,
     ];
-    /**
-     * Use Medstack DB until we migrate this table.
-     *
-     * @var string
-     */
-    protected $connection = 'remote';
 
     protected $dates = [
         'date',
