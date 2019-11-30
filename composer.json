@@ -79,6 +79,7 @@
     "ext-json": "*",
     "ext-libxml": "*",
     "ext-simplexml": "*",
+    "ext-pdo": "*",
     "alexbowers/nova-prepopulate-searchable": "^1.0",
     "algolia/algoliasearch-client-php": "^2.2",
     "algolia/scout-extended": "^1.8",
@@ -168,7 +169,10 @@
   "autoload-dev": {
     "psr-4": {
       "Tests\\": "tests/"
-    }
+    },
+    "files": [
+      "vendor/circlelinkhealth/core/Helpers/helpers.php"
+    ]
   },
   "scripts": {
     "lint-php": [
@@ -191,11 +195,8 @@
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
       "@php artisan nova:publish"
     ],
-    "test-db-mysql": [
-      "php artisan config:clear && php artisan db:test && php artisan migrate:fresh && php artisan migrate && php artisan db:seed && php artisan db:seed --class=TestSuiteSeeder"
-    ],
-    "test-mysql": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner WrapperRunner -p8"
+    "paratest": [
+      "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p8"
     ],
     "coverage": [
       "php artisan --env=testing test:prepare-test_suite-db",
@@ -203,13 +204,11 @@
     ],
     "unit-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",
-      "APP_ENV=testing ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --coverage-html=./zzhell.html"
+      "APP_ENV=testing ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3"
     ],
-    "integration": [
-      "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner -p4"
-    ],
-    "feature": [
-      "./vendor/bin/paratest ./tests/feature --stop-on-failure --colors --runner SqliteRunner -p4"
+    "profile-unit-tests": [
+      "php artisan --env=testing test:prepare-test_suite-db",
+      "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --log-junit tests_profiles.xml"
     ],
     "clear": [
       "php artisan clear-compiled",
@@ -243,8 +242,7 @@
         "Modules/*/composer.json",
         "CLHPackages/*/composer.json"
       ],
-      "require": [
-      ],
+      "require": [],
       "recurse": true,
       "replace": true,
       "ignore-duplicates": false,
