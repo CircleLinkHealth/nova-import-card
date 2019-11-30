@@ -142,23 +142,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(CareplanEnrollmentAdminNotification::class)
             ->dailyAt('07:00')
             ->withoutOverlapping()->onOneServer();
-
-//        $schedule->command('ccda:determineEligibility')
-//                 ->everyFiveMinutes()
-//                 ->withoutOverlapping()->onOneServer();
-
-//        $schedule->command('ccda:toJson')
-//            ->everyMinute()
-//            ->withoutOverlapping()->onOneServer();
-
-//        $schedule->command('ccda:process')
-//            ->everyMinute()
-//            ->withoutOverlapping()->onOneServer();
-
-        //every 2 hours
-//        $schedule->command('ccdas:split-merged')
-//            ->cron('0 */2 * * *')->onOneServer();
-
+        
         $schedule->command(QueueSendAuditReports::class)
             ->monthlyOn(1, '02:00')->onOneServer();
 
