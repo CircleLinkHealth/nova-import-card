@@ -235,8 +235,34 @@ class PersonalizedPreventionPlanPrepareData
             $tasks = array_slice($recommendation, 2);
             $tableData = [];
             foreach ($tasks as $task) {
-                if (!empty($task['report_table_data'])) {
-                    $tableData[] = $task['report_table_data'];
+                if (array_key_exists('report_table_data', $task)) {
+
+                    $tableData[] = collect($task['report_table_data'])->transform(function ($table) {
+                        $codeWithText = '99498 (if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)';
+                        $emphasisedBody = '(NOTE: $0 co-pay if done during AWV)';
+
+                        $emphasizeCode = false;
+                        $body = $table['body'];
+                        $code = $table['code'];
+
+                        if (strpos($table['code'], $codeWithText) !== false) {
+                            $emphasizeCode = true;
+                            $body = (str_ireplace($emphasisedBody,
+                                "<class style='color: #ff695f; font-style: italic;'>{$emphasisedBody}</class>",
+                                $table['body']));
+                            $code = (str_ireplace($codeWithText,
+                                "<class style='color: #ff695f; font-style: italic;'>{$codeWithText}</class>",
+                                $table['code']));
+                        }
+
+                        return [
+                            'body' => $body,
+                            'code' => $code,
+                            'time_frame' => $table['time_frame'],
+                            'emphasize_code' => $emphasizeCode,
+                        ];
+
+                    });
                 }
             }
 
