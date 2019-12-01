@@ -113,7 +113,6 @@ class GeneratePatientReportsJob implements ShouldQueue
             return;
         }
 
-        //Create PDFs for reports and upload the to S3 Media
         $providerReportMedia = $this->createAndUploadPdfProviderReport($providerReport, $patient, $this->debug);
 
         if ( ! $providerReportMedia) {
