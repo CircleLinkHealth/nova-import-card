@@ -541,6 +541,42 @@ a.navbar-title:hover {
 
 
 @media (max-width: 490px) {
+
+    .survey-container {
+        //60px .top-buttons + 56px .bottom-navbar
+        height: calc(100% - 116px);
+    }
+
+    .top-buttons {
+        text-align: center;
+        background-color: $primary-color;
+        box-shadow: 0 2px 4px #afafaf;
+    }
+
+    .top-buttons .col {
+        border: 1px solid transparent;
+    }
+
+    .top-buttons .col:first-child {
+        border-right: 1px solid #f2f6f9;
+    }
+
+    .top-left-fixed, .top-right-fixed {
+        display: none;
+        position: relative;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+
+    .top-buttons .mobile-view {
+        display: inline;
+        color: #fafafa;
+        width: 90%;
+        box-shadow: none;
+    }
+
+    /*
     //pencil button circle (toggle view)
     .top-buttons .top-right-fixed > button {
         width: 84%;
@@ -558,12 +594,12 @@ a.navbar-title:hover {
         right: 22px;
     }
 
-    /*Left button return back arrow*/
+    //Left button return back arrow*
     .top-buttons .top-left-fixed > button {
         height: 36px;
         width: 36px;
     }
-    /*arrow in circle*/
+    //arrow in circle
     .top-buttons .top-left-fixed > button > svg {
         padding-right: 6px;
         height: 30px;
@@ -573,6 +609,7 @@ a.navbar-title:hover {
         left: 0px;
         top: unset;
     }
+    */
 
     .questions-body {
         margin-left: -15px;
@@ -602,14 +639,6 @@ a.navbar-title:hover {
         width: 40%;
         height: 30px;
         padding: 1%;
-    }
-
-    .progress-text {
-        margin-left: 35px;
-    }
-
-    .progress {
-        margin-left: 27px;;
     }
 
     .survey-main-title {
@@ -642,17 +671,20 @@ a.navbar-title:hover {
         display: contents;
     }
 
-    .call-btn-round{
-        padding: 3px 27px 37px 13px !important;
-        margin-top: 7px !important;
+    .call-btn-round {
+        width: 35px;
+        height: 35px;
+        margin-left: 10px;
+        //padding: 3px 27px 37px 13px !important;
+        //margin-top: 7px !important;
     }
 
-    .scroll-buttons{
+    .scroll-buttons {
         margin-right: -20px;
         margin-left: -20px;
     }
 
-    .scroll-buttons .btn{
+    .scroll-buttons .btn {
         margin-top: 10px;
         width: 35px;
         height: 35px

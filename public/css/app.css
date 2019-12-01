@@ -12036,40 +12036,74 @@ a.navbar-title:hover {
 }
 
 @media (max-width: 490px) {
-  .top-buttons .top-right-fixed > button {
-    width: 84%;
-    height: 38px;
-    padding: 1%;
+  .survey-container {
+    height: calc(100% - 116px);
   }
 
-  .top-buttons .top-right-fixed > button > svg {
-    height: 55%;
+  .top-buttons {
+    text-align: center;
+    background-color: #50b2e2;
+    box-shadow: 0 2px 4px #afafaf;
   }
 
+  .top-buttons .col {
+    border: 1px solid transparent;
+  }
+
+  .top-buttons .col:first-child {
+    border-right: 1px solid #f2f6f9;
+  }
+
+  .top-left-fixed,
   .top-right-fixed {
-    left: unset;
-    top: unset;
-    right: 22px;
+    display: none;
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
   }
 
-  /*Left button return back arrow*/
-
-  .top-buttons .top-left-fixed > button {
-    height: 36px;
-    width: 36px;
+  .top-buttons .mobile-view {
+    display: inline;
+    color: #fafafa;
+    width: 90%;
+    box-shadow: none;
   }
 
-  /*arrow in circle*/
+  /*
+    //pencil button circle (toggle view)
+    .top-buttons .top-right-fixed > button {
+        width: 84%;
+        height: 38px;
+        padding: 1%;
+    }
+    //pencil in circle
+    .top-buttons .top-right-fixed > button > svg {
+        height: 55%;
+    }
 
-  .top-buttons .top-left-fixed > button > svg {
-    padding-right: 6px;
-    height: 30px;
-  }
+    .top-right-fixed {
+        left: unset;
+        top: unset;
+        right: 22px;
+    }
 
-  .top-buttons .top-left-fixed {
-    left: 0px;
-    top: unset;
-  }
+    //Left button return back arrow*
+    .top-buttons .top-left-fixed > button {
+        height: 36px;
+        width: 36px;
+    }
+    //arrow in circle
+    .top-buttons .top-left-fixed > button > svg {
+        padding-right: 6px;
+        height: 30px;
+    }
+
+    .top-buttons .top-left-fixed {
+        left: 0px;
+        top: unset;
+    }
+    */
 
   .questions-body {
     margin-left: -15px;
@@ -12099,14 +12133,6 @@ a.navbar-title:hover {
     width: 40%;
     height: 30px;
     padding: 1%;
-  }
-
-  .progress-text {
-    margin-left: 35px;
-  }
-
-  .progress {
-    margin-left: 27px;
   }
 
   .survey-main-title {
@@ -12140,8 +12166,9 @@ a.navbar-title:hover {
   }
 
   .call-btn-round {
-    padding: 3px 27px 37px 13px !important;
-    margin-top: 7px !important;
+    width: 35px;
+    height: 35px;
+    margin-left: 10px;
   }
 
   .scroll-buttons {
