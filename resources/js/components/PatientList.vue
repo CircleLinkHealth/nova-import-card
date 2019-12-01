@@ -1,45 +1,93 @@
 <template>
-    <div>
-        <v-server-table class="table" :url="getUrl()" :columns="columns" :options="options" ref="table">
-            <template slot="hra_status" slot-scope="props">
-                <a v-if="props.row.hra_status" :href="getHraUrl(props.row)">{{getStatusTitle(props.row.hra_status)}}</a>
-                <span v-else>{{getStatusTitle(props.row.hra_status)}}</span>
-            </template>
-            <template slot="vitals_status" slot-scope="props">
-                <a v-if="props.row.vitals_status" :href="getVitalsUrl(props.row)">{{getStatusTitle(props.row.vitals_status)}}</a>
-                <span v-else>{{getStatusTitle(props.row.vitals_status)}}</span>
-            </template>
-            <template slot="eligibility" slot-scope="props">
-                <!-- todo -->
-                <span>Eligible</span>
-            </template>
-            <template slot="actions" slot-scope="props">
-                <mdb-dropdown class="actions">
-                    <mdb-dropdown-toggle slot="toggle" class="actions-toggle">...</mdb-dropdown-toggle>
-                    <mdb-dropdown-menu right :dropup="shouldDropUp(props)">
-                        <mdb-dropdown-item @click="sendHraLink(props.row)">Send HRA link</mdb-dropdown-item>
-                        <mdb-dropdown-item @click="sendVitalsLink(props.row)">Send Vitals link</mdb-dropdown-item>
-                    </mdb-dropdown-menu>
-                </mdb-dropdown>
-            </template>
-        </v-server-table>
+    <mdb-container>
+        <add-patient-modal v-if="addPatientModalOptions.show" :options="addPatientModalOptions"></add-patient-modal>
         <send-link-modal v-if="sendLinkModalOptions.show" :options="sendLinkModalOptions"></send-link-modal>
-    </div>
+        <mdb-row class="no-gutters">
+            <mdb-col md="8" sm="12">
+                <h1>AWV Patient List</h1>
+            </mdb-col>
+            <mdb-col md="4" sm="12">
+                <p class="text-right">
+                    <mdb-btn @click="addPatient" class="text-right">
+                        Add AWV Patient
+                    </mdb-btn>
+                </p>
+            </mdb-col>
+        </mdb-row>
+        <mdb-row>
+            <v-server-table class="table" :url="getUrl()" :columns="columns" :options="options" ref="table">
+                <template slot="patient_name" slot-scope="props">
+                    <a v-if="hasWellnessDocsUrl()" :href="getWellnessDocsPage(props.row.patient_id)" target="_blank">
+                        {{props.row.patient_name}}
+                    </a>
+                    <span v-else>{{props.row.patient_name}}</span>
+                </template>
+                <template slot="hra_status" slot-scope="props">
+                    <a v-if="props.row.hra_status"
+                       :href="getHraUrl(props.row)">{{getStatusTitle(props.row.hra_status)}}</a>
+                    <span v-else>{{getStatusTitle(props.row.hra_status)}}</span>
+                </template>
+                <template slot="vitals_status" slot-scope="props">
+                    <a v-if="props.row.vitals_status" :href="getVitalsUrl(props.row)">{{getStatusTitle(props.row.vitals_status)}}</a>
+                    <span v-else>{{getStatusTitle(props.row.vitals_status)}}</span>
+                </template>
+                <template slot="eligibility" slot-scope="props">
+                    <!-- todo -->
+                    <span>Eligible</span>
+                </template>
+                <template slot="actions" slot-scope="props">
+                    <mdb-dropdown class="actions">
+                        <mdb-dropdown-toggle slot="toggle" class="actions-toggle">...</mdb-dropdown-toggle>
+                        <mdb-dropdown-menu right :dropup="shouldDropUp(props)">
+                            <mdb-dropdown-item @click="sendHraLink(props.row)">Send HRA link</mdb-dropdown-item>
+                            <mdb-dropdown-item @click="sendVitalsLink(props.row)">Send Vitals link</mdb-dropdown-item>
+                        </mdb-dropdown-menu>
+                    </mdb-dropdown>
+                </template>
+            </v-server-table>
+        </mdb-row>
+    </mdb-container>
 </template>
 
 <script>
 
-    import {mdbDropdown, mdbDropdownItem, mdbDropdownMenu, mdbDropdownToggle} from 'mdbvue';
+    import {
+        mdbBtn,
+        mdbCol,
+        mdbContainer,
+        mdbDropdown,
+        mdbDropdownItem,
+        mdbDropdownMenu,
+        mdbDropdownToggle,
+        mdbRow
+    } from 'mdbvue';
     import SendLinkModal from './SendLinkModal';
+    import AddPatientModal from './AddPatientModal';
 
     let self;
 
     export default {
         name: "PatientList",
-        components: {SendLinkModal, mdbDropdown, mdbDropdownItem, mdbDropdownMenu, mdbDropdownToggle},
-        props: ['debug'],
+        components: {
+            AddPatientModal,
+            SendLinkModal,
+            mdbDropdown,
+            mdbDropdownItem,
+            mdbDropdownMenu,
+            mdbDropdownToggle,
+            mdbBtn,
+            mdbContainer,
+            mdbRow,
+            mdbCol
+        },
+        props: ['debug', 'wellnessDocsUrl'],
         data() {
             return {
+                addPatientModalOptions: {
+                    debug: this.debug,
+                    show: false,
+                    onDone: null
+                },
                 sendLinkModalOptions: {
                     debug: this.debug,
                     show: false,
@@ -87,6 +135,15 @@
                         is: 'fa-sort',
                         up: 'fa-sort-asc',
                         down: 'fa-sort-desc'
+                    },
+                    headings: {
+                        'patient_name': 'Patient Name',
+                        'provider_name': 'Provider Name',
+                        'hra_status': 'HRA Status',
+                        'vitals_status': 'Vitals Status',
+                        'eligibility': 'Eligibility',
+                        'dob': 'DOB',
+                        'actions': 'Actions'
                     }
                 },
             };
@@ -102,6 +159,14 @@
 
             getVitalsUrl(patient) {
                 return `survey/vitals/${patient.patient_id}`;
+            },
+
+            hasWellnessDocsUrl() {
+                return !!this.wellnessDocsUrl;
+            },
+
+            getWellnessDocsPage(patientId) {
+                return this.wellnessDocsUrl ? this.wellnessDocsUrl.replace("$PATIENT_ID$", patientId) : '#';
             },
 
             getStatusTitle(id) {
@@ -138,6 +203,18 @@
                 this.sendLinkModalOptions.onDone = () => {
                     this.sendLinkModalOptions.show = false;
                 }
+            },
+
+            addPatient() {
+                this.addPatientModalOptions.show = true;
+                this.addPatientModalOptions.onDone = () => {
+                    this.addPatientModalOptions.show = false;
+                    this.refresh();
+                }
+            },
+
+            refresh() {
+                this.$refs.table.refresh();
             }
         },
         created() {

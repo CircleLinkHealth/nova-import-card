@@ -28,7 +28,7 @@ class QueueGenerateProviderReports extends Command
      *
      * @var string
      */
-    protected $signature = 'reports:providerReport {patientIds : comma separated.} {date? : in format YYYY-MM-DD}';
+    protected $signature = 'reports:providerReport {patientIds : comma separated.} {date? : in format YYYY-MM-DD} {--debug}';
 
     /**
      * The console command description.
@@ -66,8 +66,10 @@ class QueueGenerateProviderReports extends Command
 //        $this->date       = $this->argument('date')
 //            ? Carbon::parse($this->argument('date'))
 //            : Carbon::now();
+
+        $debug = $this->option('debug');
         foreach ($this->patientIds as $patientId){
-            GeneratePatientReportsJob::dispatch($patientId, $this->date)->onQueue('high');
+            GeneratePatientReportsJob::dispatch($patientId, $this->date, $debug)->onQueue('high');
         }
     }
 }

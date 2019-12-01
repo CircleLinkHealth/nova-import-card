@@ -3,13 +3,13 @@
 
         <div class="top-left-fixed" v-if="adminMode">
             <mdb-btn class="btn-toggle-edit" color="primary" @click="goBack">
-                <font-awesome-icon icon="chevron-circle-left" size="3x"/>
+                <mdb-icon icon="chevron-circle-left" size="3x"/>
             </mdb-btn>
         </div>
 
         <div class="top-right-fixed" v-if="adminMode">
             <mdb-btn class="btn-toggle-edit" :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
-                <font-awesome-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
+                <mdb-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
             </mdb-btn>
         </div>
 
@@ -191,8 +191,8 @@
                 <div class="col-1 col-sm-1 col-md-1 col-lg-1 text-center no-padding">
                     <div class="row scroll-buttons" v-show="!readOnlyMode">
                         <mdb-btn color="primary" @click="toggleCallAssistance" class="call-btn-round">
-                            <font-awesome-icon :icon="callAssistance ? 'times' : 'phone-alt'"
-                                               size="2x"></font-awesome-icon>
+                            <mdb-icon :icon="callAssistance ? 'times' : 'phone-alt'"
+                                               size="2x"></mdb-icon>
                         </mdb-btn>
                     </div>
                 </div>
@@ -242,7 +242,7 @@
 
 
 <script>
-    import {mdbBtn, mdbProgress} from 'mdbvue';
+    import {mdbBtn, mdbProgress, mdbIcon} from 'mdbvue';
     import questionTypeText from "./questionTypeText";
     import questionTypeCheckbox from "./questionTypeCheckbox";
     import questionTypeRange from "./questionTypeRange";
@@ -253,23 +253,11 @@
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
     import $ from "jquery";
 
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {
-        faChevronCircleDown,
-        faChevronCircleLeft,
-        faEye,
-        faPencilAlt,
-        faPhoneAlt,
-        faTimes
-    } from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
-    library.add(faChevronCircleLeft, faChevronCircleDown, faPhoneAlt, faTimes, faPencilAlt, faEye);
-
     export default {
         props: ['surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'debug'],
 
         components: {
+            mdbIcon,
             'mdb-btn': mdbBtn,
             'mdb-progress': mdbProgress,
             'question-type-text': questionTypeText,
@@ -279,9 +267,7 @@
             'question-type-radio': questionTypeRadio,
             'question-type-date': questionTypeDate,
             'call-assistance': callAssistance,
-
             'question-type-muti-select': questionTypeMultiSelect,
-            'font-awesome-icon': FontAwesomeIcon
         },
 
         data() {
@@ -345,7 +331,10 @@
                 let nextHasAnswer = false;
                 if (canProceed) {
                     const nextQuestion = this.getNextQuestion(this.currentQuestionIndex);
-                    nextHasAnswer = nextQuestion != null && nextQuestion.question != null && typeof nextQuestion.question.answer !== "undefined";
+                    nextHasAnswer = nextQuestion != null &&
+                        nextQuestion.question != null &&
+                        typeof nextQuestion.question.answer !== "undefined" &&
+                        !(nextQuestion.question.answer.value === null || typeof nextQuestion.question.answer.value === "undefined");
                 }
 
                 return nextHasAnswer;
@@ -529,7 +518,7 @@
                         const q = this.questions.find(x => x.id === questionId);
 
                         //increment progress only if question was not answered before
-                        const incrementProgress = typeof q.answer === "undefined";
+                        const incrementProgress = typeof q.answer === "undefined" || (typeof q.answer.value === "undefined" || q.answer.value === null);
                         q.answer = {value: answer};
 
                         if (isLastQuestion) {
@@ -601,7 +590,7 @@
                         //For now is OK since we are depending only on ONE related Question
                         const questions = this.getQuestionsOfOrder(prevQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
-                        if (!firstQuestion.answer) {
+                        if (!firstQuestion.answer || !firstQuestion.answer.value) {
                             canGoToPrev = false;
                             break;
                         }
@@ -672,7 +661,7 @@
                         //For now is OK since we are depending only on ONE related Question
                         const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
-                        if (!firstQuestion.answer) {
+                        if (!firstQuestion.answer || !firstQuestion.answer.value) {
                             canGoToNext = false;
                             break;
                         }
@@ -742,7 +731,7 @@
                         //For now is OK since we are depending only on ONE related Question
                         const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
-                        if (!firstQuestion.answer) {
+                        if (!firstQuestion.answer || !firstQuestion.answer.value) {
                             shouldDisable = true;
                             break;
                         }
@@ -923,8 +912,7 @@
                     qScroll.css('top', `${topOffset}px`);
 
                     qScroll.fadeIn();
-                }
-                else {
+                } else {
                     qScroll.hide();
                 }
             },
@@ -950,7 +938,7 @@
                 result.disabled = false; // we will be disabling based on answers
                 return result;
             });
-            const questions = questionsData.filter(question => !question.optional);
+            //const questions = questionsData.filter(question => !question.optional);
             const subQuestions = questionsData.filter(question => question.optional);
             this.questions.push(...questionsData);
             this.subQuestions.push(...subQuestions);
@@ -961,7 +949,8 @@
                     const a = this.surveyData.answers.find(a => a.question_id === q.id);
                     if (a) {
                         q.answer = a;
-                        if (lastOrder !== q.pivot.order) {
+                        //check if answer is actually answered and not just a suggested answer
+                        if (a.value && lastOrder !== q.pivot.order) {
                             this.progress = this.progress + 1;
                         }
                     }
@@ -984,7 +973,10 @@
                 return elem.pivot.order;
             }).length;
 
-            if (this.surveyData.answers && this.surveyData.answers.length === this.questions.length) {
+            const allQuestionsAnswered = this.surveyData.answers &&
+                this.surveyData.answers.filter(a => !(a.value === null || typeof a.value === 'undefined')).length === this.questions.length;
+
+            if (allQuestionsAnswered) {
                 this.stage = "complete";
             }
 

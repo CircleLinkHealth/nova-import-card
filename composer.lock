@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a952f6a15c58bbd20758bb5c23697bef",
+    "content-hash": "a88df3c87448b22cc0eeb3bee36b0482",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -302,12 +302,42 @@
             "time": "2019-10-09T09:12:27+00:00"
         },
         {
+            "name": "circlelinkhealth/cpmmigrations",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/module-cpm-migrations.git",
+                "reference": "819ca94ec4bd2ab30a3b4656560047188bd20d13"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\CpmMigrations\\Providers\\CpmMigrationsServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\CpmMigrations\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2019-11-27T01:48:00+00:00"
+        },
+        {
             "name": "circlelinkhealth/customer",
-            "version": "v1.3.3",
+            "version": "v1.5.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "9a2742fb177d657182feb9b32fa6bb997480c0ed"
+                "reference": "4e3650229e104eacba6fd286d96fad7eeb5fc408"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
@@ -340,7 +370,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-21T18:27:32+00:00"
+            "time": "2019-11-27T01:40:43+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -378,6 +408,39 @@
             "time": "2019-10-02T13:24:06+00:00"
         },
         {
+            "name": "circlelinkhealth/sqlviews",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
+                "reference": "f261050c53d8eecd351bac2d05499363b72c813c"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\SqlViews\\Providers\\SqlViewsServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\SqlViews\\": ""
+                },
+                "classmap": [
+                    "Database/Views"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2019-11-27T01:46:44+00:00"
+        },
+        {
             "name": "circlelinkhealth/timetracking",
             "version": "v1.1.2",
             "source": {
@@ -409,6 +472,72 @@
                 }
             ],
             "time": "2019-10-10T08:40:30+00:00"
+        },
+        {
+            "name": "daltcore/lara-pdf-merger",
+            "version": "2.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DALTCORE/lara-pdf-merger.git",
+                "reference": "b77296947637a5ba991def1b2c2f83d6565e24b9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DALTCORE/lara-pdf-merger/zipball/b77296947637a5ba991def1b2c2f83d6565e24b9",
+                "reference": "b77296947637a5ba991def1b2c2f83d6565e24b9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LynX39\\LaraPdfMerger\\PdfMergerServiceProvider"
+                    ],
+                    "aliases": {
+                        "PdfMerger": "LynX39\\LaraPdfMerger\\Facades\\PdfMerger"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "LynX39\\LaraPdfMerger": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Musso",
+                    "email": "lynx@deltaaskii.com",
+                    "homepage": "https://github.com/LynX39"
+                },
+                {
+                    "name": "Ramon Smit",
+                    "email": "rsmit@daltcore.com",
+                    "homepage": "https://github.com/daltcore"
+                },
+                {
+                    "name": "Marouan Sami",
+                    "email": "sami.marwen.isetcom@gmail.com",
+                    "homepage": "https://github.com/MarwenSami"
+                }
+            ],
+            "homepage": "https://github.com/MarwenSami/lara-pdf-merger",
+            "keywords": [
+                "duplex merge",
+                "laravel",
+                "manage",
+                "merge",
+                "merger",
+                "paginate",
+                "pdf"
+            ],
+            "time": "2019-09-20T11:18:17+00:00"
         },
         {
             "name": "defuse/php-encryption",
@@ -8449,6 +8578,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "circlelinkhealth/raygun": 20,
+        "circlelinkhealth/cpmmigrations": 20,
+        "circlelinkhealth/sqlviews": 20,
         "michalisantoniou6/laravel-cerberus": 20,
         "waavi/url-shortener": 20
     },

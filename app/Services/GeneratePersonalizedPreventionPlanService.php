@@ -72,8 +72,8 @@ class GeneratePersonalizedPreventionPlanService
             ->personalizedPreventionPlan()
             ->updateOrCreate(
                 [
-                    'hra_instance_id'  => $this->hraInstance->id,
-                    'vitals_instance_id'  => $this->vitalsInstance->id,
+                    'hra_instance_id'    => $this->hraInstance->id,
+                    'vitals_instance_id' => $this->vitalsInstance->id,
                 ],
                 [
                     'hra_answers'      => $this->hraAnswers,
@@ -113,7 +113,8 @@ class GeneratePersonalizedPreventionPlanService
             'multipleQuestion16'             => $this->answerForHraQuestionWithOrder(16),
             'family_conditions'              => $this->answerForHraQuestionWithOrder(18),
             'family_members_with_condition'  => $this->answerForHraQuestionWithOrder(18, 'a'),
-            'emotional'                      => $this->answerForHraQuestionWithOrder(22, '1'),
+            'emotional_little_interest'      => $this->answerForHraQuestionWithOrder(22, '1'),
+            'emotional_depressed'            => $this->answerForHraQuestionWithOrder(22, '2'),
             'fall_risk'                      => $this->answerForHraQuestionWithOrder(24),
             'hearing_impairment'             => $this->answerForHraQuestionWithOrder(25),
             /*next two should be 26 & 26a according to the excel sheet*/
@@ -149,13 +150,7 @@ class GeneratePersonalizedPreventionPlanService
 
         $answer = $this->vitalsAnswers->where('question_id', $question->id)->first();
 
-        if ( ! $answer) {
-            return [];
-        }
-
-        return array_key_exists('value', $answer->value)
-            ? $answer->value['value']
-            : $answer->value;
+        return GenerateProviderReportService::sanitizedValue($answer);
 
     }
 
@@ -165,13 +160,7 @@ class GeneratePersonalizedPreventionPlanService
 
         $answer = $this->hraAnswers->where('question_id', $question->id)->first();
 
-        if ( ! $answer) {
-            return [];
-        }
-
-        return array_key_exists('value', $answer->value)
-            ? $answer->value['value']
-            : $answer->value;
+        return GenerateProviderReportService::sanitizedValue($answer);
     }
 }
 

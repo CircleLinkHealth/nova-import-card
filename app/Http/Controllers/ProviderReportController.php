@@ -39,6 +39,6 @@ class ProviderReportController extends Controller
 
         $reportData = $this->service->formatReportDataForView($report);
 
-        return view('providerReport.report', compact(['reportData', 'patient']));
+        return view('reports.provider', compact(['reportData', 'patient']));
     }
 }

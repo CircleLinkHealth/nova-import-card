@@ -16,12 +16,12 @@
                                :placeholder="placeholder"/>
                     </div>
                     <!--remove input fields button-->
-                    <div v-if="placeholderForSingleQuestion.length > 1"
+                    <div v-if="!readOnly && placeholderForSingleQuestion.length > 1"
                          class="col-md-12"
                          v-for="extraFieldButtonName in extraFieldButtonNames">
                         <div @click="removeSingleInputFields(index)"
                              class="button-text-only remove">
-                            <font-awesome-icon icon="minus-circle"/>
+                            <mdb-icon icon="minus-circle"/>
                             {{extraFieldButtonName.remove_extra_answer_text}}
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                          class="col-md-12">
                     <span class="button-text-only"
                           @click="addInputField(extraFieldButtonName.placeholder)">
-                          <font-awesome-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
+                          <mdb-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
                     </span>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                          v-for="extraFieldButtonName in extraFieldButtonNames">
                         <div @click="removeInputFields(index)"
                              class="button-text-only remove">
-                            <font-awesome-icon icon="minus-circle"/>
+                            <mdb-icon icon="minus-circle"/>
                             {{extraFieldButtonName.remove_extra_answer_text}}
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                          class="col-md-12">
                     <span class="button-text-only"
                           @click="addInputFields(extraFieldButtonName.sub_parts)">
-                          <font-awesome-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
+                          <mdb-icon icon="plus-circle"/> {{extraFieldButtonName.add_extra_answer_text}}
                     </span>
                     </div>
                 </div>
@@ -103,7 +103,7 @@
                     :disabled="!(isOptional ||hasTypedInAllInputs || hasTypedInSubParts)"
                     @click="handleAnswer()">
                 {{isLastQuestion ? 'Complete' : 'Next'}}
-                <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+                <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
             </mdbBtn>
         </div>
     </div>
@@ -111,22 +111,14 @@
 
 <script>
 
-    import {mdbBtn} from 'mdbvue';
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faMinusCircle, faPlusCircle, faSpinner} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
-    library.add(faSpinner);
-    library.add(faPlusCircle);
-    library.add(faMinusCircle);
+    import {mdbBtn, mdbIcon} from 'mdbvue';
 
     const SINGLE_INPUT_KEY_NAME = "name";
 
     export default {
         name: "questionTypeText",
         props: ['question', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
-        components: {mdbBtn, FontAwesomeIcon},
-
+        components: {mdbBtn, mdbIcon},
 
         data() {
             return {
@@ -234,8 +226,7 @@
                         this.subParts.push(fields);
                     });
 
-                }
-                else {
+                } else {
                     const fields = extraFieldSubParts.map((x) => {
                         return Object.assign({}, x, {value: '', active: false});
                     });
@@ -272,6 +263,22 @@
                 }
 
                 this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer, this.isLastQuestion);
+            },
+
+            setInputFieldsFromServer(value) {
+                if (this.questionHasSubParts) {
+                    this.subParts = [];
+                    this.addInputFields(this.questionOptions[0].sub_parts, value);
+                } else {
+                    let placeholder = "";
+                    if (this.extraFieldButtonNames && this.extraFieldButtonNames.length) {
+                        placeholder = this.extraFieldButtonNames[0].placeholder;
+                    }
+
+                    value.forEach(answer => {
+                        this.addInputField(placeholder, answer[SINGLE_INPUT_KEY_NAME]);
+                    });
+                }
             }
         },
 
@@ -298,22 +305,10 @@
             this.singleTitle = this.questionOptions && this.questionOptions.length && this.questionOptions[0].title;
 
             if (this.question.answer && this.question.answer.value) {
-                if (this.questionHasSubParts) {
-                    this.subParts = [];
-                    this.addInputFields(this.questionOptions[0].sub_parts, this.question.answer.value);
-                }
-                else {
-                    let placeholder = "";
-                    if (this.extraFieldButtonNames && this.extraFieldButtonNames.length) {
-                        placeholder = this.extraFieldButtonNames[0].placeholder;
-                    }
-
-                    this.question.answer.value.forEach(answer => {
-                        this.addInputField(placeholder, answer[SINGLE_INPUT_KEY_NAME]);
-                    });
-                }
-            }
-            else {
+                this.setInputFieldsFromServer(this.question.answer.value);
+            } else if (this.question.answer && this.question.answer.suggested_value) {
+                this.setInputFieldsFromServer(this.question.answer.suggested_value);
+            } else {
                 /*get placeholder for single question input*/
                 if (this.questionHasPlaceHolderInSubParts && !this.questionHasPlaceHolderInOptions) {
                     const placeholder = this.questionOptions[0].sub_parts.map(q => q.placeholder);

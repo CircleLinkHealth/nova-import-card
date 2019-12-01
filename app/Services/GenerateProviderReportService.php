@@ -4,6 +4,7 @@
 namespace App\Services;
 
 
+use App\Answer;
 use App\Survey;
 use App\User;
 use Carbon\Carbon;
@@ -112,6 +113,15 @@ class GenerateProviderReportService
 
     }
 
+    private function answerForHraQuestionWithOrder($order, $subOrder = null, $default = [])
+    {
+        $question = $this->hraQuestions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
+
+        $answer = $this->hraAnswers->where('question_id', $question->id)->first();
+
+        return $this->sanitizedValue($answer, $default);
+    }
+
     private function getAllergyHistory()
     {
         return $this->answerForHraQuestionWithOrder(21);
@@ -178,20 +188,15 @@ class GenerateProviderReportService
      */
     private function getMentalState()
     {
-        //see values for phq2
-        $phq2scores = [
-            'not at all'              => 0,
-            'several days'            => 1,
-            'more than half the days' => 2,
-            'nearly every day'        => 3,
-        ];
-
         $answer1 = $this->answerForHraQuestionWithOrder(22, '1');
         $answer2 = $this->answerForHraQuestionWithOrder(22, '2');
 
+        $depressionScoresArray = ProviderReportService::depressionScoreArray();
+
         return [
-            'depression_score' => $phq2scores[strtolower(ProviderReportService::checkInputValueIsNotEmpty($answer1,
-                    '22.1', []))] + $phq2scores[strtolower(ProviderReportService::checkInputValueIsNotEmpty($answer2,
+            'depression_score' => $depressionScoresArray[strtolower(ProviderReportService::checkInputValueIsNotEmpty($answer1,
+                    '22.1',
+                    []))] + $depressionScoresArray[strtolower(ProviderReportService::checkInputValueIsNotEmpty($answer2,
                     '22.2', []))],
         ];
     }
@@ -211,6 +216,40 @@ class GenerateProviderReportService
 
         return $vitals;
 
+    }
+
+    private function answerForVitalsQuestionWithOrder($order, $subOrder = null)
+    {
+        $question = $this->vitalsQuestions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
+
+        $answer = $this->vitalsAnswers->where('question_id', $question->id)->first();
+
+        return $this->sanitizedValue($answer);
+    }
+
+    /**
+     * @param Answer $answer
+     *
+     * @param array $default
+     *
+     * @return array|mixed
+     */
+    public static function sanitizedValue(Answer $answer = null, $default = [])
+    {
+        if ( ! $answer) {
+            return $default;
+        }
+
+        $value = array_key_exists('value', $answer->value)
+            ? $answer->value['value']
+            : $answer->value;
+
+        //sometimes we have arrays of 1 element which has [name=>null]
+        if (is_array($value)) {
+            return ProviderReportService::getArrayValue($value);
+        }
+
+        return $value;
     }
 
     private function getDiet()
@@ -236,7 +275,7 @@ class GenerateProviderReportService
         $socialFactors = [];
 
         $socialFactors['tobacco']['has_used']             = $this->answerForHraQuestionWithOrder(11);
-        $socialFactors['tobacco']['last_smoked']          = $this->answerForHraQuestionWithOrder(11, 'b');
+        $socialFactors['tobacco']['last_smoked']          = strtolower($this->answerForHraQuestionWithOrder(11, 'b', ''));
         $socialFactors['tobacco']['amount']               = $this->answerForHraQuestionWithOrder(11, 'c');
         $socialFactors['tobacco']['interest_in_quitting'] = $this->answerForHraQuestionWithOrder(11, 'd');
 
@@ -265,7 +304,7 @@ class GenerateProviderReportService
     {
         $exerciseActivityLevels          = [];
         $val                             = $this->answerForHraQuestionWithOrder(14);
-        $exerciseActivityLevels['value'] = $val;
+        $exerciseActivityLevels['value'] = lcfirst($val);
 
         return $exerciseActivityLevels;
     }
@@ -307,37 +346,5 @@ class GenerateProviderReportService
     private function getSpecificPatientRequests()
     {
         return $this->answerForHraQuestionWithOrder(46);
-    }
-
-    private function answerForHraQuestionWithOrder($order, $subOrder = null)
-    {
-        $question = $this->hraQuestions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
-
-        $answer = $this->hraAnswers->where('question_id', $question->id)->first();
-
-        if ( ! $answer) {
-            return [];
-        }
-
-        return array_key_exists('value', $answer->value)
-            ? $answer->value['value']
-            : $answer->value;
-    }
-
-
-    private function answerForVitalsQuestionWithOrder($order, $subOrder = null)
-    {
-        $question = $this->vitalsQuestions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
-
-        $answer = $this->vitalsAnswers->where('question_id', $question->id)->first();
-
-        if ( ! $answer) {
-            return [];
-        }
-
-        return array_key_exists('value', $answer->value)
-            ? $answer->value['value']
-            : $answer->value;
-
     }
 }

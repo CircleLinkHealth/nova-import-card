@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.7.28 on 2019-10-29 23:13:00.
+ * Generated for Laravel 5.7.28 on 2019-11-26 14:45:39.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -14644,201 +14644,6 @@ namespace Waavi\UrlShortener\Facades {
  
 }
 
-namespace Michalisantoniou6\Cerberus { 
-
-    /**
-     * This file is part of Cerberus,
-     * a role & permission management solution for Laravel.
-     *
-     * @license MIT
-     * @package Michalisantoniou6\Cerberus
-     */ 
-    class CerberusFacade {
-        
-        /**
-         * Checks if the current user has a role by its name
-         *
-         * @param string $name Role name.
-         * @return bool 
-         * @static 
-         */ 
-        public static function hasRole($role, $requireAll = false)
-        {
-                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
-                        return $instance->hasRole($role, $requireAll);
-        }
-        
-        /**
-         * Check if the current user has a permission by its name
-         *
-         * @param string $permission Permission string.
-         * @return bool 
-         * @static 
-         */ 
-        public static function hasPermission($permission, $requireAll = false)
-        {
-                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
-                        return $instance->hasPermission($permission, $requireAll);
-        }
-        
-        /**
-         * Check if the current user has a role or permission by its name
-         *
-         * @param array|string $roles The role(s) needed.
-         * @param array|string $permissions The permission(s) needed.
-         * @param array $options The Options.
-         * @return bool 
-         * @static 
-         */ 
-        public static function ability($roles, $permissions, $options = array())
-        {
-                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
-                        return $instance->ability($roles, $permissions, $options);
-        }
-        
-        /**
-         * Get the currently authenticated user or null.
-         *
-         * @return \Michalisantoniou6\Cerberus\Illuminate\Auth\UserInterface|null 
-         * @static 
-         */ 
-        public static function user()
-        {
-                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
-                        return $instance->user();
-        }
-        
-        /**
-         * Filters a route for a role or set of roles.
-         * 
-         * If the third parameter is null then abort with status code 403.
-         * Otherwise the $result is returned.
-         *
-         * @param string $route Route pattern. i.e: "admin/*"
-         * @param array|string $roles The role(s) needed
-         * @param mixed $result i.e: Redirect::to('/')
-         * @param bool $requireAll User must have all roles
-         * @return mixed 
-         * @static 
-         */ 
-        public static function routeNeedsRole($route, $roles, $result = null, $requireAll = true)
-        {
-                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
-                        return $instance->routeNeedsRole($route, $roles, $result, $requireAll);
-        }
-        
-        /**
-         * Filters a route for a permission or set of permissions.
-         * 
-         * If the third parameter is null then abort with status code 403.
-         * Otherwise the $result is returned.
-         *
-         * @param string $route Route pattern. i.e: "admin/*"
-         * @param array|string $permissions The permission(s) needed
-         * @param mixed $result i.e: Redirect::to('/')
-         * @param bool $requireAll User must have all permissions
-         * @return mixed 
-         * @static 
-         */ 
-        public static function routeNeedsPermission($route, $permissions, $result = null, $requireAll = true)
-        {
-                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
-                        return $instance->routeNeedsPermission($route, $permissions, $result, $requireAll);
-        }
-        
-        /**
-         * Filters a route for role(s) and/or permission(s).
-         * 
-         * If the third parameter is null then abort with status code 403.
-         * Otherwise the $result is returned.
-         *
-         * @param string $route Route pattern. i.e: "admin/*"
-         * @param array|string $roles The role(s) needed
-         * @param array|string $permissions The permission(s) needed
-         * @param mixed $result i.e: Redirect::to('/')
-         * @param bool $requireAll User must have all roles and permissions
-         * @return void 
-         * @static 
-         */ 
-        public static function routeNeedsRoleOrPermission($route, $roles, $permissions, $result = null, $requireAll = false)
-        {
-                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
-                        $instance->routeNeedsRoleOrPermission($route, $roles, $permissions, $result, $requireAll);
-        }
-         
-    }
- 
-}
-
-namespace Intervention\Image\Facades { 
-
-    /**
-     * 
-     *
-     */ 
-    class Image {
-        
-        /**
-         * Overrides configuration settings
-         *
-         * @param array $config
-         * @return self 
-         * @static 
-         */ 
-        public static function configure($config = array())
-        {
-                        /** @var \Intervention\Image\ImageManager $instance */
-                        return $instance->configure($config);
-        }
-        
-        /**
-         * Initiates an Image instance from different input types
-         *
-         * @param mixed $data
-         * @return \Intervention\Image\Image 
-         * @static 
-         */ 
-        public static function make($data)
-        {
-                        /** @var \Intervention\Image\ImageManager $instance */
-                        return $instance->make($data);
-        }
-        
-        /**
-         * Creates an empty image canvas
-         *
-         * @param int $width
-         * @param int $height
-         * @param mixed $background
-         * @return \Intervention\Image\Image 
-         * @static 
-         */ 
-        public static function canvas($width, $height, $background = null)
-        {
-                        /** @var \Intervention\Image\ImageManager $instance */
-                        return $instance->canvas($width, $height, $background);
-        }
-        
-        /**
-         * Create new cached image and run callback
-         * (requires additional package intervention/imagecache)
-         *
-         * @param \Closure $callback
-         * @param int $lifetime
-         * @param boolean $returnObj
-         * @return \Image 
-         * @static 
-         */ 
-        public static function cache($callback, $lifetime = null, $returnObj = false)
-        {
-                        /** @var \Intervention\Image\ImageManager $instance */
-                        return $instance->cache($callback, $lifetime, $returnObj);
-        }
-         
-    }
- 
-}
-
 namespace Barryvdh\Snappy\Facades { 
 
     /**
@@ -15305,6 +15110,278 @@ namespace Barryvdh\Snappy\Facades {
         {
                         /** @var \Barryvdh\Snappy\ImageWrapper $instance */
                         return $instance->stream($filename);
+        }
+         
+    }
+ 
+}
+
+namespace LynX39\LaraPdfMerger\Facades { 
+
+    /**
+     * 
+     *
+     */ 
+    class PdfMerger {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function init()
+        {
+                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
+                        return $instance->init();
+        }
+        
+        /**
+         * Add a PDF for inclusion in the merge with a valid file path. Pages should be formatted: 1,3,6, 12-16.
+         *
+         * @param $filepath
+         * @param $pages
+         * @return \LynX39\LaraPdfMerger\PdfManage 
+         * @throws Exception
+         * @static 
+         */ 
+        public static function addPDF($filepath, $pages = 'all', $orientation = null)
+        {
+                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
+                        return $instance->addPDF($filepath, $pages, $orientation);
+        }
+        
+        /**
+         * Merges your provided PDFs and outputs to specified location.
+         *
+         * @param string $orientation
+         * @return void 
+         * @throws \Exception if there are no PDFs to merge
+         * @static 
+         */ 
+        public static function merge($orientation = null, $meta = array())
+        {
+                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
+                        $instance->merge($orientation, $meta);
+        }
+        
+        /**
+         * Merges your provided PDFs and adds blank pages between documents as needed to allow duplex printing
+         *
+         * @param string $orientation
+         * @return void 
+         * @throws \Exception if there are no PDFs to merge
+         * @static 
+         */ 
+        public static function duplexMerge($orientation = null, $meta = array())
+        {
+                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
+                        $instance->duplexMerge($orientation, $meta);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function save($outputpath = 'newfile.pdf', $outputmode = 'file')
+        {
+                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
+                        return $instance->save($outputpath, $outputmode);
+        }
+         
+    }
+ 
+}
+
+namespace Intervention\Image\Facades { 
+
+    /**
+     * 
+     *
+     */ 
+    class Image {
+        
+        /**
+         * Overrides configuration settings
+         *
+         * @param array $config
+         * @return self 
+         * @static 
+         */ 
+        public static function configure($config = array())
+        {
+                        /** @var \Intervention\Image\ImageManager $instance */
+                        return $instance->configure($config);
+        }
+        
+        /**
+         * Initiates an Image instance from different input types
+         *
+         * @param mixed $data
+         * @return \Intervention\Image\Image 
+         * @static 
+         */ 
+        public static function make($data)
+        {
+                        /** @var \Intervention\Image\ImageManager $instance */
+                        return $instance->make($data);
+        }
+        
+        /**
+         * Creates an empty image canvas
+         *
+         * @param int $width
+         * @param int $height
+         * @param mixed $background
+         * @return \Intervention\Image\Image 
+         * @static 
+         */ 
+        public static function canvas($width, $height, $background = null)
+        {
+                        /** @var \Intervention\Image\ImageManager $instance */
+                        return $instance->canvas($width, $height, $background);
+        }
+        
+        /**
+         * Create new cached image and run callback
+         * (requires additional package intervention/imagecache)
+         *
+         * @param \Closure $callback
+         * @param int $lifetime
+         * @param boolean $returnObj
+         * @return \Image 
+         * @static 
+         */ 
+        public static function cache($callback, $lifetime = null, $returnObj = false)
+        {
+                        /** @var \Intervention\Image\ImageManager $instance */
+                        return $instance->cache($callback, $lifetime, $returnObj);
+        }
+         
+    }
+ 
+}
+
+namespace Michalisantoniou6\Cerberus { 
+
+    /**
+     * This file is part of Cerberus,
+     * a role & permission management solution for Laravel.
+     *
+     * @license MIT
+     * @package Michalisantoniou6\Cerberus
+     */ 
+    class CerberusFacade {
+        
+        /**
+         * Checks if the current user has a role by its name
+         *
+         * @param string $name Role name.
+         * @return bool 
+         * @static 
+         */ 
+        public static function hasRole($role, $requireAll = false)
+        {
+                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
+                        return $instance->hasRole($role, $requireAll);
+        }
+        
+        /**
+         * Check if the current user has a permission by its name
+         *
+         * @param string $permission Permission string.
+         * @return bool 
+         * @static 
+         */ 
+        public static function hasPermission($permission, $requireAll = false)
+        {
+                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
+                        return $instance->hasPermission($permission, $requireAll);
+        }
+        
+        /**
+         * Check if the current user has a role or permission by its name
+         *
+         * @param array|string $roles The role(s) needed.
+         * @param array|string $permissions The permission(s) needed.
+         * @param array $options The Options.
+         * @return bool 
+         * @static 
+         */ 
+        public static function ability($roles, $permissions, $options = array())
+        {
+                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
+                        return $instance->ability($roles, $permissions, $options);
+        }
+        
+        /**
+         * Get the currently authenticated user or null.
+         *
+         * @return \Michalisantoniou6\Cerberus\Illuminate\Auth\UserInterface|null 
+         * @static 
+         */ 
+        public static function user()
+        {
+                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
+                        return $instance->user();
+        }
+        
+        /**
+         * Filters a route for a role or set of roles.
+         * 
+         * If the third parameter is null then abort with status code 403.
+         * Otherwise the $result is returned.
+         *
+         * @param string $route Route pattern. i.e: "admin/*"
+         * @param array|string $roles The role(s) needed
+         * @param mixed $result i.e: Redirect::to('/')
+         * @param bool $requireAll User must have all roles
+         * @return mixed 
+         * @static 
+         */ 
+        public static function routeNeedsRole($route, $roles, $result = null, $requireAll = true)
+        {
+                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
+                        return $instance->routeNeedsRole($route, $roles, $result, $requireAll);
+        }
+        
+        /**
+         * Filters a route for a permission or set of permissions.
+         * 
+         * If the third parameter is null then abort with status code 403.
+         * Otherwise the $result is returned.
+         *
+         * @param string $route Route pattern. i.e: "admin/*"
+         * @param array|string $permissions The permission(s) needed
+         * @param mixed $result i.e: Redirect::to('/')
+         * @param bool $requireAll User must have all permissions
+         * @return mixed 
+         * @static 
+         */ 
+        public static function routeNeedsPermission($route, $permissions, $result = null, $requireAll = true)
+        {
+                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
+                        return $instance->routeNeedsPermission($route, $permissions, $result, $requireAll);
+        }
+        
+        /**
+         * Filters a route for role(s) and/or permission(s).
+         * 
+         * If the third parameter is null then abort with status code 403.
+         * Otherwise the $result is returned.
+         *
+         * @param string $route Route pattern. i.e: "admin/*"
+         * @param array|string $roles The role(s) needed
+         * @param array|string $permissions The permission(s) needed
+         * @param mixed $result i.e: Redirect::to('/')
+         * @param bool $requireAll User must have all roles and permissions
+         * @return void 
+         * @static 
+         */ 
+        public static function routeNeedsRoleOrPermission($route, $roles, $permissions, $result = null, $requireAll = false)
+        {
+                        /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
+                        $instance->routeNeedsRoleOrPermission($route, $roles, $permissions, $result, $requireAll);
         }
          
     }
@@ -17923,13 +18000,15 @@ namespace  {
 
     class UrlShortener extends \Waavi\UrlShortener\Facades\UrlShortener {}
 
-    class Cerberus extends \Michalisantoniou6\Cerberus\CerberusFacade {}
-
-    class Image extends \Intervention\Image\Facades\Image {}
-
     class PDF extends \Barryvdh\Snappy\Facades\SnappyPdf {}
 
     class SnappyImage extends \Barryvdh\Snappy\Facades\SnappyImage {}
+
+    class PdfMerger extends \LynX39\LaraPdfMerger\Facades\PdfMerger {}
+
+    class Image extends \Intervention\Image\Facades\Image {}
+
+    class Cerberus extends \Michalisantoniou6\Cerberus\CerberusFacade {}
  
 }
 

@@ -37,7 +37,7 @@
                 :disabled="!answerChecked"
                 @click="handleAnswers">
             {{isLastQuestion ? 'Complete' : 'Next'}}
-            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+            <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
         </mdbBtn>
     </div>
 
@@ -45,18 +45,14 @@
 
 <script>
 
-    import {mdbBtn} from "mdbvue";
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+    import {mdbBtn, mdbIcon} from "mdbvue";
 
-    library.add(faSpinner);
     export default {
         name: "questionTypeCheckbox",
         props: ['question', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
         components: {
             mdbBtn,
-            FontAwesomeIcon
+            mdbIcon
         },
 
         data() {
@@ -97,8 +93,7 @@
 
                 if (this.hasAnyCustomInputNotFilled()) {
                     return false;
-                }
-                else {
+                } else {
                     return this.checkBoxValues.filter(q => q.checked === true).length > 0;
                 }
             },
@@ -169,6 +164,24 @@
                 this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer, this.isLastQuestion);
             },
 
+            setCheckBoxValuesFromServer(value) {
+                if (Array.isArray(value)) {
+                    value.forEach(answer => {
+                        const cv = this.checkBoxValues.find(c => c.value === answer.name);
+                        if (!cv) {
+                            return;
+                        }
+
+                        cv.checked = true;
+                        if (answer.type) {
+                            cv.customInput = answer.type;
+                        }
+                    });
+                } else {
+                    //todo
+                }
+            }
+
 
         },
 
@@ -185,22 +198,11 @@
             const options = this.checkBoxValues.filter(checkBoxValue => checkBoxValue.options !== null).map(checkBoxValue => checkBoxValue.options);
             this.questionOptions.push(...options);
 
-            if (this.question.answer && this.question.answer.value) {
-                if (Array.isArray(this.question.answer.value)) {
-                    this.question.answer.value.forEach(answer => {
-                        const cv = this.checkBoxValues.find(c => c.value === answer.name);
-                        if (!cv) {
-                            return;
-                        }
-
-                        cv.checked = true;
-                        if (answer.type) {
-                            cv.customInput = answer.type;
-                        }
-                    });
-                }
-                else {
-                    //todo
+            if (this.question.answer) {
+                if (this.question.answer.value) {
+                    this.setCheckBoxValuesFromServer(this.question.answer.value);
+                } else if (this.question.answer.suggested_value) {
+                    this.setCheckBoxValuesFromServer(this.question.answer.suggested_value);
                 }
             }
 

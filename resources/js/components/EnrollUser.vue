@@ -9,7 +9,7 @@
 
                         <div class="spinner-overlay" v-show="waiting">
                             <div class="text-center">
-                                <font-awesome-icon icon="spinner" :spin="true"/>
+                                <mdb-icon icon="spinner" :spin="true"/>
                             </div>
                         </div>
 
@@ -39,16 +39,11 @@
 
 <script>
 
-    import {mdbAlert, mdbBtn} from 'mdbvue';
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
-    library.add(faSpinner);
+    import {mdbAlert, mdbBtn, mdbIcon} from 'mdbvue';
 
     export default {
         name: "EnrollUser",
-        components: {mdbBtn, mdbAlert, FontAwesomeIcon},
+        components: {mdbBtn, mdbAlert, mdbIcon},
         props: ['patientName', 'patientId'],
         data() {
             return {
