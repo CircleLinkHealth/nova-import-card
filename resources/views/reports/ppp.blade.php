@@ -96,36 +96,41 @@ function getStringValue($val, $default = '')
             </thead>
             <tbody>
 
-            <?php
-            $codeWithText = '99498 (if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)';
-//            $emphasizedCodeText = '(if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)';
-            $emphasisedBody = '(NOTE: $0 co-pay if done during AWV)';
-            ?>
+
 
             @foreach($personalizedHealthAdvices as $key => $tasks)
+
                 @if(! empty($tasks['tasks']))
-                    @foreach($tasks['table_data'] as $table)
+
+                    <?php
+                    $tableData = $tasks['table_data'];
+                    $codeWithText = '99498 (if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)';
+                    //            $emphasizedCodeText = '(if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)';
+                    $emphasisedBody = '(NOTE: $0 co-pay if done during AWV)';
+                    ?>
+
+                    @foreach($tableData as $data)
                         <tr>
                             {{--Emphasize code 99498 and the related body --}}
                             @if($table[0]['emphasize_code'])
                                 <td class="suggested-list-body">
                                     <?php
-                                    echo $table[0]['body']
+                                    echo $data[0]['body']
                                     ?>
                                 </td>
 
-                                <td>{{$table[0]['time_frame']}}</td>
+                                <td>{{$data[0]['time_frame']}}</td>
 
                                 <td style="font-weight: 500">
                                     <?php
-                                    echo $table[0]['code']
+                                    echo $data[0]['code']
                                     ?>
                                 </td>
                             @else
                                 <td class="suggested-list-body">
-                                    <strong>{{$table[0]['body']}}</strong>
+                                    <strong>{{$data[0]['body']}}</strong>
                                 </td>
-                                <td>{{$table[0]['time_frame']}}</td>
+                                <td>{{$data[0]['time_frame']}}</td>
                                 <td style="font-weight: 500">{{$table[0]['code']}}</td>
                             @endif
                         </tr>
