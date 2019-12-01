@@ -96,7 +96,7 @@ return [
                 'timeout'    => 300,
             ],
         ],
-        'worker' => [
+        'production_v3' => [
             'supervisor-1' => [
                 'connection'    => 'redis',
                 'queue'         => ['default', 'low', 'demanding'],
