@@ -6,6 +6,7 @@
 @import 'variables';
 
 $primary-color: #50b2e2;
+$primary-color-active: #4aa5d2;
 
 @import '~@fortawesome/fontawesome-free/css/all.min.css';
 @import '~bootstrap-css-only/css/bootstrap.min.css';
@@ -110,7 +111,7 @@ html, body, #app {
     text-transform: none;
     height: 40px;
     border-radius: 5px;
-    border: solid 1px #4aa5d2;
+    border: solid 1px $primary-color-active;
     background-color: $primary-color;
     margin: 0 0 10px 0;
 }
@@ -255,6 +256,15 @@ html, body, #app {
 
 @media (max-width: 490px) {
 
+}
+
+.btn.btn-primary.radio.active, input.text-field.active, input.text-field.active::placeholder {
+    background-color: $primary-color-active !important;
+    color: #ffffff !important;
+}
+
+.btn.btn-primary.radio:hover, input.text-field:hover {
+    border-color: $primary-color-active !important;
 }
 
 .no-padding {

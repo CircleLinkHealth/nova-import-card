@@ -289,15 +289,6 @@
         width: 25%;
     }
 
-    .btn.radio.active, input.text-field.active, input.text-field.active::placeholder {
-        background-color: #4aa5d2 !important;
-        color: #ffffff !important;
-    }
-
-    .btn.radio:hover, input.text-field:hover {
-        border-color: #4aa5d2 !important;
-    }
-
     .btn.btn-sm {
         font-size: 14px;
         width: 30px;
