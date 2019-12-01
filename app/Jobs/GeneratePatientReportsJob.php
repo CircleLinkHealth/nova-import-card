@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\CPM\PatientReportCreatedEvent;
 use App\Notifications\SendReport;
 use App\PersonalizedPreventionPlan;
 use App\Services\GeneratePersonalizedPreventionPlanService;
@@ -95,6 +96,9 @@ class GeneratePatientReportsJob implements ShouldQueue
         ])
                        ->findOrFail($this->patientId);
 
+        //instantiate Redis Event class to emit report created events to CPM
+        $redisEvent = new PatientReportCreatedEvent($patient);
+
         //Generate Reports
         $providerReport = (new GenerateProviderReportService($patient))->generateData();
 
@@ -121,11 +125,8 @@ class GeneratePatientReportsJob implements ShouldQueue
             return;
         }
 
-        Redis::publish('awv-patient-report-created',
-            json_encode([
-                'patient_id'      => $patient->id,
-                'report_media_id' => $providerReportMedia->id,
-            ]));
+        $redisEvent->publishReportCreated($providerReportMedia);
+
 
         $pppMedia = $this->createAndUploadPdfPPP($pppReport, $patient, $this->debug);
 
@@ -135,15 +136,11 @@ class GeneratePatientReportsJob implements ShouldQueue
             return;
         }
 
+        $redisEvent->publishReportCreated($pppMedia);
+
         if ($this->debug) {
             return;
         }
-
-        Redis::publish('awv-patient-report-created',
-            json_encode([
-                'patient_id'      => $patient->id,
-                'report_media_id' => $pppMedia->id,
-            ]));
 
         //Update AWVSummaries
         $summary = $patient->patientAWVSummaries->first();
