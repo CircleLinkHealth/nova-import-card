@@ -44,19 +44,14 @@
                 :disabled="!hasAnyInput"
                 @click="handleAnswer()">
             {{isLastQuestion ? 'Complete' : 'Next'}}
-            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+            <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
         </mdbBtn>
     </div>
 </template>
 
 <script>
 
-    import {mdbBtn} from "mdbvue";
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
-    library.add(faSpinner);
+    import {mdbBtn, mdbIcon} from "mdbvue";
 
     const AUTO_GENERATE_FUNCS = {
         'bmi_func': '703 * ($mass$ / Math.pow($height$,2))'
@@ -65,7 +60,7 @@
     export default {
         name: "questionTypeNumber",
         props: ['question', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly', 'getAllQuestionsFunc'],
-        components: {mdbBtn, FontAwesomeIcon},
+        components: {mdbBtn, mdbIcon},
 
         data() {
             return {
@@ -215,7 +210,7 @@
                                 //p: { order, type }
                                 const targetQuestion = questions.find(q => q.pivot.order === p.order);
 
-                                if (!targetQuestion || !targetQuestion.answer) {
+                                if (!targetQuestion || !targetQuestion.answer || !targetQuestion.answer.value) {
                                     return;
                                 }
 
@@ -237,6 +232,17 @@
                 } else {
                     //todo
                 }
+            },
+
+            setValueFromServer(value) {
+                if (typeof value === "string") {
+                    this.inputNumbers.push(value)
+                } else if (Array.isArray(value)) {
+                    this.inputNumbers = value;
+                } else {
+                    //assume object
+                    this.inputNumbers = Object.values(value);
+                }
             }
         },
         created() {
@@ -244,14 +250,11 @@
             const questionOptions = this.question.type.question_type_answers.map(q => q.options);
             this.questionOptions.push(...questionOptions);
 
-            if (this.question.answer && this.question.answer.value) {
-                if (typeof this.question.answer.value === "string") {
-                    this.inputNumbers.push(this.question.answer.value)
-                } else if (Array.isArray(this.question.answer.value)) {
-                    this.inputNumbers = this.question.answer.value;
-                } else {
-                    //assume object
-                    this.inputNumbers = Object.values(this.question.answer.value);
+            if (this.question.answer) {
+                if (this.question.answer.value) {
+                    this.setValueFromServer(this.question.answer.value);
+                } else if (this.question.answer.suggested_value) {
+                    this.setValueFromServer(this.question.answer.suggested_value);
                 }
             }
 

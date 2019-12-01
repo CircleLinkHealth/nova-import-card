@@ -1,5 +1,5 @@
 html, body, #app {
-    letter-spacing: 0.78px;
+    letter-spacing: 1px;
     font-size: 14px;
     font-family: Poppins, sans-serif;
 }
@@ -61,7 +61,7 @@ table td {
 }
 
 .table thead {
-    border-bottom: 1px solid rgba(0, 0, 0, .1);
+    border-bottom: 1px solid rgba(0, 0, 0, .05);
 }
 
 .suggested-list {
@@ -82,6 +82,8 @@ table td {
 hr {
     margin: 0;
     padding: 0;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .no-border {

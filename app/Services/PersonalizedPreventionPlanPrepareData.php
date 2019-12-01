@@ -8,18 +8,18 @@ use App\TaskRecommendations;
 class PersonalizedPreventionPlanPrepareData
 {//titles
     const NUTRITION_TITLE = 'Nutrition';
-    const TOBACCO_TITLE = 'Tobacco/Smoking';
+    const TOBACCO_TITLE = 'Tobacco / Smoking';
     const ALCOHOL_TITLE = 'Alcohol';
     const DRUGS_TITLE = 'Recreational Drug Use';
     const PHYSICAL_TITLE = 'Physical Activity';
-    const WEIGHT_BMI_TITLE = 'Weight/BMI';
+    const WEIGHT_BMI_TITLE = 'Weight / BMI';
     const SEXUAL_TITLE = 'Sexual Practices';
     const EMOTIONAL_TITLE = 'Emotional Health';
     const FALL_RISK_TITLE = 'Fall Risk';
     const HEARING_TITLE = 'Hearing Impairment';
     const COGNITIVE_TITLE = 'Cognitive Impairment';
     const ADL_TITLE = 'ADL';
-    const VACCINES_TITLE = 'Immunizations/Vaccines';
+    const VACCINES_TITLE = 'Immunizations / Vaccines';
     const SCREENINGS_TITLE = 'Screenings';
     const OTHER_TITLE = 'Other misc';
     const VITALS_TITLE = 'Vitals';
@@ -727,7 +727,12 @@ class PersonalizedPreventionPlanPrepareData
 
             $getAdlRecommendations = $this->getTaskRecommendations($title, $index);
             $textToReplace = '{insert all selected tasks in Q26}'; //todo:rename this in seeder and DB
-            $replacementText = implode(", ", $adl['adl']);
+            $adlAnswers = $adl['adl'];
+            $answersUnCapitalized = collect($adlAnswers)->map(function ($answer) {
+                return lcfirst($answer);
+            })->toArray();
+
+            $replacementText = implode(", ", $answersUnCapitalized);
             $adlRecommendationBody = $getAdlRecommendations['task_body'];
             $newAdlRecommendationBody = str_replace($textToReplace, $replacementText, $adlRecommendationBody);
 
@@ -910,18 +915,18 @@ class PersonalizedPreventionPlanPrepareData
             : 'N/A';
         $breastCancerSelected = $this->checkForConditionSelected($screenings, $condition = 'Breast Cancer',
             $checkInCategory = 'family_conditions');
-
-        if ($screenings['sex'] === 'Female' && '50' < $screenings['age'] && $screenings['age'] < '74') {
+//@todo:also add if other or trans waiting answer from raph
+        if ($screenings['sex'] !== 'Male' && '50' < $screenings['age'] && $screenings['age'] < '74') {
             return $this->getTaskRecommendations($title, $index);
 
         } elseIf (!($screenings['breast_cancer_screening'] === 'In the last 2-3 years'
                 || $screenings['breast_cancer_screening'] === 'In the last year')
-            && $screenings['sex'] === 'Female'
+            && $screenings['sex'] !== 'Male'
             && $breastCancerSelected === true) {
             return $this->getTaskRecommendations($title, $index);
 
         } elseIf ($screenings['breast_cancer_screening'] !== 'In the last year'
-            && $screenings['sex'] === 'Female'
+            && $screenings['sex'] !== 'Male'
             && $breastCancerSelected === true) {
             return $this->getTaskRecommendations($title, $index);
         }
@@ -942,12 +947,12 @@ class PersonalizedPreventionPlanPrepareData
             ? $patientPppData->answers_for_eval['cervical_cancer_screening']
             : 'N/A';
 
-        if ($screenings['sex'] === 'Female'
+        if ($screenings['sex'] !== 'Male'
             && '21' <= $screenings['age']
             && $screenings['age'] <= '29'
             && $screenings['cervical_cancer_screening'] !== 'In the last 2-3 years') {
             return $this->getTaskRecommendations($title, $index);
-        } elseif ($screenings['sex'] === 'Female'
+        } elseif ($screenings['sex'] !== 'Male'
             && '21' <= $screenings['age']
             && $screenings['age'] <= '29'
             && $screenings['cervical_cancer_screening'] !== 'In the last year') {
@@ -1007,16 +1012,16 @@ class PersonalizedPreventionPlanPrepareData
         $prostateCancerSelected = $this->checkForConditionSelected($screenings, $condition = 'Prostate Cancer',
             $checkInCategory = 'multipleQuestion16');
 
-        if ($screenings['sex'] === 'Male'
+        if ($screenings['sex'] !== 'Female'
             && '55' <= $screenings['age']
             && $screenings['age'] <= '69'
             && $screenings['prostate_cancer_screening'] === '10+ years ago/Never/Unsure') {
             return $this->getTaskRecommendations($title, $index);
-        } elseif ($screenings['sex'] === 'Male'
+        } elseif ($screenings['sex'] !== 'Female'
             && $screenings['race'] === 'Black/African-Ameri.'
             && $screenings['prostate_cancer_screening'] === '10+ years ago/Never/Unsure') {
             return $this->getTaskRecommendations($title, $index);
-        } elseif ($screenings['sex'] === 'Male' && $prostateCancerSelected === true) {
+        } elseif ($screenings['sex'] !== 'Female' && $prostateCancerSelected === true) {
             return $this->getTaskRecommendations($title, $index);
         }
 
@@ -1076,14 +1081,14 @@ class PersonalizedPreventionPlanPrepareData
         $hasSkinCancerSelectedInQ18 = $this->checkForConditionSelected($screenings, $condition = 'Skin Cancer',
             $checkInCategory = 'family_conditions');
 
-        $checkSkinCancerIsSelectedInQ16 = $this->checkSkinCancerIsSelectedInQ16($screenings,
+        $skinCancerIsSelectedInQ16 = $this->checkSkinCancerIsSelectedInQ16($screenings,
             'multipleQuestion16',
             'Cancer',
-            'Skin');
+            'skin');
 
         $countFamilyMembersWithSkinCancerFromQ18 = $this->countFamilyMembersWithSkinCancer($screenings, $condition = 'Skin Cancer');
 
-        if (($hasSkinCancerSelectedInQ18 === true && $countFamilyMembersWithSkinCancerFromQ18 >= '2') || $checkSkinCancerIsSelectedInQ16 === true) {
+        if (($hasSkinCancerSelectedInQ18 === true && $countFamilyMembersWithSkinCancerFromQ18 >= '2') || $skinCancerIsSelectedInQ16 === true) {
             return $this->getTaskRecommendations($title, $index);
         }
 
@@ -1115,7 +1120,7 @@ class PersonalizedPreventionPlanPrepareData
                     && array_key_exists('name', $data)
                     && isset($data['name'])
                     && $data['name'] === $conditionName) {
-                    return $data['type'] === $conditionType;
+                    return ProviderReportService::caseInsensitiveComparison($data['type'], $conditionType);
                 }
             }
         }

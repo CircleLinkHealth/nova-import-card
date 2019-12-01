@@ -6,12 +6,12 @@
                 <mdb-col>
                     <div class="top-left-fixed">
                         <mdb-btn class="btn-toggle-edit" color="primary" @click="goBack">
-                            <font-awesome-icon icon="chevron-circle-left" size="3x"/>
+                            <mdb-icon icon="chevron-circle-left" size="3x"/>
                         </mdb-btn>
                     </div>
                     <!-- shown on mobiles -->
                     <mdb-btn flat darkWaves @click="goBack" class="hidden mobile-view">
-                        <font-awesome-icon icon="chevron-circle-left"/>
+                        <mdb-icon icon="chevron-circle-left"/>
                         Back
                     </mdb-btn>
                 </mdb-col>
@@ -19,12 +19,12 @@
                     <div class="top-right-fixed">
                         <mdb-btn class="btn-toggle-edit" :outline="readOnlyMode ? 'info' : 'danger'"
                                  @click="toggleReadOnlyMode">
-                            <font-awesome-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
+                            <mdb-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
                         </mdb-btn>
                     </div>
                     <!-- shown on mobiles -->
                     <mdb-btn flat darkWaves @click="toggleReadOnlyMode" class="hidden mobile-view">
-                        <font-awesome-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'"/>
+                        <mdb-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'"/>
                         {{readOnlyMode ? 'Edit' : 'View'}}
                     </mdb-btn>
                 </mdb-col>
@@ -47,11 +47,15 @@
                     <div class="survey-main-title">
                         <label id="sub-title">Annual Wellness Visit (AWV) Questionnaire</label>
                     </div>
-                    <div class="survey-sub-welcome-text">"Welcome to your Annual Wellness Visit (AWV) survey!
-                        Thank you for taking time to fill this out for your Doctor.
-                        If you need help answering questions, click the call button on bottom left and call the number
-                        listed for support.
-                        Thanks!"
+                    <div class="survey-sub-welcome-text">Welcome to your
+                        Annual Wellness Visit (AWV) Questionnaire! Understanding your health is of upmost importance to
+                        us,
+                        so thank you for taking time to fill this out.
+                        If there’s any question you have trouble answering, feel free to click the call button on the
+                        bottom
+                        left and a representative will help when you call the number. If you skip any questions, our
+                        reps
+                        will also reach out shortly. Thanks!
                     </div>
 
 
@@ -206,8 +210,8 @@
                     <div class="container">
                         <div class="row no-gutters scroll-buttons" v-show="!readOnlyMode">
                             <mdb-btn color="primary" @click="toggleCallAssistance" class="call-btn-round">
-                                <font-awesome-icon :icon="callAssistance ? 'times' : 'phone-alt'" style="font-size: 1.5em !important;">
-                                </font-awesome-icon>
+                                <mdb-icon :icon="callAssistance ? 'times' : 'phone-alt'" style="font-size: 1.5em !important;">
+                                </mdb-icon>
                             </mdb-btn>
                         </div>
                     </div>
@@ -259,7 +263,7 @@
 
 
 <script>
-    import {mdbBtn, mdbCol, mdbProgress, mdbRow} from 'mdbvue';
+    import {mdbBtn, mdbCol, mdbProgress, mdbRow, mdbIcon} from 'mdbvue';
     import questionTypeText from "./questionTypeText";
     import questionTypeCheckbox from "./questionTypeCheckbox";
     import questionTypeRange from "./questionTypeRange";
@@ -270,23 +274,11 @@
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
     import $ from "jquery";
 
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {
-        faChevronCircleDown,
-        faChevronCircleLeft,
-        faEye,
-        faPencilAlt,
-        faPhoneAlt,
-        faTimes
-    } from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
-    library.add(faChevronCircleLeft, faChevronCircleDown, faPhoneAlt, faTimes, faPencilAlt, faEye);
-
     export default {
         props: ['surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'debug'],
 
         components: {
+            mdbIcon,
             mdbRow,
             mdbCol,
             'mdb-btn': mdbBtn,
@@ -298,9 +290,7 @@
             'question-type-radio': questionTypeRadio,
             'question-type-date': questionTypeDate,
             'call-assistance': callAssistance,
-
             'question-type-muti-select': questionTypeMultiSelect,
-            'font-awesome-icon': FontAwesomeIcon
         },
 
         data() {
@@ -364,7 +354,10 @@
                 let nextHasAnswer = false;
                 if (canProceed) {
                     const nextQuestion = this.getNextQuestion(this.currentQuestionIndex);
-                    nextHasAnswer = nextQuestion != null && nextQuestion.question != null && typeof nextQuestion.question.answer !== "undefined";
+                    nextHasAnswer = nextQuestion != null &&
+                        nextQuestion.question != null &&
+                        typeof nextQuestion.question.answer !== "undefined" &&
+                        !(nextQuestion.question.answer.value === null || typeof nextQuestion.question.answer.value === "undefined");
                 }
 
                 return nextHasAnswer;
@@ -548,7 +541,7 @@
                         const q = this.questions.find(x => x.id === questionId);
 
                         //increment progress only if question was not answered before
-                        const incrementProgress = typeof q.answer === "undefined";
+                        const incrementProgress = typeof q.answer === "undefined" || (typeof q.answer.value === "undefined" || q.answer.value === null);
                         q.answer = {value: answer};
 
                         if (isLastQuestion) {
@@ -620,7 +613,7 @@
                         //For now is OK since we are depending only on ONE related Question
                         const questions = this.getQuestionsOfOrder(prevQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
-                        if (!firstQuestion.answer) {
+                        if (!firstQuestion.answer || !firstQuestion.answer.value) {
                             canGoToPrev = false;
                             break;
                         }
@@ -691,7 +684,7 @@
                         //For now is OK since we are depending only on ONE related Question
                         const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
-                        if (!firstQuestion.answer) {
+                        if (!firstQuestion.answer || !firstQuestion.answer.value) {
                             canGoToNext = false;
                             break;
                         }
@@ -761,7 +754,7 @@
                         //For now is OK since we are depending only on ONE related Question
                         const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
                         const firstQuestion = questions[0];
-                        if (!firstQuestion.answer) {
+                        if (!firstQuestion.answer || !firstQuestion.answer.value) {
                             shouldDisable = true;
                             break;
                         }
@@ -969,7 +962,7 @@
                 result.disabled = false; // we will be disabling based on answers
                 return result;
             });
-            const questions = questionsData.filter(question => !question.optional);
+            //const questions = questionsData.filter(question => !question.optional);
             const subQuestions = questionsData.filter(question => question.optional);
             this.questions.push(...questionsData);
             this.subQuestions.push(...subQuestions);
@@ -980,7 +973,8 @@
                     const a = this.surveyData.answers.find(a => a.question_id === q.id);
                     if (a) {
                         q.answer = a;
-                        if (lastOrder !== q.pivot.order) {
+                        //check if answer is actually answered and not just a suggested answer
+                        if (a.value && lastOrder !== q.pivot.order) {
                             this.progress = this.progress + 1;
                         }
                     }
@@ -1003,7 +997,10 @@
                 return elem.pivot.order;
             }).length;
 
-            if (this.surveyData.answers && this.surveyData.answers.length === this.questions.length) {
+            const allQuestionsAnswered = this.surveyData.answers &&
+                this.surveyData.answers.filter(a => !(a.value === null || typeof a.value === 'undefined')).length === this.questions.length;
+
+            if (allQuestionsAnswered) {
                 this.stage = "complete";
             }
 

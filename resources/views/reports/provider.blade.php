@@ -2,6 +2,11 @@
 @section('content')
 
     @if (isset($isPdf) && $isPdf)
+
+        <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+
         <!-- found in surveysMaster but for some reason dompdf has issues with it -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         <link href="{{ asset('css/pdf.css') }}" rel="stylesheet">
@@ -57,7 +62,7 @@
                 @if($reportData['demographic_data']['ethnicity'] === 'No')
                     non
                 @endif
-                hispanic/latino
+                hispanic&nbsp;/&nbsp;latino
                 {{lcfirst($reportData['demographic_data']['race'])}} {{$reportData['demographic_data']['gender']}}.
                 In general, the patient has self-assessed their health as {{$reportData['demographic_data']['health']}}.
             </div>
@@ -73,11 +78,11 @@
             <br/>
 
             <div class="recommendations-area">
-                The patient has reported allergies to the following:
                 @if(! empty($reportData['allergy_history']))
+                The patient has reported allergies to the following:
                     @foreach($reportData['allergy_history'] as $allergy)
                         {{$allergy}}{{$loop->last ? '.' : ', '}}
-                    @endforeach()
+                    @endforeach
                 @else
                     NKA.
                 @endif
@@ -104,7 +109,7 @@
                         @else
                             {{$condition['name']}} {{$loop->last ? '.' : ', '}}
                         @endif
-                    @endforeach()
+                    @endforeach
                     @if(! empty($reportData['medical_history_other']))
                         The patient has also reported
                         @foreach($reportData['medical_history_other'] as $otherCondition)
@@ -125,14 +130,14 @@
             <br/>
 
             <div class="recommendations-area">
-                The patient has indicated they use
                 @if(! empty($reportData['medication_history']))
+                    The patient has indicated they use
                     @foreach($reportData['medication_history'] as $medication)
                         {{$medication['dose']}}
                         of {{$medication['drug']}} {{$medication['frequency']}} {{$loop->last ? '.' : ', '}}
-                    @endforeach()
+                    @endforeach
                 @else
-                    None.
+                    The patient has indicated that they do not take any medications regularly.
                 @endif
             </div>
         </div>
@@ -153,7 +158,7 @@
                     @foreach($reportData['family_medical_history'] as $condition)
                         {{$condition['name']}} in
                         patient's {{$condition['family']}} {{$loop->last ? '.' : ', '}}
-                    @endforeach()
+                    @endforeach
                 @else
                     Nothing.
                 @endif
@@ -172,18 +177,22 @@
             <div class="recommendations-area">
                 The patient's immunization history is as follows:
                 <br>
-                The patient HAS received the
-                @foreach($reportData['immunizations_received'] as $immunization)
-                    {{$immunization}} {{$loop->last ? ' ' : ', '}}
-                @endforeach
-                vaccinations.
-                <br>
-                <br>
-                The patient has not, or is unsure if they have received the
-                @foreach($reportData['immunizations_not_received'] as $immunization)
-                    {{$immunization}} {{$loop->last ? ' ' : ', '}}
-                @endforeach
-                vaccinations.
+                @if(!empty($reportData['immunizations_received']))
+                    The patient HAS received the
+                    @foreach($reportData['immunizations_received'] as $immunization)
+                        {{$immunization}} {{$loop->last ? ' ' : ', '}}
+                    @endforeach
+                    vaccinations.
+                @endif
+                @if (!empty($reportData['immunizations_not_received']))
+                    <br>
+                    <br>
+                    The patient has not, or is unsure if they have received the
+                    @foreach($reportData['immunizations_not_received'] as $immunization)
+                        {{$immunization}} {{$loop->last ? ' ' : ', '}}
+                    @endforeach
+                    vaccinations.
+                @endif
             </div>
         </div>
 
@@ -234,8 +243,10 @@
             <br/>
 
             <div class="recommendations-area">
-                <strong>Blood pressure: </strong> {{$reportData['vitals']['blood_pressure']['first_metric']}}
-                /{{$reportData['vitals']['blood_pressure']['second_metric']}} mmHg <br>
+                <strong>Blood pressure: </strong>
+                {{$reportData['vitals']['blood_pressure']['first_metric']}}
+                &nbsp;/&nbsp;
+                {{$reportData['vitals']['blood_pressure']['second_metric']}} mmHg <br>
                 <strong>Height: </strong> {{$reportData['vitals']['height']['feet']}}
                 feet, {{$reportData['vitals']['height']['inches']}} inches <br>
                 <strong>Weight: </strong> {{$reportData['vitals']['weight']}} lbs <br>
@@ -366,7 +377,7 @@
                 @endif
                 <br>
                 <br>
-                <strong>MCI/Cognitive</strong>
+                <strong>MCI&nbsp;/&nbsp;Cognitive</strong>
                 <br>
                 The patient was {{$reportData['functional_capacity']['mci_cognitive']['clock']}} to put in the hour
                 markers and the time at ten minutes past eleven o'clock.
@@ -381,7 +392,7 @@
                 the past 6 months.
                 <br>
                 <br>
-                <strong>Hearing/Auditory Function</strong>
+                <strong>Hearing&nbsp;/&nbsp;Auditory Function</strong>
                 <br>
                 The patient {{$reportData['functional_capacity']['hearing_difficulty']}} difficulty with their hearing.
             </div>
@@ -423,12 +434,12 @@
             <div class="recommendations-area">
                 The patient {{$reportData['advanced_care_planning']['has_attorney']}} a Medical Power of Attorney.
                 The patient @if($reportData['advanced_care_planning']['living_will'] === 'yes') has a living
-                will/advance
+                will&nbsp;/&nbsp;advance
                 directive.
                 A copy of the patient's advance
                 directive {{$reportData['advanced_care_planning']['existing_copy'] === 'yes'}}
                 available on file at the moment.
-                @else does not have a living will/advance directive. @endif
+                @else does not have a living will&nbsp;/&nbsp;advance directive. @endif
             </div>
         </div>
 

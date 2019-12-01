@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Collection;
  * @property-read ProviderReport[]|Collection providerReports
  * @property-read InvitationLink url
  * @property-read PersonalizedPreventionPlan personalizedPreventionPlan
+ * @property Patient $patientInfo
  *
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
@@ -31,7 +32,7 @@ class User extends \CircleLinkHealth\Customer\Entities\User
                         'status',
                         'last_question_answered_id',
                         'start_date',
-                        'completed_at'
+                        'completed_at',
                     ])
                     ->withTimestamps();
     }
@@ -44,7 +45,7 @@ class User extends \CircleLinkHealth\Customer\Entities\User
                         'last_question_answered_id',
                         'status',
                         'start_date',
-                        'completed_at'
+                        'completed_at',
                     ])
                     ->withTimestamps();
     }

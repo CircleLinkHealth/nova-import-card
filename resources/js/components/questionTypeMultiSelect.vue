@@ -26,7 +26,7 @@
                 :disabled="!hasSelections"
                 @click="handleAnswer">
             {{isLastQuestion ? 'Complete' : 'Next'}}
-            <font-awesome-icon v-show="waiting" icon="spinner" :spin="true"/>
+            <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
         </mdbBtn>
 
     </div>
@@ -35,18 +35,13 @@
 
 <script>
 
-    import {mdbBtn} from 'mdbvue';
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+    import {mdbBtn, mdbIcon} from 'mdbvue';
     import vueSelect from 'vue-select';
-
-    library.add(faSpinner);
 
     export default {
         name: "questionTypeMultiSelect",
         props: ['question', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'getAllQuestionsFunc', 'readOnly'],
-        components: {FontAwesomeIcon, vueSelect, mdbBtn},
+        components: {mdbIcon, vueSelect, mdbBtn},
 
         data() {
             return {
@@ -120,19 +115,22 @@
                     const selectKey = this.options[0].multi_select_key;
 
                     this.selectBoxes = targetQuestion.answer.value.map(v => {
-
                         let selected = [];
+
+                        let valueFromServer;
                         if (this.question.answer && this.question.answer.value) {
-                            const valueFromServer = this.question.answer.value.find(x => x[key] === v[key]);
-                            if (valueFromServer) {
-                                selected = valueFromServer[selectKey];
-                            }
+                            valueFromServer = this.question.answer.value.find(x => x[key] === v[key]);
+                        } else if (this.question.answer && this.question.answer.suggested_value) {
+                            valueFromServer = this.question.answer.suggested_value.find(x => x[key] === v[key]);
+                        }
+
+                        if (valueFromServer) {
+                            selected = valueFromServer[selectKey];
                         }
                         return {key: v[key], options: selectOptions, placeholder, active: false, selected};
                     });
 
-                }
-                else {
+                } else {
                     //todo
                 }
             },

@@ -1,0 +1,297 @@
+<template>
+    <mdb-modal v-on:close="cancel" size="lg">
+        <form novalidate @submit="save">
+            <mdb-modal-header>
+                <mdb-modal-title>Add AWV Patient</mdb-modal-title>
+            </mdb-modal-header>
+            <mdb-modal-body>
+
+                <mdb-container>
+                    <mdb-row>
+                        <mdb-col>
+                            <div class="spinner-overlay" v-show="waiting">
+                                <div class="text-center">
+                                    <mdb-icon icon="spinner" :spin="true"/>
+                                </div>
+                            </div>
+                        </mdb-col>
+                    </mdb-row>
+
+                    <mdb-row>
+                        <mdb-col md="6">
+                            <mdb-input label="First Name *"
+                                       v-model="patient.firstName"
+                                       :customValidation="validation.firstName.validated"
+                                       :isValid="validation.firstName.valid"
+                                       @change="validate('firstName', $event)"
+                                       invalidFeedback="Please set a first name."/>
+                        </mdb-col>
+                        <mdb-col md="6">
+                            <mdb-input label="Last Name *"
+                                       v-model="patient.lastName"
+                                       :customValidation="validation.lastName.validated"
+                                       :isValid="validation.lastName.valid"
+                                       @change="validate('lastName', $event)"
+                                       invalidFeedback="Please set a last name."/>
+                        </mdb-col>
+                    </mdb-row>
+
+                    <mdb-row>
+                        <mdb-col>
+                            <mdb-input label="Phone number *" v-model="patient.phoneNumber"
+                                       type="tel"
+                                       :customValidation="validation.phoneNumber.validated"
+                                       :isValid="validation.phoneNumber.valid"
+                                       @change="validate('phoneNumber', $event)"
+                                       invalidFeedback="Please set a valid phone number."/>
+                        </mdb-col>
+                        <mdb-col>
+                            <mdb-input label="DOB *"
+                                       v-model="patient.dob"
+                                       :customValidation="validation.dob.validated"
+                                       :isValid="validation.dob.valid"
+                                       type="date"
+                                       @change="validate('dob', $event)"/>
+                        </mdb-col>
+                    </mdb-row>
+
+                    <mdb-row>
+                        <mdb-col>
+                            <mdb-input label="Email" v-model="patient.email"
+                                       :customValidation="validation.email.validated"
+                                       :isValid="validation.email.valid"
+                                       @change="validate('email', $event)" invalidFeedback="Please set a valid email."
+                                       type="email"/>
+                        </mdb-col>
+                    </mdb-row>
+
+                    <mdb-row class="provider-container">
+                        <mdb-col>
+                            <add-patient-provider ref="providerComponent"></add-patient-provider>
+                        </mdb-col>
+                    </mdb-row>
+
+                    <mdb-row style="margin-top: 5px">
+                        <mdb-col>
+                            <mdb-alert v-if="error" color="danger">
+                                <p v-html="error"></p>
+                            </mdb-alert>
+                        </mdb-col>
+                    </mdb-row>
+
+                </mdb-container>
+
+            </mdb-modal-body>
+            <mdb-modal-footer>
+                <mdb-btn color="warning" icon="ban" @click.native="cancel">Cancel</mdb-btn>
+                <mdb-btn type="submit" color="primary" icon="save" :disabled="waiting || !isFormValid">Save</mdb-btn>
+            </mdb-modal-footer>
+        </form>
+    </mdb-modal>
+</template>
+
+<script>
+
+    import {
+        mdbAlert,
+        mdbBtn,
+        mdbCol,
+        mdbContainer,
+        mdbIcon,
+        mdbInput,
+        mdbModalBody,
+        mdbModalFooter,
+        mdbModalHeader,
+        mdbModalTitle,
+        mdbRow
+    } from 'mdbvue';
+    import mdbModal from 'mdbvue/lib/components/mdbModal';
+
+    import AddPatientProvider from "./AddPatientProvider";
+
+    export default {
+        name: "AddPatientModal",
+        components: {
+            mdbIcon,
+            mdbModal,
+            mdbModalBody,
+            mdbModalFooter,
+            mdbModalHeader,
+            mdbModalTitle,
+            mdbBtn,
+            mdbAlert,
+            mdbInput,
+            mdbContainer,
+            mdbCol,
+            mdbRow,
+            'add-patient-provider': AddPatientProvider
+        },
+        props: ['options'],
+        data() {
+            return {
+                patient: {
+                    firstName: null,
+                    lastName: null,
+                    dob: null,
+                    email: null,
+                    phoneNumber: null
+                },
+                validation: {
+                    firstName: {
+                        valid: false,
+                        validated: false
+                    },
+                    lastName: {
+                        valid: false,
+                        validated: false
+                    },
+                    dob: {
+                        valid: false,
+                        validated: false
+                    },
+                    email: {
+                        //optional
+                        valid: true,
+                        validated: false
+                    },
+                    phoneNumber: {
+                        valid: false,
+                        validated: false
+                    },
+                    provider: {
+                        valid: false,
+                        validated: false
+                    }
+                },
+                waiting: false,
+                error: null,
+            };
+        },
+        created() {
+
+        },
+        mounted() {
+            this.resetForm();
+
+            this.$watch(() => this.$refs.providerComponent.isFormValid, (value) => {
+                this.validation['provider'].valid = value;
+                this.validation['provider'].validated = true
+            });
+        },
+        methods: {
+
+            validate(key, value) {
+                switch (key) {
+                    case "firstName":
+                    case "lastName":
+                        this.validation[key].valid = value.length > 0;
+                        break;
+                    case "phoneNumber":
+                        const phoneRe = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+                        this.validation[key].valid = phoneRe.test(value);
+                        break;
+                    case "email":
+                        if (!value || !value.length) {
+                            //optional
+                            this.validation[key].valid = true;
+                        } else {
+                            const re = /\S+@\S+\.\S+/;
+                            this.validation[key].valid = re.test(value);
+                        }
+                        break;
+                    default:
+                        this.validation[key].valid = true;
+                        break;
+                }
+                this.validation[key].validated = true;
+            },
+
+            resetForm() {
+                this.patient = {
+                    firstName: null,
+                    lastName: null,
+                    dob: null,
+                    email: null,
+                    phoneNumber: null,
+                };
+            },
+
+            save(e) {
+
+                e.preventDefault();
+
+                this.error = null;
+                this.waiting = true;
+
+                const url = `/manage-patients/store`;
+
+                const req = {
+                    patient: this.patient,
+                    provider: this.$refs.providerComponent.getUser()
+                };
+
+                axios.post(url, req)
+                    .then(resp => {
+                        this.waiting = false;
+                        this.options.onDone();
+                    })
+                    .catch(error => {
+                        this.waiting = false;
+                        this.handleError(error);
+                    })
+            },
+
+            cancel() {
+                this.options.onDone();
+            },
+
+            handleError(error) {
+                console.log(error);
+                if (error.response && error.response.status === 504) {
+                    this.error = `Server took too long to respond [${error.response.status}]. Please try again.`;
+                } else if (error.response && error.response.status === 500) {
+                    this.error = `There was an error with our servers [${error.response.status}]. Please contact CLH support.`;
+                    console.error(error.response.data);
+                } else if (error.response && error.response.status === 404) {
+                    this.error = `Not Found [${error.response.status}]`;
+                } else if (error.response && (error.response.status === 401 || error.response.status === 419)) {
+                    this.error = `Not Authenticated [${error.response.status}]`;
+                    //reload the page which will redirect to login
+                    window.location.reload();
+                } else if (error.response && error.response.data) {
+                    const errors = [error.response.data.error];
+                    Object.keys(error.response.data.errors || []).forEach(e => {
+                        errors.push(error.response.data.errors[e]);
+                    });
+                    this.error = errors.join('<br/>');
+                } else {
+                    this.error = error.message;
+                }
+            }
+        },
+        computed: {
+            isFormValid() {
+                for (let i in this.validation) {
+                    if (!this.validation[i].valid) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+    }
+</script>
+
+<style scoped>
+
+    .container {
+        position: relative;
+    }
+
+    .provider-container {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border: 1px solid #dee2e6;
+    }
+
+</style>

@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use App\InvitationLink;
+use App\Jobs\SurveyAnswersCalculateSuggestionsJob;
 use App\Survey;
 use App\SurveyInstance;
 use App\User;
@@ -166,6 +167,13 @@ class SurveyInvitationLinksService
                      'survey_instance_id' => $hraSurvey->instances->first()->id,
                      'status'             => SurveyInstance::PENDING,
                  ]);
+        }
+
+        //in case job runs synchronously
+        try {
+            SurveyAnswersCalculateSuggestionsJob::dispatch($user->id)->onQueue('high');
+        } catch (\Exception $exception) {
+            \Log::error($exception->getMessage());
         }
 
         return [

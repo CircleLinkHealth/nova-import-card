@@ -9,7 +9,7 @@
 
                 <div class="spinner-overlay" v-show="waiting">
                     <div class="text-center">
-                        <font-awesome-icon icon="spinner" :spin="true"/>
+                        <mdb-icon icon="spinner" :spin="true"/>
                     </div>
                 </div>
 
@@ -123,14 +123,9 @@
         mdbModalBody,
         mdbModalFooter,
         mdbModalHeader,
-        mdbModalTitle
+        mdbModalTitle,
+        mdbIcon
     } from 'mdbvue';
-
-    import {library} from '@fortawesome/fontawesome-svg-core';
-    import {faSpinner} from '@fortawesome/free-solid-svg-icons';
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
-    library.add(faSpinner);
 
     const CHANNEL_MAIL = "mail";
     const CHANNEL_SMS = "sms";
@@ -138,7 +133,7 @@
     export default {
         name: "SendLinkModal",
         components: {
-            FontAwesomeIcon,
+            mdbIcon,
             mdbModal,
             mdbModalBody,
             mdbModalFooter,

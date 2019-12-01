@@ -29,6 +29,10 @@ function getStringValue($val, $default = '')
 @section('content')
 
     @if (isset($isPdf) && $isPdf)
+        <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+
         <!-- found in surveysMaster but for some reason dompdf has issues with it -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         <link href="{{ asset('css/pdf.css') }}" rel="stylesheet">
@@ -65,13 +69,16 @@ function getStringValue($val, $default = '')
                 ' {{getStringValue($patientPppData->answers_for_eval['height']['inches'])}}" </strong><br>
             Body Mass Index (BMI): <strong>{{getStringValue($patientPppData->answers_for_eval['bmi'])}}</strong> <br>
             Blood Pressure:
-            <strong>{{getStringValue($patientPppData->answers_for_eval['blood_pressure']['first_metric'])}}
-                / {{getStringValue($patientPppData->answers_for_eval['blood_pressure']['second_metric'])}}</strong><br>
+            <strong>
+                {{getStringValue($patientPppData->answers_for_eval['blood_pressure']['first_metric'])}}
+                &nbsp;/&nbsp;
+                {{getStringValue($patientPppData->answers_for_eval['blood_pressure']['second_metric'])}}
+            </strong><br>
         </div>
 
         <div class="suggested-list">
             <span class="report-title no-border no-margin">
-                <strong>Suggested CheckList</strong>
+                <strong>Suggested Checklist</strong>
             </span>
             <span class="side-title">
                 Ask your doctor about:
@@ -205,7 +212,7 @@ function getStringValue($val, $default = '')
 
     .image.volume-half {
         background: url({{asset('/images/volume-half@3x.png')}}) no-repeat;
-        margin-top: 1px;
+        margin-top: 4px;
     }
 
     .image.thought-bubble {

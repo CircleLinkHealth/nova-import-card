@@ -1,15 +1,18 @@
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Nunito');
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
+
 // Variables
 @import 'variables';
 
 $primary-color: #50b2e2;
 
-@import "~bootstrap-css-only/css/bootstrap.min.css";
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
+@import '~bootstrap-css-only/css/bootstrap.min.css';
+@import '~mdbvue/lib/mdbvue.css';
 
-@import "~mdbvue/build/scss/mdb";
-
-@import "~font-awesome/css/font-awesome.min.css";
+$image-path: '~@/../../mdb/mdbvue/img';
+@import '~@/../../mdb/mdbvue/scss/mdb.scss';
 
 @import "~vue-select/dist/vue-select.css";
 
@@ -85,6 +88,7 @@ html, body, #app {
 }
 
 .progress-bar {
+    height: 100% !important;
     background-color: $primary-color !important;
 }
 
@@ -700,4 +704,9 @@ a.navbar-title:hover {
     bottom: 0;
     background-color: rgba(255, 255, 255, 0.7);
     z-index: 9999;
+}
+
+.list-group-item.active {
+    background-color: $primary-color;
+    border-color: $primary-color;
 }
