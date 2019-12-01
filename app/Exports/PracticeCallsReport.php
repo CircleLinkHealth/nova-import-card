@@ -7,8 +7,8 @@
 namespace App\Exports;
 
 use App\Contracts\Reports\PracticeDataExport;
-use App\Models\CCD\Problem;
 use App\Notifications\SendSignedUrlToDownloadPracticeReport;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -18,7 +18,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use URL;
 
-class PatientProblemsReport implements FromQuery, WithMapping, PracticeDataExport, WithHeadings
+class PracticeCallsReport implements FromQuery, WithMapping, PracticeDataExport, WithHeadings
 {
     use Exportable;
     /**
@@ -52,7 +52,7 @@ class PatientProblemsReport implements FromQuery, WithMapping, PracticeDataExpor
     {
         if ( ! $this->media) {
             if ( ! $mediaCollectionName) {
-                $mediaCollectionName = "{$this->practice->name}_patients_with_problems_reports";
+                $mediaCollectionName = "{$this->practice->name}_practice_calls_reports";
             }
 
             $this->store($this->filename(), self::STORE_TEMP_REPORT_ON_DISK);
@@ -67,7 +67,7 @@ class PatientProblemsReport implements FromQuery, WithMapping, PracticeDataExpor
     {
         if ( ! $this->filename) {
             $generatedAt    = now()->toDateTimeString();
-            $this->filename = "patients_with_problems_report_generated_at_$generatedAt.csv";
+            $this->filename = "practice_calls_last_three_months_generated_at_$generatedAt.csv";
         }
 
         return $this->filename;
@@ -116,11 +116,9 @@ class PatientProblemsReport implements FromQuery, WithMapping, PracticeDataExpor
     public function headings(): array
     {
         return [
-            'Name',
-            'MRN',
-            'DOB',
-            'Condition',
-            'ICD-10',
+            'Date of Call',
+            'Time of Call',
+            'Was Successful',
         ];
     }
 
@@ -129,33 +127,15 @@ class PatientProblemsReport implements FromQuery, WithMapping, PracticeDataExpor
      */
     public function map($row): array
     {
-        $demographics = [
-            'name' => $row->display_name,
-            'mrn'  => $row->getMrnNumber(),
-            'dob'  => $row->patientInfo->dob(),
-        ];
+        return $row->inboundCalls->map(function ($call) {
+            $calledDate = Carbon::parse($call->called_date);
 
-        if ($row->ccdProblems->isEmpty()) {
-            return array_merge(
-                $demographics,
-                [
-                    'condition' => 'N/A',
-                    'icd10'     => 'N/A',
-                ]
-            );
-        }
-
-        return $row->ccdProblems->map(
-            function (Problem $problem) use ($demographics) {
-                return array_merge(
-                    $demographics,
-                    [
-                        'condition' => $problem->name,
-                        'icd10'     => $problem->icd10Code() ?? 'N/A',
-                    ]
-                );
-            }
-        )->all();
+            return [
+                'date_of_call'   => $calledDate->toDateString(),
+                'time_of_call'   => $calledDate->toTimeString(),
+                'was_successful' => 'reached' === $call->status ? 'true' : 'false',
+            ];
+        })->all();
     }
 
     /**
@@ -184,16 +164,14 @@ class PatientProblemsReport implements FromQuery, WithMapping, PracticeDataExpor
             ->ofType('participant')
             ->has('patientInfo')
             ->with(
-                [
-                    'patientInfo' => function ($q) {
-                        $q->select('mrn_number', 'birth_date', 'id', 'user_id');
-                    },
-                    'ccdProblems' => function ($q) {
-                        $q->select('id', 'name', 'cpm_problem_id', 'patient_id')->with(
-                            ['icd10Codes', 'cpmProblem']
-                        );
-                    },
-                ]
-            )->select('id', 'display_name');
+                       [
+                           'inboundCalls' => function ($calls) {
+                               $calls->select('inbound_cpm_id', 'status', 'called_date')
+                                   ->whereNotNull('called_date')
+                                   ->where('called_date', '>=', Carbon::now()->subMonth(3)->startOfMonth()->startOfDay())
+                                   ->where('called_date', '<=', Carbon::now()->endOfDay());
+                           },
+                       ]
+                   )->select('id');
     }
 }

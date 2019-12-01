@@ -6,34 +6,20 @@
 
 namespace Tests\Unit;
 
-use App\Console\Commands\CreatePatientProblemsReportForPractice;
+use App\Console\Commands\CreateCallsReportForPractice;
 use App\Exports\PatientProblemsReport;
-use App\Notifications\SendSignedUrlToDownloadPatientProblemsReport;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
+use App\Exports\PracticeCallsReport;
+use App\Notifications\SendSignedUrlToDownloadPracticeReport;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Notification;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Tests\Helpers\SetupTestCustomerTrait;
 use Tests\TestCase;
-use URL;
 
-class PatientProblemsReportTest extends TestCase
+class PracticeCallsReportTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
     use SetupTestCustomerTrait;
-
-    public function test__user_is_redirected_to_login_if_unauthenticated()
-    {
-        $signedLink = URL::temporarySignedRoute('download.media.from.signed.url', now()->addDays(2), [
-            'media_id'    => 1,
-            'user_id'     => 2,
-            'practice_id' => 3,
-        ]);
-
-        $this->call('get', $signedLink)
-            ->assertRedirect(url('/login'));
-    }
 
     /**
      * We want to test that given the correct input, the command will produce the report.
@@ -45,7 +31,7 @@ class PatientProblemsReportTest extends TestCase
         //setup
         $userId     = 1;
         $practiceId = 10;
-        $mock       = \Mockery::mock(PatientProblemsReport::class);
+        $mock       = \Mockery::mock(PracticeCallsReport::class);
 
         $mock->shouldReceive('forPractice')
             ->with($practiceId)
@@ -58,10 +44,10 @@ class PatientProblemsReportTest extends TestCase
             ->shouldReceive('notifyUser')
             ->andReturnSelf();
 
-        $this->instance(PatientProblemsReport::class, $mock);
+        $this->instance(PracticeCallsReport::class, $mock);
 
         //test
-        $this->artisan(CreatePatientProblemsReportForPractice::class, [
+        $this->artisan(CreateCallsReportForPractice::class, [
             'practice_id' => $practiceId,
             'user_id'     => $userId,
         ])
@@ -77,7 +63,7 @@ class PatientProblemsReportTest extends TestCase
         //setup
         $customer1 = $this->createTestCustomerData(0);
         $customer2 = $this->createTestCustomerData(0);
-        $report    = new PatientProblemsReport();
+        $report    = new PracticeCallsReport();
 
         try {
             //test
@@ -96,7 +82,7 @@ class PatientProblemsReportTest extends TestCase
         $customer = $this->createTestCustomerData(5);
         $user     = $customer['provider'];
         $practice = $customer['practice'];
-        $report   = new PatientProblemsReport();
+        $report   = new PracticeCallsReport();
 
         //test
         $report->forPractice($practice->id)
@@ -118,7 +104,7 @@ class PatientProblemsReportTest extends TestCase
 
         Notification::assertSentTo(
             $user,
-            SendSignedUrlToDownloadPatientProblemsReport::class,
+            SendSignedUrlToDownloadPracticeReport::class,
             function ($notification, $channels, $notifiable) use ($user) {
                 $response = $this->actingAs($user)->call('get', $notification->signedLink);
 
@@ -139,7 +125,7 @@ class PatientProblemsReportTest extends TestCase
         $customer = $this->createTestCustomerData(1);
         $user     = $customer['provider'];
         $user2    = $customer['admin'];
-        $report   = new PatientProblemsReport();
+        $report   = new PracticeCallsReport();
 
         //test
         $report->forPractice($customer['practice']->id)

@@ -11,7 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SendSignedUrlToDownloadPatientProblemsReport extends Notification implements ShouldQueue
+class SendSignedUrlToDownloadPracticeReport extends Notification implements ShouldQueue
 {
     use Queueable;
     /**
@@ -21,8 +21,6 @@ class SendSignedUrlToDownloadPatientProblemsReport extends Notification implemen
 
     /**
      * Create a new notification instance.
-     *
-     * @param string $signedUrl
      */
     public function __construct(string $signedUrl)
     {
