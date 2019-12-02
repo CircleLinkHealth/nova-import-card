@@ -10,6 +10,7 @@ use App\Contracts\DirectMail;
 use App\DirectMailMessage;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class PhiMail implements DirectMail
 {
@@ -128,10 +129,9 @@ class PhiMail implements DirectMail
      * @param $outboundRecipient
      * @param $binaryAttachmentFilePath
      * @param $binaryAttachmentFileName
-     * @param null                                          $ccdaAttachmentPath
-     * @param \CircleLinkHealth\Customer\Entities\User|null $patient
-     * @param mixed|null                                    $body
-     * @param mixed|null                                    $subject
+     * @param null       $ccdaAttachmentPath
+     * @param mixed|null $body
+     * @param mixed|null $subject
      *
      * @throws \Exception
      *
@@ -221,6 +221,16 @@ class PhiMail implements DirectMail
         return $srList ?? false;
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    private function fetchKeyIfNotExists(string $certFileName, string $certPath)
+    {
+        if ( ! is_readable($certPath) && \Storage::disk('secrets')->exists($certFileName)) {
+            file_put_contents($certPath, Storage::get($certFileName));
+        }
+    }
+
     private function handleException(\Exception $e)
     {
         $message     = $e->getMessage()."\n".$e->getFile()."\n".$e->getLine();
@@ -237,8 +247,15 @@ class PhiMail implements DirectMail
      */
     private function initPhiMailConnection()
     {
-        $phiMailUser = config('services.emr-direct.user');
-        $phiMailPass = config('services.emr-direct.password');
+        $phiMailUser        = config('services.emr-direct.user');
+        $phiMailPass        = config('services.emr-direct.password');
+        $clientCertPath     = base_path(config('services.emr-direct.conc-keys-pem-path'));
+        $serverCertPath     = base_path(config('services.emr-direct.server-cert-pem-path'));
+        $clientCertFileName = 'emr-direct-production-conc-key.pem';
+        $serverCertFileName = 'phiCertDirectRootCA.pem';
+
+        $this->fetchKeyIfNotExists($clientCertFileName, $clientCertPath);
+        $this->fetchKeyIfNotExists($serverCertFileName, $serverCertPath);
 
         // Use the following command to enable client TLS authentication, if
         // required. The key file referenced should contain the following
@@ -249,13 +266,13 @@ class PhiMail implements DirectMail
         //   <root_CA_certificate.pem>
         //
         PhiMailConnector::setClientCertificate(
-            base_path(config('services.emr-direct.conc-keys-pem-path')),
+            $clientCertPath,
             config('services.emr-direct.pass-phrase')
         );
 
         // This command is recommended for added security to set the trusted
         // SSL certificate or trust anchor for the phiMail server.
-        PhiMailConnector::setServerCertificate(base_path(config('services.emr-direct.server-cert-pem-path')));
+        PhiMailConnector::setServerCertificate($serverCertPath);
 
         $phiMailServer = config('services.emr-direct.mail-server');
         $phiMailPort   = config('services.emr-direct.port');
@@ -266,8 +283,6 @@ class PhiMail implements DirectMail
 
     /**
      * This is to help notify us of the status of CCDs we receive.
-     *
-     * @param DirectMailMessage $dm
      */
     private function notifyAdmins(
         DirectMailMessage $dm
