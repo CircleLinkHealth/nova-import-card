@@ -50,7 +50,8 @@ return [
     ],
 
     'cpm' => [
-        'wellness_docs_url' => env('CPM_WELLNESS_DOCS_URL', null)
-    ]
+        'wellness_docs_url' => env('CPM_WELLNESS_DOCS_URL', null),
+        'ccd_importer_url'  => env('CPM_CCD_IMPORTER_URL', null),
+    ],
 
 ];

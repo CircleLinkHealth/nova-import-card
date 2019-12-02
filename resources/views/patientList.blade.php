@@ -5,6 +5,7 @@
         <patient-list
             ref="patientList"
             :debug="@json(!isProductionEnv())"
+            ccd-importer-url="{{config('services.cpm.ccd_importer_url')}}"
             wellness-docs-url="{{config('services.cpm.wellness_docs_url')}}">
         </patient-list>
     </div>

@@ -7,77 +7,110 @@
             <mdb-modal-body>
 
                 <mdb-container>
-                    <mdb-row>
-                        <mdb-col>
-                            <div class="spinner-overlay" v-show="waiting">
-                                <div class="text-center">
-                                    <mdb-icon icon="spinner" :spin="true"/>
-                                </div>
-                            </div>
-                        </mdb-col>
-                    </mdb-row>
 
-                    <mdb-row>
-                        <mdb-col md="6">
-                            <mdb-input label="First Name *"
-                                       v-model="patient.firstName"
-                                       :customValidation="validation.firstName.validated"
-                                       :isValid="validation.firstName.valid"
-                                       @change="validate('firstName', $event)"
-                                       invalidFeedback="Please set a first name."/>
-                        </mdb-col>
-                        <mdb-col md="6">
-                            <mdb-input label="Last Name *"
-                                       v-model="patient.lastName"
-                                       :customValidation="validation.lastName.validated"
-                                       :isValid="validation.lastName.valid"
-                                       @change="validate('lastName', $event)"
-                                       invalidFeedback="Please set a last name."/>
-                        </mdb-col>
-                    </mdb-row>
+                    <mdb-tabs :active="0"
+                              default
+                              :links="[{text: 'Form'}, {text: 'CCD'}]"
+                              :transition-duration="0.2"
+                              transition-style="linear">
 
-                    <mdb-row>
-                        <mdb-col>
-                            <mdb-input label="Phone number *" v-model="patient.phoneNumber"
-                                       type="tel"
-                                       :customValidation="validation.phoneNumber.validated"
-                                       :isValid="validation.phoneNumber.valid"
-                                       @change="validate('phoneNumber', $event)"
-                                       invalidFeedback="Please set a valid phone number."/>
-                        </mdb-col>
-                        <mdb-col>
-                            <mdb-input label="DOB *"
-                                       v-model="patient.dob"
-                                       :customValidation="validation.dob.validated"
-                                       :isValid="validation.dob.valid"
-                                       type="date"
-                                       @change="validate('dob', $event)"/>
-                        </mdb-col>
-                    </mdb-row>
+                        <template slot="Form">
+                            <mdb-row>
+                                <mdb-col>
+                                    <div class="spinner-overlay" v-show="waiting">
+                                        <div class="text-center">
+                                            <mdb-icon icon="spinner" :spin="true"/>
+                                        </div>
+                                    </div>
+                                </mdb-col>
+                            </mdb-row>
 
-                    <mdb-row>
-                        <mdb-col>
-                            <mdb-input label="Email" v-model="patient.email"
-                                       :customValidation="validation.email.validated"
-                                       :isValid="validation.email.valid"
-                                       @change="validate('email', $event)" invalidFeedback="Please set a valid email."
-                                       type="email"/>
-                        </mdb-col>
-                    </mdb-row>
+                            <mdb-row>
+                                <mdb-col md="6">
+                                    <mdb-input label="First Name *"
+                                               v-model="patient.firstName"
+                                               :customValidation="validation.firstName.validated"
+                                               :isValid="validation.firstName.valid"
+                                               @change="validate('firstName', $event)"
+                                               invalidFeedback="Please set a first name."/>
+                                </mdb-col>
+                                <mdb-col md="6">
+                                    <mdb-input label="Last Name *"
+                                               v-model="patient.lastName"
+                                               :customValidation="validation.lastName.validated"
+                                               :isValid="validation.lastName.valid"
+                                               @change="validate('lastName', $event)"
+                                               invalidFeedback="Please set a last name."/>
+                                </mdb-col>
+                            </mdb-row>
 
-                    <mdb-row class="provider-container">
-                        <mdb-col>
-                            <add-patient-provider ref="providerComponent"></add-patient-provider>
-                        </mdb-col>
-                    </mdb-row>
+                            <mdb-row>
+                                <mdb-col>
+                                    <mdb-input label="Phone number *" v-model="patient.phoneNumber"
+                                               type="tel"
+                                               :customValidation="validation.phoneNumber.validated"
+                                               :isValid="validation.phoneNumber.valid"
+                                               @change="validate('phoneNumber', $event)"
+                                               invalidFeedback="Please set a valid phone number."/>
+                                </mdb-col>
+                                <mdb-col>
+                                    <mdb-input label="DOB *"
+                                               v-model="patient.dob"
+                                               :customValidation="validation.dob.validated"
+                                               :isValid="validation.dob.valid"
+                                               type="date"
+                                               @change="validate('dob', $event)"/>
+                                </mdb-col>
+                            </mdb-row>
 
-                    <mdb-row style="margin-top: 5px">
-                        <mdb-col>
-                            <mdb-alert v-if="error" color="danger">
-                                <p v-html="error"></p>
-                            </mdb-alert>
-                        </mdb-col>
-                    </mdb-row>
+                            <mdb-row>
+                                <mdb-col>
+                                    <mdb-input label="Email" v-model="patient.email"
+                                               :customValidation="validation.email.validated"
+                                               :isValid="validation.email.valid"
+                                               @change="validate('email', $event)"
+                                               invalidFeedback="Please set a valid email."
+                                               type="email"/>
+                                </mdb-col>
+                            </mdb-row>
+
+                            <mdb-row class="provider-container">
+                                <mdb-col>
+                                    <add-patient-provider ref="providerComponent"></add-patient-provider>
+                                </mdb-col>
+                            </mdb-row>
+
+                            <mdb-row style="margin-top: 5px">
+                                <mdb-col>
+                                    <mdb-alert v-if="error" color="danger">
+                                        <p v-html="error"></p>
+                                    </mdb-alert>
+                                </mdb-col>
+                            </mdb-row>
+                        </template>
+                        <template slot="CCD">
+
+                            <mdb-row>
+                                <mdb-col>
+                                    <p class="text-center">
+                                        Click the button below to open a new page where you can import a patient using
+                                        CCD.
+                                    </p>
+                                </mdb-col>
+                            </mdb-row>
+
+                            <mdb-row>
+                                <mdb-col class="text-center">
+                                    <a v-if="hasImportFromCcdUrl" :href="getImportFromCcdUrl()"
+                                       class="btn btn-primary"
+                                       target="_blank">
+                                        Import from CCD
+                                    </a>
+                                </mdb-col>
+                            </mdb-row>
+                        </template>
+
+                    </mdb-tabs>
 
                 </mdb-container>
 
@@ -103,7 +136,8 @@
         mdbModalFooter,
         mdbModalHeader,
         mdbModalTitle,
-        mdbRow
+        mdbRow,
+        mdbTabs
     } from 'mdbvue';
     import mdbModal from 'mdbvue/lib/components/mdbModal';
 
@@ -124,6 +158,7 @@
             mdbContainer,
             mdbCol,
             mdbRow,
+            mdbTabs,
             'add-patient-provider': AddPatientProvider
         },
         props: ['options'],
@@ -179,6 +214,14 @@
             });
         },
         methods: {
+
+            hasImportFromCcdUrl() {
+                return !!this.options.ccdImporterUrl;
+            },
+
+            getImportFromCcdUrl() {
+                return this.options.ccdImporterUrl ? `${this.options.ccdImporterUrl}?source=importer_awv` : '#';
+            },
 
             validate(key, value) {
                 switch (key) {
