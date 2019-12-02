@@ -96,42 +96,21 @@ function getStringValue($val, $default = '')
             </thead>
             <tbody>
 
-
-
+            {{-- Suggested Checklist section--}}
             @foreach($personalizedHealthAdvices as $key => $tasks)
-
                 @if(! empty($tasks['tasks']))
-
                     <?php
                     $tableData = $tasks['table_data'];
-                    $codeWithText = '99498 (if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)';
-                    $emphasisedBody = '(NOTE: $0 co-pay if done during AWV)';
                     ?>
-
                     @foreach($tableData as $recommendationData)
                         <tr>
                             {{--Emphasize code 99498 and the related body --}}
-                            @if($recommendationData[0]['emphasize_code'])
-                                <td class="suggested-list-body">
-                                    <?php
-                                    echo $recommendationData[0]['body']
-                                    ?>
-                                </td>
+                            <td class="suggested-list-body">
+                                <strong>{!!$recommendationData[0]['body']!!}</strong>
+                            </td>
+                            <td>{!!$recommendationData[0]['time_frame']!!}</td>
+                            <td style="font-weight: 500">{!!$recommendationData[0]['code']!!}</td>
 
-                                <td>{{$recommendationData[0]['time_frame']}}</td>
-
-                                <td style="font-weight: 500">
-                                    <?php
-                                    echo $recommendationData[0]['code']
-                                    ?>
-                                </td>
-                            @else
-                                <td class="suggested-list-body">
-                                    <strong>{{$recommendationData[0]['body']}}</strong>
-                                </td>
-                                <td>{{$recommendationData[0]['time_frame']}}</td>
-                                <td style="font-weight: 500">{{$recommendationData[0]['code']}}</td>
-                            @endif
                         </tr>
                     @endforeach
                 @endif
