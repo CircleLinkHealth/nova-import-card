@@ -177,7 +177,7 @@ class PatientCareplanController extends Controller
         // create pdf for each user
         $p = 1;
         foreach ($users as $user_id) {
-            $user = User::with(['careTeamMembers', 'carePlan.pdfs'])->find($user_id);
+            $user = User::with(['careTeamMembers', 'carePlan.pdfs', 'primaryPractice'])->find($user_id);
 
             if ( ! $user) {
                 return response()->json("User with id: {$user->id} not found.");
@@ -450,6 +450,7 @@ class PatientCareplanController extends Controller
         $insurancePolicies = $patient->ccdInsurancePolicies()->get();
 
         $contact_days_array = [];
+        $contactWindows     = [];
         if ($patient->patientInfo()->exists()) {
             $contactWindows     = $patient->patientInfo->contactWindows;
             $contact_days_array = $contactWindows->pluck('day_of_week')->toArray();
@@ -460,8 +461,6 @@ class PatientCareplanController extends Controller
             compact(
                 [
                     'patient',
-                    'userMeta',
-                    'userConfig',
                     'states',
                     'locations',
                     'timezones',
@@ -480,6 +479,8 @@ class PatientCareplanController extends Controller
             )
         );
     }
+
+    //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
 
     private function storeOrUpdateDemographics(
         Request $request
