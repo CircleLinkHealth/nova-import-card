@@ -103,18 +103,18 @@
                             </div>
                         @endif
                     </div>
-                @else
-                    @if ($shouldShowDisputeForm)
-                        <dispute-nurse-invoice invoice-id="{{$invoiceId}}"></dispute-nurse-invoice>
-                    @elseif ($invoice->is_nurse_approved)
-                        <div class="row">
-                            <div class="col-md-12 alert alert-success">
-                                <h4>You approved this invoice
-                                    on {{presentDate($invoice->nurse_approved_at->setTimezone(auth()->user()->timezone), true, true, true)}}</h4>
-                            </div>
-                        </div>
-                    @endif
                 @endisset
+
+                @if ($shouldShowDisputeForm)
+                    <dispute-nurse-invoice invoice-id="{{$invoiceId}}"></dispute-nurse-invoice>
+                @elseif ($invoice->is_nurse_approved)
+                    <div class="row">
+                        <div class="col-md-12 alert alert-success">
+                            <h4>You approved this invoice
+                                on {{presentDate($invoice->nurse_approved_at->setTimezone(auth()->user()->timezone), true, true, true)}}</h4>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
