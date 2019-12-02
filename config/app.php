@@ -283,4 +283,11 @@ return [
     |
     */
     'app_version' => env('APP_VERSION', ''),
+
+    // Hide these variables from debug screens (Whoops, Raygun, etc)
+    'debug_blacklist' => [
+        '_COOKIE' => array_keys($_COOKIE),
+        '_SERVER' => array_keys($_SERVER),
+        '_ENV'    => array_except(array_keys($_ENV), ['APP_ENV']),
+    ],
 ];
