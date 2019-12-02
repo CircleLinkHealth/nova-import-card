@@ -227,7 +227,11 @@ class PhiMail implements DirectMail
     private function fetchKeyIfNotExists(string $certFileName, string $certPath)
     {
         if ( ! is_readable($certPath) && \Storage::disk('secrets')->exists($certFileName)) {
-            file_put_contents($certPath, Storage::get($certFileName));
+            $written = file_put_contents($certPath, Storage::get($certFileName));
+
+            if (false === $written) {
+                throw new \Exception("Could not write `$certFileName` to `$certPath`.");
+            }
         }
     }
 
