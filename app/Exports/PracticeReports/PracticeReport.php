@@ -150,7 +150,7 @@ abstract class PracticeReport implements FromQuery, WithMapping, PracticeDataExp
                 'practice_id' => $this->practice->id,
             ]);
 
-        $this->user->notify(new SendSignedUrlToDownloadPracticeReport($this->signedLink));
+        $this->user->notify(new SendSignedUrlToDownloadPracticeReport(get_called_class(), $this->signedLink, $this->practice->id, $this->media->id));
 
         return $this;
     }
