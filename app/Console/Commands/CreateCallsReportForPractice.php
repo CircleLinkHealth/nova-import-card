@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Exports\PracticeCallsReport;
+use App\Exports\PracticeReports\PracticeCallsReport;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 
 class CreateCallsReportForPractice extends CreatePracticeReportForUser
@@ -29,6 +29,8 @@ class CreateCallsReportForPractice extends CreatePracticeReportForUser
 
     /**
      * CreatePatientProblemsReportForPractice constructor.
+     *
+     * @param PracticeCallsReport $report
      */
     public function __construct(PracticeCallsReport $report)
     {

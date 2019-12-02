@@ -7,10 +7,8 @@
 namespace Tests\Unit;
 
 use App\Console\Commands\CreatePatientProblemsReportForPractice;
-use App\Exports\PatientProblemsReport;
+use App\Exports\PracticeReports\PatientProblemsReport;
 use App\Notifications\SendSignedUrlToDownloadPracticeReport;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Notification;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -32,7 +30,7 @@ class PatientProblemsReportTest extends TestCase
         ]);
 
         $this->call('get', $signedLink)
-            ->assertRedirect(url('/login'));
+             ->assertRedirect(url('/login'));
     }
 
     /**
@@ -48,15 +46,15 @@ class PatientProblemsReportTest extends TestCase
         $mock       = \Mockery::mock(PatientProblemsReport::class);
 
         $mock->shouldReceive('forPractice')
-            ->with($practiceId)
-            ->andReturnSelf()
-            ->shouldReceive('forUser')
-            ->with($userId)
-            ->andReturnSelf()
-            ->shouldReceive('createMedia')
-            ->andReturnSelf()
-            ->shouldReceive('notifyUser')
-            ->andReturnSelf();
+             ->with($practiceId)
+             ->andReturnSelf()
+             ->shouldReceive('forUser')
+             ->with($userId)
+             ->andReturnSelf()
+             ->shouldReceive('createMedia')
+             ->andReturnSelf()
+             ->shouldReceive('notifyUser')
+             ->andReturnSelf();
 
         $this->instance(PatientProblemsReport::class, $mock);
 
@@ -65,8 +63,8 @@ class PatientProblemsReportTest extends TestCase
             'practice_id' => $practiceId,
             'user_id'     => $userId,
         ])
-            ->assertExitCode(0)
-            ->expectsOutput('Command ran.');
+             ->assertExitCode(0)
+             ->expectsOutput('Command ran.');
     }
 
     /**
@@ -82,7 +80,7 @@ class PatientProblemsReportTest extends TestCase
         try {
             //test
             $report->forPractice($customer1['practice']->id)
-                ->forUser($customer2['admin']->id);
+                   ->forUser($customer2['admin']->id);
         } catch (\Exception $e) {
             //assert
             $this->assertEquals(ModelNotFoundException::class, get_class($e));
@@ -100,9 +98,9 @@ class PatientProblemsReportTest extends TestCase
 
         //test
         $report->forPractice($practice->id)
-            ->forUser($user->id)
-            ->createMedia()
-            ->notifyUser();
+               ->forUser($user->id)
+               ->createMedia()
+               ->notifyUser();
 
         //assert
         $this->assertDatabaseHas('media', [
@@ -123,11 +121,11 @@ class PatientProblemsReportTest extends TestCase
                 $response = $this->actingAs($user)->call('get', $notification->signedLink);
 
                 $response->assertStatus(200)
-                    ->assertHeader('content-type', 'text/plain; charset=UTF-8');
+                         ->assertHeader('content-type', 'text/plain; charset=UTF-8');
 
                 $this->assertEquals(['database', 'mail'], $channels);
 
-                return (int) $notifiable->id === (int) $user->id;
+                return (int)$notifiable->id === (int)$user->id;
             }
         );
     }
@@ -143,12 +141,12 @@ class PatientProblemsReportTest extends TestCase
 
         //test
         $report->forPractice($customer['practice']->id)
-            ->forUser($user->id)
-            ->createMedia()
-            ->notifyUser();
+               ->forUser($user->id)
+               ->createMedia()
+               ->notifyUser();
 
         $this->actingAs($user2)->call('get', $report->getSignedLink())
             //assert
-            ->assertStatus(403);
+             ->assertStatus(403);
     }
 }

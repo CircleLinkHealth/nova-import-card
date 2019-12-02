@@ -7,8 +7,7 @@
 namespace Tests\Unit;
 
 use App\Console\Commands\CreateCallsReportForPractice;
-use App\Exports\PatientProblemsReport;
-use App\Exports\PracticeCallsReport;
+use App\Exports\PracticeReports\PracticeCallsReport;
 use App\Notifications\SendSignedUrlToDownloadPracticeReport;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Notification;
@@ -24,7 +23,7 @@ class PracticeCallsReportTest extends TestCase
     /**
      * We want to test that given the correct input, the command will produce the report.
      *
-     * @see PatientProblemsReport
+     * @see PracticeCallsReport
      */
     public function test_console_command_sends_notification()
     {
