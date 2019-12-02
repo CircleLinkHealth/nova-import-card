@@ -80,29 +80,31 @@
 
         <div class="row">
             <div class="col-md-12">
-                @isset($dispute)
-                    <div class="col-md-12 alert alert-{{$dispute->is_resolved ? 'success' : 'warning'}}">
-                        <div class="col-md-12">
-                            <h3>Dispute Status: <b>{{$dispute->is_resolved ? 'Resolved' : 'Open'}}</b></h3>
-                        </div>
+                @isset($disputes)
+                    @foreach($disputes as $dispute)
+                        <div class="col-md-12 alert alert-{{$dispute->is_resolved ? 'success' : 'warning'}}">
+                            <div class="col-md-12">
+                                <h3>Dispute Status: <b>{{$dispute->is_resolved ? 'Resolved' : 'Open'}}</b></h3>
+                            </div>
 
-                        <div class="col-md-12">
-                            <h5>Your Message:</h5>
-                        </div>
-                        <div class="col-md-12">
-                            <p>{{$dispute->reason}}</p>
-                        </div>
-                        <hr>
-                        @if($dispute->is_resolved)
                             <div class="col-md-12">
-                                <h5>CLH Message:</h5>
+                                <h5>Your Message:</h5>
                             </div>
                             <div class="col-md-12">
-                                <p>{{$dispute->resolution_note}}</p>
-                                <p>written by {{optional($dispute->resolver)->getFullName()}}</p>
+                                <p>{{$dispute->reason}}</p>
                             </div>
-                        @endif
-                    </div>
+                            <hr>
+                            @if($dispute->is_resolved)
+                                <div class="col-md-12">
+                                    <h5>CLH Message:</h5>
+                                </div>
+                                <div class="col-md-12">
+                                    <p>{{$dispute->resolution_note}}</p>
+                                    <p>written by {{optional($dispute->resolver)->getFullName()}}</p>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
                 @endisset
 
                 @if ($shouldShowDisputeForm)
