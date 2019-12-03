@@ -40,7 +40,15 @@ function parseBool(val) {
     return !falsy.test(val) && !!val;
 }
 
+function parseNumber(val, defaultValue) {
+    if (val && !isNaN(+val)) {
+        return +val;
+    }
+    return defaultValue;
+}
+
 module.exports.parseBool = parseBool;
+module.exports.parseNumber = parseNumber;
 module.exports.validateInfo = validateInfo;
 module.exports.createActivity = createActivity;
 module.exports.addSeconds = addSeconds;

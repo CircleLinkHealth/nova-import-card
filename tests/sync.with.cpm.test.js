@@ -1,18 +1,20 @@
-const {setQueueInterval,setHttpRequestCreator, getQueue, ignorePatientTimeSync, syncPatientTimeWithCPM} = require('../sockets/sync.with.cpm');
+const {setQueueInterval, setHttpRequestCreator, getQueue, ignorePatientTimeSync, syncPatientTimeWithCPM, setNumberOfSyncAttempts} = require('../sockets/sync.with.cpm');
 
 const {assert} = require('chai');
 
 describe('Sync With CPM', () => {
 
-    let url = 'mock';
-    let patientId = 123;
-    let providerId = 321;
+    const url = 'mock';
+    const patientId = 123;
+    const providerId = 321;
+    const queueInterval = 50;
+    const requestResolveTime = 50;
 
     before(function () {
-        setQueueInterval(50);
+        setQueueInterval(queueInterval);
         setHttpRequestCreator(() => {
             return new Promise(((resolve, reject) => {
-                setTimeout(resolve, 50);
+                setTimeout(resolve, requestResolveTime);
             }));
         });
     });
@@ -45,19 +47,51 @@ describe('Sync With CPM', () => {
         doneWhenNotExecuting(done);
     });
 
+    it('should sync ccd time two times', function (done) {
+        setNumberOfSyncAttempts(2);
+        syncPatientTimeWithCPM(url, patientId, providerId);
+
+        checkQueue();
+        setTimeout(() => {
+            checkQueue();
+            doneWhenNotExecuting(done);
+        }, queueInterval + requestResolveTime + 5);
+    });
+
+    it('should sync ccd time three times', function (done) {
+        setNumberOfSyncAttempts(3);
+        syncPatientTimeWithCPM(url, patientId, providerId);
+
+        checkQueue();
+        setTimeout(() => {
+            checkQueue();
+            setTimeout(() => {
+                checkQueue();
+                doneWhenNotExecuting(done);
+            }, queueInterval + requestResolveTime + 5);
+        }, queueInterval + requestResolveTime + 5);
+    });
+
     after(function (done) {
         ignorePatientTimeSync(url, patientId, providerId);
         doneWhenNotExecuting(done);
     });
 
     function doneWhenNotExecuting(done) {
+        setNumberOfSyncAttempts(1);
         let queue = getQueue();
         if (Object.keys(queue).length) {
             setTimeout(() => doneWhenNotExecuting(done), 50);
-        }
-        else {
+        } else {
+            setNumberOfSyncAttempts();
             done();
         }
+    }
+
+    function checkQueue() {
+        let queue = getQueue();
+        assert.isTrue(Object.keys(queue).length > 0);
+        assert.isTrue(queue[url].length === 1);
     }
 
 });

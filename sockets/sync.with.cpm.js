@@ -1,10 +1,22 @@
 const axios = require('axios');
+const parseNumber = require("../time-tracker/utils.fn").parseNumber;
 
 let resultsCallback = null;
 let isQueued = false;
 let queueInterval = 1000;
 let queue = {};
 let httpRequestCreator = getDefaultHttpRequestCreator();
+
+const TIME_SYNC_ATTEMPTS_DEFAULT = 2;
+let TIME_SYNC_ATTEMPTS = parseNumber(process.env.TIME_SYNC_ATTEMPTS, TIME_SYNC_ATTEMPTS_DEFAULT);
+
+function setNumberOfSyncAttempts(val) {
+    if (!val) {
+        //reset
+        val = TIME_SYNC_ATTEMPTS_DEFAULT;
+    }
+    TIME_SYNC_ATTEMPTS = +val;
+}
 
 function getDefaultHttpRequestCreator() {
     return function (url, patients) {
@@ -28,7 +40,12 @@ function getQueue() {
     return queue;
 }
 
-function syncPatientTimeWithCPM(syncUrl, patientId, providerId) {
+function syncPatientTimeWithCPM(syncUrl, patientId, providerId, attempt) {
+
+    if (!attempt) {
+        attempt = 1;
+    }
+
     if (!queue[syncUrl]) {
         queue[syncUrl] = [];
     }
@@ -37,7 +54,7 @@ function syncPatientTimeWithCPM(syncUrl, patientId, providerId) {
         return;
     }
 
-    queue[syncUrl].push({patientId, providerId});
+    queue[syncUrl].push({patientId, providerId, attempt});
     execute();
 }
 
@@ -90,6 +107,12 @@ function syncWithCPMInternal(syncUrl, listOfPatients) {
             if (resultsCallback) {
                 resultsCallback(response);
             }
+            listOfPatients.forEach(entry => {
+                if (entry.attempt >= TIME_SYNC_ATTEMPTS) {
+                    return;
+                }
+               syncPatientTimeWithCPM(syncUrl, entry.patientId, entry.providerId, entry.attempt + 1);
+            });
         })
         .catch((err) => {
             console.error(err);
@@ -102,5 +125,6 @@ module.exports = {
     ignorePatientTimeSync,
     getQueue,
     setHttpRequestCreator,
-    setQueueInterval
+    setQueueInterval,
+    setNumberOfSyncAttempts
 };
