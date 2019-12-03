@@ -72,13 +72,12 @@ class ApproveBillablePatientsService
      *  is_closed Boolean
      *
      * @param $practiceId
-     * @param Carbon $date
      *
      * @return \Illuminate\Support\Collection
      */
     public function getBillablePatientsForMonth($practiceId, Carbon $date)
     {
-        $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(100);
+        $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(20);
 
         $summaries->getCollection()->transform(function ($summary) {
             if ( ! $summary->actor_id) {
