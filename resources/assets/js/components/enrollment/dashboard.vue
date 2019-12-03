@@ -54,17 +54,78 @@
                             <ul>
                                 <li class="sidebar-demo-list"><span :title="name"><b>Name:</b> {{name}}</span></li>
                                 <li class="sidebar-demo-list"><span :title="lang"><b>Language:</b> {{lang}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="practice_name"><b>Practice Name:</b> {{practice_name}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b> {{providerFullName}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="provider_pronunciation"><b>Provider Pronunciation:</b> {{provider_pronunciation}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="provider_sex"><b>Provider Sex:</b> {{provider_sex}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="providerPhone"><b>Provider Phone:</b> {{providerPhone}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span></li>
+                                <li class="sidebar-demo-list"><span :title="practice_name"><b>Practice Name:</b> {{practice_name}}</span>
+                                </li>
+                                <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b> {{providerFullName}}</span>
+                                </li>
+                                <li class="sidebar-demo-list"><span :title="provider_pronunciation"><b>Provider Pronunciation:</b> {{provider_pronunciation}}</span>
+                                </li>
+                                <li class="sidebar-demo-list"><span :title="provider_sex"><b>Provider Sex:</b> {{provider_sex}}</span>
+                                </li>
+                                <li class="sidebar-demo-list"><span :title="providerPhone"><b>Provider Phone:</b> {{providerPhone}}</span>
+                                </li>
+                                <li class="sidebar-demo-list"><span
+                                        :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span>
+                                </li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col s12">
+                    <div class="card">
+                        <div class="card-content">
+                            <p style="text-align: center; padding-bottom: 10px"><strong>Suggested Family Members</strong></p>
+                            <p style="font-weight: lighter; padding-left: 15px">Check to confirm family member(s):</p>
+                            <ul>
+                                <li class="sidebar-demo-list" style="height: auto !important;">
+                                    <label>
+                                        <input type="checkbox">
+                                        <span>Collin Eichmann</span>
+                                        <ul style="padding-left: 10px">
+                                            <li><strong>Address:</strong>660 Eugene Lane</li>
+                                            <li><strong>Phone:</strong> +123456789</li>
+                                        </ul>
+                                    </label>
+                                </li>
+                                <li class="sidebar-demo-list" style="height: auto !important;">
+                                    <label>
+                                        <input type="checkbox">
+                                        <span>Lulu Eichmann</span>
+                                        <ul style="padding-left: 10px">
+                                            <li><strong>Address:</strong>660 Eugene Lane</li>
+                                            <li><strong>Phone:</strong> +123456789</li>
+                                        </ul>
+                                    </label>
+                                </li>
+                                <li class="sidebar-demo-list" style="height: auto !important;">
+                                    <label>
+                                        <input type="checkbox">
+                                        <span>Allene Robel</span>
+                                        <ul style="padding-left: 10px">
+                                            <li><strong>Address:</strong>660 Eugene Lane</li>
+                                            <li><strong>Phone:</strong> +123456789</li>
+                                        </ul>
+                                    </label>
+                                </li>
+                                <li class="sidebar-demo-list" style="height: auto !important;">
+                                    <label>
+                                        <input type="checkbox">
+                                        <span>Dovie Abernathy</span>
+                                        <ul style="padding-left: 10px">
+                                            <li><strong>Address:</strong>660 Eugene Lane</li>
+                                            <li><strong>Phone:</strong> +156789023</li>
+                                        </ul>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="row">
                 <div class="col s12">
@@ -216,7 +277,8 @@
                         <div class="col s6 m3 select-custom">
                             <label for="home_radio"
                                    :class="{valid: home_is_valid, invalid: home_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="home_radio" value="home"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio"
+                                       id="home_radio" value="home"
                                        :checked="home_phone != ''"/>
                                 <span class="phone-label">{{home_phone_label}}</span>
 
@@ -227,7 +289,8 @@
 
                             <label for="cell_radio"
                                    :class="{valid: cell_is_valid, invalid: cell_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="cell_radio" value="cell"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio"
+                                       id="cell_radio" value="cell"
                                        :checked="home_phone == '' && cell_phone != ''"/>
                                 <span class="phone-label">{{cell_phone_label}}</span></label>
                             <input class="input-field" name="cell_phone" id="cell_phone" v-model="cell_phone"/>
@@ -236,7 +299,8 @@
 
                             <label for="other_radio"
                                    :class="{valid: other_is_valid, invalid: other_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="other_radio" value="other"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio"
+                                       id="other_radio" value="other"
                                        :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
                                 <span class="phone-label">{{other_phone_label}}</span>
                             </label>
@@ -245,7 +309,8 @@
                         <div class="col s6 m3 select-custom">
                             <label for="agent_radio"
                                    :class="{valid: agent_is_valid, invalid: agent_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="agent_radio" value="agent"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio"
+                                       id="agent_radio" value="agent"
                                        :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
                                 <span class="phone-label">{{agent_phone_label}}</span>
                             </label>
@@ -253,8 +318,9 @@
                         </div>
                     </div>
                     <div v-if="preferred_phone == 'agent' " class="row">
-                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out other contact's details</b></blockquote>
-                        <div  class="col s6 m4">
+                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out other contact's
+                            details</b></blockquote>
+                        <div class="col s6 m4">
                             <label for="agent_name" class="label">Other Contact's Name</label>
                             <input class="input-field" name="agent_name" id="agent_name" v-model="agent_name"/>
                         </div>
@@ -263,14 +329,16 @@
                             <input class="input-field" name="agent_email" id="agent_email" v-model="agent_email"/>
                         </div>
                         <div class="col s6 m4">
-                            <label for="agent_relationship" class="label">Other Contact's Relationship to the Patient</label>
+                            <label for="agent_relationship" class="label">Other Contact's Relationship to the
+                                Patient</label>
                             <input class="input-field" name="agent_relationship" id="agent_relationship"
                                    v-model="agent_relationship"/>
                         </div>
                         <div class="col s6 m3 select-custom">
                             <label for="agent_radio"
                                    :class="{valid: agent_is_valid, invalid: agent_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="agent_radio" value="agent"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio"
+                                       id="agent_radio" value="agent"
                                        :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
                                 <span class="phone-label">{{agent_phone_label}}</span>
                             </label>
@@ -278,8 +346,9 @@
                         </div>
                     </div>
                     <div v-if="preferred_phone == 'agent' " class="row">
-                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out other contact's details</b></blockquote>
-                        <div  class="col s6 m4">
+                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out other contact's
+                            details</b></blockquote>
+                        <div class="col s6 m4">
                             <label for="agent_name" class="label">Other Contact's Name</label>
                             <input class="input-field" name="agent_name" id="agent_name" v-model="agent_name"/>
                         </div>
@@ -288,14 +357,16 @@
                             <input class="input-field" name="agent_email" id="agent_email" v-model="agent_email"/>
                         </div>
                         <div class="col s6 m4">
-                            <label for="agent_relationship" class="label">Other Contact's Relationship to the Patient</label>
+                            <label for="agent_relationship" class="label">Other Contact's Relationship to the
+                                Patient</label>
                             <input class="input-field" name="agent_relationship" id="agent_relationship"
                                    v-model="agent_relationship"/>
                         </div>
                     </div>
                     <div class="row">
                         <blockquote style="border-left: 5px solid #26a69a;">
-                            <span class="consented_title"><b>II.</b></span> Please confirm the patient’s mailing address and email address:
+                            <span class="consented_title"><b>II.</b></span> Please confirm the patient’s mailing address
+                            and email address:
                         </blockquote>
 
                         <div class="col s12 m3 select-custom">
@@ -332,7 +403,7 @@
                         </blockquote>
                         <div class="col s12 m3">
                             <label for="days[]" class="label">Day</label>
-                            <select  class="do-not-close" name="days[]" id="days[]" multiple>
+                            <select class="do-not-close" name="days[]" id="days[]" multiple>
                                 <option disabled selected>Days:</option>
                                 <option value="1">Monday</option>
                                 <option value="2">Tuesday</option>
@@ -406,7 +477,8 @@
                         Hi, this is {{userFullName}} calling on behalf of {{providerFullName}} at {{practice_name}}.
                         The doctor(s) have invited you to their new personalized care management program.
                         Please give us a call at {{practice_phone}} to learn more.
-                        Please note there is nothing to worry about, this program just lets your doctor take better care of you between visits.
+                        Please note there is nothing to worry about, this program just lets your doctor take better care
+                        of you between visits.
                         Again the number is {{practice_phone}}.
                     </blockquote>
 
@@ -688,24 +760,24 @@
             utc_requested_callback() {
                 return this.utc_reason === 'requested callback';
             },
-            utc_other(){
+            utc_other() {
                 return this.utc_reason === 'other';
             },
-            rejected_other(){
+            rejected_other() {
                 return this.reason === 'other';
             },
-            provider_pronunciation: function(){
+            provider_pronunciation: function () {
                 return providerInfo ? (providerInfo.pronunciation ? providerInfo.pronunciation : 'N/A') : 'N/A';
             },
-            provider_sex: function(){
+            provider_sex: function () {
                 return providerInfo ? (providerInfo.sex ? providerInfo.sex : 'N/A') : 'N/A';
             },
-            last_office_visit_at: function(){
-                return enrollee.last_encounter ? enrollee.last_encounter: 'N/A';
+            last_office_visit_at: function () {
+                return enrollee.last_encounter ? enrollee.last_encounter : 'N/A';
             },
-            care_ambassador_script: function(){
+            care_ambassador_script: function () {
 
-                if(! script){
+                if (!script) {
                     return 'Script not found.'
                 }
                 let ca_script = script.body;
@@ -1002,7 +1074,6 @@
     .invalid {
         color: red;
     }
-
 
     .padding-top-5 {
         padding-top: 5%;
