@@ -320,7 +320,6 @@
             changePractice() {
                 this.tableData = []
                 this.url = null;
-                this.$refs.tblBillingReport.resetQuery()
                 this.$refs.tblBillingReport.setPage(1)
                 this.getCounts()
                 this.retrieve()
