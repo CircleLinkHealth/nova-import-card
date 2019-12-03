@@ -78,49 +78,32 @@
                     <div class="card">
                         <div class="card-content">
                             <p style="text-align: center; padding-bottom: 10px"><strong>Suggested Family Members</strong></p>
-                            <p style="font-weight: lighter; padding-left: 15px">Check to confirm family member(s):</p>
-                            <ul>
-                                <li class="sidebar-demo-list" style="height: auto !important;">
-                                    <label>
-                                        <input type="checkbox">
-                                        <span>Collin Eichmann</span>
-                                        <ul style="padding-left: 10px">
-                                            <li><strong>Address:</strong>660 Eugene Lane</li>
-                                            <li><strong>Phone:</strong> +123456789</li>
+                            <div v-if="this.family_loading">
+                                <loader style="margin-left: 45%"/>
+                            </div>
+                            <div v-else>
+                                <div v-if="showBanner" class="banner-class">{{this.bannerText}}</div>
+                                <div v-else>
+                                    <div v-if="this.suggested_family_members_exist">
+                                        <p style="font-weight: lighter; padding-left: 15px">Check to confirm family member(s):</p>
+                                        <ul>
+                                            <li v-for="member in this.suggested_family_members" class="sidebar-demo-list" style="height: auto !important;">
+                                                <label>
+                                                    <input type="checkbox">
+                                                    <span>{{member.first_name}} {{member.last_name}}</span>
+                                                    <ul style="padding-left: 10px">
+                                                        <li><strong>Address:</strong>{{member.address.value}}</li>
+                                                        <li><strong>Phone:</strong>{{member.phone.value}}</li>
+                                                    </ul>
+                                                </label>
+                                            </li>
                                         </ul>
-                                    </label>
-                                </li>
-                                <li class="sidebar-demo-list" style="height: auto !important;">
-                                    <label>
-                                        <input type="checkbox">
-                                        <span>Lulu Eichmann</span>
-                                        <ul style="padding-left: 10px">
-                                            <li><strong>Address:</strong>660 Eugene Lane</li>
-                                            <li><strong>Phone:</strong> +123456789</li>
-                                        </ul>
-                                    </label>
-                                </li>
-                                <li class="sidebar-demo-list" style="height: auto !important;">
-                                    <label>
-                                        <input type="checkbox">
-                                        <span>Allene Robel</span>
-                                        <ul style="padding-left: 10px">
-                                            <li><strong>Address:</strong>660 Eugene Lane</li>
-                                            <li><strong>Phone:</strong> +123456789</li>
-                                        </ul>
-                                    </label>
-                                </li>
-                                <li class="sidebar-demo-list" style="height: auto !important;">
-                                    <label>
-                                        <input type="checkbox">
-                                        <span>Dovie Abernathy</span>
-                                        <ul style="padding-left: 10px">
-                                            <li><strong>Address:</strong>660 Eugene Lane</li>
-                                            <li><strong>Phone:</strong> +156789023</li>
-                                        </ul>
-                                    </label>
-                                </li>
-                            </ul>
+                                    </div>
+                                    <div v-else>
+                                        <p style="font-weight: lighter; padding-left: 15px">No suggested family members found.</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -624,6 +607,7 @@
     import NoCoPayEn from './call-scripts/no-copay-en';
     import CoPayEs from './call-scripts/copay-es';
     import NoCoPayEs from './call-scripts/no-copay-es';
+    import Loader from '../loader.vue';
 
     //Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
@@ -644,6 +628,7 @@
             'no-copay-en': NoCoPayEn,
             'copay-es': CoPayEs,
             'no-copay-es': NoCoPayEs,
+            'loader': Loader,
         },
         computed: {
             enrolleeId: function () {
@@ -789,10 +774,18 @@
                     .replace(/{enroller}/gi, userFullName);
 
                 return processed_script;
+            },
+            suggested_family_members_exist: function () {
+                return Array.isArray(this.suggested_family_members) && this.suggested_family_members.length > 0;
             }
         },
         data: function () {
             return {
+                showBanner: false,
+                bannerText: '',
+                bannerType: 'info',
+
+                family_loading: false,
                 csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 userFullName: userFullName,
                 providerFullName: providerFullName,
@@ -837,9 +830,13 @@
                 agent_name: '',
                 agent_email: '',
                 agent_relationship: '',
+
+                suggested_family_members: [],
             };
         },
         mounted: function () {
+
+            this.family_loading = true;
 
             this.start_time = Date.now();
             this.total_time_in_system_running = this.total_time_in_system;
@@ -909,8 +906,24 @@
                 }
 
             });
+
+            this.getSuggestedFamilyMembers();
         },
         methods: {
+            getSuggestedFamilyMembers(){
+                return this.axios
+                    .get(rootUrl('/enrollment/get-suggested-family-members/' + enrollee.id))
+                    .then(response => {
+                        this.family_loading = false;
+                        this.suggested_family_members = response.data.suggested_family_members;
+                    })
+                    .catch(err => {
+                        this.family_loading = false;
+                        this.bannerText = err.response.data.message;
+                        this.bannerType = 'danger';
+                        this.showBanner = true;
+                    });
+            },
 
             getTimeDiffInSecondsFromMS(millis) {
                 return Math.round(Date.now() - millis) / 1000;
@@ -1044,7 +1057,11 @@
 
 </script>
 <style>
-
+    .banner-class {
+        background-color: lightpink;
+        padding: 15px;
+        border-radius: 5px;
+    }
     .phone-label {
         margin-bottom: 10px;
     }

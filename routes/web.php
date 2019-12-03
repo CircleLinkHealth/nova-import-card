@@ -137,7 +137,6 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
     });
 
-
     // API
     Route::group(['prefix' => 'api', 'middleware' => ['cacheResponse']], function () {
         Route::group(['prefix' => 'admin'], function () {
@@ -428,14 +427,15 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(
         [
-            'prefix' => 'enrollment'
-        ], function(){
-        Route::get('/getSuggestedFamilyMembers/{enrolleeId}', [
-            'uses' => 'API\EnrollmentCenterController@getSuggestedFamilyMembers',
-            'as'   => 'enrollment-center.family-members',
-        ])->middleware('permission:enrollee.read');
-    });
-
+            'prefix' => 'enrollment',
+        ],
+        function () {
+            Route::get('/get-suggested-family-members/{enrolleeId}', [
+                'uses' => 'API\EnrollmentCenterController@getSuggestedFamilyMembers',
+                'as'   => 'enrollment-center.family-members',
+            ])->middleware('permission:enrollee.read');
+        }
+    );
 
     Route::resource(
         'practice.users',
