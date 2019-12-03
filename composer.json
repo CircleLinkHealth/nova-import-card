@@ -80,6 +80,7 @@
     "ext-libxml": "*",
     "ext-simplexml": "*",
     "ext-pdo": "*",
+    "ext-redis": "*",
     "alexbowers/nova-prepopulate-searchable": "^1.0",
     "algolia/algoliasearch-client-php": "^2.2",
     "algolia/scout-extended": "^1.8",
@@ -120,7 +121,6 @@
     "nvanheuverzwijn/monolog-logdna": "^2.1",
     "phaxio/phaxio": "^1.0",
     "pragmarx/version": "^0.2.8",
-    "predis/predis": "^1.1",
     "propaganistas/laravel-phone": "^3.0",
     "seld/jsonlint": "^1.7",
     "sparclex/nova-import-card": "^2.0",
@@ -135,6 +135,7 @@
     "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
+    "ext-xdebug": "*",
     "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
     "brianium/paratest": "*",

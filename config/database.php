@@ -158,7 +158,7 @@ return [
     */
 
     'redis' => [
-        'client' => 'predis',
+        'client' => 'phpredis',
 
         'default' => [
             'host'               => env('REDIS_HOST', '127.0.0.1'),
@@ -169,10 +169,11 @@ return [
         ],
 
         'cache' => [
-            'host'     => env('REDIS_HOST', '127.0.0.1'),
-            'password' => env('REDIS_PASSWORD', null),
-            'port'     => env('REDIS_PORT', 6379),
-            'database' => env('REDIS_CACHE_DB', 1),
+            'host'               => env('REDIS_HOST', '127.0.0.1'),
+            'password'           => env('REDIS_PASSWORD', null),
+            'port'               => env('REDIS_PORT', 6379),
+            'database'           => env('REDIS_CACHE_DB', 1),
+            'read_write_timeout' => -1,
         ],
     ],
 ];
