@@ -146,10 +146,10 @@ $factory->define(Invite::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(Enrollee::class, function (Faker\Generator $faker) {
+$factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factory){
     return [
-        'provider_id' => 2430,
-        'practice_id' => 8,
+        'provider_id' => $factory->create(\CircleLinkHealth\Customer\Entities\User::class)->id,
+        'practice_id' => $factory->create(Practice::class)->id,
         'mrn'         => $faker->randomNumber(6),
         'dob'         => $faker->date('Y-m-d'),
 
