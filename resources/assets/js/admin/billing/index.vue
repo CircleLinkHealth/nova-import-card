@@ -320,9 +320,10 @@
             changePractice() {
                 this.tableData = []
                 this.url = null;
+                this.$refs.tblBillingReport.resetQuery()
+                this.$refs.tblBillingReport.setPage(1)
                 this.getCounts()
                 this.retrieve()
-                this.$refs.tblBillingReport.setPage(1)
             },
             detachChargeableService(e) {
                 if (e) e.preventDefault()
