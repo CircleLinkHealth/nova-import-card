@@ -62,9 +62,6 @@ class WorkScheduleController extends Controller
         $startDate = Carbon::parse($request->input('start'))->toDateString();
         $endDate   = Carbon::parse($request->input('end'))->toDateString();
         $today     = Carbon::parse(now())->toDateString();
-//        $startOfMonth = Carbon::parse($today)->startOfMonth()->copy()->toDateString();
-//        $endOfMonth   = Carbon::parse($today)->endOfMonth()->copy()->toDateString();
-//        $endOfYear    = Carbon::parse($today)->endOfYear()->copy()->toDateString();
 
         if (auth()->user()->isAdmin()) {
             $nurses          = $this->getActiveNurses();
@@ -81,9 +78,6 @@ class WorkScheduleController extends Controller
             'workEvents'      => $windowData->toArray(),
             'dataForDropdown' => $dataForDropdown,
             'today'           => $today,
-            //            'startOfMonth'    => $startOfMonth,
-            //            'endOfMonth'      => $endOfMonth,
-            //            'endOfYear'       => $endOfYear,
         ];
 
         return response()->json([
@@ -250,13 +244,13 @@ class WorkScheduleController extends Controller
     public function index()
     {
         $authIsAdmin = json_encode(auth()->user()->isAdmin());
-
+        $today       = Carbon::parse(now())->toDateString();
 //        $tzAbbr = auth()->user()->timezone_abbr; // @todo: we need this ?  it wasnt used in view
 
         //I think time tracking submits along with the form, thus messing up sessions.
         //Temporary fix
         $disableTimeTracking = true; // @todo: we need this ?  it wasnt used in view
-        return view('care-center.work-schedule', compact('authIsAdmin'));
+        return view('care-center.work-schedule', compact('authIsAdmin', 'today'));
     }
 
     /**
@@ -315,8 +309,9 @@ class WorkScheduleController extends Controller
     {
         $authIsAdmin = auth()->user()->isAdmin();
         $authUserId  = auth()->id();
+        $today       = Carbon::parse(now())->toDateString();
 
-        return view('admin.nurse.schedules.index', compact('authIsAdmin', 'authUserId'));
+        return view('admin.nurse.schedules.index', compact('authIsAdmin', 'authUserId', 'today'));
     }
 
     /**

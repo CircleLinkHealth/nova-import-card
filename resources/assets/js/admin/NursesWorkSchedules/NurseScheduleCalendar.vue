@@ -6,6 +6,7 @@
                 <input id="holidaysCheckbox"
                        type="checkbox"
                        class="holidays-button"
+                       @click="refetchEvents"
                        v-model="showHolidays">
                 Holidays
             </div>
@@ -19,14 +20,14 @@
             </div>
 
             <div class="search-filter">
-                <vue-select v-if="this.authIsAdmin && sex"
+                <vue-select v-if="this.authIsAdmin"
                             multiple v-model="searchFilter"
-
+                            :options="dataForSearchFilter()"
                             placeholder="Filter RN"
                             required>
                 </vue-select>
             </div>
-<!--:options="dataForSearchFilter"-->
+
             <!-- Add new event - main button-->
             <div class="add-event-main">
                 <button class="btn btn-primary" @click="openMainEventModal">Add new window</button>
@@ -34,9 +35,8 @@
 
         </div>
         <div class="calendar">
-            <full-calendar v-if="sex"
-                           ref="calendar"
-                           :event-sources="eventSources()"
+            <full-calendar ref="calendar"
+                           :event-sources="eventSources"
                            :config="config"
                            @day-click="handleDateCLick"
                            @event-selected="handleEventCLick"
@@ -63,14 +63,13 @@
                             <!--  Filter Options-->
                             <div v-if="!clickedToViewEvent" class="filter-options">
                                 <div v-if="authIsAdmin">
-                                    <vue-select v-if="sex"
-
-                                                v-model="nurseData"
+                                    <vue-select v-model="nurseData"
+                                                :options="dataForDropdown"
                                                 placeholder="Choose RN"
                                                 required>
                                     </vue-select>
                                 </div>
-<!--:options="dataForDropdown"-->
+
                                 <div class="modal-inputs col-md-12">
                                     <div class="work-hours">
                                         <h5>Work For:</h5>
@@ -223,6 +222,7 @@
 
         props: [
             'authIsAdmin',
+            'today'
         ],
 
         components: {
@@ -237,7 +237,7 @@
             return {
                 // calendarData:[],
                 dataForDropdown: [],
-                today: '', //pushed from created()
+                // today: '', //pushed from created()
                 // startOfMonth: [],
                 // endOfMonth: [],
                 // endOfYear: [],
@@ -267,7 +267,55 @@
                 workEventsToConfirm: [],
                 isRecurringEvent: false,
                 addHolidays: false,
-                sex: false,
+                eventSources: [
+                    { // has to be 'events()' else it doesnt work
+                        // WorkEvents
+                        events(start, end, timezone, callback) {
+                            debugger;
+                            axios.get('care-center/work-schedule/get-calendar-data', {
+                                params: {
+                                    start: new Date(start),
+                                    end: new Date(end),
+                                }
+                            })
+                                .then((response => {
+                                    const calendarData = response.data.calendarData;
+                                    self.workHours = [];
+                                    self.dataForDropdown = [];
+                                    self.workHours.push(...calendarData.workEvents);
+                                    self.dataForDropdown.push(...calendarData.dataForDropdown);
+                                    console.log(self.showHolidays);
+                                    const x = self.eventsFiltered();
+                                    callback(x);
+
+                                })).catch((error) => {
+                                this.errors = error;
+                                console.log(this.errors);
+                            });
+                        },
+                    },
+                    {
+                        // Holidays Events
+                        events(start, end, timezone, callback) {
+                            axios.get('nurses/holidays', {
+                                params: {
+                                    start: new Date(start),
+                                    end: new Date(end),
+                                }
+                            })
+                                .then((response => {
+                                        const holidays = response.data.holidays;
+                                        self.holidays = [];
+                                        self.holidays.push(...holidays);
+                                        console.log(self.showHolidays);
+                                        callback(holidays);
+                                    }
+                                )).catch((error) => {
+                                 console.log(error);
+                            });
+                        }
+                    }
+                ],
 
                 config: {
                     defaultView: viewDefault,
@@ -334,6 +382,10 @@
         },
 
         methods: Object.assign(mapActions(['addNotification']), {
+            refetchEvents() {
+                return this.$refs.calendar.$emit('refetch-events');
+            },
+
             openMainEventModal() {
                 this.addNewEventMainClicked = true;
                 this.toggleModal();
@@ -346,16 +398,16 @@
             deleteEvent(shouldDeleteAll) {
                 const event = this.eventToViewData[0];
                 const eventType = event.eventType;
-                const isAddedNow = event.hasOwnProperty('isAddedNow');
+
 
                 if (eventType !== holidayEventType) {
-                    this.deleteWorkDay(event, isAddedNow, shouldDeleteAll);
+                    this.deleteWorkDay(event, shouldDeleteAll);
                 } else {
-                    this.deleteHoliday(event, isAddedNow);
+                    this.deleteHoliday(event);
                 }
             },
 
-            deleteHoliday(event, isAddedNow) {
+            deleteHoliday(event) {
                 this.loader = true;
                 const holidayId = event.holidayId;
                 axios.get(`/care-center/work-schedule/holidays/destroy/${holidayId}`).then((response => {
@@ -363,15 +415,9 @@
                     console.log(response);
 
                     //Delete event from dom
-                    if (isAddedNow) {
-                        const index = this.eventsAddedNow.findIndex(x => x.data.windowId === windowId);
-                        this.eventsAddedNow.splice(index, 1);
-                    }
+                    // const index = this.holidays.findIndex(x => x.data.holidayId === holidayId);
+                    // this.holidays.splice(index, 1);
 
-                    if (!isAddedNow) {
-                        const index = this.holidays.findIndex(x => x.data.holidayId === holidayId);
-                        this.holidays.splice(index, 1);
-                    }
                     this.loader = false;
                     //Show notification
                     this.addNotification({
@@ -395,7 +441,7 @@
                 });
             },
 
-            deleteWorkDay(event, isAddedNow, shouldDeleteAll) {
+            deleteWorkDay(event, shouldDeleteAll) {
                 this.loader = true;
                 const windowId = this.eventToViewData[0].windowId;
                 axios.get(`/care-center/work-schedule/destroy/${windowId}`, {
@@ -407,14 +453,10 @@
                     this.loader = false;
                     this.toggleModal();
                     //Delete event from events() - dom
-                    if (isAddedNow) {
-                        const index = this.eventsAddedNow.findIndex(x => x.data.windowId === windowId);
-                        this.eventsAddedNow.splice(index, 1);
-                    }
-                    if (!isAddedNow) {
-                        const index = this.workHours.findIndex(x => x.data.windowId === windowId);
-                        this.workHours.splice(index, 1);
-                    }
+                    //
+                    // const index = this.workHours.findIndex(x => x.data.windowId === windowId);
+                    // this.workHours.splice(index, 1);
+
 
                     //Show notification
                     this.addNotification({
@@ -443,9 +485,9 @@
                 });
             },
 
-            refetchEvents() {
-                this.$refs.calendar.$emit('refetch-events');
-            },
+            // refetchEvents() {
+            //     this.$refs.calendar.$emit('refetch-events');
+            // },
 
             formatDate(date) {
                 var d = new Date(date),
@@ -476,7 +518,7 @@
                         holiday: workDate
                     }).then((response => {
                             console.log(response);
-
+                            this.refetchEvents();
                             this.loader = false;
                             this.toggleModal();
                             //@todo: Will fix refetchEvents() for this. so i disabled it
@@ -608,6 +650,7 @@
                     validated: validatedDefault,
                     updateCollisions: updateCollidedWindows
                 }).then((response => {
+                        this.refetchEvents();
                         this.loader = false;
                         this.toggleModal();
                         //@todo: Will fix refetchEvents() for this. so i disabled it
@@ -642,7 +685,7 @@
                 //         name: this.nurseData.label,
                 //         nurseId: this.nurseData.nurseId,
                 //         eventType: defaultEventType,
-                //         isAddedNow: true,
+                //
                 //     },
                 //     // dow: [newEventData.window.dayOfWeek],
                 //     end: `${this.workEventDate}T${this.workRangeEnds}`,
@@ -652,25 +695,12 @@
                 // }
             },
 
-            dataForSearchFilter() {
-                const workEvents = this.workHours;
-                const workEventsWithHolidays = workEvents.concat(this.holidays);
-
-                if (this.showWorkEvents && !this.showHolidays) {
-                        return removeDuplicatesFrom(workEvents);
-                    } else if (!this.showWorkEvents && this.showHolidays) {
-                        return removeDuplicatesFrom(this.holidays);
-                    } else {
-                        return removeDuplicatesFrom(workEventsWithHolidays);
-                    }
-            },
-
             handleDateCLick(date, jsEvent, view) {
                 const clickedDate = date;
                 const today = Date.parse(this.today);
 
-                // this.workEventDate = '';
-                // this.workEventDate = clickedDate.format();
+                this.workEventDate = '';
+                this.workEventDate = clickedDate.format();
 
                 if (clickedDate >= today) {
                     this.toggleModal();
@@ -735,56 +765,53 @@
                 this.selectedDate = '';
             },
 
-            eventSources() {
-               if (this.sex){
-                   return [
-                       { // has to be 'events()' else it doesnt work
-                           // WorkEvents
-                           events(start, end, timezone, callback) {
-                               axios.get('care-center/work-schedule/get-calendar-data', {
-                                   params: {
-                                       start: new Date(start),
-                                       end: new Date(end),
-                                   }
-                               })
-                                   .then((response => {
-                                       const calendarData = response.data.calendarData;
-                                       self.workHours = [];
-                                       self.workHours.push(...calendarData.workEvents);
-                                       callback(calendarData.workEvents);
-                                       self.dataForDropdown = calendarData.dataForDropdown;
-                                   })).catch((error) => {
-                                   this.errors = error;
-                                   console.log(this.errors);
-                               });
-                           },
-                       },
-                       {
-                           // Holidays Events
-                           events(start, end, timezone, callback) {
-                               axios.get('nurses/holidays', {
-                                   params: {
-                                       start: new Date(start),
-                                       end: new Date(end),
-                                   }
-                               })
-                                   .then((response => {
-                                           const holidays = response.data.holidays;
-                                           self.holidays = [];
-                                           self.holidays.push(...holidays);
-                                           callback(holidays);
-                                       }
-                                   )).catch((error) => {
-                                   console.log(error);
-                               });
-                           }
-                       }
-                   ]
-               }
+            dataForSearchFilter() {
+                const workEvents = this.workHours;
+                const workEventsWithHolidays = workEvents.concat(this.holidays);
+
+                if (this.showWorkEvents && !this.showHolidays) {
+                    return removeDuplicatesFrom(workEvents);
+                } else if (!this.showWorkEvents && this.showHolidays) {
+                    return removeDuplicatesFrom(this.holidays);
+                } else {
+                    return removeDuplicatesFrom(workEventsWithHolidays);
+                }
+            },
+
+            eventsFiltered() {
+                const workEvents = this.workHours;
+                const workEventsWithHolidays = workEvents.concat(this.holidays);
+
+                if (this.searchFilter === null || this.searchFilter.length === 0) {
+                    if (this.showWorkEvents && !this.showHolidays) {
+                        return workEvents;
+                    } else if (this.showHolidays && !this.showWorkEvents) {
+                        return this.holidays;
+                    } else {
+                        return workEventsWithHolidays;
+                    }
+
+                } else {
+                    if (this.showWorkEvents && !this.showHolidays) {
+                        return this.searchFilter.map(q => {
+                            return workEvents.filter(event => event.data.nurseId === q.nurseId);
+                        }).map(arr => arr).flat();
+                    } else if (this.showHolidays && !this.showWorkEvents) {
+                        return this.searchFilter.map(q => {
+                            return this.holidays.filter(event => event.data.nurseId === q.nurseId);
+                        }).map(arr => arr).flat();
+                    } else {
+                        return this.searchFilter.map(q => {
+                            return workEventsWithHolidays.filter(event => event.data.nurseId === q.nurseId);
+                        }).map(arr => arr).flat();
+                    }
+                }
             },
         }),
 //@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
         computed: {
+
+
             calculateMinDate() {
                 return this.workEventDate !== '' ? this.workEventDate : this.today;
             },
@@ -801,39 +828,11 @@
                 return this.clickedToViewEvent ? 'View / Delete Event' : 'Add new window';
             },
 
-            // events() {
-            //     const workEvents = this.workHours;
-            //     const workEventsWithHolidays = workEvents.concat(this.holidays);
-            //     if (this.searchFilter === null || this.searchFilter.length === 0) {
-            //         if (this.showWorkEvents && !this.showHolidays) {
-            //             return workEvents;
-            //         } else if (this.showHolidays && !this.showWorkEvents) {
-            //             return this.holidays;
-            //         } else {
-            //             return workEventsWithHolidays;
-            //         }
-            //
-            //     } else {
-            //         if (this.showWorkEvents && !this.showHolidays) {
-            //             return this.searchFilter.map(q => {
-            //                 return workEvents.filter(event => event.data.nurseId === q.nurseId);
-            //             }).map(arr => arr).flat();
-            //         } else if (this.showHolidays && !this.showWorkEvents) {
-            //             return this.searchFilter.map(q => {
-            //                 return this.holidays.filter(event => event.data.nurseId === q.nurseId);
-            //             }).map(arr => arr).flat();
-            //         } else {
-            //             return this.searchFilter.map(q => {
-            //                 return workEventsWithHolidays.filter(event => event.data.nurseId === q.nurseId);
-            //             }).map(arr => arr).flat();
-            //         }
-            //     }
-            // },
         },
 
         created() {
             self = this;
-            this.sex = true;
+
             // this.loader = true;
             // // All Work Events
             // axios.get('care-center/work-schedule/get-calendar-data')
