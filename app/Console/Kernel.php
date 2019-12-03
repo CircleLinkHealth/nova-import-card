@@ -120,9 +120,12 @@ class Kernel extends ConsoleKernel
         $schedule->command(ResetPatients::class)
             ->cron('1 0 1 * *')->onOneServer();
 
-        //Run at 12:30am every 1st of month
+        //Run at 12:45am every 1st of month
         $schedule->command(AttachBillableProblemsToLastMonthSummary::class, ['--reset-actor' => true])
-            ->cron('30 0 1 * *')->onOneServer();
+            ->cron('45 0 1 * *')->onOneServer();
+
+        $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
+            ->dailyAt('00:15')->onOneServer();
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,
