@@ -6,7 +6,7 @@
                 <input id="holidaysCheckbox"
                        type="checkbox"
                        class="holidays-button"
-                       @click="refetchEvents"
+                       @click="refetchEvents()"
                        v-model="showHolidays">
                 Holidays
             </div>
@@ -15,13 +15,16 @@
                 <input id="workCheckbox"
                        type="checkbox"
                        class="work-button"
+                       @click="refetchEvents()"
                        v-model="showWorkEvents">
                 Work Events
             </div>
 
             <div class="search-filter">
-                <vue-select v-if="this.authIsAdmin"
+                <vue-select ref="searchFilter"
+                        v-if="this.authIsAdmin"
                             multiple v-model="searchFilter"
+                            @input="refetchEvents()"
                             :options="dataForSearchFilter()"
                             placeholder="Filter RN"
                             required>
@@ -271,7 +274,6 @@
                     { // has to be 'events()' else it doesnt work
                         // WorkEvents
                         events(start, end, timezone, callback) {
-                            debugger;
                             axios.get('care-center/work-schedule/get-calendar-data', {
                                 params: {
                                     start: new Date(start),
@@ -281,11 +283,15 @@
                                 .then((response => {
                                     const calendarData = response.data.calendarData;
                                     self.workHours = [];
+                                    self.holidays = [];
                                     self.dataForDropdown = [];
+
+                                    self.holidays.push(...calendarData.holidayEvents);
                                     self.workHours.push(...calendarData.workEvents);
                                     self.dataForDropdown.push(...calendarData.dataForDropdown);
                                     console.log(self.showHolidays);
                                     const x = self.eventsFiltered();
+                                    // const c = calendarData.workEvents.concat(calendarData.holidayEvents);
                                     callback(x);
 
                                 })).catch((error) => {
@@ -294,27 +300,27 @@
                             });
                         },
                     },
-                    {
-                        // Holidays Events
-                        events(start, end, timezone, callback) {
-                            axios.get('nurses/holidays', {
-                                params: {
-                                    start: new Date(start),
-                                    end: new Date(end),
-                                }
-                            })
-                                .then((response => {
-                                        const holidays = response.data.holidays;
-                                        self.holidays = [];
-                                        self.holidays.push(...holidays);
-                                        console.log(self.showHolidays);
-                                        callback(holidays);
-                                    }
-                                )).catch((error) => {
-                                 console.log(error);
-                            });
-                        }
-                    }
+                    // {
+                    //     // Holidays Events
+                    //     events(start, end, timezone, callback) {
+                    //         axios.get('nurses/holidays', {
+                    //             params: {
+                    //                 start: new Date(start),
+                    //                 end: new Date(end),
+                    //             }
+                    //         })
+                    //             .then((response => {
+                    //                     const holidays = response.data.holidays;
+                    //                     self.holidays = [];
+                    //                     self.holidays.push(...holidays);
+                    //                     console.log(self.showHolidays);
+                    //                     callback(holidays);
+                    //                 }
+                    //             )).catch((error) => {
+                    //              console.log(error);
+                    //         });
+                    //     }
+                    // }
                 ],
 
                 config: {
@@ -384,6 +390,10 @@
         methods: Object.assign(mapActions(['addNotification']), {
             refetchEvents() {
                 return this.$refs.calendar.$emit('refetch-events');
+            },
+
+            rerenderEvents() {
+                return this.$refs.calendar.$emit('rerender-events');
             },
 
             openMainEventModal() {
@@ -484,10 +494,6 @@
 
                 });
             },
-
-            // refetchEvents() {
-            //     this.$refs.calendar.$emit('refetch-events');
-            // },
 
             formatDate(date) {
                 var d = new Date(date),
@@ -777,11 +783,9 @@
                     return removeDuplicatesFrom(workEventsWithHolidays);
                 }
             },
-
             eventsFiltered() {
                 const workEvents = this.workHours;
                 const workEventsWithHolidays = workEvents.concat(this.holidays);
-
                 if (this.searchFilter === null || this.searchFilter.length === 0) {
                     if (this.showWorkEvents && !this.showHolidays) {
                         return workEvents;
@@ -810,7 +814,9 @@
         }),
 //@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
         computed: {
-
+            // searchFilterHasValue(){
+            //     return this.$refs.searchFilter;
+            // },
 
             calculateMinDate() {
                 return this.workEventDate !== '' ? this.workEventDate : this.today;

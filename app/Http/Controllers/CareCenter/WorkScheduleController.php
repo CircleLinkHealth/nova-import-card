@@ -57,18 +57,22 @@ class WorkScheduleController extends Controller
         $this->fullCalendarService = $fullCalendarService;
     }
 
-    public function calendarWorkEvents(Request $request)
+    public function calendarEvents(Request $request)
     {
         $startDate = Carbon::parse($request->input('start'))->toDateString();
         $endDate   = Carbon::parse($request->input('end'))->toDateString();
         $today     = Carbon::parse(now())->toDateString();
+        $auth      = auth()->user();
 
-        if (auth()->user()->isAdmin()) {
+        if ($auth->isAdmin()) {
             $nurses          = $this->getActiveNurses();
             $windowData      = $this->fullCalendarService->prepareCalendarDataForAllActiveNurses($nurses, $startDate, $endDate);
+            $holidays        = $this->fullCalendarService->getHolidays($nurses, $startDate, $endDate)->toArray();
             $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
-        } else {
+        } elseif ($auth->isCareCoach()) {
             $windowData      = $this->calendarWorkEventsForAuthNurse($startDate, $endDate);
+            $holidaysData    = $auth->nurseInfo->holidays;
+            $holidays        = $this->fullCalendarService->prepareHolidaysData($holidaysData, $auth, $startDate, $endDate)->toArray();
             $dataForDropdown = '';
         }
 
@@ -77,6 +81,7 @@ class WorkScheduleController extends Controller
         $calendarData = [
             'workEvents'      => $windowData->toArray(),
             'dataForDropdown' => $dataForDropdown,
+            'holidayEvents'   => $holidays,
             'today'           => $today,
         ];
 
@@ -212,34 +217,34 @@ class WorkScheduleController extends Controller
         return $workScheduleData[0];
     }
 
-    /**
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|Response
-     */
-    public function getHolidays(Request $request)
-    {
-        $startDate = Carbon::parse($request->input('start'))->toDateString();
-        $endDate   = Carbon::parse($request->input('end'))->toDateString();
-
-        $auth = auth()->user();
-        if ($auth->isAdmin()) {
-            $nurses = $this->getActiveNurses();
-
-            if ( ! $nurses) {
-                return response()->json(['errors' => 'Nurses not found'], 400);
-            }
-            $holidays = $this->fullCalendarService->getHolidays($nurses, $startDate, $endDate)->toArray();
-        }
-
-        if ($auth->isCareCoach()) {
-            $holidaysData = $auth->nurseInfo->holidays;
-            $holidays     = $this->fullCalendarService->prepareHolidaysData($holidaysData, $auth, $startDate, $endDate)->toArray();
-        }
-
-        return response()->json([
-            'success'  => true,
-            'holidays' => $holidays,
-        ], 200);
-    }
+//    /**
+//     * @return \Illuminate\Contracts\Routing\ResponseFactory|Response
+//     */
+//    public function getHolidays(Request $request)
+//    {
+//        $startDate = Carbon::parse($request->input('start'))->toDateString();
+//        $endDate   = Carbon::parse($request->input('end'))->toDateString();
+//
+//        $auth = auth()->user();
+//        if ($auth->isAdmin()) {
+//            $nurses = $this->getActiveNurses();
+//
+//            if ( ! $nurses) {
+//                return response()->json(['errors' => 'Nurses not found'], 400);
+//            }
+//            $holidays = $this->fullCalendarService->getHolidays($nurses, $startDate, $endDate)->toArray();
+//        }
+//
+//        if ($auth->isCareCoach()) {
+//            $holidaysData = $auth->nurseInfo->holidays;
+//            $holidays     = $this->fullCalendarService->prepareHolidaysData($holidaysData, $auth, $startDate, $endDate)->toArray();
+//        }
+//
+//        return response()->json([
+//            'success'  => true,
+//            'holidays' => $holidays,
+//        ], 200);
+//    }
 
     public function index()
     {

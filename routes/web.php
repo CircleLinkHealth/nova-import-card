@@ -1861,7 +1861,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         //@todo: Im not sure where to place this Route as is been used by admin and nusrses. Or if i should create 2 seperated routes
         Route::get('work-schedule/get-calendar-data', [
-            'uses' => 'CareCenter\WorkScheduleController@calendarWorkEvents',
+            'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
             'as'   => 'care.center.work.schedule.getCalendarData',
         ])->middleware('permission:nurseContactWindow.read');
 
