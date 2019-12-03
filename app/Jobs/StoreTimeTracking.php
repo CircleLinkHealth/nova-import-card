@@ -6,10 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Services\ActivityService;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
@@ -39,7 +36,7 @@ class StoreTimeTracking implements ShouldQueue
      *
      * @var int
      */
-    public $tries = 2;
+    public $tries = 3;
 
     /**
      * @var ParameterBag
@@ -57,10 +54,10 @@ class StoreTimeTracking implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(ActivityService $service)
+    public function handle()
     {
         $provider = User::with('nurseInfo')
-            ->find($this->params->get('providerId', null));
+            ->findOrFail($this->params->get('providerId', null));
 
         $isPatientBhi = User::isBhiChargeable()
             ->where('id', $this->params->get('patientId'))
@@ -75,8 +72,8 @@ class StoreTimeTracking implements ShouldQueue
 
             if ($this->isBillableActivity($pageTimer, $provider)) {
                 $newActivity = $this->createActivity($pageTimer, $provider, $isBehavioral);
-                $service->processMonthlyActivityTime([$this->params->get('patientId')]);
-                $this->handleNurseLogs($newActivity, $provider);
+                ProcessMonthltyPatientTime::dispatch($this->params->get('patientId'));
+                ProcessNurseMonthlyLogs::dispatch($newActivity);
             }
         }
     }
@@ -143,16 +140,6 @@ class StoreTimeTracking implements ShouldQueue
 
     private function handleNurseLogs(Activity $activity, User $provider)
     {
-        $activity->load('patient.patientInfo');
-
-        $nurse = $provider->nurseInfo;
-
-        if ( ! is_a($nurse, Nurse::class)) {
-            return;
-        }
-
-        (new AlternativeCareTimePayableCalculator($nurse))
-            ->adjustNursePayForActivity($activity);
     }
 
     /**
