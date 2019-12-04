@@ -80,6 +80,7 @@
     "ext-libxml": "*",
     "ext-simplexml": "*",
     "ext-pdo": "*",
+    "ext-redis": "*",
     "alexbowers/nova-prepopulate-searchable": "^1.0",
     "algolia/algoliasearch-client-php": "^2.2",
     "algolia/scout-extended": "^1.8",
