@@ -38,6 +38,7 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @property \CircleLinkHealth\Customer\Entities\User                                                          $user
  * @property \CircleLinkHealth\Customer\Entities\NurseContactWindow[]|\Illuminate\Database\Eloquent\Collection $windows
  * @property \CircleLinkHealth\Customer\Entities\WorkHours[]|\Illuminate\Database\Eloquent\Collection          $workhourables
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereBillingType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereHighRate($value)
@@ -51,19 +52,24 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereUserId($value)
  * @mixin \Eloquent
+ *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse
  *     filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse query()
+ *
  * @property int $is_demo
  * @property int $pay_interval
  * @property int $is_variable_rate
  * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice[] $invoices
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsDemo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsVariableRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse wherePayInterval($value)
+ *
  * @property-read int|null $care_rate_logs_count
  * @property-read int|null $holidays_count
  * @property-read int|null $invoices_count
@@ -73,6 +79,7 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @property-read int|null $windows_count
  * @property-read int|null $workhourables_count
  * @property int|null $case_load_capacity
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereCaseLoadCapacity($value)
  */
 class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
@@ -132,23 +139,34 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         return \CircleLinkHealth\TimeTracking\Entities\Activity::where('provider_id', $nurse->user_id)
             ->where('patient_id', $patient->user_id)
             ->where(function ($q) {
-                                                                   $q->where(
-                                                                       'created_at',
-                                                                       '>=',
-                                                                       Carbon::now()->startOfMonth()
-                                                                   )
-                                                                       ->where(
-                                                                         'updated_at',
-                                                                         '<=',
-                                                                         Carbon::now()->endOfMonth()
-                                                                     );
-                                                               })
+                $q->where(
+                    'created_at',
+                    '>=',
+                    Carbon::now()->startOfMonth()
+                )
+                    ->where(
+                        'updated_at',
+                        '<=',
+                        Carbon::now()->endOfMonth()
+                    );
+            })
             ->sum('duration');
     }
 
     public function careRateLogs()
     {
         return $this->hasMany(NurseCareRateLog::class);
+    }
+
+    public function currentWeekWindows()
+    {
+        $start = Carbon::parse(now())->startOfWeek()->toDateString();
+        $end   = Carbon::parse($start)->copy()->endOfWeek()->toDateString();
+
+        return $this->windows()->where([
+            ['date', '>=', $start],
+            ['date', '<=', $end],
+        ]);
     }
 
     public function firstWindowAfter(Carbon $date)
@@ -213,11 +231,11 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         return $this->upcomingHolidaysFrom(Carbon::today())
             ->sortBy(function ($item) {
-                        return Carbon::createFromFormat(
-                            'Y-m-d',
-                            "{$item->date->format('Y-m-d')}"
-                        );
-                    });
+                return Carbon::createFromFormat(
+                    'Y-m-d',
+                    "{$item->date->format('Y-m-d')}"
+                );
+            });
     }
 
     /**
