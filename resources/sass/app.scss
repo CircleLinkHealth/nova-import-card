@@ -563,9 +563,53 @@ a.navbar-title:hover {
     .questions-title {
         font-size: 100%;
     }
+
+    //pencil button circle (toggle view)
+    .top-buttons .top-right-fixed > button {
+        width: 4em;
+        height: 4em;
+        padding: 1%;
+    }
+
+    //Left button return back arrow*
+    .top-buttons .top-left-fixed > button {
+        height: 4em;
+        width: 4em;
+    }
+    // top buttons
+    #app > div > div.top-buttons > div > div:nth-child(1) > div > button > i{
+        font-size: 3em;
+    }
+
+    #app > div > div.top-buttons > div > div:nth-child(2) > div > button > i{
+        font-size: 1.5em;
+    }
 }
 
+@media (max-width: 600px) {
 
+    //pencil button circle (toggle view)
+    .top-buttons .top-right-fixed > button {
+        width: 36px;
+        height: 36px;
+        padding: 1%;
+    }
+
+    //Left button return back arrow*
+    .top-buttons .top-left-fixed > button {
+        height: 36px;
+        width: 36px;
+    }
+    // top buttons
+    #app > div > div.top-buttons > div > div:nth-child(1) > div > button > i{
+        font-size: 2em;
+    }
+
+    #app > div > div.top-buttons > div > div:nth-child(2) > div > button > i{
+        font-size: 1.5em;
+    }
+
+}
 //I phone X
 @media (max-width: 490px) {
 

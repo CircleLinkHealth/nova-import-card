@@ -206,7 +206,7 @@
         <div class="bottom-navbar container" :class="stage === 'complete' ? 'hidden' : ''">
             <!-- justify-content-end -->
             <div class="row no-gutters">
-                <div class="col-3 col-sm-1 col-md-1 col-lg-2 text-center">
+                <div class="col-3 col-sm-4 col-md-3 col-lg-2 text-center">
                     <div class="container">
                         <div class="row no-gutters scroll-buttons" v-show="!readOnlyMode">
                             <mdb-btn color="primary" @click="toggleCallAssistance" class="call-btn-round">
@@ -216,16 +216,16 @@
                         </div>
                     </div>
                 </div>
-                <div :class="readOnlyMode ? 'col-6' : 'col-5'" class="col-sm-1 offset-sm-0 col-md-1 offset-md-0 col-lg-6 offset-lg-1">
+                <div :class="readOnlyMode ? 'col-6' : 'col-5'" class="col-sm-4 offset-sm-0 col-md-4 offset-md-0 col-lg-6 offset-lg-1">
                     <div class="container">
                         <div class="row no-gutters progress-container">
-                            <div class="col-12 col-sm-12 col-md-6 text-center">
+                            <div class="col-12 col-sm-12 col-md-6 offset-md-1 col-lg-6 offset-lg-0 text-center">
                                 <span class="progress-text">
                                     {{progress}} of {{totalQuestions}} completed
                                 </span>
                             </div>
 
-                            <div class="col-12 col-sm-12 col-md-6 text-center">
+                            <div class="col-12 col-sm-12 col-md-12 offset-md-1 col-lg-4 offset-lg-0 text-center">
                                 <mdb-progress :value="progressPercentage"
                                               :height="10"/>
                             </div>
@@ -234,7 +234,7 @@
                     </div>
                 </div>
                 <!--scroll buttons-->
-                <div class="col-4 col-sm-5 col-md-4 col-lg-3" v-show="!readOnlyMode">
+                <div class="col-4 col-sm-4 col-md-4 offset-md-1 col-lg-3 offset-lg-0" v-show="!readOnlyMode">
                     <div class="container">
                         <div class="row no-gutters scroll-buttons">
                             <div class="col text-right">
