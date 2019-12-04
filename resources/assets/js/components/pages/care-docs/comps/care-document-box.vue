@@ -151,6 +151,9 @@
                 return rootUrl('/download-care-document/' + this.patient.id + '/' + this.doc.id);
             },
             openSendModal(channel) {
+                if (! this.doc){
+                    return null;
+                }
                 switch (channel) {
                     case "email":
                         this.inputType = 'email';

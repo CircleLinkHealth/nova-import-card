@@ -1,6 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\SaasAccount;
 use Illuminate\Database\Seeder;
 
 class PracticeTableSeeder extends Seeder
@@ -9,9 +15,10 @@ class PracticeTableSeeder extends Seeder
     {
         \DB::table('practices')->delete();
 
-        factory(Practice::class, 5)->create()->each(function ($practice) {
-            $practice->active = 1;
-            $practice->save();
+        $saasAccount = SaasAccount::firstOrFail();
+
+        factory(Practice::class, 5)->create(['active' => true, 'saas_account_id' => $saasAccount->id])->each(function ($practice) {
+            factory(Location::class)->create(['practice_id' => $practice->id, 'is_primary' => true]);
         });
     }
 }

@@ -88,6 +88,8 @@ class GenerateOpsDailyReport implements ShouldQueue
     {
         ini_set('memory_limit', '512M');
 
+        $demoPracticeIds = Practice::whereIsDemo(1)->pluck('id')->toArray();
+
         $practices = Practice::select(['id', 'display_name'])
             ->activeBillable()
             ->opsDashboardQuery($this->date->copy()->startOfMonth(), $this->fromDate)

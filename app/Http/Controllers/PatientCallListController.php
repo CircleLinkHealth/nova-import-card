@@ -6,13 +6,25 @@
 
 namespace App\Http\Controllers;
 
-use App\CallView;
+use App\Call;
+use App\Models\Addendum;
+use App\Services\CallService;
 use App\Services\NoteService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PatientCallListController extends Controller
 {
+    /**
+     * @var CallService
+     */
+    protected $service;
+
+    public function __construct(CallService $service)
+    {
+        $this->service = $service;
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -28,45 +40,53 @@ class PatientCallListController extends Controller
      * @return Response
      */
     public function index(Request $request, NoteService $noteService)
-    {
-        $nurseId = \Auth::user()->id;
+    {//note:here nurseId is actually userId.
+        $nurseId        = \Auth::user()->id;
+        $today          = Carbon::parse(now())->copy()->toDateString();
+        $draftNotes     = $noteService->getUserDraftNotes($nurseId);
+        $filterPriority = 'all';
+        $dropdownStatus = 'scheduled';
 
-        $draftNotes = $noteService->getUserDraftNotes($nurseId);
-
-        $calls = CallView::where('nurse_id', '=', $nurseId);
-
-        $dateFilter = 'All';
-        $date       = Carbon::now();
-
-        // filter status
-        $filterStatus = 'scheduled';
-        if ( ! empty($request->input('filterStatus'))) {
-            $filterStatus = $request->input('filterStatus');
+        if ( ! empty($request->input('filterPriority'))) {
+            $filterPriority = $request->input('filterPriority');
         }
 
-        if ($request->has('date') && 'all' != strtolower($request->input('date'))) {
-            try {
-                $date = $dateFilter = Carbon::parse($request->input('date'));
-            } catch (\Exception $e) {
-                return redirect()->back()->withErrors('Invalid date format. Please use yyyy-mm-dd instead.');
-            }
-            $calls->where('scheduled_date', '=', $date->toDateString());
+        if ( ! empty($request->input('filterStatus')) && 'all' === $filterPriority) {
+            $dropdownStatus = $request->input('filterStatus');
         }
 
-        if ('all' != $filterStatus) {
-            $calls->where('status', '=', $filterStatus);
-        }
+        $dropdownStatusClass = 'all' !== $filterPriority
+            ? ['disabled' => 'disable', 'class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;']
+            : ['class' => 'form-control select-picker', 'style' => 'width:32%; margin-left:-55%;'];
 
-        $calls->orderByRaw('FIELD(type, "Call Back") desc, scheduled_date asc, call_time_start asc, call_time_end asc');
-
-        $calls = $calls->get();
+        $calls = $this->service->filterCalls($dropdownStatus, $filterPriority, $today, $nurseId);
 
         return view('patientCallList.index', compact([
             'draftNotes',
             'calls',
             'dateFilter',
-            'filterStatus',
+            'dropdownStatus',
+            'filterPriority',
+            'dropdownStatusClass',
         ]));
+    }
+
+    /**
+     * @param $callId
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function markAddendumActivitiesDone($callId)
+    {
+        $call   = Call::findOrFail($callId);
+        $noteId = $call->note_id;
+
+        $addendum = Addendum::where('addendumable_id', $noteId)->first();
+
+        $addendum->markActivitiesAsDone();
+        $addendum->markAllAttachmentNotificationsAsRead();
+
+        return redirect(route('patient.note.view', ['patient_id' => $call->inbound_cpm_id, 'note_id' => $noteId]));
     }
 
     /**

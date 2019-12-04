@@ -19,9 +19,6 @@ use Spatie\MediaLibrary\Exceptions\InvalidConversion;
 class PracticeReportsService
 {
     /**
-     * @param array  $practices
-     * @param Carbon $date
-     *
      * @throws InvalidConversion
      * @throws FileCannotBeAdded
      *
@@ -51,7 +48,6 @@ class PracticeReportsService
     /**
      * @param $practices
      * @param $format
-     * @param Carbon $date
      *
      * @return mixed
      */
@@ -115,7 +111,6 @@ class PracticeReportsService
     /**
      * @param $rows
      * @param $format
-     * @param Carbon $date
      *
      * @return mixed
      */
@@ -129,10 +124,6 @@ class PracticeReportsService
     }
 
     /**
-     * @param Practice          $practice
-     * @param Carbon            $date
-     * @param ChargeableService $chargeableService
-     *
      * @throws \Exception
      * @throws \Waavi\UrlShortener\InvalidResponseException
      *

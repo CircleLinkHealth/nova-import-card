@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Providers\CpmArtisanServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use Circlelinkhealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
@@ -193,6 +194,8 @@ return [
         App\Providers\AppServiceProvider::class,
         App\Providers\AppDeferredServiceProvider::class,
 
+        App\Providers\BroadcastServiceProvider::class,
+
         App\Providers\HtmlToPdfServiceProvider::class,
         App\Providers\DirectMailServiceProvider::class,
         App\Providers\FaxServiceProvider::class,
@@ -210,6 +213,7 @@ return [
         NurseInvoicesDeferredBindingsServiceProvider::class,
         EligibilityServiceProvider::class,
         CardServiceProvider::class,
+        CpmArtisanServiceProvider::class,
     ],
 
     /*

@@ -11,15 +11,19 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\PerformsQueries;
 
 class ImporterProblemCodes extends Resource
 {
+    use PerformsQueries {
+        applyOrderings as protected traitApplyOrderings;
+    }
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = 'App\CLH\CCD\Importer\SnomedToCpmIcdMap';
+    public static $model = \App\CLH\CCD\Importer\SnomedToCpmIcdMap::class;
 
     /**
      * The columns that should be searched.
@@ -41,6 +45,8 @@ class ImporterProblemCodes extends Resource
      * @var string
      */
     public static $title = 'id';
+
+    public static $with = 'cpmProblem';
 
     /**
      * Get the actions available for the resource.
@@ -113,5 +119,17 @@ class ImporterProblemCodes extends Resource
     public function lenses(Request $request)
     {
         return [];
+    }
+
+    protected static function applyOrderings($query, array $orderings)
+    {
+        //Sort my cpmProblem.name
+        if (array_key_exists('cpmProblem', $orderings)) {
+            $query->leftJoin('cpm_problems', 'cpm_problems.id', '=', 'snomed_to_cpm_icd_maps.cpm_problem_id');
+            $orderings['cpm_problems.name'] = $orderings['cpmProblem'];
+            unset($orderings['cpmProblem']);
+        }
+
+        return self::traitApplyOrderings($query, $orderings);
     }
 }

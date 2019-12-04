@@ -2,7 +2,9 @@
 
 @section('title', 'Lead')
 
-@section('instructions', "Welcome! Let's start by creating <u>your implementation lead</u>.")
+@section('instructions')
+    Welcome! Let's start by creating <u>your implementation lead</u>.
+@endsection
 
 @section('module')
 

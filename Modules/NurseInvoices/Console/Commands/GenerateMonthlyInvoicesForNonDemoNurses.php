@@ -62,7 +62,7 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
             $end,
             $userIds,
             false,
-            $requestedBy = null,
+            null,
             true
         );
 
