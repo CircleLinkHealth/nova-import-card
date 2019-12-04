@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7582a492a10d06b02c48faaaa0c8d3ea",
+    "content-hash": "952501f781b17826dff155b901cd3331",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -44,8 +44,8 @@
             "authors": [
                 {
                     "name": "Alex Bowers",
-                    "email": "bowersbros@gmail.com",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "bowersbros@gmail.com"
                 }
             ],
             "description": "A tool to allow BelongsTo searchable fields to be pre-populated with data",
@@ -294,9 +294,9 @@
             "authors": [
                 {
                     "name": "Olav van Schie",
+                    "role": "Developer",
                     "email": "hello@appstract.team",
-                    "homepage": "https://appstract.team",
-                    "role": "Developer"
+                    "homepage": "https://appstract.team"
                 }
             ],
             "description": "OPcache helper for Laravel.",
@@ -350,9 +350,9 @@
             "authors": [
                 {
                     "name": "Olav van Schie",
+                    "role": "Developer",
                     "email": "hello@appstract.team",
-                    "homepage": "https://appstract.team",
-                    "role": "Developer"
+                    "homepage": "https://appstract.team"
                 }
             ],
             "description": "Smart Http Client for PHP.",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.125.0",
+            "version": "3.127.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d9ffe7cf9cc93d3c49f4f6d2db6cf0c469686f9c"
+                "reference": "c7f8c962ad2bb1430e673f14505870d8573a55d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d9ffe7cf9cc93d3c49f4f6d2db6cf0c469686f9c",
-                "reference": "d9ffe7cf9cc93d3c49f4f6d2db6cf0c469686f9c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c7f8c962ad2bb1430e673f14505870d8573a55d6",
+                "reference": "c7f8c962ad2bb1430e673f14505870d8573a55d6",
                 "shasum": ""
             },
             "require": {
@@ -450,7 +450,8 @@
                 "nette/neon": "^2.3",
                 "phpunit/phpunit": "^4.8.35|^5.4.3",
                 "psr/cache": "^1.0",
-                "psr/simple-cache": "^1.0"
+                "psr/simple-cache": "^1.0",
+                "sebastian/comparator": "^1.2.3"
             },
             "suggest": {
                 "aws/aws-php-sns-message-validator": "To validate incoming SNS notifications",
@@ -495,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-12-02T23:15:42+00:00"
+            "time": "2019-12-04T01:40:14+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -616,14 +617,14 @@
         },
         {
             "name": "circlelinkhealth/core",
-            "version": "1.31",
+            "version": "v1.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "483be4ac83a25c50cb64474c1034878d2af50f05"
+                "reference": "6d42e04962c760362e3fb7b555f1c4a1a13cc75a"
             },
             "require": {
-                "venturecraft/revisionable": "*"
+                "venturecraft/revisionable": "dev-master"
             },
             "type": "library",
             "extra": {
@@ -649,15 +650,45 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-29T15:46:51+00:00"
+            "time": "2019-10-09T09:12:27+00:00"
+        },
+        {
+            "name": "circlelinkhealth/cpmmigrations",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/module-cpm-migrations.git",
+                "reference": "783cb739161a256e7814696f9ebd91d70e959519"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\CpmMigrations\\Providers\\CpmMigrationsServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\CpmMigrations\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2019-11-28T07:45:05+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.4.7",
+            "version": "v1.5.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "0be174a6174bacdadbc61cf44836c912efbc8f56"
+                "reference": "4e3650229e104eacba6fd286d96fad7eeb5fc408"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
@@ -690,7 +721,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-19T00:58:51+00:00"
+            "time": "2019-11-27T01:40:43+00:00"
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
@@ -763,60 +794,37 @@
             "time": "2019-10-02T13:24:06+00:00"
         },
         {
-            "name": "circlelinkhealth/revisionable",
-            "version": "dev-master",
+            "name": "circlelinkhealth/sqlviews",
+            "version": "dev-heroku",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-revisionable.git",
-                "reference": "39592bed5d2a5eb13ea3b5d17bf2b6a8887487c6"
-            },
-            "require": {
-                "illuminate/support": "~4.0|~5.0|~5.1",
-                "laravel/framework": "~5.4",
-                "php": ">=5.4.0"
-            },
-            "require-dev": {
-                "orchestra/testbench": "~3.0"
+                "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
+                "reference": "422f1f5875cb3cfc5d0567c5e0c35855df7fb052"
             },
             "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\SqlViews\\Providers\\SqlViewsServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
             "autoload": {
-                "classmap": [
-                    "src/migrations"
-                ],
-                "psr-0": {
-                    "Venturecraft\\Revisionable": "src/"
-                }
-            },
-            "autoload-dev": {
                 "psr-4": {
-                    "Venturecraft\\Revisionable\\Tests\\": "tests/"
-                }
+                    "CircleLinkHealth\\SqlViews\\": ""
+                },
+                "classmap": [
+                    "Database/Views"
+                ]
             },
-            "license": [
-                "MIT"
-            ],
             "authors": [
                 {
-                    "name": "Chris Duell",
-                    "email": "me@chrisduell.com"
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "description": "Keep a revision history for your models without thinking, created as a package for use with Laravel",
-            "homepage": "http://github.com/venturecraft/revisionable",
-            "keywords": [
-                "ardent",
-                "audit",
-                "history",
-                "laravel",
-                "model",
-                "revision"
-            ],
-            "support": {
-                "issues": "https://github.com/VentureCraft/revisionable/issues",
-                "source": "https://github.com/VentureCraft/revisionable"
-            },
-            "abandoned": true,
-            "time": "2019-11-29T16:22:22+00:00"
+            "time": "2019-11-27T01:58:21+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
@@ -3893,8 +3901,8 @@
             "authors": [
                 {
                     "name": "Luís Otávio Cobucci Oblonczyk",
-                    "email": "lcobucci@gmail.com",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "lcobucci@gmail.com"
                 }
             ],
             "description": "A simple library to work with JSON Web Token and JSON Web Signature",
@@ -5537,6 +5545,88 @@
             "time": "2018-07-02T15:55:56+00:00"
         },
         {
+            "name": "paragonie/sodium_compat",
+            "version": "v1.12.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paragonie/sodium_compat.git",
+                "reference": "063cae9b3a7323579063e7037720f5b52b56c178"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/063cae9b3a7323579063e7037720f5b52b56c178",
+                "reference": "063cae9b3a7323579063e7037720f5b52b56c178",
+                "shasum": ""
+            },
+            "require": {
+                "paragonie/random_compat": ">=1",
+                "php": "^5.2.4|^5.3|^5.4|^5.5|^5.6|^7|^8"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^3|^4|^5|^6|^7"
+            },
+            "suggest": {
+                "ext-libsodium": "PHP < 7.0: Better performance, password hashing (Argon2i), secure memory management (memzero), and better security.",
+                "ext-sodium": "PHP >= 7.0: Better performance, password hashing (Argon2i), secure memory management (memzero), and better security."
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "autoload.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "ISC"
+            ],
+            "authors": [
+                {
+                    "name": "Paragon Initiative Enterprises",
+                    "email": "security@paragonie.com"
+                },
+                {
+                    "name": "Frank Denis",
+                    "email": "jedisct1@pureftpd.org"
+                }
+            ],
+            "description": "Pure PHP implementation of libsodium; uses the PHP extension if it exists",
+            "keywords": [
+                "Authentication",
+                "BLAKE2b",
+                "ChaCha20",
+                "ChaCha20-Poly1305",
+                "Chapoly",
+                "Curve25519",
+                "Ed25519",
+                "EdDSA",
+                "Edwards-curve Digital Signature Algorithm",
+                "Elliptic Curve Diffie-Hellman",
+                "Poly1305",
+                "Pure-PHP cryptography",
+                "RFC 7748",
+                "RFC 8032",
+                "Salpoly",
+                "Salsa20",
+                "X25519",
+                "XChaCha20-Poly1305",
+                "XSalsa20-Poly1305",
+                "Xchacha20",
+                "Xsalsa20",
+                "aead",
+                "cryptography",
+                "ecdh",
+                "elliptic curve",
+                "elliptic curve cryptography",
+                "encryption",
+                "libsodium",
+                "php",
+                "public-key cryptography",
+                "secret-key cryptography",
+                "side-channel resistant"
+            ],
+            "time": "2019-11-07T17:07:24+00:00"
+        },
+        {
             "name": "phaxio/phaxio",
             "version": "1.0.3",
             "source": {
@@ -5971,8 +6061,8 @@
             "authors": [
                 {
                     "name": "Antonio Carlos Ribeiro",
-                    "email": "acr@antoniocarlosribeiro.com",
-                    "role": "Creator & Designer"
+                    "role": "Creator & Designer",
+                    "email": "acr@antoniocarlosribeiro.com"
                 }
             ],
             "description": "Take control over your Laravel app version",
@@ -6031,8 +6121,8 @@
             "authors": [
                 {
                     "name": "Antonio Carlos Ribeiro",
-                    "email": "acr@antoniocarlosribeiro.com",
-                    "role": "Creator & Designer"
+                    "role": "Creator & Designer",
+                    "email": "acr@antoniocarlosribeiro.com"
                 }
             ],
             "description": "Load your Laravel config files using yaml",
@@ -6522,6 +6612,60 @@
                 "shell"
             ],
             "time": "2019-11-27T22:44:29+00:00"
+        },
+        {
+            "name": "pusher/pusher-php-server",
+            "version": "v4.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pusher/pusher-http-php.git",
+                "reference": "3c05ef64839845b6114396ff8406712cba052750"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/3c05ef64839845b6114396ff8406712cba052750",
+                "reference": "3c05ef64839845b6114396ff8406712cba052750",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "paragonie/sodium_compat": "^1.6",
+                "php": "^7.1",
+                "psr/log": "^1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Pusher\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Library for interacting with the Pusher REST API",
+            "keywords": [
+                "events",
+                "messaging",
+                "php-pusher-server",
+                "publish",
+                "push",
+                "pusher",
+                "real time",
+                "real-time",
+                "realtime",
+                "rest",
+                "trigger"
+            ],
+            "time": "2019-12-03T13:29:13+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -8923,16 +9067,16 @@
         },
         {
             "name": "venturecraft/revisionable",
-            "version": "1.33.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/VentureCraft/revisionable.git",
-                "reference": "31034cf307808eae0bf776e9c13793495d7f19f3"
+                "reference": "dacfcd53b21e76a306f45bbabe07f89c45638928"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/VentureCraft/revisionable/zipball/31034cf307808eae0bf776e9c13793495d7f19f3",
-                "reference": "31034cf307808eae0bf776e9c13793495d7f19f3",
+                "url": "https://api.github.com/repos/VentureCraft/revisionable/zipball/dacfcd53b21e76a306f45bbabe07f89c45638928",
+                "reference": "dacfcd53b21e76a306f45bbabe07f89c45638928",
                 "shasum": ""
             },
             "require": {
@@ -8944,6 +9088,13 @@
                 "orchestra/testbench": "~3.0"
             },
             "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Venturecraft\\Revisionable\\RevisionableServiceProvider"
+                    ]
+                }
+            },
             "autoload": {
                 "classmap": [
                     "src/migrations"
@@ -8972,7 +9123,7 @@
                 "model",
                 "revision"
             ],
-            "time": "2019-10-27T06:37:42+00:00"
+            "time": "2019-11-12T08:40:18+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -9538,9 +9689,9 @@
             "authors": [
                 {
                     "name": "Brian",
+                    "role": "Lead",
                     "email": "scaturrob@gmail.com",
-                    "homepage": "http://brianscaturro.com",
-                    "role": "Lead"
+                    "homepage": "http://brianscaturro.com"
                 }
             ],
             "description": "A dependable php environment",
@@ -10362,8 +10513,8 @@
             "authors": [
                 {
                     "name": "Filipe Dobreira",
-                    "homepage": "https://github.com/filp",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "homepage": "https://github.com/filp"
                 }
             ],
             "description": "php error handling for cool kids",
@@ -10937,29 +11088,30 @@
         },
         {
             "name": "nwidart/laravel-modules",
-            "version": "4.1.0",
+            "version": "6.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nWidart/laravel-modules.git",
-                "reference": "0efd81aef05419a9d032e5bbd7859dd8a67cb7e3"
+                "reference": "6dc702eeb5d025b4cd331bc394e47ccc43b68e89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/0efd81aef05419a9d032e5bbd7859dd8a67cb7e3",
-                "reference": "0efd81aef05419a9d032e5bbd7859dd8a67cb7e3",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/6dc702eeb5d025b4cd331bc394e47ccc43b68e89",
+                "reference": "6dc702eeb5d025b4cd331bc394e47ccc43b68e89",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1"
+                "ext-json": "*",
+                "php": ">=7.2"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.7",
-                "laravel/framework": "5.7.*",
+                "friendsofphp/php-cs-fixer": "^2.15",
+                "laravel/framework": "6.0.*",
                 "mockery/mockery": "~1.0",
-                "orchestra/testbench": "^3.7",
+                "orchestra/testbench": "^4.0",
                 "phpstan/phpstan": "^0.9.2",
-                "phpunit/phpunit": "~7.3",
-                "spatie/phpunit-snapshot-assertions": "^1.0"
+                "phpunit/phpunit": "~7.0|~8.0",
+                "spatie/phpunit-snapshot-assertions": "^2.1.0"
             },
             "type": "library",
             "extra": {
@@ -10972,7 +11124,7 @@
                     }
                 },
                 "branch-alias": {
-                    "dev-master": "4.0-dev"
+                    "dev-master": "6.0-dev"
                 }
             },
             "autoload": {
@@ -11003,7 +11155,7 @@
                 "nwidart",
                 "rad"
             ],
-            "time": "2019-03-04T09:50:46+00:00"
+            "time": "2019-11-12T18:38:48+00:00"
         },
         {
             "name": "orangehill/iseed",
@@ -11102,18 +11254,18 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 },
                 {
                     "name": "Sebastian Heuer",
-                    "email": "sebastian@phpeople.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpeople.de"
                 },
                 {
                     "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "Component for reading phar.io manifest information from a PHP Archive (PHAR)",
@@ -12466,16 +12618,16 @@
         },
         {
             "name": "spatie/phpunit-watcher",
-            "version": "1.21.3",
+            "version": "1.21.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/phpunit-watcher.git",
-                "reference": "ca9033fb7478a49105a67361fb861e88817d4be2"
+                "reference": "39f35dd7f629c52058d14b554adabf159d40c6de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/phpunit-watcher/zipball/ca9033fb7478a49105a67361fb861e88817d4be2",
-                "reference": "ca9033fb7478a49105a67361fb861e88817d4be2",
+                "url": "https://api.github.com/repos/spatie/phpunit-watcher/zipball/39f35dd7f629c52058d14b554adabf159d40c6de",
+                "reference": "39f35dd7f629c52058d14b554adabf159d40c6de",
                 "shasum": ""
             },
             "require": {
@@ -12486,6 +12638,9 @@
                 "symfony/process": "^4.0|^5.0",
                 "symfony/yaml": "^4.0|^5.0",
                 "yosymfony/resource-watcher": "^2.0"
+            },
+            "conflict": {
+                "yosymfony/resource-watcher": "<2.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^8.0"
@@ -12517,20 +12672,20 @@
                 "phpunit-watcher",
                 "spatie"
             ],
-            "time": "2019-12-02T07:58:44+00:00"
+            "time": "2019-12-04T08:14:29+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.5.2",
+            "version": "3.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "65b12cdeaaa6cd276d4c3033a95b9b88b12701e7"
+                "reference": "557a1fc7ac702c66b0bbfe16ab3d55839ef724cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/65b12cdeaaa6cd276d4c3033a95b9b88b12701e7",
-                "reference": "65b12cdeaaa6cd276d4c3033a95b9b88b12701e7",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/557a1fc7ac702c66b0bbfe16ab3d55839ef724cb",
+                "reference": "557a1fc7ac702c66b0bbfe16ab3d55839ef724cb",
                 "shasum": ""
             },
             "require": {
@@ -12568,7 +12723,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2019-10-28T04:36:32+00:00"
+            "time": "2019-12-04T04:46:47+00:00"
         },
         {
             "name": "swagger-api/swagger-ui",
@@ -12934,8 +13089,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "email": "arne@blankerts.de"
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
@@ -13209,6 +13364,8 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/raygun": 20,
+        "circlelinkhealth/cpmmigrations": 20,
+        "circlelinkhealth/sqlviews": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
@@ -13223,8 +13380,7 @@
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-simplexml": "*",
-        "ext-pdo": "*",
-        "ext-redis": "*"
+        "ext-pdo": "*"
     },
     "platform-dev": []
 }
