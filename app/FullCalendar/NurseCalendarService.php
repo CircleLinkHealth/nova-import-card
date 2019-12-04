@@ -28,11 +28,17 @@ class NurseCalendarService
      * @param $windowTimeEnd
      * @param $windowDayOfWeek
      * @param mixed $windowDate
+     * @param mixed $workScheduleData
      *
      * @return Builder|Model|object|null
      */
-    public function checkIfWindowsExists($nurseInfoId, $windowTimeStart, $windowTimeEnd, $windowDate)
+    public function checkIfWindowsExists($workScheduleData)
     {
+        $nurseInfoId     = $workScheduleData['nurse_info_id'];
+        $windowTimeStart = $workScheduleData['window_time_start'];
+        $windowTimeEnd   = $workScheduleData['window_time_end'];
+        $windowDate      = $workScheduleData['date'];
+
         return NurseContactWindow::where([
             [
                 'nurse_info_id',
@@ -148,6 +154,27 @@ class NurseCalendarService
     }
 
     /**
+     * @return array
+     */
+    public function getAuthData()
+    {
+        $auth = auth()->user();
+
+        if ($auth->isAdmin()) {
+            return [
+                'role' => 'admin',
+            ];
+        }
+
+        if ($auth->isCareCoach()) {
+            return [
+                'role'        => 'nurse',
+                'nurseInfoId' => $auth->nurseInfo->id,
+            ];
+        }
+    }
+
+    /**
      * @param $events
      *
      * @return \Illuminate\Support\Collection
@@ -178,19 +205,16 @@ class NurseCalendarService
 
     /**
      * @param $recurringEventsToSave
+     * @param mixed $updateCollisions
      *
      * @return array
      */
-    public function getEventsToAskConfirmation($recurringEventsToSave)
+    public function getEventsToAskConfirmation($recurringEventsToSave, $updateCollisions)
     {
         $askForConfirmationEvents = [];
         foreach ($recurringEventsToSave as $event) {
-            $windowsExists = $this->checkIfWindowsExists(
-                $event['nurse_info_id'],
-                $event['window_time_start'],
-                $event['window_time_end'],
-                $event['date']
-            );
+            $windowsExists = ! $updateCollisions ? $this->checkIfWindowsExists($event) : false;
+
             if ($windowsExists) {
                 $askForConfirmationEvents[] = $windowsExists;
             }
@@ -206,7 +230,7 @@ class NurseCalendarService
      * @return Collection|\Illuminate\Support\Collection
      */
     public function getHolidays(Collection $nurses, $startDate, $endDate)
-    {
+    { // @todo:include company holidays
         $limitDate = Carbon::parse(now())->startOfYear()->subMonth(2)->toDate();
 
         return $nurses->map(function ($nurse) use ($limitDate, $startDate, $endDate) {

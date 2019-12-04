@@ -24,7 +24,7 @@
                     </a>
                 </div>
                 @include('partials.care-center.work-schedule-slot.index', [
-                           'windows' => $nurse->windows,
+                           'windows' => $nurse->currentWeekWindows,
                            'holidaysThisWeek' => $nurse->holidays_this_week,
                            'nurse' => $nurse
                        ])

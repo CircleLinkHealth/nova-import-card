@@ -9,7 +9,7 @@
     <div class="container">
 
         <nurse-schedule-calendar
-                :auth-is-admin="{{$authIsAdmin}}"
+                :auth-data="{{json_encode($authData)}}"
                 :today="{{json_encode($today)}}">
         </nurse-schedule-calendar>
     </div>

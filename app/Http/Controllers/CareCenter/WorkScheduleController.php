@@ -17,7 +17,6 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use Validator;
 
@@ -70,7 +69,7 @@ class WorkScheduleController extends Controller
             $holidays        = $this->fullCalendarService->getHolidays($nurses, $startDate, $endDate)->toArray();
             $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
         } elseif ($auth->isCareCoach()) {
-            $windowData      = $this->calendarWorkEventsForAuthNurse($startDate, $endDate);
+            $windowData      = $this->calendarWorkEventsForAuthNurse($startDate, $endDate, $auth);
             $holidaysData    = $auth->nurseInfo->holidays;
             $holidays        = $this->fullCalendarService->prepareHolidaysData($holidaysData, $auth, $startDate, $endDate)->toArray();
             $dataForDropdown = '';
@@ -94,12 +93,13 @@ class WorkScheduleController extends Controller
     /**
      * @param $startDate
      * @param $endDate
+     * @param $auth
      *
      * @return \Illuminate\Support\Collection
      */
-    public function calendarWorkEventsForAuthNurse($startDate, $endDate)
+    public function calendarWorkEventsForAuthNurse($startDate, $endDate, $auth)
     {
-        $nurse   = auth()->user();
+        $nurse   = $auth;
         $windows = $this->nurseContactWindows
             ->whereNurseInfoId($nurse->nurseInfo->id)
             ->where('date', '>=', $startDate)
@@ -217,45 +217,46 @@ class WorkScheduleController extends Controller
         return $workScheduleData[0];
     }
 
-//    /**
-//     * @return \Illuminate\Contracts\Routing\ResponseFactory|Response
-//     */
-//    public function getHolidays(Request $request)
-//    {
-//        $startDate = Carbon::parse($request->input('start'))->toDateString();
-//        $endDate   = Carbon::parse($request->input('end'))->toDateString();
-//
-//        $auth = auth()->user();
-//        if ($auth->isAdmin()) {
-//            $nurses = $this->getActiveNurses();
-//
-//            if ( ! $nurses) {
-//                return response()->json(['errors' => 'Nurses not found'], 400);
-//            }
-//            $holidays = $this->fullCalendarService->getHolidays($nurses, $startDate, $endDate)->toArray();
-//        }
-//
-//        if ($auth->isCareCoach()) {
-//            $holidaysData = $auth->nurseInfo->holidays;
-//            $holidays     = $this->fullCalendarService->prepareHolidaysData($holidaysData, $auth, $startDate, $endDate)->toArray();
-//        }
-//
-//        return response()->json([
-//            'success'  => true,
-//            'holidays' => $holidays,
-//        ], 200);
-//    }
+    public function getSelectedNurseCalendar(Request $request)
+    {
+        $startDate = Carbon::parse(now())->toDateString();
+        $endDate   = Carbon::parse($startDate)->copy()->addMonths(2)->toDateString();
+
+//        $nurseInfoId = $request->input('nurseInfoId');
+        $nurseInfoId = 176;
+        $nurse       = Nurse::findOrFail($nurseInfoId)->user;
+
+        $windows = $this->nurseContactWindows
+            ->whereNurseInfoId($nurseInfoId)
+            ->where('date', '>=', $startDate)
+            ->where('date', '<=', $endDate)
+            ->get()
+            ->sortBy(function ($item) {
+                return Carbon::createFromFormat(
+                    'H:i:s',
+                    "{$item->window_time_start}"
+                );
+            });
+
+        $eventsForSelectedNurse = $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse);
+        $holidaysData           = $nurse->nurseInfo->holidays;
+        $holidays               = $this->fullCalendarService->prepareHolidaysData($holidaysData, $nurse, $startDate, $endDate)->toArray();
+
+        return response()->json([
+            'eventsForSelectedNurse' => $eventsForSelectedNurse,
+        ], 200);
+    }
 
     public function index()
     {
-        $authIsAdmin = json_encode(auth()->user()->isAdmin());
-        $today       = Carbon::parse(now())->toDateString();
+        $authData = $this->fullCalendarService->getAuthData();
+        $today    = Carbon::parse(now())->toDateString();
 //        $tzAbbr = auth()->user()->timezone_abbr; // @todo: we need this ?  it wasnt used in view
 
         //I think time tracking submits along with the form, thus messing up sessions.
         //Temporary fix
         $disableTimeTracking = true; // @todo: we need this ?  it wasnt used in view
-        return view('care-center.work-schedule', compact('authIsAdmin', 'today'));
+        return view('care-center.work-schedule', compact('authData', 'today'));
     }
 
     /**
@@ -284,7 +285,7 @@ class WorkScheduleController extends Controller
         $workScheduleData
     ): JsonResponse {
         $recurringEventsToSave    = $this->fullCalendarService->createRecurringEvents($nurseInfoId, $workScheduleData);
-        $confirmationNeededEvents = $this->fullCalendarService->getEventsToAskConfirmation($recurringEventsToSave);
+        $confirmationNeededEvents = $this->fullCalendarService->getEventsToAskConfirmation($recurringEventsToSave, $updateCollisions);
 
         if ( ! empty($confirmationNeededEvents) && ! $updateCollisions) {
             $collidingDates = $this->fullCalendarService->getCollidingDates($confirmationNeededEvents);
@@ -312,11 +313,10 @@ class WorkScheduleController extends Controller
      */
     public function showAllNurseSchedule()
     {
-        $authIsAdmin = auth()->user()->isAdmin();
-        $authUserId  = auth()->id();
-        $today       = Carbon::parse(now())->toDateString();
+        $authData = $this->fullCalendarService->getAuthData();
+        $today    = Carbon::parse(now())->toDateString();
 
-        return view('admin.nurse.schedules.index', compact('authIsAdmin', 'authUserId', 'today'));
+        return view('admin.nurse.schedules.index', compact('authData', 'authUserId', 'today'));
     }
 
     /**
@@ -348,6 +348,35 @@ class WorkScheduleController extends Controller
             $window->forceDelete();
         }
     }
+
+//    /**
+//     * @return \Illuminate\Contracts\Routing\ResponseFactory|Response
+//     */
+//    public function getHolidays(Request $request)
+//    {
+//        $startDate = Carbon::parse($request->input('start'))->toDateString();
+//        $endDate   = Carbon::parse($request->input('end'))->toDateString();
+//
+//        $auth = auth()->user();
+//        if ($auth->isAdmin()) {
+//            $nurses = $this->getActiveNurses();
+//
+//            if ( ! $nurses) {
+//                return response()->json(['errors' => 'Nurses not found'], 400);
+//            }
+//            $holidays = $this->fullCalendarService->getHolidays($nurses, $startDate, $endDate)->toArray();
+//        }
+//
+//        if ($auth->isCareCoach()) {
+//            $holidaysData = $auth->nurseInfo->holidays;
+//            $holidays     = $this->fullCalendarService->prepareHolidaysData($holidaysData, $auth, $startDate, $endDate)->toArray();
+//        }
+//
+//        return response()->json([
+//            'success'  => true,
+//            'holidays' => $holidays,
+//        ], 200);
+//    }
 
     public function store(Request $request)
     {
@@ -385,27 +414,29 @@ class WorkScheduleController extends Controller
             'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
         ]);
         //  Validator
-        $windowExists = $this->fullCalendarService->checkIfWindowsExists($nurseInfoId, $windowTimeStart, $windowTimeEnd, $workScheduleData['date']);
-        $hoursSum     = NurseContactWindow::where([
+
+        $windowExists = ! $updateCollisions ? $this->fullCalendarService->checkIfWindowsExists($workScheduleData) : false;
+
+        $hoursSum = NurseContactWindow::where([
             ['nurse_info_id', '=', $nurseInfoId],
             ['day_of_week', '=', $workScheduleData['day_of_week']],
         ])
             ->get()
             ->sum(function ($window) {
                 return Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_end
-                    )->diffInHours(Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_start
-                    ));
-            }) + Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_end']
+                    'H:i:s',
+                    $window->window_time_end
                 )->diffInHours(Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_start']
+                    'H:i:s',
+                    $window->window_time_start
                 ));
+            }) + Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_end']
+            )->diffInHours(Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_start']
+            ));
 
         $invalidWorkHoursNumber = false;
 
@@ -439,7 +470,6 @@ class WorkScheduleController extends Controller
         if ($isAdmin) {
             $user = auth()->user();
             if ('does_not_repeat' !== $repeatFrequency) {
-                //@todo: lots of parameters. revisit this.
                 return $this->saveRecurringEvents($nurseInfoId, $updateCollisions, $validator, $workScheduleData);
             }
             $window = $this->nurseContactWindows->create([

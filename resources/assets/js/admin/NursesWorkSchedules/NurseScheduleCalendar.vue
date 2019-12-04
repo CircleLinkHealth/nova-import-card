@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="calendar-menu">
-            <div v-if="this.authIsAdmin"
+            <div v-if="authIsAdmin"
                  class="show-holidays">
                 <input id="holidaysCheckbox"
                        type="checkbox"
@@ -10,7 +10,7 @@
                        v-model="showHolidays">
                 Holidays
             </div>
-            <div v-if="this.authIsAdmin"
+            <div v-if="authIsAdmin"
                  class="show-work">
                 <input id="workCheckbox"
                        type="checkbox"
@@ -22,7 +22,7 @@
 
             <div class="search-filter">
                 <vue-select ref="searchFilter"
-                        v-if="this.authIsAdmin"
+                            v-if="authIsAdmin"
                             multiple v-model="searchFilter"
                             @input="refetchEvents()"
                             :options="dataForSearchFilter()"
@@ -110,7 +110,7 @@
                                     <h5>Date:</h5>
                                     <input type="date"
                                            name="event_date"
-                                           :min="calculateMinDate"
+                                           :min="calculateMinDate()"
                                            v-model="selectedDate">
                                 </div>
                             </div>
@@ -132,11 +132,11 @@
                                                :class="{disable: !repeatFrequencyHasSelected || addHolidays}"
                                                :disabled="!repeatFrequencyHasSelected || addHolidays"
                                                name="until"
-                                               :min="calculateMinDate"
+                                               :min="calculateMinDate()"
                                                v-model="repeatUntil">
                                     </div>
                                     <!-- ADD HOLIDAYS-->
-                                    <div v-if="this.authIsAdmin === false"
+                                    <div v-if="! authIsAdmin"
                                          class="add-holidays">
                                         <input id="addHolidays"
                                                type="checkbox"
@@ -220,11 +220,36 @@
         });
     }
 
+    // async function sex() {
+    //
+    //        // return await axios.get('nurses/nurse-calendar-data').then(response => {
+    //        //      return response.data;
+    //        // }).catch(error => {
+    //        //      console.log(error);
+    //        //  });
+    //     try {
+    //         let res = await axios({
+    //             url: 'nurses/nurse-calendar-data',
+    //             method: 'get',
+    //             timeout: 8000,
+    //
+    //         });
+    //
+    //         return res
+    //     }
+    //     catch (err) {
+    //         console.error(err);
+    //     }
+    //
+    //
+    // }
+
+
     export default {
         name: "NurseScheduleCalendar",
 
         props: [
-            'authIsAdmin',
+            'authData',
             'today'
         ],
 
@@ -270,6 +295,8 @@
                 workEventsToConfirm: [],
                 isRecurringEvent: false,
                 addHolidays: false,
+                authIsAdmin: false,
+                authIsNurse: false,
                 eventSources: [
                     { // has to be 'events()' else it doesnt work
                         // WorkEvents
@@ -508,9 +535,20 @@
 
                 return [year, month, day].join('-');
             },
+
+            getNurseId() {
+                if (this.authIsAdmin) {
+                    return this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
+                }
+
+                if (this.authIsNurse) {
+                    return this.authData.nurseInfoId;
+                }
+            },
+
             addNewEvent() {
                 this.loader = true;
-                const nurseId = this.clickedToViewEvent ? this.eventToViewData[0].nurseId : this.nurseData.nurseId;
+                const nurseId = this.getNurseId();
                 const workDate = this.addNewEventMainClicked ? this.selectedDate : this.workEventDate;
                 const repeatFreq = this.eventFrequency.length !== 0 ? this.eventFrequency.value : 'does_not_repeat';
                 const validatedDefault = 'not_checked';
@@ -527,7 +565,6 @@
                             this.refetchEvents();
                             this.loader = false;
                             this.toggleModal();
-                            //@todo: Will fix refetchEvents() for this. so i disabled it
                             this.addNotification({
                                 title: "Success!",
                                 text: "Holiday has been saved.",
@@ -615,7 +652,9 @@
                         });
                         const recurringDates = recurringDatesToEvent.all();
                         const events = this.workHours.concat(this.holidays);
-
+                        // const events = sex().then(res => res.data.eventsForSelectedNurse);
+                        // console.log(events);
+                        // debugger;
                         const eventsToConfirmTemporary = [];
                         for (var i = 0; i < recurringDates.length; i++) {
                             const date = this.formatDate(recurringDates[i]);
@@ -641,6 +680,7 @@
                     }
                 }
             },
+
             updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, updateCollisionWindow = null) {
                 const updateCollidedWindows = updateCollisionWindow === null ? false : updateCollisionWindow;
                 const nurseInfoId = !!nurseId ? nurseId : '';
@@ -743,7 +783,7 @@
                 this.workEventDate = this.eventToViewData[0].date;
 
 
-                if (arg.repeat_frequency !== 'does_not_repeat') {
+                if (arg.data.eventType !== 'holiday' && arg.repeat_frequency !== 'does_not_repeat') {
                     this.isRecurringEvent = true;
                 }
 
@@ -772,6 +812,7 @@
             },
 
             dataForSearchFilter() {
+                // With Current way of rendedring events this array has only nurses from time range in display
                 const workEvents = this.workHours;
                 const workEventsWithHolidays = workEvents.concat(this.holidays);
 
@@ -811,12 +852,6 @@
                     }
                 }
             },
-        }),
-//@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
-        computed: {
-            // searchFilterHasValue(){
-            //     return this.$refs.searchFilter;
-            // },
 
             calculateMinDate() {
                 return this.workEventDate !== '' ? this.workEventDate : this.today;
@@ -825,7 +860,9 @@
             // calculateMaxDate() {
             //
             // },
-
+        }),
+//@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
+        computed: {
             repeatFrequencyHasSelected() {
                 return this.eventFrequency !== null && this.eventFrequency.length !== 0;
             },
@@ -838,6 +875,13 @@
 
         created() {
             self = this;
+            if (this.authData.role === 'admin') {
+                this.authIsAdmin = true;
+            }
+
+            if (this.authData.role === 'nurse') {
+                this.authIsNurse = true;
+            }
 
             // this.loader = true;
             // // All Work Events

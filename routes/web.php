@@ -2411,3 +2411,8 @@ Route::prefix('admin')->group(
         );
     }
 );
+
+Route::get('nurses/nurse-calendar-data', [
+    'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendar',
+    'as'   => 'get.nurse.schedules.selectedNurseCalendar',
+])->middleware('permission:nurse.read');
