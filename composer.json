@@ -57,6 +57,10 @@
       "url": "https://packagist.org"
     },
     {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/wkhtmltopdf-amd64.git"
+    },
+    {
       "packagist": false
     },
     {
@@ -70,6 +74,10 @@
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-sqlviews.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/module-revisionable.git"
     }
   ],
   "require": {
@@ -95,6 +103,7 @@
     "circlelinkhealth/twofa": "1.1.2",
     "circlelinkhealth/cpmmigrations": "dev-master",
     "circlelinkhealth/sqlviews": "dev-heroku",
+    "circlelinkhealth/revisionable": "*",
     "daltcore/lara-pdf-merger": "dev-master",
     "dillingham/nova-button": "^1.0",
     "doctrine/dbal": "2.9.2",
@@ -138,6 +147,7 @@
     "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
+    "ext-xdebug": "*",
     "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
     "brianium/paratest": "*",

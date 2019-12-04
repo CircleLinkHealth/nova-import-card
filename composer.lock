@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "952501f781b17826dff155b901cd3331",
+    "content-hash": "f3ec6669d2377b235995c6740f5022eb",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -792,6 +792,62 @@
                 }
             ],
             "time": "2019-10-02T13:24:06+00:00"
+        },
+        {
+            "name": "circlelinkhealth/revisionable",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/module-revisionable.git",
+                "reference": "39592bed5d2a5eb13ea3b5d17bf2b6a8887487c6"
+            },
+            "require": {
+                "illuminate/support": "~4.0|~5.0|~5.1",
+                "laravel/framework": "~5.4",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/migrations"
+                ],
+                "psr-0": {
+                    "Venturecraft\\Revisionable": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Venturecraft\\Revisionable\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Duell",
+                    "email": "me@chrisduell.com"
+                }
+            ],
+            "description": "Keep a revision history for your models without thinking, created as a package for use with Laravel",
+            "homepage": "http://github.com/venturecraft/revisionable",
+            "keywords": [
+                "ardent",
+                "audit",
+                "history",
+                "laravel",
+                "model",
+                "revision"
+            ],
+            "support": {
+                "issues": "https://github.com/VentureCraft/revisionable/issues",
+                "source": "https://github.com/VentureCraft/revisionable"
+            },
+            "abandoned": true,
+            "time": "2019-11-29T16:22:22+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews",
@@ -13380,7 +13436,10 @@
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-simplexml": "*",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "ext-redis": "*"
     },
-    "platform-dev": []
+    "platform-dev": {
+        "ext-xdebug": "*"
+    }
 }
