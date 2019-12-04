@@ -27591,9 +27591,9 @@ input.text-field:hover {
 
 .select-dropdown .vs__dropdown-option:before {
   color: #50b2e2;
-  font-family: FontAwesome, serif;
+  font-family: "Font Awesome 5 Free", serif;
   display: inline-block;
-  content: "\f10c";
+  content: "\f111";
   letter-spacing: 5px;
   position: relative;
   font-size: 1.3em;

@@ -250,9 +250,9 @@
     .scrollable label input[type=checkbox] + span:before {
         background-color: #FFFFFF;
         color: #50b2e2;
-        font-family: FontAwesome, serif;
+        font-family: "Font Awesome 5 Free", serif;
         display: inline-block;
-        content: "\f10c";
+        content: "\f111";
         letter-spacing: 5px;
         position: relative;
         font-size: 1.3em;
@@ -291,17 +291,18 @@
     }
 
     @media (max-width: 490px) {
-        .scrollable label{
+        .scrollable label {
             height: fit-content;
             padding: 8px;
             font-size: 13px;
             font-weight: 400;
         }
-        .scrollable label input[type=checkbox] + span:before{
+
+        .scrollable label input[type=checkbox] + span:before {
             font-size: 1em;
         }
 
-        .text-field{
+        .text-field {
             font-size: 15px;
         }
 
