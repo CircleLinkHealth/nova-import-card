@@ -13,6 +13,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use Laravel\Scout\Searchable;
 
 /**
  * App\Enrollee.
@@ -158,6 +159,7 @@ use CircleLinkHealth\Customer\Entities\User;
 class Enrollee extends BaseModel
 {
     use Filterable;
+    use Searchable;
 
     // Agent array keys
     const AGENT_EMAIL_KEY        = 'email';
