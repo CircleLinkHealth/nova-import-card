@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f3ec6669d2377b235995c6740f5022eb",
+    "content-hash": "9ea1fe08e460b29aa8b23f79f603f519",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -851,11 +851,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews",
-            "version": "dev-heroku",
+            "version": "dev-heroku-2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
-                "reference": "422f1f5875cb3cfc5d0567c5e0c35855df7fb052"
+                "reference": "c38c6b3e327ead508d67a538edff39c5dd40fa76"
             },
             "type": "library",
             "extra": {
@@ -880,7 +880,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-27T01:58:21+00:00"
+            "time": "2019-12-04T21:04:12+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
@@ -13419,8 +13419,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/raygun": 20,
         "circlelinkhealth/cpmmigrations": 20,
+        "circlelinkhealth/raygun": 20,
         "circlelinkhealth/sqlviews": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
@@ -13435,9 +13435,9 @@
         "ext-dom": "*",
         "ext-json": "*",
         "ext-libxml": "*",
-        "ext-simplexml": "*",
         "ext-pdo": "*",
-        "ext-redis": "*"
+        "ext-redis": "*",
+        "ext-simplexml": "*"
     },
     "platform-dev": {
         "ext-xdebug": "*"
