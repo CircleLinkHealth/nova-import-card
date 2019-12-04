@@ -423,4 +423,10 @@
             font-size: initial;
         }
     }
+
+    @media (max-width: 996px) {
+        .label {
+            font-size: 100%;
+        }
+    }
 </style>

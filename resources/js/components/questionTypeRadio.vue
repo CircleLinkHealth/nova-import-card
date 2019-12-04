@@ -380,4 +380,31 @@
         }
     }
 
+    @media (max-width: 996px) {
+        .btn.radio {
+            height: 3em;
+            text-align: left;
+            padding: 3px;
+            padding-left: 1em;
+            font-size: 13px;
+        }
+    }
+
+    @media (max-width: 996px) {
+        .text-field.small, input.text-field.small {
+            height: 100%;
+            width: 152px;
+            text-align: left;
+            padding: 4px;
+            font-size: xx-small;
+        }
+
+        #app div > div.question-answer-type > div > div > input {
+            height: 100%;
+            text-align: left;
+            padding: 1em;
+            font-size: xx-small;
+        }
+    }
+
 </style>
