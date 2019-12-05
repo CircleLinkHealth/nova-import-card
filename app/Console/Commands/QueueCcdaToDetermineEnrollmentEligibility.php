@@ -46,7 +46,7 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
                         } catch (\Exception $exception) {
                             \Log::error($exception->getMessage());
 
-                            return;
+                            continue;
                         }
                     }
 
