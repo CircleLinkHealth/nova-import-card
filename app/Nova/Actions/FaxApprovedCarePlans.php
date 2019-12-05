@@ -7,11 +7,13 @@
 namespace App\Nova\Actions;
 
 use App\CarePlan;
+use App\Jobs\FaxPatientCarePlansToLocation;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\FaxChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
@@ -21,8 +23,7 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
 {
     use InteractsWithQueue;
     use Queueable;
-
-//    use SerializesModels;
+    use SerializesModels;
 
     /**
      * Get the fields available on the action.
@@ -44,7 +45,7 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        if ($models->count() > 1) {
+        if ($models->count() > 1){
             $this->markAsFailed(
                 $models->first(),
                 'Invalid number of practices. Action can be performed on 1 practice only.'
@@ -68,9 +69,8 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
                 ->whereHas('carePlan', function ($cp) {
                     $cp->where('status', CarePlan::PROVIDER_APPROVED);
                 })
-                ->get()
-                ->each(function ($patient) use ($location) {
-                    $location->notify(new CarePlanProviderApproved($patient->carePlan, [FaxChannel::class]));
+                ->chunk(5, function ($patients)use ($location){
+                    FaxPatientCarePlansToLocation::dispatch($patients, $location);
                 });
             $this->markAsFinished($practice);
         } catch (\Exception $exception) {
