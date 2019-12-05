@@ -41,7 +41,13 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
             function ($ccdas) {
                 foreach ($ccdas as $ccda) {
                     if ( ! $ccda->json) {
-                        $ccda->bluebuttonJson();
+                        try {
+                            $ccda->bluebuttonJson();
+                        } catch (\Exception $exception) {
+                            \Log::error($exception->getMessage());
+
+                            return;
+                        }
                     }
 
                     CheckCcdaEnrollmentEligibility::dispatch($ccda, $ccda->practice, $ccda->batch)
