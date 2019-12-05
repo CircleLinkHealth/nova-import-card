@@ -51,7 +51,7 @@ class Practice extends Resource
     {
         //There is a known bug when adding ->canSee and ->canRun for actions that are queueable, this is a workaround
         return $request->user()->isAdmin() ? [
-            new Actions\FaxApprovedCarePlans(),
+            (new Actions\FaxApprovedCarePlans())->onlyOnDetail(),
         ] : [];
     }
 

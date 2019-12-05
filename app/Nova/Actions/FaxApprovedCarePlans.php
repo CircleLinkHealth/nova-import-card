@@ -7,22 +7,22 @@
 namespace App\Nova\Actions;
 
 use App\CarePlan;
-use App\Notifications\SendAllApprovedCarePlansToPractice;
-use App\Services\PdfService;
-use CircleLinkHealth\Customer\Entities\User;
+use App\Notifications\CarePlanProviderApproved;
+use App\Notifications\Channels\FaxChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Fields\Text;
 
 class FaxApprovedCarePlans extends Action implements ShouldQueue
 {
     use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
+
+//    use SerializesModels;
 
     /**
      * Get the fields available on the action.
@@ -31,40 +31,50 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
      */
     public function fields()
     {
-        return [];
+        return [
+            Text::make('Fax Number'),
+        ];
     }
 
     /**
-     * Perform the action on the given models.
+     * Validate models and input,
+     * then if location exists with the given Fax number, get enrolled practice patients with provider approved careplans and fax them to Practice.
      *
      * @return mixed
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        $pdfService = app(PdfService::class);
+        if ($models->count() > 1) {
+            $this->markAsFailed(
+                $models->first(),
+                'Invalid number of practices. Action can be performed on 1 practice only.'
+            );
 
-        $pageFileNames = [];
+            return;
+        }
 
-        foreach ($models as $model) {
-            $patients = $model->patients()
-                ->whereHas('patientInfo', function ($info) {
-                                  $info->enrolled();
-                              })
-                ->whereHas('carePlan', function ($cp) {
-                                  $cp->where('status', CarePlan::PROVIDER_APPROVED);
-                              })
-                ->take(5)
-                ->get();
+        try {
+            $practice = $models->first();
+            $location = $practice->locations()->where('fax', $fields->fax_number)->first();
 
-            foreach ($patients as $patient) {
-                $pageFileNames[] = $patient->carePlan->toPdf();
+            if ( ! $location) {
+                throw new \Exception('Invalid Fax Number.');
             }
 
-            $mergedFileNameWithPath = $pdfService->mergeFiles($pageFileNames);
-
-            //testing
-            $kakou = User::findOrFail(8935);
-            $kakou->notify(new SendAllApprovedCarePlansToPractice($mergedFileNameWithPath));
+            $practice->patients()
+                ->whereHas('patientInfo', function ($info) {
+                         $info->enrolled();
+                     })
+                ->whereHas('carePlan', function ($cp) {
+                         $cp->where('status', CarePlan::PROVIDER_APPROVED);
+                     })
+                ->get()
+                ->each(function ($patient) use ($location) {
+                         $location->notify(new CarePlanProviderApproved($patient->carePlan, [FaxChannel::class]));
+                     });
+            $this->markAsFinished($practice);
+        } catch (\Exception $exception) {
+            $this->markAsFailed($practice, $exception);
         }
     }
 }
