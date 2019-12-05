@@ -240,6 +240,7 @@ class QueueEligibilityBatchForProcessing extends Command
         echo "\n queuing {$batch->id}";
         if ((int) $batch->status > 0 && $batch->updated_at->lt(now()->subMinutes(30))) {
             echo "\n bail. did nothing for {$batch->id}";
+            echo "\n batch updated at {$batch->updated_at->toDateTimeString()}";
 
             return $batch;
         }
