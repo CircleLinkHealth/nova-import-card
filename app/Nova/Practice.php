@@ -49,17 +49,10 @@ class Practice extends Resource
      */
     public function actions(Request $request)
     {
-        return [
-            (new Actions\FaxApprovedCarePlans())
-            //failing at some places investigating
-            //                ->canRun(function ($request) {
-            //                    return $request->user()->isAdmin();
-            //                })
-            //                ->canSee(function ($request) {
-            //                    return $request->user()->isAdmin();
-            //                })
-            ,
-        ];
+        //There is a known bug when adding ->canSee and ->canRun for actions that are queueable, this is a workaround
+        return $request->user()->isAdmin() ? [
+            new Actions\FaxApprovedCarePlans(),
+        ] : [];
     }
 
     /**
