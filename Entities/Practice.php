@@ -18,6 +18,7 @@ use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Nova\Actions\Actionable;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
@@ -129,6 +130,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  */
 class Practice extends BaseModel implements HasMedia
 {
+    use Actionable;
     use HasChargeableServices;
     use HasMediaTrait;
     use HasSettings;

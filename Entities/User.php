@@ -3699,6 +3699,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasRole(['care-center', 'care-center-external']);
     }
 
+
+    /**
+     *
+     * Workaround for Nova Action core code. It calls user->name, but our user does not have a 'name' attribute.
+     *
+     * @return string
+     */
+    public function getNameAttribute(){
+        return $this->display_name;
+    }
+
     /**
      * Determines if current time is within invoice review period.
      *
