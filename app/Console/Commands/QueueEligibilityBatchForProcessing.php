@@ -238,8 +238,9 @@ class QueueEligibilityBatchForProcessing extends Command
     private function queueGoogleDriveJobs(EligibilityBatch $batch): EligibilityBatch
     {
         echo "\n queuing {$batch->id}";
-        if ((int) $batch->status > 0 && $batch->updated_at->lt(now()->subMinutes(30))) {
+        if ((int) $batch->status > 0 && $batch->updated_at->gt(now()->subMinutes(30))) {
             echo "\n bail. did nothing for {$batch->id}";
+            echo "\n batch updated at {$batch->updated_at->toDateTimeString()}";
 
             return $batch;
         }
@@ -250,7 +251,7 @@ class QueueEligibilityBatchForProcessing extends Command
             ->take(100)
             ->get();
 
-        echo "\n unprocessed records found {$unprocessed->count()}";
+        echo "\n {$unprocessed->count()} unprocessed records found";
 
         $unprocessed->each(function (EligibilityJob $ej) {
             echo "\n processing ej {$ej->id}";
