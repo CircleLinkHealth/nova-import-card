@@ -61,7 +61,7 @@
         "circlelinkhealth/raygun": "dev-master",
         "circlelinkhealth/timetracking": "1.1.2",
         "circlelinkhealth/cpmmigrations": "dev-master",
-        "circlelinkhealth/sqlviews": "dev-master",
+        "circlelinkhealth/sqlviews": "dev-heroku-2",
         "daltcore/lara-pdf-merger": "^2.0",
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.0",

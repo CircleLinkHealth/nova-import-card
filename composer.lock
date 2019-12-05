@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a88df3c87448b22cc0eeb3bee36b0482",
+    "content-hash": "54688beab2f33afa9b163ac42e36f8bd",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -409,11 +409,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews",
-            "version": "dev-master",
+            "version": "dev-heroku-2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
-                "reference": "f261050c53d8eecd351bac2d05499363b72c813c"
+                "reference": "7246717854e67af322abfada06fbbb124d678f14"
             },
             "type": "library",
             "extra": {
@@ -438,7 +438,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-27T01:46:44+00:00"
+            "time": "2019-12-04T21:45:48+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
@@ -8586,8 +8586,16 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.1.3",
-        "ext-json": "*"
+        "php": ">=7.2.0",
+        "ext-bcmath": "*",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "ext-libxml": "*",
+        "ext-pdo": "*",
+        "ext-redis": "*",
+        "ext-simplexml": "*"
     },
-    "platform-dev": []
+    "platform-dev": {
+        "ext-xdebug": "*"
+    }
 }
