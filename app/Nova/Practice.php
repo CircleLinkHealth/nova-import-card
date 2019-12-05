@@ -50,7 +50,15 @@ class Practice extends Resource
     public function actions(Request $request)
     {
         return [
-            (new Actions\FaxApprovedCarePlans()),
+            (new Actions\FaxApprovedCarePlans())
+            //failing at some places investigating
+            //                ->canRun(function ($request) {
+            //                    return $request->user()->isAdmin();
+            //                })
+            //                ->canSee(function ($request) {
+            //                    return $request->user()->isAdmin();
+            //                })
+            ,
         ];
     }
 
