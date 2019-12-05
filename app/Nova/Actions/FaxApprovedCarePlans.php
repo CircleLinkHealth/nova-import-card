@@ -63,15 +63,15 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
 
             $practice->patients()
                 ->whereHas('patientInfo', function ($info) {
-                         $info->enrolled();
-                     })
+                    $info->enrolled();
+                })
                 ->whereHas('carePlan', function ($cp) {
-                         $cp->where('status', CarePlan::PROVIDER_APPROVED);
-                     })
+                    $cp->where('status', CarePlan::PROVIDER_APPROVED);
+                })
                 ->get()
                 ->each(function ($patient) use ($location) {
-                         $location->notify(new CarePlanProviderApproved($patient->carePlan, [FaxChannel::class]));
-                     });
+                    $location->notify(new CarePlanProviderApproved($patient->carePlan, [FaxChannel::class]));
+                });
             $this->markAsFinished($practice);
         } catch (\Exception $exception) {
             $this->markAsFailed($practice, $exception);
