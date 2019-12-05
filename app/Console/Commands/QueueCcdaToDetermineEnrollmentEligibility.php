@@ -32,13 +32,22 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
      */
     public function handle()
     {
-        Ccda::with(['batch', 'practice'])->where([
-            ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
-        ])->chunkById(50, function ($ccdas) {
-            foreach ($ccdas as $ccda) {
-                CheckCcdaEnrollmentEligibility::dispatch($ccda, $ccda->practice, $ccda->batch)
-                    ->onQueue('low');
+        Ccda::with(['batch', 'practice'])->where(
+            [
+                ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
+            ]
+        )->whereNotNull('practice_id')->whereNotNull('batch_id')->chunkById(
+            50,
+            function ($ccdas) {
+                foreach ($ccdas as $ccda) {
+                    if ( ! $ccda->json) {
+                        $ccda->bluebuttonJson();
+                    }
+
+                    CheckCcdaEnrollmentEligibility::dispatch($ccda, $ccda->practice, $ccda->batch)
+                        ->onQueue('low');
+                }
             }
-        });
+        );
     }
 }
