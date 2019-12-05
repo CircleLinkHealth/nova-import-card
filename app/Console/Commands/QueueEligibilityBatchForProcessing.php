@@ -251,7 +251,7 @@ class QueueEligibilityBatchForProcessing extends Command
             ->take(100)
             ->get();
 
-        echo "\n unprocessed records found {$unprocessed->count()}";
+        echo "\n {$unprocessed->count()} unprocessed records found";
 
         $unprocessed->each(function (EligibilityJob $ej) {
             echo "\n processing ej {$ej->id}";
