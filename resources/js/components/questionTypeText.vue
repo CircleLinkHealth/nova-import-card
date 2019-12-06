@@ -330,14 +330,6 @@
         margin-bottom: 20px;
     }
 
-    .text-field {
-        border: none;
-        border-bottom: solid 1px rgba(0, 0, 0, 0.1);
-        background-color: transparent;
-        outline: 0;
-        height: 30px;
-    }
-
     .label {
         font-family: Poppins, serif;
         font-size: 24px;
@@ -359,25 +351,20 @@
     }
 
     .btn-primary {
-        background-color: #50b2e2;
-        border-color: #4aa5d2;
+        /*background-color: #50b2e2;*/
+        /*border-color: #4aa5d2;*/
     }
 
     .btn-primary.disabled {
         opacity: 50%;
-        background-color: #50b2e2;
-        border-color: #4aa5d2;
-    }
-
-    .fa, .fas {
-        color: #50b2e2;
-        font-weight: unset;
+        /*background-color: #50b2e2;*/
+        /*border-color: #4aa5d2;*/
     }
 
     .text-field {
         border: none;
-        border-bottom: solid 1px rgba(0, 0, 0, 0.1);
-        background-color: transparent;
+        border-bottom: solid 1px rgba(0, 0, 0, 0.1) !important;
+        background-color: transparent !important;
         outline: 0;
         width: 100%;
         height: 30px;

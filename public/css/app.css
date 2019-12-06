@@ -27621,7 +27621,6 @@ input.text-field:hover {
 
 .bottom-navbar {
   background-color: #ffffff;
-  height: 56px;
 }
 
 @media (min-width: 519px) {
@@ -27901,7 +27900,7 @@ a.navbar-title:hover {
 
 @media (max-width: 490px) {
   .survey-container {
-    height: calc(100% - 120px);
+    height: calc(100% - 114px);
   }
 
   .top-buttons {

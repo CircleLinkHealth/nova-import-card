@@ -203,7 +203,7 @@
             </call-assistance>
         </div>
 
-        <div class="bottom-navbar container" :class="stage === 'complete' ? 'hidden' : ''">
+        <div class="bottom-navbar container no-padding" :class="stage === 'complete' ? 'hidden' : ''">
             <!-- justify-content-end -->
             <div class="row no-gutters">
                 <div class="col-3 col-sm-4 col-md-3 col-lg-2 text-center">

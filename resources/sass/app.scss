@@ -334,7 +334,7 @@ html, body, #app {
 
 .bottom-navbar {
     background-color: #ffffff;
-    height: 56px;
+    //height: 56px;
 }
 
 @media (min-width: 519px) {
@@ -615,7 +615,7 @@ a.navbar-title:hover {
 
     .survey-container {
         //60px .top-buttons + 56px .bottom-navbar
-        height: calc(100% - 120px);
+        height: calc(100% - 114px);
     }
 
     .top-buttons {
