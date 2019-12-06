@@ -245,21 +245,15 @@ class QueueEligibilityBatchForProcessing extends Command
             return $batch;
         }
 
-        $unprocessed = EligibilityJob::whereBatchId($batch->id)
+        $unprocessedCount = EligibilityJob::whereBatchId($batch->id)
             ->where('status', '<', 2)
-            ->inRandomOrder()
-            ->take(100)
-            ->get();
+            ->count();
 
-        echo "\n {$unprocessed->count()} unprocessed records found";
+        echo "\n {$unprocessedCount} unprocessed records found";
 
-        $unprocessed->each(function (EligibilityJob $ej) {
-            echo "\n processing ej {$ej->id}";
+        $batch->processPendingJobs();
 
-            $ej->process();
-        });
-
-        if ($unprocessed->isNotEmpty()) {
+        if (0 < $unprocessedCount) {
             echo "\n batch {$batch->id} has unprocessed ej that will be processed";
 
             return $batch;
@@ -278,7 +272,7 @@ class QueueEligibilityBatchForProcessing extends Command
             }
         }
 
-        if ($unprocessed->isEmpty()) {
+        if (0 === $unprocessedCount) {
             $batch->status = EligibilityBatch::STATUSES['complete'];
             $batch->touch();
 
