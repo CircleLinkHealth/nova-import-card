@@ -238,28 +238,22 @@ class QueueEligibilityBatchForProcessing extends Command
     private function queueGoogleDriveJobs(EligibilityBatch $batch): EligibilityBatch
     {
         echo "\n queuing {$batch->id}";
-        if ((int) $batch->status > 0 && $batch->updated_at->gt(now()->subMinutes(30))) {
+        if ((int) $batch->status > 0 && $batch->updated_at->gt(now()->subMinutes(10))) {
             echo "\n bail. did nothing for {$batch->id}";
             echo "\n batch updated at {$batch->updated_at->toDateTimeString()}";
 
             return $batch;
         }
 
-        $unprocessed = EligibilityJob::whereBatchId($batch->id)
-            ->where('status', '<', 2)
-            ->inRandomOrder()
-            ->take(100)
-            ->get();
+        $unprocessedCount = EligibilityJob::whereBatchId($batch->id)
+            ->where('status', 0)
+            ->count();
 
-        echo "\n {$unprocessed->count()} unprocessed records found";
+        echo "\n {$unprocessedCount} unprocessed records found";
 
-        $unprocessed->each(function (EligibilityJob $ej) {
-            echo "\n processing ej {$ej->id}";
+        $batch->processPendingJobs();
 
-            $ej->process();
-        });
-
-        if ($unprocessed->isNotEmpty()) {
+        if (0 < $unprocessedCount) {
             echo "\n batch {$batch->id} has unprocessed ej that will be processed";
 
             return $batch;
@@ -278,7 +272,7 @@ class QueueEligibilityBatchForProcessing extends Command
             }
         }
 
-        if ($unprocessed->isEmpty()) {
+        if (0 === $unprocessedCount) {
             $batch->status = EligibilityBatch::STATUSES['complete'];
             $batch->touch();
 

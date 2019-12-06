@@ -51,10 +51,6 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        if ( ! $this->app->runningInConsole()) {
-            return;
-        }
-
         $this->load(__DIR__.'/Commands');
 
         if ('local' == $this->app->environment()) {
@@ -75,7 +71,7 @@ class Kernel extends ConsoleKernel
             ->dailyAt('04:00')->onOneServer();
 
         $schedule->command(QueueEligibilityBatchForProcessing::class)
-            ->everyTenMinutes()
+            ->everyFiveMinutes()
             ->withoutOverlapping()->onOneServer();
 
         $schedule->command(AutoPullEnrolleesFromAthena::class)

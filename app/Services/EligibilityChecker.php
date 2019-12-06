@@ -92,7 +92,6 @@ class EligibilityChecker
         $filterProblems = true,
         $createEnrollees = true
     ) {
-        ini_set('memory_limit', '128M');
         $this->filterLastEncounter = $filterLastEncounter;
         $this->filterInsurance     = $filterInsurance;
         $this->filterProblems      = $filterProblems;
@@ -130,7 +129,7 @@ class EligibilityChecker
     public function __destruct()
     {
         if ($this->batch) {
-            $this->batch->save();
+            $this->batch->touch();
         }
 
         if ($this->eligibilityJob) {
@@ -173,11 +172,11 @@ class EligibilityChecker
             $isValid = $this->validateProblems();
         }
 
-        if ($this->filterLastEncounter && $isValid) {
+        if ($this->filterLastEncounter && false !== $isValid) {
             $isValid = $this->validateLastEncounter();
         }
 
-        if ($this->filterInsurance && $isValid) {
+        if ($this->filterInsurance && false !== $isValid) {
             $isValid = $this->validateInsurance();
         }
 
