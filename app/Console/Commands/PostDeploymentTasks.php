@@ -48,6 +48,7 @@ class PostDeploymentTasks extends Command
         collect(
             [
                 'view:clear',
+                'view:cache',
                 'route:cache',
                 'config:cache',
                 'opcache:clear',
