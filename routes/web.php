@@ -1074,7 +1074,7 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'eligibility.download.csv.eligible',
                 ])->middleware('permission:enrollee.read');
 
-                Route::get('/eligible-csv', [
+                Route::get('/entire-patient-list-csv', [
                     'uses' => 'EligibilityBatchController@downloadAllPatientsCsv',
                     'as'   => 'eligibility.download.all',
                 ])->middleware('permission:enrollee.read');
