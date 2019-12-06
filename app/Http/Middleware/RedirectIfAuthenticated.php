@@ -7,6 +7,7 @@ use App\Survey;
 use App\User;
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 class RedirectIfAuthenticated
@@ -23,9 +24,13 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
+        Log::debug("Authenticate Middleware -> route login");
         if ( ! Auth::guard($guard)->check()) {
+            Log::debug("Authenticate Middleware -> route login");
             return $next($request);
         }
+
+        Log::debug("Authenticate Middleware -> ready to route somewhere");
 
         /** @var User $user */
         $user          = auth()->user();

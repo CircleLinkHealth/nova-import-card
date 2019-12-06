@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
@@ -57,6 +58,7 @@ class LoginController extends Controller
 
     protected function redirectTo()
     {
+        Log::debug("LoginController -> redirectoTo");
         $request    = request();
         $referer    = $request->header('referer', null);
         $redirectTo = null;
@@ -76,6 +78,7 @@ class LoginController extends Controller
         //without it, it would redirect to home page '/'
         Session::put('url.intended', $route);
 
+        Log::debug("Route => $route");
         return $route;
     }
 }
