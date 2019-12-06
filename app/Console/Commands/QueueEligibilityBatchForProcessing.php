@@ -238,7 +238,7 @@ class QueueEligibilityBatchForProcessing extends Command
     private function queueGoogleDriveJobs(EligibilityBatch $batch): EligibilityBatch
     {
         echo "\n queuing {$batch->id}";
-        if ((int) $batch->status > 0 && $batch->updated_at->gt(now()->subMinutes(30))) {
+        if ((int) $batch->status > 0 && $batch->updated_at->gt(now()->subMinutes(10))) {
             echo "\n bail. did nothing for {$batch->id}";
             echo "\n batch updated at {$batch->updated_at->toDateTimeString()}";
 
