@@ -73,6 +73,13 @@ class EligibilityBatchController extends Controller
 
                             $firstIteration = false;
                         }
+
+                        foreach ($data as $key => $value) {
+                            if (is_array($value)) {
+                                $data[$key] = json_encode($value);
+                            }
+                        }
+
                         // Add a new row with data
                         fputcsv($handle, $data);
                     }
