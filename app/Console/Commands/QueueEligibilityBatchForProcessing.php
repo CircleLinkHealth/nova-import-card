@@ -272,7 +272,7 @@ class QueueEligibilityBatchForProcessing extends Command
 
             if ($result) {
                 $batch->status = EligibilityBatch::STATUSES['processing'];
-                $batch->save();
+                $batch->touch();
 
                 return $batch;
             }
@@ -280,13 +280,13 @@ class QueueEligibilityBatchForProcessing extends Command
 
         if ($unprocessed->isEmpty()) {
             $batch->status = EligibilityBatch::STATUSES['complete'];
-            $batch->save();
+            $batch->touch();
 
             return $batch;
         }
 
         $batch->status = EligibilityBatch::STATUSES['processing'];
-        $batch->save();
+        $batch->touch();
 
         return $batch;
     }
