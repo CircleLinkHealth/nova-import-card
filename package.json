@@ -1,9 +1,9 @@
 {
     "private": true,
     "scripts": {
-        "build": "composer install && php artisan migrate && php artisan migrate:views && npm install",
-        "build-dev": "npm run build && npm run dev && composer ide",
-        "build-prod": "npm run build && npm run prod",
+        "build-awv": "composer install && php artisan migrate && php artisan migrate:views && npm install",
+        "build-dev": "npm run build-awv && npm run dev && composer ide",
+        "build-prod": "npm run build-awv && npm run prod",
         "dev": "npm run development",
         "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
         "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
