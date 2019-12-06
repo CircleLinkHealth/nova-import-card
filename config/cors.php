@@ -15,8 +15,8 @@ return [
     'supportsCredentials' => false,
     'allowedOrigins'         => (env('APP_ENV', 'production') === 'production' || env('APP_ENV',
             'production') === 'worker' || env('APP_ENV', 'production') === 'staging')
-        ? ['*careplanmanager.com']
-        : ['*.ngrok.io', '*.test'],
+        ? ['*careplanmanager.com', '*awv-staging.herokuapp.com']
+        : ['*.ngrok.io', '*.test', '*awv-staging.herokuapp.com'],
     'allowedOriginsPatterns' => [],
     'allowedHeaders' => ['*'],
     'allowedMethods' => ['*'],
