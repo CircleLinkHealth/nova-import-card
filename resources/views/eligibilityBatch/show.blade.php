@@ -55,7 +55,7 @@
                             @endif
 
                             <div class="pull-left" style="padding-left: 2%;">
-                                <a href="{{route('eligibility.download.eligible', [$batch->id])}}"
+                                <a href="{{route('eligibility.download.csv.eligible', [$batch->id])}}"
                                    class="btn btn-success">Download Eligible Patients CSV</a>
                             </div>
                         @endif
