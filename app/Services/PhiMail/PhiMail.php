@@ -282,7 +282,6 @@ class PhiMail implements DirectMail
         //   <your_client_certificate.pem>
         //   <intermediate_CA_certificate.pem>
         //   <root_CA_certificate.pem>
-        //
         PhiMailConnector::setClientCertificate(
             $clientCertPath,
             config('services.emr-direct.pass-phrase')
