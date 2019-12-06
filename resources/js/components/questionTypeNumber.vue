@@ -315,4 +315,23 @@
     .number-field.parts-2 {
         width: 120px;
     }
+
+    @media (max-width: 490px) {
+        .number-field {
+            padding-left: 9px;
+            width: 325px;
+        }
+
+        .number-field.parts-2 {
+            width: 157px;
+        }
+
+        .vitals .number-field {
+            width: 130px;
+        }
+        .vitals .number-field.parts-2 {
+            width: 151px;
+        }
+    }
+
 </style>

@@ -253,7 +253,7 @@
     }
 </script>
 
-<style>
+<style scoped>
 
     input.text-field {
         padding-left: 5px;
@@ -287,15 +287,6 @@
 
     .btn.radio.small, input.text-field.small {
         width: 25%;
-    }
-
-    .btn.radio.active, input.text-field.active, input.text-field.active::placeholder {
-        background-color: #4aa5d2 !important;
-        color: #ffffff !important;
-    }
-
-    .btn.radio:hover, input.text-field:hover {
-        border-color: #4aa5d2 !important;
     }
 
     .btn.btn-sm {
@@ -343,6 +334,77 @@
         pointer-events: none;
         background-color: #50b2e2;
         border-color: #4aa5d2;
+    }
+
+
+    @media (max-width: 490px) {
+        /*Radio buttons*/
+        .btn.radio {
+            height: 34px;
+            width: 325px;
+            text-align: left;
+            padding: 3px;
+            padding-left: 1em;
+            font-size: 13px;
+        }
+
+        /*Other buttons eg question order 11a in HRA*/
+        .text-field.small, input.text-field.small {
+            height: 35px;
+            width: 152px;
+            text-align: left;
+            padding: 4px;
+            font-size: xx-small;
+        }
+
+        /*Yes or No*/
+        .btn.radio.small {
+            height: 35px;
+            width: 152px;
+            text-align: left;
+            font-size: 13px;
+            padding-left: 1em;
+        }
+
+        /*Other button Q11c.*/
+        #app div > div.question-answer-type > div > div > input {
+            height: 35px;
+            text-align: left;
+            padding: 1em;
+            font-size: xx-small;
+        }
+        /* Vitals Radios*/
+        .btn.btn-sm {
+            width: 35px;
+            height: 35px;
+        }
+    }
+
+    @media (max-width: 996px) {
+        .btn.radio {
+            height: 3em;
+            text-align: left;
+            padding: 3px;
+            padding-left: 1em;
+            font-size: 13px;
+        }
+    }
+
+    @media (max-width: 996px) {
+        .text-field.small, input.text-field.small {
+            height: 100%;
+            width: 152px;
+            text-align: left;
+            padding: 4px;
+            font-size: xx-small;
+        }
+
+        #app div > div.question-answer-type > div > div > input {
+            height: 100%;
+            text-align: left;
+            padding: 1em;
+            font-size: xx-small;
+        }
     }
 
 </style>

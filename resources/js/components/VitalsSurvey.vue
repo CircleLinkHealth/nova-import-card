@@ -1,16 +1,34 @@
 <template>
-    <div class="container main-container">
+    <div class="container main-container vitals">
 
-        <div class="top-left-fixed" v-if="adminMode">
-            <mdb-btn class="btn-toggle-edit" color="primary" @click="goBack">
-                <mdb-icon icon="chevron-circle-left" size="3x"/>
-            </mdb-btn>
-        </div>
-
-        <div class="top-right-fixed" v-if="adminMode">
-            <mdb-btn class="btn-toggle-edit" :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
-                <mdb-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
-            </mdb-btn>
+        <div class="top-buttons" v-if="adminMode">
+            <mdb-row class="no-gutters">
+                <mdb-col>
+                    <div class="top-left-fixed">
+                        <mdb-btn class="btn-toggle-edit" color="primary" @click="goBack">
+                            <mdb-icon icon="chevron-circle-left" size="3x"/>
+                        </mdb-btn>
+                    </div>
+                    <!-- shown on mobiles -->
+                    <mdb-btn flat darkWaves @click="goBack" class="hidden mobile-view">
+                        <mdb-icon icon="chevron-circle-left"/>
+                        Back
+                    </mdb-btn>
+                </mdb-col>
+                <mdb-col>
+                    <div class="top-right-fixed">
+                        <mdb-btn class="btn-toggle-edit" :outline="readOnlyMode ? 'info' : 'danger'"
+                                 @click="toggleReadOnlyMode">
+                            <mdb-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
+                        </mdb-btn>
+                    </div>
+                    <!-- shown on mobiles -->
+                    <mdb-btn flat darkWaves @click="toggleReadOnlyMode" class="hidden mobile-view">
+                        <mdb-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'"/>
+                        {{readOnlyMode ? 'Edit' : 'View'}}
+                    </mdb-btn>
+                </mdb-col>
+            </mdb-row>
         </div>
 
         <!--Survey welcome note-->
@@ -257,7 +275,7 @@
 
 <script>
 
-    import {mdbBtn, mdbProgress, mdbIcon} from 'mdbvue';
+    import {mdbBtn, mdbProgress, mdbRow, mdbCol, mdbIcon} from 'mdbvue';
 
     import questionTypeText from "./questionTypeText";
     import questionTypeCheckbox from "./questionTypeCheckbox";
@@ -272,6 +290,8 @@
 
         components: {
             mdbIcon,
+            mdbRow,
+            mdbCol,
             'mdb-btn': mdbBtn,
             'mdb-progress': mdbProgress,
             'question-type-text': questionTypeText,
