@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\InvalidCcdaException;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
@@ -47,7 +48,10 @@ class ProcessCcda implements ShouldQueue
 
         try {
             $json = $ccda->bluebuttonJson();
-        } catch (\Exception $e) {
+        } catch (InvalidCcdaException $e) {
+            Log::error($e->getMessage());
+
+            return;
         }
 
         if ( ! $json) {
