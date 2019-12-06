@@ -22,6 +22,7 @@ interface MedicalRecord
      * status: A careplan was created.
      */
     const CAREPLAN_CREATED = 'careplan_created';
+
     /**
      * status: A record created for the purpose of determining whether the patient is eligible to be called for enrollment.
      */
@@ -33,6 +34,11 @@ interface MedicalRecord
     const ELIGIBLE = 'eligible';
 
     /**
+     * status: An error occured while processing the CCDA.
+     */
+    const ERROR = 'error';
+
+    /**
      * status: The CCD is ready to be imported.
      */
     const IMPORT = 'import';
@@ -41,6 +47,11 @@ interface MedicalRecord
      * status: The patient is ineligible ot be called for enrollment.
      */
     const INELIGIBLE = 'ineligible';
+
+    /**
+     * status: The CCD is invalid. Example: the xml file is empty.
+     */
+    const INVALID = 'invalid';
 
     /**
      * status: The patient has consented to enrolling to CCM.
@@ -68,15 +79,11 @@ interface MedicalRecord
 
     /**
      * Get the Transformer.
-     *
-     * @return MedicalRecordLogger
      */
     public function getLogger(): MedicalRecordLogger;
 
     /**
      * Get the User to whom this record belongs to, if one exists.
-     *
-     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function getPatient(): User;
 
@@ -89,71 +96,51 @@ interface MedicalRecord
 
     /**
      * Import Allergies for QA.
-     *
-     * @return MedicalRecord
      */
     public function importAllergies(): MedicalRecord;
 
     /**
      * Import Demographics for QA.
-     *
-     * @return MedicalRecord
      */
     public function importDemographics(): MedicalRecord;
 
     /**
      * Import Document for QA.
-     *
-     * @return MedicalRecord
      */
     public function importDocument(): MedicalRecord;
 
     /**
      * Import Insurance Policies for QA.
-     *
-     * @return MedicalRecord
      */
     public function importInsurance(): MedicalRecord;
 
     /**
      * Import Medications for QA.
-     *
-     * @return MedicalRecord
      */
     public function importMedications(): MedicalRecord;
 
     /**
      * Import Problems for QA.
-     *
-     * @return MedicalRecord
      */
     public function importProblems(): MedicalRecord;
 
     /**
      * Import Providers for QA.
-     *
-     * @return MedicalRecord
      */
     public function importProviders(): MedicalRecord;
 
     /**
      * Predict which BillingProvider should be attached to this MedicalRecord.
-     *
-     * @return MedicalRecord
      */
     public function predictBillingProvider(): MedicalRecord;
 
     /**
      * Predict which Location should be attached to this MedicalRecord.
-     *
-     * @return MedicalRecord
      */
     public function predictLocation(): MedicalRecord;
 
     /**
      * Predict which Practice should be attached to this MedicalRecord.
-     *
-     * @return MedicalRecord
      */
     public function predictPractice(): MedicalRecord;
 }

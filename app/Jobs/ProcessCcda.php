@@ -42,9 +42,13 @@ class ProcessCcda implements ShouldQueue
      */
     public function handle()
     {
+        /** @var Ccda $ccda */
         $ccda = $this->ccda;
 
-        $json = $ccda->bluebuttonJson();
+        try {
+            $json = $ccda->bluebuttonJson();
+        } catch (\Exception $e) {
+        }
 
         if ( ! $json) {
             throw new \Exception('No response from ccd parser.');
