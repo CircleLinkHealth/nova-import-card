@@ -27488,6 +27488,11 @@ body,
   }
 }
 
+.input.text-field.active {
+  border: none !important;
+  border-bottom: 1px solid #4aa5d2;
+}
+
 input.text-field.active::-webkit-input-placeholder {
   background-color: #4aa5d2 !important;
   color: #ffffff !important;
@@ -27517,7 +27522,8 @@ input.text-field.active::placeholder {
 
 .btn.btn-primary.radio:hover,
 input.text-field:hover {
-  border-color: #4aa5d2 !important;
+  border: none !important;
+  border-bottom: 1px solid #4aa5d2 !important;
 }
 
 .no-padding {
@@ -27941,6 +27947,7 @@ a.navbar-title:hover {
     padding-left: 0;
     padding-right: 0;
     height: 100%;
+    overflow: hidden;
   }
 
   .question-answer-type {
@@ -27997,7 +28004,7 @@ a.navbar-title:hover {
   .call-btn-round {
     width: 35px;
     height: 35px;
-    margin-left: 10px;
+    margin-left: 20px;
   }
 
   .scroll-buttons {

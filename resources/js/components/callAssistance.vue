@@ -4,7 +4,7 @@
         <div class="content">
             <div class="header">
                 <mdb-btn @click="handleClick" class="btn-transparent">
-                    <mdb-icon icon="angle-left" size="3x"></mdb-icon>
+                    <mdb-icon icon="angle-left" size="2x"></mdb-icon>
                 </mdb-btn>
                 <span class="title">Call</span>
             </div>

@@ -257,13 +257,19 @@ html, body, #app {
 
 }
 
+.input.text-field.active {
+    border: none !important;
+    border-bottom: 1px solid $primary-color-active;
+}
+
 .btn.btn-primary.radio.active, input.text-field.active, input.text-field.active::placeholder {
     background-color: $primary-color-active !important;
     color: #ffffff !important;
 }
 
 .btn.btn-primary.radio:hover, input.text-field:hover {
-    border-color: $primary-color-active !important;
+    border: none !important;
+    border-bottom: 1px solid $primary-color-active !important;
 }
 
 .no-padding {
@@ -577,11 +583,11 @@ a.navbar-title:hover {
         width: 4em;
     }
     // top buttons
-    #app > div > div.top-buttons > div > div:nth-child(1) > div > button > i{
+    #app > div > div.top-buttons > div > div:nth-child(1) > div > button > i {
         font-size: 3em;
     }
 
-    #app > div > div.top-buttons > div > div:nth-child(2) > div > button > i{
+    #app > div > div.top-buttons > div > div:nth-child(2) > div > button > i {
         font-size: 1.5em;
     }
 }
@@ -601,15 +607,16 @@ a.navbar-title:hover {
         width: 36px;
     }
     // top buttons
-    #app > div > div.top-buttons > div > div:nth-child(1) > div > button > i{
+    #app > div > div.top-buttons > div > div:nth-child(1) > div > button > i {
         font-size: 2em;
     }
 
-    #app > div > div.top-buttons > div > div:nth-child(2) > div > button > i{
+    #app > div > div.top-buttons > div > div:nth-child(2) > div > button > i {
         font-size: 1.5em;
     }
 
 }
+
 //I phone X
 @media (max-width: 490px) {
 
@@ -656,6 +663,7 @@ a.navbar-title:hover {
         padding-left: 0;
         padding-right: 0;
         height: 100%;
+        overflow: hidden;
     }
 
     .question-answer-type {
@@ -712,7 +720,7 @@ a.navbar-title:hover {
     .call-btn-round {
         width: 35px;
         height: 35px;
-        margin-left: 10px;
+        margin-left: 20px;
         //padding: 3px 27px 37px 13px !important;
         //margin-top: 7px !important;
     }

@@ -194,7 +194,7 @@
             </template>
         </div>
         <div class="call-assistance">
-            <call-assistance v-if="practiceOutgoingPhoneNumber && callAssistance"
+            <call-assistance v-if="/*practiceOutgoingPhoneNumber && */callAssistance"
                              :phone-number="practiceOutgoingPhoneNumber"
                              :cpm-caller-token="cpmCallerToken"
                              :cpm-caller-url="cpmCallerUrl"

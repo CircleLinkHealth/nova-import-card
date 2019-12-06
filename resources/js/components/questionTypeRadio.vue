@@ -253,7 +253,7 @@
     }
 </script>
 
-<style>
+<style scoped>
 
     input.text-field {
         padding-left: 5px;

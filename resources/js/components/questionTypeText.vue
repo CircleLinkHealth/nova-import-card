@@ -368,6 +368,8 @@
         outline: 0;
         width: 100%;
         height: 30px;
+        font-size: 24px;
+        letter-spacing: 1.33px;
     }
 
     .text-field:active, .text-field:focus {
