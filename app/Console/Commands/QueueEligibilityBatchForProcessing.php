@@ -246,7 +246,7 @@ class QueueEligibilityBatchForProcessing extends Command
         }
 
         $unprocessedCount = EligibilityJob::whereBatchId($batch->id)
-            ->where('status', '<', 2)
+            ->where('status', 0)
             ->count();
 
         echo "\n {$unprocessedCount} unprocessed records found";
