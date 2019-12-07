@@ -61,8 +61,14 @@ module.exports = app => {
                     continue;
                 }
 
-                const originalTime = user.totalTime;
+                const cachedTime = user.totalCcmTimeFromCache + user.totalBhiTimeFromCache;
 
+                if (user.totalCcmTimeFromCache === timeOnCpm.ccm_time && user.totalBhiTimeFromCache === timeOnCpm.bhi_time) {
+                    console.log(`sync time is same as cached[${cachedTime}]. ignoring.`);
+                    continue;
+                }
+
+                // const originalTime = user.totalTime;
                 if (user.totalCCMTime < timeOnCpm.ccm_time) {
                     user.totalCCMTime = timeOnCpm.ccm_time;
                 }
@@ -73,10 +79,10 @@ module.exports = app => {
 
                 user.totalTime = user.totalCCMTime + user.totalBHITime;
 
-                if (originalTime !== user.totalTime) {
-                    user.sync();
-                }
-
+                // if (originalTime !== user.totalTime) {
+                console.log('sync ccm time', user.totalCCMTime, 'cachedTime[', cachedTime, ']', 'now[', user.totalTime, ']');
+                user.sync();
+                // }
             }
         }
 
@@ -275,6 +281,7 @@ module.exports = app => {
                 }))
             };
 
+            console.log('caching ccm', user.totalCcmSeconds);
             storeTime(requestData.patientId, user.totalCcmSeconds, user.totalBhiSeconds, true);
 
             axios.post(url, requestData).then((response) => {
