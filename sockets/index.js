@@ -278,8 +278,13 @@ module.exports = app => {
                 }))
             };
 
-            console.log('caching ccm', user.totalCcmSeconds);
-            storeTime(requestData.patientId, user.totalCcmSeconds, user.totalBhiSeconds, true);
+            if (user.totalCcmSeconds === 0 && user.totalBhiSeconds === 0) {
+                console.log('will not cache ccc because time is 0');
+            }
+            else {
+                console.log('caching ccm', user.totalCcmSeconds);
+                storeTime(requestData.patientId, user.totalCcmSeconds, user.totalBhiSeconds, true);
+            }
 
             axios.post(url, requestData).then((response) => {
                 console.log(response.status, response.data, requestData.patientId, requestData.activities.map(activity => activity.duration).join(', '))
