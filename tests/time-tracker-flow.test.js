@@ -214,13 +214,13 @@ describe('TimeTrackerFlow', () => {
             })
     
             it('should require modal (910 seconds)', () => {
-                user.inactiveSeconds = 910
+                user.inactiveSeconds = user.ALERT_TIMEOUT_CALL_MODE + 10;
     
                 assert.equal(user.inactivityRequiresModal(), true)
             })
     
             it('should require logout (1210)', () => {
-                user.inactiveSeconds = 1210
+                user.inactiveSeconds = user.LOGOUT_TIMEOUT_CALL_MODE + 10;
     
                 assert.equal(user.inactivityRequiresLogout(), true)
             })
