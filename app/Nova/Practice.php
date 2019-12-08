@@ -6,9 +6,12 @@
 
 namespace App\Nova;
 
+use App\Nova\Importers\PatientConsentLetters;
+use Circlelinkhealth\ClhImportCardExtended\ClhImportCardExtended;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 
 class Practice extends Resource
@@ -19,13 +22,14 @@ class Practice extends Resource
      * @var string
      */
     public static $group = \App\Constants::NOVA_GROUP_PRACTICES;
+
+    public static $importer = PatientConsentLetters::class;
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
     public static $model = \CircleLinkHealth\Customer\Entities\Practice::class;
-
     /**
      * The columns that should be searched.
      *
@@ -50,9 +54,11 @@ class Practice extends Resource
     public function actions(Request $request)
     {
         //There is a known bug when adding ->canSee and ->canRun for actions that are queueable, this is a workaround
-        return $request->user()->isAdmin() ? [
-            (new Actions\FaxApprovedCarePlans())->onlyOnDetail(),
-        ] : [];
+        return $request->user()->isAdmin()
+            ? [
+                (new Actions\FaxApprovedCarePlans())->onlyOnDetail(),
+            ]
+            : [];
     }
 
     /**
@@ -62,7 +68,17 @@ class Practice extends Resource
      */
     public function cards(Request $request)
     {
-        return [];
+        $fields = [
+            Select::make('Practice')->options([
+                '8'   => 'Demo',
+                '212' => 'Collins, Abbot and Kurphal',
+            ])->withModel(\CircleLinkHealth\Customer\Entities\Practice::class),
+            Text::make('Email'),
+        ];
+
+        return [
+            ClhImportCardExtended::make(self::class, $fields),
+        ];
     }
 
     /**
