@@ -6,6 +6,7 @@
 
 namespace App\Exports\PracticeReports;
 
+use App\Call;
 use App\Contracts\Reports\PracticeDataExport;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -16,7 +17,6 @@ class PracticeCallsReport extends PracticeReport
     /**
      * @param null $mediaCollectionName
      *
-     * @return PracticeDataExport
      * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\DiskDoesNotExist
      * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileDoesNotExist
      * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileIsTooBig
@@ -36,9 +36,6 @@ class PracticeCallsReport extends PracticeReport
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function filename(): string
     {
         if ( ! $this->filename) {
@@ -49,56 +46,56 @@ class PracticeCallsReport extends PracticeReport
         return $this->filename;
     }
 
-    /**
-     * @return array
-     */
     public function headings(): array
     {
         return [
-            'Date of Call',
-            'Time of Call',
+            'Name',
+            'MRN',
+            'DOB',
+            'Call Date and Time',
             'Was Successful',
         ];
     }
 
     /**
      * @param mixed $row
-     *
-     * @return array
      */
     public function map($row): array
     {
-        return $row->inboundCalls->map(function ($call) {
+        $demographics = [
+            'name' => $row->display_name,
+            'mrn'  => $row->getMrnNumber(),
+            'dob'  => $row->patientInfo->dob(),
+        ];
+
+        return $row->inboundCalls->map(function ($call) use ($demographics) {
             $calledDate = Carbon::parse($call->called_date);
 
-            return [
-                'date_of_call'   => $calledDate->toDateString(),
-                'time_of_call'   => $calledDate->toTimeString(),
-                'was_successful' => 'reached' === $call->status
-                    ? 'true'
-                    : 'false',
-            ];
+            return array_merge($demographics, [
+                'date_of_call'   => $calledDate->toDateTimeString(),
+                'was_successful' => Call::REACHED === $call->status
+                    ? 'Y'
+                    : 'N',
+            ]);
         })->all();
     }
 
-    /**
-     * @return Builder
-     */
     public function query(): Builder
     {
         return User::ofPractice($this->practice)
-                   ->ofType('participant')
-                   ->has('patientInfo')
-                   ->with(
+            ->ofType('participant')
+            ->has('patientInfo')
+            ->whereHas('inboundCalls', function ($calls) {
+                       $calls->calledLastThreeMonths();
+                   })
+            ->with(
                        [
                            'inboundCalls' => function ($calls) {
                                $calls->select('inbound_cpm_id', 'status', 'called_date')
-                                     ->whereNotNull('called_date')
-                                     ->where('called_date', '>=',
-                                         Carbon::now()->subMonth(3)->startOfMonth()->startOfDay())
-                                     ->where('called_date', '<=', Carbon::now()->endOfDay());
+                                   ->calledLastThreeMonths();
                            },
+                           'patientInfo',
                        ]
-                   )->select('id');
+                   )->select('id', 'display_name');
     }
 }
