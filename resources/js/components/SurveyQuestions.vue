@@ -928,11 +928,22 @@
                 const elem = $('.question.active')[0];
 
                 if (elem.scrollHeight > (elem.offsetHeight + elem.scrollTop)) {
+
+                    const bodyEl = $('body');
+                    const bodyWidth = bodyEl.width();
+                    const bodyHeight = bodyEl.height();
+
+                    //got it from app.scss @media query...
+                    const mobileMediaQuery = 490;
+
+                    const staticLeftOffset = bodyWidth > mobileMediaQuery ? 110 : 90;
+                    const staticTopOffset = bodyWidth > mobileMediaQuery ? 220 : 200;
+
                     const navbar = $('.bottom-navbar');
-                    const leftOffset = navbar.offset().left + navbar.width() - 110;
+                    const leftOffset = navbar.offset().left + bodyWidth - staticLeftOffset;
                     qScroll.css('left', `${leftOffset}px`);
 
-                    const topOffset = $('body').height() - 220;
+                    const topOffset = bodyHeight - staticTopOffset;
                     qScroll.css('top', `${topOffset}px`);
 
                     qScroll.fadeIn();

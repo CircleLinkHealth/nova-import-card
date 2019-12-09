@@ -394,7 +394,7 @@
     }
 
     @media (max-width: 490px) {
-        .label {
+        .label, .text-field {
             font-size: 16px;
         }
 
