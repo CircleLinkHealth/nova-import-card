@@ -37,8 +37,6 @@ class ImportConsentedEnrollees implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param array $enrolleeIds
      */
     public function __construct(array $enrolleeIds, EligibilityBatch $batch = null)
     {
@@ -53,6 +51,8 @@ class ImportConsentedEnrollees implements ShouldQueue
      */
     public function handle(ImportService $importService)
     {
+        ini_set('max_execution_time', 300);
+
         $imported = collect();
 
         Enrollee::whereIn('id', $this->enrolleeIds)
@@ -61,7 +61,7 @@ class ImportConsentedEnrollees implements ShouldQueue
                 $newImported = $enrollees->map(function ($enrollee) use ($importService) {
                     //verify it wasn't already imported
                     if ($enrollee->user_id) {
-                        $this->log('This patient has already been imported', $enrollee->id);
+                        $this->enrolleeAlreadyImported($enrollee);
 
                         return;
                     }
@@ -73,12 +73,12 @@ class ImportConsentedEnrollees implements ShouldQueue
                             $enrollee->user_id = $imr->patient_id;
                             $enrollee->save();
 
-                            $this->log('This patient has already been imported', $enrollee->id);
+                            $this->enrolleeAlreadyImported($enrollee);
 
                             return;
                         }
 
-                        $this->log('The CCD was imported.', $enrollee->id);
+                        $this->enrolleeMedicalRecordImported($enrollee);
 
                         return;
                     }
@@ -106,13 +106,13 @@ class ImportConsentedEnrollees implements ShouldQueue
                         $response = $importService->importExistingCcda($enrollee->medical_record_id);
 
                         if ($response->imr) {
-                            $this->log('The CCD was imported.', $enrollee->id);
+                            $this->enrolleeAlreadyImported($enrollee);
 
                             return;
                         }
                     }
 
-                    $this->log($response->message ?? 'Sorry. Some random error occured. Please post to #qualityassurance to notify everyone to stop using the importer, and also tag Michalis to fix this asap.', $enrollee->id);
+                    throw new \Exception("This should never be reached. enrollee:$enrollee->id");
                 });
 
                 $imported = $imported->merge($newImported);
@@ -135,6 +135,18 @@ class ImportConsentedEnrollees implements ShouldQueue
         $hash = $enrollee->practice->name.$enrollee->first_name.$enrollee->last_name.$enrollee->mrn.$enrollee->city.$enrollee->state.$enrollee->zip;
 
         return EligibilityJob::whereHash($hash)->first();
+    }
+
+    private function enrolleeAlreadyImported(Enrollee $enrollee)
+    {
+        $link = route('patient.careplan.print', [$enrollee->user_id]);
+        $this->log("Eligible patient with ID {$enrollee->id} has already been imported. See $link");
+    }
+
+    private function enrolleeMedicalRecordImported(Enrollee $enrollee)
+    {
+        $link = route('import.ccd.remix');
+        $this->log("Just imported the CCD of Eligible Patient ID {$enrollee->id}. Please visit $link");
     }
 
     private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
@@ -187,7 +199,7 @@ class ImportConsentedEnrollees implements ShouldQueue
         );
 
         if ( ! isset($ccdaExternal[0])) {
-            $this->log('Could not retrieve CCD from Athena', $enrollee->id);
+            $this->log("Could not retrieve CCD from Athena for eligible patient id $enrollee->id");
 
             return;
         }
@@ -203,13 +215,13 @@ class ImportConsentedEnrollees implements ShouldQueue
         $imported                      = $ccda->import();
         $enrollee->save();
 
-        $this->log('The CCD was imported', $enrollee->id);
+        $this->enrolleeMedicalRecordImported($enrollee);
     }
 
-    private function log($message, int $id)
+    private function log($message)
     {
-        \Log::channel('logdna')->warning($message, [
-            'enrollee_id' => $id,
-        ]);
+        \Log::channel('logdna')->warning($message);
+
+        sendSlackMessage('#parse_enroll_import', $message);
     }
 }
