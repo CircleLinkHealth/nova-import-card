@@ -57,6 +57,10 @@ class DownloadController extends Controller
             ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
             ->get();
 
+        if ($collection->isEmpty()) {
+            return 'We could not find the files you are looking for. Please contact Circle Link support.';
+        }
+
         return MediaStream::create('patient-consent-letters.zip')->addMedia($collection);
     }
 

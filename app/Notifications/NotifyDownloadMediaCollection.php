@@ -7,7 +7,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -53,9 +52,10 @@ class NotifyDownloadMediaCollection extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', $this->url)
-            ->line('Thank you for using our application!');
+            ->subject('Patient Consent Letters')
+            ->line('Click button below to be redirected to CarePlan Manager, where you may download the consent letters.')
+            ->action('Download Consent Letters', $this->url)
+            ->line('Regards, the CircleLink Health Team');
     }
 
     /**

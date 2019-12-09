@@ -6,7 +6,6 @@
 
 namespace Circlelinkhealth\ClhImportCardExtended;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -48,9 +47,7 @@ class ImportCsvNovaRequest extends NovaRequest
             return $this->fields;
         }
 
-        foreach ($this->getFieldsInputFromRequest() as $field) {
-            $this->fields[$field->indexName] = $this->getInputValueOrModel($field);
-        }
+        $this->fields = new Fields($this->getFieldsInputFromRequest());
 
         return $this->fields;
     }
@@ -60,46 +57,26 @@ class ImportCsvNovaRequest extends NovaRequest
         return json_decode($this->input('fields'));
     }
 
-    private function getFieldValue($field)
-    {
-        return is_a($field->value, 'stdClass') && isset($field->value->value)
-            ? $field->value->value
-            : $field->value;
-    }
-
-    private function getInputValueOrModel($field)
-    {
-        if ($this->isModel($field)) {
-            return $field->model::find($this->getFieldValue($field));
-        }
-
-        return $this->getFieldValue($field);
-    }
-
     private function getRulesForFields()
     {
         return [
             'required',
             function ($attribute, $value, $fail) {
                 foreach (json_decode($value) as $field) {
-                    if ( ! $field->nullable) {
-                        if ( ! $this->getFieldValue($field)) {
-                            return $fail('Field '.$field->indexName.' is required.');
+                    $field = new InputField($field);
+                    if ( ! $field->isNullable()) {
+                        if ( ! $field->getFieldValue()) {
+                            return $fail('Field '.$field->getName().' is required.');
                         }
 
-                        if ($this->isModel($field)) {
-                            if ( ! $this->getInputValueOrModel($field)) {
-                                return $fail('Model '.$field->model.'not found');
+                        if ($field->isModel()) {
+                            if ( ! $field->getInputValueOrModel()) {
+                                return $fail('Model '.$field->getModelClass().'with key '.$field->getModelKey().'not found');
                             }
                         }
                     }
                 }
             },
         ];
-    }
-
-    private function isModel($field): bool
-    {
-        return isset($field->model) && ! is_null($field->model) && is_subclass_of($field->model, Model::class);
     }
 }

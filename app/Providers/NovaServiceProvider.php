@@ -21,8 +21,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         parent::boot();
 
-        \Laravel\Nova\Fields\Field::macro('withModel', function ($model) {
-            $this->withMeta(['model' => $model]);
+        \Laravel\Nova\Fields\Field::macro('withModel', function ($model, $modelKey = null) {
+            $this->withMeta([
+                'model'    => $model,
+                'modelKey' => $modelKey ?: 'id',
+            ]);
 
             return $this;
         });

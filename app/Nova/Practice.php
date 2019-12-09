@@ -11,7 +11,6 @@ use Circlelinkhealth\ClhImportCardExtended\ClhImportCardExtended;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 
 class Practice extends Resource
@@ -69,7 +68,7 @@ class Practice extends Resource
     public function cards(Request $request)
     {
         $fields = [
-            Text::make('Email'),
+            Text::make('Email')->withModel(\CircleLinkHealth\Customer\Entities\User::class, 'email'),
         ];
 
         return [

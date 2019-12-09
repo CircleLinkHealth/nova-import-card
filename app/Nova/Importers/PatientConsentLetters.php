@@ -6,9 +6,7 @@
 
 namespace App\Nova\Importers;
 
-use App\Constants;
 use App\Notifications\NotifyDownloadMediaCollection;
-use App\Notifications\SendSignedUrlToDownloadPatientProblemsReport;
 use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
@@ -20,8 +18,7 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Events\AfterImport;
-use URL;
-use ZipArchive;
+use Maatwebsite\Excel\Events\BeforeImport;
 
 class PatientConsentLetters implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueue, WithEvents
 {
@@ -35,8 +32,6 @@ class PatientConsentLetters implements WithChunkReading, ToModel, WithHeadingRow
     protected $date;
 
     protected $email;
-
-    protected $fields;
 
     protected $fileName;
 
@@ -59,8 +54,7 @@ class PatientConsentLetters implements WithChunkReading, ToModel, WithHeadingRow
         $this->attributes     = $attributes;
         $this->rules          = $rules;
         $this->modelClass     = $modelClass;
-        $this->fields         = $resource->fields;
-        $this->email          = $resource->fields['Email'];
+        $this->email          = $resource->fields->getFieldValue('Email');
         $this->fileName       = $resource->fileName;
         $this->pdfService     = app(PdfService::class);
         $this->date           = Carbon::now();
@@ -77,7 +71,7 @@ class PatientConsentLetters implements WithChunkReading, ToModel, WithHeadingRow
         return 10;
     }
 
-    public static function beforeImport(AfterImport $event)
+    public static function beforeImport(BeforeImport $event)
     {
         User::whereEmail($event->getConcernable()->email)->first()->clearMediaCollection($event->getConcernable()->collectionName);
     }
@@ -89,7 +83,7 @@ class PatientConsentLetters implements WithChunkReading, ToModel, WithHeadingRow
 
     public function message(): string
     {
-        return 'File queued for importing. Patient Consent Letters will be created.';
+        return 'File queued for importing. Patient Consent Letters will be created and and email containing download link will be sent.';
     }
 
     public function model(array $row)
