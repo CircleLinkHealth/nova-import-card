@@ -33,7 +33,7 @@ class InputField
     public function getInputValueOrModel()
     {
         if ($this->isModel()) {
-            return $this->field->model::where($this->getModelKey(), $this->getFieldValue());
+            return $this->field->model::where($this->getModelKey(), $this->getFieldValue())->first();
         }
 
         return $this->getFieldValue();
@@ -54,6 +54,11 @@ class InputField
         return $this->field->indexName;
     }
 
+    public function getRules()
+    {
+        return $this->field->fieldRules ?: [];
+    }
+
     public function isModel(): bool
     {
         return isset($this->field->model) && ! is_null($this->field->model) && is_subclass_of($this->field->model, Model::class);
@@ -62,9 +67,5 @@ class InputField
     public function isNullable()
     {
         return $this->field->nullable;
-    }
-
-    private function getRules()
-    {
     }
 }

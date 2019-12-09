@@ -8,25 +8,20 @@ namespace Circlelinkhealth\ClhImportCardExtended;
 
 class Fields
 {
-    protected $fields;
-
-    //make like a collection class
-    public function __construct(array $fields)
-    {
-        $this->fields = collect($fields);
-    }
-
-    public function getField($name)
-    {
-        return new InputField($this->fields->filter(function ($field) use ($name) {
-            return $field->indexName == $name;
-        })->first());
-    }
+    protected $inputFields = [];
 
     public function getFieldValue($name)
     {
-        $field = $this->getField($name);
+        return $this->inputFields[strtolower($name)];
+    }
 
-        return $field ? $field->getFieldValue() : null;
+    public function setInputFields(array $fieldsFromRequest)
+    {
+        foreach ($fieldsFromRequest as $field) {
+            $inputField                                            = new InputField($field);
+            $this->inputFields[strtolower($inputField->getName())] = $inputField->getInputValueOrModel();
+        }
+
+        return $this;
     }
 }

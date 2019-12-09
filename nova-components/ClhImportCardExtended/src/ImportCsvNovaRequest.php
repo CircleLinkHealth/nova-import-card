@@ -47,7 +47,7 @@ class ImportCsvNovaRequest extends NovaRequest
             return $this->fields;
         }
 
-        $this->fields = new Fields($this->getFieldsInputFromRequest());
+        $this->fields = (new Fields())->setInputFields($this->getFieldsInputFromRequest());
 
         return $this->fields;
     }

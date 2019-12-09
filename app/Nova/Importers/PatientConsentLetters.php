@@ -31,8 +31,6 @@ class PatientConsentLetters implements WithChunkReading, ToModel, WithHeadingRow
 
     protected $date;
 
-    protected $email;
-
     protected $fileName;
 
     protected $modelClass;
@@ -48,13 +46,15 @@ class PatientConsentLetters implements WithChunkReading, ToModel, WithHeadingRow
 
     protected $rules;
 
+    protected $user;
+
     public function __construct($resource, $attributes, $rules, $modelClass)
     {
         $this->resource       = $resource;
         $this->attributes     = $attributes;
         $this->rules          = $rules;
         $this->modelClass     = $modelClass;
-        $this->email          = $resource->fields->getFieldValue('Email');
+        $this->user           = $resource->fields->getFieldValue('Email');
         $this->fileName       = $resource->fileName;
         $this->pdfService     = app(PdfService::class);
         $this->date           = Carbon::now();
@@ -63,7 +63,7 @@ class PatientConsentLetters implements WithChunkReading, ToModel, WithHeadingRow
 
     public static function afterImport(AfterImport $event)
     {
-        User::whereEmail($event->getConcernable()->email)->first()->notify(new NotifyDownloadMediaCollection($event->getConcernable()->collectionName));
+        $event->getConcernable()->user->notify(new NotifyDownloadMediaCollection($event->getConcernable()->collectionName));
     }
 
     public function batchSize(): int
@@ -73,7 +73,7 @@ class PatientConsentLetters implements WithChunkReading, ToModel, WithHeadingRow
 
     public static function beforeImport(BeforeImport $event)
     {
-        User::whereEmail($event->getConcernable()->email)->first()->clearMediaCollection($event->getConcernable()->collectionName);
+        $event->getConcernable()->user->clearMediaCollection($event->getConcernable()->collectionName);
     }
 
     public function chunkSize(): int
@@ -88,25 +88,40 @@ class PatientConsentLetters implements WithChunkReading, ToModel, WithHeadingRow
 
     public function model(array $row)
     {
-        $fileName = $row['name'].'-consent-letter-'.Carbon::today()->toDateString().'pdf';
+        $fileName = $row['name'].'-consent-letter-'.Carbon::today()->toDateString().'.pdf';
         $filePath = storage_path('pdfs/'.$fileName);
         $pdf      = app('snappy.pdf.wrapper');
         $pdf->loadView(
             'pdfs.patient-consent-letter',
             [
                 'patientName' => $row['name'],
-                'dob'         => $row['dob'],
+                'dob'         => $this->getDate($row['dob']),
                 'mrn'         => $row['mrn'],
-                'date'        => $row['consent_date'],
+                'date'        => $this->getDate($row['consent_date']),
             ]
         );
         $pdf->save($filePath, true);
 
-        User::whereEmail($this->email)->first()->addMedia($filePath)->toMediaCollection($this->collectionName);
+        $this->user->addMedia($filePath)->toMediaCollection($this->collectionName);
     }
 
     public function rules(): array
     {
         return $this->rules;
+    }
+
+    private function getDate($field)
+    {
+        try {
+            $date = Carbon::parse($field);
+        } catch (\Exception $exception) {
+            try {
+                $date = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($field));
+            } catch (\Exception $exc) {
+                return null;
+            }
+        }
+
+        return $date->toDateString();
     }
 }
