@@ -69,10 +69,6 @@ class Practice extends Resource
     public function cards(Request $request)
     {
         $fields = [
-            Select::make('Practice')->options([
-                '8'   => 'Demo',
-                '212' => 'Collins, Abbot and Kurphal',
-            ])->withModel(\CircleLinkHealth\Customer\Entities\Practice::class),
             Text::make('Email'),
         ];
 
