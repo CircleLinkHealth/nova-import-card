@@ -14,7 +14,7 @@ This PR resolves ticket https://circlelinkhealth.atlassian.net/browse/CPM-
 - [ ] Write tests
 
 **Dependencies**
-List any dependencies that are required for this change (other PRs, services, integrations, module updates) 
+- List any dependencies that are required for this change (other PRs, services, integrations, module updates) 
 
 **Type of change**
 
