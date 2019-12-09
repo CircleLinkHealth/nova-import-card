@@ -213,17 +213,17 @@ describe('TimeTrackerFlow', () => {
                 assert.equal(user.inactivityRequiresLogout(), false)
             })
     
-            // it('should require modal (910 seconds)', () => {
-            //     user.inactiveSeconds = 910
-            //
-            //     assert.equal(user.inactivityRequiresModal(), true)
-            // })
+            it('should require modal (910 seconds)', () => {
+                user.inactiveSeconds = user.ALERT_TIMEOUT_CALL_MODE + 10;
     
-            // it('should require logout (1210)', () => {
-            //     user.inactiveSeconds = 1210
-            //
-            //     assert.equal(user.inactivityRequiresLogout(), true)
-            // })
+                assert.equal(user.inactivityRequiresModal(), true)
+            })
+    
+            it('should require logout (1210)', () => {
+                user.inactiveSeconds = user.LOGOUT_TIMEOUT_CALL_MODE + 10;
+    
+                assert.equal(user.inactivityRequiresLogout(), true)
+            })
         })
     })
 

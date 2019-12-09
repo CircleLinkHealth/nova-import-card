@@ -1,13 +1,15 @@
-const { EventEmitter } = require('events')
-const { validateInfo, createActivity } = require('./utils.fn');
+const getTime = require("../cache/user-time").getTime;
+
+const {EventEmitter} = require('events')
+const {validateInfo, createActivity} = require('./utils.fn');
 
 function TimeTrackerUser(info, $emitter = new EventEmitter()) {
-    
+
     validateInfo(info)
 
     const key = `${info.providerId}-${info.patientId}`;
 
-    
+
     const validateWebSocket = (ws) => {
         if (!ws) throw new Error('[ws] must be a valid WebSocket instance')
     }
@@ -44,6 +46,22 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
             return this.bhiDuration + this.totalBHITime
         },
 
+        get totalCcmTimeFromCache() {
+            return getTime(this.patientId).ccm;
+        },
+
+        get totalCcmSecondsFromCache() {
+            return this.ccmDuration + this.totalCcmTimeFromCache;
+        },
+
+        get totalBhiTimeFromCache() {
+            return getTime(this.patientId).bhi;
+        },
+
+        get totalBhiSecondsFromCache() {
+            return this.bhiDuration + this.totalBhiTimeFromCache;
+        },
+
         /**
          * @returns {Number} total duration in seconds of activities excluding initial-total-time
          */
@@ -56,6 +74,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         get totalSeconds() {
             return this.totalBhiSeconds + this.totalCcmSeconds
         },
+
         /**
          * @returns {Array} list of all sockets in all activities belongs to this user
          */
@@ -73,11 +92,11 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
          */
         isBehavioral: false,
         /**
-         * 
+         *
          * @param {any} data JSON or string you want to send via web sockets
          * @param {*} socket WebSocket instance you want to exclude from broadcast
          */
-        broadcast (data, socket) {
+        broadcast(data, socket) {
             this.allSockets.forEach(ws => {
                 const shouldSend = socket ? (socket !== ws) : true // if socket arg is specified, don't send to that socket
                 if (ws.readyState === ws.OPEN && shouldSend) {
@@ -85,13 +104,13 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
                 }
             })
         },
-        inactivityRequiresNoModal () {
+        inactivityRequiresNoModal() {
             return this.inactiveSeconds < (!this.callMode ? this.ALERT_TIMEOUT : this.ALERT_TIMEOUT_CALL_MODE) // 2 minutes if !call-mode and 15 minutes if in call-mode (120, 900)
         },
-        inactivityRequiresModal () {
+        inactivityRequiresModal() {
             return !this.inactivityRequiresNoModal() && this.inactiveSeconds < (!this.callMode ? this.LOGOUT_TIMEOUT : this.LOGOUT_TIMEOUT_CALL_MODE) // 10 minutes if !call-mode and 20 minutes if in call-mode (600, 1200)
         },
-        inactivityRequiresLogout () {
+        inactivityRequiresLogout() {
             return !this.inactivityRequiresModal() && !this.inactivityRequiresNoModal()
         },
         MINIMUM_DURATION_AFTER_INACTIVITY_SECONDS: 30,
@@ -99,7 +118,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         LOGOUT_TIMEOUT: 600,
         ALERT_TIMEOUT_CALL_MODE: 1800, //30 minutes
         LOGOUT_TIMEOUT_CALL_MODE: 3600, //60 minutes
-        overrideTimeouts (options = {}) {
+        overrideTimeouts(options = {}) {
             this.ALERT_TIMEOUT = Math.ceil(options.alertTimeout) || this.ALERT_TIMEOUT;
             this.LOGOUT_TIMEOUT = Math.ceil(options.logoutTimeout) || this.LOGOUT_TIMEOUT;
             this.ALERT_TIMEOUT_CALL_MODE = Math.ceil(options.alertTimeoutCallMode) || this.ALERT_TIMEOUT_CALL_MODE;
@@ -108,8 +127,8 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     }
 
     /**
-     * 
-     * @param {{ activity: '', isManualBehavioral: false }} info 
+     *
+     * @param {{ activity: '', isManualBehavioral: false }} info
      */
     user.findActivity = (info) => {
         return user.activities.find(item => (item.name == info.activity) && (item.isBehavioral == info.isManualBehavioral))
@@ -117,8 +136,8 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
 
     user.switchBhi = (info) => {
         user.broadcast({
-            message: 'server:bhi:switch', 
-            mode: info.isManualBehavioral, 
+            message: 'server:bhi:switch',
+            mode: info.isManualBehavioral,
             isCcm: info.isCcm,
             isBehavioral: info.isBehavioral
         })
@@ -152,13 +171,12 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
             activity.duration += info.initSeconds
         }
         if (user.callMode) {
-            ws.send(JSON.stringify({ message: 'server:call-mode:enter' }))
-        }
-        else {
-            ws.send(JSON.stringify({ message: 'server:call-mode:exit' }))
+            ws.send(JSON.stringify({message: 'server:call-mode:enter'}))
+        } else {
+            ws.send(JSON.stringify({message: 'server:call-mode:exit'}))
         }
         if (user.isBehavioral) {
-            ws.send(JSON.stringify({ message: 'server:bhi:switch', mode: true }))
+            ws.send(JSON.stringify({message: 'server:bhi:switch', mode: true}))
         }
     }
 
@@ -173,13 +191,12 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
             activity = createActivity(info)
             activity.sockets.push(ws)
             user.activities.push(activity)
-        }
-        else if (activity) {
+        } else if (activity) {
             if (activity.sockets.indexOf(ws) < 0) {
                 activity.sockets.push(ws)
             }
         }
-        
+
         user.closeAllModals()
 
         /**
@@ -188,11 +205,9 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         if (user.inactiveSeconds) {
             if (user.inactivityRequiresNoModal()) {
                 user.handleNoModal(info)
-            }
-            else if (user.inactivityRequiresModal()) {
-                if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({ message: 'server:modal' }))
-            }
-            else {
+            } else if (user.inactivityRequiresModal()) {
+                if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({message: 'server:modal'}))
+            } else {
                 user.respondToModal(false, info)
                 user.logout()
             }
@@ -209,7 +224,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         user.isLoggingOut = true
         user.allSockets.forEach(socket => {
             if (socket.readyState === socket.OPEN) {
-                socket.send(JSON.stringify({ message: 'server:logout' }))
+                socket.send(JSON.stringify({message: 'server:logout'}))
             }
         })
     }
@@ -231,11 +246,11 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
          */
         user.allSockets.forEach(socket => {
             if (socket.readyState === socket.OPEN) {
-                socket.send(JSON.stringify({ message: 'server:inactive-modal:close' }))
+                socket.send(JSON.stringify({message: 'server:inactive-modal:close'}))
             }
         })
     }
-    
+
     user.leave = (ws) => {
         /**
          * to be executed on client:leave when the client page loses focus
@@ -259,8 +274,18 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     user.sync = (socket) => {
         user.allSockets.forEach(ws => {
             const shouldSend = socket ? (socket !== ws) : true // if socket arg is specified, don't send to that socket
+
+            const totalCcmSeconds = user.totalCcmSecondsFromCache > user.totalCcmSeconds ? user.totalCcmSecondsFromCache : user.totalCcmSeconds;
+            const totalBhiSeconds = user.totalBhiSecondsFromCache > user.totalBhiSeconds ? user.totalBhiSecondsFromCache : user.totalBhiSeconds;
+            const totalSeconds = totalBhiSeconds + totalCcmSeconds;
+
             if (ws.readyState === ws.OPEN && shouldSend) {
-                ws.send(JSON.stringify({ message: 'server:sync', seconds: user.totalSeconds, ccmSeconds: user.totalCcmSeconds, bhiSeconds: user.totalBhiSeconds }))
+                ws.send(JSON.stringify({
+                    message: 'server:sync',
+                    seconds: totalSeconds,
+                    ccmSeconds: totalCcmSeconds,
+                    bhiSeconds: totalBhiSeconds
+                }))
             }
         })
     }
@@ -274,7 +299,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     }
 
     /**
-     * 
+     *
      * @param {boolean} response yes/no on whether the practitioner was busy on a patient during calculated inactive-time
      */
     user.respondToModal = (response, info) => {
@@ -282,22 +307,21 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         if (activity) {
             if (response) {
                 activity.duration += user.inactiveSeconds
-            }
-            else {
+            } else {
                 activity.duration += 30
             }
         }
         user.inactiveSeconds = 0
     }
-    
+
     user.showInactiveModal = (info, now = () => (new Date())) => {
         let activity = user.findActivity(info)
         if (activity) {
             activity.isInActiveModalShown = true
             activity.inactiveModalShowTime = now()
         }
-    } 
-    
+    }
+
     user.closeInactiveModal = (info, response, now = () => (new Date())) => {
         let activity = user.findActivity(info)
         if (activity && activity.inactiveModalShowTime) {
@@ -305,8 +329,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
             const elapsedSeconds = (new Date(now() - activity.inactiveModalShowTime)).getSeconds()
             if (response) {
                 activity.duration += elapsedSeconds
-            }
-            else {
+            } else {
                 user.removeInactiveDuration(info)
             }
             activity.inactiveModalShowTime = null
@@ -335,13 +358,13 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
 
     user.enterCallMode = (info) => {
         let activity = user.findActivity(info)
-        
+
         if (activity) {
             activity.callMode = true
         }
-        
 
-        user.broadcast({ message: 'server:call-mode:enter' })
+
+        user.broadcast({message: 'server:call-mode:enter'})
 
         $emitter.on(`server:enter:${user.providerId}`, serverEnterHandler)
     }
@@ -351,7 +374,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
             activity.callMode = false
         })
 
-        user.broadcast({ message: 'server:call-mode:exit' })
+        user.broadcast({message: 'server:call-mode:exit'})
 
         $emitter.removeListener(`server:enter:${user.providerId}`, serverEnterHandler)
     }
