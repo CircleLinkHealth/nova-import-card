@@ -516,6 +516,17 @@ a.navbar-title:hover {
     color: #fafafa;
 }
 
+@media (max-width: 375px) {
+
+    a.navbar-title {
+        margin-left: 10px;
+    }
+
+    .navbar-title img {
+        width: 30px;
+    }
+}
+
 .top-left-fixed {
     position: fixed;
     top: 15px;
