@@ -67,12 +67,10 @@ class Practice extends Resource
      */
     public function cards(Request $request)
     {
-        $fields = [
-            Text::make('Email')->withModel(\CircleLinkHealth\Customer\Entities\User::class, 'email'),
-        ];
-
         return [
-            ClhImportCardExtended::make(self::class, $fields),
+            ClhImportCardExtended::make(self::class, [
+                Text::make('Email')->withModel(\CircleLinkHealth\Customer\Entities\User::class, 'email'),
+            ]),
         ];
     }
 
