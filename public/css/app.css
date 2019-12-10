@@ -27488,47 +27488,6 @@ body,
   }
 }
 
-.input.text-field.active {
-  border: none !important;
-  border-bottom: 1px solid #4aa5d2;
-}
-
-input.text-field.active::-webkit-input-placeholder {
-  background-color: #4aa5d2 !important;
-  color: #ffffff !important;
-}
-
-input.text-field.active::-moz-placeholder {
-  background-color: #4aa5d2 !important;
-  color: #ffffff !important;
-}
-
-input.text-field.active:-ms-input-placeholder {
-  background-color: #4aa5d2 !important;
-  color: #ffffff !important;
-}
-
-input.text-field.active::-ms-input-placeholder {
-  background-color: #4aa5d2 !important;
-  color: #ffffff !important;
-}
-
-.btn.btn-primary.radio.active,
-input.text-field.active,
-input.text-field.active::placeholder {
-  background-color: #4aa5d2 !important;
-  color: #ffffff !important;
-}
-
-input.text-field:hover {
-  border: none !important;
-  border-bottom: 1px solid #4aa5d2 !important;
-}
-
-.btn.btn-primary.radio:hover {
-  border: 1px solid #4aa5d2 !important;
-}
-
 .no-padding {
   padding: 0;
 }

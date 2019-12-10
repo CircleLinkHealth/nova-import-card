@@ -253,7 +253,9 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
+    $primary-color-active: #4aa5d2;
 
     input.text-field {
         padding-left: 5px;
@@ -285,6 +287,18 @@
         color: #1a1a1a;
     }
 
+    .btn.btn-primary.radio.active,
+    input.text-field.active,
+    input.text-field.active::placeholder {
+        background-color: $primary-color-active !important;
+        color: #ffffff;
+    }
+
+    input.text-field:hover,
+    .btn.btn-primary.radio:hover {
+        border: 1px solid $primary-color-active !important;
+    }
+
     .btn.radio.small, input.text-field.small {
         width: 25%;
     }
@@ -312,6 +326,7 @@
         border-color: #4aa5d2;
     }
 
+    .text-field[disabled="disabled"],
     .btn-primary.disabled {
         opacity: 50%;
         background-color: #50b2e2;

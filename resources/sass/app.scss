@@ -257,25 +257,6 @@ html, body, #app {
 
 }
 
-.input.text-field.active {
-    border: none !important;
-    border-bottom: 1px solid $primary-color-active;
-}
-
-.btn.btn-primary.radio.active, input.text-field.active, input.text-field.active::placeholder {
-    background-color: $primary-color-active !important;
-    color: #ffffff !important;
-}
-
-input.text-field:hover {
-    border: none !important;
-    border-bottom: 1px solid $primary-color-active !important;
-}
-
-.btn.btn-primary.radio:hover {
-    border: 1px solid $primary-color-active !important;
-}
-
 .no-padding {
     padding: 0;
 }

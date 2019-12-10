@@ -324,7 +324,9 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
+    $primary-color-active: #4aa5d2;
 
     .sub-part {
         margin-bottom: 20px;
@@ -363,8 +365,8 @@
 
     .text-field {
         border: none;
-        border-bottom: solid 1px rgba(0, 0, 0, 0.1) !important;
-        background-color: transparent !important;
+        border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+        background-color: transparent;
         outline: 0;
         width: 100%;
         height: 30px;
@@ -372,8 +374,33 @@
         letter-spacing: 1.33px;
     }
 
-    .text-field:active, .text-field:focus {
+    .text-field:active, .text-field:focus, .text-field:hover {
         border-color: #4aa5d2;
+    }
+
+    .text-field[disabled="disabled"] {
+        opacity: 50%;
+    }
+
+    .input.text-field.active {
+        border: none;
+        border-bottom: 1px solid $primary-color-active;
+    }
+
+    .btn.btn-primary.radio.active,
+    input.text-field.active,
+    input.text-field.active::placeholder {
+        background-color: $primary-color-active;
+        color: #ffffff;
+    }
+
+    input.text-field:hover {
+        border: none;
+        border-bottom: 1px solid $primary-color-active;
+    }
+
+    .btn.btn-primary.radio:hover {
+        border: 1px solid $primary-color-active;
     }
 
     .button-text-only {
