@@ -813,7 +813,7 @@
 
             scrollToQuestion(questionId) {
                 return new Promise((resolve) => {
-                    const topButtonsOffset = $('.top-buttons').height();
+                    const topButtonsOffset = $('.top-buttons').height() || 0;
                     const surveyContainer = $('.survey-container');
                     const currentQuestionOffset = $(`#${questionId}`).offset().top;
 

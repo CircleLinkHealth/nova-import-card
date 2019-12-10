@@ -27520,10 +27520,13 @@ input.text-field.active::placeholder {
   color: #ffffff !important;
 }
 
-.btn.btn-primary.radio:hover,
 input.text-field:hover {
   border: none !important;
   border-bottom: 1px solid #4aa5d2 !important;
+}
+
+.btn.btn-primary.radio:hover {
+  border: 1px solid #4aa5d2 !important;
 }
 
 .no-padding {
