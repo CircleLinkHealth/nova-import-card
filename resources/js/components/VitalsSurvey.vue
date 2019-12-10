@@ -32,7 +32,7 @@
         </div>
 
         <!--Survey welcome note-->
-        <div class="survey-container" :class="{ max: stage === 'complete', 'read-only': readOnlyMode }">
+        <div class="survey-container" :class="{ max: stage === 'complete', 'read-only': readOnlyMode, 'with-top-buttons': stage !== 'welcome' }">
             <template v-if="stage === 'welcome'">
                 <div class="card-body">
                     <div class="welcome-icon-container">

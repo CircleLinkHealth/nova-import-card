@@ -146,15 +146,15 @@ html, body, #app {
 }
 
 .survey-sub-welcome-text {
-    font-family: Poppins, serif;
-    font-size: 10px;
+    font-family: Poppins;
+    font-size: 18px;
     font-weight: normal;
     font-style: normal;
     font-stretch: normal;
     line-height: normal;
-    letter-spacing: 0.56px;
+    letter-spacing: 1px;
     text-align: left;
-    margin-top: 10px;
+    margin-top: 25px;
     margin-left: 5%;
     margin-right: 5%;
     color: #1a1a1a;
@@ -464,21 +464,6 @@ When progress text and bar are in one line (col-sm screens)
     color: darkred;
 }
 
-.survey-sub-welcome-text {
-    font-family: Poppins;
-    font-size: 18px;
-    font-weight: normal;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: 1px;
-    text-align: center;
-    margin-top: 25px;
-    margin-left: 13%;
-    width: 75%;
-    color: #1a1a1a;
-}
-
 .welcome-icon {
     width: 108px;
     margin: auto;
@@ -606,6 +591,11 @@ a.navbar-title:hover {
 @media (max-width: 490px) {
 
     .survey-container {
+        //56px .bottom-navbar
+        height: calc(100% - 54px);
+    }
+
+    .survey-container.with-top-buttons {
         //60px .top-buttons + 56px .bottom-navbar
         height: calc(100% - 114px);
     }
@@ -699,7 +689,9 @@ a.navbar-title:hover {
 
     .survey-sub-welcome-text {
         font-size: 13px;
-        display: contents;
+        //display: contents;
+        margin-left: 1%;
+        margin-right: 1%;
     }
 
     .call-btn-round {
@@ -742,4 +734,22 @@ a.navbar-title:hover {
 .list-group-item.active {
     background-color: $primary-color;
     border-color: $primary-color;
+}
+
+@media (max-width: 375px) {
+    .welcome-icon {
+        width: 120px;
+    }
+
+    .survey-main-title {
+        font-size: 14px;
+        margin-bottom: 10px;
+        margin-top: 30px;
+    }
+
+    .survey-sub-welcome-text {
+        margin-top: 0;
+        font-size: 12px;
+    }
+
 }
