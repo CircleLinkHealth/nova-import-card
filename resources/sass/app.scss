@@ -267,9 +267,13 @@ html, body, #app {
     color: #ffffff !important;
 }
 
-.btn.btn-primary.radio:hover, input.text-field:hover {
+input.text-field:hover {
     border: none !important;
     border-bottom: 1px solid $primary-color-active !important;
+}
+
+.btn.btn-primary.radio:hover {
+    border: 1px solid $primary-color-active !important;
 }
 
 .no-padding {

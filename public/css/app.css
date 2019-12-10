@@ -28017,6 +28017,12 @@ a.navbar-title:hover {
     width: 35px;
     height: 35px;
   }
+
+  .question-scroll {
+    width: 40px;
+    height: 40px;
+    background-size: 40px;
+  }
 }
 
 .spinner-overlay {
