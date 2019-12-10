@@ -7,6 +7,7 @@
 namespace Circlelinkhealth\ClhImportCardExtended;
 
 use Illuminate\Database\Eloquent\Model;
+use Validator;
 
 /**
  * Class InputField.
@@ -54,11 +55,6 @@ class InputField
         return $this->field->indexName;
     }
 
-    public function getRules()
-    {
-        return $this->field->fieldRules ?: [];
-    }
-
     public function isModel(): bool
     {
         return isset($this->field->model) && ! is_null($this->field->model) && is_subclass_of($this->field->model, Model::class);
@@ -67,5 +63,17 @@ class InputField
     public function isNullable()
     {
         return $this->field->nullable;
+    }
+
+    public function validate()
+    {
+        return Validator::make(['value' => $this->getFieldValue()], [
+            'value' => $this->getRules(),
+        ])->validate();
+    }
+
+    private function getRules()
+    {
+        return $this->field->inputRules ?: [];
     }
 }

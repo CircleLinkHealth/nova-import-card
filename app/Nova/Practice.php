@@ -69,7 +69,9 @@ class Practice extends Resource
     {
         return [
             ClhImportCardExtended::make(self::class, [
-                Text::make('Email')->withModel(\CircleLinkHealth\Customer\Entities\User::class, 'email'),
+                Text::make('email')
+                    ->withModel(\CircleLinkHealth\Customer\Entities\User::class, 'email')
+                    ->inputRules(['required', 'email']),
             ]),
         ];
     }

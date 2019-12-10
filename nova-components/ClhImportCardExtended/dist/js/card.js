@@ -188,6 +188,9 @@ var self;
     console.log(this.fields);
   },
   methods: {
+    getFieldTitle: function getFieldTitle(field) {
+      return field.name.charAt(0).toUpperCase() + field.name.slice(1);
+    },
     fileChange: function fileChange(event) {
       var path = event.target.value;
       var fileName = path.match(/[^\\/]*$/)[0];
@@ -204,14 +207,6 @@ var self;
       this.working = true;
       var formData = new FormData();
       formData.append('file', this.file);
-      var fields = []; // this.fields.forEach(function (field){
-      //     fields.push({
-      //         'attribute': field.attribute,
-      //         'indexName': field.indexName,
-      //         'value': field.value
-      // });
-      // });
-
       formData.append('fields', JSON.stringify(this.fields));
       Nova.request().post('/nova-vendor/clh-import-card-extended/import-csv-to-resource/' + this.card.resource, formData).then(function (_ref) {
         var data = _ref.data;
@@ -949,7 +944,7 @@ var render = function() {
                     _c("label", { attrs: { for: "input-field" } }, [
                       _vm._v(
                         "\n                        " +
-                          _vm._s(_vm.__(field.indexName)) +
+                          _vm._s(_vm.__(_vm.getFieldTitle(field))) +
                           "\n                    "
                       )
                     ]),

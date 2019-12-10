@@ -64,15 +64,17 @@ class ImportCsvNovaRequest extends NovaRequest
             function ($attribute, $value, $fail) {
                 foreach (json_decode($value) as $field) {
                     $field = new InputField($field);
+                    $field->validate();
+
                     if ( ! $field->isNullable()) {
                         if ( ! $field->getFieldValue()) {
                             return $fail('Field '.$field->getName().' is required.');
                         }
+                    }
 
-                        if ($field->isModel()) {
-                            if ( ! $field->getInputValueOrModel()) {
-                                return $fail('Model '.$field->getModelClass().'with key '.$field->getModelKey().'not found');
-                            }
+                    if ($field->isModel()) {
+                        if ( ! $field->getInputValueOrModel()) {
+                            return $fail('Model '.$field->getModelClass().'with key '.$field->getModelKey().' not found');
                         }
                     }
                 }

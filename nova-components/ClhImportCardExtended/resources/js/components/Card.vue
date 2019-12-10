@@ -7,7 +7,7 @@
                     <div v-for="field, key in this.fields">
                         <span class="flex py-6">
                         <label for="input-field">
-                            {{__(field.indexName)}}
+                            {{__(getFieldTitle(field))}}
                         </label>
                         <div style="width: 100%" v-if="field.component == 'select-field'">
                             <v-select class="field-input" v-model="fields[key].value" id="input-field"  :options="field.options"></v-select>
@@ -83,6 +83,9 @@
         },
 
         methods: {
+            getFieldTitle(field){
+                return field.name.charAt(0).toUpperCase() + field.name.slice(1);
+            },
             fileChange(event) {
                 let path = event.target.value;
                 let fileName = path.match(/[^\\/]*$/)[0];

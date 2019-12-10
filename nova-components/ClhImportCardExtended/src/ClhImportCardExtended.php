@@ -15,7 +15,7 @@ class ClhImportCardExtended extends Card
      *
      * @var string
      */
-    public $width = '1/3';
+    public $width = '1/2';
 
     public function __construct($resource, array $fields)
     {

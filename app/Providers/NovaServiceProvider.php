@@ -30,8 +30,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             return $this;
         });
 
-        \Laravel\Nova\Fields\Field::macro('rulesForCard', function ($rules) {
-            $this->withMeta(['rulesForCard' => $rules]);
+        \Laravel\Nova\Fields\Field::macro('inputRules', function ($rules) {
+            $this->withMeta(['inputRules' => $rules]);
 
             return $this;
         });
