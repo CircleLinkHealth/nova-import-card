@@ -27,7 +27,7 @@
                             <br>
                             <input type="text" name="name"
                                    class="login-inputs"
-                                   value="{{old('name') ?? 'Coty Z-willms'}}"
+                                   value="{{old('name')}}"
                                    placeholder="Full Name" required>
 
                         </div>
@@ -38,7 +38,7 @@
                             <input type="date" name="birth_date"
                                    class="login-inputs"
                                    placeholder="1950-01-15" required
-                                   value="{{old('birth_date') ?? '1927-12-07'}}">
+                                   value="{{old('birth_date')}}">
 
                         </div>
                         <br>
