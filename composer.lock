@@ -469,7 +469,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
-                "reference": "351e426e3c5e81c126b8045de563b4f62389414b"
+                "reference": "f877e3d785477f1eea57ef7f70f6dac4a105055f"
             },
             "type": "library",
             "extra": {
@@ -494,7 +494,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-12-09T10:49:09+00:00"
+            "time": "2019-12-10T12:34:39+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
