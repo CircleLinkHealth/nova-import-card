@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "463954d5ccf59481388bff07131d57f0",
+    "content-hash": "6abacb5c2ec5a22b3c1fc83b28e56b76",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -465,11 +465,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews",
-            "version": "dev-heroku-2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
-                "reference": "7246717854e67af322abfada06fbbb124d678f14"
+                "reference": "351e426e3c5e81c126b8045de563b4f62389414b"
             },
             "type": "library",
             "extra": {
@@ -494,7 +494,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-12-04T21:45:48+00:00"
+            "time": "2019-12-09T10:49:09+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
