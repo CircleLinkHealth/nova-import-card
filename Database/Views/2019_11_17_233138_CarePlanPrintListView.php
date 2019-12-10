@@ -13,7 +13,7 @@ class CarePlanPrintListView extends BaseSqlView
      */
     public function createSqlView(): bool
     {
-        $startOfMonthQuery = safeStartOfMonthQuery();
+        $startOfMonthQuery = $this->safeStartOfMonthQuery();
 
         return \DB::statement("
         CREATE VIEW {$this->getViewName()}
@@ -62,5 +62,17 @@ WHERE pi.patient_ccm_status = 'enrolled'
     public function getViewName(): string
     {
         return 'careplan_print_list_view';
+    }
+
+    /**
+     * Return a start of month query compatible with both sqlite and mysql.
+     *
+     * @return string
+     */
+    private function safeStartOfMonthQuery()
+    {
+        return 'mysql' === config('database.connections')[config('database.default')]['driver']
+            ? "DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)"
+            : "date('now','start of month')"; //sqlite
     }
 }
