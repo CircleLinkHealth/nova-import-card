@@ -1,6 +1,6 @@
 <?php
 
-namespace CcdaParserProcessorPhp\Console\Commands;
+namespace CircleLinkHealth\CcdaParserProcessorPhp\Console\Commands;
 
 use Illuminate\Console\Command;
 
