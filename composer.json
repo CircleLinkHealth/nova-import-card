@@ -1,0 +1,30 @@
+{
+    "name": "circlelinkhealth/ccda-parser-processor-php",
+    "description": "PHP wrapper for bluebutton nodejs",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Pangratios Cosma",
+            "email": "pagcosma@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "circlelinkhealth/ccda-parser-processor",
+                "version": "1.0",
+                "type": "package",
+                "source": {
+                    "type": "git",
+                    "reference": "master",
+                    "url": "git@github.com:circlelinkhealth/ccda-parser-processor.git"
+                }
+            }
+        }
+    ],
+    "require": {
+        "circlelinkhealth/ccda-parser-processor": "^1.0"
+    }
+}
