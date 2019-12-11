@@ -61,24 +61,29 @@ module.exports = app => {
                     continue;
                 }
 
+                let shouldSync = false;
+
                 //set values from cpm
-                if (user.totalCCMTime !== timeOnCpm.ccm_time) {
+                if (user.totalCCMTime < timeOnCpm.ccm_time) {
+                    shouldSync = true;
                     user.totalCCMTime = timeOnCpm.ccm_time;
                 }
 
-                if (user.totalBHITime !== timeOnCpm.bhi_time) {
+                if (user.totalBHITime < timeOnCpm.bhi_time) {
+                    shouldSync = true;
                     user.totalBHITime = timeOnCpm.bhi_time;
                 }
 
-                user.totalTime = user.totalCCMTime + user.totalBHITime;
-
-                const cachedTime = user.totalCcmTimeFromCache + user.totalBhiTimeFromCache;
-                if (user.totalCcmTimeFromCache === timeOnCpm.ccm_time && user.totalBhiTimeFromCache === timeOnCpm.bhi_time) {
-                    console.log(`sync time is same as cached[${cachedTime}]. ignoring.`);
+                const syncTime = timeOnCpm.ccm_time + timeOnCpm.bhi_time;
+                if (!shouldSync) {
+                    console.log(`sync time [${syncTime}] is equal or less to current time [${user.totalTime}]. ignoring`);
                     continue;
                 }
 
-                console.log('sync ccm time', user.totalCCMTime, 'cachedTime[', cachedTime, ']', 'now[', user.totalTime, ']');
+                user.totalTime = user.totalCCMTime + user.totalBHITime;
+                const cachedTime = user.totalCcmTimeFromCache + user.totalBhiTimeFromCache;
+
+                console.log('sync time[', syncTime, '] cachedTime[', cachedTime, ']', 'now[', user.totalTime, ']');
                 user.sync();
             }
         }
