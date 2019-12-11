@@ -71,11 +71,21 @@ class StoreTimeTracking implements ShouldQueue
             $pageTimer = $this->createPageTimer($activity);
 
             if ($this->isBillableActivity($pageTimer, $provider)) {
-                $newActivity = $this->createActivity($pageTimer, $provider, $isBehavioral);
+                $newActivity = $this->createActivity($pageTimer, $isBehavioral);
                 ProcessMonthltyPatientTime::dispatchNow($this->params->get('patientId'));
                 ProcessNurseMonthlyLogs::dispatch($newActivity);
             }
         }
+    }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        return ['storetime', 'patient:'.$this->params->get('patientId'), 'provider:'.$this->params->get('providerId', null)];
     }
 
     /**
@@ -85,7 +95,7 @@ class StoreTimeTracking implements ShouldQueue
      *
      * @return Activity|\Illuminate\Database\Eloquent\Model
      */
-    private function createActivity(PageTimer $pageTimer, User $provider = null, $isBehavioral = false)
+    private function createActivity(PageTimer $pageTimer, $isBehavioral = false)
     {
         return Activity::create(
             [
@@ -136,10 +146,6 @@ class StoreTimeTracking implements ShouldQueue
         $pageTimer->save();
 
         return $pageTimer;
-    }
-
-    private function handleNurseLogs(Activity $activity, User $provider)
-    {
     }
 
     /**

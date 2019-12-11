@@ -284,12 +284,12 @@ class ProcessEligibilityService
         $col->whenNotEmpty(function ($collection) use ($batch) {
             $i = 0;
             $collection->each(function ($file) use (
-                    $batch, $i
+                    $batch, &$i
                 ) {
                 ProcessCcdaFromGoogleDrive::dispatch($file, $batch);
 
-                echo "\n batch {$batch->id}: processing file $i";
                 ++$i;
+                echo "\n batch {$batch->id}: processing file $i";
             });
         });
 
@@ -392,7 +392,7 @@ class ProcessEligibilityService
     {
         if (isProductionEnv()) {
             sendSlackMessage(
-                ' #parse_enroll_import',
+                '#parse_enroll_import',
                 "Hey I just processed this list, it's crazy. Here's some patients, call them maybe? {$batch->linkToView()}"
             );
         }

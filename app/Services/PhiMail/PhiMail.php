@@ -226,9 +226,22 @@ class PhiMail implements DirectMail
      */
     private function fetchKeyIfNotExists(string $certFileName, string $certPath)
     {
-        if ( ! is_readable($certPath) && \Storage::disk('secrets')->exists($certFileName)) {
-            $written = file_put_contents($certPath, Storage::get($certFileName));
-            chmod($certPath, 644);
+        $storage = Storage::disk('secrets');
+
+        if ( ! is_readable($certPath)) {
+            touch($certPath);
+
+            if ( ! is_writeable($certPath)) {
+                throw new \Exception("$certPath is not writable");
+            }
+
+            if ( ! $storage->has($certFileName)) {
+                throw new \Exception("$certFileName not found on remote drive.");
+            }
+
+            $contents = $storage->get($certFileName);
+
+            $written = file_put_contents($certPath, $contents);
 
             if (false === $written) {
                 throw new \Exception("Could not write `$certFileName` to `$certPath`.");
@@ -256,11 +269,11 @@ class PhiMail implements DirectMail
         $phiMailPass        = config('services.emr-direct.password');
         $clientCertPath     = base_path(config('services.emr-direct.conc-keys-pem-path'));
         $serverCertPath     = base_path(config('services.emr-direct.server-cert-pem-path'));
-        $clientCertFileName = 'emr-direct-production-conc-key.pem';
-        $serverCertFileName = 'phiCertDirectRootCA.pem';
+        $clientCertFileName = config('services.emr-direct.client-cert-filename');
+        $serverCertFileName = config('services.emr-direct.server-cert-filename');
 
-        $this->fetchKeyIfNotExists($clientCertFileName, $clientCertPath);
         $this->fetchKeyIfNotExists($serverCertFileName, $serverCertPath);
+        $this->fetchKeyIfNotExists($clientCertFileName, $clientCertPath);
 
         // Use the following command to enable client TLS authentication, if
         // required. The key file referenced should contain the following
@@ -269,7 +282,6 @@ class PhiMail implements DirectMail
         //   <your_client_certificate.pem>
         //   <intermediate_CA_certificate.pem>
         //   <root_CA_certificate.pem>
-        //
         PhiMailConnector::setClientCertificate(
             $clientCertPath,
             config('services.emr-direct.pass-phrase')
