@@ -67,7 +67,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'awv',
-            'model' => CircleLinkHealth\Customer\Entities\User::class,
+            'model' => App\User::class,
         ],
 
         // 'users' => [
