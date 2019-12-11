@@ -27,8 +27,11 @@ class ProviderController extends Controller
             $carePlan = CarePlan::where('user_id', $patientId)
                 ->firstOrFail();
 
-            if (CarePlan::DRAFT == $carePlan->status && $carePlan->validator()->fails()) {
-                return redirect()->back()->with(['errors' => $carePlan->validator()->errors()]);
+            if (CarePlan::DRAFT == $carePlan->status) {
+                $validator = $carePlan->validator($request->has('confirm_diabetes_conditions'));
+                if ($validator->fails()) {
+                    return redirect()->back()->with(['errors' => $validator->errors()]);
+                }
             }
         }
 

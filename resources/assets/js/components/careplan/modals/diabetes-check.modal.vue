@@ -4,8 +4,8 @@
            class-name="modal-diabetes-check">
         <template slot-scope="props">
             <div class="row">
-                <div class="col-sm-12" style="text-align: center"><h4><span style="color: red">Warning!</span></h4></div>
-                <div class="col-sm-12" style="font-size: 16px !important;">
+                <div class="col-sm-12 warning-text"><h4><span>Warning!</span></h4></div>
+                <div class="col-sm-12 modal-text" >
                     <span>This patient has both Diabetes Type 1 and Type 2. Please confirm that this is correct, otherwise
                         choose the correct Diabetes type and try again.</span>
                 </div>
@@ -49,4 +49,50 @@
     .modal-diabetes-check .modal-container {
         width: 50%;
     }
+
+    @media only screen and (max-width: 768px) {
+        /* For mobile phones: */
+        .modal-diabetes-check .modal-container {
+            width: 95%;
+        }
+    }
+
+    .modal-diabetes-check .modal-footer {
+        padding: 0px;
+    }
+
+    .btn.btn-secondary {
+        background-color: #ddd;
+        padding: 10 20 10 20;
+        margin-right: 15px;
+        margin-bottom: 5px;
+    }
+
+    .btn.btn-danger {
+        background-color: #d9534f;
+    }
+
+    .top-20 {
+        margin-top: 20px;
+    }
+
+    .top-30 {
+        margin-top: 30px;
+    }
+
+    .absolute {
+        position: absolute;
+    }
+
+
+    .warning-text {
+        font-size: 30px !important;
+        text-align: center;
+        color: red;
+    }
+    .modal-text {
+        font-size: 20px;
+    }
+
+
 </style>

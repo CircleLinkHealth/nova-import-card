@@ -529,6 +529,10 @@ if (isset($patient) && ! empty($patient)) {
                     form.submit();
                 });
 
+                function patientHasBothTypesOfDiabetes() {
+                    return patientProblemNames.includes("{{\App\Models\CPM\CpmProblem::DIABETES_TYPE_1}}") && patientProblemNames.includes("{{\App\Models\CPM\CpmProblem::DIABETES_TYPE_2}}");
+                }
+
                 $(function () {
                     $('#form-approve').submit(function (e) {
                         e.preventDefault();
@@ -550,9 +554,7 @@ if (isset($patient) && ! empty($patient)) {
                     })
                 })
 
-                function patientHasBothTypesOfDiabetes() {
-                    return patientProblemNames.includes('Diabetes Type 1', 'Diabetes Type 2');
-                }
+
             </script>
         @endpush
 

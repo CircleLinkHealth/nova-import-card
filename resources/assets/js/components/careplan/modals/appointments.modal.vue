@@ -165,7 +165,6 @@
                 if (this.selectedAppointment && this.selectedAppointment.isPending() && confirm('Are you sure you want to remove this appointment?')) {
                     this.loaders.removeAppointment = true
                     return this.axios.delete(rootUrl(`api/patients/${this.patientId}/appointments/${this.selectedAppointment.id}`)).then(response => {
-                        console.log('appointments-modal:remove', response.data)
                         Event.$emit('appointments:remove', this.selectedAppointment.id)
                         this.loaders.removeAppointment = false
                     }).catch(err => {
@@ -180,7 +179,6 @@
                 this.newAppointment.date = this.newAppointmentDate
                 this.loaders.addAppointment = true
                 return this.axios.post(rootUrl(`api/patients/${this.patientId}/appointments`), this.newAppointment).then(response => {
-                    console.log('appointments-modal:add', response.data)
                     Event.$emit('appointments:add', response.data)
                     this.loaders.addAppointment = false
                     this.reset()
@@ -199,7 +197,6 @@
                 this.newAppointment.provider = this.providers[0]
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/providers`)).then(response => {
                     this.providers = this.providers.concat(response.data.map(provider => ({ label: (provider.name || '').trim(), value: provider.id })).sort((a, b) => a.label > b.label ? 1 : -1))
-                    console.log('appointments-modal:get-providers', this.providers)
                     this.loaders.getProviders = false
                 }).catch(err => {
                     console.error('appointments-modal:get-providers', err)

@@ -299,7 +299,6 @@
                     this.loaders.removeProblem = true
                     const url = `api/patients/${this.patientId}/problems/${this.selectedProblem.type}/${this.selectedProblem.id}`
                     return this.axios.delete(rootUrl(url)).then(response => {
-                        console.log('care-areas:remove-problems', response.data)
                         this.loaders.removeProblem = false
                         Event.$emit(`care-areas:remove-${this.selectedProblem.type}-problem`, this.selectedProblem.id)
                         Event.$emit('problems:updated', {})
@@ -325,7 +324,6 @@
                     is_monitored: this.newProblem.is_monitored,
                     icd10: this.newProblem.icd10
                 }).then(response => {
-                    console.log('full-conditions:add', response.data)
                     this.loaders.addProblem = false
                     Event.$emit('problems:updated', {})
                     Event.$emit('full-conditions:add', response.data)
@@ -346,7 +344,6 @@
                     icd10: this.selectedProblem.icd10,
                     instruction: this.selectedInstruction
                 }).then(response => {
-                    console.log('full-conditions:edit', response.data)
                     this.loaders.editProblem = false
                     Event.$emit('problems:updated', {})
                     Event.$emit('full-conditions:edit', response.data)

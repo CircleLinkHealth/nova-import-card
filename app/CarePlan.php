@@ -12,6 +12,7 @@ use App\Models\Pdf;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
+use App\Rules\DoesNotHaveBothTypesOfDiabetes;
 use App\Rules\HasAtLeast2CcmOr1BhiProblems;
 use App\Rules\HasValidNbiMrn;
 use App\Services\CareplanService;
@@ -348,7 +349,7 @@ class CarePlan extends BaseModel implements PdfReport
      *
      * @return \Illuminate\Validation\Validator
      */
-    public function validator()
+    public function validator(bool $confirmDiabetesConditions = false)
     {
         $patient = $this->patient->load(
             [
@@ -378,7 +379,10 @@ class CarePlan extends BaseModel implements PdfReport
         return Validator::make(
             $data,
             [
-                'conditions'      => [new HasAtLeast2CcmOr1BhiProblems()],
+                'conditions' => [
+                    new HasAtLeast2CcmOr1BhiProblems(),
+                    ! $confirmDiabetesConditions && self::DRAFT === $this->status ? new DoesNotHaveBothTypesOfDiabetes() : null,
+                ],
                 'phoneNumber'     => 'required|phone:AUTO,US',
                 'dob'             => 'required|date',
                 'mrn'             => ['required', new HasValidNbiMrn($patient)],

@@ -122,6 +122,7 @@
 
             Event.$on('care-areas:ccd-problems', (problems) => {
                 this.ccdProblems = problems
+                App.$emit('patient-problems-updated', this.ccdProblems);
             })
 
             Event.$on('care-areas:add', (problem) => {
@@ -147,9 +148,6 @@
 
             Event.$on('care-areas:request-problems', () => Event.$emit('care-areas:problems', this.cpmProblems))
 
-            Event.$on('care-areas:ccd-problems', ()=>{
-                App.$emit('patient-problems-updated', this.ccdProblems);
-            })
         }
     }
 </script>
