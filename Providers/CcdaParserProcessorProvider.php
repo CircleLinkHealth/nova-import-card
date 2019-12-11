@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\CcdaParserProcessorPhp\Providers;
 
-use CcdaParserProcessorPhp\Console\Commands\CcdaParse;
+use CircleLinkHealth\CcdaParserProcessorPhp\Console\Commands\CcdaParse;
 use Illuminate\Support\ServiceProvider;
 
 class CcdaParserProcessorProvider extends ServiceProvider
