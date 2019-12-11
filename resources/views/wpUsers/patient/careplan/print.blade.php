@@ -516,6 +516,7 @@ if (isset($patient) && ! empty($patient)) {
 
                 let patientProblemNames = Object.keys(@json($problems));
 
+                //update problems if they have changed in care-areas modal
                 App.$on('patient-problems-updated', (problems) => {
                     problemNames = problems.map(function(problem){
                         return problem.name;
@@ -523,6 +524,7 @@ if (isset($patient) && ! empty($patient)) {
                     patientProblemNames = problemNames;
                 });
 
+                //Once approver has confirmed that Diabetes Conditions are Correct, add the field needed to bypass validation in the back-end and submit form
                 App.$on('confirm-diabetes-conditions', () => {
                     let form = $('#form-approve');
                     $("<input>").attr("type", "hidden").attr("name", "confirm_diabetes_conditions").appendTo(form);
