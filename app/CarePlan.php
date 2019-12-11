@@ -381,6 +381,7 @@ class CarePlan extends BaseModel implements PdfReport
             [
                 'conditions' => [
                     new HasAtLeast2CcmOr1BhiProblems(),
+                    //If Approver has confirmed that Diabetes Conditions are correct or if Care Plan has already been approved, bypass check
                     ! $confirmDiabetesConditions && self::DRAFT === $this->status ? new DoesNotHaveBothTypesOfDiabetes() : null,
                 ],
                 'phoneNumber'     => 'required|phone:AUTO,US',
