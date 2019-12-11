@@ -25,7 +25,7 @@
         }
     ],
     "require": {
-        "circlelinkhealth/ccda-parser-processor": "^1.0"
+        "circlelinkhealth/ccda-parser-processor": "dev-master"
     },
     "extra": {
         "laravel": {
