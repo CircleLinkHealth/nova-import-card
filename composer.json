@@ -26,5 +26,15 @@
     ],
     "require": {
         "circlelinkhealth/ccda-parser-processor": "^1.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CcdaParserProcessorPhp\\Providers\\CcdaParserProcessorProvider"
+            ],
+            "aliases": {
+
+            }
+        }
     }
 }
