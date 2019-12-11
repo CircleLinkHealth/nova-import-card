@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CcdaParserProcessorPhp\Providers;
+namespace CircleLinkHealth\CcdaParserProcessorPhp\Providers;
 
 use CcdaParserProcessorPhp\Console\Commands\CcdaParse;
 use Illuminate\Support\ServiceProvider;
