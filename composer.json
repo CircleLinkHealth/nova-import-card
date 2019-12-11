@@ -75,7 +75,6 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "michalisantoniou6/laravel-cerberus": "dev-master",
         "nvanheuverzwijn/monolog-logdna": "^2.1",
-        "predis/predis": "^1.1",
         "twilio/sdk": "^5.28",
         "waavi/url-shortener": "dev-master"
     },
