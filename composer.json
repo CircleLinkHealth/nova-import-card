@@ -10,22 +10,8 @@
     ],
     "minimum-stability": "dev",
     "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "circlelinkhealth/ccda-parser-processor",
-                "version": "1.0",
-                "type": "package",
-                "source": {
-                    "type": "git",
-                    "reference": "master",
-                    "url": "git@github.com:circlelinkhealth/ccda-parser-processor.git"
-                }
-            }
-        }
     ],
     "require": {
-        "circlelinkhealth/ccda-parser-processor": "dev-master"
     },
     "extra": {
         "laravel": {
