@@ -234,7 +234,7 @@ class NurseCalendarService
         $limitDate = Carbon::parse(now())->startOfYear()->subMonth(2)->toDate();
 
         return $nurses->map(function ($nurse) use ($limitDate, $startDate, $endDate) {
-            $holidays = $nurse->nurseInfo->holidays->where('date', '>=', $limitDate);
+            $holidays = $nurse->nurseInfo->upcoming_holiday_dates;
 
             return $this->prepareHolidaysData($holidays, $nurse, $startDate, $endDate);
         })->flatten(1);
@@ -308,7 +308,7 @@ class NurseCalendarService
 
                 return collect(
                     [
-                        self::TITLE => "$nurse->display_name",
+                        self::TITLE => "$nurse->display_name day-off",
                         self::START => $holidayDate,
                         'allDay'    => true,
                         'color'     => '#ff5b4f',
@@ -352,11 +352,14 @@ class NurseCalendarService
                 $windowEndForView = Carbon::parse($window->window_time_end)->format('H:i');
                 $hoursAbrev = 'h';
                 $color = '#5bc0ded6';
+                //@todo: dont really like this
+                $title = auth()->user()->isAdmin() ? "$nurse->display_name ({$workHoursForDay}$hoursAbrev)
+                        {$windowStartForView}-{$windowEndForView}" : "({$workHoursForDay}$hoursAbrev)
+                        {$windowStartForView}-{$windowEndForView}";
 
                 return collect(
                     [
-                        self::TITLE => "$nurse->display_name ({$workHoursForDay}$hoursAbrev)
-                        {$windowStartForView}-{$windowEndForView}",
+                        self::TITLE        => $title,
                         self::START        => "{$windowDate}T{$window->window_time_start}",
                         self::END          => "{$windowDate}T{$window->window_time_end}",
                         'color'            => $color,
@@ -368,7 +371,7 @@ class NurseCalendarService
                         'data'             => [
                             'nurseId'      => $nurse->nurseInfo->id,
                             'windowId'     => $window->id,
-                            'name'         => $nurse->display_name,
+                            'name'         => '$nurse->display_name',
                             'day'          => $dayInHumanLang,
                             'date'         => $windowDate,
                             'start'        => $window->window_time_start,

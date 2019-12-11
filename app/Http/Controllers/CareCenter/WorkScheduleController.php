@@ -70,7 +70,7 @@ class WorkScheduleController extends Controller
             $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
         } elseif ($auth->isCareCoach()) {
             $windowData      = $this->calendarWorkEventsForAuthNurse($startDate, $endDate, $auth);
-            $holidaysData    = $auth->nurseInfo->holidays;
+            $holidaysData    = $auth->nurseInfo->upcoming_holiday_dates->flatten();
             $holidays        = $this->fullCalendarService->prepareHolidaysData($holidaysData, $auth, $startDate, $endDate)->toArray();
             $dataForDropdown = '';
         }
@@ -223,8 +223,7 @@ class WorkScheduleController extends Controller
         $endDate   = Carbon::parse($startDate)->copy()->addMonths(2)->toDateString();
 
         $nurseInfoId = $request->input('nurseInfoId');
-//        $nurseInfoId = 176;
-        $nurse = Nurse::findOrFail($nurseInfoId)->user;
+        $nurse       = Nurse::findOrFail($nurseInfoId)->user;
 
         $windows = $this->nurseContactWindows
             ->whereNurseInfoId($nurseInfoId)
@@ -238,12 +237,12 @@ class WorkScheduleController extends Controller
                 );
             });
 
-        $eventsForSelectedNurse = $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse);
+        $eventsForSelectedNurse = $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse)->toArray();
         $holidaysData           = $nurse->nurseInfo->holidays;
         $holidays               = $this->fullCalendarService->prepareHolidaysData($holidaysData, $nurse, $startDate, $endDate)->toArray();
 
         return response()->json([
-            'eventsForSelectedNurse' => $eventsForSelectedNurse,
+            'eventsForSelectedNurse' => array_merge($eventsForSelectedNurse, $holidays),
         ], 200);
     }
 
@@ -348,35 +347,6 @@ class WorkScheduleController extends Controller
             $window->forceDelete();
         }
     }
-
-//    /**
-//     * @return \Illuminate\Contracts\Routing\ResponseFactory|Response
-//     */
-//    public function getHolidays(Request $request)
-//    {
-//        $startDate = Carbon::parse($request->input('start'))->toDateString();
-//        $endDate   = Carbon::parse($request->input('end'))->toDateString();
-//
-//        $auth = auth()->user();
-//        if ($auth->isAdmin()) {
-//            $nurses = $this->getActiveNurses();
-//
-//            if ( ! $nurses) {
-//                return response()->json(['errors' => 'Nurses not found'], 400);
-//            }
-//            $holidays = $this->fullCalendarService->getHolidays($nurses, $startDate, $endDate)->toArray();
-//        }
-//
-//        if ($auth->isCareCoach()) {
-//            $holidaysData = $auth->nurseInfo->holidays;
-//            $holidays     = $this->fullCalendarService->prepareHolidaysData($holidaysData, $auth, $startDate, $endDate)->toArray();
-//        }
-//
-//        return response()->json([
-//            'success'  => true,
-//            'holidays' => $holidays,
-//        ], 200);
-//    }
 
     public function store(Request $request)
     {

@@ -274,8 +274,8 @@
                 authIsNurse: false,
                 eventSources: [
                     { // has to be 'events()' else it doesnt work
-                        // WorkEvents
                         events(start, end, timezone, callback) {
+                            self.loader = true;
                             axios.get('care-center/work-schedule/get-calendar-data', {
                                 params: {
                                     start: new Date(start),
@@ -291,10 +291,9 @@
                                     self.holidays.push(...calendarData.holidayEvents);
                                     self.workHours.push(...calendarData.workEvents);
                                     self.dataForDropdown.push(...calendarData.dataForDropdown);
-                                    console.log(self.showHolidays);
-                                    const x = self.eventsFiltered();
-                                    // const c = calendarData.workEvents.concat(calendarData.holidayEvents);
-                                    callback(x);
+                                    const eventsFiltered = self.eventsFiltered();
+                                    self.loader = false;
+                                    callback(eventsFiltered);
 
                                 })).catch((error) => {
                                 this.errors = error;
@@ -302,27 +301,6 @@
                             });
                         },
                     },
-                    // {
-                    //     // Holidays Events
-                    //     events(start, end, timezone, callback) {
-                    //         axios.get('nurses/holidays', {
-                    //             params: {
-                    //                 start: new Date(start),
-                    //                 end: new Date(end),
-                    //             }
-                    //         })
-                    //             .then((response => {
-                    //                     const holidays = response.data.holidays;
-                    //                     self.holidays = [];
-                    //                     self.holidays.push(...holidays);
-                    //                     console.log(self.showHolidays);
-                    //                     callback(holidays);
-                    //                 }
-                    //             )).catch((error) => {
-                    //              console.log(error);
-                    //         });
-                    //     }
-                    // }
                 ],
 
                 config: {
@@ -633,11 +611,7 @@
                             const eventsToConfirmTemporary = [];
                             for (var i = 0; i < recurringDates.length; i++) {
                                 const date = this.formatDate(recurringDates[i]);
-                                console.log(response[0]);
                                 const eventsToAskConfirmation = events.filter(event => event.data.date === date);
-
-                                //I was expecting filter to return only arrays that satisfy the condition however i im getting also the empty arrays
-                                // That's why i  use this conditional here
 
                                 if (eventsToAskConfirmation.length !== 0) {
                                     this.loader = false;
@@ -690,9 +664,6 @@
                         this.refetchEvents();
                         this.loader = false;
                         this.toggleModal();
-                        //@todo: Will fix refetchEvents() for this. so i disabled it
-                        // const newEvent = this.prepareLiveData(response.data); //to show in UI before page reload.
-                        // this.eventsAddedNow.push(newEvent);
                         this.addNotification({
                             title: "Success!",
                             text: "Event has been created.",
@@ -873,32 +844,6 @@
             if (this.authData.role === 'nurse') {
                 this.authIsNurse = true;
             }
-
-            // this.loader = true;
-            // // All Work Events
-            // axios.get('care-center/work-schedule/get-calendar-data')
-            //     .then((response => {
-            //         const calendarData = response.data.calendarData;
-            //         // this.workHours.push(...calendarData.workEvents);
-            //         // this.dataForDropdown.push(...calendarData.dataForDropdown);
-            //         this.today = calendarData.today;
-            //         // this.loader = false;
-            //
-            //     })).catch((error) => {
-            //     this.errors = error;
-            //     console.log(this.errors);
-            // });
-            // //    All Holiday Events
-            // axios.get('nurses/holidays')
-            //     .then((response => {
-            //             //loader add
-            //             this.showWorkHours = false;
-            //             this.holidays.push(...response.data.holidays);
-            //             this.loader = false;
-            //         }
-            //     )).catch((error) => {
-            //     console.log(error);
-            // });
 
         },
 
