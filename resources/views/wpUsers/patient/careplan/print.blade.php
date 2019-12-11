@@ -13,7 +13,7 @@ if (isset($patient) && ! empty($patient)) {
 
 @if(!isset($isPdf))
     @section('title', 'Care Plan View/Print')
-    @section('activity', 'Care Plan View/Print')
+@section('activity', 'Care Plan View/Print')
 @endif
 
 @section('content')
@@ -41,7 +41,8 @@ if (isset($patient) && ! empty($patient)) {
         <meta name="provider-destroy-route"
               content="{{ route('user.care-team.destroy', ['userId' => $patient->id,'id'=>'']) }}">
 
-        <meta name="provider-update-route" content="{{ route('user.care-team.update', ['userId' => $patient->id,'id'=>'']) }}">
+        <meta name="provider-update-route"
+              content="{{ route('user.care-team.update', ['userId' => $patient->id,'id'=>'']) }}">
         <meta name="providers-search" content="{{ route('providers.search') }}">
         <meta name="created_by" content="{{auth()->id()}}">
         <meta name="patient_id" content="{{$patient->id}}">
@@ -181,13 +182,16 @@ if (isset($patient) && ! empty($patient)) {
                                             </template>
 
                                             @if ( ($patient->getCarePlanStatus() == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->getCarePlanStatus() == 'draft' && auth()->user()->canQAApproveCarePlans()) )
-                                                <form action="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}"
+                                                <form id="form-approve"
+                                                      action="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}"
                                                       method="POST" style="display: inline">
                                                     {{ csrf_field() }}
-                                                    <input class="btn btn-info btn-sm inline-block"
-                                                   aria-label="..."
-                                                   role="button"
-                                                       type="submit" value="Approve">
+                                                    <button class="btn btn-info btn-sm inline-block"
+                                                            aria-label="..."
+                                                            form="form-approve"
+                                                            role="button"
+                                                    >Approve
+                                                    </button>
                                                 </form>
 
                                                 @if(auth()->user()->hasRole('provider'))
@@ -195,9 +199,10 @@ if (isset($patient) && ! empty($patient)) {
                                                           method="POST" style="display: inline">
                                                         {{ csrf_field() }}
                                                         <input class="btn btn-success btn-sm inline-block"
-                                                       aria-label="..."
-                                                       type="submit"
-                                                       role="button" value="Approve
+                                                               aria-label="..."
+                                                               type="submit"
+
+                                                               role="button" value="Approve
                                                         and View Next">
                                                     </form>
 
@@ -494,6 +499,7 @@ if (isset($patient) && ! empty($patient)) {
                 </others>
                 <!-- /OTHER NOTES -->
                 <!-- /OTHER INFORMATION -->
+                <diabetes-check-modal></diabetes-check-modal>
             </section>
         </div>
         @include('partials.confirm-modal')
@@ -505,6 +511,41 @@ if (isset($patient) && ! empty($patient)) {
                 </script>
             @endpush
         @endif
+        @push('scripts')
+            <script>
+                const patientProblemNames = @json($problemNames);
+
+                App.$on('confirm-diabetes-conditions', () => {
+                    let form = $('#form-approve');
+                    $("<input>").attr("type", "hidden").attr("name", "confirm_diabetes_conditions").appendTo(form);
+                    form.submit();
+                });
+                $(function () {
+                    $('#form-approve').submit(function (e) {
+                        e.preventDefault();
+                        form = this;
+
+                        if (patientHasBothTypesOfDiabetes()) {
+                            $(":input").each(function() {
+                                if ($(this).attr('name') === "confirm_diabetes_conditions") {
+                                    form.submit();
+                                }
+                            });
+
+                            App.$emit('show-diabetes-check-modal');
+
+                            return;
+                        } else {
+                            form.submit();
+                        }
+                    })
+                })
+
+                function patientHasBothTypesOfDiabetes() {
+                    return patientProblemNames.includes('Diabetes Type 1', 'Diabetes Type 2');
+                }
+            </script>
+        @endpush
 
         @if ($recentSubmission)
             @push('scripts')

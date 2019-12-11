@@ -55,6 +55,7 @@ const ServerTimeDisplay = () => import(/* webpackChunkName: "chunk" */ './admin/
 const LoaderComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/loader')
 const PersistentTextArea = () => import(/* webpackChunkName: "chunk-misc" */ './components/persistent-textarea')
 const CareAreasComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/care-areas')
+const DiabetesCheckModalComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/modals/diabetes-check.modal')
 const HealthGoalsComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/health-goals')
 const MedicationsComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/medications')
 const SymptomsComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/symptoms')
@@ -116,6 +117,7 @@ Vue.component('allergies', AllergiesComponent);
 Vue.component('social-services', SocialServicesComponent);
 Vue.component('others', OthersComponent);
 Vue.component('misc-modal', MiscModalComponent);
+Vue.component('diabetes-check-modal', DiabetesCheckModalComponent);
 Vue.component('appointments', AppointmentsComponent);
 Vue.component('patient-list', PatientList);
 Vue.component('v-datepicker', DatepickerComponent);
