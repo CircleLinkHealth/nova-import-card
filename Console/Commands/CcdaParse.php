@@ -3,6 +3,7 @@
 namespace CircleLinkHealth\CcdaParserProcessorPhp\Console\Commands;
 
 use Illuminate\Console\Command;
+use Symfony\Component\Process\Process;
 
 class CcdaParse extends Command
 {
@@ -37,6 +38,15 @@ class CcdaParse extends Command
      */
     public function handle()
     {
-        $this->info('TODO');
+        $this->info('Ready to spawn nodejs process');
+        $path = dirname(__FILE__) . '../../../nodejs/index.js';
+        $process = new Process("node $path");
+        $result = $process->run();
+        if ($result !== 0) {
+            $this->error($process->getErrorOutput());
+        }
+        else {
+            $this->info($process->getOutput());
+        }
     }
 }
