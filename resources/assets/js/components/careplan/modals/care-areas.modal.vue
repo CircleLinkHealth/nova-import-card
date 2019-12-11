@@ -264,9 +264,10 @@
         },
         methods: {
             select(problem) {
+                //when '+' is selected, problem === null.
+                let instruction = problem ? problem.instruction.name : problem
                 this.selectedProblem = problem
-                this.selectedInstruction = problem.instruction.name
-
+                this.selectedInstruction = instruction
             },
             updateInstructions(event){
                 let cpmProblem = this.cpmProblems.find(problem => {
