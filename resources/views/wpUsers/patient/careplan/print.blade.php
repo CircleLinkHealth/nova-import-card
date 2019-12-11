@@ -513,13 +513,22 @@ if (isset($patient) && ! empty($patient)) {
         @endif
         @push('scripts')
             <script>
-                const patientProblemNames = @json($problemNames);
+
+                let patientProblemNames = Object.keys(@json($problems));
+
+                App.$on('patient-problems-updated', (problems) => {
+                    problemNames = problems.map(function(problem){
+                        return problem.name;
+                    });
+                    patientProblemNames = problemNames;
+                });
 
                 App.$on('confirm-diabetes-conditions', () => {
                     let form = $('#form-approve');
                     $("<input>").attr("type", "hidden").attr("name", "confirm_diabetes_conditions").appendTo(form);
                     form.submit();
                 });
+
                 $(function () {
                     $('#form-approve').submit(function (e) {
                         e.preventDefault();

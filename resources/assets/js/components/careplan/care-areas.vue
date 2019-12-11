@@ -146,6 +146,10 @@
             })
 
             Event.$on('care-areas:request-problems', () => Event.$emit('care-areas:problems', this.cpmProblems))
+
+            Event.$on('care-areas:ccd-problems', ()=>{
+                App.$emit('patient-problems-updated', this.ccdProblems);
+            })
         }
     }
 </script>
