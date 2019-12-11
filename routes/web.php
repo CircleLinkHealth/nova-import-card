@@ -2354,6 +2354,7 @@ Route::get('nurses/holidays', [
     'as'   => 'get.admin.nurse.schedules.holidays',
 ])->middleware('permission:nurse.read');
 
+Route::post('nurses/nurse-calendar-data', [
 Route::prefix('admin')->group(
     function () {
         Route::prefix('users')->group(

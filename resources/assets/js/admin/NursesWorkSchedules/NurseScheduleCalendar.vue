@@ -220,31 +220,6 @@
         });
     }
 
-    // async function sex() {
-    //
-    //        // return await axios.get('nurses/nurse-calendar-data').then(response => {
-    //        //      return response.data;
-    //        // }).catch(error => {
-    //        //      console.log(error);
-    //        //  });
-    //     try {
-    //         let res = await axios({
-    //             url: 'nurses/nurse-calendar-data',
-    //             method: 'get',
-    //             timeout: 8000,
-    //
-    //         });
-    //
-    //         return res
-    //     }
-    //     catch (err) {
-    //         console.error(err);
-    //     }
-    //
-    //
-    // }
-
-
     export default {
         name: "NurseScheduleCalendar",
 
@@ -644,41 +619,57 @@
                         }
 
 
-                        const recurringDatesToEvent = new RRule({                       //https://github.com/jakubroztocil/rrule
-                            freq: frequency[0],
-                            // byweekday: [q.data.clhDayOfWeek],
-                            dtstart: new Date(workDate),
-                            until: until[0],
-                        });
-                        const recurringDates = recurringDatesToEvent.all();
-                        const events = this.workHours.concat(this.holidays);
-                        // const events = sex().then(res => res.data.eventsForSelectedNurse);
-                        // console.log(events);
-                        // debugger;
-                        const eventsToConfirmTemporary = [];
-                        for (var i = 0; i < recurringDates.length; i++) {
-                            const date = this.formatDate(recurringDates[i]);
-                            const eventsToAskConfirmation = events.filter(event => event.data.date === date && event.data.nurseId === nurseId);
-                            //I was expecting filter to return only arrays that satisfy the condition however i im getting also the empty arrays
-                            // That's why i  use this conditional here
-                            if (eventsToAskConfirmation.length !== 0) {
-                                this.loader = false;
-                                eventsToConfirmTemporary.push(...eventsToAskConfirmation);
-                            }
-                        }
-                        this.workEventsToConfirm.push(...eventsToConfirmTemporary);
+                        this.getEventsForSelectedNurse(nurseId, workDate).then(response => {
+                            const events = response;
+                            const recurringDatesToEvent = new RRule({                       //https://github.com/jakubroztocil/rrule
+                                freq: frequency[0],
+                                // byweekday: [q.data.clhDayOfWeek],
+                                dtstart: new Date(workDate),
+                                until: until[0],
+                            });
 
-                        if (eventsToConfirmTemporary.length !== 0) {
-                            if (confirm("There are some windows overlapping. Do you want to replace the existing windows with the new?")) {
-                                this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, true);
+                            const recurringDates = recurringDatesToEvent.all();
+
+                            const eventsToConfirmTemporary = [];
+                            for (var i = 0; i < recurringDates.length; i++) {
+                                const date = this.formatDate(recurringDates[i]);
+                                console.log(response[0]);
+                                const eventsToAskConfirmation = events.filter(event => event.data.date === date);
+
+                                //I was expecting filter to return only arrays that satisfy the condition however i im getting also the empty arrays
+                                // That's why i  use this conditional here
+
+                                if (eventsToAskConfirmation.length !== 0) {
+                                    this.loader = false;
+                                    eventsToConfirmTemporary.push(...eventsToAskConfirmation);
+                                }
+
                             }
-                        } else {
-                            this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
-                        }
+                            this.workEventsToConfirm.push(...eventsToConfirmTemporary);
+
+                            if (eventsToConfirmTemporary.length !== 0) {
+                                if (confirm("There are overlapping windows. Do you want to replace the existing windows with new?")) {
+                                    this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, true);
+                                }
+                            } else {
+                                this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
+                            }
+                        }).catch(error => {
+                            console.log(error);
+                        });
                     } else {
                         this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
                     }
                 }
+            },
+
+            async getEventsForSelectedNurse(nurseId, workDate) {
+                let res = await axios.post('nurses/nurse-calendar-data', {
+                    nurseInfoId:nurseId,
+                    startDate:workDate
+                });
+                return res.data.eventsForSelectedNurse;
+
             },
 
             updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, updateCollisionWindow = null) {

@@ -219,12 +219,12 @@ class WorkScheduleController extends Controller
 
     public function getSelectedNurseCalendar(Request $request)
     {
-        $startDate = Carbon::parse(now())->toDateString();
+        $startDate = Carbon::parse($request->input('startDate'))->toDateString();
         $endDate   = Carbon::parse($startDate)->copy()->addMonths(2)->toDateString();
 
-//        $nurseInfoId = $request->input('nurseInfoId');
-        $nurseInfoId = 176;
-        $nurse       = Nurse::findOrFail($nurseInfoId)->user;
+        $nurseInfoId = $request->input('nurseInfoId');
+//        $nurseInfoId = 176;
+        $nurse = Nurse::findOrFail($nurseInfoId)->user;
 
         $windows = $this->nurseContactWindows
             ->whereNurseInfoId($nurseInfoId)
