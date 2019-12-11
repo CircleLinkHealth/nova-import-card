@@ -392,7 +392,7 @@ class ProcessEligibilityService
     {
         if (isProductionEnv()) {
             sendSlackMessage(
-                ' #parse_enroll_import',
+                '#parse_enroll_import',
                 "Hey I just processed this list, it's crazy. Here's some patients, call them maybe? {$batch->linkToView()}"
             );
         }
