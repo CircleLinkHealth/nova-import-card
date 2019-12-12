@@ -327,7 +327,7 @@ class NurseCalendarService
                         self::TITLE => "$nurse->display_name day-off",
                         self::START => $holidayDate,
                         'allDay'    => true,
-                        'color'     => '#ff5b4f',
+                        'color'     => '#f5c431',
                         'data'      => [
                             'holidayId' => $holiday->id,
                             'nurseId'   => $nurse->nurseInfo->id,
@@ -367,10 +367,12 @@ class NurseCalendarService
                 $windowStartForView = Carbon::parse($window->window_time_start)->format('H:i');
                 $windowEndForView = Carbon::parse($window->window_time_end)->format('H:i');
                 $hoursAbrev = 'h';
-                $color = '#5bc0ded6';
-                //@todo: dont really like this
-                $title = auth()->user()->isAdmin() ? "$nurse->display_name ({$workHoursForDay}$hoursAbrev)
-                        {$windowStartForView}-{$windowEndForView}" : "({$workHoursForDay}$hoursAbrev)
+                $color = 'not_worked' === $window->validated ? '#ff5b4f' : '#5bc0ded6';
+
+                $title = auth()->user()->isAdmin() ?
+                    "$nurse->display_name ({$workHoursForDay}$hoursAbrev)
+                        {$windowStartForView}-{$windowEndForView}" :
+                    "({$workHoursForDay}$hoursAbrev)
                         {$windowStartForView}-{$windowEndForView}";
 
                 return collect(
@@ -387,7 +389,7 @@ class NurseCalendarService
                         'data'             => [
                             'nurseId'      => $nurse->nurseInfo->id,
                             'windowId'     => $window->id,
-                            'name'         => '$nurse->display_name',
+                            'name'         => "$nurse->display_name",
                             'day'          => $dayInHumanLang,
                             'date'         => $windowDate,
                             'start'        => $window->window_time_start,
