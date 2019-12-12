@@ -26,15 +26,6 @@ if (!config.storeResultsInDb) {
         process.exit(1);
     }
 }
-function exitWithError(code, msg) {
-    if (code > 0) {
-        console.error(msg);
-    }
-    else {
-        console.log(msg);
-    }
-    process.exit(code);
-}
 function processAndStoreInDb(ccdaId, filePath) {
     let dataStr;
     return disk_1.readFromFile(filePath)
@@ -56,6 +47,7 @@ function processAndStoreOnDisk(ccdaId, filePath, targetFilePath) {
     });
 }
 if (config.storeResultsInDb) {
+    db_1.init();
     db_1.getFromDb(fileId)
         .then(res => {
         if (res) {
@@ -70,6 +62,7 @@ if (config.storeResultsInDb) {
     })
         .catch(err => {
         console.error(err);
+        process.exit(1);
     });
 }
 else {
@@ -87,6 +80,7 @@ else {
     })
         .catch(err => {
         console.error(err);
+        process.exit(1);
     });
 }
 //# sourceMappingURL=index.js.map

@@ -22,7 +22,7 @@ class CcdaParse extends Command
      *
      * @var string
      */
-    protected $signature = 'ccd:parse';
+    protected $signature = 'ccd:parse {ccdaId} {inputPath} {outputPath?}';
 
     /**
      * Create a new command instance.
@@ -42,8 +42,16 @@ class CcdaParse extends Command
     public function handle()
     {
         $this->info('Ready to spawn nodejs process');
-        $path    = dirname(__FILE__).'../../../nodejs/index.js';
-        $process = new Process("node $path");
+        $path       = dirname(__FILE__).'../../../nodejs/index.js';
+        $ccdaId     = $this->argument('ccdaId');
+        $inputPath  = $this->argument('inputPath');
+        $outputPath = $this->hasArgument('outputPath')
+            ? $this->argument('outputPath')
+            : null;
+        $cmd = "node $path"." $ccdaId $inputPath".(null !== $outputPath
+                ? " $outputPath"
+                : '');
+        $process = new Process($cmd);
         $process->run(function ($type, $buffer) {
             if ('err' === $type) {
                 $this->error($buffer);

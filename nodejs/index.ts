@@ -1,7 +1,7 @@
 import Configuration from "./lib/config";
 import {fileExists, readFromFile, storeToFile} from "./lib/disk";
 import {parse} from "./lib/parser";
-import {getFromDb, updateDb} from "./lib/db";
+import {init as initDb, getFromDb, updateDb} from "./lib/db";
 
 const config = Configuration.get();
 
@@ -30,15 +30,6 @@ if (!config.storeResultsInDb) {
     }
 }
 
-function exitWithError(code: number, msg: string) {
-    if (code > 0) {
-        console.error(msg);
-    } else {
-        console.log(msg);
-    }
-    process.exit(code);
-}
-
 function processAndStoreInDb(ccdaId: string, filePath: string): Promise<void> {
     let dataStr: string;
     return readFromFile(filePath)
@@ -62,6 +53,7 @@ function processAndStoreOnDisk(ccdaId: string, filePath: string, targetFilePath:
 }
 
 if (config.storeResultsInDb) {
+    initDb();
     getFromDb(fileId)
         .then(res => {
             if (res) {
@@ -76,6 +68,7 @@ if (config.storeResultsInDb) {
         })
         .catch(err => {
             console.error(err);
+            process.exit(1);
         });
 } else {
     fileExists(targetFilePath)
@@ -92,5 +85,6 @@ if (config.storeResultsInDb) {
         })
         .catch(err => {
             console.error(err);
+            process.exit(1);
         })
 }
