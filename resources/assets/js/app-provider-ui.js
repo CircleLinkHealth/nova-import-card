@@ -80,10 +80,12 @@ const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ '
 const NurseInvoiceDailyDispute = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../Modules/NurseInvoices/Resources/assets/js/components/nurseInvoiceDailyDispute');
 const PusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-notifications')
 const PusherSeeAllNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-see-all-notifications')
+const AttestCallConditionsModalComponent = () => import(/* webpackChunkName: "chunk-attest-call-conditions" */  './components/attest-call-conditions.modal');
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
 
+Vue.component('attest-call-conditions-modal', AttestCallConditionsModalComponent);
 Vue.component('billing-report', BillingComponent);
 Vue.component('component-proxy', ComponentProxy);
 Vue.component('careTeam', CareTeamComponent);
@@ -132,6 +134,7 @@ Vue.component('dispute-nurse-invoice', DisputeNurseInvoice);
 Vue.component('nurse-invoice-daily-dispute', NurseInvoiceDailyDispute);
 Vue.component('pusher-notifications', PusherNotifications);
 Vue.component('pusher-see-all-notifications', PusherSeeAllNotifications);
+
 
 const App = new Vue({
     el: '#app',

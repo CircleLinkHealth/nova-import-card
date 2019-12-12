@@ -9,6 +9,7 @@
               integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
               crossorigin="anonymous">
         <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
         <style>
 
             .modal-body {
@@ -559,6 +560,7 @@
             </div>
         </div>
         </div>
+
     </form>
 
     <!-- Modal - CPM-182 -->
@@ -603,6 +605,7 @@
             </div>
         </div>
     </div>
+    <create-care-person :show="true"></create-care-person>
 
     <div>
         <br/>
@@ -894,6 +897,13 @@
                         }
 
                     }
+
+                    if (callIsSuccess) {
+                        console.log('if is reached')
+                        App.$emit('show-attest-call-conditions-modal');
+                        return;
+                    }
+                    return;
 
                     if (showModal) {
                         $('#confirm-note-create').modal('show');
