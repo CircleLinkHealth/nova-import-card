@@ -238,7 +238,7 @@ class WorkScheduleController extends Controller
             });
 
         $eventsForSelectedNurse = $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse)->toArray();
-        $holidaysData           = $nurse->nurseInfo->holidays;
+        $holidaysData           = $nurse->nurseInfo->upcoming_holiday_dates->flatten();
         $holidays               = $this->fullCalendarService->prepareHolidaysData($holidaysData, $nurse, $startDate, $endDate)->toArray();
 
         return response()->json([
@@ -293,7 +293,7 @@ class WorkScheduleController extends Controller
                 'errors'    => 'Validation Failed',
                 'validator' => $validator->getMessageBag()->add(
                     'window_time_start',
-                    "This window is overlapping with an already existing window in $collidingDates."
+                    "This window is overlapping with an existing window in $collidingDates."
                 ),
                 'collidingEvents' => $confirmationNeededEvents,
             ], 422);

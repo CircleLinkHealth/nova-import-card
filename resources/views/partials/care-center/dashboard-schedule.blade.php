@@ -16,7 +16,7 @@
 
         <nurse-schedule-calendar
                 :auth-data="{{json_encode($authData)}}"
-                :today="{{json_encode(Carbon::today())}}">
+                :today="{{json_encode(\Carbon\Carbon::parse(today())->toDateString())}}">
         </nurse-schedule-calendar>
 
     </div>

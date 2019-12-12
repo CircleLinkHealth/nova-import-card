@@ -7,6 +7,7 @@
 namespace App\FullCalendar;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
@@ -67,22 +68,31 @@ class NurseCalendarService
      * @param $diffRange
      * @param $eventDate
      * @param $repeatFrequency
+     * @param $holidayDates
      *
      * @return array|\Illuminate\Support\Collection
      */
-    public function createRecurringDates($diffRange, $eventDate, $repeatFrequency)
+    public function createRecurringDates($diffRange, $eventDate, $repeatFrequency, $holidayDates)
     {
         $defaultRecurringDates = collect();
 
         if ('weekly' === $repeatFrequency) {
             for ($i = 0; $i < $diffRange; ++$i) {
-                $defaultRecurringDates[] = Carbon::parse($eventDate)->copy()->addWeek($i)->toDateString();
+                $defaultRecurringDate = Carbon::parse($eventDate)->copy()->addWeek($i)->toDateString();
+                //do NOT create workEvents over days-off.
+                if ( ! in_array($defaultRecurringDate, $holidayDates)) {
+                    $defaultRecurringDates[] = $defaultRecurringDate;
+                }
             }
         }
 
         if ('daily' === $repeatFrequency) {
             for ($i = 0; $i < $diffRange; ++$i) { //@todo:should exclude weekedns option
-                $defaultRecurringDates[] = Carbon::parse($eventDate)->copy()->addDay($i)->toDateString();
+                $defaultRecurringDate = Carbon::parse($eventDate)->copy()->addDay($i)->toDateString();
+                //do NOT create workEvents over days-off.
+                if ( ! in_array($defaultRecurringDate, $holidayDates)) {
+                    $defaultRecurringDates[] = $defaultRecurringDate;
+                }
             }
         }
 
@@ -102,7 +112,13 @@ class NurseCalendarService
         $repeatEventUntil  = null === $workScheduleData['until'] ? $defaultRepeatDate : $workScheduleData['until'];
         $rangeToRepeat     = $this->getWeeksOrDaysToRepeat($workScheduleData['date'], $repeatEventUntil, $repeatFrequency);
         $validatedDefault  = 'not_checked';
-        $recurringDates    = $this->createRecurringDates($rangeToRepeat, $workScheduleData['date'], $repeatFrequency);
+        $nurse             = Nurse::findOrFail($nurseInfoId);
+        $holidays          = $nurse->upcomingHolidaysFrom(Carbon::parse($workScheduleData['date']));
+        $holidayDates      = $holidays->map(function ($holiday) {
+            return Carbon::parse($holiday->date)->toDateString();
+        })->toArray();
+
+        $recurringDates = $this->createRecurringDates($rangeToRepeat, $workScheduleData['date'], $repeatFrequency, $holidayDates);
 
         return  $this->createWindowData($recurringDates, $nurseInfoId, $workScheduleData, $validatedDefault, $repeatFrequency, $repeatEventUntil);
     }

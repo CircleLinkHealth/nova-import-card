@@ -267,7 +267,6 @@
                 addNewEventMainClicked: false,
                 selectedDate: [],
                 repeatUntil: '',
-                workEventsToConfirm: [],
                 isRecurringEvent: false,
                 addHolidays: false,
                 authIsAdmin: false,
@@ -583,22 +582,36 @@
                         return;
                     }
 
-                    if (repeatFreq !== 'does_not_repeat') {
-                        const until = [];
-                        const frequency = [];
+                    this.getExistingEventsForSelectedNurse(nurseId, workDate).then(events => {
+                        const conflicts = this.getConflicts(events, workDate);
+                        const conflictExist = conflicts.length !== 0;
+                        const eventsToConfirmTemporary = [];
+                        if (repeatFreq === 'does_not_repeat' && conflictExist) {
+                            this.loader = false;
+                            this.addNotification({
+                                title: "Warning!",
+                                text: "This window is overlapping with an existing window",
+                                type: "danger",
+                                timeout: true
+                            });
 
-                        if (repeatFreq === 'weekly') {
-                            frequency.push(RRule.WEEKLY);
-                            until.push(new Date(repeatUntil))
+                            alert("This window is overlapping with an existing window");
+                            return;
                         }
-                        if (repeatFreq === 'daily') {
-                            frequency.push(RRule.DAILY);
-                            until.push(new Date(repeatUntil))
-                        }
 
+                        if (repeatFreq !== 'does_not_repeat') {
+                            const until = [];
+                            const frequency = [];
 
-                        this.getEventsForSelectedNurse(nurseId, workDate).then(response => {
-                            const events = response;
+                            if (repeatFreq === 'weekly') {
+                                frequency.push(RRule.WEEKLY);
+                                until.push(new Date(repeatUntil))
+                            }
+                            if (repeatFreq === 'daily') {
+                                frequency.push(RRule.DAILY);
+                                until.push(new Date(repeatUntil))
+                            }
+
                             const recurringDatesToEvent = new RRule({                       //https://github.com/jakubroztocil/rrule
                                 freq: frequency[0],
                                 // byweekday: [q.data.clhDayOfWeek],
@@ -607,40 +620,41 @@
                             });
 
                             const recurringDates = recurringDatesToEvent.all();
-
-                            const eventsToConfirmTemporary = [];
                             for (var i = 0; i < recurringDates.length; i++) {
                                 const date = this.formatDate(recurringDates[i]);
-                                const eventsToAskConfirmation = events.filter(event => event.data.date === date);
-
+                                const eventsToAskConfirmation = this.getConflicts(events, date);
                                 if (eventsToAskConfirmation.length !== 0) {
                                     this.loader = false;
                                     eventsToConfirmTemporary.push(...eventsToAskConfirmation);
                                 }
-
                             }
-                            this.workEventsToConfirm.push(...eventsToConfirmTemporary);
+                        }
 
-                            if (eventsToConfirmTemporary.length !== 0) {
-                                if (confirm("There are overlapping windows. Do you want to replace the existing windows with new?")) {
+                        if (eventsToConfirmTemporary.length !== 0) {
+                            if (eventsToConfirmTemporary.filter(event => event.data.eventType === 'holiday').length !== 0) {
+                                if (confirm("There are windows overlapping some of your days-off. We will not replace your days-off.")){
                                     this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, true);
                                 }
-                            } else {
-                                this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
+                            } else if (confirm("There are overlapping windows. Do you want to replace the existing windows with new?")) {
+                                this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, true);
                             }
-                        }).catch(error => {
-                            console.log(error);
-                        });
-                    } else {
-                        this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
-                    }
+                        } else {
+                            this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault);
+                        }
+                    }).catch(error => {
+                        console.log(error);
+                    });
                 }
             },
 
-            async getEventsForSelectedNurse(nurseId, workDate) {
+            getConflicts(events, date) {
+                return events.filter(event => event.data.date === date);
+            },
+
+            async getExistingEventsForSelectedNurse(nurseId, workDate) {
                 let res = await axios.post('nurses/nurse-calendar-data', {
-                    nurseInfoId:nurseId,
-                    startDate:workDate
+                    nurseInfoId: nurseId,
+                    startDate: workDate
                 });
                 return res.data.eventsForSelectedNurse;
 
