@@ -16,6 +16,7 @@ use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\MessageBag;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
@@ -244,26 +245,47 @@ class CarePlanProviderApprovalTest extends TestCase
             ],
         ]);
 
+        //Patient has both types of diabetes and DRAFT careplan. Test validation fails
         $this->assertFalse($this->carePlan->validator()->passes());
+        //Test validation passes if approver confirms both types of diabetes are correct
+        $this->assertTrue($this->carePlan->validator(true)->passes());
 
-        //create care center
+        //create care center that can QA approve careplans
         $careCenter = $this->createUser($this->practice->id, 'care-center');
         auth()->login($careCenter);
+        $carePlan = $this->patient->carePlan;
+        $this->assertEquals($carePlan->status, CarePlan::DRAFT);
 
-        $carePlan         = $this->patient->carePlan;
-        $carePlan->status = CarePlan::QA_APPROVED;
-        $carePlan->save();
-
-        $this->from(
-            route('patient.careplan.print', [
-                'patientId' => $this->patient->id,
-            ])
-        )
-            ->call('POST', route('patient.careplan.approve', ['patientId' => $this->patient->id]))
+        //set previous url to assert redirect, call route and assert session errors
+        session()->setPreviousUrl(route('patient.careplan.print', [
+            'patientId' => $this->patient->id,
+        ]));
+        $this->call('POST', route('patient.careplan.approve', ['patientId' => $this->patient->id]))
+            ->assertStatus(302)
             ->assertRedirect(route('patient.careplan.print', [
-                'patientId'    => $this->patient->id,
-                'clearSession' => 0,
+                'patientId' => $this->patient->id,
+            ]))
+            ->assertSessionHas('errors', new MessageBag([
+                'conditions' => [
+                    (new DoesNotHaveBothTypesOfDiabetes())->message(),
+                ],
             ]));
+
+        //assert careplan has not been approved
+        $this->assertEquals($carePlan->fresh()->status, CarePlan::DRAFT);
+
+        //call the same route with approver confirmation that patient has indeed both types of diabetes
+        session()->setPreviousUrl(route('patient.careplan.print', [
+            'patientId' => $this->patient->id,
+        ]));
+        $this->call('POST', route('patient.careplan.approve', [
+            'patientId' => $this->patient->id,
+        ]), [
+            'confirm_diabetes_conditions' => 1,
+        ])->assertSessionHasNoErrors();
+
+        //assert careplan has been QA approved
+        $this->assertEquals($carePlan->fresh()->status, CarePlan::QA_APPROVED);
     }
 
     public function test_r_n_can_approve()

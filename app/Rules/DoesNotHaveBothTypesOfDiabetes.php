@@ -27,7 +27,7 @@ class DoesNotHaveBothTypesOfDiabetes implements Rule
      */
     public function message()
     {
-        return 'The Care Plan has both Diabetes Type 1 and Diabetes Type 2. Please confirm that this is accurate at the "Approve" modal, or choose the correct type of Diabetes for the patient. ';
+        return 'The Care Plan has both Diabetes Type 1 and Diabetes Type 2. Please confirm that this is accurate by clicking "Approve" and confirm conditions in the modal, or choose the correct type of Diabetes for the patient. ';
     }
 
     /**
