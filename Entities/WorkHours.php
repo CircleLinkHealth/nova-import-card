@@ -56,6 +56,10 @@ class WorkHours extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use SoftDeletes;
 
+    protected $dates = [
+        'work_week_start',
+    ];
+
     protected $fillable = [
         'workhourable_type',
         'workhourable_id',
@@ -66,6 +70,7 @@ class WorkHours extends \CircleLinkHealth\Core\Entities\BaseModel
         'friday',
         'saturday',
         'sunday',
+        'work_week_start',
     ];
 
     /**
