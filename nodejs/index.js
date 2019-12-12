@@ -34,23 +34,25 @@ function processAndStoreInDb(ccdaId, filePath) {
         return db_1.updateDb(fileId, "in_progress");
     })
         .then(() => {
+        console.log('Ready to parse');
         const result = parser_1.parse(dataStr);
-        return db_1.updateDb(fileId, 'completed', result.data, result.error.stack);
+        return db_1.updateDb(fileId, 'completed', result.data ? JSON.stringify(result.data) : undefined, result.error ? result.error.stack : undefined);
     })
         .then(() => Promise.resolve());
 }
 function processAndStoreOnDisk(ccdaId, filePath, targetFilePath) {
     return disk_1.readFromFile(filePath)
         .then(data => {
+        console.log('Ready to parse');
         const result = parser_1.parse(data);
-        return disk_1.storeToFile(targetFilePath, result);
+        return disk_1.storeToFile(targetFilePath, result.data ? JSON.stringify(result.data) : undefined);
     });
 }
 if (config.storeResultsInDb) {
-    db_1.init();
-    db_1.getFromDb(fileId)
+    db_1.init()
+        .then(() => db_1.getFromDb(fileId, ['id', 'result']))
         .then(res => {
-        if (res) {
+        if (res && res.result) {
             console.log("Record already exists in db with same ccda id. Exiting.");
             return Promise.resolve();
         }

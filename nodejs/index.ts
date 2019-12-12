@@ -1,7 +1,7 @@
 import Configuration from "./lib/config";
 import {fileExists, readFromFile, storeToFile} from "./lib/disk";
 import {parse} from "./lib/parser";
-import {init as initDb, getFromDb, updateDb} from "./lib/db";
+import {getFromDb, init as initDb, updateDb} from "./lib/db";
 
 const config = Configuration.get();
 
@@ -38,8 +38,9 @@ function processAndStoreInDb(ccdaId: string, filePath: string): Promise<void> {
             return updateDb(fileId, "in_progress");
         })
         .then(() => {
+            console.log('Ready to parse');
             const result = parse(dataStr);
-            return updateDb(fileId, 'completed', result.data, result.error.stack);
+            return updateDb(fileId, 'completed', result.data ? JSON.stringify(result.data) : undefined, result.error ? result.error.stack : undefined);
         })
         .then(() => Promise.resolve());
 }
@@ -47,16 +48,17 @@ function processAndStoreInDb(ccdaId: string, filePath: string): Promise<void> {
 function processAndStoreOnDisk(ccdaId: string, filePath: string, targetFilePath: string) {
     return readFromFile(filePath)
         .then(data => {
+            console.log('Ready to parse');
             const result = parse(data);
-            return storeToFile(targetFilePath, result);
+            return storeToFile(targetFilePath, result.data ? JSON.stringify(result.data) : undefined);
         });
 }
 
 if (config.storeResultsInDb) {
-    initDb();
-    getFromDb(fileId)
+    initDb()
+        .then(() => getFromDb(fileId, ['id', 'result']))
         .then(res => {
-            if (res) {
+            if (res && res.result) {
                 console.log("Record already exists in db with same ccda id. Exiting.")
                 return Promise.resolve();
             }
