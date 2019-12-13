@@ -73,7 +73,7 @@ class StoreTimeTracking implements ShouldQueue
             if ($this->isBillableActivity($pageTimer, $provider)) {
                 $newActivity = $this->createActivity($pageTimer, $isBehavioral);
                 ProcessMonthltyPatientTime::dispatchNow($this->params->get('patientId'));
-                ProcessNurseMonthlyLogs::dispatch($newActivity);
+                ProcessNurseMonthlyLogs::dispatchNow($newActivity);
             }
         }
     }
