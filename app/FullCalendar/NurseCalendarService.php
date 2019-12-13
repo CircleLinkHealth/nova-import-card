@@ -322,6 +322,11 @@ class NurseCalendarService
                 $holidayDate = Carbon::parse($holiday->date)->toDateString();
                 $holidayDateInDayOfWeek = Carbon::parse($holidayDate)->dayOfWeek;
                 $holidayInHumanLang = clhDayOfWeekToDayName($holidayDateInDayOfWeek);
+                $eventType = 'holiday';
+//                If it does not have an id, it is a company holiday
+                if ( ! $holiday->id) {
+                    $eventType = 'companyHoliday';
+                }
 
                 return collect(
                     [
@@ -335,7 +340,7 @@ class NurseCalendarService
                             'name'      => $nurse->display_name,
                             'date'      => $holidayDate,
                             'day'       => $holidayInHumanLang,
-                            'eventType' => 'holiday',
+                            'eventType' => $eventType,
                         ],
                     ]
                 );

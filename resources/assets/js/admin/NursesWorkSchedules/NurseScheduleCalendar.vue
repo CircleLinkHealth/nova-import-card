@@ -371,9 +371,9 @@
                 return this.$refs.calendar.$emit('refetch-events');
             },
 
-            rerenderEvents() {
-                return this.$refs.calendar.$emit('rerender-events');
-            },
+            // rerenderEvents() {
+            //     return this.$refs.calendar.$emit('rerender-events');
+            // },
 
             openMainEventModal() {
                 this.addNewEventMainClicked = true;
@@ -387,8 +387,10 @@
             deleteEvent(shouldDeleteAll) {
                 const event = this.eventToViewData[0];
                 const eventType = event.eventType;
-
-
+                // This should never happen
+                if (eventType === 'companyHoliday') {
+                    alert('You cant delete company holiday');
+                }
                 if (eventType !== holidayEventType) {
                     this.deleteWorkDay(event, shouldDeleteAll);
                 } else {
@@ -401,14 +403,8 @@
                 const holidayId = event.holidayId;
                 axios.get(`/care-center/work-schedule/holidays/destroy/${holidayId}`).then((response => {
                     this.toggleModal();
-                    console.log(response);
-
-                    //Delete event from dom
-                    // const index = this.holidays.findIndex(x => x.data.holidayId === holidayId);
-                    // this.holidays.splice(index, 1);
-
+                    this.refetchEvents();
                     this.loader = false;
-                    //Show notification
                     this.addNotification({
                         title: "Success!",
                         text: response.data.message,
@@ -441,13 +437,7 @@
                 ).then((response => {
                     this.loader = false;
                     this.toggleModal();
-                    //Delete event from events() - dom
-                    //
-                    // const index = this.workHours.findIndex(x => x.data.windowId === windowId);
-                    // this.workHours.splice(index, 1);
-
-
-                    //Show notification
+                    this.refetchEvents();
                     this.addNotification({
                         title: "Success!",
                         text: response.data.message,
@@ -631,8 +621,8 @@
                         }
 
                         if (eventsToConfirmTemporary.length !== 0) {
-                            if (eventsToConfirmTemporary.filter(event => event.data.eventType === 'holiday').length !== 0) {
-                                if (confirm("There are windows overlapping some of your days-off. We will not replace your days-off.")){
+                            if (eventsToConfirmTemporary.filter(event => event.data.eventType === 'holiday' || event.data.eventType === 'companyHoliday').length !== 0) {
+                                if (confirm("There are windows overlapping some of your days-off. We will not replace your days-off.")) {
                                     this.updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, true);
                                 }
                             } else if (confirm("There are overlapping windows. Do you want to replace the existing windows with new?")) {
@@ -747,6 +737,10 @@
 
             handleEventCLick(arg) {
                 const today = Date.parse(this.today);
+                if (arg.data.eventType === 'companyHoliday') {
+                    alert('This is a Company Holiday, you cannot edit or delete this window');
+                    return;
+                }
                 const clickedDate = Date.parse(arg.data.date);
                 // Dont allow delete of a past event
                 if (clickedDate <= today) {
@@ -757,7 +751,6 @@
                 this.eventToViewData.push(arg.data);
                 this.workEventDate = '';
                 this.workEventDate = this.eventToViewData[0].date;
-
 
                 if (arg.data.eventType !== 'holiday' && arg.repeat_frequency !== 'does_not_repeat') {
                     this.isRecurringEvent = true;
@@ -788,7 +781,6 @@
             },
 
             dataForSearchFilter() {
-                // With Current way of rendedring events this array has only nurses from time range in display
                 const workEvents = this.workHours;
                 const workEventsWithHolidays = workEvents.concat(this.holidays);
 

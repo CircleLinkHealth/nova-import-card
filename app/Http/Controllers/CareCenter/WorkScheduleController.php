@@ -71,7 +71,8 @@ class WorkScheduleController extends Controller
         } elseif ($auth->isCareCoach()) {
             $windowData   = $this->calendarWorkEventsForAuthNurse($startDate, $endDate, $auth);
             $holidaysData = $auth->nurseInfo->nurseHolidaysWithCompanyHolidays($startDate, $endDate);
-//           "Resetting" array keys using array_values(). Otherwise sometimes (when holidays are spreading into the beginning of next month) it becomes not iterable.
+            //"Resetting" array keys using array_values().
+            // Otherwise sometimes (when holidays are spreading into the beginning of next month) it becomes not iterable.
             $holidays        = array_values($this->fullCalendarService->prepareHolidaysData($holidaysData, $auth, $startDate, $endDate)->toArray());
             $dataForDropdown = '';
         }
@@ -395,19 +396,19 @@ class WorkScheduleController extends Controller
             ->get()
             ->sum(function ($window) {
                 return Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_end
-                )->diffInHours(Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_start
-                ));
+                        'H:i:s',
+                        $window->window_time_end
+                    )->diffInHours(Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_start
+                    ));
             }) + Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_end']
-            )->diffInHours(Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_start']
-            ));
+                    'H:i',
+                    $workScheduleData['window_time_end']
+                )->diffInHours(Carbon::createFromFormat(
+                    'H:i',
+                    $workScheduleData['window_time_start']
+                ));
 
         $invalidWorkHoursNumber = false;
 
