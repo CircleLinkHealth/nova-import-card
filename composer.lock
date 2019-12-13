@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7582a492a10d06b02c48faaaa0c8d3ea",
+    "content-hash": "68bae25a63d0d4797f3eccf12583b2e8",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -13217,7 +13217,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.2.0",
+        "php": "~7.2.11",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",
@@ -13226,5 +13226,7 @@
         "ext-pdo": "*",
         "ext-redis": "*"
     },
-    "platform-dev": []
+    "platform-dev": {
+        "ext-xdebug": "*"
+    }
 }
