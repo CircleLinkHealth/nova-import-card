@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * CircleLinkHealth\Customer\Entities\Nurse.
@@ -239,7 +241,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     /**
      * Days the Nurse is taking off.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function holidays()
     {
@@ -247,7 +249,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function invoices()
     {
@@ -271,6 +273,22 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         }
 
         return $companyHolidays->where('holiday_date', '=', $date->toDateString())->count() > 0;
+    }
+
+    /**
+     * @param $startDate
+     * @param $endDate
+     * @return Collection|\Illuminate\Database\Eloquent\Collection
+     */
+    public function nurseHolidaysWithCompanyHolidays($startDate, $endDate)
+    {
+        $startCarbon     = Carbon::parse($startDate);
+        $endCarbon       = Carbon::parse($endDate);
+        $companyHolidays = $this->companyHolidaysFrom($startCarbon);
+        $nurseHolidays   = $this->holidays->where('date', '>=', $startCarbon->copy()->startOfDay())
+            ->where('date', '<=', $endCarbon->copy()->endOfDay());
+
+        return $companyHolidays->merge($nurseHolidays)->unique();
     }
 
     public function states()
@@ -330,7 +348,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
      * Workhourables: monday: 2
      * This nurse has committed to working 2 hours within 09:00 - 19:00 on Monday.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function windows()
     {
@@ -354,7 +372,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     /**
      * Get company holidays from a date.
      *
-     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection
+     * @return Collection|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
     private function companyHolidaysFrom(Carbon $date = null)
     {
