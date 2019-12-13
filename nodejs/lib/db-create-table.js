@@ -1,12 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CREATE_TABLE_COMMAND = `
-CREATE TABLE IF NOT EXISTS \`ccdas_v2\` (
+function createTableCommand(tableName) {
+    return `
+CREATE TABLE IF NOT EXISTS \`${tableName}\` (
   \`id\` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   \`ccda_id\` int(11) NOT NULL,
   \`result\` json DEFAULT NULL,
   \`error\` varchar(255) DEFAULT NULL,
   \`status\` varchar(255) NOT NULL,
+  \`duration_seconds\` int(11) NOT NULL DEFAULT 0,
   \`created_at\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   \`updated_at\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (\`id\`),
@@ -14,4 +16,6 @@ CREATE TABLE IF NOT EXISTS \`ccdas_v2\` (
   UNIQUE KEY \`ccda_id_index\` (\`ccda_id\`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 `;
+}
+exports.createTableCommand = createTableCommand;
 //# sourceMappingURL=db-create-table.js.map

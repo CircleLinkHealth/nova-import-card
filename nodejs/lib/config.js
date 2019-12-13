@@ -1,18 +1,37 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const minimist = require('minimist');
 class Configuration {
-    constructor() {
-        this.storeResultsInDb = Configuration.parseBool(process.env.CCDA_PARSER_STORE_RESULTS_IN_DB, false);
-        this.dbUri = process.env.CCDA_PARSER_DB_URI;
-        this.dbHost = process.env.CCDA_PARSER_DB_HOST || "127.0.0.1";
-        this.dbPort = Configuration.parseNumber(process.env.CCDA_PARSER_DB_PORT, 3306);
-        this.dbName = process.env.CCDA_PARSER_DB_DATABASE;
-        this.dbUsername = process.env.CCDA_PARSER_DB_USERNAME;
-        this.dbPassword = process.env.CCDA_PARSER_DB_PASSWORD;
+    constructor(args) {
+        const processed = minimist(args, {
+            boolean: ['store-results-in-db', 'force'],
+            default: {
+                'store-results-in-db': true,
+                'db-host': '127.0.0.1',
+                'db-port': 3306,
+                'db-name': 'cpm_local',
+                'db-username': 'root',
+                'db-password': '',
+                'db-json-table': 'ccdas-json',
+                'force': false
+            }
+        });
+        this.storeResultsInDb = processed['store-results-in-db'];
+        this.dbUri = processed['db-uri'];
+        this.dbHost = processed['db-host'];
+        this.dbPort = +processed['db-port'];
+        this.dbName = processed['db-name'];
+        this.dbUsername = processed['db-username'];
+        this.dbPassword = processed['db-password'];
+        this.dbJsonTable = processed['db-json-table'];
+        this.force = processed['force'];
+        this.ccdaId = processed['ccda-id'];
+        this.ccdaXmlPath = processed['ccda-xml-path'];
+        this.ccdaJsonTargetPath = processed['ccda-json-target-path'];
     }
     static get() {
         if (!Configuration._singleton) {
-            Configuration._singleton = new Configuration();
+            Configuration._singleton = new Configuration(process.argv.slice(2));
         }
         return Configuration._singleton;
     }
@@ -38,4 +57,6 @@ class Configuration {
     }
 }
 exports.default = Configuration;
+//this triggers initialization. should be called at the very beginning of the process
+Configuration.get();
 //# sourceMappingURL=config.js.map

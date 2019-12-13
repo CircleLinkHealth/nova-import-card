@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mysql_1 = require("mysql");
 const config_1 = require("./config");
 const db_create_table_1 = require("./db-create-table");
-let dbTable = 'ccdas_v2';
 let connection;
 function init() {
     return new Promise((resolve, reject) => {
@@ -25,7 +24,7 @@ function init() {
                 });
             }
             //now make sure that table exists
-            connection.query(db_create_table_1.CREATE_TABLE_COMMAND, function (err, result) {
+            connection.query(db_create_table_1.createTableCommand(config.dbJsonTable), function (err, result) {
                 if (err) {
                     return reject(err);
                 }
@@ -38,13 +37,13 @@ function init() {
     });
 }
 exports.init = init;
-function getFromDb(ccdaId, fields) {
+function getJsonFromDb(ccdaId, fields) {
     const config = config_1.default.get();
     if (!config.storeResultsInDb) {
         return Promise.reject(new Error("should not be called. not storing results in db."));
     }
     return new Promise((resolve, reject) => {
-        connection.query(`SELECT ${fields.join(',')} FROM ${dbTable} WHERE ccda_id = ?`, [ccdaId], (error, results, fields) => {
+        connection.query(`SELECT ${fields.join(',')} FROM \`${config.dbJsonTable}\` WHERE ccda_id = ?`, [ccdaId], (error, results, fields) => {
             if (error) {
                 reject(error);
             }
@@ -54,14 +53,14 @@ function getFromDb(ccdaId, fields) {
         });
     });
 }
-exports.getFromDb = getFromDb;
-function updateDb(ccdaId, status, result, error) {
+exports.getJsonFromDb = getJsonFromDb;
+function updateDb(ccdaId, status, result, error, duration) {
     const config = config_1.default.get();
     if (!config.storeResultsInDb) {
         return Promise.reject(new Error("should not be called. not storing results in db."));
     }
     return new Promise((resolve, reject) => {
-        getFromDb(ccdaId, ['id'])
+        getJsonFromDb(ccdaId, ['id'])
             .then(res => {
             if (res) {
                 return performUpdate(ccdaId, status, result, error);
@@ -75,7 +74,11 @@ function updateDb(ccdaId, status, result, error) {
     });
 }
 exports.updateDb = updateDb;
-function performInsert(ccdaId, status, result, error) {
+function performInsert(ccdaId, status, result, error, durationSeconds) {
+    const config = config_1.default.get();
+    if (!config.storeResultsInDb) {
+        return Promise.reject(new Error("should not be called. not storing results in db."));
+    }
     return new Promise((resolve, reject) => {
         const fields = ['ccda_id', 'status'];
         const values = [ccdaId, status];
@@ -87,9 +90,13 @@ function performInsert(ccdaId, status, result, error) {
             fields.push('error');
             values.push(error);
         }
+        if (durationSeconds) {
+            fields.push('duration_seconds');
+            values.push(durationSeconds);
+        }
         fields.push('created_at', 'updated_at');
         values.push(new Date(), new Date());
-        const cmd = `INSERT INTO ${dbTable} (${fields.join(',')}) VALUES (${fields.map(f => '?').join(',')})`;
+        const cmd = `INSERT INTO \`${config.dbJsonTable}\` (${fields.join(',')}) VALUES (${fields.map(f => '?').join(',')})`;
         connection.query(cmd, values, (error, results) => {
             if (error) {
                 reject(error);
@@ -100,7 +107,11 @@ function performInsert(ccdaId, status, result, error) {
         });
     });
 }
-function performUpdate(ccdaId, status, result, error) {
+function performUpdate(ccdaId, status, result, error, durationSeconds) {
+    const config = config_1.default.get();
+    if (!config.storeResultsInDb) {
+        return Promise.reject(new Error("should not be called. not storing results in db."));
+    }
     return new Promise((resolve, reject) => {
         const fields = ['ccda_id=?', 'status=?'];
         const values = [ccdaId, status];
@@ -112,10 +123,14 @@ function performUpdate(ccdaId, status, result, error) {
             fields.push('error=?');
             values.push(error);
         }
+        if (durationSeconds) {
+            fields.push('duration_seconds=?');
+            values.push(durationSeconds);
+        }
         fields.push('updated_at=?');
         values.push(new Date());
         values.push(ccdaId);
-        const cmd = `UPDATE ${dbTable} SET ${fields.join(',')} WHERE ccda_id = ?`;
+        const cmd = `UPDATE \`${config.dbJsonTable}\` SET ${fields.join(',')} WHERE ccda_id = ?`;
         connection.query(cmd, values, (error, results) => {
             if (error) {
                 reject(error);

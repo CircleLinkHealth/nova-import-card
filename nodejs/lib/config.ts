@@ -1,17 +1,53 @@
+const minimist = require('minimist');
 export default class Configuration {
 
-    public readonly storeResultsInDb: boolean = Configuration.parseBool(process.env.CCDA_PARSER_STORE_RESULTS_IN_DB, false);
-    public readonly dbUri: string = process.env.CCDA_PARSER_DB_URI;
-    public readonly dbHost: string = process.env.CCDA_PARSER_DB_HOST || "127.0.0.1";
-    public readonly dbPort: number = Configuration.parseNumber(process.env.CCDA_PARSER_DB_PORT, 3306);
-    public readonly dbName: string = process.env.CCDA_PARSER_DB_DATABASE;
-    public readonly dbUsername: string = process.env.CCDA_PARSER_DB_USERNAME;
-    public readonly dbPassword: string = process.env.CCDA_PARSER_DB_PASSWORD;
-
     private static _singleton: Configuration;
+    public readonly storeResultsInDb: boolean;
+    public readonly dbUri: string;
+    public readonly dbHost: string;
+    public readonly dbPort: number;
+    public readonly dbName: string;
+    public readonly dbUsername: string;
+    public readonly dbPassword: string;
+    public readonly dbJsonTable: string;
+    public readonly force: boolean;
+    public readonly ccdaId: string;
+    public readonly ccdaXmlPath: string;
+    public readonly ccdaJsonTargetPath: string;
+
+    constructor(args: any) {
+        const processed: { [key: string]: string | boolean } = minimist(args, {
+            boolean: ['store-results-in-db', 'force'],
+            default: {
+                'store-results-in-db': true,
+                'db-host': '127.0.0.1',
+                'db-port': 3306,
+                'db-name': 'cpm_local',
+                'db-username': 'root',
+                'db-password': '',
+                'db-json-table': 'ccdas-json',
+                'force': false
+            }
+        });
+
+        this.storeResultsInDb = processed['store-results-in-db'] as boolean;
+        this.dbUri = processed['db-uri'] as string;
+        this.dbHost = processed['db-host'] as string;
+        this.dbPort = +(processed['db-port'] as string);
+        this.dbName = processed['db-name'] as string;
+        this.dbUsername = processed['db-username'] as string;
+        this.dbPassword = processed['db-password'] as string;
+        this.dbJsonTable = processed['db-json-table'] as string;
+
+        this.force = processed['force'] as boolean;
+        this.ccdaId = processed['ccda-id'] as string;
+        this.ccdaXmlPath = processed['ccda-xml-path'] as string;
+        this.ccdaJsonTargetPath = processed['ccda-json-target-path'] as string;
+    }
+
     public static get() {
         if (!Configuration._singleton) {
-            Configuration._singleton = new Configuration();
+            Configuration._singleton = new Configuration(process.argv.slice(2));
         }
         return Configuration._singleton;
     }
@@ -38,3 +74,6 @@ export default class Configuration {
     }
 
 }
+
+//this triggers initialization. should be called at the very beginning of the process
+Configuration.get();

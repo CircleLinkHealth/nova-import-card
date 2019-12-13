@@ -1,8 +1,7 @@
 import {Connection, createConnection, FieldInfo, MysqlError} from "mysql";
 import Configuration from "./config";
-import {CREATE_TABLE_COMMAND} from "./db-create-table";
+import {createTableCommand} from "./db-create-table";
 
-let dbTable = 'ccdas_v2';
 let connection: Connection;
 
 export function init(): Promise<void> {
@@ -26,7 +25,7 @@ export function init(): Promise<void> {
             }
 
             //now make sure that table exists
-            connection.query(CREATE_TABLE_COMMAND, function (err, result) {
+            connection.query(createTableCommand(config.dbJsonTable), function (err, result) {
                 if (err) {
                     return reject(err);
                 }
@@ -39,14 +38,14 @@ export function init(): Promise<void> {
     });
 }
 
-export function getFromDb(ccdaId: string, fields: string[]): Promise<any> {
+export function getJsonFromDb(ccdaId: string, fields: string[]): Promise<any> {
     const config = Configuration.get();
     if (!config.storeResultsInDb) {
         return Promise.reject(new Error("should not be called. not storing results in db."));
     }
 
     return new Promise<any>((resolve, reject) => {
-        connection.query(`SELECT ${fields.join(',')} FROM ${dbTable} WHERE ccda_id = ?`,
+        connection.query(`SELECT ${fields.join(',')} FROM \`${config.dbJsonTable}\` WHERE ccda_id = ?`,
             [ccdaId],
             (error: MysqlError | null, results: any[], fields: FieldInfo[] | undefined) => {
                 if (error) {
@@ -58,7 +57,7 @@ export function getFromDb(ccdaId: string, fields: string[]): Promise<any> {
     });
 }
 
-export function updateDb(ccdaId: string, status: string, result?: string, error?: string): Promise<void> {
+export function updateDb(ccdaId: string, status: string, result?: string, error?: string, duration?: number): Promise<void> {
 
     const config = Configuration.get();
     if (!config.storeResultsInDb) {
@@ -66,7 +65,7 @@ export function updateDb(ccdaId: string, status: string, result?: string, error?
     }
 
     return new Promise<void>((resolve, reject) => {
-        getFromDb(ccdaId, ['id'])
+        getJsonFromDb(ccdaId, ['id'])
             .then(res => {
 
                 if (res) {
@@ -81,7 +80,13 @@ export function updateDb(ccdaId: string, status: string, result?: string, error?
     });
 }
 
-function performInsert(ccdaId: string, status: string, result?: string, error?: string): Promise<void> {
+function performInsert(ccdaId: string, status: string, result?: string, error?: string, durationSeconds?: number): Promise<void> {
+
+    const config = Configuration.get();
+    if (!config.storeResultsInDb) {
+        return Promise.reject(new Error("should not be called. not storing results in db."));
+    }
+
     return new Promise<void>((resolve, reject) => {
         const fields = ['ccda_id', 'status'];
         const values: any[] = [ccdaId, status];
@@ -94,10 +99,15 @@ function performInsert(ccdaId: string, status: string, result?: string, error?: 
             values.push(error);
         }
 
+        if (durationSeconds) {
+            fields.push('duration_seconds');
+            values.push(durationSeconds);
+        }
+
         fields.push('created_at', 'updated_at');
         values.push(new Date(), new Date());
 
-        const cmd = `INSERT INTO ${dbTable} (${fields.join(',')}) VALUES (${fields.map(f => '?').join(',')})`;
+        const cmd = `INSERT INTO \`${config.dbJsonTable}\` (${fields.join(',')}) VALUES (${fields.map(f => '?').join(',')})`;
         connection.query(cmd,
             values,
             (error: MysqlError | null, results: any[]) => {
@@ -110,7 +120,13 @@ function performInsert(ccdaId: string, status: string, result?: string, error?: 
     });
 }
 
-function performUpdate(ccdaId: string, status: string, result?: string, error?: string): Promise<void> {
+function performUpdate(ccdaId: string, status: string, result?: string, error?: string, durationSeconds?: number): Promise<void> {
+
+    const config = Configuration.get();
+    if (!config.storeResultsInDb) {
+        return Promise.reject(new Error("should not be called. not storing results in db."));
+    }
+
     return new Promise<void>((resolve, reject) => {
         const fields = ['ccda_id=?', 'status=?'];
         const values: any[] = [ccdaId, status];
@@ -123,11 +139,16 @@ function performUpdate(ccdaId: string, status: string, result?: string, error?: 
             values.push(error);
         }
 
+        if (durationSeconds) {
+            fields.push('duration_seconds=?');
+            values.push(durationSeconds);
+        }
+
         fields.push('updated_at=?');
         values.push(new Date());
         values.push(ccdaId);
 
-        const cmd = `UPDATE ${dbTable} SET ${fields.join(',')} WHERE ccda_id = ?`;
+        const cmd = `UPDATE \`${config.dbJsonTable}\` SET ${fields.join(',')} WHERE ccda_id = ?`;
         connection.query(cmd,
             values,
             (error: MysqlError | null, results: any[]) => {
