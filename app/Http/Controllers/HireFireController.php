@@ -30,7 +30,11 @@ class HireFireController extends Controller
             abort(403);
         }
 
-        return response()->json(['name' => 'worker', 'quantity' => $this->countPendingJobs($request)]);
+        return response()->json(
+            [
+                ['name' => 'worker', 'quantity' => $this->countPendingJobs($request)],
+            ]
+        );
     }
 
     private function countPendingJobs(Request $request)
