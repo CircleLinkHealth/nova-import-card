@@ -1,5 +1,6 @@
 const colors = require('../logger/colors')
 const {setResultsCallback, syncPatientTimeWithCPM, ignorePatientTimeSync} = require('./sync.with.cpm');
+const storeTime = require("../cache/user-time").storeTime;
 
 module.exports = app => {
     require('express-ws')(app);
@@ -60,22 +61,30 @@ module.exports = app => {
                     continue;
                 }
 
-                const originalTime = user.totalTime;
+                let shouldSync = false;
 
+                //set values from cpm
                 if (user.totalCCMTime < timeOnCpm.ccm_time) {
+                    shouldSync = true;
                     user.totalCCMTime = timeOnCpm.ccm_time;
                 }
 
                 if (user.totalBHITime < timeOnCpm.bhi_time) {
+                    shouldSync = true;
                     user.totalBHITime = timeOnCpm.bhi_time;
                 }
 
-                user.totalTime = user.totalCCMTime + user.totalBHITime;
-
-                if (originalTime !== user.totalTime) {
-                    user.sync();
+                const syncTime = timeOnCpm.ccm_time + timeOnCpm.bhi_time;
+                if (!shouldSync) {
+                    console.log(`sync time [${syncTime}] is equal or less to current time [${user.totalTime}]. ignoring`);
+                    continue;
                 }
 
+                user.totalTime = user.totalCCMTime + user.totalBHITime;
+                const cachedTime = user.totalCcmTimeFromCache + user.totalBhiTimeFromCache;
+
+                console.log('sync time[', syncTime, '] cachedTime[', cachedTime, ']', 'now[', user.totalTime, ']');
+                user.sync();
             }
         }
 
@@ -90,8 +99,7 @@ module.exports = app => {
             ws.on('close', () => {
                 $emitter.emit('socket:remove', ws)
             })
-        }
-        catch (ex) {
+        } catch (ex) {
             errorThrow(ex, ws);
         }
     })
@@ -120,24 +128,20 @@ module.exports = app => {
                                 if (user.allSockets.length === 1 && !info['noLiveCount'] && info['timeSyncUrl'] && +info['patientId'] > 0) {
                                     syncPatientTimeWithCPM(info['timeSyncUrl'], info['patientId'])
                                 }
-                            }
-                            catch (ex) {
+                            } catch (ex) {
                                 errorThrow(ex, ws)
                                 return;
                             }
-                        }
-                        else if (data.message === 'client:leave') {
+                        } else if (data.message === 'client:leave') {
                             try {
                                 const info = data.info
                                 const user = app.getTimeTracker(info).get(info)
                                 user.leave(ws)
-                            }
-                            catch (ex) {
+                            } catch (ex) {
                                 errorThrow(ex, ws)
                                 return;
                             }
-                        }
-                        else if (['client:enter', 'client:bhi'].includes(data.message)) {
+                        } else if (['client:enter', 'client:bhi'].includes(data.message)) {
                             try {
                                 const info = data.info
                                 const user = app.getTimeTracker(info).get(info)
@@ -147,104 +151,85 @@ module.exports = app => {
                                 if (data.message === 'client:bhi') {
                                     user.switchBhi(info)
                                 }
-                            }
-                            catch (ex) {
+                            } catch (ex) {
                                 errorThrow(ex, ws)
                                 return;
                             }
-                        }
-                        else if (data.message === 'client:modal') {
+                        } else if (data.message === 'client:modal') {
                             try {
                                 const info = data.info
                                 const user = app.getTimeTracker(info).get(info)
                                 user.respondToModal(!!data.response, info)
 
-                            }
-                            catch (ex) {
+                            } catch (ex) {
                                 errorThrow(ex, ws)
                                 return;
                             }
-                        }
-                        else if (data.message === 'client:inactive-modal:show') {
+                        } else if (data.message === 'client:inactive-modal:show') {
                             try {
                                 const info = data.info
                                 const user = app.getTimeTracker(info).get(info)
                                 user.showInactiveModal(info)
-                            }
-                            catch (ex) {
+                            } catch (ex) {
                                 errorThrow(ex, ws)
                                 return;
                             }
-                        }
-                        else if (data.message === 'client:inactive-modal:close') {
+                        } else if (data.message === 'client:inactive-modal:close') {
                             try {
                                 const info = data.info
                                 const user = app.getTimeTracker(info).get(info)
                                 user.closeInactiveModal(info, !!data.response)
                                 user.sync()
-                            }
-                            catch (ex) {
+                            } catch (ex) {
                                 errorThrow(ex, ws)
                                 return;
                             }
-                        }
-                        else if (data.message === 'client:call-mode:enter') {
+                        } else if (data.message === 'client:call-mode:enter') {
                             try {
                                 const info = data.info
                                 const user = app.getTimeTracker(info).get(info)
                                 user.enterCallMode(info)
-                            }
-                            catch (ex) {
+                            } catch (ex) {
                                 errorThrow(ex, ws)
                                 return;
                             }
-                        }
-                        else if (data.message === 'client:call-mode:exit') {
+                        } else if (data.message === 'client:call-mode:exit') {
                             try {
                                 const info = data.info
                                 const user = app.getTimeTracker(info).get(info)
                                 user.exitCallMode(info)
-                            }
-                            catch (ex) {
+                            } catch (ex) {
                                 errorThrow(ex, ws)
                                 return;
                             }
-                        }
-                        else if (data.message === 'client:timeouts:override') {
+                        } else if (data.message === 'client:timeouts:override') {
                             try {
                                 const info = data.info
                                 const timeouts = data.timeouts || {}
                                 const user = app.getTimeTracker(info).get(info)
                                 user.overrideTimeouts(timeouts)
-                            }
-                            catch (ex) {
+                            } catch (ex) {
                                 errorThrow(ex, ws)
                                 return;
                             }
-                        }
-                        else if (data.message === 'client:logout') {
+                        } else if (data.message === 'client:logout') {
                             try {
                                 const info = data.info
                                 const user = app.getTimeTracker(info).get(info)
                                 user.clientInactivityLogout(info)
-                            }
-                            catch (ex) {
+                            } catch (ex) {
                                 errorThrow(ex, ws)
                                 return;
                             }
-                        }
-                        else if (data.message === 'PING') {
+                        } else if (data.message === 'PING') {
 
-                        }
-                        else {
+                        } else {
                             errorThrow(new Error('invalid message'), ws)
                         }
-                    }
-                    else {
+                    } else {
                         errorThrow('[data.info] must be a valid Object', ws);
                     }
-                }
-                else {
+                } else {
                     errorThrow('[data] must be a valid Object', ws);
                 }
             } catch (ex) {
@@ -296,6 +281,14 @@ module.exports = app => {
                     start_time: activity.start_time,
                     is_behavioral: activity.isBehavioral
                 }))
+            };
+
+            if (user.totalCcmSeconds === 0 && user.totalBhiSeconds === 0) {
+                console.log('will not cache ccc because time is 0');
+            }
+            else {
+                console.log('caching ccm', user.totalCcmSeconds);
+                storeTime(requestData.patientId, user.totalCcmSeconds, user.totalBhiSeconds, true);
             }
 
             axios.post(url, requestData).then((response) => {
