@@ -631,6 +631,18 @@
             let submitted = false;
             let form;
 
+
+            //Once nurse has attested call conditions add as form inputs and submit form
+            App.$on('call-conditions-attested', (attestedConditions) => {
+                let i = 0;
+                attestedConditions.map(function (condition) {
+                    $("<input>")
+                        .attr("type", "hidden")
+                        .attr("name", "attestedConditions["+i+"][condition_id]").val(condition).appendTo(form);
+                    i++;
+                });
+                form.submit();
+            });
             const waitForEl = function (selector, callback) {
                 if (!$(selector).length) {
                     setTimeout(function () {
@@ -899,11 +911,9 @@
                     }
 
                     if (callIsSuccess) {
-                        console.log('if is reached')
                         App.$emit('show-attest-call-conditions-modal');
                         return;
                     }
-                    return;
 
                     if (showModal) {
                         $('#confirm-note-create').modal('show');
