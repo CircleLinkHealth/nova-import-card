@@ -71,7 +71,7 @@ class WorkScheduleController extends Controller
         } elseif ($auth->isCareCoach()) {
             $windowData   = $this->calendarWorkEventsForAuthNurse($startDate, $endDate, $auth);
             $holidaysData = $auth->nurseInfo->nurseHolidaysWithCompanyHolidays($startDate, $endDate);
-//            array_values to reset array keys. otherwise sometimes (when holidays are spreading into the beggining of next month) is not iterable.
+//           "Resetting" array keys using array_values(). Otherwise sometimes (when holidays are spreading into the beginning of next month) it becomes not iterable.
             $holidays        = array_values($this->fullCalendarService->prepareHolidaysData($holidaysData, $auth, $startDate, $endDate)->toArray());
             $dataForDropdown = '';
         }
