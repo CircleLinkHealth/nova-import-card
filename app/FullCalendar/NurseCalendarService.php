@@ -114,7 +114,8 @@ class NurseCalendarService
         $validatedDefault  = 'not_checked';
         $nurse             = Nurse::findOrFail($nurseInfoId);
         $holidays          = $nurse->upcomingHolidaysFrom(Carbon::parse($workScheduleData['date']));
-        $holidayDates      = $holidays->map(function ($holiday) {
+//        Using $holidayDates to avoid creating work-windows on days-off
+        $holidayDates = $holidays->map(function ($holiday) {
             return Carbon::parse($holiday->date)->toDateString();
         })->toArray();
 
@@ -246,11 +247,11 @@ class NurseCalendarService
      * @return Collection|\Illuminate\Support\Collection
      */
     public function getHolidays(Collection $nurses, $startDate, $endDate)
-    { // @todo:include company holidays
+    {
         $limitDate = Carbon::parse(now())->startOfYear()->subMonth(2)->toDate();
 
         return $nurses->map(function ($nurse) use ($limitDate, $startDate, $endDate) {
-            $holidays = $nurse->nurseInfo->upcoming_holiday_dates;
+            $holidays = $nurse->nurseInfo->nurseHolidaysWithCompanyHolidays($startDate, $endDate);
 
             return $this->prepareHolidaysData($holidays, $nurse, $startDate, $endDate);
         })->flatten(1);
