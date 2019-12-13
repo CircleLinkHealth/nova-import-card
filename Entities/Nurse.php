@@ -12,7 +12,6 @@ use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * CircleLinkHealth\Customer\Entities\Nurse.
@@ -63,10 +62,12 @@ use Illuminate\Database\Eloquent\Collection;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse query()
- * @property int $is_demo
- * @property int $pay_interval
- * @property int $is_variable_rate
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice[] $invoices
+ *
+ * @property int                                                                                              $is_demo
+ * @property int                                                                                              $pay_interval
+ * @property int                                                                                              $is_variable_rate
+ * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoice[]|\Illuminate\Database\Eloquent\Collection $invoices
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsDemo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereIsVariableRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse wherePayInterval($value)
@@ -277,6 +278,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     /**
      * @param $startDate
      * @param $endDate
+     *
      * @return Collection|\Illuminate\Database\Eloquent\Collection
      */
     public function nurseHolidaysWithCompanyHolidays($startDate, $endDate)
