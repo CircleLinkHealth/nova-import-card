@@ -193,5 +193,7 @@ class Kernel extends ConsoleKernel
             return SendResolveInvoiceDisputeReminder::shouldSkip();
         })->onOneServer();
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30')->onOneServer();
+
+        $schedule->command(CreateCalendarRecurringEventsCommand::class)->dailyAt('00:10')->onOneServer();
     }
 }

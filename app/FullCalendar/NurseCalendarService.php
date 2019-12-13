@@ -368,7 +368,15 @@ class NurseCalendarService
                 $windowStartForView = Carbon::parse($window->window_time_start)->format('H:i');
                 $windowEndForView = Carbon::parse($window->window_time_end)->format('H:i');
                 $hoursAbrev = 'h';
-                $color = 'not_worked' === $window->validated ? '#ff5b4f' : '#5bc0ded6';
+                $color = '#5bc0ded6';
+
+                if ('not_worked' === $window->validated) {
+                    $color = '#FB627A';
+                }
+
+                if ('worked' === $window->validated) {
+                    $color = '#bcdfc1';
+                }
 
                 $title = auth()->user()->isAdmin() ?
                     "$nurse->display_name ({$workHoursForDay}$hoursAbrev)

@@ -84,7 +84,6 @@ class CreateCalendarRecurringEventsCommand extends Command
                     });
             });
 
-        return info('Success');
-        //@todo: Inform someone
+        return info('Success! "Calendar Recurring Events" have been created');
     }
 }
