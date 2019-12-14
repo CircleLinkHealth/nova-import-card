@@ -10,10 +10,9 @@
             /*}*/
         </style>
     @endpush
-    {{--    <div id="v-show-nurse-work-schedule" class="row-centered nurse-dashboard-schedule hidden-xs">--}}
+    <notifications class="text-left"></notifications>
     <div class="container-fluid"
          style="width: 90%; margin-left: 5%; margin-bottom: 5%">
-        <notifications class="text-left"></notifications>
         <div class="row">
             <div class="col-lg-12">
                 <nurse-schedule-calendar

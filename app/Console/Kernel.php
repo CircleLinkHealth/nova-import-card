@@ -194,6 +194,6 @@ class Kernel extends ConsoleKernel
         })->onOneServer();
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30')->onOneServer();
 
-        $schedule->command(CreateCalendarRecurringEventsCommand::class)->dailyAt('00:10')->onOneServer();
+        $schedule->command(CheckForYesterdaysActivitiesAndUpdateContactWindows::class)->dailyAt('00:10')->onOneServer();
     }
 }

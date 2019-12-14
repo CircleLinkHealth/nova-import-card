@@ -25,7 +25,7 @@
                             v-if="authIsAdmin"
                             multiple v-model="searchFilter"
                             @input="refetchEvents()"
-                            :options="dataForSearchFilter()"
+                            :options="nursesForSearchFilter()"
                             placeholder="Filter RN"
                             required>
                 </vue-select>
@@ -107,7 +107,7 @@
 
                             <div class="choose-event-date">
                                 <div v-if="addNewEventMainClicked">
-                                    <h5>Date:</h5>
+                                    <h5>Event Date:</h5>
                                     <input type="date"
                                            name="event_date"
                                            :min="calculateMinDate()"
@@ -286,14 +286,12 @@
                                     self.workHours = [];
                                     self.holidays = [];
                                     self.dataForDropdown = [];
-
                                     self.holidays.push(...calendarData.holidayEvents);
                                     self.workHours.push(...calendarData.workEvents);
                                     self.dataForDropdown.push(...calendarData.dataForDropdown);
                                     const eventsFiltered = self.eventsFiltered();
                                     self.loader = false;
                                     callback(eventsFiltered);
-
                                 })).catch((error) => {
                                 this.errors = error;
                                 console.log(this.errors);
@@ -371,10 +369,6 @@
                 return this.$refs.calendar.$emit('refetch-events');
             },
 
-            // rerenderEvents() {
-            //     return this.$refs.calendar.$emit('rerender-events');
-            // },
-
             openMainEventModal() {
                 this.addNewEventMainClicked = true;
                 this.toggleModal();
@@ -391,6 +385,10 @@
                 if (eventType === 'companyHoliday') {
                     alert('You cant delete company holiday');
                 }
+                if (!confirm('Are you sure you want to delete this window?')) {
+                    return;
+                }
+
                 if (eventType !== holidayEventType) {
                     this.deleteWorkDay(event, shouldDeleteAll);
                 } else {
@@ -402,26 +400,12 @@
                 this.loader = true;
                 const holidayId = event.holidayId;
                 axios.get(`/care-center/work-schedule/holidays/destroy/${holidayId}`).then((response => {
+                    this.loader = false;
                     this.toggleModal();
                     this.refetchEvents();
-                    this.loader = false;
-                    this.addNotification({
-                        title: "Success!",
-                        text: response.data.message,
-                        type: "success",
-                        timeout: true
-                    });
-
-                    alert(response.data.message);
-
+                    this.throwSuccessNotification(response.data.message);
                 })).catch((error) => {
                     this.errors = error;
-                    this.addNotification({
-                        title: "Warning!",
-                        text: this.errors.response.data.errors,
-                        type: "danger",
-                        timeout: true
-                    });
                     alert(this.errors.response.data.errors);
                 });
             },
@@ -438,26 +422,11 @@
                     this.loader = false;
                     this.toggleModal();
                     this.refetchEvents();
-                    this.addNotification({
-                        title: "Success!",
-                        text: response.data.message,
-                        type: "success",
-                        timeout: true
-                    });
-
-
-                    alert(response.data.message);
-
+                    this.throwSuccessNotification(response.data.message);
                 })).catch((error) => {
                     console.log(error);
                     if (error.response.status === 422) {
                         this.errors = error;
-                        this.addNotification({
-                            title: "Warning!",
-                            text: this.errors.response.data.errors,
-                            type: "danger",
-                            timeout: true
-                        });
                         alert(this.errors.response.data.errors);
                     }
 
@@ -488,6 +457,30 @@
                 }
             },
 
+            addHolidayEvents(workDate) {
+                axios.post('care-center/work-schedule/holidays', {
+                    holiday: workDate
+                }).then((response => {
+                        console.log(response);
+                        this.refetchEvents();
+                        this.loader = false;
+                        this.toggleModal();
+                        this.throwSuccessNotification("Holiday has been saved.");
+                    }
+                )).catch((error) => {
+                    console.log(error);
+                });
+            },
+
+            throwWarningNotification(text) {
+                this.addNotification({
+                    title: "Warning!",
+                    text: text,
+                    type: "danger",
+                    timeout: true
+                });
+            },
+
             addNewEvent() {
                 this.loader = true;
                 const nurseId = this.getNurseId();
@@ -500,75 +493,44 @@
                     : null;
 
                 if (this.addHolidays) {
-                    axios.post('care-center/work-schedule/holidays', {
-                        holiday: workDate
-                    }).then((response => {
-                            console.log(response);
-                            this.refetchEvents();
-                            this.loader = false;
-                            this.toggleModal();
-                            this.addNotification({
-                                title: "Success!",
-                                text: "Holiday has been saved.",
-                                type: "success",
-                                timeout: true
-                            });
-                        }
-                    )).catch((error) => {
-                        console.log(error);
-                    });
+                    this.addHolidayEvents(workDate);
                 } else {
                     if (this.authIsAdmin) {
                         if (nurseId === null
                             || nurseId === undefined) {
                             this.loader = false;
-                            this.addNotification({
-                                title: "Warning!",
-                                text: "Choose an RN field is required",
-                                type: "danger",
-                                timeout: true
-                            });
-
-                            alert("Choose an RN field is required");
+                            this.throwWarningNotification("Choose an RN field is required");
                             return;
-
                         }
+                    }
+
+                    if (this.addNewEventMainClicked) {
+                        if (this.selectedDate.length === 0) {
+                            this.loader = false;
+                            this.throwWarningNotification("Choose event date, is required");
+                            return;
+                        }
+                    }
+
+                    if (repeatFreq !== 'does_not_repeat' && repeatUntil === null) {
+                        this.loader = false;
+                        this.throwWarningNotification("Choose repeat until date, is required");
+                        return;
                     }
 
                     if (this.workRangeStarts === '') {
                         this.loader = false;
-                        this.addNotification({
-                            title: "Warning!",
-                            text: "Work start time is required",
-                            type: "danger",
-                            timeout: true
-                        });
-
-                        alert("Work start time is required");
+                        this.throwWarningNotification("Work start time is required");
                         return;
                     }
                     if (this.workRangeEnds === '') {
                         this.loader = false;
-                        this.addNotification({
-                            title: "Warning!",
-                            text: "Work end time is required",
-                            type: "danger",
-                            timeout: true
-                        });
-
-                        alert("Work end time is required");
+                        this.throwWarningNotification("Work end time is required");
                         return;
                     }
                     if (this.hoursToWork === '') {
                         this.loader = false;
-                        this.addNotification({
-                            title: "Warning!",
-                            text: "Hours to work for this day is required",
-                            type: "danger",
-                            timeout: true
-                        });
-
-                        alert("Hours to work for this day is required");
+                        this.throwWarningNotification("Hours to work for this day is required");
                         return;
                     }
 
@@ -578,14 +540,7 @@
                         const eventsToConfirmTemporary = [];
                         if (repeatFreq === 'does_not_repeat' && conflictExist) {
                             this.loader = false;
-                            this.addNotification({
-                                title: "Warning!",
-                                text: "This window is overlapping with an existing window",
-                                type: "danger",
-                                timeout: true
-                            });
-
-                            alert("This window is overlapping with an existing window");
+                            this.throwWarningNotification("This window is overlapping with an existing window");
                             return;
                         }
 
@@ -668,12 +623,7 @@
                         this.refetchEvents();
                         this.loader = false;
                         this.toggleModal();
-                        this.addNotification({
-                            title: "Success!",
-                            text: "Event has been created.",
-                            type: "success",
-                            timeout: true
-                        });
+                        this.throwSuccessNotification("Event has been created.");
                     }
                 ))
                     .catch((error) => {
@@ -684,27 +634,14 @@
                         }
                     });
             },
-            prepareLiveData(newEventData) {
-                // return {
-                //     allDay: true,
-                //     until: newEventData.scheduledData.until,
-                //
-                //     data: {
-                //         date: this.workEventDate,
-                //         windowId: newEventData.window.id,
-                //         end: this.workRangeEnds,
-                //         start: this.workRangeStarts,
-                //         name: this.nurseData.label,
-                //         nurseId: this.nurseData.nurseId,
-                //         eventType: defaultEventType,
-                //
-                //     },
-                //     // dow: [newEventData.window.dayOfWeek],
-                //     end: `${this.workEventDate}T${this.workRangeEnds}`,
-                //     start: `${this.workEventDate}T${this.workRangeStarts}`,
-                //     title: `${this.nurseData.label} (${this.hoursToWork}h)
-                //     ${this.workRangeStarts}-${this.workRangeEnds}`,
-                // }
+
+            throwSuccessNotification(text) {
+                this.addNotification({
+                    title: "Success!",
+                    text: text,
+                    type: "success",
+                    timeout: true
+                });
             },
 
             handleDateCLick(date, jsEvent, view) {
@@ -722,14 +659,7 @@
 
                 } else {
                     this.loader = false;
-                    this.addNotification({
-                        title: "Warning!",
-                        text: 'You can only add/edit events for today or for a future date',
-                        type: "danger",
-                        timeout: true
-                    });
-
-                    alert('You can only add/edit events for today or for a future date');
+                    this.throwWarningNotification('You can only add/edit events for today or for a future date');
                 }
 
             },
@@ -739,6 +669,11 @@
                 const today = Date.parse(this.today);
                 if (arg.data.eventType === 'companyHoliday') {
                     alert('This is a Company Holiday, you cannot edit or delete this window');
+                    return;
+                }
+
+                if (this.authIsAdmin && arg.data.eventType === 'holiday') {
+                    alert("You cannot edit a nurse's holiday");
                     return;
                 }
                 const clickedDate = Date.parse(arg.data.date);
@@ -780,7 +715,7 @@
                 this.selectedDate = '';
             },
 
-            dataForSearchFilter() {
+            nursesForSearchFilter() {
                 const workEvents = this.workHours;
                 const workEventsWithHolidays = workEvents.concat(this.holidays);
 
@@ -792,6 +727,7 @@
                     return removeDuplicatesFrom(workEventsWithHolidays);
                 }
             },
+
             eventsFiltered() {
                 const workEvents = this.workHours;
                 const workEventsWithHolidays = workEvents.concat(this.holidays);
