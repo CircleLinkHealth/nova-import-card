@@ -45,11 +45,7 @@ class CreateCalendarRecurringEventsCommand extends Command
      * //@return mixed.
      */
     public function handle()
-    {// I Can check current past events if they got worked or not by checking PageTimer,
-        // however there is no way to know the hrs committed and the time range to work committed.
-        //Should i check now for past events and mark them in different color
-        // OR we ll start this functionality (checking if past committed events have activity) from development date and later?
-
+    {
         $today          = Carbon::parse(now())->toDateString();
         $currentWeekMap = createWeekMap($today);
 
@@ -60,10 +56,9 @@ class CreateCalendarRecurringEventsCommand extends Command
             })->chunk(200, function ($nurseContactWindows) use ($currentWeekMap) {
                 collect($nurseContactWindows)
                     ->transform(function ($window) use ($currentWeekMap) {
-//                        If we re showing events from release date and after then use $newEventOriginalDate ELSE use $window->date
-//                        $newEventOriginalDate = projection of original's event scheduled date to current's week date.
-//                        I suggest using the 'newEventOriginalDate'. we have events with scheduled_date 2017-10-11 and we dont need them repeating till today.
-//                         Also past events submitted work_hours cant be qualified as worked.
+//                        $projectionEventDate = projection of original's event scheduled date to current's week date.
+//                        I suggest using the $projectionEventDate cause we have events with scheduled_date 2017-10-11 and we dont need them repeating till today.
+//                        Also with the functionality before this feature we cant know if the hrs committed in the past (< startOfThisWeek) got worked or not.
                         $projectionEventDate = $currentWeekMap[$window->day_of_week];
                         $nurseInfoId = $window->nurse->id;
                         $eventDateToDayName = clhDayOfWeekToDayName($window->day_of_week);
