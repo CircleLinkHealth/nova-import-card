@@ -18,8 +18,9 @@ use Illuminate\Queue\SerializesModels;
 class CreateCalendarRecurringEventsJob implements ShouldQueue
 {
     /*
-     *  Note: This command does NOT delete original data from table. They are left with repeat_frequency == null.
-     * We can delete them later.
+     *  Note: This command does NOT delete original data from table. They are left with repeat_frequency == null
+     *  and they re ignored.
+     *  We can delete them later if we want to.
      *
      */
     use Dispatchable;

@@ -285,9 +285,9 @@ class WorkScheduleController extends Controller
         \Illuminate\Contracts\Validation\Validator $validator,
         $workScheduleData
     ): JsonResponse {
-        $recurringEventsToSave    = $this->fullCalendarService->createRecurringEvents($nurseInfoId, $workScheduleData);
+        $recurringEventsToSave = $this->fullCalendarService->createRecurringEvents($nurseInfoId, $workScheduleData);
+//        It should never happen. We can also use it in the future to give the option to choose what to do with each event.
         $confirmationNeededEvents = $this->fullCalendarService->getEventsToAskConfirmation($recurringEventsToSave, $updateCollisions);
-
         if ( ! empty($confirmationNeededEvents) && ! $updateCollisions) {
             $collidingDates = $this->fullCalendarService->getCollidingDates($confirmationNeededEvents);
 
@@ -396,16 +396,16 @@ class WorkScheduleController extends Controller
             ->get()
             ->sum(function ($window) {
                 return Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_end
-                    )->diffInHours(Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_end
+                )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
             }) + Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_end']
-                )->diffInHours(Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_end']
+            )->diffInHours(Carbon::createFromFormat(
                     'H:i',
                     $workScheduleData['window_time_start']
                 ));
