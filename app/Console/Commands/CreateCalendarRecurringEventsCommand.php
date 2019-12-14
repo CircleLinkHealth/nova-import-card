@@ -61,7 +61,7 @@ class CreateCalendarRecurringEventsCommand extends Command
                 collect($nurseContactWindows)
                     ->transform(function ($window) use ($currentWeekMap) {
 //                        If we re showing events from release date and after then use $newEventOriginalDate ELSE use $window->date
-//                        $newEventOriginalDate = projection of oriiginal's event scheduled date to current's week date.
+//                        $newEventOriginalDate = projection of original's event scheduled date to current's week date.
 //                        I suggest using the 'newEventOriginalDate'. we have events with scheduled_date 2017-10-11 and we dont need them repeating till today.
 //                         Also past events submitted work_hours cant be qualified as worked.
                         $projectionEventDate = $currentWeekMap[$window->day_of_week];
