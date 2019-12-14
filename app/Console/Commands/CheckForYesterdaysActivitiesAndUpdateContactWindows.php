@@ -24,7 +24,7 @@ class CheckForYesterdaysActivitiesAndUpdateContactWindows extends Command
      *
      * @var string
      */
-    protected $signature = 'command:checkForYesterdaysActivitiesForCalendarEvents';
+    protected $signature = 'command:checkForYesterdaysActivitiesForCalendarEvents {forDate?}';
 
     /**
      * Create a new command instance.
@@ -41,16 +41,20 @@ class CheckForYesterdaysActivitiesAndUpdateContactWindows extends Command
      */
     public function handle()
     {
-        $yesterday = Carbon::parse(now())->startOfDay()->copy()->subDay(1)->toDateString();
+        $date = $this->argument('forDate') ?? null;
+
+        $dateToCheck = ! empty($date)
+            ? Carbon::parse($date)
+            : Carbon::parse(now())->startOfDay()->copy()->subDay(1)->toDateString();
 
         NurseContactWindow::with('nurse')
-            ->where('date', $yesterday)
+            ->where('date', $dateToCheck)
             ->whereHas('nurse', function ($q) {
                 $q->where('status', 'active'); //@todo: case of nurse becoming active from inactivity
-            })->chunk(100, function ($windows) use ($yesterday) {
-                collect($windows)->map(function ($window) use ($yesterday) {
+            })->chunk(100, function ($windows) use ($dateToCheck) {
+                collect($windows)->map(function ($window) use ($dateToCheck) {
                     $userId = $window->nurse->user_id;
-                    $date = Carbon::parse($yesterday)->toDateTimeString();
+                    $date = Carbon::parse($dateToCheck)->toDateTimeString();
 
                     $activitiesExist = PageTimer::where('provider_id', $userId)
                         ->where([

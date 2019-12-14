@@ -79,6 +79,15 @@ class CreateCalendarRecurringEventsCommand extends Command
                     });
             });
 
+        $startDate = Carbon::parse($today)->startOfDay()->toDateString();
+        $endDate   = Carbon::parse($startDate)->endOfDay()->toDateString();
+
+        $windows = NurseContactWindow::whereNotNull('repeat_frequency')
+            ->where([
+                ['date', '>=', $startDate],
+                ['date', '<=', $endDate],
+            ])->get();
+
         return info('Success! "Calendar Recurring Events" have been created');
     }
 }
