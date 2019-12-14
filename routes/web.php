@@ -2354,7 +2354,6 @@ Route::get('nurses/holidays', [
     'as'   => 'get.admin.nurse.schedules.holidays',
 ])->middleware('permission:nurse.read');
 
-Route::post('nurses/nurse-calendar-data', [
 Route::prefix('admin')->group(
     function () {
         Route::prefix('users')->group(
@@ -2413,7 +2412,7 @@ Route::prefix('admin')->group(
     }
 );
 
-Route::get('nurses/nurse-calendar-data', [
-    'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendar',
+Route::post('nurses/nurse-calendar-data', [
+    'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');

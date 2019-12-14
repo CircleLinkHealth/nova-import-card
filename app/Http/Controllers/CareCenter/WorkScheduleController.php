@@ -219,7 +219,7 @@ class WorkScheduleController extends Controller
         return $workScheduleData[0];
     }
 
-    public function getSelectedNurseCalendar(Request $request)
+    public function getSelectedNurseCalendarData(Request $request)
     {
         $startDate = Carbon::parse($request->input('startDate'))->toDateString();
         $endDate   = Carbon::parse($startDate)->copy()->addMonths(2)->toDateString();
@@ -240,7 +240,7 @@ class WorkScheduleController extends Controller
             });
 
         $eventsForSelectedNurse = $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse)->toArray();
-        $holidaysData           = $nurse->nurseInfo->upcoming_holiday_dates->flatten();
+        $holidaysData           = $nurse->nurseInfo->upcoming_holiday_dates->flatten(); // we only need the future holidays
         $holidays               = $this->fullCalendarService->prepareHolidaysData($holidaysData, $nurse, $startDate, $endDate)->toArray();
 
         return response()->json([
@@ -399,16 +399,16 @@ class WorkScheduleController extends Controller
                     'H:i:s',
                     $window->window_time_end
                 )->diffInHours(Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_start
-                    ));
+                    'H:i:s',
+                    $window->window_time_start
+                ));
             }) + Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_end']
             )->diffInHours(Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_start']
-                ));
+                'H:i',
+                $workScheduleData['window_time_start']
+            ));
 
         $invalidWorkHoursNumber = false;
 
