@@ -1,24 +1,25 @@
 <template>
     <div>
         <div class="calendar-menu">
-            <div v-if="authIsAdmin"
-                 class="show-holidays">
-                <input id="holidaysCheckbox"
-                       type="checkbox"
-                       class="holidays-button"
-                       @click="refetchEvents()"
-                       v-model="showHolidays">
-                Holidays
-            </div>
-            <div v-if="authIsAdmin"
-                 class="show-work">
-                <input id="workCheckbox"
-                       type="checkbox"
-                       class="work-button"
-                       @click="refetchEvents()"
-                       v-model="showWorkEvents">
-                Work Events
-            </div>
+           <div v-if="authIsAdmin"
+                class="col-lg-2">
+               <div class="show-holidays">
+                   <input id="holidaysCheckbox"
+                          type="checkbox"
+                          class="holidays-button"
+                          @click="refetchEvents()"
+                          v-model="showHolidays">
+                   Holidays
+               </div>
+               <div class="show-work">
+                   <input id="workCheckbox"
+                          type="checkbox"
+                          class="work-button"
+                          @click="refetchEvents()"
+                          v-model="showWorkEvents">
+                   Work Events
+               </div>
+           </div>
 
             <div class="search-filter">
                 <vue-select ref="searchFilter"
@@ -543,6 +544,7 @@
                         }
 
                         if (repeatFreq !== 'does_not_repeat') {
+                            // Create temporary recurring dates to evaluate and prompt user to act in front-end
                             const until = [];
                             const frequency = [];
 
@@ -586,6 +588,7 @@
                         }
                     }).catch(error => {
                         console.log(error);
+                        alert(error);
                     });
                 }
             },
