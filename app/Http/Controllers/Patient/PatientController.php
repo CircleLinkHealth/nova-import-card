@@ -185,6 +185,7 @@ class PatientController extends Controller
         }
 
         if ($user->canApproveCarePlans()) {
+//            I dont understand how these are used (if used)
             $showPatientsPendingApprovalBox = true;
             $patients                       = $user->patientsPendingApproval()->get();
             $patientsPendingApproval        = $this->formatter->patientListing($patients);
