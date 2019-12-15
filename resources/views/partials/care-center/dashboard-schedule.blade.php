@@ -13,14 +13,18 @@
     <notifications class="text-left"></notifications>
     <div class="container-fluid"
          style="width: 90%; margin-left: 5%; margin-bottom: 5%">
-        <div class="row">
-            <div class="col-lg-12">
-                <nurse-schedule-calendar
-                        :auth-data="{{json_encode($authData)}}"
-                        :today="{{json_encode(\Carbon\Carbon::parse(today())->toDateString())}}">
-                </nurse-schedule-calendar>
-            </div>
+        <div class="row" style="text-align: center">
+            <h3>
+                Your Schedule ({{auth()->user()->timezone_abbr}})
+            </h3>
         </div>
+        <div class="col-lg-12">
+            <nurse-schedule-calendar
+                    :auth-data="{{json_encode($authData)}}"
+                    :today="{{json_encode(\Carbon\Carbon::parse(today())->toDateString())}}">
+            </nurse-schedule-calendar>
+        </div>
+
     </div>
     {{--        <div class="row">--}}
     {{--            <div class="col-md-12">--}}

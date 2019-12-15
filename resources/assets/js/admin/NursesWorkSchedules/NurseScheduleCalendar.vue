@@ -30,14 +30,12 @@
                             required>
                 </vue-select>
             </div>
-
-            <!-- Add new event - main button-->
-            <div class="add-event-main">
-                <button class="btn btn-primary" @click="openMainEventModal">Add new window</button>
-            </div>
-
         </div>
         <div class="calendar">
+            <!-- Add new event - main button-->
+            <div class="add-event-main col-md-2">
+                <button class="btn btn-primary" @click="openMainEventModal">Add new window</button>
+            </div>
             <full-calendar ref="calendar"
                            :event-sources="eventSources"
                            :config="config"
@@ -806,6 +804,7 @@
 
     .add-event-main {
         margin-bottom: 30px;
+        margin-right: -10%;
     }
 
     .disable {
@@ -922,6 +921,7 @@
 
     .calendar-menu {
         margin-left: 10%;
+        margin-bottom: 40px;
     }
 
     .search-filter {
@@ -996,6 +996,14 @@
 
     #addWorkEvent > div.modal-dialog > div > div.modal-header > button {
         visibility: hidden;
+    }
+
+    #calendar > div.fc-toolbar.fc-header-toolbar > div.fc-center {
+        margin-left: -2%;
+    }
+
+    #calendar > div.fc-toolbar.fc-header-toolbar > div.fc-right {
+        margin-right: 15%;
     }
 </style>
 
