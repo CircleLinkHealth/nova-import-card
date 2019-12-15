@@ -45,8 +45,8 @@ class CallService
                 );
             });
         }
-
-        $calls->orderByRaw('FIELD(asap, true) desc, scheduled_date asc, call_time_start asc, call_time_end asc');
+        // Ordering: ASAP are always first, then Call Backs, then everything else with earlier tasks higher than later tasks.
+        $calls->orderByRaw('asap desc, FIELD(type, "Call Back") desc, scheduled_date asc, call_time_start asc, call_time_end asc');
 
         return $calls->get();
     }
