@@ -219,6 +219,36 @@ class WorkScheduleController extends Controller
         return $workScheduleData[0];
     }
 
+    /**
+     * @param $nurseInfoId
+     * @param $workScheduleData
+     *
+     * @return int|mixed
+     */
+    public function getHoursSum($nurseInfoId, $workScheduleData)
+    {
+        return NurseContactWindow::where([
+            ['nurse_info_id', '=', $nurseInfoId],
+            ['day_of_week', '=', $workScheduleData['day_of_week']],
+        ])
+            ->get()
+            ->sum(function ($window) {
+                return Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_end
+                )->diffInHours(Carbon::createFromFormat(
+                    'H:i:s',
+                    $window->window_time_start
+                ));
+            }) + Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_end']
+            )->diffInHours(Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_start']
+            ));
+    }
+
     public function getSelectedNurseCalendarData(Request $request)
     {
         $startDate = Carbon::parse($request->input('startDate'))->toDateString();
@@ -352,19 +382,18 @@ class WorkScheduleController extends Controller
 
     public function store(Request $request)
     {
-        $dataRequest = $request->all();
+        $workScheduleData = $request->all();
+        $nurseInfoId      = $workScheduleData['nurse_info_id'];
 
-        if ( ! array_key_exists('day_of_week', $dataRequest)) {
-            $inputDate                  = $dataRequest['date'];
-            $dataRequest['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
+        if ( ! array_key_exists('day_of_week', $workScheduleData)) {
+            $inputDate                       = $workScheduleData['date'];
+            $workScheduleData['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
         }
 
-        $workScheduleData = $dataRequest;
-        $nurseInfoId      = $workScheduleData['nurse_info_id'];
-        $repeatFrequency  = $workScheduleData['repeat_freq'];
         $updateCollisions = null === $workScheduleData['updateCollisions'] ? false : $workScheduleData['updateCollisions'];
 
-        $isAdmin     = auth()->user()->isAdmin();
+        $isAdmin = auth()->user()->isAdmin();
+
         $nurseInfoId = $isAdmin
             ? $nurseInfoId
             : auth()->user()->nurseInfo->id;
@@ -378,30 +407,10 @@ class WorkScheduleController extends Controller
             'window_time_start' => 'required|date_format:H:i',
             'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
         ]);
-        //  Validator
 
         $windowExists = ! $updateCollisions ? $this->fullCalendarService->checkIfWindowsExists($workScheduleData) : false;
 
-        $hoursSum = NurseContactWindow::where([
-            ['nurse_info_id', '=', $nurseInfoId],
-            ['day_of_week', '=', $workScheduleData['day_of_week']],
-        ])
-            ->get()
-            ->sum(function ($window) {
-                return Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_end
-                )->diffInHours(Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_start
-                ));
-            }) + Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_end']
-            )->diffInHours(Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_start']
-            ));
+        $hoursSum = $this->getHoursSum($nurseInfoId, $workScheduleData);
 
         $invalidWorkHoursNumber = false;
 
@@ -434,7 +443,7 @@ class WorkScheduleController extends Controller
 
         if ($isAdmin) {
             $user = auth()->user();
-            if ('does_not_repeat' !== $repeatFrequency) {
+            if ('does_not_repeat' !== $workScheduleData['repeat_freq']) {
                 return $this->saveRecurringEvents($nurseInfoId, $updateCollisions, $validator, $workScheduleData);
             }
             $window = $this->nurseContactWindows->create([
@@ -456,7 +465,7 @@ class WorkScheduleController extends Controller
             sendSlackMessage('#carecoachscheduling', $message);
         } else {
             $user = auth()->user();
-            if ('does_not_repeat' !== $repeatFrequency) {
+            if ('does_not_repeat' !== $workScheduleData['repeat_freq']) {
                 return $this->saveRecurringEvents($nurseInfoId, $updateCollisions, $validator, $workScheduleData);
             }
             $window = $user->nurseInfo->windows()->create([
