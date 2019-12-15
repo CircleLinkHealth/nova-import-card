@@ -237,12 +237,7 @@
 
         data() {
             return {
-                // calendarData:[],
                 dataForDropdown: [],
-                // today: '', //pushed from created()
-                // startOfMonth: [],
-                // endOfMonth: [],
-                // endOfYear: [],
                 workHours: [],
                 holidays: [],
                 showWorkHours: true,

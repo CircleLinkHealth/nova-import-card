@@ -312,7 +312,7 @@ class WorkScheduleController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showAllNurseSchedule()
+    public function showAllNurseScheduleForAdmin()
     {
         $authData = $this->fullCalendarService->getAuthData();
         $today    = Carbon::parse(now())->toDateString();
@@ -360,16 +360,9 @@ class WorkScheduleController extends Controller
         }
 
         $workScheduleData = $dataRequest;
-        // @todo: refactor to use only $workScheduledData
-        $eventDate         = $workScheduleData['date'];
-        $nurseInfoId       = $workScheduleData['nurse_info_id'];
-        $windowTimeStart   = $workScheduleData['window_time_start'];
-        $windowTimeEnd     = $workScheduleData['window_time_end'];
-        $repeatFrequency   = $workScheduleData['repeat_freq']; //@todo: replace with $vars
-        $windowDayOfWeek   = $workScheduleData['day_of_week'];
-        $windowRepeatUntil = $workScheduleData['until'];
-        $workHours         = $workScheduleData['work_hours'];
-        $updateCollisions  = null === $workScheduleData['updateCollisions'] ? false : $workScheduleData['updateCollisions'];
+        $nurseInfoId      = $workScheduleData['nurse_info_id'];
+        $repeatFrequency  = $workScheduleData['repeat_freq'];
+        $updateCollisions = null === $workScheduleData['updateCollisions'] ? false : $workScheduleData['updateCollisions'];
 
         $isAdmin     = auth()->user()->isAdmin();
         $nurseInfoId = $isAdmin

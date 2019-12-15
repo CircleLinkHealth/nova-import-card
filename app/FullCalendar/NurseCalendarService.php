@@ -77,7 +77,7 @@ class NurseCalendarService
         $defaultRecurringDates = collect();
 
         if ('weekly' === $repeatFrequency) {
-            for ($i = 0; $i < $diffRange; ++$i) {
+            for ($i = 0; $i <= $diffRange; ++$i) {
                 $defaultRecurringDate = Carbon::parse($eventDate)->copy()->addWeek($i)->toDateString();
                 //do NOT create workEvents over days-off.
                 if ( ! in_array($defaultRecurringDate, $holidayDates)) {
@@ -87,7 +87,7 @@ class NurseCalendarService
         }
 
         if ('daily' === $repeatFrequency) {
-            for ($i = 0; $i < $diffRange; ++$i) { //@todo:should exclude weekedns option
+            for ($i = 0; $i <= $diffRange; ++$i) { //@todo:should exclude weekedns option
                 $defaultRecurringDate = Carbon::parse($eventDate)->copy()->addDay($i)->toDateString();
                 //do NOT create workEvents over days-off.
                 if ( ! in_array($defaultRecurringDate, $holidayDates)) {
