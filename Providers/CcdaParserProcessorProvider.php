@@ -16,7 +16,7 @@ class CcdaParserProcessorProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = true;
+    protected $defer = false;
     
     /**
      * Boot the application events.
@@ -24,6 +24,11 @@ class CcdaParserProcessorProvider extends ServiceProvider
     public function boot()
     {
         $this->registerConfig();
+        $this->commands(
+            [
+                CcdaParse::class,
+            ]
+        );
     }
     
     /**
@@ -43,11 +48,7 @@ class CcdaParserProcessorProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->commands(
-            [
-                CcdaParse::class,
-            ]
-        );
+    
     }
     
     /**
