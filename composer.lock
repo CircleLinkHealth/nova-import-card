@@ -620,7 +620,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git",
-                "reference": "a04ca778b13d3129ced762845dfc54bc217ec6c3"
+                "reference": "2dfb6d2b79b87eba29837138196ea37c739f406e"
             },
             "type": "library",
             "extra": {
@@ -652,7 +652,7 @@
                 }
             ],
             "description": "PHP wrapper for bluebutton nodejs",
-            "time": "2019-12-16T11:34:28+00:00"
+            "time": "2019-12-16T12:32:26+00:00"
         },
         {
             "name": "circlelinkhealth/core",
