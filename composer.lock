@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "68bae25a63d0d4797f3eccf12583b2e8",
+    "content-hash": "3fc754259fda2be3a7b0c45ebb41cb1a",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -613,6 +613,46 @@
                 "time"
             ],
             "time": "2019-11-30T02:33:19+00:00"
+        },
+        {
+            "name": "circlelinkhealth/ccda-parser-processor-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git",
+                "reference": "e83144319cdd46698e8e097cdef3ab2f4ecca222"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\CcdaParserProcessorPhp\\Providers\\CcdaParserProcessorProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\CcdaParserProcessorPhp\\": ""
+                },
+                "files": []
+            },
+            "scripts": {
+                "post-install-cmd": [
+                    "npm install"
+                ],
+                "post-update-cmd": [
+                    "npm install"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Pangratios Cosma",
+                    "email": "pagcosma@gmail.com"
+                }
+            ],
+            "description": "PHP wrapper for bluebutton nodejs",
+            "time": "2019-12-16T06:24:54+00:00"
         },
         {
             "name": "circlelinkhealth/core",
@@ -13208,6 +13248,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/ccda-parser-processor-php": 20,
         "circlelinkhealth/raygun": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,

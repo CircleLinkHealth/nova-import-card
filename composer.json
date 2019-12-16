@@ -70,6 +70,10 @@
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-revisionable.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git"
     }
   ],
   "require": {
@@ -89,6 +93,7 @@
     "barryvdh/laravel-snappy": "0.4.4",
     "circlelinkhealth/core": "1.31",
     "circlelinkhealth/customer": "1.4.7",
+    "circlelinkhealth/ccda-parser-processor-php": "dev-master",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/timetracking": "1.1.2",
@@ -240,8 +245,8 @@
     },
     "merge-plugin": {
       "include": [
-        "Modules/*/composer.json",
-        "CLHPackages/*/composer.json"
+        "CLHPackages/*/composer.json",
+        "Modules/*/composer.json"
       ],
       "require": [],
       "recurse": true,
