@@ -29,12 +29,8 @@ class CcdaParse extends Command
      * Example:
      *  - Need these set:
      *      - CCDA_PARSER_STORE_RESULTS_IN_DB=true
-     *      - CCDA_PARSER_DB_HOST=127.0.0.1
-     *      - CCDA_PARSER_DB_PORT=3306
-     *      - CCDA_PARSER_DB_DATABASE=cpm_local
      *      - CCDA_PARSER_DB_JSON_TABLE=ccdas-json
-     *      - CCDA_PARSER_DB_USERNAME=root
-     *      - CCDA_PARSER_DB_PASSWORD=
+     *      - CCDA_PARSER_DB_CONNECTION=mysql
      *  - php artisan ccd:parse 101 ./vendor/circlelinkhealth/ccda-parser-processor-php/nodejs/samples/nist.xml
      *
      * @var string
@@ -59,54 +55,68 @@ class CcdaParse extends Command
     {
         $this->info('Ready to spawn nodejs process');
 
-        $cmd = $this->prepareCommand();
-
-        $process = Process::fromShellCommandline($cmd);
+        $process = Process::fromShellCommandline($this->prepareCommand());
         $process->setTimeout(60 * 20); //20 minutes
-        $process->run(function ($type, $buffer) {
-            if ('err' === $type) {
-                $this->error($buffer);
-            } else {
-                $this->info($buffer);
-            }
-        });
+        $process->run(
+            function ($type, $buffer) {
+                if ('err' === $type) {
+                    $this->error($buffer);
+                } else {
+                    $this->info($buffer);
+                }
+            },
+            $this->valuesToInject()
+        );
     }
 
     private function prepareCommand()
     {
-        $path             = dirname(__FILE__).'/../../nodejs/index.js';
-        $storeResultsInDb = $this->config->get('ccda-parser.store_results_in_db');
-        $dbConnection     = $this->config->get('ccda-parser.db_connection');
-        $dbJsonTable      = $this->config->get('ccda-parser.db_table');
+        $cmdArgs = [
+            'node "$path"',
+            '--db-host="$dbHost"',
+            '--db-port="$dbPort"',
+            '--db-name="$dbDatabase"',
+            '--db-username="$dbUsername"',
+            '--db-password="$dbPassword"',
+            '--db-json-table="$dbJsonTable"',
+            '--store-results-in-db="$storeResultsInDb"',
+            '--ccda-id="$ccdaId"',
+            '--ccda-xml-path="$inputPath"',
+        ];
 
-        $dbConnectionData = $this->config->get("database.connections.$dbConnection");
-        $dbHost           = $dbConnectionData['host'];
-        $dbPort           = $dbConnectionData['port'];
-        $dbDatabase       = $dbConnectionData['database'];
-        $dbUsername       = $dbConnectionData['username'];
-        $dbPassword       = $dbConnectionData['password'];
-
-        $ccdaId    = $this->argument('ccdaId');
-        $inputPath = $this->argument('inputPath');
-
-        $cmdArgs[] = "node $path";
-        $cmdArgs[] = "--db-host=$dbHost";
-        $cmdArgs[] = "--db-port=$dbPort";
-        $cmdArgs[] = "--db-name=$dbDatabase";
-        $cmdArgs[] = "--db-username=$dbUsername";
-        $cmdArgs[] = "--db-password=$dbPassword";
-        $cmdArgs[] = "--db-json-table=$dbJsonTable";
-        $cmdArgs[] = "--store-results-in-db=$storeResultsInDb";
-        $cmdArgs[] = "--ccda-id=$ccdaId";
-        $cmdArgs[] = "--ccda-xml-path=$inputPath";
         if ($this->hasArgument('outputPath')) {
-            $outputPath = $this->argument('outputPath');
-            $cmdArgs[]  = "--ccda-json-target-path=$outputPath";
+            $cmdArgs[] = '--ccda-json-target-path="$outputPath"';
         }
+
         if ($this->hasOption('force')) {
-            $cmdArgs[] = '--force=true';
+            $cmdArgs[] = '--force="true"';
         }
 
         return implode(' ', $cmdArgs);
+    }
+
+    private function valuesToInject()
+    {
+        $dbConnection     = $this->config->get('ccda-parser.db_connection');
+        $dbConnectionData = $this->config->get("database.connections.$dbConnection");
+
+        $args = [
+            'path'             => dirname(__FILE__).'/../../nodejs/index.js',
+            'storeResultsInDb' => true === $this->config->get('ccda-parser.store_results_in_db') ? 'true' : 'false',
+            'dbJsonTable'      => $this->config->get('ccda-parser.db_table'),
+            'dbHost'           => $dbConnectionData['host'],
+            'dbPort'           => $dbConnectionData['port'],
+            'dbDatabase'       => $dbConnectionData['database'],
+            'dbUsername'       => $dbConnectionData['username'],
+            'dbPassword'       => $dbConnectionData['password'],
+            'ccdaId'           => $this->argument('ccdaId'),
+            'inputPath'        => $this->argument('inputPath'),
+        ];
+
+        if ($this->hasArgument('outputPath')) {
+            $args['outputPath'] = $this->argument('outputPath');
+        }
+
+        return $args;
     }
 }
