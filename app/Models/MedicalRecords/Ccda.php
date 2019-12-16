@@ -324,13 +324,15 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
             'outputPath' => $jsonPath,
         ]);
 
+        \Storage::delete($xmlPath);
+
         if (file_exists($jsonPath)) {
             $this->json = file_get_contents($jsonPath);
             $this->save();
-        }
+            \Storage::delete($jsonPath);
 
-        \Storage::delete($xmlPath);
-        \Storage::delete($jsonPath);
+            return;
+        }
 
         $json = optional(DB::table(config('ccda-parser.db_table'))->where('ccda_id', '=', $this->id)->first())->result;
 
