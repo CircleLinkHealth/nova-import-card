@@ -10,6 +10,8 @@ Route::group(['middleware' => ['auth', 'cacheResponse']], function () {
     );
 });
 
+Route::get('hirefire/{token}/info', 'HireFireController@getQueueSize');
+
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
 Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
