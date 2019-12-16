@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Tests\Helpers;
+namespace App\Traits\Tests;
 
 use App\Call;
 use App\CLH\Helpers\StringManipulation;
@@ -59,14 +59,13 @@ trait UserHelpers
     /**
      * @param int    $practiceId
      * @param string $roleName
-     *
-     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function createUser(
         $practiceId = 8,
         $roleName = 'provider'
     ): User {
-        $roles = (array) Role::whereName($roleName)->firstOrFail()->id;
+        $practiceId = parseIds($practiceId)[0];
+        $roles      = (array) Role::whereName($roleName)->firstOrFail()->id;
 
         //creates the User
         $user = $this->setupUser($practiceId, $roles);
@@ -74,31 +73,39 @@ trait UserHelpers
         $email     = $user->email;
         $locations = $user->locations->pluck('id')->all();
 
-        foreach ($locations as $locId) {
-            $this->assertDatabaseHas(
-                'location_user',
-                [
-                    'location_id' => $locId,
-                    'user_id'     => $user->id,
-                ]
-            );
+        $isTest = method_exists($this, 'assertDatabaseHas');
+
+        if ($isTest) {
+            foreach ($locations as $locId) {
+                $this->assertDatabaseHas(
+                    'location_user',
+                    [
+                        'location_id' => $locId,
+                        'user_id'     => $user->id,
+                    ]
+                );
+            }
         }
 
-        //check that it was created
-        $this->assertDatabaseHas('users', ['email' => $email]);
+        if ($isTest) {
+            //check that it was created
+            $this->assertDatabaseHas('users', ['email' => $email]);
+        }
 
         //check that the roles were created
         foreach ($roles as $role) {
             $is_admin = 1 == $role;
             $user->attachPractice($practiceId, [$role], $is_admin);
-            $this->assertDatabaseHas(
-                'practice_role_user',
-                [
-                    'user_id'    => $user->id,
-                    'role_id'    => $role,
-                    'program_id' => $practiceId,
-                ]
-            );
+            if ($isTest) {
+                $this->assertDatabaseHas(
+                    'practice_role_user',
+                    [
+                        'user_id'    => $user->id,
+                        'role_id'    => $role,
+                        'program_id' => $practiceId,
+                    ]
+                );
+            }
         }
 
         if ('participant' == $roleName) {

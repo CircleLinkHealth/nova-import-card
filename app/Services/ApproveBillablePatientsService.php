@@ -38,20 +38,20 @@ class ApproveBillablePatientsService
     public function counts($practiceId, Carbon $month)
     {
         $count['approved'] = $this->approvePatientsRepo
-            ->billablePatientSummaries($practiceId, $month)
+            ->billablePatientSummaries($practiceId, $month, true)
             ->where('approved', '=', true)
             ->where('rejected', '=', false)
             ->count();
 
         $count['toQA'] = $this->approvePatientsRepo
-            ->billablePatientSummaries($practiceId, $month)
+            ->billablePatientSummaries($practiceId, $month, true)
             ->where('approved', '=', false)
             ->where('rejected', '=', false)
             ->where('needs_qa', '=', true)
             ->count();
 
         $count['rejected'] = $this->approvePatientsRepo
-            ->billablePatientSummaries($practiceId, $month)
+            ->billablePatientSummaries($practiceId, $month, true)
             ->where('rejected', '=', true)
             ->where('approved', '=', false)
             ->count();
@@ -72,13 +72,12 @@ class ApproveBillablePatientsService
      *  is_closed Boolean
      *
      * @param $practiceId
-     * @param Carbon $date
      *
      * @return \Illuminate\Support\Collection
      */
     public function getBillablePatientsForMonth($practiceId, Carbon $date)
     {
-        $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(100);
+        $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(30);
 
         $summaries->getCollection()->transform(function ($summary) {
             if ( ! $summary->actor_id) {

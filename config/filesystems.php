@@ -86,6 +86,14 @@ return [
             'url'    => env('AWS_URL'),
         ],
 
+        'secrets' => [
+            'driver' => 's3',
+            'key'    => env('S3_SECRETS_KEY'),
+            'secret' => env('S3_SECRETS_SECRET'),
+            'region' => env('S3_SECRETS_REGION'),
+            'bucket' => env('S3_SECRETS_BUCKET'),
+        ],
+
         'rackspace' => [
             'driver'    => 'rackspace',
             'username'  => 'your-username',
