@@ -620,7 +620,10 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git",
-                "reference": "2dfb6d2b79b87eba29837138196ea37c739f406e"
+                "reference": "7336948ea4edc60d175fa5746886d1aff704e070"
+            },
+            "require": {
+                "foxy/foxy": "^1.0.0"
             },
             "type": "library",
             "extra": {
@@ -652,7 +655,7 @@
                 }
             ],
             "description": "PHP wrapper for bluebutton nodejs",
-            "time": "2019-12-16T12:32:26+00:00"
+            "time": "2019-12-16T13:28:24+00:00"
         },
         {
             "name": "circlelinkhealth/core",
@@ -1839,6 +1842,66 @@
                 "nova"
             ],
             "time": "2019-11-15T08:00:48+00:00"
+        },
+        {
+            "name": "foxy/foxy",
+            "version": "v1.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fxpio/foxy.git",
+                "reference": "dca69a757c8fdd80d8a2774b4f9183020c2c00f8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fxpio/foxy/zipball/dca69a757c8fdd80d8a2774b4f9183020c2c00f8",
+                "reference": "dca69a757c8fdd80d8a2774b4f9183020c2c00f8",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.1",
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "composer/composer": "^1.5.0"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Foxy\\Foxy",
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Foxy\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "François Pluchino",
+                    "email": "francois.pluchino@gmail.com"
+                }
+            ],
+            "description": "Fast, reliable, and secure NPM/Yarn bridge for Composer",
+            "homepage": "https://github.com/fxpio/foxy",
+            "keywords": [
+                "Bridge",
+                "asset",
+                "composer",
+                "dependency manager",
+                "nodejs",
+                "npm",
+                "package",
+                "yarn"
+            ],
+            "time": "2019-08-19T13:48:11+00:00"
         },
         {
             "name": "fzaninotto/faker",
