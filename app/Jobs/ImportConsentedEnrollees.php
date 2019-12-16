@@ -51,8 +51,6 @@ class ImportConsentedEnrollees implements ShouldQueue
      */
     public function handle(ImportService $importService)
     {
-        ini_set('max_execution_time', 300);
-
         Enrollee::whereIn('id', $this->enrolleeIds)
             ->with(['targetPatient', 'practice', 'eligibilityJob'])
             ->chunkById(10, function ($enrollees) use ($importService) {
