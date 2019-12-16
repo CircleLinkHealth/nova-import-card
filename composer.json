@@ -57,10 +57,6 @@
       "url": "https://packagist.org"
     },
     {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/wkhtmltopdf-amd64.git"
-    },
-    {
       "packagist": false
     },
     {
