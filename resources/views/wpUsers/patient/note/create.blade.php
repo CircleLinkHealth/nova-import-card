@@ -615,6 +615,7 @@
         <script>
 
 
+            const userIsCareCoach = @json(auth()->user()->isCareCoach());
             const userIsCCMCountable = @json(auth()->user()->isCCMCountable());
             const taskTypeToTopicMap = @json($task_types_to_topics);
             const noteTypesMap = @json($note_types);
@@ -910,7 +911,7 @@
 
                     }
 
-                    if (callIsSuccess) {
+                    if (callIsSuccess && userIsCareCoach) {
                         App.$emit('show-attest-call-conditions-modal');
                         return;
                     }
@@ -929,16 +930,22 @@
 
                 $(document).on("click", "#confirm-task-completed-submit", function (event) {
                     $('#task_status').val("done");
+                    $('#confirm-task-completed').modal('hide');
                     confirmSubmitForm();
                 });
 
                 $(document).on("click", "#confirm-task-not-completed-submit", function (event) {
                     $('#task_status').val("not_done");
+                    $('#confirm-task-completed').modal('hide');
                     confirmSubmitForm();
                 });
 
                 function confirmSubmitForm() {
 
+                    if ($("input[name=attestedConditions]").length == 0 && userIsCareCoach){
+                        App.$emit('show-attest-call-conditions-modal');
+                        return;
+                    }
                     if (isSavingDraft) {
                         setTimeout(() => confirmSubmitForm(), 500);
                         return;
