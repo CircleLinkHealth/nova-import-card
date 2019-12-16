@@ -13462,7 +13462,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.2.0",
+        "php": "~7.2.11",
         "ext-bcmath": "*",
         "ext-dom": "*",
         "ext-json": "*",
