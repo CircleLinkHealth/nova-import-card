@@ -16,19 +16,16 @@ class CcdaParserProcessorProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = false;
-
+    protected $defer = true;
+    
     /**
      * Boot the application events.
      */
     public function boot()
     {
         $this->registerConfig();
-        $this->commands([
-            CcdaParse::class,
-        ]);
     }
-
+    
     /**
      * Get the services provided by the provider.
      *
@@ -36,30 +33,37 @@ class CcdaParserProcessorProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [];
+        return [
+            CcdaParse::class,
+        ];
     }
-
+    
     /**
      * Register the service provider.
      */
     public function register()
     {
+        $this->commands(
+            [
+                CcdaParse::class,
+            ]
+        );
     }
-
+    
     /**
      * Register config.
      */
     protected function registerConfig()
     {
-        /*$this->publishes(
+        $this->publishes(
             [
-                __DIR__.'/../Config/config.php' => config_path('customer.php'),
+                __DIR__.'/../Config/config.php' => config_path('ccda-parser.php'),
             ],
             'config'
         );
         $this->mergeConfigFrom(
             __DIR__.'/../Config/config.php',
-            'customer'
-        );*/
+            'ccda-parser'
+        );
     }
 }

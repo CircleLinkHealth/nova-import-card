@@ -16,18 +16,14 @@ In composer.json add
  }
 ```
 
-and run `composer install`
+Run `composer install && npm install`
 
 Add below .env variables:
 
 ```
 CCDA_PARSER_STORE_RESULTS_IN_DB=true
-CCDA_PARSER_DB_HOST=127.0.0.1
-CCDA_PARSER_DB_PORT=3306
-CCDA_PARSER_DB_DATABASE=cpm_local
-CCDA_PARSER_DB_JSON_TABLE=ccdas-json
-CCDA_PARSER_DB_USERNAME=root
-CCDA_PARSER_DB_PASSWORD=
+CCDA_PARSER_DB_CONNECTION=mysql
+CCDA_PARSER_DB_JSON_TABLE=ccdas
 ```
 
 # Usage

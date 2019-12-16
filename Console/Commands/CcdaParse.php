@@ -8,6 +8,7 @@ namespace CircleLinkHealth\CcdaParserProcessorPhp\Console\Commands;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
+use Illuminate\Config\Repository as Config;
 
 class CcdaParse extends Command
 {
@@ -35,15 +36,20 @@ class CcdaParse extends Command
      * @var string
      */
     protected $signature = 'ccd:parse {ccdaId} {inputPath} {outputPath?} {--force}';
-
+    /**
+     * @var Config
+     */
+    protected $config;
+    
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param Config $config
      */
-    public function __construct()
+    public function __construct(Config $config)
     {
         parent::__construct();
+        $this->config = $config;
     }
 
     /**
@@ -54,17 +60,35 @@ class CcdaParse extends Command
     public function handle()
     {
         $this->info('Ready to spawn nodejs process');
+        
+        $cmd = $this->prepareCommand();
+        
+        $process = new Process($cmd);
+        $process->setTimeout(60 * 20); //20 minutes
+        $process->run(function ($type, $buffer) {
+            if ('err' === $type) {
+                $this->error($buffer);
+            } else {
+                $this->info($buffer);
+            }
+        });
+    }
+    
+    private function prepareCommand() {
         $path             = dirname(__FILE__) . '/../../nodejs/index.js';
-        $storeResultsInDb = env('CCDA_PARSER_STORE_RESULTS_IN_DB', false);
-        $dbHost           = env('CCDA_PARSER_DB_HOST', '127.0.0.1');
-        $dbPort           = env('CCDA_PARSER_DB_PORT', 3306);
-        $dbDatabase       = env('CCDA_PARSER_DB_DATABASE', 'cpm_local');
-        $dbUsername       = env('CCDA_PARSER_DB_USERNAME', '');
-        $dbPassword       = env('CCDA_PARSER_DB_PASSWORD', '');
-        $dbJsonTable      = env('CCDA_PARSER_DB_JSON_TABLE', 'ccdas-json');
+        $storeResultsInDb = $this->config->get('ccda-parser.store_results_in_db');
+        $dbConnection = $this->config->get('ccda-parser.db_connection');
+        $dbJsonTable = $this->config->get('ccda-parser.db_table');
+    
+        $dbHost           = $this->config->get("database.connections.$dbConnection.host");
+        $dbPort           = $this->config->get("database.connections.$dbConnection.port");
+        $dbDatabase       = $this->config->get("database.connections.$dbConnection.database");
+        $dbUsername       = $this->config->get("database.connections.$dbConnection.username");
+        $dbPassword       = $this->config->get("database.connections.$dbConnection.password");
+    
         $ccdaId           = $this->argument('ccdaId');
         $inputPath        = $this->argument('inputPath');
-
+    
         $cmdArgs   = [];
         $cmdArgs[] = "node $path";
         $cmdArgs[] = "--db-host=$dbHost";
@@ -83,16 +107,9 @@ class CcdaParse extends Command
         if ($this->hasOption('force')) {
             $cmdArgs[]  = "--force=true";
         }
-
+    
         $cmd     = implode(" ", $cmdArgs);
-        $process = new Process($cmd);
-        $process->setTimeout(60 * 20); //20 minutes
-        $process->run(function ($type, $buffer) {
-            if ('err' === $type) {
-                $this->error($buffer);
-            } else {
-                $this->info($buffer);
-            }
-        });
+        
+        return $cmd;
     }
 }
