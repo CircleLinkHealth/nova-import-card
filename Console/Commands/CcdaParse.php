@@ -60,8 +60,6 @@ class CcdaParse extends Command
         $this->info('Ready to spawn nodejs process');
 
         $cmd = $this->prepareCommand();
-        
-        var_dump($cmd);
 
         $process = Process::fromShellCommandline($cmd);
         $process->setTimeout(60 * 20); //20 minutes
