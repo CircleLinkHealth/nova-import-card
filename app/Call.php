@@ -7,6 +7,7 @@
 namespace App;
 
 use App\Contracts\AttachableToNotification;
+use App\Models\CCD\Problem;
 use App\Traits\NotificationAttachable;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
@@ -143,6 +144,11 @@ class Call extends BaseModel implements AttachableToNotification
 
         'is_cpm_outbound',
     ];
+
+    public function attestedProblems()
+    {
+        return $this->belongsToMany(Problem::class, 'call_problems', 'call_id', 'ccd_problem_id');
+    }
 
     public function getIsFromCareCenterAttribute()
     {
