@@ -10,6 +10,8 @@ Route::group(['middleware' => ['auth', 'cacheResponse']], function () {
     );
 });
 
+Route::get('hirefire/{token}/info', 'HireFireController@getQueueSize');
+
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
 Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
@@ -1014,6 +1016,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'DirectMailController@show',
                 'as'   => 'direct-mail.show',
             ]);
+
+            Route::get('inbox/check', [
+                'uses' => 'DirectMailController@checkInbox',
+                'as'   => 'direct-mail.check',
+            ]);
         });
 
         Route::group(['prefix' => 'revisions'], function () {
@@ -1081,7 +1088,12 @@ Route::group(['middleware' => 'auth'], function () {
 
                 Route::get('/eligible-csv', [
                     'uses' => 'EligibilityBatchController@downloadEligibleCsv',
-                    'as'   => 'eligibility.download.eligible',
+                    'as'   => 'eligibility.download.csv.eligible',
+                ])->middleware('permission:enrollee.read');
+
+                Route::get('/entire-patient-list-csv', [
+                    'uses' => 'EligibilityBatchController@downloadAllPatientsCsv',
+                    'as'   => 'eligibility.download.all',
                 ])->middleware('permission:enrollee.read');
 
                 Route::get('supplemental-insurance-info-csv', [

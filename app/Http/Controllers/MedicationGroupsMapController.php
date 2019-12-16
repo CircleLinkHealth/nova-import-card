@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMedicationGroupMapRequest;
 use App\MedicationGroupsMap;
 use App\Models\CPM\CpmMedicationGroup;
 use Illuminate\Http\Request;
@@ -100,7 +101,7 @@ class MedicationGroupsMapController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreMedicationGroupMapRequest $request)
     {
         $stored = MedicationGroupsMap::create($request->input());
         $stored->load('cpmMedicationGroup');

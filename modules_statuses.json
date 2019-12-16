@@ -3,6 +3,5 @@
     "CpmMigrations": true,
     "Eligibility": true,
     "NurseInvoices": true,
-    "SqlViews": true,
-    "CpmMigrationsdsdsdsd": true
+    "SqlViews": true
 }
