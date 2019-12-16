@@ -63,7 +63,7 @@ class CcdaParse extends Command
         
         $cmd = $this->prepareCommand();
         
-        $process = new Process($cmd);
+        $process = Process::fromShellCommandline($cmd);
         $process->setTimeout(60 * 20); //20 minutes
         $process->run(function ($type, $buffer) {
             if ('err' === $type) {
@@ -88,8 +88,7 @@ class CcdaParse extends Command
     
         $ccdaId           = $this->argument('ccdaId');
         $inputPath        = $this->argument('inputPath');
-    
-        $cmdArgs   = [];
+        
         $cmdArgs[] = "node $path";
         $cmdArgs[] = "--db-host=$dbHost";
         $cmdArgs[] = "--db-port=$dbPort";
@@ -109,7 +108,6 @@ class CcdaParse extends Command
         }
     
         $cmd     = implode(" ", $cmdArgs);
-        
         return $cmd;
     }
 }
