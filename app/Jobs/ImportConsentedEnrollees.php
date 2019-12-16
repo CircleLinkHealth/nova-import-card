@@ -53,17 +53,15 @@ class ImportConsentedEnrollees implements ShouldQueue
     {
         ini_set('max_execution_time', 300);
 
-        $imported = collect();
-
         Enrollee::whereIn('id', $this->enrolleeIds)
             ->with(['targetPatient', 'practice', 'eligibilityJob'])
-            ->chunk(10, function ($enrollees) use ($importService, &$imported) {
-                $newImported = $enrollees->map(function ($enrollee) use ($importService) {
+            ->chunkById(10, function ($enrollees) use ($importService) {
+                $enrollees->each(function ($enrollee) use ($importService) {
                     //verify it wasn't already imported
                     if ($enrollee->user_id) {
                         $this->enrolleeAlreadyImported($enrollee);
 
-                        return;
+                        return null;
                     }
 
                     //verify it wasn't already imported
@@ -75,12 +73,17 @@ class ImportConsentedEnrollees implements ShouldQueue
 
                             $this->enrolleeAlreadyImported($enrollee);
 
-                            return;
+                            return null;
                         }
 
                         $this->enrolleeMedicalRecordImported($enrollee);
 
-                        return;
+                        return null;
+                    }
+
+                    //import ccda
+                    if ($importService->isCcda($enrollee->medical_record_type)) {
+                        return $importService->importExistingCcda($enrollee->medical_record_id);
                     }
 
                     //import PHX
@@ -101,24 +104,9 @@ class ImportConsentedEnrollees implements ShouldQueue
                         return $this->importFromEligibilityJob($enrollee, $job);
                     }
 
-                    //import ccda
-                    if ($importService->isCcda($enrollee->medical_record_type)) {
-                        return $importService->importExistingCcda($enrollee->medical_record_id);
-                    }
-
                     throw new \Exception("This should never be reached. enrollee:$enrollee->id");
                 });
-
-                $imported = $imported->merge($newImported);
             });
-
-        if ($this->batch && $imported->isNotEmpty()) {
-            \Log::info($imported->toJson());
-
-            \Cache::put("batch:{$this->batch->id}:last_consented_enrollee_import", $imported->toJson(), 14400);
-        }
-
-        return $imported;
     }
 
     private function eligibilityJob(Enrollee $enrollee)
