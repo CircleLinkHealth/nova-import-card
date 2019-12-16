@@ -40,7 +40,6 @@
         },
         mounted() {
             App.$on('show-attest-call-conditions-modal', () => {
-                console.log('component reached');
                 this.$refs['attest-call-conditions-modal'].visible = true;
             });
 

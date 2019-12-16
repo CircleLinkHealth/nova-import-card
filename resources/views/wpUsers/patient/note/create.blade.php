@@ -631,19 +631,7 @@
             //CPM-91 and CPM-437 double submitting notes
             let submitted = false;
             let form;
-
-
-            //Once nurse has attested call conditions add as form inputs and submit form
-            App.$on('call-conditions-attested', (attestedConditions) => {
-                let i = 0;
-                attestedConditions.map(function (condition) {
-                    $("<input>")
-                        .attr("type", "hidden")
-                        .attr("name", "attestedConditions["+i+"][condition_id]").val(condition).appendTo(form);
-                    i++;
-                });
-                form.submit();
-            });
+            let attConditions = [];
             const waitForEl = function (selector, callback) {
                 if (!$(selector).length) {
                     setTimeout(function () {
@@ -657,6 +645,20 @@
             };
 
             $(document).ready(function () {
+
+                //Once nurse has attested call conditions add as form inputs and submit form
+                App.$on('call-conditions-attested', (attestedConditions) => {
+                    let i = 0;
+                    attConditions = attestedConditions;
+                    attestedConditions.map(function (condition) {
+                        $("<input>")
+                            .attr("id", "attestedCondidtions")
+                            .attr("type", "hidden")
+                            .attr("name", "attestedConditions["+i+"][condition_id]").val(condition).appendTo(form);
+                        i++;
+                    });
+                    confirmSubmitForm();
+                });
 
                 if (medications && medications.length) {
                     waitForEl('#note', () => {
@@ -942,7 +944,7 @@
 
                 function confirmSubmitForm() {
 
-                    if ($("input[name=attestedConditions]").length == 0 && userIsCareCoach){
+                    if (attConditions.length == 0 && userIsCareCoach){
                         App.$emit('show-attest-call-conditions-modal');
                         return;
                     }
