@@ -169,7 +169,12 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         }
 
         if ( ! $this->json) {
-            $this->parseToJson();
+            if ($parsedJson = $this->getParsedJson()) {
+                $this->json = $parsedJson;
+                $this->save();
+            } else {
+                $this->parseToJson();
+            }
         }
 
         return json_decode($this->json);
@@ -324,7 +329,9 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
             'outputPath' => $jsonPath,
         ]);
 
-        \Storage::delete($xmlPath);
+        if (file_exists($xmlPath)) {
+            \Storage::delete($xmlPath);
+        }
 
         if (file_exists($jsonPath)) {
             $this->json = file_get_contents($jsonPath);
@@ -334,9 +341,19 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
             return;
         }
 
-        $json = optional(DB::table(config('ccda-parser.db_table'))->where('ccda_id', '=', $this->id)->first())->result;
+        $json = $this->getParsedJson();
 
         $this->json = $json;
         $this->save();
+    }
+
+    /**
+     * Gets the parsed json from the parser's table, if it was already parsed.
+     *
+     * @return string|null
+     */
+    private function getParsedJson()
+    {
+        return optional(DB::table(config('ccda-parser.db_table'))->where('ccda_id', '=', $this->id)->first())->result;
     }
 }
