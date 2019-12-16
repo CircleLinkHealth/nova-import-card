@@ -106,7 +106,7 @@
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/revisionable": "*",
-    "circlelinkhealth/sqlviews": "dev-heroku-2",
+    "circlelinkhealth/sqlviews": "dev-master",
     "circlelinkhealth/timetracking": "1.1.2",
     "circlelinkhealth/twofa": "1.1.2",
     "daltcore/lara-pdf-merger": "dev-master",
