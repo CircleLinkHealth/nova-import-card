@@ -58,7 +58,7 @@ return [
     */
 
     'trim' => [
-        'recent' => 1440,
+        'recent' => 60,
         'failed' => 10080,
     ],
 
@@ -83,8 +83,6 @@ return [
                 'tries'      => 1,
                 'timeout'    => 300,
             ],
-        ],
-        'production' => [
         ],
         'staging' => [
             'supervisor-1' => [
