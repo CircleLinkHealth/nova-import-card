@@ -109,6 +109,18 @@ class ImportConsentedEnrollees implements ShouldQueue
             });
     }
 
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        $ids = implode(',', $this->enrolleeIds);
+
+        return ['importconsentedenrollees', 'enrollees:'.$ids];
+    }
+
     private function eligibilityJob(Enrollee $enrollee)
     {
         if ($enrollee->eligibilityJob) {
