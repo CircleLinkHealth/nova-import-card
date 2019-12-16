@@ -12,6 +12,7 @@
   "repositories": [
   ],
   "require": {
+    "foxy/foxy": "^1.0.0"
   },
   "extra": {
     "laravel": {
