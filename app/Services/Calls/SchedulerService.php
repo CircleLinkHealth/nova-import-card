@@ -520,11 +520,13 @@ class SchedulerService
      *
      * @param $call
      * @param $status
+     * @param mixed $attestedProblems
      */
     public function updateCallWithNote(
         Note $note,
         $call,
-        $status
+        $status,
+        $attestedProblems = []
     ) {
         $patient = $note->patient;
 
@@ -536,7 +538,7 @@ class SchedulerService
             $call->save();
         } else {
             // If call doesn't exist, make one and store it
-            $this->noteService->storeCallForNote(
+            $call = $this->noteService->storeCallForNote(
                 $note,
                 $status,
                 $patient,
@@ -545,6 +547,8 @@ class SchedulerService
                 'core algorithm'
             );
         }
+
+        $call->attestedProblems()->attach($attestedProblems);
     }
 
     /**
@@ -559,13 +563,15 @@ class SchedulerService
      * @param $patient
      * @param $noteId
      * @param $callStatus - 'reached', 'not reached', 'ignored'
+     * @param mixed $attestedProblems
      *
      * @return array
      */
     public function updateTodaysCallAndPredictNext(
         $patient,
         $noteId,
-        $callStatus
+        $callStatus,
+        $attestedProblems = []
     ) {
         $scheduled_call = $this->getTodaysCall($patient->id);
 
@@ -574,7 +580,8 @@ class SchedulerService
         $this->updateCallWithNote(
             $note,
             $scheduled_call,
-            $callStatus
+            $callStatus,
+            $attestedProblems
         );
 
         if (Call::IGNORED != $callStatus) {

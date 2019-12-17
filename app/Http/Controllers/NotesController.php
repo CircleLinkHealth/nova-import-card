@@ -132,16 +132,16 @@ class NotesController extends Controller
                 ->where('inbound_cpm_id', '=', $patientId)
                 ->where('outbound_cpm_id', '=', $author_id)
                 ->select(
-                                           [
-                                               'id',
-                                               'type',
-                                               'sub_type',
-                                               'attempt_note',
-                                               'scheduled_date',
-                                               'window_start',
-                                               'window_end',
-                                           ]
-                                       )
+                    [
+                        'id',
+                        'type',
+                        'sub_type',
+                        'attempt_note',
+                        'scheduled_date',
+                        'window_start',
+                        'window_end',
+                    ]
+                )
                 ->get();
         }
 
@@ -539,6 +539,7 @@ class NotesController extends Controller
                         //use $note->created_at, in case we are editing a note
                         $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
                         $this->patientRepo->updateCallLogs($patient->patientInfo, true, true, $note->performed_at);
+                        $call->attestedProblems()->attach($input['attested_problems']);
                     } else {
                         $call->status = 'done';
                     }
@@ -592,7 +593,8 @@ class NotesController extends Controller
                         $prediction = $schedulerService->updateTodaysCallAndPredictNext(
                             $patient,
                             $note->id,
-                            $call_status
+                            $call_status,
+                            $input['attested_problems']
                         );
                     }
 
@@ -805,11 +807,11 @@ class NotesController extends Controller
     {
         return Practice::whereId($patient->program_id)
             ->where(
-                           function ($q) {
-                               $q->where('name', '=', 'phoenix-heart')
-                                   ->orWhere('name', '=', 'demo');
-                           }
-                       )
+                function ($q) {
+                    $q->where('name', '=', 'phoenix-heart')
+                        ->orWhere('name', '=', 'demo');
+                }
+            )
             ->exists();
     }
 

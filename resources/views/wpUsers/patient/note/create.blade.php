@@ -653,9 +653,9 @@
                     let i = 0;
                     attestedConditions.map(function (condition) {
                         $("<input>")
-                            .attr("id", "attestedCondidtions")
+                            .attr("id", "attested_problems")
                             .attr("type", "hidden")
-                            .attr("name", "attestedConditions["+i+"][condition_id]").val(condition).appendTo(form);
+                            .attr("name", "attested_problems["+i+"]").val(condition).appendTo(form);
                         i++;
                     });
                     confirmSubmitForm();
