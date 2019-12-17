@@ -189,13 +189,14 @@ if (isset($patient) && ! empty($patient)) {
                                                     <button class="btn btn-info btn-sm inline-block"
                                                             aria-label="..."
                                                             form="form-approve"
-                                                            role="button"
-                                                    >Approve
+                                                            type="submit"
+                                                            role="button">
+                                                        Approve
                                                     </button>
                                                 </form>
 
                                                 @if(auth()->user()->hasRole('provider'))
-                                                    <form action="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
+                                                    <form id="form-approve-next" action="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
                                                           method="POST" style="display: inline">
                                                         {{ csrf_field() }}
                                                         <input class="btn btn-success btn-sm inline-block"
@@ -213,14 +214,6 @@ if (isset($patient) && ! empty($patient)) {
                                                                 onclick="notEligibleClick()"
                                                                 class="btn btn-danger btn-sm text-right">Not Eligible
                                                         </button>
-
-                                                        <script>
-                                                            function notEligibleClick() {
-                                                                if (confirm('CAUTION: Clicking "confirm" will delete this patient’s entire record from Care Plan Manager. This action cannot be undone. Do you want to delete this patients entire record?')) {
-                                                                    document.getElementById('not-eligible-form').submit();
-                                                                }
-                                                            }
-                                                        </script>
                                                     </form>
                                                 @endif
                                             @endif
@@ -436,7 +429,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /ALLERGIES -->
 
                 <!-- SOCIALSERVICES -->
-                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}" misc-id="{{$socialServicesMiscId}}">
+                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}">
                     @if($social)
                         <p><?= nl2br($social); ?></p>
                     @else
@@ -490,7 +483,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /Appointments -->
 
                 <!-- OTHER NOTES -->
-                <others ref="othersComponent" patient-id="{{$patient->id}}" misc-id="{{$othersMiscId}}">
+                <others ref="othersComponent" patient-id="{{$patient->id}}">
                     @if($other)
                         <p><?= nl2br($other); ?></p>
                     @else
@@ -515,10 +508,12 @@ if (isset($patient) && ! empty($patient)) {
             <script>
 
                 let patientProblemNames = Object.keys(@json($problems));
+                const diabetes1 = "{{\App\Models\CPM\CpmProblem::DIABETES_TYPE_1}}";
+                const diabetes2 = "{{\App\Models\CPM\CpmProblem::DIABETES_TYPE_2}}";
 
                 //update problems if they have changed in care-areas modal
                 App.$on('patient-problems-updated', (problems) => {
-                    problemNames = problems.map(function(problem){
+                    let problemNames = problems.map(function(problem){
                         return problem.name;
                     });
                     patientProblemNames = problemNames;
@@ -532,13 +527,13 @@ if (isset($patient) && ! empty($patient)) {
                 });
 
                 function patientHasBothTypesOfDiabetes() {
-                    return patientProblemNames.includes("{{\App\Models\CPM\CpmProblem::DIABETES_TYPE_1}}") && patientProblemNames.includes("{{\App\Models\CPM\CpmProblem::DIABETES_TYPE_2}}");
+                    return patientProblemNames.includes(diabetes1) && patientProblemNames.includes(diabetes2);
                 }
 
                 $(function () {
                     $('#form-approve').submit(function (e) {
                         e.preventDefault();
-                        form = this;
+                        const form = this;
 
                         if (patientHasBothTypesOfDiabetes()) {
                             $(":input").each(function() {
@@ -556,6 +551,11 @@ if (isset($patient) && ! empty($patient)) {
                     })
                 })
 
+                function notEligibleClick() {
+                    if (confirm('CAUTION: Clicking "confirm" will delete this patient’s entire record from Care Plan Manager. This action cannot be undone. Do you want to delete this patients entire record?')) {
+                        document.getElementById('not-eligible-form').submit();
+                    }
+                }
 
             </script>
         @endpush
