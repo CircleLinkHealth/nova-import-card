@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ce87a064d556c065dc28e36354e7e111",
+    "content-hash": "2755878aee7ad5140ae1d610cd5a0aa7",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.129.0",
+            "version": "3.129.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "bd41c4a70e914c8b18c940f2cde19097dd83bd51"
+                "reference": "4e326d030ef7c82585d276969b3079169b4806e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/bd41c4a70e914c8b18c940f2cde19097dd83bd51",
-                "reference": "bd41c4a70e914c8b18c940f2cde19097dd83bd51",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4e326d030ef7c82585d276969b3079169b4806e2",
+                "reference": "4e326d030ef7c82585d276969b3079169b4806e2",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-12-13T19:47:53+00:00"
+            "time": "2019-12-16T19:10:16+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -621,7 +621,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git",
-                "reference": "2dc2460657b5da9da3e5bc427afb02113ba022d5"
+                "reference": "95fe31bcc8733c47cd0d4d3adbf6faeb40dac0c1"
             },
             "type": "library",
             "extra": {
@@ -641,6 +641,9 @@
             "scripts": {
                 "post-install-cmd": [
                     "npm install"
+                ],
+                "post-update-cmd": [
+                    "npm install"
                 ]
             },
             "authors": [
@@ -650,7 +653,7 @@
                 }
             ],
             "description": "PHP wrapper for bluebutton nodejs",
-            "time": "2019-12-13T11:40:19+00:00"
+            "time": "2019-12-16T13:44:16+00:00"
         },
         {
             "name": "circlelinkhealth/core",
