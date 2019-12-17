@@ -22,6 +22,7 @@
 
 <script>
     import Modal from '../../../admin/common/modal'
+    import {Event} from 'vue-tables-2'
 
     export default {
         name: "diabetes-check-modal",
@@ -31,6 +32,7 @@
         methods: {
             hideModal() {
                 this.$refs['diabetes-check-modal'].visible = false;
+                Event.$emit('modal-care-areas:show')
             },
             hideAndSubmitForm() {
                 App.$emit('confirm-diabetes-conditions');
