@@ -631,7 +631,7 @@
             //CPM-91 and CPM-437 double submitting notes
             let submitted = false;
             let form;
-            let attConditions = [];
+            let conditionsAttested = false;
             const waitForEl = function (selector, callback) {
                 if (!$(selector).length) {
                     setTimeout(function () {
@@ -648,8 +648,9 @@
 
                 //Once nurse has attested call conditions add as form inputs and submit form
                 App.$on('call-conditions-attested', (attestedConditions) => {
+                    conditionsAttested = true;
+
                     let i = 0;
-                    attConditions = attestedConditions;
                     attestedConditions.map(function (condition) {
                         $("<input>")
                             .attr("id", "attestedCondidtions")
@@ -944,7 +945,7 @@
 
                 function confirmSubmitForm() {
 
-                    if (attConditions.length == 0 && userIsCareCoach){
+                    if (!conditionsAttested && userIsCareCoach){
                         App.$emit('show-attest-call-conditions-modal');
                         return;
                     }
