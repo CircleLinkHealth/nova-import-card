@@ -20,7 +20,6 @@ class ImportService
      * Create a TabularMedicalRecord for each row, and import it.
      *
      * @param $row
-     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
      *
      * @throws \Exception
      *
@@ -160,7 +159,7 @@ class ImportService
                     'status'   => Ccda::QA,
                     'imported' => true,
                 ]
-                      );
+            );
 
         $response->success = true;
         $response->message = 'CCDA successfully imported.';
@@ -170,8 +169,6 @@ class ImportService
     }
 
     /**
-     * @param Enrollee $enrollee
-     *
      * @throws \Exception
      *
      * @return \App\Models\MedicalRecords\ImportedMedicalRecord
@@ -222,28 +219,36 @@ class ImportService
 
     private function parseDate($dob)
     {
-        if ( ! $dob) {
-            return null;
+        try {
+            $date = Carbon::parse($dob);
+
+            if ($date->isToday()) {
+                throw new \InvalidArgumentException('date note parsed correctly');
+            }
+        } catch (\InvalidArgumentException $e) {
+            if ( ! $dob) {
+                return null;
+            }
+
+            if (str_contains($dob, '/')) {
+                $delimiter = '/';
+            } elseif (str_contains($dob, '-')) {
+                $delimiter = '-';
+            }
+            $date = explode($delimiter, $dob);
+
+            if (count($date) < 3) {
+                throw new \Exception("Invalid date $dob");
+            }
+
+            $year = $date[2];
+
+            if (2 == strlen($year)) {
+                //if date is two digits we are assuming it's from the 1900s
+                $year = (int) $year + 1900;
+            }
+
+            return Carbon::createFromDate($year, $date[0], $date[1]);
         }
-
-        if (str_contains($dob, '/')) {
-            $delimiter = '/';
-        } elseif (str_contains($dob, '-')) {
-            $delimiter = '-';
-        }
-        $date = explode($delimiter, $dob);
-
-        if (count($date) < 3) {
-            throw new \Exception("Invalid date $dob");
-        }
-
-        $year = $date[2];
-
-        if (2 == strlen($year)) {
-            //if date is two digits we are assuming it's from the 1900s
-            $year = (int) $year + 1900;
-        }
-
-        return Carbon::createFromDate($year, $date[0], $date[1]);
     }
 }

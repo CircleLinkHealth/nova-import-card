@@ -12,6 +12,7 @@ use App\DirectMailMessage;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Entities\CcdaRequest;
+use App\Exceptions\InvalidCcdaException;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\TargetPatient;
@@ -169,7 +170,10 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         if ( ! $this->json) {
             $xml = $this->getMedia('ccd')->first()->getFile();
             if ( ! is_string($xml) || strlen($xml) < 1 || false == stripos($xml, '<ClinicalDocument')) {
-                throw new \Exception("CCD appears to be invalid. CCD: `$xml`");
+                $this->json   = null;
+                $this->status = 'invalid';
+                $this->save();
+                throw new InvalidCcdaException($this->id);
             }
             $this->json = $this->parseToJson($xml);
             $this->save();
