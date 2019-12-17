@@ -20,8 +20,8 @@
                             <div class="col-sm-8 top-20">
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <datepicker class="form-control pad-0" :class="{ error: !newAppointment.isPending() }" format="MM-dd-yyyy"
-                                            v-model="newAppointment.date" :disabled="{ to: today }" placeholder="MM-DD-YYYY" required></datepicker>
+                                        <datepicker input-class="form-control" class="form-control pad-0" :class="{ error: !newAppointment.isPending() }" format="MM-dd-yyyy"
+                                            v-model="newAppointment.date" placeholder="MM-DD-YYYY" required></datepicker>
                                     </div>
                                     <div class="col-sm-6">
                                         <input type="time" class="form-control" :class="{ error: !newAppointment.isPending() }" v-model="newAppointment.time" required />
@@ -120,7 +120,7 @@
                 newAppointment: {
                     provider: null,
                     min: moment(new Date()).format('MM-DD-YYYY'),
-                    date: null,
+                    date: moment(new Date()).add(1,'days').format('MM-DD-YYYY'),
                     time: '09:00:00',
                     type: null,
                     comment: null,
