@@ -20,7 +20,7 @@
                             <div class="col-sm-8 top-20">
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <datepicker class="form-control pad-0" :class="{ error: !newAppointment.isPending() }" format="MM-dd-yyyy"
+                                        <datepicker input-class="form-control" class="form-control pad-0" :class="{ error: !newAppointment.isPending() }" format="MM-dd-yyyy"
                                             v-model="newAppointment.date" :disabledDates="{ to: today }" placeholder="MM-DD-YYYY" required></datepicker>
                                     </div>
                                     <div class="col-sm-6">
@@ -126,7 +126,6 @@
                     comment: null,
                     isPending: () => (moment(this.newAppointmentDate + ' ' + this.newAppointment.time).toDate() > new Date())
                 },
-                // today: moment().add(-1, 'days').toDate(),
                 today: moment().toDate(),
                 selectedAppointment: null,
                 loaders: {
