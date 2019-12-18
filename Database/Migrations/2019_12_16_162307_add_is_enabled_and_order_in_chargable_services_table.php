@@ -29,8 +29,17 @@ class AddIsEnabledAndOrderInChargableServicesTable extends Migration
         DB::table($dbTable)
           ->insert([
               'order'       => 3,
-              'code'        => 'G2058',
-              'description' => 'Additional 20 minutes of CCM',
+              'code'        => 'G2058(>40mins)',
+              'description' => 'CCM services over 40 mins (1 month)',
+              'created_at'  => now(),
+              'updated_at'  => now(),
+          ]);
+
+        DB::table($dbTable)
+          ->insert([
+              'order'       => 4,
+              'code'        => 'G2058(>60mins)',
+              'description' => 'CCM services over 60 mins (1 month)',
               'created_at'  => now(),
               'updated_at'  => now(),
           ]);
