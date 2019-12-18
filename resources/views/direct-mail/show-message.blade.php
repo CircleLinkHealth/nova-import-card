@@ -22,6 +22,7 @@
                     @else
                         has not been imported yet.
                     @endif
+                    <a href="{{route('download.ccda.xml', [$ccda->id])}}">CCDA [{{$ccda->id}}] Download RAW XML</a>
                 @empty
                     No CCDAs were sent with the message.
                 @endforelse
