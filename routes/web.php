@@ -542,6 +542,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'get.CCDViewerController.show',
     ])->middleware('permission:ccda.read');
 
+    Route::get('ccd/download/xml/{ccdaId}', [
+        'uses' => 'CCDViewer\CCDViewerController@downloadXml',
+        'as'   => 'download.ccda.xml',
+    ])->middleware('permission:ccda.read');
+
     Route::post('ccd', [
         'uses' => 'CCDViewer\CCDViewerController@showUploadedCcd',
         'as'   => 'ccd-viewer.post',
