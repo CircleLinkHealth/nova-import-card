@@ -17,6 +17,10 @@ use Illuminate\Support\Collection;
 
 class PatientSummaryEloquentRepository
 {
+    const MINUTES_20 = 1200;
+    const MINUTES_40 = 2400;
+    const MINUTES_60 = 3600;
+
     public $callRepo;
     public $patientRepo;
 
@@ -383,8 +387,11 @@ class PatientSummaryEloquentRepository
      */
     public function lacksProblemCodes(PatientMonthlySummary $summary)
     {
-        return ! $summary->billable_problem1_code || ! $summary->billable_problem2_code || $summary->billableBhiProblems(
-            )->whereNull('icd_10_code')->where('icd_10_code', '=', '')->exists();
+        return ! $summary->billable_problem1_code || ! $summary->billable_problem2_code || $summary->billableBhiProblems()->whereNull('icd_10_code')->where(
+            'icd_10_code',
+            '=',
+            ''
+        )->exists();
     }
 
     /**
@@ -587,12 +594,14 @@ class PatientSummaryEloquentRepository
      */
     private function shouldAttachChargeableService(ChargeableService $service, PatientMonthlySummary $summary)
     {
-        return 'CPT 99484'        == $service->code && $summary->bhi_time >= 1200
-               || 'CPT 99490'     == $service->code && $summary->ccm_time >= 1200
-               || 'G0511'         == $service->code && $summary->ccm_time >= 1200
-               || 'Software-Only' == $service->code && $summary->patient->primaryPractice->hasServiceCode(
-                   'Software-Only'
-               ) && 0 == $summary->timeFromClhCareCoaches();
+        //FIXME: this is confusing. Might need a few extra parenthesis.
+        return ChargeableService::BHI                        == $service->code && $summary->bhi_time >= self::MINUTES_20
+               || ChargeableService::CCM                     == $service->code && $summary->ccm_time >= self::MINUTES_20
+               || ChargeableService::GENERAL_CARE_MANAGEMENT == $service->code && $summary->ccm_time >= self::MINUTES_20
+               || ChargeableService::CCM_PLUS_40             == $service->code && $summary->ccm_time >= self::MINUTES_40 && $summary->patient->primaryPractice->hasServiceCode(ChargeableService::CCM_PLUS_40)
+               || ChargeableService::CCM_PLUS_60             == $service->code && $summary->ccm_time >= self::MINUTES_60 && $summary->patient->primaryPractice->hasServiceCode(ChargeableService::CCM_PLUS_60)
+               || (ChargeableService::SOFTWARE_ONLY == $service->code && $summary->patient->primaryPractice->hasServiceCode(ChargeableService::SOFTWARE_ONLY)
+                  && 0 == $summary->timeFromClhCareCoaches());
     }
 
     /**
