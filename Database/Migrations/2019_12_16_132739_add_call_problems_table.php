@@ -18,6 +18,7 @@ class AddCallProblemsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('call_id');
             $table->unsignedInteger('ccd_problem_id');
+            $table->unsignedInteger('patient_monthly_summary_id')->nullable();
 
             $table->foreign('call_id')
                 ->references('id')
@@ -28,6 +29,10 @@ class AddCallProblemsTable extends Migration
                   ->references('id')
                   ->on('ccd_problems')
                   ->onDelete('cascade');
+
+            $table->foreign('patient_monthly_summary_id')
+                  ->references('id')
+                  ->on('patient_monthly_summaries');
         });
     }
 
@@ -38,8 +43,6 @@ class AddCallProblemsTable extends Migration
      */
     public function down()
     {
-        Schema::table('', function (Blueprint $table) {
-
-        });
+        Schema::dropIfExists('call_problems');
     }
 }
