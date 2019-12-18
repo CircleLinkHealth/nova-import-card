@@ -7,13 +7,14 @@
 namespace Tests\Unit\CallsAlgo;
 
 use App\Algorithms\Calls\CallAlgoHelper;
+use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use Tests\TestCase;
 
 class NurseMatchTest extends TestCase
 {
-    use App\Traits\Tests\UserHelpers;
     use CallAlgoHelper;
+    use UserHelpers;
     private $matchArray = [];
     private $nurse;
     private $nurse2;

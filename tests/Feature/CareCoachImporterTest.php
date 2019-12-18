@@ -6,12 +6,13 @@
 
 namespace Tests\Feature;
 
+use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
 
 class CareCoachImporterTest extends TestCase
 {
-    use App\Traits\Tests\UserHelpers;
+    use UserHelpers;
 
     /**
      * A basic test example.

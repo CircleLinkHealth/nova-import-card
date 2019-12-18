@@ -6,13 +6,14 @@
 
 namespace Tests\Feature\Unit;
 
+use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
 
 class NurseScheduleTest extends TestCase
 {
-    use App\Traits\Tests\UserHelpers;
+    use UserHelpers;
 
     private $nurse;
 

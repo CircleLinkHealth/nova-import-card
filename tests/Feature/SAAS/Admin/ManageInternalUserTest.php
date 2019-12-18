@@ -6,6 +6,7 @@
 
 namespace Tests\Feature\SAAS\Admin;
 
+use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
@@ -13,7 +14,8 @@ use Tests\DuskTestCase;
 
 class ManageInternalUserTest extends DuskTestCase
 {
-    use App\Traits\Tests\UserHelpers;
+    use UserHelpers;
+
     private $adminUser;
     private $practice;
 

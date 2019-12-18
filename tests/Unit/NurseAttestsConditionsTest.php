@@ -6,19 +6,125 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Call;
+use App\Models\CPM\CpmProblem;
+use App\Traits\Tests\UserHelpers;
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Practice;
+use Tests\Helpers\CarePlanHelpers;
 use Tests\TestCase;
 
 class NurseAttestsConditionsTest extends TestCase
 {
+    use CarePlanHelpers;
+    use UserHelpers;
+    protected $location;
+    protected $nurse;
+    protected $patient;
+
+    protected $practice;
+    protected $provider;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->practice = Practice::first() ?? factory(Practice::class)->create();
+        $this->location = Location::firstOrCreate([
+            'practice_id' => $this->practice->id,
+        ]);
+
+        $this->provider = $this->createUser($this->practice->id);
+        $this->nurse    = $this->createUser($this->practice->id, 'care-center');
+
+        $this->setupPatient();
+    }
+
+    public function test_asserted_problems_are_attached_to_call_back_task()
+    {
+        $this->assertTrue(true);
+    }
+
     /**
      * A basic unit test example.
      *
      * @return void
      */
-    public function test_example()
+    public function test_asserted_problems_are_attached_to_scheduled_call()
+    {
+        auth()->login($this->nurse);
+
+        $this->actingAs($this->nurse)->call('POST', route('patient.note.store', ['patientId' => $this->patient->id]), $this->getStoreCallInput());
+
+        $this->assertTrue(true);
+        //assert call has attested conditions
+    }
+
+    public function test_modal_pops_up()
     {
         $this->assertTrue(true);
+    }
+
+    private function getStoreCallInput()
+    {
+        return [
+            'ccm_status'             => 'enrolled',
+            'withdrawn_reason'       => 'No Longer Interested',
+            'withdrawn_reason_other' => '',
+            'general_comment'        => '',
+            'type'                   => 'Review Care Plan',
+            'performed_at'           => '2019-12-17T12:26',
+            'phone'                  => 'outbound',
+            'call_status'            => 'reached',
+            'tcm'                    => 'hospital',
+            'summary'                => '',
+            'body'                   => 'test',
+            'patient_id'             => "{$this->patient->id}",
+            'logger_id'              => "{$this->nurse->id}",
+            'author_id'              => "{$this->nurse->id}",
+            'programId'              => "{$this->practice->id}",
+            'task_status'            => '',
+            'attested_problems'      => $this->patient->ccdProblems()->pluck('id')->toArray(),
+        ];
+    }
+
+    private function setupPatient()
+    {
+        $this->patient = $this->createUser($this->practice->id, 'participant');
+        $this->patient->setPreferredContactLocation($this->location->id);
+        $this->patient->patientInfo->save();
+
+        $cpmProblems = CpmProblem::get();
+        $ccdProblems = $this->patient->ccdProblems()->createMany([
+            ['name' => 'test'.str_random(5)],
+            ['name' => 'test'.str_random(5)],
+            ['name' => 'test'.str_random(5)],
+        ]);
+
+        foreach ($ccdProblems as $problem) {
+            $problem->cpmProblem()->associate($cpmProblems->random());
+            $problem->save();
+        }
+
+        //setup call
+        $call = Call::create([
+            'service' => 'phone',
+            'status'  => 'scheduled',
+
+            'scheduler' => 'core algorithm',
+
+            'inbound_cpm_id'  => $this->patient->id,
+            'outbound_cpm_id' => $this->nurse->id,
+
+            'inbound_phone_number'  => factory()->phone,
+            'outbound_phone_number' => factory()->phone,
+            'scheduled_date'        => Carbon::now()->toDateString(),
+
+            'inbound_cpm_id'  => $this->patient->id,
+            'outbound_cpm_id' => $this->nurse->id,
+
+            'is_cpm_outbound' => true,
+        ]);
     }
 }

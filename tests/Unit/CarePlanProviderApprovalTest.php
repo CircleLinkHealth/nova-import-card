@@ -9,6 +9,7 @@ namespace Tests\Unit;
 use App\CarePlan;
 use App\Models\CPM\CpmProblem;
 use App\Notifications\CarePlanProviderApproved;
+use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -20,8 +21,8 @@ use Tests\TestCase;
 
 class CarePlanProviderApprovalTest extends TestCase
 {
-    use App\Traits\Tests\UserHelpers;
     use CarePlanHelpers;
+    use UserHelpers;
 
     /**
      * @var CarePlan

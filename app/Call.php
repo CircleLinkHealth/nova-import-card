@@ -84,6 +84,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
+ * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection                                              $attestedProblems
+ * @property int|null                                                                                                        $attested_problems_count
  */
 class Call extends BaseModel implements AttachableToNotification
 {
