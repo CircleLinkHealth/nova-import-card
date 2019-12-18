@@ -178,4 +178,9 @@ class Problem extends \CircleLinkHealth\Core\Entities\BaseModel implements \App\
             ->withPivot('name', 'icd_10_code')
             ->withTimestamps();
     }
+
+    public function summaries()
+    {
+        return $this->belongsToMany(Call::class, 'call_problems', 'ccd_problem_id', 'patient_monthly_summary_id');
+    }
 }

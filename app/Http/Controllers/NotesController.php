@@ -539,7 +539,7 @@ class NotesController extends Controller
                         //use $note->created_at, in case we are editing a note
                         $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
                         $this->patientRepo->updateCallLogs($patient->patientInfo, true, true, $note->performed_at);
-                        $call->attestedProblems()->attach($input['attested_problems']);
+                        $call->attachAttestedProblems($input['attested_problems']);
                     } else {
                         $call->status = 'done';
                     }

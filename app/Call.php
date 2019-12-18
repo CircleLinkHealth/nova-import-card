@@ -147,6 +147,17 @@ class Call extends BaseModel implements AttachableToNotification
         'is_cpm_outbound',
     ];
 
+    public function attachAttestedProblems(array $attestedProblems)
+    {
+        $summary = PatientMonthlySummary::where('patient_id', $this->inbound_cpm_id)
+            ->getCurrent()
+            ->first();
+
+        $this->attestedProblems()->attach($attestedProblems, [
+            'patient_monthly_summary_id' => $summary ? $summary->id : null,
+        ]);
+    }
+
     public function attestedProblems()
     {
         return $this->belongsToMany(Problem::class, 'call_problems', 'call_id', 'ccd_problem_id');

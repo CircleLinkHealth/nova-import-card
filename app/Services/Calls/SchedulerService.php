@@ -548,7 +548,7 @@ class SchedulerService
             );
         }
 
-        $call->attestedProblems()->attach($attestedProblems);
+        $call->attachAttestedProblems($attestedProblems);
     }
 
     /**
