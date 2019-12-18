@@ -112,6 +112,11 @@ class PatientMonthlySummary extends BaseModel
         return $this->hasOne(User::class, 'actor_id');
     }
 
+    public function attestedProblems()
+    {
+        return $this->belongsToMany(Problem::class, 'call_problems', 'patient_monthly_summary_id', 'ccd_problem_id');
+    }
+
     public function attachBillableProblem($problemId, $name, $icd10Code, $type = 'ccm')
     {
         return $this->billableProblems()
