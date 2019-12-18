@@ -13,8 +13,6 @@ class UserObserver
 {
     /**
      * Listen to the User creating event.
-     *
-     * @param User $user
      */
     public function creating(User $user)
     {
@@ -22,8 +20,6 @@ class UserObserver
 
     /**
      * Listen to the User deleting event.
-     *
-     * @param \CircleLinkHealth\Customer\Entities\User $user
      */
     public function deleting(User $user)
     {
@@ -31,8 +27,6 @@ class UserObserver
 
     /**
      * Listen to the User saved event.
-     *
-     * @param User $user
      */
     public function saved(User $user)
     {
@@ -53,6 +47,8 @@ class UserObserver
                     } catch (\Exception $e) {
                         //check if this is a mysql exception for unique key constraint
                         if ($e instanceof QueryException) {
+                            //                    @todo:heroku query to see if it exists, then attach
+
                             $errorCode = $e->errorInfo[1];
                             if (1062 == $errorCode) {
                                 return false;
@@ -67,8 +63,6 @@ class UserObserver
 
     /**
      * Listen to the User saving event.
-     *
-     * @param User $user
      */
     public function saving(User $user)
     {

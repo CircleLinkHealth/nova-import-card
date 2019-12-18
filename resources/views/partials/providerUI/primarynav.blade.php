@@ -48,11 +48,12 @@ $user = auth()->user();
 
 <nav class="navbar primary-navbar">
     <div class="container-fluid full-width margin-0">
-        <a class="navbar-brand" href="{{ url('/') }}" style="border: none"><img
+        <a class="navbar-brand" href="{{ url('/') }}" style="padding: 5px 15px; border: none"><img
                     src="{{mix('/img/logos/LogoHorizontal_White.svg')}}"
                     alt="Care Plan Manager"
                     style="position:relative;top:-7px"
-                    width="105px"/></a>
+                    height="50"
+                    width="105"/></a>
 
         <button type="button" class="navbar-toggle collapsed" style="border-color:white" data-toggle="collapse"
                 data-target="#navbar-collapse" aria-expanded="false">
@@ -184,6 +185,17 @@ $user = auth()->user();
                             @endrole
                         </ul>
                     </li>
+                    {{--Live Notifications--}}
+                    <li class="dropdown">
+                        <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                             aria-expanded="false"><i class="glyphicon glyphicon-bell"></i> Notifications
+                            <a class="inline-block">
+
+                                <pusher-notifications :user-id="{{json_encode(\Illuminate\Support\Facades\Auth::id())}}"></pusher-notifications>
+                            </a>
+                        </div>
+                    </li>
+
                     <li class="dropdown">
                         <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
                              aria-expanded="false">

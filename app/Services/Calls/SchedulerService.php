@@ -34,8 +34,6 @@ class SchedulerService
 
     /**
      * SchedulerService constructor.
-     *
-     * @param PatientWriteRepository $patientWriteRepository
      */
     public function __construct(PatientWriteRepository $patientWriteRepository, NoteService $noteService)
     {
@@ -89,7 +87,7 @@ class SchedulerService
         })
             ->where('inbound_cpm_id', $patient->id)
             ->whereIn('status', ['reached', 'not reached'])
-            ->where('called_date', '!=', '')
+            ->whereNotNull('called_date')
             ->where('called_date', '<', Carbon::today()->startOfDay()->toDateTimeString())
             ->orderBy('called_date', 'desc')
             ->first();
@@ -134,8 +132,6 @@ class SchedulerService
      * So, run the query again to find any call of today with status of not 'reached' or 'not reached'.
      *
      * @param $patientId
-     *
-     * @return Call|null
      */
     public function getTodaysCall($patientId): ?Call
     {
@@ -172,9 +168,9 @@ class SchedulerService
                                $row
                            ) {
                     $q->where(
-                                   'birth_date',
-                                   Carbon::parse($row['DOB'])->toDateString()
-                               );
+                        'birth_date',
+                        Carbon::parse($row['DOB'])->toDateString()
+                    );
                 })
                 ->first();
 
@@ -522,7 +518,6 @@ class SchedulerService
      * Update a call based on info received from note.
      * If a call does not exist, one is created and linked to this note.
      *
-     * @param Note $note
      * @param $call
      * @param $status
      */

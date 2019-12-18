@@ -1,10 +1,11 @@
 export const BILLING_PROVIDER = 'billing_provider';
 export const REGULAR_DOCTOR = 'regular_doctor';
+export const MEMBER = 'member';
 export const RELATION_VALID_DROPDOWN_OPTIONS = [BILLING_PROVIDER, REGULAR_DOCTOR];
 export const relationToPatientOptions = {
     minimumResultsForSearch: -1, //hide search input
     data: [
-        {id: '', text: 'Care Team Member'},
+        {id: MEMBER, text: 'Care Team Member'},
         {id: REGULAR_DOCTOR, text: 'Regular Dr.'},
         {id: BILLING_PROVIDER, text: 'Billing Dr.'}
     ]

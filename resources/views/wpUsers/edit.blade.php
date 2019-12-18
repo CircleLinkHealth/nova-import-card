@@ -179,7 +179,7 @@
                                         <div class="col-xs-6"></div>
                                         <div class="col-xs-4">{!! Form::label('auto_attach_programs', 'Give access to all of ' . auth()->user()->saasAccountName() . '\'s practices') !!}</div>
                                         <div class="col-xs-2">
-                                            {!! Form::checkbox('auto_attach_programs', $patient->auto_attach_programs ?? 0, $patient->auto_attach_programs) !!}
+                                            {!! Form::checkbox('auto_attach_programs', 1, !! $patient->auto_attach_programs) !!}
                                         </div>
                                         @push('scripts')
                                             <script>
@@ -217,12 +217,13 @@
                                         <button class="btn-primary btn-xs" id="programsCheckAll">Check All</button>
                                         |
                                         <button class="btn-primary btn-xs" id="programsUncheckAll">Uncheck All</button>
+
                                         @foreach( $wpBlogs as $wpBlogId => $domain )
                                             <div class="row" id="program_{{ $wpBlogId }}"
                                                  style="border-bottom:1px solid #000;">
                                                 <div class="col-sm-2">
                                                     <div class="text-right">
-                                                        @if( in_array($wpBlogId, $patient->practices()->pluck('id')->all()) )
+                                                        @if( in_array($wpBlogId, $userPractices) )
                                                             {!! Form::checkbox('programs[]', $wpBlogId, ['checked' => "checked"], ['style' => '', 'class' => 'programs']) !!}
                                                         @else
                                                             {!! Form::checkbox('programs[]', $wpBlogId, [], ['style' => '', 'class' => 'programs']) !!}
@@ -483,10 +484,10 @@
                                     <a href="{{ URL::previous() }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::hidden('user_id', $patient->id) !!}
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
-                                    </form>
                                 </div>
                             </div>
                         </div>
+{!! Form::close() !!}
 
                     </div>
                 </div>

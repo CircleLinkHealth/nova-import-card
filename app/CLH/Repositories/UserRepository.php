@@ -336,9 +336,6 @@ class UserRepository
      * We could implement a change password page and we could use this method
      * to also populate password history.
      * https://www.5balloons.info/setting-up-change-password-with-laravel-authentication/.
-     *
-     * @param \CircleLinkHealth\Customer\Entities\User $user
-     * @param ParameterBag                             $params
      */
     public function saveOrUpdatePasswordsHistory(
         User $user,
@@ -551,13 +548,10 @@ class UserRepository
             $user->email = $params->get('email');
         }
 
-        if ($params->get('access_disabled')) {
-            $user->access_disabled = $params->get('access_disabled');
-        } else {
-            $user->access_disabled = 0; // 0 = good, 1 = disabled
-        }
+        $user->access_disabled = $params->get('access_disabled', false);
 
-        $user->auto_attach_programs = $params->get('auto_attach_programs');
+        $user->auto_attach_programs = $params->has('auto_attach_programs');
+
         if ($params->get('first_name')) {
             $user->setFirstName($params->get('first_name'));
         }
@@ -590,8 +584,6 @@ class UserRepository
 
     /**
      * Clear Cerberus roles cache for User.
-     *
-     * @param User $user
      */
     private function clearRolesCache(User $user)
     {

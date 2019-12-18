@@ -12,6 +12,7 @@ use App\Rules\DateBeforeUsingCarbon;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Raygun\PsrLogger\RaygunLogger;
 use Illuminate\Http\Request;
@@ -119,6 +120,8 @@ class CallController extends Controller
             $previousCall->save();
         }
 
+        $request->merge(['is_reschedule' => true]);
+
         return $this->create($request);
     }
 
@@ -126,7 +129,6 @@ class CallController extends Controller
      * This handler is only used by nurses, so calls scheduled from here
      * have is_manual = true.
      *
-     * @param Request $request
      * @param $patientId
      *
      * @return \Illuminate\Http\RedirectResponse
@@ -214,7 +216,10 @@ class CallController extends Controller
             'callId',
             'columnName',
             'value',
-            'familyOverride'
+            'familyOverride',
+            'is_temporary',
+            'temporary_from',
+            'temporary_to'
         );
 
         $columnsToCheckForOverride = ['scheduled_date', 'window_start', 'window_end'];
@@ -229,7 +234,7 @@ class CallController extends Controller
         }
 
         // find call
-        $call = Call::find($data['callId']);
+        $call = Call::whereId($data['callId'])->with('inboundUser')->first();
         if ( ! $call) {
             return response('could not locate call '.$data['callId'], 401);
         }
@@ -318,6 +323,15 @@ class CallController extends Controller
 
         $call->save();
 
+        if ('outbound_cpm_id' === $col) {
+            $this->processNursePatientRelation($call->inboundUser, [
+                'is_temporary'    => $data['is_temporary'] ?? false,
+                'temporary_to'    => $data['temporary_to'] ?? null,
+                'temporary_from'  => $data['temporary_from'] ?? null,
+                'outbound_cpm_id' => $data['value'],
+            ]);
+        }
+
         return response(
             'successfully updated call '.$data['columnName'].'='.$data['value'].' - CallId='.$data['callId'],
             201
@@ -328,7 +342,6 @@ class CallController extends Controller
      * Software-Only role cannot change clh nurse to in-house nurse
      * CPM-660.
      *
-     * @param Call $call
      * @param $newCareCoachUserId
      *
      * @return bool
@@ -351,7 +364,10 @@ class CallController extends Controller
 
         //check role of current care coach
         $currentIsClhCareCoach = $call->outboundUser->hasRoleForSite('care-center', $patientPrimaryPractice);
-        $newIsClhCareCoach     = User::find($newCareCoachUserId)->hasRoleForSite('care-center', $patientPrimaryPractice);
+        $newIsClhCareCoach     = User::find($newCareCoachUserId)->hasRoleForSite(
+            'care-center',
+            $patientPrimaryPractice
+        );
 
         if ($currentIsClhCareCoach && ! $newIsClhCareCoach) {
             return false;
@@ -383,6 +399,11 @@ class CallController extends Controller
             'attempt_note'    => '',
             'is_manual'       => 'required|boolean',
             'family_override' => '',
+            'asap'            => '',
+            'is_temporary'    => 'sometimes|boolean',
+            'is_reschedule'   => 'sometimes|boolean',
+            'temporary_from'  => ['nullable', 'after_or_equal:today', new DateBeforeUsingCarbon()],
+            'temporary_to'    => ['nullable', 'after_or_equal:today', new DateBeforeUsingCarbon()],
         ]);
 
         if ($validation->fails()) {
@@ -439,7 +460,7 @@ class CallController extends Controller
                  $input['scheduled_date'],
                  $input['window_start'],
                  $input['window_end']
-            )) {
+             )) {
             return [
                 'errors' => ['patient belongs to family and the family has a call at different time'],
                 'code'   => 418,
@@ -491,8 +512,50 @@ class CallController extends Controller
         return $mustConfirm;
     }
 
+    private function processNursePatientRelation(User $patient, $input)
+    {
+        $isReschedule = $input['is_reschedule'] ?? false;
+        $isTemporary  = $input['is_temporary'] ?? false;
+        $tempFrom     = $input['temporary_from'] ?? null;
+        $tempTo       = $input['temporary_to'] ?? null;
+
+        //request came from Notes Pages Call Reschedule
+        if ($isReschedule) {
+            return;
+        }
+
+        if ($isTemporary) {
+            if ( ! ($tempFrom instanceof Carbon)) {
+                $tempFrom = Carbon::parse($tempFrom);
+            }
+            if ( ! ($tempTo instanceof Carbon)) {
+                $tempTo = Carbon::parse($tempTo);
+            }
+
+            PatientNurse::updateOrCreate(
+                ['patient_user_id' => $patient->id],
+                [
+                    'patient_user_id'         => $patient->id,
+                    'temporary_nurse_user_id' => $input['outbound_cpm_id'],
+                    'temporary_from'          => $tempFrom,
+                    'temporary_to'            => $tempTo,
+                ]
+            );
+        } else {
+            PatientNurse::updateOrCreate(
+                ['patient_user_id' => $patient->id],
+                [
+                    'patient_user_id'         => $patient->id,
+                    'nurse_user_id'           => $input['outbound_cpm_id'],
+                    'temporary_nurse_user_id' => null,
+                    'temporary_from'          => null,
+                    'temporary_to'            => null,
+                ]
+            );
+        }
+    }
+
     /**
-     * @param User $user
      * @param $input
      *
      * @return Call
@@ -523,12 +586,11 @@ class CallController extends Controller
             ? $input['sub_type']
             : null;
         $call->inbound_cpm_id = $user->id;
-
+        $call->asap           = boolval($input['asap'] ?? false);
         //make sure we are sending the dates correctly formatted
-        $call->scheduled_date = $scheduledDate->format('Y-m-d');
-        $call->window_start   = $windowStart->format('H:i');
-        $call->window_end     = $windowEnd->format('H:i');
-
+        $call->scheduled_date  = $scheduledDate->format('Y-m-d');
+        $call->window_start    = $windowStart->format('H:i');
+        $call->window_end      = $windowEnd->format('H:i');
         $call->attempt_note    = $input['attempt_note'];
         $call->note_id         = null;
         $call->is_cpm_outbound = 1;
@@ -544,6 +606,8 @@ class CallController extends Controller
         }
 
         $call->save();
+
+        $this->processNursePatientRelation($user, $input);
 
         return $call;
     }

@@ -77,6 +77,8 @@ interface MedicalRecord
 
     public function getDocumentCustodian(): string;
 
+    public function getId(): ?int;
+
     /**
      * Get the Transformer.
      */
@@ -86,6 +88,8 @@ interface MedicalRecord
      * Get the User to whom this record belongs to, if one exists.
      */
     public function getPatient(): User;
+
+    public function getType(): ?string;
 
     /**
      * Handles importing a MedicalRecord for QA.

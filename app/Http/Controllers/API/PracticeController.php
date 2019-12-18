@@ -94,7 +94,7 @@ class PracticeController extends Controller
                     $info
                               ? $info->states
                               : new Collection()
-                          )
+                )
                     ->map(function ($state) {
                         return $state->code;
                     });
@@ -126,7 +126,7 @@ class PracticeController extends Controller
     public function getPatients($practiceId)
     {
         $practice = Practice::find($practiceId);
-        $patients = $practice->patients()->with('carePlan')->get([
+        $patients = $practice->patients()->with(['carePlan', 'patientInfo'])->get([
             'id',
             'first_name',
             'last_name',
@@ -143,6 +143,7 @@ class PracticeController extends Controller
                 'city'       => $patient->city,
                 'state'      => $patient->state,
                 'status'     => optional($patient->carePlan)->status,
+                'ccm_status' => optional($patient->patientInfo)->ccm_status,
             ];
         })->toArray();
 
@@ -219,7 +220,7 @@ class PracticeController extends Controller
             ->practices(true, false, $roleIds)
             ->with('locations')
             ->get([
-                'id',
+                'practices.id',
                 'display_name',
             ]);
 

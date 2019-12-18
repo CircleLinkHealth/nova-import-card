@@ -4,7 +4,7 @@
             <form action="{{ route('admin.enrollees.import.medical.records') }}" method="post">
                 {{ csrf_field() }}
                 <div class="form-group">
-                    <div class="form-group" data-step="2" data-intro="Select the practice you;d like to import CCDs for.">
+                    <div class="form-group" data-step="2" data-intro="Select the practice you'd like to import CCDs for.">
                         <select data-position='right' name="practice_id" class="col-sm-12 form-control select2" required>
                             <option value="" disabled selected>Select Practice</option>
                             @foreach(CircleLinkHealth\Customer\Entities\Practice::active()->orderBy('display_name')->get() as $practice)
