@@ -30,7 +30,7 @@ trait HasChargeableServices
             }
         );
 
-        return $chargeableServices->has('AWV: G0438') || $chargeableServices->has('AWV: G0439');
+        return $chargeableServices->has(ChargeableService::AWV_INITIAL) || $chargeableServices->has(ChargeableService::AWV_SUBSEQUENT);
     }
 
     public function hasServiceCode($code)
