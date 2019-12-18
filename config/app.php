@@ -5,6 +5,7 @@
  */
 
 use App\Providers\CpmArtisanServiceProvider;
+use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use Circlelinkhealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
@@ -213,6 +214,7 @@ return [
         NurseInvoicesDeferredBindingsServiceProvider::class,
         EligibilityServiceProvider::class,
         CardServiceProvider::class,
+        CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
     ],
 

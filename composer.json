@@ -78,6 +78,10 @@
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git"
     }
   ],
   "require": {
@@ -252,8 +256,8 @@
     },
     "merge-plugin": {
       "include": [
-        "Modules/*/composer.json",
-        "CLHPackages/*/composer.json"
+        "CLHPackages/*/composer.json",
+        "Modules/*/composer.json"
       ],
       "require": [],
       "recurse": true,
