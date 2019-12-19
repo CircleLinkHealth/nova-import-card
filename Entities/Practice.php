@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Customer\Entities;
 use App\CareAmbassadorLog;
 use App\CLH\Helpers\StringManipulation;
 use App\EnrolleeCustomFilter;
+use App\Models\CCD\Problem;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\ValueObjects\PatientReportData;
 use Carbon\Carbon;
@@ -404,7 +405,9 @@ class Practice extends BaseModel implements HasMedia
                             [
                                 'patientSummaries' => function ($q) use ($month) {
                                     $q
-                                        ->with(['billableBhiProblems'])
+                                        ->with(['billableBhiProblems', 'attestedProblems' => function($problem){
+                                            $problem->with(['cpmProblem', 'codes']);
+                                        }])
                                         ->where('month_year', $month->toDateString())
                                         ->where('approved', '=', true);
                                 },
@@ -439,11 +442,9 @@ class Practice extends BaseModel implements HasMedia
                                     $patientData->setProvider($u->getBillingProviderName());
                                     $patientData->setBillingCodes($u->billingCodes($month));
 
-                                    $patientData->setProblem1Code($summary->billable_problem1_code);
-                                    $patientData->setProblem1($summary->billable_problem1);
-
-                                    $patientData->setProblem2Code($summary->billable_problem2_code);
-                                    $patientData->setProblem2($summary->billable_problem2);
+                                    $patientData->setCcmProblemCodes($summary->attestedProblems->transform(function (Problem $problem){
+                                        return $problem->icd10Code();
+                                    })->filter()->implode(','));
 
                                     $patientData->setBhiCode(
                                         optional(optional($summary->billableProblems->first())->pivot)->icd_10_code
