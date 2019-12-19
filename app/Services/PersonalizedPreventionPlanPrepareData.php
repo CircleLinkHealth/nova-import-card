@@ -75,7 +75,25 @@ class PersonalizedPreventionPlanPrepareData
     const NMPA = 'nmpa';
     const NLWAD = 'nlwad';
 
+    /**
+     * Return ordered checkList Data
+     *
+     * @param $personalizedHealthAdvices
+     * @return array
+     */
+    public function getOrderedSuggestedChecklist($personalizedHealthAdvices)
+    {
+        $suggestedChecklistData = collect();
+        foreach ($personalizedHealthAdvices as $advice => $tasks) {
+            $suggestedChecklistData[] = $tasks['table_data'];
+        }
 
+       return $suggestedChecklistData->sortBy(function ($collections) {
+            foreach ($collections as $collection => $arrays) {
+                return $arrays[0]['emphasize_code'];
+            }
+        }, SORT_REGULAR, true)->values()->all();
+    }
     /*
      * https://docs.google.com/document/d/1ZC68KlBgKFYZIDd9uTVBAw_P85oO1VjloHw9vZt2Tmc/edit
     each evaluation from this doc belongs to a function
@@ -250,10 +268,10 @@ class PersonalizedPreventionPlanPrepareData
                     if (strpos($table['code'], $codeWithText) !== false) {
                         $emphasizeCode = true;
                         $body = (str_ireplace($emphasisedBody,
-                            "<class style='color: #50b2e2; font-style: italic;'>{$emphasisedBody}</class>",
+                            "<class style='background-color: #cfe7f3;'>{$emphasisedBody}</class>",
                             $table['body']));
                         $code = (str_ireplace($codeWithText,
-                            "<class style='color: #50b2e2; font-style: italic;'>{$codeWithText}</class>",
+                            "<class style='background-color: #cfe7f3;'>{$codeWithText}</class>",
                             $table['code']));
                     }
 
@@ -271,7 +289,7 @@ class PersonalizedPreventionPlanPrepareData
                 'title' => $recommendation[0],
                 'image' => $recommendation[1],
                 'tasks' => $tasks,
-                'table_data' => $tableData,
+                'table_data' => $tableData, // i can't order them here cause they re not all collected yet.
             ];
         });
 
