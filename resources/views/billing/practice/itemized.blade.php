@@ -16,10 +16,7 @@
             <th>Billing Code</th>
             <th>CCM Mins</th>
             <th>BHI Mins</th>
-            <th>Condition I</th>
-            <th>Condition I Code</th>
-            <th>Condition II</th>
-            <th>Condition II Code</th>
+            <th>CCM Problem Codes</th>
             <th>BHI Problem</th>
             <th>BHI Code</th>
 
@@ -35,10 +32,7 @@
                     <td>{{$data->getBillingCodes()}}</td>
                     <td>{{$data->getCcmTime()}}</td>
                     <td>{{$data->getBhiTime()}}</td>
-                    <td>{{$data->getProblem1()}}</td>
-                    <td>{{$data->getProblem1Code()}}</td>
-                    <td>{{$data->getProblem2()}}</td>
-                    <td>{{$data->getProblem2Code()}}</td>
+                    <td>{{$data->getCcmProblemCodes()}}</td>
                     <td>{{$data->getBhiProblem()}}</td>
                     <td>{{$data->getBhiCode()}}</td>
                 </tr>

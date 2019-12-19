@@ -21,6 +21,8 @@ class PatientReportData
     protected $bhiTime;
 
     protected $billingCodes;
+
+    protected $ccmProblemCodes;
     protected $ccmTime;
 
     protected $dob;
@@ -28,14 +30,6 @@ class PatientReportData
     protected $name;
 
     protected $practice;
-
-    protected $problem1;
-
-    protected $problem1Code;
-
-    protected $problem2;
-
-    protected $problem2Code;
 
     protected $provider;
 
@@ -82,6 +76,14 @@ class PatientReportData
     /**
      * @return mixed
      */
+    public function getCcmProblemCodes()
+    {
+        return $this->ccmProblemCodes;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getCcmTime()
     {
         return $this->ccmTime;
@@ -109,38 +111,6 @@ class PatientReportData
     public function getPractice()
     {
         return $this->practice;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProblem1()
-    {
-        return $this->problem1;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProblem1Code()
-    {
-        return $this->problem1Code;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProblem2()
-    {
-        return $this->problem2;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProblem2Code()
-    {
-        return $this->problem2Code;
     }
 
     /**
@@ -189,6 +159,14 @@ class PatientReportData
     public function setBillingCodes($billingCodes): void
     {
         $this->billingCodes = $billingCodes;
+    }
+
+    /**
+     * @param mixed $ccmProblemCodes
+     */
+    public function setCcmProblemCodes($ccmProblemCodes): void
+    {
+        $this->ccmProblemCodes = $ccmProblemCodes;
     }
 
     /**
