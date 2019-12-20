@@ -37,7 +37,6 @@
         "mapCoverage": true
     },
     "dependencies": {
-        "@composer-asset/circlelinkhealth--ccda-parser-processor-php": "file:./vendor/foxy/composer-asset/circlelinkhealth/ccda-parser-processor-php",
         "@fortawesome/fontawesome-svg-core": "^1.2.0",
         "@fortawesome/free-solid-svg-icons": "^5.1.0",
         "@fortawesome/vue-fontawesome": "^0.1.0",
@@ -84,7 +83,7 @@
         "vuejs-paginator": "^2.0.2",
         "vuex": "^2.4.0",
         "webpack": "^4.41.4",
-        "xmldom": "^0.1.27"
+        "xmldom": "^0.1.31"
     },
     "devDependencies": {
         "@babel/plugin-syntax-dynamic-import": "^7.2.0",
