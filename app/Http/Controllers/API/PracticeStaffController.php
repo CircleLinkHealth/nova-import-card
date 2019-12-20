@@ -182,9 +182,7 @@ class PracticeStaffController extends Controller
         $roleNames = $formData['role_names'];
         $roles     = Role::whereIn('name', $roleNames)->get()->keyBy('id');
 
-        $user = User::updateOrCreate([
-            'id' => $formData['id'],
-        ], [
+        $args = [
             'program_id'   => $primaryPractice->id,
             'email'        => $formData['email'],
             'first_name'   => $formData['first_name'],
@@ -192,7 +190,15 @@ class PracticeStaffController extends Controller
             'display_name' => "{$formData['first_name']} {$formData['last_name']}",
             'suffix'       => ! empty($formData['suffix']) ? $formData['suffix'] : null,
             'user_status'  => 1,
-        ]);
+        ];
+
+        if (is_numeric($formData['id'])) {
+            $user = User::updateOrCreate([
+                'id' => $formData['id'],
+            ], $args);
+        } else {
+            $user = User::create($args);
+        }
 
         if ($formData['emr_direct_address']) {
             $user->emr_direct_address = $formData['emr_direct_address'];

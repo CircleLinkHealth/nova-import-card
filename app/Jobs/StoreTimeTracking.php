@@ -6,10 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Services\ActivityService;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
@@ -39,7 +36,7 @@ class StoreTimeTracking implements ShouldQueue
      *
      * @var int
      */
-    public $tries = 2;
+    public $tries = 3;
 
     /**
      * @var ParameterBag
@@ -57,10 +54,10 @@ class StoreTimeTracking implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(ActivityService $service)
+    public function handle()
     {
         $provider = User::with('nurseInfo')
-            ->find($this->params->get('providerId', null));
+            ->findOrFail($this->params->get('providerId', null));
 
         $isPatientBhi = User::isBhiChargeable()
             ->where('id', $this->params->get('patientId'))
@@ -74,11 +71,21 @@ class StoreTimeTracking implements ShouldQueue
             $pageTimer = $this->createPageTimer($activity);
 
             if ($this->isBillableActivity($pageTimer, $provider)) {
-                $newActivity = $this->createActivity($pageTimer, $provider, $isBehavioral);
-                $service->processMonthlyActivityTime([$this->params->get('patientId')]);
-                $this->handleNurseLogs($newActivity, $provider);
+                $newActivity = $this->createActivity($pageTimer, $isBehavioral);
+                ProcessMonthltyPatientTime::dispatchNow($this->params->get('patientId'));
+                ProcessNurseMonthlyLogs::dispatchNow($newActivity);
             }
         }
+    }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        return ['storetime', 'patient:'.$this->params->get('patientId'), 'provider:'.$this->params->get('providerId', null)];
     }
 
     /**
@@ -88,7 +95,7 @@ class StoreTimeTracking implements ShouldQueue
      *
      * @return Activity|\Illuminate\Database\Eloquent\Model
      */
-    private function createActivity(PageTimer $pageTimer, User $provider = null, $isBehavioral = false)
+    private function createActivity(PageTimer $pageTimer, $isBehavioral = false)
     {
         return Activity::create(
             [
@@ -131,7 +138,7 @@ class StoreTimeTracking implements ShouldQueue
         $pageTimer->end_time          = $endTime->toDateTimeString();
         $pageTimer->url_full          = $activity['url'];
         $pageTimer->url_short         = $activity['url_short'];
-        $pageTimer->program_id        = $this->params->get('programId');
+        $pageTimer->program_id        = $this->params->get('programId', null);
         $pageTimer->ip_addr           = $this->params->get('ipAddr');
         $pageTimer->activity_type     = $activity['name'];
         $pageTimer->title             = $activity['title'];
@@ -139,20 +146,6 @@ class StoreTimeTracking implements ShouldQueue
         $pageTimer->save();
 
         return $pageTimer;
-    }
-
-    private function handleNurseLogs(Activity $activity, User $provider)
-    {
-        $activity->load('patient.patientInfo');
-
-        $nurse = $provider->nurseInfo;
-
-        if ( ! is_a($nurse, Nurse::class)) {
-            return;
-        }
-
-        (new AlternativeCareTimePayableCalculator($nurse))
-            ->adjustNursePayForActivity($activity);
     }
 
     /**

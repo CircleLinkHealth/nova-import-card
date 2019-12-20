@@ -12,13 +12,12 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\Helpers\UserHelpers;
 
 class NurseWorkScheduleTest extends DuskTestCase
 {
-    use CarePlanHelpers;
     use
-        UserHelpers;
+        \App\Traits\Tests\UserHelpers;
+    use CarePlanHelpers;
 
     public function report($user)
     {

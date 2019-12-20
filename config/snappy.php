@@ -4,20 +4,34 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-$localBinPath = '/usr/local/bin/wkhtmltopdf';
-$pdfBinary    = null;
-if (file_exists($localBinPath)) {
-    $pdfBinary = $localBinPath;
+$pdfBinary           = null;
+$pdfBinaryCandidates = [
+    '/app/bin/wkhtmltopdf',
+    '/usr/local/bin/wkhtmltopdf',
+];
+foreach ($pdfBinaryCandidates as $pdfPath) {
+    if (file_exists($pdfPath)) {
+        $pdfBinary = $pdfPath;
+        break;
+    }
 }
+//if ( ! $pdfBinary) {
 //    throw new \Exception('wkhtmltopdf binary was not found.', 500);
-
-//Img Binary
-$debianImgLib = '/usr/local/bin/wkhtmltoimage';
-$imgBinary    = null;
-if (file_exists($debianImgLib)) {
-    $imgBinary = $debianImgLib;
+//}
+$imgBinary           = null;
+$imgBinaryCandidates = [
+    '/app/bin/wkhtmltoimage',
+    '/usr/local/bin/wkhtmltoimage',
+];
+foreach ($imgBinaryCandidates as $imgPath) {
+    if (file_exists($imgPath)) {
+        $imgBinary = $imgPath;
+        break;
+    }
 }
-//    throw new \Exception('wkhtmltoimage binary not found.', 500);
+//if ( ! $imgBinary) {
+//    throw new \Exception('wkhtmltoimage binary was not found.', 500);
+//}
 
 return [
     'pdf' => [
