@@ -6,8 +6,8 @@
 
 namespace Tests\Unit;
 
+use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Permission;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class ProtectPHITest extends TestCase

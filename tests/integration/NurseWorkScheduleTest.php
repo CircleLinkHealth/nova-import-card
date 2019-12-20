@@ -6,13 +6,13 @@
 
 namespace Tests\integration;
 
+use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\Helpers\UserHelpers;
 
 class NurseWorkScheduleTest extends DuskTestCase
 {
