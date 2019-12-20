@@ -247,31 +247,53 @@ class ProcessEligibilityService
         $recursive = false; // Get subdirectories also?
         $dir       = $batch->options['dir'];
 
+        if ($batch->isFinishedFetchingFiles()) {
+            return null;
+        }
+
+        $collection = collect($cloudDisk->listContents($dir, $recursive));
+
+        $options                  = $batch->options;
+        $options['numberOfFiles'] = $collection->count();
+        $batch->options           = $options;
+        $batch->save();
+
+        echo "\n batch {$batch->id}: {$options['numberOfFiles']} total files on drive";
+
         $alreadyProcessed = Media::select('file_name')->whereModelType(Ccda::class)->whereIn('model_id', function ($query) use ($batch) {
             $query->select('id')
                 ->from((new Ccda())->getTable())
                 ->where('batch_id', $batch->id);
         })->distinct()->pluck('file_name');
 
-        return collect($cloudDisk->listContents($dir, $recursive))
+        echo "\n batch {$batch->id}: {$alreadyProcessed->count()} CCDs already processed from this batch.";
+
+        $col = $collection
             ->where('type', '=', 'file')
             ->whereIn('mimetype', [
                 'text/xml',
                 'application/xml',
             ])
-            ->whereNotIn('name', $alreadyProcessed->all())
-            ->take(10)
-            ->whenEmpty(function () {
-                return false;
-            })->whenNotEmpty(function ($collection) use ($batch) {
-                $collection->each(function ($file) use (
-                    $batch
-                ) {
-                    ProcessCcdaFromGoogleDrive::dispatch($file, $batch);
-                });
+            ->whereNotIn('name', $alreadyProcessed->all());
 
-                return true;
+        echo "\n batch {$batch->id}: {$col->count()} CCDs to fetch from drive";
+
+        if ($col->isEmpty()) {
+            return false;
+        }
+        $col->whenNotEmpty(function ($collection) use ($batch) {
+            $i = 0;
+            $collection->each(function ($file) use (
+                    $batch, &$i
+                ) {
+                ProcessCcdaFromGoogleDrive::dispatch($file, $batch);
+
+                ++$i;
+                echo "\n batch {$batch->id}: processing file $i";
             });
+        });
+
+        return true;
     }
 
     public function handleAlreadyDownloadedZip(
@@ -370,7 +392,7 @@ class ProcessEligibilityService
     {
         if (isProductionEnv()) {
             sendSlackMessage(
-                ' #parse_enroll_import',
+                '#parse_enroll_import',
                 "Hey I just processed this list, it's crazy. Here's some patients, call them maybe? {$batch->linkToView()}"
             );
         }

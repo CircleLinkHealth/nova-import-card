@@ -7,7 +7,7 @@
 namespace App;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Core\Entities\SqlViewModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 
 /**
@@ -88,7 +88,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property int|null                                                                       $revision_history_count
  */
-class CallView extends BaseModel
+class CallView extends SqlViewModel
 {
     use Filterable;
 

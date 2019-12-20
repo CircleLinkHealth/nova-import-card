@@ -1194,23 +1194,22 @@ if ( ! function_exists('read_file_using_generator')) {
 if ( ! function_exists('getEhrReportWritersFolderUrl')) {
     function getEhrReportWritersFolderUrl()
     {
-        if (isProductionEnv()) {
-            return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
-        }
-
         //this is to make local environments faster for devs
         //comment out this if section to use the feature
         if (app()->environment('local')) {
             return null;
         }
 
-        $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
-
-        if ( ! $dir) {
-            return null;
-        }
-
-        return "https://drive.google.com/drive/folders/{$dir['path']}";
+        return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
+//        Commenting out due to Heroku migration
+//        @todo:heroku change this to a nova variable
+//        $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
+//
+//        if ( ! $dir) {
+//            return null;
+//        }
+//
+//        return "https://drive.google.com/drive/folders/{$dir['path']}";
     }
 }
 
@@ -1321,6 +1320,8 @@ if ( ! function_exists('tryDropForeignKey')) {
         try {
             $table->dropForeign($key);
         } catch (QueryException $e) {
+            //                    @todo:heroku review error code below
+
             $errorCode = $e->errorInfo[1];
             if (1091 == $errorCode) {
                 Log::debug("Key `${key}` does not exist. Nothing to delete.".__FILE__);

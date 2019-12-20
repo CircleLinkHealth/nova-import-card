@@ -16,9 +16,9 @@ use Tests\Helpers\CarePlanHelpers;
 
 class NurseWorkScheduleTest extends DuskTestCase
 {
-    use CarePlanHelpers;
     use
-        UserHelpers;
+        \App\Traits\Tests\UserHelpers;
+    use CarePlanHelpers;
 
     public function report($user)
     {

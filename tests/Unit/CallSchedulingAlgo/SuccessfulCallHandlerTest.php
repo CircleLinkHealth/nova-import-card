@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 class SuccessfulCallHandlerTest extends TestCase
 {
-    use UserHelpers;
+    use \App\Traits\Tests\UserHelpers;
 
     /**
      * @var \CircleLinkHealth\Customer\Entities\User

@@ -14,7 +14,7 @@ use Tests\DuskTestCase;
 
 class ManageInternalUserTest extends DuskTestCase
 {
-    use UserHelpers;
+    use \App\Traits\Tests\UserHelpers;
     private $adminUser;
     private $practice;
 

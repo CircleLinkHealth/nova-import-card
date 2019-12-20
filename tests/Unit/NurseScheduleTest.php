@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class NurseScheduleTest extends TestCase
 {
-    use UserHelpers;
+    use \App\Traits\Tests\UserHelpers;
 
     private $nurse;
 
