@@ -42,8 +42,7 @@ jobs:
 
     - run: sudo apt update && sudo apt install zlib1g-dev libsqlite3-dev libpng-dev
     - run: sudo docker-php-ext-install zip pcntl exif bcmath gd pdo_mysql
-
-    - run: pecl install -o -f redis &&  rm -rf /tmp/pear &&  docker-php-ext-enable redis
+    - run: pecl install -o -f redis &&  docker-php-ext-enable redis
 
     # Download and cache dependencies
 
