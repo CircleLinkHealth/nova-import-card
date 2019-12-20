@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a88df3c87448b22cc0eeb3bee36b0482",
+    "content-hash": "c798c849d602923c500e899496b532e8",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -265,6 +265,62 @@
             "time": "2019-10-02T23:27:09+00:00"
         },
         {
+            "name": "cakephp/chronos",
+            "version": "1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cakephp/chronos.git",
+                "reference": "ba2bab98849e7bf29b02dd634ada49ab36472959"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cakephp/chronos/zipball/ba2bab98849e7bf29b02dd634ada49ab36472959",
+                "reference": "ba2bab98849e7bf29b02dd634ada49ab36472959",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "athletic/athletic": "~0.1",
+                "cakephp/cakephp-codesniffer": "^3.0",
+                "phpbench/phpbench": "@dev",
+                "phpunit/phpunit": "<6.0 || ^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cake\\Chronos\\": "src/"
+                },
+                "files": [
+                    "src/carbon_compat.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brian Nesbitt",
+                    "email": "brian@nesbot.com",
+                    "homepage": "http://nesbot.com"
+                },
+                {
+                    "name": "The CakePHP Team",
+                    "homepage": "http://cakephp.org"
+                }
+            ],
+            "description": "A simple API extension for DateTime.",
+            "homepage": "http://cakephp.org",
+            "keywords": [
+                "date",
+                "datetime",
+                "time"
+            ],
+            "time": "2019-11-30T02:33:19+00:00"
+        },
+        {
             "name": "circlelinkhealth/core",
             "version": "v1.3",
             "source": {
@@ -413,7 +469,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
-                "reference": "f261050c53d8eecd351bac2d05499363b72c813c"
+                "reference": "f877e3d785477f1eea57ef7f70f6dac4a105055f"
             },
             "type": "library",
             "extra": {
@@ -438,7 +494,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-27T01:46:44+00:00"
+            "time": "2019-12-10T12:34:39+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking",
@@ -2066,6 +2122,75 @@
             "time": "2019-02-26T15:41:34+00:00"
         },
         {
+            "name": "laravel/horizon",
+            "version": "v3.4.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/horizon.git",
+                "reference": "37226dd66318014fac20351b4cc7ca209dd4ccb6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/horizon/zipball/37226dd66318014fac20351b4cc7ca209dd4ccb6",
+                "reference": "37226dd66318014fac20351b4cc7ca209dd4ccb6",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/chronos": "^1.0",
+                "ext-json": "*",
+                "ext-pcntl": "*",
+                "ext-posix": "*",
+                "illuminate/contracts": "~5.7.0|~5.8.0|^6.0|^7.0",
+                "illuminate/queue": "~5.7.0|~5.8.0|^6.0|^7.0",
+                "illuminate/support": "~5.7.0|~5.8.0|^6.0|^7.0",
+                "php": ">=7.1.0",
+                "predis/predis": "^1.1",
+                "ramsey/uuid": "^3.5",
+                "symfony/debug": "^4.2",
+                "symfony/process": "^4.2"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.0",
+                "orchestra/testbench": "^3.7|^4.0|^5.0",
+                "phpunit/phpunit": "^7.0|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Horizon\\HorizonServiceProvider"
+                    ],
+                    "aliases": {
+                        "Horizon": "Laravel\\Horizon\\Horizon"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Horizon\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "Dashboard and code-driven configuration for Laravel queues.",
+            "keywords": [
+                "laravel",
+                "queue"
+            ],
+            "time": "2019-11-19T16:23:21+00:00"
+        },
+        {
             "name": "laravel/nexmo-notification-channel",
             "version": "v1.0.1",
             "source": {
@@ -3330,6 +3455,53 @@
                 "php"
             ],
             "time": "2019-09-01T07:51:21+00:00"
+        },
+        {
+            "name": "nvanheuverzwijn/monolog-logdna",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nvanheuverzwijn/monolog-logdna.git",
+                "reference": "6e484afbb216396dc7ce93563790c51bae3ed967"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nvanheuverzwijn/monolog-logdna/zipball/6e484afbb216396dc7ce93563790c51bae3ed967",
+                "reference": "6e484afbb216396dc7ce93563790c51bae3ed967",
+                "shasum": ""
+            },
+            "require": {
+                "monolog/monolog": ">=1.0",
+                "php": "^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zwijn\\Monolog\\": "src/Monolog"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Vanheuverzwijn",
+                    "email": "nicolas.vanheu@gmail.com"
+                }
+            ],
+            "description": "Logdna handler for Monolog",
+            "homepage": "http://github.com/nvanheuverzwijn/monolog-logdna",
+            "keywords": [
+                "log",
+                "logdna",
+                "logging",
+                "psr-3"
+            ],
+            "time": "2018-08-20T01:23:44+00:00"
         },
         {
             "name": "opis/closure",
@@ -8577,8 +8749,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "circlelinkhealth/raygun": 20,
         "circlelinkhealth/cpmmigrations": 20,
+        "circlelinkhealth/raygun": 20,
         "circlelinkhealth/sqlviews": 20,
         "michalisantoniou6/laravel-cerberus": 20,
         "waavi/url-shortener": 20
@@ -8586,8 +8758,16 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.1.3",
-        "ext-json": "*"
+        "php": ">=7.2.0",
+        "ext-bcmath": "*",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "ext-libxml": "*",
+        "ext-pdo": "*",
+        "ext-redis": "*",
+        "ext-simplexml": "*"
     },
-    "platform-dev": []
+    "platform-dev": {
+        "ext-xdebug": "*"
+    }
 }

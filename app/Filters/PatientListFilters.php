@@ -61,8 +61,18 @@ class PatientListFilters extends QueryFilters
         return $this->builder->where('vitals_status', '=', $status);
     }
 
+    /**
+     * TODO: not implemented yet
+     *
+     * @param $status
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     * @throws \Exception
+     */
     public function eligibility($status)
     {
+        throw new \Exception("not implemented");
+
         if (empty($status)) {
             return $this->builder;
         }
@@ -76,7 +86,7 @@ class PatientListFilters extends QueryFilters
             return $this->builder;
         }
 
-        return $this->builder->where('dob', '=', $value);
+        return $this->builder->where('dob', 'like', '%' . $value . '%');
     }
 
     public function year($value)
@@ -94,8 +104,10 @@ class PatientListFilters extends QueryFilters
             return $this->builder;
         }
 
-        return $this->builder->whereIn('year', $value)
-                             ->orWhereNull('year');
+        return $this->builder->where(function ($q) use ($value) {
+            $q->whereIn('year', $value)
+              ->orWhereNull('year');
+        });
     }
 
     public function practiceIds(array $value)

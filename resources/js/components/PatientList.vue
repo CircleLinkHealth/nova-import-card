@@ -129,7 +129,7 @@
                         ]
                     },
                     //todo: eligibility should have a dropdown for filters
-                    filterable: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob'],
+                    filterable: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'dob'],
                     sortable: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob'],
                     sortIcon: {
                         base: 'fa',

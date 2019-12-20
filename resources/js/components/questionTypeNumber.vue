@@ -263,7 +263,7 @@
                 this.keys.push(...keys);
                 if (this.inputNumbers.length === 0) {
                     //just add empty inputs
-                    this.inputNumbers.push(keys.map(k => ''));
+                    this.inputNumbers.push(...keys.map(k => ''));
                 }
             }
 

@@ -32,7 +32,7 @@
         </div>
 
         <!--Survey welcome note-->
-        <div class="survey-container" :class="{ max: stage === 'complete', 'read-only': readOnlyMode }">
+        <div class="survey-container" :class="{ max: stage === 'complete', 'read-only': readOnlyMode, 'with-top-buttons': stage !== 'welcome' }">
             <template v-if="stage === 'welcome'">
                 <div class="practice-title">
                     <label id="title">
@@ -51,6 +51,8 @@
                         Annual Wellness Visit (AWV) Questionnaire! Understanding your health is of upmost importance to
                         us,
                         so thank you for taking time to fill this out.
+                        <br/>
+                        <br/>
                         If there’s any question you have trouble answering, feel free to click the call button on the
                         bottom
                         left and a representative will help when you call the number. If you skip any questions, our
@@ -210,13 +212,15 @@
                     <div class="container">
                         <div class="row no-gutters scroll-buttons" v-show="!readOnlyMode">
                             <mdb-btn color="primary" @click="toggleCallAssistance" class="call-btn-round">
-                                <mdb-icon :icon="callAssistance ? 'times' : 'phone-alt'" style="font-size: 1.5em !important;">
+                                <mdb-icon :icon="callAssistance ? 'times' : 'phone-alt'"
+                                          style="font-size: 1.5em !important;">
                                 </mdb-icon>
                             </mdb-btn>
                         </div>
                     </div>
                 </div>
-                <div :class="readOnlyMode ? 'col-6' : 'col-5'" class="col-sm-4 offset-sm-0 col-md-4 offset-md-0 col-lg-6 offset-lg-1">
+                <div :class="readOnlyMode ? 'col-6' : 'col-5'"
+                     class="col-sm-4 offset-sm-0 col-md-4 offset-md-0 col-lg-6 offset-lg-1">
                     <div class="container">
                         <div class="row no-gutters progress-container">
                             <div class="col-12 col-sm-12 col-md-6 offset-md-1 col-lg-6 offset-lg-0 text-center">
@@ -263,7 +267,7 @@
 
 
 <script>
-    import {mdbBtn, mdbCol, mdbProgress, mdbRow, mdbIcon} from 'mdbvue';
+    import {mdbBtn, mdbCol, mdbIcon, mdbProgress, mdbRow} from 'mdbvue';
     import questionTypeText from "./questionTypeText";
     import questionTypeCheckbox from "./questionTypeCheckbox";
     import questionTypeRange from "./questionTypeRange";
@@ -813,7 +817,7 @@
 
             scrollToQuestion(questionId) {
                 return new Promise((resolve) => {
-                    const topButtonsOffset = $('.top-buttons').height();
+                    const topButtonsOffset = $('.top-buttons').height() || 0;
                     const surveyContainer = $('.survey-container');
                     const currentQuestionOffset = $(`#${questionId}`).offset().top;
 
@@ -928,11 +932,22 @@
                 const elem = $('.question.active')[0];
 
                 if (elem.scrollHeight > (elem.offsetHeight + elem.scrollTop)) {
+
+                    const bodyEl = $('body');
+                    const bodyWidth = bodyEl.width();
+                    const bodyHeight = bodyEl.height();
+
+                    //got it from app.scss @media query...
+                    const mobileMediaQuery = 490;
+
+                    const staticLeftOffset = bodyWidth > mobileMediaQuery ? 110 : 90;
+                    const staticTopOffset = bodyWidth > mobileMediaQuery ? 220 : 200;
+
                     const navbar = $('.bottom-navbar');
-                    const leftOffset = navbar.offset().left + navbar.width() - 110;
+                    const leftOffset = navbar.offset().left + bodyWidth - staticLeftOffset;
                     qScroll.css('left', `${leftOffset}px`);
 
-                    const topOffset = $('body').height() - 220;
+                    const topOffset = bodyHeight - staticTopOffset;
                     qScroll.css('top', `${topOffset}px`);
 
                     qScroll.fadeIn();
