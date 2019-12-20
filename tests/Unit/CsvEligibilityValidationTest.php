@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 class CsvEligibilityValidationTest extends TestCase
 {
-    use App\Traits\Tests\UserHelpers;
+    use \App\Traits\Tests\UserHelpers;
 
     private $practice;
 
