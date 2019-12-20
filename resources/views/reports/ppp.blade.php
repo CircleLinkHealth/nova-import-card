@@ -96,18 +96,19 @@ function getStringValue($val, $default = '')
             </thead>
             <tbody>
 
-            @foreach($personalizedHealthAdvices as $key => $tasks)
-                @if(! empty($tasks['tasks']))
-                    @foreach($tasks['table_data'] as $table)
-                        <tr>
-                            <td class="suggested-list-body">
-                                <strong>{{$table[0]['body']}}</strong>
-                            </td>
-                            <td>{{$table[0]['time_frame']}}</td>
-                            <td style="font-weight: 500">{{$table[0]['code']}}</td>
-                        </tr>
-                    @endforeach
-                @endif
+            {{-- Suggested Checklist section--}}
+            @foreach($suggestedCheckListData as $recommendations)
+                @foreach($recommendations as $recommendation)
+                    <tr>
+                        {{--Emphasize code 99498 and the related body --}}
+                        <td class="suggested-list-body">
+                            <strong>{!!$recommendation[0]['body']!!}</strong>
+                        </td>
+                        <td>{!!$recommendation[0]['time_frame']!!}</td>
+                        <td style="font-weight: 500">{!!$recommendation[0]['code']!!}</td>
+
+                    </tr>
+                @endforeach
             @endforeach
             </tbody>
         </table>

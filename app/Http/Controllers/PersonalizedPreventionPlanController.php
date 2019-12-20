@@ -17,7 +17,7 @@ class PersonalizedPreventionPlanController extends Controller
 
     public function getPppForUser($userId, $year = null)
     {
-        if ( ! $year) {
+        if (!$year) {
             $year = Carbon::now()->year;
         }
 
@@ -27,15 +27,18 @@ class PersonalizedPreventionPlanController extends Controller
                 $report->forYear($year);
             },
         ])
-                       ->findOrFail($userId);
+            ->findOrFail($userId);
 
         $patientPppData = optional($patient->personalizedPreventionPlan)->first();
 
-        if ( ! $patientPppData) {
+        if (!$patientPppData) {
             throw new \Exception("This patient does not have a PPP for {$year}.");
         }
 
         $personalizedHealthAdvices = $this->service->prepareRecommendations($patientPppData);
-        return view('reports.ppp', compact('personalizedHealthAdvices', 'patient', 'patientPppData'));
+
+        $suggestedCheckListData = $this->service->getOrderedSuggestedChecklist($personalizedHealthAdvices);
+
+        return view('reports.ppp', compact('personalizedHealthAdvices', 'patient', 'patientPppData', 'suggestedCheckListData'));
     }
 }

@@ -75,7 +75,25 @@ class PersonalizedPreventionPlanPrepareData
     const NMPA = 'nmpa';
     const NLWAD = 'nlwad';
 
+    /**
+     * Return ordered checkList Data
+     *
+     * @param $personalizedHealthAdvices
+     * @return array
+     */
+    public function getOrderedSuggestedChecklist($personalizedHealthAdvices)
+    {
+        $suggestedChecklistData = collect();
+        foreach ($personalizedHealthAdvices as $advice => $tasks) {
+            $suggestedChecklistData[] = $tasks['table_data'];
+        }
 
+       return $suggestedChecklistData->sortBy(function ($collections) {
+            foreach ($collections as $collection => $arrays) {
+                return $arrays[0]['emphasize_code'];
+            }
+        }, SORT_REGULAR, true)->values()->all();
+    }
     /*
      * https://docs.google.com/document/d/1ZC68KlBgKFYZIDd9uTVBAw_P85oO1VjloHw9vZt2Tmc/edit
     each evaluation from this doc belongs to a function
@@ -235,16 +253,43 @@ class PersonalizedPreventionPlanPrepareData
             $tasks = array_slice($recommendation, 2);
             $tableData = [];
             foreach ($tasks as $task) {
-                if (!empty($task['report_table_data'])) {
-                    $tableData[] = $task['report_table_data'];
+                if (!array_key_exists('report_table_data', $task)) {
+                    continue;
                 }
+
+                $tableData[] = collect($task['report_table_data'])->transform(function ($table) {
+                    $codeWithText = '99498 (if same day as AWV, bill w/ mod. 33 on same claim and Dr. as AWV)';
+                    $emphasisedBody = '(NOTE: $0 co-pay if done during AWV)';
+
+                    $emphasizeCode = false;
+                    $body = $table['body'];
+                    $code = $table['code'];
+
+                    if (strpos($table['code'], $codeWithText) !== false) {
+                        $emphasizeCode = true;
+                        $body = (str_ireplace($emphasisedBody,
+                            "<class style='background-color: #cfe7f3;'>{$emphasisedBody}</class>",
+                            $table['body']));
+                        $code = (str_ireplace($codeWithText,
+                            "<class style='background-color: #cfe7f3;'>{$codeWithText}</class>",
+                            $table['code']));
+                    }
+
+                    return [
+                        'body' => $body,
+                        'code' => $code,
+                        'time_frame' => $table['time_frame'],
+                        'emphasize_code' => $emphasizeCode,
+                    ];
+
+                });
             }
 
             return [
                 'title' => $recommendation[0],
                 'image' => $recommendation[1],
                 'tasks' => $tasks,
-                'table_data' => $tableData,
+                'table_data' => $tableData, // i can't order them here cause they re not all collected yet.
             ];
         });
 
