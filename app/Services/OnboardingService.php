@@ -486,6 +486,8 @@ class OnboardingService
             } catch (\Exception $e) {
                 \Log::alert($e);
                 if ($e instanceof QueryException) {
+                    //                    @todo:heroku query to see if it exists, then attach
+
                     $errorCode = $e->errorInfo[1];
                     if (1062 == $errorCode) {
                         //do nothing

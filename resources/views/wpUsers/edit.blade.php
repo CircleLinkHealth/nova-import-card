@@ -179,7 +179,7 @@
                                         <div class="col-xs-6"></div>
                                         <div class="col-xs-4">{!! Form::label('auto_attach_programs', 'Give access to all of ' . auth()->user()->saasAccountName() . '\'s practices') !!}</div>
                                         <div class="col-xs-2">
-                                            {!! Form::checkbox('auto_attach_programs', $patient->auto_attach_programs ?? 0, $patient->auto_attach_programs) !!}
+                                            {!! Form::checkbox('auto_attach_programs', 1, !! $patient->auto_attach_programs) !!}
                                         </div>
                                         @push('scripts')
                                             <script>
@@ -484,10 +484,10 @@
                                     <a href="{{ URL::previous() }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::hidden('user_id', $patient->id) !!}
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
-                                    </form>
                                 </div>
                             </div>
                         </div>
+{!! Form::close() !!}
 
                     </div>
                 </div>

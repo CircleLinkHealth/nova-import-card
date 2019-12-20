@@ -10,6 +10,7 @@ use App\EligibilityBatch;
 use App\Models\MedicalRecords\Ccda;
 use CircleLinkHealth\Customer\Entities\Media;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -59,10 +60,16 @@ class ProcessCcdaFromGoogleDrive implements ShouldQueue
         })->where('file_name', $this->googleDriveFile['name'])->exists();
 
         if ($fileExists) {
-            return false;
+            return;
         }
 
-        $rawData = $cloudDisk->get($driveFilePath);
+        try {
+            $rawData = $cloudDisk->get($driveFilePath);
+        } catch (FileNotFoundException $e) {
+            // Jobs Fail due to file not found, but upon retrying, it works.
+            // If a file was not found, just return and thefile will be retried when rescheduled.
+            return;
+        }
 
         $ccda = Ccda::create([
             'batch_id'    => $this->batch->id,

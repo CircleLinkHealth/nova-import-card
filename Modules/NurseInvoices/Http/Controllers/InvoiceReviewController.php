@@ -33,8 +33,6 @@ class InvoiceReviewController extends Controller
 
     /**
      * InvoiceReviewController constructor.
-     *
-     * @param AttachDisputesToTimePerDay $attachDisputes
      */
     public function __construct(AttachDisputesToTimePerDay $attachDisputes)
     {
@@ -42,7 +40,6 @@ class InvoiceReviewController extends Controller
     }
 
     /**
-     * @param AdminShowNurseInvoice $request
      * @param $nurseUserId
      * @param $invoiceId
      *
@@ -61,8 +58,6 @@ class InvoiceReviewController extends Controller
     }
 
     /**
-     * @param StoreNurseInvoiceApproval $request
-     *
      * @return JsonResponse
      */
     public function approveInvoice(StoreNurseInvoiceApproval $request)
@@ -100,7 +95,7 @@ class InvoiceReviewController extends Controller
         $reason = $request->input('reason');
 
         NurseInvoice::findOrFail($id)
-            ->dispute()
+            ->disputes()
             ->create(
                 [
                     'reason'  => $reason,
@@ -112,8 +107,6 @@ class InvoiceReviewController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return Factory|View
      */
     public function reviewInvoice(Request $request)
@@ -146,8 +139,6 @@ class InvoiceReviewController extends Controller
     }
 
     /**
-     * @param ShowNurseInvoice $request
-     *
      * @return Factory|View
      */
     public function show(ShowNurseInvoice $request)
@@ -171,7 +162,7 @@ class InvoiceReviewController extends Controller
             return false;
         }
 
-        return null === $invoice->dispute && ! $invoice->is_nurse_approved && Carbon::now()->lte($deadline) && Carbon::now()->gte($invoice->month_year->copy()->startOfMonth());
+        return ! $invoice->is_nurse_approved && Carbon::now()->lte($deadline) && Carbon::now()->gte($invoice->month_year->copy()->startOfMonth());
     }
 
     private function getDisputesDeadline(Carbon $date)
@@ -189,10 +180,7 @@ class InvoiceReviewController extends Controller
     }
 
     /**
-     * @param Request      $request
-     * @param int          $nurseUserId
-     * @param NurseInvoice $invoice
-     * @param array        $invoiceDataWithDisputes
+     * @param array $invoiceDataWithDisputes
      *
      * @return Factory|View
      */
@@ -207,11 +195,12 @@ class InvoiceReviewController extends Controller
         } else {
             $invoiceData = $invoice->invoice_data ?? [];
         }
+
         $canBeDisputed = $this->canBeDisputed($invoice, $deadline->deadline());
         $args          = array_merge(
             [
                 'invoiceId'              => $invoice->id,
-                'dispute'                => $invoice->dispute,
+                'disputes'               => $invoice->disputes,
                 'invoice'                => $invoice,
                 'shouldShowDisputeForm'  => $auth->isAdmin() ? false : $canBeDisputed,
                 'disputeDeadline'        => $deadline->deadline()->setTimezone($auth->timezone),

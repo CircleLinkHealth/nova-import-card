@@ -60,7 +60,7 @@ function formatTime($time)
             $(document).ready(function () {
                 const table = $('#cpmEditableTable');
                 table.DataTable({
-                    order: [[2, "asc"]],
+                    order: [],
                     processing: true,
                     scrollX: true,
                     fixedHeader: true,
@@ -69,12 +69,6 @@ function formatTime($time)
 
 
                 });
-
-                // $('#filter-select').change(function () {
-                //     table.column($(this).data('column'))
-                //         .search($(this).val())
-                //         .draw();
-                // });
 
                 function addClickListener() {
                     const row = $('.patientNameLink');

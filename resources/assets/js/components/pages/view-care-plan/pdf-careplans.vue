@@ -146,7 +146,7 @@
             </div>
             <div class="col-md-9 text-right">
                 <slot name="buttons"></slot>
-                <a :href="assessmentUrl" v-if="patientCarePlan.status == 'provider_approved'" class="btn btn-info btn-sm inline-block">View Assessment</a>
+                <!--<a :href="assessmentUrl" v-if="patientCarePlan.status == 'provider_approved'" class="btn btn-info btn-sm inline-block">View Assessment</a>-->
                 <a @click="openModal()" class="btn btn-info btn-sm inline-block">Upload PDF</a>
                 <slot></slot>
             </div>

@@ -5,6 +5,7 @@
  */
 
 use App\Providers\CpmArtisanServiceProvider;
+use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use Circlelinkhealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
@@ -213,6 +214,7 @@ return [
         NurseInvoicesDeferredBindingsServiceProvider::class,
         EligibilityServiceProvider::class,
         CardServiceProvider::class,
+        CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
     ],
 
@@ -251,7 +253,7 @@ return [
         'Password'     => Illuminate\Support\Facades\Password::class,
         'Queue'        => Illuminate\Support\Facades\Queue::class,
         'Redirect'     => Illuminate\Support\Facades\Redirect::class,
-        'Redis'        => Illuminate\Support\Facades\Redis::class,
+        'RedisManager' => Illuminate\Support\Facades\Redis::class,
         'Request'      => Illuminate\Support\Facades\Request::class,
         'Response'     => Illuminate\Support\Facades\Response::class,
         'Route'        => Illuminate\Support\Facades\Route::class,
@@ -287,4 +289,11 @@ return [
     |
     */
     'app_version' => env('APP_VERSION', ''),
+
+    // Hide these variables from debug screens (Whoops, Raygun, etc)
+    'debug_blacklist' => [
+        '_COOKIE' => array_keys($_COOKIE),
+        '_SERVER' => array_keys($_SERVER),
+        '_ENV'    => array_except(array_keys($_ENV), ['APP_ENV']),
+    ],
 ];

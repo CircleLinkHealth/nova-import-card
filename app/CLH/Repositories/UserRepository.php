@@ -553,13 +553,10 @@ class UserRepository
             $user->email = $params->get('email');
         }
 
-        if ($params->get('access_disabled')) {
-            $user->access_disabled = $params->get('access_disabled');
-        } else {
-            $user->access_disabled = 0; // 0 = good, 1 = disabled
-        }
+        $user->access_disabled = $params->get('access_disabled', false);
 
-        $user->auto_attach_programs = $params->get('auto_attach_programs');
+        $user->auto_attach_programs = $params->has('auto_attach_programs');
+
         if ($params->get('first_name')) {
             $user->setFirstName($params->get('first_name'));
         }
