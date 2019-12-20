@@ -442,9 +442,7 @@ class Practice extends BaseModel implements HasMedia
                                     $patientData->setProvider($u->getBillingProviderName());
                                     $patientData->setBillingCodes($u->billingCodes($month));
 
-                                    $patientData->setCcmProblemCodes($summary->attestedProblems->transform(function (Problem $problem){
-                                        return $problem->icd10Code();
-                                    })->filter()->implode(','));
+                                    $patientData->setCcmProblemCodes($summary->getAttestedProblemsForReport());
 
                                     $patientData->setBhiCode(
                                         optional(optional($summary->billableProblems->first())->pivot)->icd_10_code
