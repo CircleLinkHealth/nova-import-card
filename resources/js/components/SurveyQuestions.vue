@@ -1,16 +1,34 @@
 <template>
     <div class="container main-container">
 
-        <div class="top-left-fixed" v-if="adminMode">
-            <mdb-btn class="btn-toggle-edit" color="primary" @click="goBack">
-                <mdb-icon icon="chevron-circle-left" size="3x"/>
-            </mdb-btn>
-        </div>
-
-        <div class="top-right-fixed" v-if="adminMode">
-            <mdb-btn class="btn-toggle-edit" :outline="readOnlyMode ? 'info' : 'danger'" @click="toggleReadOnlyMode">
-                <mdb-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
-            </mdb-btn>
+        <div class="top-buttons" v-if="adminMode">
+            <mdb-row class="no-gutters">
+                <mdb-col>
+                    <div class="top-left-fixed">
+                        <mdb-btn class="btn-toggle-edit" color="primary" @click="goBack">
+                            <mdb-icon icon="chevron-circle-left" size="3x"/>
+                        </mdb-btn>
+                    </div>
+                    <!-- shown on mobiles -->
+                    <mdb-btn flat darkWaves @click="goBack" class="hidden mobile-view">
+                        <mdb-icon icon="chevron-circle-left"/>
+                        Back
+                    </mdb-btn>
+                </mdb-col>
+                <mdb-col>
+                    <div class="top-right-fixed">
+                        <mdb-btn class="btn-toggle-edit" :outline="readOnlyMode ? 'info' : 'danger'"
+                                 @click="toggleReadOnlyMode">
+                            <mdb-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'" size="2x"/>
+                        </mdb-btn>
+                    </div>
+                    <!-- shown on mobiles -->
+                    <mdb-btn flat darkWaves @click="toggleReadOnlyMode" class="hidden mobile-view">
+                        <mdb-icon :icon="readOnlyMode ? 'pencil-alt' : 'eye'"/>
+                        {{readOnlyMode ? 'Edit' : 'View'}}
+                    </mdb-btn>
+                </mdb-col>
+            </mdb-row>
         </div>
 
         <!--Survey welcome note-->
@@ -176,7 +194,7 @@
             </template>
         </div>
         <div class="call-assistance">
-            <call-assistance v-if="practiceOutgoingPhoneNumber && callAssistance"
+            <call-assistance v-if="/*practiceOutgoingPhoneNumber && */callAssistance"
                              :phone-number="practiceOutgoingPhoneNumber"
                              :cpm-caller-token="cpmCallerToken"
                              :cpm-caller-url="cpmCallerUrl"
@@ -185,27 +203,29 @@
             </call-assistance>
         </div>
 
-        <div class="bottom-navbar container" :class="stage === 'complete' ? 'hidden' : ''">
+        <div class="bottom-navbar container no-padding" :class="stage === 'complete' ? 'hidden' : ''">
             <!-- justify-content-end -->
-            <div class="row">
-                <div class="col-1 col-sm-1 col-md-1 col-lg-1 text-center no-padding">
-                    <div class="row scroll-buttons" v-show="!readOnlyMode">
-                        <mdb-btn color="primary" @click="toggleCallAssistance" class="call-btn-round">
-                            <mdb-icon :icon="callAssistance ? 'times' : 'phone-alt'"
-                                               size="2x"></mdb-icon>
-                        </mdb-btn>
+            <div class="row no-gutters">
+                <div class="col-3 col-sm-4 col-md-3 col-lg-2 text-center">
+                    <div class="container">
+                        <div class="row no-gutters scroll-buttons" v-show="!readOnlyMode">
+                            <mdb-btn color="primary" @click="toggleCallAssistance" class="call-btn-round">
+                                <mdb-icon :icon="callAssistance ? 'times' : 'phone-alt'" style="font-size: 1.5em !important;">
+                                </mdb-icon>
+                            </mdb-btn>
+                        </div>
                     </div>
                 </div>
-                <div class="col-5 offset-1 col-sm-1 offset-sm-0 col-md-1 offset-md-0 col-lg-6 offset-lg-2 no-padding">
+                <div :class="readOnlyMode ? 'col-6' : 'col-5'" class="col-sm-4 offset-sm-0 col-md-4 offset-md-0 col-lg-6 offset-lg-1">
                     <div class="container">
-                        <div class="row progress-container">
-                            <div class="col-12 col-sm-12 col-md-6 text-center">
+                        <div class="row no-gutters progress-container">
+                            <div class="col-12 col-sm-12 col-md-6 offset-md-1 col-lg-6 offset-lg-0 text-center">
                                 <span class="progress-text">
                                     {{progress}} of {{totalQuestions}} completed
                                 </span>
                             </div>
 
-                            <div class="col-12 col-sm-12 col-md-6 text-center">
+                            <div class="col-12 col-sm-12 col-md-12 offset-md-1 col-lg-4 offset-lg-0 text-center">
                                 <mdb-progress :value="progressPercentage"
                                               :height="10"/>
                             </div>
@@ -214,24 +234,25 @@
                     </div>
                 </div>
                 <!--scroll buttons-->
-                <div class="col-5 col-sm-5 col-md-4 col-lg-3 no-padding" v-show="!readOnlyMode">
-                    <div class="row scroll-buttons">
-                        <div class="col text-right">
+                <div class="col-4 col-sm-4 col-md-4 offset-md-1 col-lg-3 offset-lg-0" v-show="!readOnlyMode">
+                    <div class="container">
+                        <div class="row no-gutters scroll-buttons">
+                            <div class="col text-right">
+                                <mdb-btn
+                                    color="primary"
+                                    @click="scrollDown"
+                                    :disabled="!canScrollDown">
+                                    <i class="fas fa-angle-down"></i>
+                                </mdb-btn>
 
-                            <mdb-btn
-                                color="primary"
-                                @click="scrollDown"
-                                :disabled="!canScrollDown">
-                                <i class="fas fa-angle-down"></i>
-                            </mdb-btn>
+                                <mdb-btn
+                                    color="primary"
+                                    @click="scrollUp"
+                                    :disabled="!canScrollUp">
+                                    <i class="fas fa-angle-up"></i>
+                                </mdb-btn>
 
-                            <mdb-btn
-                                color="primary"
-                                @click="scrollUp"
-                                :disabled="!canScrollUp">
-                                <i class="fas fa-angle-up"></i>
-                            </mdb-btn>
-
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -242,7 +263,7 @@
 
 
 <script>
-    import {mdbBtn, mdbProgress, mdbIcon} from 'mdbvue';
+    import {mdbBtn, mdbCol, mdbProgress, mdbRow, mdbIcon} from 'mdbvue';
     import questionTypeText from "./questionTypeText";
     import questionTypeCheckbox from "./questionTypeCheckbox";
     import questionTypeRange from "./questionTypeRange";
@@ -258,6 +279,8 @@
 
         components: {
             mdbIcon,
+            mdbRow,
+            mdbCol,
             'mdb-btn': mdbBtn,
             'mdb-progress': mdbProgress,
             'question-type-text': questionTypeText,
@@ -790,14 +813,15 @@
 
             scrollToQuestion(questionId) {
                 return new Promise((resolve) => {
+                    const topButtonsOffset = $('.top-buttons').height();
                     const surveyContainer = $('.survey-container');
                     const currentQuestionOffset = $(`#${questionId}`).offset().top;
 
                     let scrollTo = 0;
                     if (currentQuestionOffset < 0) {
-                        scrollTo = surveyContainer.scrollTop() + currentQuestionOffset;
+                        scrollTo = surveyContainer.scrollTop() + currentQuestionOffset - topButtonsOffset;
                     } else {
-                        scrollTo = currentQuestionOffset
+                        scrollTo = currentQuestionOffset - topButtonsOffset;
                     }
 
                     surveyContainer.scrollTo(

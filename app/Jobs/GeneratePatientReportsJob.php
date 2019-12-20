@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\CPM\PatientReportCreatedEvent;
 use App\Notifications\SendReport;
 use App\PersonalizedPreventionPlan;
 use App\Services\GeneratePersonalizedPreventionPlanService;
@@ -20,6 +21,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
 use LynX39\LaraPdfMerger\Facades\PdfMerger;
+use Illuminate\Support\Facades\Redis;
 
 class GeneratePatientReportsJob implements ShouldQueue
 {
@@ -94,6 +96,9 @@ class GeneratePatientReportsJob implements ShouldQueue
         ])
                        ->findOrFail($this->patientId);
 
+        //instantiate Redis Event class to emit report created events to CPM
+        $redisEvent = new PatientReportCreatedEvent($patient);
+
         //Generate Reports
         $providerReport = (new GenerateProviderReportService($patient))->generateData();
 
@@ -112,60 +117,30 @@ class GeneratePatientReportsJob implements ShouldQueue
             return;
         }
 
-        //Create PDFs for reports and upload the to S3 Media
-        $providerReportUploaded = $this->createAndUploadPdfProviderReport($providerReport, $patient, $this->debug);
+        $providerReportMedia = $this->createAndUploadPdfProviderReport($providerReport, $patient, $this->debug);
 
-        if ( ! $providerReportUploaded) {
+        if ( ! $providerReportMedia) {
             \Log::error("Something went wrong while uploading Provider Report for patient with id:{$patient->id} ");
 
             return;
         }
 
-        $pppUploaded = $this->createAndUploadPdfPPP($pppReport, $patient, $this->debug);
+        $redisEvent->publishReportCreated($providerReportMedia);
 
-        if ( ! $pppUploaded) {
+
+        $pppMedia = $this->createAndUploadPdfPPP($pppReport, $patient, $this->debug);
+
+        if ( ! $pppMedia) {
             \Log::error("Something went wrong while uploading PPP for patient with id:{$patient->id} ");
 
             return;
         }
 
+        $redisEvent->publishReportCreated($pppMedia);
+
         if ($this->debug) {
             return;
         }
-
-        //Notify Billing Provider
-        $billingProvider = $patient->billingProviderUser();
-
-        //TODO: Practice breaks on instantiation because we need to move App\Traits\HasChargeableServices from CPM to Customer
-        try {
-            $settings = $patient->practiceSettings();
-
-            $channels = [];
-
-            if ($settings) {
-                if ($settings->dm_awv_reports) {
-                    //todo: when Notifications Module is finished
-//                $channels[] = DirectMailChannel::class;
-                }
-                if ($settings->efax_awv_reports) {
-                    //todo: when Notifications Module is finished
-//                $channels[] = EfaxChannel::class;
-                }
-                if ($settings->email_awv_reports) {
-                    $channels[] = MailChannel::class;
-                }
-            }
-        } catch (\Exception $e) {
-            \Log::error($e->getMessage());
-            $channels[] = MailChannel::class;
-        }
-
-
-        if ($billingProvider) {
-            $billingProvider->notify(new SendReport($patient, $providerReport, 'Provider Report', $channels));
-            $billingProvider->notify(new SendReport($patient, $pppReport, 'PPP', $channels));
-        }
-
 
         //Update AWVSummaries
         $summary = $patient->patientAWVSummaries->first();

@@ -80,10 +80,11 @@
             mdbRow,
             mdbCol
         },
-        props: ['debug', 'wellnessDocsUrl'],
+        props: ['debug', 'wellnessDocsUrl', 'ccdImporterUrl'],
         data() {
             return {
                 addPatientModalOptions: {
+                    ccdImporterUrl: this.ccdImporterUrl,
                     debug: this.debug,
                     show: false,
                     onDone: null

@@ -27488,6 +27488,44 @@ body,
   }
 }
 
+.input.text-field.active {
+  border: none !important;
+  border-bottom: 1px solid #4aa5d2;
+}
+
+input.text-field.active::-webkit-input-placeholder {
+  background-color: #4aa5d2 !important;
+  color: #ffffff !important;
+}
+
+input.text-field.active::-moz-placeholder {
+  background-color: #4aa5d2 !important;
+  color: #ffffff !important;
+}
+
+input.text-field.active:-ms-input-placeholder {
+  background-color: #4aa5d2 !important;
+  color: #ffffff !important;
+}
+
+input.text-field.active::-ms-input-placeholder {
+  background-color: #4aa5d2 !important;
+  color: #ffffff !important;
+}
+
+.btn.btn-primary.radio.active,
+input.text-field.active,
+input.text-field.active::placeholder {
+  background-color: #4aa5d2 !important;
+  color: #ffffff !important;
+}
+
+.btn.btn-primary.radio:hover,
+input.text-field:hover {
+  border: none !important;
+  border-bottom: 1px solid #4aa5d2 !important;
+}
+
 .no-padding {
   padding: 0;
 }
@@ -27559,9 +27597,9 @@ body,
 
 .select-dropdown .vs__dropdown-option:before {
   color: #50b2e2;
-  font-family: FontAwesome, serif;
+  font-family: "Font Awesome 5 Free", serif;
   display: inline-block;
-  content: "\f10c";
+  content: "\f111";
   letter-spacing: 5px;
   position: relative;
   font-size: 1.3em;
@@ -27589,7 +27627,6 @@ body,
 
 .bottom-navbar {
   background-color: #ffffff;
-  height: 56px;
 }
 
 @media (min-width: 519px) {
@@ -27813,6 +27850,173 @@ a.navbar-title:hover {
   position: fixed;
   top: 15px;
   right: 30px;
+}
+
+@media (min-width: 414px) {
+  .survey-container {
+    margin-left: 1em;
+  }
+}
+
+@media (max-width: 996px) {
+  .questions-title {
+    font-size: 100%;
+  }
+
+  .top-buttons .top-right-fixed > button {
+    width: 4em;
+    height: 4em;
+    padding: 1%;
+  }
+
+  .top-buttons .top-left-fixed > button {
+    height: 4em;
+    width: 4em;
+  }
+
+  #app > div > div.top-buttons > div > div:nth-child(1) > div > button > i {
+    font-size: 3em;
+  }
+
+  #app > div > div.top-buttons > div > div:nth-child(2) > div > button > i {
+    font-size: 1.5em;
+  }
+}
+
+@media (max-width: 600px) {
+  .top-buttons .top-right-fixed > button {
+    width: 36px;
+    height: 36px;
+    padding: 1%;
+  }
+
+  .top-buttons .top-left-fixed > button {
+    height: 36px;
+    width: 36px;
+  }
+
+  #app > div > div.top-buttons > div > div:nth-child(1) > div > button > i {
+    font-size: 2em;
+  }
+
+  #app > div > div.top-buttons > div > div:nth-child(2) > div > button > i {
+    font-size: 1.5em;
+  }
+}
+
+@media (max-width: 490px) {
+  .survey-container {
+    height: calc(100% - 114px);
+  }
+
+  .top-buttons {
+    text-align: center;
+    background-color: #50b2e2;
+    box-shadow: 0 2px 4px #afafaf;
+  }
+
+  .top-buttons .col {
+    border: 1px solid transparent;
+  }
+
+  .top-buttons .col:first-child {
+    border-right: 1px solid #f2f6f9;
+  }
+
+  .top-left-fixed,
+  .top-right-fixed {
+    display: none;
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .top-buttons .mobile-view {
+    display: inline;
+    color: #fafafa;
+    width: 90%;
+    box-shadow: none;
+  }
+
+  .questions-body {
+    margin-left: -15px;
+  }
+
+  .main-container {
+    padding-left: 0;
+    padding-right: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .question-answer-type {
+    width: 330px;
+  }
+
+  .questions-title {
+    width: 330px;
+    padding-left: 9px;
+    font-size: 14px;
+  }
+
+  .next-btn {
+    height: 34px;
+    padding-top: 2px;
+  }
+
+  .btn-start {
+    width: 40%;
+    height: 30px;
+    padding: 1%;
+  }
+
+  .survey-main-title {
+    font-size: 15px;
+    margin-bottom: 15px;
+    margin-top: 45px;
+  }
+
+  #app > div > div.bottom-navbar.container > div > div.col-1.col-sm-1.col-md-1.col-lg-1.text-center.no-padding > div > button > svg {
+    margin-left: -6px;
+    margin-top: 2px;
+    padding: 2px;
+  }
+
+  .by-circlelink {
+    margin-right: 28px;
+    font-size: 14px;
+  }
+
+  #app > div > div > div > div.align-items-center > div {
+    font-size: 76%;
+  }
+
+  .welcome-icon {
+    width: 160px;
+  }
+
+  .survey-sub-welcome-text {
+    font-size: 13px;
+    display: contents;
+  }
+
+  .call-btn-round {
+    width: 35px;
+    height: 35px;
+    margin-left: 20px;
+  }
+
+  .scroll-buttons {
+    margin-right: -20px;
+    margin-left: -20px;
+  }
+
+  .scroll-buttons .btn {
+    margin-top: 10px;
+    width: 35px;
+    height: 35px;
+  }
 }
 
 .spinner-overlay {

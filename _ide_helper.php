@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.7.28 on 2019-11-29 15:08:59.
+ * Generated for Laravel 5.7.28 on 2019-12-06 14:20:46.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -8199,8 +8199,6 @@ namespace Illuminate\Support\Facades {
     /**
      * 
      *
-     * @see \Illuminate\Redis\RedisManager
-     * @see \Illuminate\Contracts\Redis\Factory
      */ 
     class Redis {
         
