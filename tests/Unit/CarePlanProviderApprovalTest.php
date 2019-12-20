@@ -23,6 +23,8 @@ use Tests\TestCase;
 
 class CarePlanProviderApprovalTest extends TestCase
 {
+    use \App\Traits\Tests\UserHelpers;
+
     use CarePlanHelpers;
 
     use UserHelpers;

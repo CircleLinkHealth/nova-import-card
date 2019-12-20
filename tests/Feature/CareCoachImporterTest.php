@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class CareCoachImporterTest extends TestCase
 {
-    use App\Traits\Tests\UserHelpers;
+    use \App\Traits\Tests\UserHelpers;
 
     /**
      * A basic test example.

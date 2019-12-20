@@ -16,7 +16,7 @@ use Tests\TestCase;
 class NoteForwardedTest extends TestCase
 {
     use
-        App\Traits\Tests\UserHelpers;
+        \App\Traits\Tests\UserHelpers;
     use WithoutMiddleware;
     protected $admin;
     protected $nurse;
