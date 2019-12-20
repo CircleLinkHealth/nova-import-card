@@ -41,7 +41,7 @@ jobs:
           echo Failed waiting for MySQL && exit 1
 
     - run: sudo apt update && sudo apt install zlib1g-dev libsqlite3-dev libpng-dev
-    - run: sudo docker-php-ext-install zip pcntl exif bcmath gd pdo_mysql
+    - run: sudo docker-php-ext-install zip pcntl exif bcmath gd pdo_mysql redis
 
     # Download and cache dependencies
 
