@@ -333,10 +333,10 @@ class WebixFormatter implements ReportFormatter
 
             $careplanReport[$user->id]['bio_data'][$metric]['target'] = $biometric_values['target'].ReportsService::biometricsUnitMapping(
                 $metric
-                );
+            );
             $careplanReport[$user->id]['bio_data'][$metric]['starting'] = $biometric_values['starting'].ReportsService::biometricsUnitMapping(
                 $metric
-                );
+            );
             $careplanReport[$user->id]['bio_data'][$metric]['verb'] = $biometric_values['verb'];
         }
 
@@ -369,7 +369,7 @@ class WebixFormatter implements ReportFormatter
         $miscService = app(CpmMiscService::class);
 
         //Social Services
-        if ($user->cpmMiscUserPivot->where('cpmMisc.name', CpmMisc::SOCIAL_SERVICES)->first()) {
+        if ($user->cpmMiscUserPivot->contains('cpmMisc.name', CpmMisc::SOCIAL_SERVICES)) {
             $careplanReport[$user->id]['social'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::SOCIAL_SERVICES
@@ -379,7 +379,7 @@ class WebixFormatter implements ReportFormatter
         }
 
         //Other
-        if ($user->cpmMiscUserPivot->where('cpmMisc.name', CpmMisc::OTHER)->first()) {
+        if ($user->cpmMiscUserPivot->contains('cpmMisc.name', CpmMisc::OTHER)) {
             $careplanReport[$user->id]['other'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::OTHER
@@ -414,7 +414,7 @@ class WebixFormatter implements ReportFormatter
                         '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
                         '$1-$2-$3',
                         $provider->getPrimaryPhone()
-                        );
+                    );
                 }
             }
 
@@ -425,7 +425,7 @@ class WebixFormatter implements ReportFormatter
                 'type'      => $appt->type,
                 'time'      => Carbon::parse($appt->time)->format('H:i A').' '.Carbon::parse($user->timezone)->format(
                     'T'
-                    ),
+                ),
                 'address' => optional($provider)->address
                     ? "A: {$provider->address}. "
                     : '',
@@ -459,7 +459,7 @@ class WebixFormatter implements ReportFormatter
                     '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
                     '$1-$2-$3',
                     $provider->getPrimaryPhone()
-                    );
+                );
             } else {
                 $phone = null;
             }
@@ -473,7 +473,7 @@ class WebixFormatter implements ReportFormatter
                     : '',
                 'time' => Carbon::parse($appt->time)->format('H:i A').' '.Carbon::parse($user->timezone)->format(
                     'T'
-                    ),
+                ),
                 'address' => $provider->address
                     ? "A: {$provider->address}. "
                     : '',
@@ -559,7 +559,7 @@ class WebixFormatter implements ReportFormatter
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
                             'patient.careplan.print',
                             ['patient' => $patient->id]
-                            ).'"><strong>Approve Now</strong></a>';
+                        ).'"><strong>Approve Now</strong></a>';
                     }
                 } else {
                     if ('draft' == $careplanStatus) {
@@ -570,7 +570,7 @@ class WebixFormatter implements ReportFormatter
                             $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
                                 'patient.demographics.show',
                                 ['patient' => $patient->id]
-                                ).'"><strong>CLH Approve</strong></a>';
+                            ).'"><strong>CLH Approve</strong></a>';
                         }
                     }
                 }

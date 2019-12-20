@@ -103,34 +103,6 @@
                                        @change="function (e) { changeUnscheduledPatients(index, e); }"/>
                             </td>
                             <td>
-                                <!--
-                                <span class="asap_label">Temporary</span>
-                                <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
-                                   style="color: #000;"
-                                   title="Is this a temporary assignment?">
-                                    <input v-model="action.data.isTemporary"
-                                           id="temporary"
-                                           type="checkbox"
-                                           name="temporary"
-                                           style=" float: right;margin-top: -14%;"
-                                           :disabled="action.disabled">
-                                </a>
-
-                                <input :disabled="action.disabled"
-                                       type="date"
-                                       v-show="action.data.isTemporary"
-                                       v-model="action.data.temporaryFrom"
-                                       name="temporary_from" class="form-control height-40"
-                                       :required="action.data.isTemporary"/>
-
-                                <input :disabled="action.disabled"
-                                       type="date"
-                                       v-show="action.data.isTemporary"
-                                       v-model="action.data.temporaryTo"
-                                       name="temporary_to" class="form-control height-40"
-                                       :required="action.data.isTemporary"/>
-                                -->
-
                                 <v-select :disabled="action.disabled"
                                           max-height="200px"
                                           class="form-control" name="outbound_cpm_id"

@@ -110,7 +110,7 @@ class WorkScheduleController extends Controller
 
         $tzAbbr = auth()->user()->timezone_abbr ?? 'EDT';
 
-        return view('admin.nurse.schedules.index', compact(['data', 'tzAbbr', 'workHours']));
+        return view('admin.nurse.schedules.index', compact(['data', 'tzAbbr']));
     }
 
     public function index()
@@ -196,14 +196,14 @@ class WorkScheduleController extends Controller
                 return Carbon::createFromFormat(
                     'H:i:s',
                     $window->window_time_end
-                    )->diffInHours(Carbon::createFromFormat(
+                )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
             }) + Carbon::createFromFormat(
                 'H:i',
                 $request->input('window_time_end')
-                )->diffInHours(Carbon::createFromFormat(
+            )->diffInHours(Carbon::createFromFormat(
                     'H:i',
                     $request->input('window_time_start')
                 ));

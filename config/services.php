@@ -87,6 +87,8 @@ return [
         'server-cert-pem-path' => env('EMR_DIRECT_SERVER_CERT_PEM_PATH'),
         'mail-server'          => env('EMR_DIRECT_MAIL_SERVER'),
         'port'                 => env('EMR_DIRECT_PORT'),
+        'client-cert-filename' => env('EMR_CLIENT_CERT_FILENAME'),
+        'server-cert-filename' => env('EMR_SERVER_CERT_FILENAME'),
     ],
 
     'athena' => [

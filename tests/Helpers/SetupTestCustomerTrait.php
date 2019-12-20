@@ -8,6 +8,7 @@ namespace Tests\Helpers;
 
 use App\CarePlan;
 use App\Models\CPM\CpmProblem;
+use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -21,8 +22,6 @@ trait SetupTestCustomerTrait
     use UserHelpers;
 
     /**
-     * @param Practice $practice
-     *
      * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function createAdmin(Practice $practice)
@@ -35,8 +34,6 @@ trait SetupTestCustomerTrait
     }
 
     /**
-     * @param Practice $practice
-     *
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
     public function createLocation(Practice $practice)
@@ -61,8 +58,7 @@ trait SetupTestCustomerTrait
     }
 
     /**
-     * @param Practice $practice
-     * @param mixed    $providerId
+     * @param mixed $providerId
      *
      * @return \CircleLinkHealth\Customer\Entities\User
      */
@@ -199,8 +195,6 @@ trait SetupTestCustomerTrait
     }
 
     /**
-     * @param Practice $practice
-     *
      * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function createProvider(Practice $practice)
