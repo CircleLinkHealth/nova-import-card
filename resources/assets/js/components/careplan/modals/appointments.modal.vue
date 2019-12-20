@@ -21,7 +21,7 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <datepicker input-class="form-control" class="form-control pad-0" :class="{ error: !newAppointment.isPending() }" format="MM-dd-yyyy"
-                                            v-model="newAppointment.date" :disabledDates="{ to: today }" placeholder="MM-DD-YYYY" required></datepicker>
+                                                    v-model="newAppointment.date" :disabledDates="{ to: today }" placeholder="MM-DD-YYYY" required></datepicker>
                                     </div>
                                     <div class="col-sm-6">
                                         <input type="time" class="form-control" :class="{ error: !newAppointment.isPending() }" v-model="newAppointment.time" required />
@@ -48,7 +48,7 @@
                     <h4>Upcoming Appointments</h4>
                     <ol class="list-group" v-for="(appointment, index) in futureAppointments" :key="appointment.id">
                         <li class="list-group-item pointer" @click="select(appointment)"
-                        :class="{ selected: selectedAppointment && selectedAppointment.id === appointment.id, disabled: (selectedAppointment && selectedAppointment.id === appointment.id)  && loaders.removeAppointment }">
+                            :class="{ selected: selectedAppointment && selectedAppointment.id === appointment.id, disabled: (selectedAppointment && selectedAppointment.id === appointment.id)  && loaders.removeAppointment }">
                             <appointment :appointment="appointment"></appointment>
                             <loader v-if="loaders.removeAppointment"></loader>
                             <input type="button" class="btn btn-danger absolute delete" value="x" @click="removeAppointment(index)" />
@@ -59,14 +59,14 @@
                     <h4>Past Appointments</h4>
                     <ol class="list-group" v-for="(appointment, index) in pastAppointments" :key="appointment.id">
                         <li class="list-group-item pointer" @click="select(appointment)"
-                        :class="{ selected: selectedAppointment && selectedAppointment.id === appointment.id, disabled: (selectedAppointment && selectedAppointment.id === appointment.id)  && loaders.removeAppointment }">
+                            :class="{ selected: selectedAppointment && selectedAppointment.id === appointment.id, disabled: (selectedAppointment && selectedAppointment.id === appointment.id)  && loaders.removeAppointment }">
                             <appointment :appointment="appointment"></appointment>
                         </li>
                     </ol>
                 </div>
                 <div class="col-sm-12" :class="{ 'appointment-container': pagination.pages().length > 20 }">
                     <div class="btn-group" :class="{ 'appointment-buttons': pagination.pages() > 20 }" role="group" aria-label="Appointments">
-                        <button class="btn btn-secondary appointment-button" :class="{ selected: pagination.selected(index) }" 
+                        <button class="btn btn-secondary appointment-button" :class="{ selected: pagination.selected(index) }"
                                 v-for="(page, index) in pagination.pages()" :key="index" @click="pagination.select(index)">
                             {{page}}
                         </button>
