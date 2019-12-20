@@ -23,6 +23,7 @@ class PatientReportData
     protected $billingCodes;
 
     protected $ccmProblemCodes;
+
     protected $ccmTime;
 
     protected $dob;

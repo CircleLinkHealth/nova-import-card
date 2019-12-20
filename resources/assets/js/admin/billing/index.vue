@@ -145,18 +145,11 @@
                 <template slot="Patient" slot-scope="props">
                     <a :href="props.row.patientUrl" target="_blank" class="blue">{{props.row.Patient}}</a>
                 </template>
-                <template slot="CCM Problem 1" slot-scope="props">
+                <template slot="CCM Problem Codes" slot-scope="props">
                     <div>
                         <span class="blue pointer"
-                              @click="showCcmModal(props.row, 1)">{{props.row['CCM Problem 1'] || '&lt;Edit&gt;'}}</span>
+                              @click="showCcmModal(props.row, 1)">{{props.row['CCM Problem Codes'] || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['problem_1']"></loader>
-                    </div>
-                </template>
-                <template slot="CCM Problem 2" slot-scope="props">
-                    <div>
-                        <span class="blue pointer"
-                              @click="showCcmModal(props.row, 2)">{{props.row['CCM Problem 2'] || '&lt;Edit&gt;'}}</span>
-                        <loader v-if="props.row.promises['problem_2']"></loader>
                     </div>
                 </template>
                 <template slot="BHI Problem" slot-scope="props">
@@ -260,10 +253,7 @@
                     'Status',
                     'CCM Mins',
                     'BHI Mins',
-                    'CCM Problem 1',
-                    'CCM Problem 1 Code',
-                    'CCM Problem 2',
-                    'CCM Problem 2 Code',
+                    'CCM Problem Codes',
                     'BHI Problem',
                     'BHI Problem Code',
                     '#Successful Calls',
@@ -425,10 +415,7 @@
                             Status: patient.status,
                             'CCM Mins': timeDisplay(patient.ccm_time),
                             'BHI Mins': timeDisplay(patient.bhi_time),
-                            'CCM Problem 1': patient.problem1,
-                            'CCM Problem 2': patient.problem2,
-                            'CCM Problem 1 Code': patient.problem1_code,
-                            'CCM Problem 2 Code': patient.problem2_code,
+                            'CCM Problem Codes': patient.ccm_problem_codes,
                             'BHI Problem': patient.bhi_problem,
                             'BHI Problem Code': patient.bhi_problem_code,
                             '#Successful Calls': patient.no_of_successful_calls,

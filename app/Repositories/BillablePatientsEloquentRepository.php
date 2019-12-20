@@ -47,7 +47,10 @@ class BillablePatientsEloquentRepository
     {
         $month = $date->startOfMonth();
 
-        $result = PatientMonthlySummary::orderBy('needs_qa', 'desc')
+        $result = PatientMonthlySummary::with(['attestedProblems' => function ($problem) {
+            $problem->with(['cpmProblem', 'codes']);
+        }])
+            ->orderBy('needs_qa', 'desc')
             ->where('month_year', $month)
             ->where(function ($q) {
                 $q->where('ccm_time', '>=', 1200)

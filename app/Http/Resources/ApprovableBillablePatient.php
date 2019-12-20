@@ -92,9 +92,10 @@ class ApprovableBillablePatient extends Resource
             'reject'                 => $this->rejected,
             'report_id'              => $this->id,
             'actor_id'               => $this->actor_id,
-            'qa'                     => $this->needs_qa || (! $this->approved && !$this->rejected),
+            'qa'                     => $this->needs_qa || ( ! $this->approved && ! $this->rejected),
 
             'chargeable_services' => ChargeableService::collection($this->whenLoaded('chargeableServices')),
+            'ccm_problem_codes'   => $this->getAttestedProblemsForReport(),
         ], $problems);
     }
 }
