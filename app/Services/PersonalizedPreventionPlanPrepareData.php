@@ -81,7 +81,7 @@ class PersonalizedPreventionPlanPrepareData
      * @param $personalizedHealthAdvices
      * @return array
      */
-    public function getOrderedSuggestedChecklist($personalizedHealthAdvices)
+    public static function getOrderedSuggestedChecklist($personalizedHealthAdvices)
     {
         $suggestedChecklistData = collect();
         foreach ($personalizedHealthAdvices as $advice => $tasks) {
