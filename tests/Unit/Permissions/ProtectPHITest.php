@@ -7,13 +7,12 @@
 namespace Tests\Unit;
 
 use App\Enrollee;
+use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
-use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Mockery as m;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class ProtectPHITest extends TestCase
