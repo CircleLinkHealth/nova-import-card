@@ -112,7 +112,7 @@ class ImportService
         $response = new \stdClass();
 
         $ccda = Ccda::withTrashed()
-            ->with('patient.patientInfo')
+            ->with(['patient.patientInfo', 'media'])
             ->find($ccdaId);
 
         if ( ! $ccda) {
@@ -125,12 +125,12 @@ class ImportService
 
         if ($ccda->imported) {
             if ($ccda->patient) {
-            }
-            $response->success = false;
-            $response->message = "CCDA with id ${ccdaId} has already been imported.";
-            $response->imr     = null;
+                $response->success = false;
+                $response->message = "CCDA with id ${ccdaId} has already been imported.";
+                $response->imr     = null;
 
-            return $response;
+                return $response;
+            }
         }
 
         if ($ccda->mrn && $ccda->practice_id) {
@@ -140,7 +140,7 @@ class ImportService
                     $q->where('mrn_number', $ccda->mrn);
                 }
             )->whereProgramId($ccda->practice_id)
-                ->first();
+                ->exists();
 
             if ($exists) {
                 $response->success = false;
@@ -153,13 +153,9 @@ class ImportService
 
         $imr = $ccda->import();
 
-        $update = Ccda::whereId($ccdaId)
-            ->update(
-                [
-                    'status'   => Ccda::QA,
-                    'imported' => true,
-                ]
-            );
+        $ccda->status   = Ccda::QA;
+        $ccda->imported = true;
+        $ccda->save();
 
         $response->success = true;
         $response->message = 'CCDA successfully imported.';
