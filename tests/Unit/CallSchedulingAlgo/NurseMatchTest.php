@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class NurseMatchTest extends TestCase
 {
-    use App\Traits\Tests\UserHelpers;
+    use \App\Traits\Tests\UserHelpers;
     use CallAlgoHelper;
     private $matchArray = [];
     private $nurse;
