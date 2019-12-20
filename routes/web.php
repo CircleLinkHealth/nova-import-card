@@ -10,6 +10,8 @@ Route::group(['middleware' => ['auth', 'cacheResponse']], function () {
     );
 });
 
+Route::get('hirefire/{token}/info', 'HireFireController@getQueueSize');
+
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
 Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
@@ -70,6 +72,16 @@ Route::group([
 //
 //
 Route::group(['middleware' => 'auth'], function () {
+    Route::get('cbt/test-patients/create', [
+        'uses' => 'Patient\PatientController@createCBTTestPatient',
+        'as'   => 'show.create-test-patients',
+    ]);
+
+    Route::post('cbt/test-patients', [
+        'uses' => 'Patient\PatientController@storeCBTTestPatient',
+        'as'   => 'create-test-patients',
+    ]);
+
     Route::get('impersonate/leave', [
         'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@leave',
         'as'   => 'impersonate.leave',
@@ -420,6 +432,11 @@ Route::group(['middleware' => 'auth'], function () {
         'API\PracticeStaffController'
     )->middleware('permission:practiceStaff.create,practiceStaff.read,practiceStaff.update,practiceStaff.delete');
 
+    Route::resource(
+        'practice.locations',
+        'API\PracticeLocationsController'
+    )->middleware('permission:location.create,location.read,location.update,location.delete');
+
     Route::get('provider/search', [
         'uses' => 'API\CareTeamController@searchProviders',
         'as'   => 'providers.search',
@@ -530,9 +547,19 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'get.CCDViewerController.showByUserId',
     ])->middleware('permission:ccda.read');
 
+    Route::get('ccd/export/user/{userId}', [
+        'uses' => 'CCDViewer\CCDViewerController@exportAllCcds',
+        'as'   => 'get.CCDViewerController.exportAllCCDs',
+    ])->middleware('permission:ccda.read');
+
     Route::get('ccd/show/{ccdaId}', [
         'uses' => 'CCDViewer\CCDViewerController@show',
         'as'   => 'get.CCDViewerController.show',
+    ])->middleware('permission:ccda.read');
+
+    Route::get('ccd/download/xml/{ccdaId}', [
+        'uses' => 'CCDViewer\CCDViewerController@downloadXml',
+        'as'   => 'download.ccda.xml',
     ])->middleware('permission:ccda.read');
 
     Route::post('ccd', [
@@ -994,6 +1021,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'DirectMailController@show',
                 'as'   => 'direct-mail.show',
             ]);
+
+            Route::get('inbox/check', [
+                'uses' => 'DirectMailController@checkInbox',
+                'as'   => 'direct-mail.check',
+            ]);
         });
 
         Route::group(['prefix' => 'revisions'], function () {
@@ -1061,7 +1093,12 @@ Route::group(['middleware' => 'auth'], function () {
 
                 Route::get('/eligible-csv', [
                     'uses' => 'EligibilityBatchController@downloadEligibleCsv',
-                    'as'   => 'eligibility.download.eligible',
+                    'as'   => 'eligibility.download.csv.eligible',
+                ])->middleware('permission:enrollee.read');
+
+                Route::get('/entire-patient-list-csv', [
+                    'uses' => 'EligibilityBatchController@downloadAllPatientsCsv',
+                    'as'   => 'eligibility.download.all',
                 ])->middleware('permission:enrollee.read');
 
                 Route::get('supplemental-insurance-info-csv', [
@@ -2250,3 +2287,28 @@ Route::get(
         'as'   => 'process.eligibility.local.zip',
     ]
 )->middleware(['auth', 'role:administrator']);
+
+Route::get('notifications/{id}', [
+    'uses' => 'NotificationController@showPusherNotification',
+    'as'   => 'notifications.show',
+])->middleware('permission:provider.read,note.read');
+
+Route::get('notifications', [
+    'uses' => 'NotificationController@index',
+    'as'   => 'notifications.index',
+])->middleware('permission:provider.read,note.read');
+
+Route::post('/redirect-mark-read/{notificationId}', [
+    'uses' => 'NotificationController@markNotificationAsRead',
+    'as'   => 'notification.redirect',
+]);
+
+Route::get('/redirect-mark-done/{callId}', [
+    'uses' => 'PatientCallListController@markAddendumActivitiesDone',
+    'as'   => 'redirect.readonly.activity',
+]);
+
+Route::get('see-all-notifications', [
+    'uses' => 'NotificationController@seeAllNotifications',
+    'as'   => 'notifications.seeAll',
+])->middleware('permission:provider.read,note.read');

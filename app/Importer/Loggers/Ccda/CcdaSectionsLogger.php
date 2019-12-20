@@ -16,6 +16,7 @@ use App\Importer\Models\ItemLogs\ProblemCodeLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\Ccda;
+use App\Search\ProviderByName;
 
 class CcdaSectionsLogger implements MedicalRecordLogger
 {
@@ -46,8 +47,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Allergies Section into Log models..
-     *
-     * @return MedicalRecordLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
     {
@@ -78,8 +77,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Demographics Section into Log models..
-     *
-     * @return MedicalRecordLogger
      */
     public function logDemographicsSection(): MedicalRecordLogger
     {
@@ -94,8 +91,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Document Section into Log models..
-     *
-     * @return MedicalRecordLogger
      */
     public function logDocumentSection(): MedicalRecordLogger
     {
@@ -120,8 +115,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Log Insurance Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logInsuranceSection(): MedicalRecordLogger
     {
@@ -150,8 +143,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Medications Section into Log models..
-     *
-     * @return MedicalRecordLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
     {
@@ -168,8 +159,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Problems Section into Log models..
-     *
-     * @return MedicalRecordLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
     {
@@ -199,8 +188,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Providers Section into Log models..
-     *
-     * @return MedicalRecordLogger
      */
     public function logProvidersSection(): MedicalRecordLogger
     {
@@ -219,13 +206,25 @@ class CcdaSectionsLogger implements MedicalRecordLogger
                 ->where('cell_phone', $data['cell_phone'])
                 ->where('home_phone', $data['home_phone'])
                 ->where('work_phone', $data['work_phone'])
-                ->first();
+                ->exists();
 
             if ($shouldBeIgnored || empty(array_filter($data))) {
                 continue;
             }
 
-            $saved = ProviderLog::create(
+            $searchProvider = ProviderByName::first("{$data['first_name']} {$data['last_name']}");
+
+            if ($searchProvider) {
+                $data['provider_id'] = $data['billing_provider_id'] = $searchProvider->id;
+                $data['practice_id'] = $searchProvider->program_id;
+                $data['location_id'] = optional($searchProvider->loadMissing('locations')->locations->first())->id;
+            }
+
+            $saved = ProviderLog::updateOrCreate(
+                array_merge([
+                    'first_name' => $data['first_name'],
+                    'last_name'  => $data['last_name'],
+                ], $this->foreignKeys),
                 array_merge($data, $this->foreignKeys)
             );
         }

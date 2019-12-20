@@ -193,11 +193,12 @@
     import EventBus from '../admin/time-tracker/comps/event-bus'
     import LoaderComponent from '../components/loader';
     import {registerHandler, sendRequest} from "./bc-job-manager";
+    import {Logger} from '../logger-logdna';
 
     import Twilio from 'twilio-client';
     import VueTouchKeyboard from "vue-touch-keyboard";
-    import style from "vue-touch-keyboard/dist/vue-touch-keyboard.css"; // load default style
 
+    require("vue-touch-keyboard/dist/vue-touch-keyboard.css");
     window.Vue.use(VueTouchKeyboard);
 
     let self;
@@ -299,8 +300,7 @@
             selectedPatientNumber() {
                 if (this.dropdownNumber === 'patientUnlisted') {
                     return this.patientUnlistedNumber;
-                }
-                else {
+                } else {
                     return this.dropdownNumber;
                 }
             },
@@ -317,8 +317,7 @@
                 if (this.cpmCallerUrl && this.cpmCallerUrl.length > 0) {
                     if (this.cpmCallerUrl[this.cpmCallerUrl.length - 1] === "/") {
                         return this.cpmCallerUrl + path;
-                    }
-                    else {
+                    } else {
                         return this.cpmCallerUrl + "/" + path;
                     }
                 }
@@ -427,10 +426,24 @@
                             this.log = 'Adding to call: ' + number;
                             this.queuedNumbersForConference.push({number, isUnlisted, isCallToPatient});
                             this.createConference();
-                        }
-                        else {
+                        } else {
                             this.log = 'Calling ' + number;
                             this.connection = this.device.connect(this.getTwimlAppRequest(number, isUnlisted, isCallToPatient));
+
+                            this.connection.on('warning', (warningName) => {
+                                const temp = new Set(self.warningEvents);
+                                temp.add(warningName);
+                                self.warningEvents = Array.from(temp);
+                                Logger.warn(`WARNING: ${warningName}`, {meta: {'connection': 'warning'}});
+                            });
+
+                            this.connection.on('warning-cleared', (warningName) => {
+                                const temp = new Set(self.warningEvents);
+                                temp.delete(warningName);
+                                self.warningEvents = Array.from(temp);
+                                Logger.warn(`WARNING-CLEARED: ${warningName}`, {meta: {'connection': 'warning-cleared'}});
+                            });
+
                         }
                     }
 
@@ -467,8 +480,7 @@
                                     this.$set(this.muted, number, false);
                                     this.$set(this.onPhone, number, false);
                                 });
-                        }
-                        else {
+                        } else {
                             this.log = 'Ending call';
                             if (this.connection) {
                                 this.connection.disconnect();
@@ -574,8 +586,7 @@
 
                                     //should never actually have to change from false to true, but leaving here for my sanity
                                     this.$set(this.onPhone, to, true);
-                                }
-                                else {
+                                } else {
 
                                     for (let i = 0; i < this.addedNumbersInConference.length; i++) {
                                         if (this.addedNumbersInConference[i].number === to) {
@@ -714,8 +725,7 @@
                     if (self.closeCountdown === 0) {
                         clearInterval(self.closeCountdownInterval);
                         window.close();
-                    }
-                    else {
+                    } else {
                         self.closeCountdown = self.closeCountdown - 1;
                     }
 
@@ -741,6 +751,7 @@
                         self.device = new Twilio.Device(response.data.token, {
                             closeProtection: true, //show warning when closing the page with active call - NOT WORKING
                             debug: true,
+                            warnings: true,
                             region: 'us1' //default to US East Coast (Virginia)
                         });
 
@@ -777,18 +788,6 @@
                             self.reportError(err.code, err.message);
                             self.resetPhoneState();
                             self.log = err.message;
-                        });
-
-                        self.device.on('warning', (warningName) => {
-                            const temp = new Set(self.warningEvents);
-                            temp.add(warningName);
-                            self.warningEvents = Array.from(temp);
-                        });
-
-                        self.device.on('warning-cleared', (warningName) => {
-                            const temp = new Set(self.warningEvents);
-                            temp.delete(warningName);
-                            self.warningEvents = Array.from(temp);
                         });
 
                         self.device.on('ready', () => {
@@ -837,8 +836,7 @@
 
                     if (!self.device || !self.device.isInitialized) {
                         status = "twilio_not_ready";
-                    }
-                    else {
+                    } else {
                         status = self.device.status();
                         if ((status === "ready" || status === "busy") && self.isCurrentlyOnPhone) {
                             number = self.selectedPatientNumber;

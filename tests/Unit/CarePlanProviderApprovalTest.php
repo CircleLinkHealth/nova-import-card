@@ -14,15 +14,14 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Notification;
+use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class CarePlanProviderApprovalTest extends TestCase
 {
+    use \App\Traits\Tests\UserHelpers;
     use CarePlanHelpers;
-    use UserHelpers;
 
     /**
      * @var CarePlan
@@ -38,6 +37,10 @@ class CarePlanProviderApprovalTest extends TestCase
      * @var
      */
     protected $patient;
+
+    /**
+     * @var Practice
+     */
     protected $practice;
 
     /**
@@ -50,8 +53,8 @@ class CarePlanProviderApprovalTest extends TestCase
         parent::setUp();
 
         //Setup Practice and Location
-        $this->practice = factory(Practice::class)->create();
-        $this->location = factory(Location::class)->create([
+        $this->practice = Practice::first() ?? factory(Practice::class)->create();
+        $this->location = Location::firstOrCreate([
             'practice_id' => $this->practice->id,
         ]);
 

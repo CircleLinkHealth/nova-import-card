@@ -58,7 +58,7 @@ return [
     */
 
     'trim' => [
-        'recent' => 1440,
+        'recent' => 60,
         'failed' => 10080,
     ],
 
@@ -84,19 +84,7 @@ return [
                 'timeout'    => 300,
             ],
         ],
-        'production' => [
-        ],
         'staging' => [
-            'supervisor-1' => [
-                'connection' => 'redis',
-                'queue'      => ['high', 'default', 'low'],
-                'balance'    => 'auto',
-                'processes'  => 8,
-                'tries'      => 1,
-                'timeout'    => 300,
-            ],
-        ],
-        'worker' => [
             'supervisor-1' => [
                 'connection'    => 'redis',
                 'queue'         => ['default', 'low', 'demanding'],
@@ -114,6 +102,35 @@ return [
                 'max-processes' => 7,
                 'tries'         => 1,
                 'timeout'       => 30,
+            ],
+        ],
+        'production_v3' => [
+            'supervisor-1' => [
+                'connection'    => 'redis',
+                'queue'         => ['default'],
+                'balance'       => 'auto',
+                'min-processes' => 3,
+                'max-processes' => 6,
+                'tries'         => 1,
+                'timeout'       => 60,
+            ],
+            'supervisor-2' => [
+                'connection'    => 'redis',
+                'queue'         => ['high'],
+                'balance'       => 'simple',
+                'min-processes' => 4,
+                'max-processes' => 10,
+                'tries'         => 1,
+                'timeout'       => 40,
+            ],
+            'supervisor-3' => [
+                'connection'    => 'redis',
+                'queue'         => ['low', 'demanding'],
+                'balance'       => 'auto',
+                'min-processes' => 1,
+                'max-processes' => 4,
+                'tries'         => 1,
+                'timeout'       => 60,
             ],
         ],
     ],

@@ -32,10 +32,6 @@ class PracticeInvoiceController extends Controller
 
     /**
      * PracticeInvoiceController constructor.
-     *
-     * @param ApproveBillablePatientsService   $service
-     * @param PatientSummaryEloquentRepository $patientSummaryDBRepository
-     * @param PracticeReportsService           $practiceReportsService
      */
     public function __construct(
         ApproveBillablePatientsService $service,
@@ -63,7 +59,7 @@ class PracticeInvoiceController extends Controller
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         }
-    
+
         $savedSummaries = collect();
 
         $this->getCurrentMonthSummariesQuery($practice_id, $date)
@@ -77,7 +73,7 @@ class PracticeInvoiceController extends Controller
                         }
                     }
                     $summary->save();
-    
+
                     $savedSummaries->push($summary);
                 }
             });
@@ -138,12 +134,12 @@ class PracticeInvoiceController extends Controller
     /**
      * Get approvable patients for a practice for a month.
      *
-     * @param Request $request
-     *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function data(Request $request)
     {
+        ini_set('max_execution_time', 300);
+
         $practice_id = $request->input('practice_id');
         $date        = $request->input('date');
 
@@ -253,8 +249,6 @@ class PracticeInvoiceController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
      * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
      *
@@ -316,8 +310,6 @@ class PracticeInvoiceController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return string
      */
     public function send(Request $request)
@@ -489,8 +481,6 @@ class PracticeInvoiceController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updatePracticeChargeableServices(Request $request)
@@ -599,7 +589,6 @@ class PracticeInvoiceController extends Controller
 
     /**
      * @param $practice_id
-     * @param Carbon $date
      *
      * @return \CircleLinkHealth\Customer\Entities\PatientMonthlySummary|\Illuminate\Database\Eloquent\Builder
      */

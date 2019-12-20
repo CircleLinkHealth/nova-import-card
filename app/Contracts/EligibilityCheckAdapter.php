@@ -16,5 +16,5 @@ interface EligibilityCheckAdapter extends HasMedicalRecord
      *
      * @return EligibilityJob
      */
-    public function adaptToEligibilityJob(): EligibilityJob;
+    public function adaptToEligibilityJob(): ?EligibilityJob;
 }

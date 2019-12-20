@@ -17,27 +17,27 @@ class PatientObserver
     {
         $user = $patient->user;
 
-        $enrollee = Enrollee::where([
-            ['mrn', '=', $patient->mrn_number],
-            ['practice_id', '=', optional($user)->primaryPractice],
-        ])->first();
+        if ($user) {
+            $enrollee = Enrollee::where([
+                ['mrn', '=', $patient->mrn_number],
+                ['practice_id', '=', optional($user->primaryPractice)->id],
+            ])->first();
 
-        if ($enrollee) {
-            //find target patient with matching ehr_patient_id, update or create TargetPatient
-            $targetPatient = TargetPatient::where('enrollee_id', $enrollee->id)
-                ->orWhere('ehr_patient_id', $enrollee->mrn)
-                ->first();
+            if ($enrollee) {
+                //find target patient with matching ehr_patient_id, update or create TargetPatient
+                $targetPatient = TargetPatient::where('enrollee_id', $enrollee->id)
+                    ->orWhere('ehr_patient_id', $enrollee->mrn)
+                    ->first();
 
-            if ($targetPatient) {
-                $user->ehrInfo()->save($targetPatient);
+                if ($targetPatient) {
+                    $user->ehrInfo()->save($targetPatient);
+                }
             }
         }
     }
 
     /**
      * Listen to the Patient created event.
-     *
-     * @param Patient $patient
      */
     public function created(Patient $patient)
     {
@@ -46,9 +46,6 @@ class PatientObserver
         }
     }
 
-    /**
-     * @param Patient $patient
-     */
     public function saving(Patient $patient)
     {
         if ($patient->isDirty('mrn_number')) {
@@ -72,8 +69,6 @@ class PatientObserver
 
     /**
      * Listen to the Patient updated event.
-     *
-     * @param \CircleLinkHealth\Customer\Entities\Patient $patient
      */
     public function updated(Patient $patient)
     {
@@ -84,13 +79,17 @@ class PatientObserver
 
     /**
      * Listen to the Patient updated event.
-     *
-     * @param Patient $patient
      */
     public function updating(Patient $patient)
     {
         if ($patient->isDirty('date_paused')) {
             $patient->paused_letter_printed_at = null;
+        }
+
+        if ($patient->isDirty('ccm_status')) {
+            if (Patient::UNREACHABLE == $patient->getOriginal('ccm_status') && Patient::ENROLLED == $patient->ccm_status) {
+                $patient->no_call_attempts_since_last_success = 0;
+            }
         }
     }
 }

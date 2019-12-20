@@ -11,8 +11,14 @@ use Phaxio;
 
 class PhaxioService implements Efax
 {
+    /**
+     * @var Phaxio
+     */
     public $fax;
 
+    /**
+     * PhaxioService constructor.
+     */
     public function __construct(Phaxio $phaxio)
     {
         $this->fax = $phaxio;

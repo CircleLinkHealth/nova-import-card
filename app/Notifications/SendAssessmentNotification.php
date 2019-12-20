@@ -13,12 +13,17 @@ use Illuminate\Notifications\Notification;
 
 class SendAssessmentNotification extends Notification
 {
+    //todo: REMOVE PHI FROM NOTIFICATION
     use Queueable;
+
     public $pathToPdf;
     private $approver;
 
     private $attachment;
-    private $channels = ['mail', 'database'];
+
+    //Letting this go to just database so we can see if this actually is being used by anyone.
+    //If we need this we can retrieve for database
+    private $channels = ['database'];
     private $patient;
     private $practice;
 
@@ -50,10 +55,7 @@ class SendAssessmentNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'channels'     => $this->channels,
-            'sender_id'    => auth()->user()->id,
-            'sender_type'  => SendAssessmentNotification::class,
-            'sender_email' => auth()->user()->email,
+            'channels' => $this->channels,
 
             'receiver_type'  => $notifiable->id,
             'receiver_id'    => get_class($notifiable),

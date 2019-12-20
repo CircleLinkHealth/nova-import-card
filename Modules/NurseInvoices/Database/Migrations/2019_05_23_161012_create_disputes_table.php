@@ -25,6 +25,8 @@ class CreateDisputesTable extends Migration
     {
         Schema::create('disputes', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('disputable_id');
+            $table->string('disputable_type');
             $table->unsignedInteger('invoice_id');
             $table->text('reason');
             $table->dateTime('resolved_at')->nullable();

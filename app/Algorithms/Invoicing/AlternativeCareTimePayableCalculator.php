@@ -6,6 +6,7 @@
 
 namespace App\Algorithms\Invoicing;
 
+use App\User;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
@@ -26,8 +27,6 @@ class AlternativeCareTimePayableCalculator
 
     /**
      * AlternativeCareTimePayableCalculator constructor.
-     *
-     * @param Nurse $nurse
      */
     public function __construct(Nurse $nurse)
     {
@@ -39,7 +38,13 @@ class AlternativeCareTimePayableCalculator
         $add_to_accrued_towards = 0;
         $add_to_accrued_after   = 0;
         $user                   = $activity->patient;
-        $monthYear              = Carbon::parse($activity->performed_at)->startOfMonth();
+
+        if ( ! $user) {
+            //in case the patient was deleted
+            $user = User::withTrashed()->findOrFail($activity->patient_id);
+        }
+
+        $monthYear = Carbon::parse($activity->performed_at)->startOfMonth();
 
         $summary = $user->patientSummaries()
             ->whereMonthYear($monthYear)
@@ -91,11 +96,6 @@ class AlternativeCareTimePayableCalculator
 
     /**
      * NOTE: We never actually started storing call data.
-     *
-     * @param int    $toAddToAccruedTowardsCCM
-     * @param int    $toAddToAccruedAfterCCM
-     * @param int    $activityId
-     * @param Carbon $monthYear
      *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
      */

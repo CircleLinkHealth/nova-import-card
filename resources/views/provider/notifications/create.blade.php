@@ -323,6 +323,8 @@
     <script>
         $(document).ready(function () {
             $('select').material_select();
+            //bug on mateiralize, hack to stop the dropdown from hiding immediately
+            $('select').parent().on('click',function(event){ event.stopPropagation(); });
         });
     </script>
 @endpush

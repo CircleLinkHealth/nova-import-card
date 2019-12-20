@@ -36,7 +36,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurse
  * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurseInfo
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice approved()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice newQuery()
@@ -54,7 +53,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereSentToAccountantAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property int|null $daily_disputes_count
  * @property int|null $media_count
  * @property int|null $notifications_count
@@ -95,9 +93,9 @@ class NurseInvoice extends Model implements HasMedia, Pdfable
         return $this->hasMany(NurseInvoiceDailyDispute::class, 'invoice_id', 'id');
     }
 
-    public function dispute()
+    public function disputes()
     {
-        return $this->morphOne(Dispute::class, 'disputable');
+        return $this->morphMany(Dispute::class, 'disputable');
     }
 
     public function nurse()
@@ -117,15 +115,13 @@ class NurseInvoice extends Model implements HasMedia, Pdfable
 
     public function scopeUndisputed($builder)
     {
-        return $builder->doesntHave('dispute');
+        return $builder->doesntHave('disputes');
     }
 
     /**
      * Create a PDF of this resource and return the path to it.
      *
      * @param mixed|null $scale
-     *
-     * @return string
      */
     public function toPdf($scale = null): string
     {

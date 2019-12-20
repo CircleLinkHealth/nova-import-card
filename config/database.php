@@ -4,6 +4,39 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+// for heroku
+if (getenv('DATABASE_URL')) {
+    $pgsqlUrl = parse_url(getenv('DATABASE_URL'));
+
+    $pgSqlhost     = $pgsqlUrl['host'];
+    $pgSqlusername = $pgsqlUrl['user'];
+    $pgSqlpassword = $pgsqlUrl['pass'];
+    $pgSqldatabase = substr($pgsqlUrl['path'], 1);
+
+    $psqlConfig = [
+        'driver'         => 'pgsql',
+        'host'           => $pgSqlhost,
+        'port'           => env('DB_PORT', '5432'),
+        'database'       => $pgSqldatabase,
+        'username'       => $pgSqlusername,
+        'password'       => $pgSqlpassword,
+        'charset'        => 'utf8',
+        'prefix'         => '',
+        'prefix_indexes' => true,
+        'schema'         => 'public',
+        'sslmode'        => 'prefer',
+    ];
+}
+
+// for heroku
+if (getenv('REDIS_URL')) {
+    $redisUrl = parse_url(getenv('REDIS_URL'));
+
+    putenv('REDIS_HOST='.$redisUrl['host']);
+    putenv('REDIS_PORT='.$redisUrl['port']);
+    putenv('REDIS_PASSWORD='.$redisUrl['pass']);
+}
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -37,7 +70,7 @@ return [
     'connections' => [
         'sqlite' => [
             'driver'                  => 'sqlite',
-            'database'                => ':memory:',
+            'database'                => base_path('tests/data/sqlite/test_db.sqlite'),
             'prefix'                  => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
@@ -58,9 +91,6 @@ return [
             'engine'         => null,
         ],
 
-        [
-        ],
-
         'test_suite' => [
             'driver'      => 'mysql',
             'host'        => env('DB_HOST', '127.0.0.1'),
@@ -76,7 +106,7 @@ return [
             'engine'      => null,
         ],
 
-        'pgsql' => [
+        'pgsql' => $psqlConfig ?? [
             'driver'         => 'pgsql',
             'host'           => env('DB_HOST', '127.0.0.1'),
             'port'           => env('DB_PORT', '5432'),
@@ -128,7 +158,7 @@ return [
     */
 
     'redis' => [
-        'client' => 'predis',
+        'client' => 'phpredis',
 
         'default' => [
             'host'               => env('REDIS_HOST', '127.0.0.1'),
@@ -139,10 +169,11 @@ return [
         ],
 
         'cache' => [
-            'host'     => env('REDIS_HOST', '127.0.0.1'),
-            'password' => env('REDIS_PASSWORD', null),
-            'port'     => env('REDIS_PORT', 6379),
-            'database' => env('REDIS_CACHE_DB', 1),
+            'host'               => env('REDIS_HOST', '127.0.0.1'),
+            'password'           => env('REDIS_PASSWORD', null),
+            'port'               => env('REDIS_PORT', 6379),
+            'database'           => env('REDIS_CACHE_DB', 1),
+            'read_write_timeout' => -1,
         ],
     ],
 ];

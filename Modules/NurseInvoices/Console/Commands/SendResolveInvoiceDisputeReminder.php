@@ -92,7 +92,9 @@ class SendResolveInvoiceDisputeReminder extends Command
      */
     public static function shouldSkip()
     {
-        $disputeResolutionDeadline = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->addDays(2);
+        $disputeSubmissionDeadline = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth());
+
+        $disputeResolutionDeadline = $disputeSubmissionDeadline->copy()->addDays(2);
 
         $today = Carbon::now();
         //This is when we dispute submissions and resolutions begin.
@@ -103,17 +105,31 @@ class SendResolveInvoiceDisputeReminder extends Command
         if ( ! $invoicesNotSentToAccountantSentQuery->exists()) {
             return true;
         }
-        if ($today->gte($disputesCanExist) && $today->lte($disputeResolutionDeadline)) {
+
+        if ($today->lte($disputesCanExist)) {
             return true;
         }
 
-        return false;
+        if ($today->lte($disputeSubmissionDeadline)) {
+            return true;
+        }
+
+        $disputesExist = \CircleLinkHealth\NurseInvoices\Entities\Dispute::whereIn('disputable_id', \CircleLinkHealth\NurseInvoices\Entities\NurseInvoice::where('month_year', $invoiceMonth)->pluck('id'))->where('is_resolved', false)->exists();
+
+        if ( ! $disputesExist) {
+            return false;
+        }
+
+        //not sure this is still necessary
+        if ($today->lte($disputeResolutionDeadline)) {
+            return true;
+        }
     }
 
     public function unresolvedDisputesCount($month)
     {
         return NurseInvoice::where('month_year', $month)
-            ->whereHas('dispute', function ($q) use ($month) {
+            ->whereHas('disputes', function ($q) use ($month) {
                 $q->whereNull('resolved_at');
             })
             ->count();

@@ -71,12 +71,17 @@ class UnsuccessfulHandler implements CallHandler
     public function createSchedulerInfoString()
     {
         $status = '<span style="color: red">unsuccessfully</span>';
+        $result = 'You just called '.$this->patient->user->getFullName()
+                  .' '.$status.' in <b>week '
+                  .$this->week.'. </b> <br/> <br/> <b>'
+                  .'Please confirm or amend the above next predicted call time. </b>';
 
-        return
-            'You just called '.$this->patient->user->getFullName()
-            .' '.$status.' in <b>week '
-            .$this->week.'. </b> <br/> <br/> <b>'
-            .'Please confirm or amend the above next predicted call time. </b>';
+        if ($this->prediction['nurse'] !== auth()->id() && isset($this->prediction['nurse_display_name'])) {
+            $nurseName = $this->prediction['nurse_display_name'];
+            $result .= "<br/><br/>Note: Next call will be assigned to <b>$nurseName</b>";
+        }
+
+        return $result;
     }
 
     public function getPatientOffset(

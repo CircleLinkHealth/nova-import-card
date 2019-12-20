@@ -10,6 +10,7 @@ use App\CarePlan;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 
 class CarePlanObserver
 {
@@ -19,7 +20,7 @@ class CarePlanObserver
         $time = $carePlan->first_printed->setTimezone($carePlan->patient->timezone ?? 'America/New_York')->format('g:i A T');
 
         $note = $carePlan->patient->notes()->create([
-            'author_id'    => 948,
+            'author_id'    => PatientSupportUser::id(),
             'body'         => "Care plan printed for mailing on ${date} at ${time}",
             'type'         => 'CarePlan Printed',
             'performed_at' => Carbon::now()->toDateTimeString(),
@@ -36,8 +37,6 @@ class CarePlanObserver
 
     /**
      * Listen to the CarePlan saving event.
-     *
-     * @param CarePlan $carePlan
      */
     public function saving(CarePlan $carePlan)
     {
