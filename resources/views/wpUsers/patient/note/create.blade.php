@@ -605,7 +605,6 @@
             </div>
         </div>
     </div>
-    <create-care-person :show="true"></create-care-person>
 
     <div>
         <br/>
@@ -633,7 +632,7 @@
             //CPM-91 and CPM-437 double submitting notes
             let submitted = false;
             let form;
-            let conditionsAttested = false;
+
             const waitForEl = function (selector, callback) {
                 if (!$(selector).length) {
                     setTimeout(function () {
@@ -662,6 +661,9 @@
                     });
                     confirmSubmitForm();
                 });
+
+                let callIsSuccess = false;
+                let conditionsAttested = false;
 
                 if (medications && medications.length) {
                     waitForEl('#note', () => {
@@ -866,7 +868,7 @@
                     const callHasTask = $('.tasks-radio').is(':checked');
 
                     const isPhoneSession = $('#phone').is(':checked');
-                    let callIsSuccess = false;
+
                     let callHasStatus = false;
                     if (userIsCCMCountable) {
                         //radio buttons
@@ -947,7 +949,7 @@
 
                 function confirmSubmitForm() {
 
-                    if (!conditionsAttested && userIsCareCoach){
+                    if (!conditionsAttested && callIsSuccess && userIsCareCoach){
                         App.$emit('show-attest-call-conditions-modal');
                         return;
                     }

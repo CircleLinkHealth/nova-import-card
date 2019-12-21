@@ -526,7 +526,7 @@ class SchedulerService
         Note $note,
         $call,
         $status,
-        $attestedProblems = []
+        $attestedProblems = null
     ) {
         $patient = $note->patient;
 
@@ -548,7 +548,9 @@ class SchedulerService
             );
         }
 
-        $call->attachAttestedProblems($attestedProblems);
+        if ($attestedProblems) {
+            $call->attachAttestedProblems($attestedProblems);
+        }
     }
 
     /**
@@ -571,7 +573,7 @@ class SchedulerService
         $patient,
         $noteId,
         $callStatus,
-        $attestedProblems = []
+        $attestedProblems = null
     ) {
         $scheduled_call = $this->getTodaysCall($patient->id);
 

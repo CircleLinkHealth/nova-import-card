@@ -463,6 +463,12 @@ class NotesController extends Controller
 
         $patient = User::findOrFail($patientId);
 
+        // validating attested problems by nurse. Checking existence since we are about to attach them below
+        $request->validate([
+            'attested_problems.*' => 'exists:ccd_problems',
+        ]);
+        $attestedProblems = isset($input['attested_problems']) ? $input['attested_problems'] : null;
+
         $editingNoteId = ! empty($input['noteId'])
             ? $input['noteId']
             : null;
@@ -541,7 +547,9 @@ class NotesController extends Controller
                         //use $note->created_at, in case we are editing a note
                         $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
                         $this->patientRepo->updateCallLogs($patient->patientInfo, true, true, $note->performed_at);
-                        $call->attachAttestedProblems($input['attested_problems']);
+                        if ($attestedProblems) {
+                            $call->attachAttestedProblems($attestedProblems);
+                        }
                     } else {
                         $call->status = 'done';
                     }
@@ -596,7 +604,7 @@ class NotesController extends Controller
                             $patient,
                             $note->id,
                             $call_status,
-                            $input['attested_problems']
+                            $attestedProblems
                         );
                     }
 
