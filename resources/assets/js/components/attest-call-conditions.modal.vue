@@ -14,10 +14,16 @@
                         <input type="checkbox"  :id="problem.id" :value="problem.id" v-model="attestedProblems">
                         <label :for="problem.id"><span> </span>{{problem.name}}</label>
                     </div>
+                    <div class="col-sm-12 add-condition">
+                        <button v-on:click="toggleAddProblem()" type="button" class="btn btn-secondary">{{addConditionLabel}}</button>
+                        <div v-if="addProblem" style="padding-top: 20px">
+                            <add-condition :patient-id="patientId" :problems="problems"></add-condition>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-sm-12 text-right">
                     <button v-on:click="hideModal()" type="button" class="btn btn-danger">Cancel</button>
-                    <button v-on:click="hideAndSubmitForm()" type="button" class="btn btn-primary right-0">Submit
+                    <button v-on:click="hideAndSubmitForm()" type="button" class="btn btn-info right-0">Submit
                     </button>
                 </div>
             </div>
@@ -27,13 +33,16 @@
 <script>
     import Modal from '../admin/common/modal';
     import {rootUrl} from '../app.config';
-    import LoaderComponent from './loader'
+    import AddCondition from './careplan/add-condition';
+    import CareplanMixin from './careplan/mixins/careplan.mixin';
+    import {Event} from 'vue-tables-2';
 
     export default {
         name: "attest-call-conditions-modal",
+        mixins: [CareplanMixin],
         components: {
+            'add-condition': AddCondition,
             'modal': Modal,
-            'loader': LoaderComponent
         },
         props: {
             'patientId': String,
@@ -44,12 +53,23 @@
             });
 
             this.getPatientBillableProblems();
+
+            Event.$on('full-conditions:add', (ccdProblem) => {
+                if (ccdProblem) this.problems.push(ccdProblem)
+                this.addProblem = false;
+            })
         },
         data(){
             return {
                 loading: false,
                 problems: [],
-                attestedProblems: []
+                attestedProblems: [],
+                addProblem: false
+            }
+        },
+        computed: {
+            addConditionLabel (){
+                return this.addProblem ? 'Hide Other Condition Section' : 'Add Other Condition';
             }
         },
         methods: {
@@ -71,8 +91,12 @@
                 this.$refs['attest-call-conditions-modal'].visible = false;
             },
             hideAndSubmitForm() {
+
                 App.$emit('call-conditions-attested', this.attestedProblems);
                 this.hideModal();
+            },
+            toggleAddProblem(){
+                this.addProblem = ! this.addProblem;
             }
         },
     }
@@ -80,6 +104,27 @@
 
 <style>
     .modal-attest-call-conditions .modal-container {
-        width: 50%;
+        width: 40%;
+    }
+
+    .add-condition {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        padding-bottom: 10px;
+    }
+    .btn.btn-secondary {
+        background-color: #ddd;
+        padding: 10 20 10 20;
+        margin-right: 0 !important;
+        margin-bottom: 5px;
+    }
+
+    .btn.btn-danger {
+        background-color: #d9534f;
+    }
+
+    .btn.btn-secondary.selected, .list-group-item.selected {
+        background: #47beab;
+        color: white;
     }
 </style>

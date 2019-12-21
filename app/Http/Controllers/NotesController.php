@@ -15,6 +15,7 @@ use App\Repositories\PatientWriteRepository;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
+use App\Services\CPM\CpmProblemService;
 use App\Services\NoteService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -194,6 +195,7 @@ class NotesController extends Controller
             'patientWithdrawnReason' => $patientWithdrawnReason,
             'note'                   => $existingNote,
             'call'                   => $existingCall,
+            'cpmProblems'            => (new CpmProblemService())->all(),
         ];
 
         return view('wpUsers.patient.note.create', $view_data);

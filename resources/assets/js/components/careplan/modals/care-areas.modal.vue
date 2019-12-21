@@ -24,41 +24,7 @@
                     </div>
                 </div>
                 <div class="col-sm-12 top-20" v-if="!selectedProblem">
-                    <div class="row">
-                        <form @submit="addCcdProblem">
-                            <div class="col-sm-12">
-                                <label class="label label-danger font-14" v-if="patientHasSelectedProblem">
-                                    Condition is already in care plan. Please add a new condition.
-                                </label>
-                            </div>
-                            <div class="col-sm-12 top-10">
-                                <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name"
-                                        :value="newProblem.name" :limit="15"
-                                        :suggestions="cpmProblemsForAutoComplete"
-                                        :class="{ error: patientHasSelectedProblem }" :threshold="0.8"
-                                        @input="resolveIcd10Code">
-                                </v-complete>
-                            </div>
-                            <div class="col-sm-6 font-14 top-20">
-                                <label><input type="radio" :value="true" v-model="newProblem.is_monitored"/> For Care
-                                    Management</label>
-                            </div>
-                            <div class="col-sm-6 font-14 top-20">
-                                <label><input type="radio" :value="false" v-model="newProblem.is_monitored"/> Other
-                                    Condition</label>
-                            </div>
-                            <div class="col-sm-12 top-20" v-if="newProblem.is_monitored">
-                                <input type="text" class="form-control" v-model="newProblem.icd10"
-                                       placeholder="ICD10 Code"/>
-                            </div>
-                            <div class="col-sm-12 text-right top-20">
-                                <loader v-if="loaders.addProblem"></loader>
-                                <input type="submit" class="btn btn-secondary right-0 selected" value="Add Condition"
-                                       :disabled="patientHasSelectedProblem"/>
-                            </div>
-                        </form>
-                    </div>
-
+                    <add-condition :patient-id="patientId" :problems="problems" :should-select-is-monitored="true"></add-condition>
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
                     <div class="row top-20">
@@ -184,6 +150,7 @@
     import VueComplete from 'v-complete'
     import Collapsible from '../../collapsible'
     import CareplanMixin from '../mixins/careplan.mixin'
+    import AddCondition from '../add-condition'
 
     export default {
         name: 'care-areas-modal',
@@ -193,6 +160,7 @@
         },
         mixins: [CareplanMixin],
         components: {
+            'add-condition': AddCondition,
             'modal': Modal,
             'v-select': VueSelect,
             'v-complete': VueComplete,
@@ -315,27 +283,27 @@
                     this.selectedInstruction = this.selectedProblem.instructions[index]
                 }
             },
-            addCcdProblem(e) {
-                e.preventDefault()
-                this.loaders.addProblem = true
-                return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), {
-                    name: this.newProblem.name,
-                    cpm_problem_id: this.newProblem.cpm_problem_id,
-                    is_monitored: this.newProblem.is_monitored,
-                    icd10: this.newProblem.icd10
-                }).then(response => {
-                    console.log('full-conditions:add', response.data)
-                    this.loaders.addProblem = false
-                    Event.$emit('problems:updated', {})
-                    Event.$emit('full-conditions:add', response.data)
-                    this.reset()
-                    this.selectedProblem = response.data
-                    setImmediate(() => this.checkPatientBehavioralStatus())
-                }).catch(err => {
-                    console.error('full-conditions:add', err)
-                    this.loaders.addProblem = false
-                })
-            },
+            // addCcdProblem(e) {
+            //     e.preventDefault()
+            //     this.loaders.addProblem = true
+            //     return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), {
+            //         name: this.newProblem.name,
+            //         cpm_problem_id: this.newProblem.cpm_problem_id,
+            //         is_monitored: this.newProblem.is_monitored,
+            //         icd10: this.newProblem.icd10
+            //     }).then(response => {
+            //         console.log('full-conditions:add', response.data)
+            //         this.loaders.addProblem = false
+            //         Event.$emit('problems:updated', {})
+            //         Event.$emit('full-conditions:add', response.data)
+            //         this.reset()
+            //         this.selectedProblem = response.data
+            //         setImmediate(() => this.checkPatientBehavioralStatus())
+            //     }).catch(err => {
+            //         console.error('full-conditions:add', err)
+            //         this.loaders.addProblem = false
+            //     })
+            // },
             editCcdProblem(e) {
                 e.preventDefault()
                 this.loaders.editProblem = true

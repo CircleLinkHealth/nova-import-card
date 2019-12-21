@@ -614,7 +614,9 @@
     @push('scripts')
         <script>
 
-
+            var careplan = @json([
+            'allCpmProblems' => $cpmProblems
+            ]);
             const userIsCareCoach = @json(auth()->user()->isCareCoach());
             const userIsCCMCountable = @json(auth()->user()->isCCMCountable());
             const taskTypeToTopicMap = @json($task_types_to_topics);
