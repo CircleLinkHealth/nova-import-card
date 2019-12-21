@@ -28,7 +28,7 @@ class NurseInfo extends Resource
             });
             $this->loadMissing('user.practices');
             if ($this->user) {
-                $nurse['practices'] = $this->user->practices->pluck('practices.id');
+                $nurse['practices'] = $this->user->practices->pluck('id');
             }
         }
 

@@ -180,7 +180,7 @@ class NurseFilters extends QueryFilters
             return $this->builder->select(['id', 'user_id', 'status'])
                 ->with([
                     'user' => function ($q) {
-                        return $q->select(['id', 'display_name', 'program_id']);
+                        return $q->select(['id', 'display_name', 'program_id'])->with('practices');
                     },
                     'states' => function ($q) {
                         return $q->select(['code']);
