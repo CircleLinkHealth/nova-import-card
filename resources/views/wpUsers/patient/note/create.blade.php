@@ -656,7 +656,7 @@
                         $("<input>")
                             .attr("id", "attested_problems")
                             .attr("type", "hidden")
-                            .attr("name", "attested_problems["+i+"]").val(condition).appendTo(form);
+                            .attr("name", "attested_problems["+i+"][ccd_problem_id]").val(condition).appendTo(form);
                         i++;
                     });
                     confirmSubmitForm();

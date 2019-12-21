@@ -465,7 +465,7 @@ class NotesController extends Controller
 
         // validating attested problems by nurse. Checking existence since we are about to attach them below
         $request->validate([
-            'attested_problems.*' => 'exists:ccd_problems',
+            'attested_problems.ccd_problem_id' => 'exists:ccd_problems',
         ]);
         $attestedProblems = isset($input['attested_problems']) ? $input['attested_problems'] : null;
 

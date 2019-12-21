@@ -9,21 +9,24 @@
                         <h4 style="text-align: center">Please select all conditions addressed in this call</h4>
                     </div>
                 </div>
-                <div class="col-sm-12">
+                <div v-if="error" class="col-sm-12">
+                    <span style="color: red"><i class="fas fa-exclamation-circle"></i>&nbsp{{error}}</span>
+                </div>
+                <div class="col-sm-12" v-bind:class="sectionSpaceClass">
                     <div v-for="problem in problems">
                         <input type="checkbox"  :id="problem.id" :value="problem.id" v-model="attestedProblems">
                         <label :for="problem.id"><span> </span>{{problem.name}}</label>
                     </div>
                     <div class="col-sm-12 add-condition">
-                        <button v-on:click="toggleAddProblem()" type="button" class="btn btn-secondary">{{addConditionLabel}}</button>
-                        <div v-if="addProblem" style="padding-top: 20px">
+                        <button v-on:click="toggleAddCondition()" type="button" class="btn btn-info">{{addConditionLabel}}</button>
+                        <div v-if="addCondition" style="padding-top: 20px">
                             <add-condition :patient-id="patientId" :problems="problems"></add-condition>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-12 text-right">
                     <button v-on:click="hideModal()" type="button" class="btn btn-danger">Cancel</button>
-                    <button v-on:click="hideAndSubmitForm()" type="button" class="btn btn-info right-0">Submit
+                    <button v-on:click="submitForm()" type="button" class="btn btn-info right-0">Submit
                     </button>
                 </div>
             </div>
@@ -56,47 +59,60 @@
 
             Event.$on('full-conditions:add', (ccdProblem) => {
                 if (ccdProblem) this.problems.push(ccdProblem)
-                this.addProblem = false;
+                this.addCondition = false;
             })
         },
         data(){
             return {
-                loading: false,
                 problems: [],
                 attestedProblems: [],
-                addProblem: false
+                addCondition: false,
+                error: null
             }
         },
         computed: {
             addConditionLabel (){
-                return this.addProblem ? 'Hide Other Condition Section' : 'Add Other Condition';
+                return this.addCondition ? 'Close Other Condition Section' : 'Add Other Condition';
+            },
+            errorExists() {
+                return !!this.error;
+            },
+            sectionSpaceClass: function () {
+                return {
+                    'm-top-15': this.errorExists,
+                    'm-top-5': !this.errorExists,
+                }
             }
         },
         methods: {
             getPatientBillableProblems(){
-                this.loading = true;
-
                 this.axios.get(rootUrl(`/api/patients/`+ this.patientId + `/problems/ccd`))
                     .then(resp => {
-                        console.log(resp.data);
                         this.problems = resp.data;
-                        this.loading = false;
                     })
                     .catch(err => {
-
+                        this.error = err;
                     });
             },
             hideModal() {
-                this.attestedConditions = [];
+                this.attestedProblems = [];
+                this.error = null;
                 this.$refs['attest-call-conditions-modal'].visible = false;
             },
-            hideAndSubmitForm() {
+            submitForm() {
+                if (this.attestedProblems.length == 0){
+                    this.error = "Please select at least one condition."
+                    return;
+                }
 
+                if (this.addCondition){
+                    this.error = "It looks like you are still trying to enter a condition manually. Please press 'Add Condition' when you are finished, or 'Close Other Condition Section' if you are not adding a condition manually."
+                    return;
+                }
                 App.$emit('call-conditions-attested', this.attestedProblems);
-                this.hideModal();
             },
-            toggleAddProblem(){
-                this.addProblem = ! this.addProblem;
+            toggleAddCondition(){
+                this.addCondition = ! this.addCondition;
             }
         },
     }
@@ -110,6 +126,7 @@
     .add-condition {
         padding-left: 0 !important;
         padding-right: 0 !important;
+        padding-top: 5px;
         padding-bottom: 10px;
     }
     .btn.btn-secondary {
@@ -126,5 +143,13 @@
     .btn.btn-secondary.selected, .list-group-item.selected {
         background: #47beab;
         color: white;
+    }
+
+    .m-top-15 {
+        margin-top: 15px;
+    }
+
+    .m-top-5 {
+        margin-top: 5px;
     }
 </style>
