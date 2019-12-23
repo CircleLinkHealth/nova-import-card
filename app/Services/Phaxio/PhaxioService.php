@@ -7,6 +7,7 @@
 namespace App\Services\Phaxio;
 
 use App\Contracts\Efax;
+use Illuminate\Support\Collection;
 use Phaxio;
 
 class PhaxioService implements Efax
@@ -17,22 +18,57 @@ class PhaxioService implements Efax
     public $fax;
 
     /**
+     * @var Collection
+     */
+    private $options;
+    
+    /**
      * PhaxioService constructor.
+     *
+     * @param Phaxio $phaxio
      */
     public function __construct(Phaxio $phaxio)
     {
         $this->fax = $phaxio;
+        $this->options = new Collection();
     }
 
+    public function createFaxFor(string $number): Efax
+    {
+        $this->options->put('to', $number);
+
+        return $this;
+    }
+    
     /**
-     * @param $to
-     * @param array|string $files
+     * Send a fax.
+     *
+     * https://www.phaxio.com/docs/api/v2.1/faxes/create_and_send_fax
+     *
+     * @param array $options
      *
      * @return mixed|Phaxio\Fax
      */
-    public function send($to, $files)
+    public function send(array $options = [])
     {
-        return $this->fax->faxes()->create(['to' => $to, 'file' => $this->prepareFiles($files)]);
+        $options = $this->options->merge($options);
+
+        if ( ! $options->has('to')) {
+            throw new \InvalidArgumentException('Filed `to` was not specified. Need to knw where to send the fax to.');
+        }
+
+        if ($options->has('file')) {
+            $options['file'] = $this->prepareFiles($options['file']);
+        }
+
+        return $this->fax->faxes()->create($options->all());
+    }
+
+    public function setOption(string $name, $value): Efax
+    {
+        $this->options->put($name, $value);
+
+        return $this;
     }
 
     private function prepareFiles($files)
@@ -55,4 +91,24 @@ class PhaxioService implements Efax
 
         return $handles;
     }
+    
+    /**
+     * @return Collection
+     */
+    public function getOptions(): Collection
+    {
+        return $this->options;
+    }
+    
+    /**
+     * @param Collection $options
+     *
+     * @return PhaxioService
+     */
+    public function setOptions(Collection $options): PhaxioService
+    {
+        $this->options = $options;
+        
+        return $this;
+}
 }

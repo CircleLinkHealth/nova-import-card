@@ -34,14 +34,10 @@ class FaxServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(Efax::class, function () {
-            $config = config('phaxio');
+        $this->app->singleton(Efax::class, function () {
+            $config = config('services.phaxio');
 
-            $mode = isProductionEnv()
-                ? 'production'
-                : 'test';
-
-            $phaxio = new Phaxio($config[$mode]['key'], $config[$mode]['secret'], $config['host']);
+            $phaxio = new Phaxio($config['key'], $config['secret'], $config['host']);
 
             return new PhaxioService($phaxio);
         });

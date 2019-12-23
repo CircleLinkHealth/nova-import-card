@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Contracts\FaxableNotification;
 use App\Contracts\HasAttachment;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NoteForwarded extends Notification implements ShouldQueue, HasAttachment
+class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, FaxableNotification
 {
     use Queueable;
     public $attachment;
@@ -142,15 +143,13 @@ class NoteForwarded extends Notification implements ShouldQueue, HasAttachment
      *
      * @param $notifiable
      *
-     * @return bool|string
+     * @return array
      */
-    public function toFax($notifiable)
+    public function toFax($notifiable = null) : array
     {
-        if ( ! $notifiable || ! $notifiable->fax) {
-            return false;
-        }
-
-        return $this->toPdf();
+        return [
+            'file' => $this->toPdf(),
+        ];
     }
 
     /**
