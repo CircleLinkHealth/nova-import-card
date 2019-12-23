@@ -232,7 +232,9 @@ class NotesController extends Controller
     ) {
         $date = Carbon::now()->subMonth(2);
         if (true == $showAll) {
-            $date = 0;
+            //earliest day possible
+            //works with both mysql and pgsql
+            $date = '1900-01-01';
         }
 
         $patient = User::with(
@@ -241,7 +243,7 @@ class NotesController extends Controller
                     $q->where('logged_from', '=', 'manual_input')
                         ->where('performed_at', '>=', $date)
                         ->with('meta')
-                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type, lv_activities.id'))
                         ->orderBy('performed_at', 'desc');
                 },
                 'appointments' => function ($q) use ($date) {

@@ -27,14 +27,13 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
+use App\Console\Commands\RunScheduler;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
-use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
-use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -44,6 +43,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        RunScheduler::class,
     ];
 
     /**
@@ -51,10 +51,6 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        if ( ! $this->app->runningInConsole()) {
-            return;
-        }
-
         $this->load(__DIR__.'/Commands');
 
         if ('local' == $this->app->environment()) {
@@ -69,18 +65,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        if ( ! isQueueWorkerEnv()) {
-            return;
-        }
-
         $schedule->command('horizon:snapshot')->everyFiveMinutes()->onOneServer();
 
         $schedule->command(DetermineTargetPatientEligibility::class)
             ->dailyAt('04:00')->onOneServer();
 
-//        $schedule->command(QueueEligibilityBatchForProcessing::class)
-//            ->everyTenMinutes()
-//            ->withoutOverlapping()->onOneServer();
+        $schedule->command(QueueEligibilityBatchForProcessing::class)
+            ->everyFiveMinutes()
+            ->withoutOverlapping()->onOneServer();
 
         $schedule->command(AutoPullEnrolleesFromAthena::class)
             ->monthlyOn(1)->onOneServer();
@@ -124,9 +116,12 @@ class Kernel extends ConsoleKernel
         $schedule->command(ResetPatients::class)
             ->cron('1 0 1 * *')->onOneServer();
 
-        //Run at 12:30am every 1st of month
+        //Run at 12:45am every 1st of month
         $schedule->command(AttachBillableProblemsToLastMonthSummary::class, ['--reset-actor' => true])
-            ->cron('30 0 1 * *')->onOneServer();
+            ->cron('45 0 1 * *')->onOneServer();
+
+        $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
+            ->dailyAt('00:15')->onOneServer();
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,
@@ -180,8 +175,9 @@ class Kernel extends ConsoleKernel
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->dailyAt('00:10')->onOneServer();
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)->monthlyOn(1, '08:30')->onOneServer();
 
-        $sendReminderAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->subHours(36);
-        $schedule->command(SendMonthlyNurseInvoiceLAN::class)->monthlyOn($sendReminderAt->day, $sendReminderAt->format('H:i'))->onOneServer();
+        $schedule->command(SendMonthlyNurseInvoiceLAN::class)->everyMinute()->when(function () {
+            return SendMonthlyNurseInvoiceLAN::shouldSend();
+        })->onOneServer();
 
         $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('08:35')->skip(function () {
             return SendResolveInvoiceDisputeReminder::shouldSkip();

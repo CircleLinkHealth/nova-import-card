@@ -57,7 +57,6 @@ class Handler extends ExceptionHandler
      * Render an exception into an HTTP response.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Exception               $e
      *
      * @return \Illuminate\Http\Response
      */
@@ -78,8 +77,6 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param \Exception $e
-     *
      * @throws Exception
      *
      * @return mixed|void
@@ -93,6 +90,8 @@ class Handler extends ExceptionHandler
         }
 
         if ($e instanceof \Illuminate\Database\QueryException) {
+            //                    @todo:heroku query to see if it exists, then attach
+
             $errorCode = $e->errorInfo[1] ?? null;
             if (1062 == $errorCode) {
                 //do nothing
@@ -106,8 +105,7 @@ class Handler extends ExceptionHandler
     /**
      * Convert an authentication exception into an unauthenticated response.
      *
-     * @param \Illuminate\Http\Request                 $request
-     * @param \Illuminate\Auth\AuthenticationException $exception
+     * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\Response
      */

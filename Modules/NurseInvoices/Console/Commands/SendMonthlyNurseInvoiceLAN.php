@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\NurseInvoices\Console\Commands;
 
 use App\Notifications\InvoiceReminder;
+use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
@@ -54,7 +55,7 @@ class SendMonthlyNurseInvoiceLAN extends Command
                         ++$count;
                     }
                 }
-             );
+            );
 
         $this->info("Command finished! Sent $count Notifications.");
     }
@@ -70,10 +71,22 @@ class SendMonthlyNurseInvoiceLAN extends Command
                         $q->whereIn('id', $this->usersIds());
                     });
                 }
-                           )
+            )
             ->where('month_year', $this->month())
             ->undisputed()
             ->notApproved();
+    }
+
+    /**
+     * Returns whether it's time to send the notification.
+     *
+     * @return bool
+     */
+    public static function shouldSend()
+    {
+        $sendReminderAt = NurseInvoiceDisputeDeadline::for(Carbon::now()->subMonth())->subHours(36);
+
+        return $sendReminderAt->isSameMinute(now());
     }
 
     /**

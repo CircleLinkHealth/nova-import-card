@@ -9,12 +9,11 @@ namespace Tests\Unit;
 use App\Call;
 use App\Services\CallService;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class CallsFilterTest extends TestCase
 {
-    use UserHelpers;
+    use \App\Traits\Tests\UserHelpers;
 
     /**
      * Nektarios Bug as described in https://circlelinkhealth.atlassian.net/browse/CPM-1787.

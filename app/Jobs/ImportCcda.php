@@ -20,6 +20,17 @@ class ImportCcda implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
+    /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 120;
+
+    /**
+     * @var Ccda
+     */
     private $ccda;
 
     /**
@@ -44,7 +55,17 @@ class ImportCcda implements ShouldQueue
                         'status'   => Ccda::QA,
                         'imported' => true,
                     ]
-                          );
+                );
         }
+    }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        return ['import', 'ccda:'.$this->ccda->id];
     }
 }

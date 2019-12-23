@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\InvalidCcdaException;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
@@ -14,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class ProcessCcda implements ShouldQueue
 {
@@ -42,9 +44,16 @@ class ProcessCcda implements ShouldQueue
      */
     public function handle()
     {
+        /** @var Ccda $ccda */
         $ccda = $this->ccda;
 
-        $json = $ccda->bluebuttonJson();
+        try {
+            $json = $ccda->bluebuttonJson();
+        } catch (InvalidCcdaException $e) {
+            Log::error($e->getMessage());
+
+            return;
+        }
 
         if ( ! $json) {
             throw new \Exception('No response from ccd parser.');

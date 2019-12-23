@@ -64,7 +64,6 @@ class PatientCallListController extends Controller
         return view('patientCallList.index', compact([
             'draftNotes',
             'calls',
-            'dateFilter',
             'dropdownStatus',
             'filterPriority',
             'dropdownStatusClass',
