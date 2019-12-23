@@ -78,6 +78,8 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @property-read int|null $billable_problems_count
  * @property-read int|null $chargeable_services_count
  * @property-read int|null $revision_history_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CCD\Problem[] $attestedProblems
+ * @property-read int|null $attested_problems_count
  */
 class PatientMonthlySummary extends BaseModel
 {
