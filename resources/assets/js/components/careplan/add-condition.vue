@@ -45,6 +45,7 @@
     import VueComplete from 'v-complete'
     import Collapsible from '../collapsible'
     import CareplanMixin from './mixins/careplan.mixin'
+    import AddConditionMixin from './mixins/add-condition.mixin'
 
 
     export default {
@@ -54,7 +55,10 @@
             'problems': Array,
             'shouldSelectIsMonitored':  Boolean
         },
-        mixins: [CareplanMixin],
+        mixins: [
+            CareplanMixin,
+            AddConditionMixin
+        ],
         components: {
             'modal': Modal,
             'v-select': VueSelect,
@@ -63,14 +67,6 @@
         },
         data() {
             return {
-                cpmProblems: [],
-                newProblem: {
-                    name: '',
-                    problem: '',
-                    is_monitored: true,
-                    icd10: null,
-                    cpm_problem_id: null
-                },
                 loaders: {
                     addInstruction: null,
                     addProblem: null,
@@ -84,11 +80,6 @@
             }
         },
         computed: {
-            patientHasSelectedProblem() {
-                //mixin territory
-                if (!this.selectedProblem) return (this.newProblem.name !== '') && this.problems.findIndex(problem => (problem.name || '').toLowerCase() == (this.newProblem.name || '').toLowerCase()) >= 0
-                else return (this.selectedProblem.name !== '') && this.problems.findIndex(problem => (problem != this.selectedProblem) && ((problem.name || '').toLowerCase() == (this.selectedProblem.name || '').toLowerCase())) >= 0
-            },
             cpmProblemsForAutoComplete() {
                 return this.cpmProblems.filter(p => p && p.name).reduce((pA, pB) => {
                     return pA.concat([{
@@ -107,21 +98,6 @@
             },
         },
         methods: {
-            getSystemCodes() {
-                let codes = this.careplan().allCpmProblemCodes || null
-
-                if (codes !== null) {
-                    this.codes = codes
-                    return true
-                }
-
-                return this.axios.get(rootUrl(`api/problems/codes`)).then(response => {
-                    // console.log('full-conditions:get-system-codes', response.data)
-                    this.codes = response.data
-                }).catch(err => {
-                    console.error('full-conditions:get-system-codes', err)
-                })
-            },
             addCcdProblem(e) {
                 e.preventDefault()
                 this.loaders.addProblem = true
@@ -131,7 +107,6 @@
                     is_monitored: this.newProblem.is_monitored,
                     icd10: this.newProblem.icd10
                 }).then(response => {
-                    console.log('full-conditions:add', response.data)
                     this.loaders.addProblem = false
                     Event.$emit('problems:updated', {})
                     Event.$emit('full-conditions:add', response.data)
@@ -154,61 +129,7 @@
                 this.newProblem.is_monitored = true
                 this.newProblem.icd10 = null
             },
-            setupCcdProblem(problem) {
-                problem.newCode = {
-                    code: null,
-                    problem_code_system_id: null,
-                    selectedCode: 'Select a Code'
-                }
-                problem.instruction = problem.instruction || (this.allCpmProblems.find(cpm => (cpm.name == problem.name) || (cpm.id == problem.cpm_id)) || {}).instruction || {}
-                problem.type = 'ccd'
-                problem.cpm = (this.cpmProblems.find(p => p.id == problem.cpm_id) || {}).name || 'Select a CPM Problem'
-                problem.icd10 = ((problem.codes.find(c => c.code_system_name == 'ICD-10') || {}).code || null)
-                problem.related = (function () {
-                    return this.allCpmProblems.find(cpm => cpm.id === problem.cpm_id)
-                }).bind(this)
-                problem.title = () => `${(problem.icd10) || (problem.related() || {}).code || ''} ${problem.original_name}`
-                problem.count = () => this.allCpmProblems.filter(p => p.name == problem.name).length
-                if (!problem.icd10 && (problem.related() || {}).code) {
-                    const icd10Code = {
-                        code: (problem.related() || {}).code,
-                        code_system_name: 'ICD-10',
-                        problem_code_system_id: 2,
-                        problem_id: problem.id
-                    }
-                    if (!problem.codes.find(p => p.problem_code_system_id == icd10Code.problem_code_system_id)) {
-                        problem.codes.push(icd10Code)
-                    }
-                }
-                return problem
-            },
-            /**
-             * is patient BHI, CCM or BOTH?
-             */
-            checkPatientBehavioralStatus() {
-                const ccmCount = this.problems.filter(problem => {
-                    if (problem.is_monitored) {
-                        const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
-                        return cpmProblem ? !cpmProblem.is_behavioral : false
-                    }
-                    return false
-                }).length
-                const bhiCount = this.problems.filter(problem => {
-                    const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
-                    return cpmProblem ? cpmProblem.is_behavioral : false
-                }).length
-                console.log('ccm', ccmCount, 'bhi', bhiCount)
-                Event.$emit('careplan:bhi', {
-                    hasCcm: ccmCount > 0,
-                    hasBehavioral: bhiCount > 0
-                })
-            }
         },
-        mounted() {
-
-                this.cpmProblems = this.careplan().allCpmProblems || []
-                this.getSystemCodes()
-        }
     }
 </script>
 

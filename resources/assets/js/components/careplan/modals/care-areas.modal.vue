@@ -150,6 +150,7 @@
     import VueComplete from 'v-complete'
     import Collapsible from '../../collapsible'
     import CareplanMixin from '../mixins/careplan.mixin'
+    import AddConditionMixin from '../mixins/add-condition.mixin'
     import AddCondition from '../add-condition'
 
     export default {
@@ -158,7 +159,10 @@
             'patient-id': String,
             problems: Array
         },
-        mixins: [CareplanMixin],
+        mixins: [
+            CareplanMixin,
+            AddConditionMixin
+        ],
         components: {
             'add-condition': AddCondition,
             'modal': Modal,
@@ -170,31 +174,11 @@
             problemsForListing() {
                 return this.problems.distinct((p) => p.name)
             },
-            patientHasSelectedProblem() {
-                if (!this.selectedProblem) return (this.newProblem.name !== '') && this.problems.findIndex(problem => (problem.name || '').toLowerCase() == (this.newProblem.name || '').toLowerCase()) >= 0
-                else return (this.selectedProblem.name !== '') && this.problems.findIndex(problem => (problem != this.selectedProblem) && ((problem.name || '').toLowerCase() == (this.selectedProblem.name || '').toLowerCase())) >= 0
-            },
             cpmProblemsForSelect() {
                 return this.cpmProblems.map(p => ({
                     label: p.name,
                     value: p.id
                 })).sort((a, b) => a.label < b.label ? -1 : 1)
-            },
-            cpmProblemsForAutoComplete() {
-                return this.cpmProblems.filter(p => p && p.name).reduce((pA, pB) => {
-                    return pA.concat([{
-                        name: pB.name,
-                        id: pB.id,
-                        code: pB.code,
-                        is_snomed: false,
-                    }, ...(pB.is_behavioral ? pB.snomeds.map(snomed => ({
-                        name: snomed.icd_10_name,
-                        id: pB.id,
-                        code: snomed.icd_10_code,
-                        is_snomed: true,
-                    })) : [])])
-                }, []).distinct(p => p.name)
-                    .sort((a, b) => (+b.is_snomed) - (+a.is_snomed) || b.name.localeCompare(a.name));
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
@@ -207,15 +191,7 @@
             return {
                 selectedProblem: null,
                 selectedInstruction: null,
-                cpmProblems: [],
                 newCpmProblem: null,
-                newProblem: {
-                    name: '',
-                    problem: '',
-                    is_monitored: true,
-                    icd10: null,
-                    cpm_problem_id: null
-                },
                 selectedCpmProblemId: null,
                 loaders: {
                     addInstruction: null,
@@ -250,17 +226,6 @@
             resetInstructions(){
                 this.selectedInstruction = this.selectedProblem.instruction.name
             },
-            reset() {
-                this.newProblem.name = ''
-                this.newProblem.problem = ''
-                this.newProblem.is_monitored = true
-                this.newProblem.icd10 = null
-            },
-            resolveIcd10Code() {
-                const autoCompleteProblem = this.cpmProblemsForAutoComplete.find(p => p.name == this.newProblem.name)
-                this.newProblem.icd10 = (autoCompleteProblem || {}).code || (this.problems.find(p => p.name == this.newProblem.name) || {}).code
-                this.newProblem.cpm_problem_id = (autoCompleteProblem || {}).id
-            },
             removeProblem() {
                 if (this.selectedProblem && confirm('Are you sure you want to remove this problem?')) {
                     this.loaders.removeProblem = true
@@ -283,27 +248,6 @@
                     this.selectedInstruction = this.selectedProblem.instructions[index]
                 }
             },
-            // addCcdProblem(e) {
-            //     e.preventDefault()
-            //     this.loaders.addProblem = true
-            //     return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), {
-            //         name: this.newProblem.name,
-            //         cpm_problem_id: this.newProblem.cpm_problem_id,
-            //         is_monitored: this.newProblem.is_monitored,
-            //         icd10: this.newProblem.icd10
-            //     }).then(response => {
-            //         console.log('full-conditions:add', response.data)
-            //         this.loaders.addProblem = false
-            //         Event.$emit('problems:updated', {})
-            //         Event.$emit('full-conditions:add', response.data)
-            //         this.reset()
-            //         this.selectedProblem = response.data
-            //         setImmediate(() => this.checkPatientBehavioralStatus())
-            //     }).catch(err => {
-            //         console.error('full-conditions:add', err)
-            //         this.loaders.addProblem = false
-            //     })
-            // },
             editCcdProblem(e) {
                 e.preventDefault()
                 this.loaders.editProblem = true
@@ -326,21 +270,6 @@
             switchToFullConditionsModal() {
                 Event.$emit('modal-care-areas:hide')
                 Event.$emit('modal-full-conditions:show')
-            },
-            getSystemCodes() {
-                let codes = this.careplan().allCpmProblemCodes || null
-
-                if (codes !== null) {
-                    this.codes = codes
-                    return true
-                }
-
-                return this.axios.get(rootUrl(`api/problems/codes`)).then(response => {
-                    // console.log('full-conditions:get-system-codes', response.data)
-                    this.codes = response.data
-                }).catch(err => {
-                    console.error('full-conditions:get-system-codes', err)
-                })
             },
             addCode(e) {
                 e.preventDefault()
@@ -394,10 +323,6 @@
                 })
             }
         },
-        mounted() {
-            this.cpmProblems = this.careplan().allCpmProblems || []
-            this.getSystemCodes()
-        }
     }
 </script>
 

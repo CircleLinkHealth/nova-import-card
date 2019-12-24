@@ -77,6 +77,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null                                             $revision_history_count
  * @property \App\Call[]|\Illuminate\Database\Eloquent\Collection $calls
  * @property int|null                                             $calls_count
+ * @property \App\Call[]|\Illuminate\Database\Eloquent\Collection $summaries
+ * @property int|null                                             $summaries_count
  */
 class Problem extends \CircleLinkHealth\Core\Entities\BaseModel implements \App\Contracts\Models\CCD\Problem
 {
