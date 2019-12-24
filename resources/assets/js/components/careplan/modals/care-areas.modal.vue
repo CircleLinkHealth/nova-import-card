@@ -24,7 +24,8 @@
                     </div>
                 </div>
                 <div class="col-sm-12 top-20" v-if="!selectedProblem">
-                    <add-condition :patient-id="patientId" :problems="problems" :should-select-is-monitored="true"></add-condition>
+                    <add-condition :patient-id="patientId" :problems="problems"
+                                   :should-select-is-monitored="true"></add-condition>
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
                     <div class="row top-20">
@@ -32,7 +33,8 @@
                             <form @submit="editCcdProblem">
                                 <div class="row">
                                     <div class="col-sm-12 top-20">
-                                        <div style="margin-bottom: 10px" v-if="selectedProblem.instruction.name !== selectedInstruction">
+                                        <div style="margin-bottom: 10px"
+                                             v-if="selectedProblem.instruction.name !== selectedInstruction">
                                             <input type="button"
                                                    class="btn btn-secondary margin-0 instruction-add selected"
                                                    @click="resetInstructions"
@@ -53,7 +55,8 @@
                                                 <label class="color-red" v-if="selectedProblem.is_monitored">Mapped
                                                     To:</label>
                                                 <select class="form-control" v-model="selectedProblem.cpm_id"
-                                                        @change="updateInstructions" v-if="selectedProblem.is_monitored">
+                                                        @change="updateInstructions"
+                                                        v-if="selectedProblem.is_monitored">
                                                     <option :value="null">Selected a Related Condition</option>
                                                     <option v-for="problem in cpmProblemsForSelect" :key="problem.value"
                                                             :value="problem.value">{{problem.label}}
@@ -208,22 +211,23 @@
         },
         methods: {
             select(problem) {
+                //when '+' is selected, problem === null.
+                let instruction = problem ? problem.instruction.name : problem
                 this.selectedProblem = problem
-                this.selectedInstruction = problem.instruction.name
-
+                this.selectedInstruction = instruction
             },
-            updateInstructions(event){
+            updateInstructions(event) {
                 let cpmProblem = this.cpmProblems.find(problem => {
                     return problem.id == event.target.value
                 })
 
-                if (cpmProblem.instruction){
+                if (cpmProblem.instruction) {
                     this.selectedInstruction = cpmProblem.instruction.name
-                }else{
+                } else {
                     this.selectedInstruction = null
                 }
             },
-            resetInstructions(){
+            resetInstructions() {
                 this.selectedInstruction = this.selectedProblem.instruction.name
             },
             removeProblem() {
