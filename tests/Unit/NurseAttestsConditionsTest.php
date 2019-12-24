@@ -46,11 +46,6 @@ class NurseAttestsConditionsTest extends DuskTestCase
         $this->setupPatient();
     }
 
-    public function test_asserted_problems_are_attached_to_call_back_task()
-    {
-        $this->assertTrue(true);
-    }
-
     /**
      * A basic unit test example.
      *
@@ -79,7 +74,18 @@ class NurseAttestsConditionsTest extends DuskTestCase
 
     public function test_modal_pops_up()
     {
-        $this->assertTrue(true);
+        //todo: fix dusk
+//        $this->browse(function ($browser) {
+//            $browser->loginAs($this->nurse)
+//                    ->visit(route('patient.note.create', [
+//                        'patientId' => $this->patient->id,
+//                    ]))
+//                    ->select('type', 'Review Patient Progress')
+//                    ->value('call_status', 'reached')
+//                    ->value('phone', 'outbound')
+//                    ->press('Save Note')
+//                    ->assertSee('Please select all conditions addressed in this call');
+//        });
     }
 
     /**
