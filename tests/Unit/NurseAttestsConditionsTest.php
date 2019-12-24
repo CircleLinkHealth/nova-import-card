@@ -12,13 +12,16 @@ use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use Faker\Factory;
+use Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\TestCase;
 
-class NurseAttestsConditionsTest extends TestCase
+class NurseAttestsConditionsTest extends DuskTestCase
 {
     use CarePlanHelpers;
     use UserHelpers;
+
+    protected $faker;
     protected $location;
     protected $nurse;
     protected $patient;
@@ -29,6 +32,8 @@ class NurseAttestsConditionsTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
+
+        $this->faker = Factory::create();
 
         $this->practice = Practice::first() ?? factory(Practice::class)->create();
         $this->location = Location::firstOrCreate([
@@ -55,10 +60,21 @@ class NurseAttestsConditionsTest extends TestCase
     {
         auth()->login($this->nurse);
 
-        $this->actingAs($this->nurse)->call('POST', route('patient.note.store', ['patientId' => $this->patient->id]), $this->getStoreCallInput());
+        $call            = $this->patient->inboundCalls()->first();
+        $pms             = $this->patient->patientSummaryForMonth();
+        $patientProblems = $this->patient->ccdProblems()->get();
 
-        $this->assertTrue(true);
-        //assert call has attested conditions
+        $this->assertNotNull($pms);
+        $this->assertEquals($call->attestedProblems()->count(), 0);
+
+        //attach problems to call
+        $call->attachAttestedProblems($patientProblems->pluck('id')->toArray());
+
+        //check call
+        $this->assertEquals($call->attestedProblems()->count(), $patientProblems->count());
+
+        //assert that asserted attached to calls exist on the summary
+        $this->assertEquals($pms->attestedProblems()->count(), $patientProblems->count());
     }
 
     public function test_modal_pops_up()
@@ -66,6 +82,13 @@ class NurseAttestsConditionsTest extends TestCase
         $this->assertTrue(true);
     }
 
+    /**
+     * Meant to be needed to call NotesController->store
+     * Currently failing because of SafeRequest
+     * Todo: make tests able to call controller actions expecting SafeRequests.
+     *
+     * @return array
+     */
     private function getStoreCallInput()
     {
         return [
@@ -108,7 +131,7 @@ class NurseAttestsConditionsTest extends TestCase
         }
 
         //setup call
-        $call = Call::create([
+        Call::create([
             'service' => 'phone',
             'status'  => 'scheduled',
 
@@ -117,8 +140,8 @@ class NurseAttestsConditionsTest extends TestCase
             'inbound_cpm_id'  => $this->patient->id,
             'outbound_cpm_id' => $this->nurse->id,
 
-            'inbound_phone_number'  => factory()->phone,
-            'outbound_phone_number' => factory()->phone,
+            'inbound_phone_number'  => $this->faker->phoneNumber,
+            'outbound_phone_number' => $this->faker->phoneNumber,
             'scheduled_date'        => Carbon::now()->toDateString(),
 
             'inbound_cpm_id'  => $this->patient->id,
