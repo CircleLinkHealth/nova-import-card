@@ -15,17 +15,17 @@ class FaxChannel
     {
         $this->fax = $fax;
     }
-    
+
     /**
      * Send the given notification.
      *
-     * @param mixed $notifiable
+     * @param mixed                                  $notifiable
      * @param \Illuminate\Notifications\Notification $notification
      */
     public function send($notifiable, FaxableNotification $notification)
     {
         if ($notifiable->fax) {
-            $fax = $this->fax->createFaxFor($notifiable->fax)->send($notification->toFax($notifiable));
+            $fax = $this->fax->createFaxFor($notifiable->fax)->sendNotification($notifiable, $notification);
         }
     }
 }
