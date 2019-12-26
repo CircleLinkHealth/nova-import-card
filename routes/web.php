@@ -4,6 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+Route::post('webhooks/on-sent-fax', [
+    'uses' => 'PhaxioWebhookController@onFaxSent',
+    'as'   => 'webhook.on-fax-sent',
+]);
+
 Route::group(['middleware' => ['auth', 'cacheResponse']], function () {
     Route::get('profiles', 'API\ProfileController@index')->middleware(
         ['permission:user.read,role.read', 'cacheResponse']
@@ -555,6 +560,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('ccd/show/{ccdaId}', [
         'uses' => 'CCDViewer\CCDViewerController@show',
         'as'   => 'get.CCDViewerController.show',
+    ])->middleware('permission:ccda.read');
+
+    Route::get('ccd/download/xml/{ccdaId}', [
+        'uses' => 'CCDViewer\CCDViewerController@downloadXml',
+        'as'   => 'download.ccda.xml',
     ])->middleware('permission:ccda.read');
 
     Route::post('ccd', [
