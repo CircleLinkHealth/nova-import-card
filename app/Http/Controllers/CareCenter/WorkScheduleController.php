@@ -9,6 +9,7 @@ namespace App\Http\Controllers\CareCenter;
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
 use App\Jobs\CreateCalendarRecurringEventsJob;
+use App\Traits\ValidatesWorkScheduleCalendar;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -22,6 +23,7 @@ use Validator;
 
 class WorkScheduleController extends Controller
 {
+    use ValidatesWorkScheduleCalendar;
     protected $fullCalendarService;
     protected $holiday;
     protected $nextWeekEnd;
@@ -229,24 +231,25 @@ class WorkScheduleController extends Controller
     {
         return NurseContactWindow::where([
             ['nurse_info_id', '=', $nurseInfoId],
-            ['day_of_week', '=', $workScheduleData['day_of_week']],
+            //            ['day_of_week', '=', $workScheduleData['day_of_week']],
+            ['date', '=', $workScheduleData['date']],
         ])
             ->get()
             ->sum(function ($window) {
                 return Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_end
-                )->diffInHours(Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_start
-                ));
+                        'H:i:s',
+                        $window->window_time_end
+                    )->diffInHours(Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_start
+                    ));
             }) + Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_end']
-            )->diffInHours(Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_start']
-            ));
+                    'H:i',
+                    $workScheduleData['window_time_end']
+                )->diffInHours(Carbon::createFromFormat(
+                    'H:i',
+                    $workScheduleData['window_time_start']
+                ));
     }
 
     public function getSelectedNurseCalendarData(Request $request)
@@ -302,6 +305,48 @@ class WorkScheduleController extends Controller
     }
 
     /**
+     * When admin creates single NOT repeated work window.
+     *
+     * @param $nurseInfoId
+     * @param $workScheduleData
+     *
+     * @return \Illuminate\Database\Eloquent\Model|NurseContactWindow
+     */
+    public function saveAdminSingleWindow($nurseInfoId, $workScheduleData)
+    {
+        return $this->nurseContactWindows->create([
+            'nurse_info_id'     => $nurseInfoId,
+            'date'              => $workScheduleData['date'],
+            'day_of_week'       => $workScheduleData['day_of_week'],
+            'window_time_start' => $workScheduleData['window_time_start'],
+            'window_time_end'   => $workScheduleData['window_time_end'],
+            'repeat_frequency'  => $workScheduleData['repeat_freq'],
+            'until'             => $workScheduleData['until'],
+        ]);
+    }
+
+    /**
+     * User nurse creates a NOT repeated work window.
+     *
+     * @param $workScheduleData
+     *
+     * @return mixed
+     */
+    public function saveNurseSingleWindow($workScheduleData)
+    {
+        $user = auth()->user();
+
+        return $user->nurseInfo->windows()->create([
+            'date'              => $workScheduleData['date'],
+            'day_of_week'       => $workScheduleData['day_of_week'],
+            'window_time_start' => $workScheduleData['window_time_start'],
+            'window_time_end'   => $workScheduleData['window_time_end'],
+            'repeat_frequency'  => $workScheduleData['repeat_freq'],
+            'until'             => $workScheduleData['until'],
+        ]);
+    }
+
+    /**
      * @param $nurseInfoId
      * @param bool                                       $updateCollisions
      * @param \Illuminate\Contracts\Validation\Validator $validator
@@ -337,6 +382,22 @@ class WorkScheduleController extends Controller
             'success' => true,
             'window'  => $recurringEventsToSave,
         ], 200);
+    }
+
+    /**
+     * @param $nurseInfoId
+     * @param $workScheduleData
+     */
+    public function sendSlackMessage($nurseInfoId, NurseContactWindow $window, $workScheduleData)
+    {
+        //@todo: These messages needs to be adapted.
+        $user      = auth()->user();
+        $nurseUser = Nurse::find($nurseInfoId)->user;
+        $dayName   = clhDayOfWeekToDayName($window->day_of_week);
+
+        $nurseMessage = "Admin {$user->display_name} assigned Nurse {$nurseUser->display_name} to work for";
+        $message      = "${nurseMessage} {$workScheduleData['work_hours']} hours on ${dayName} between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
+        sendSlackMessage('#carecoachscheduling', $message);
     }
 
     /**
@@ -384,100 +445,47 @@ class WorkScheduleController extends Controller
     {
         $workScheduleData = $request->all();
         $nurseInfoId      = $workScheduleData['nurse_info_id'];
-
         if ( ! array_key_exists('day_of_week', $workScheduleData)) {
             $inputDate                       = $workScheduleData['date'];
             $workScheduleData['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
         }
 
         $updateCollisions = null === $workScheduleData['updateCollisions'] ? false : $workScheduleData['updateCollisions'];
-
-        $isAdmin = auth()->user()->isAdmin();
-
-        $nurseInfoId = $isAdmin
-            ? $nurseInfoId
-            : auth()->user()->nurseInfo->id;
+        $isAdmin          = auth()->user()->isAdmin();
+        $nurseInfoId      = $isAdmin ? $nurseInfoId : auth()->user()->nurseInfo->id;
 
         if ( ! $nurseInfoId) {
             $nurseInfoId = auth()->user()->nurseInfo->id;
         }
 
-        $validator = Validator::make($workScheduleData, [
-            'day_of_week'       => 'required',
-            'window_time_start' => 'required|date_format:H:i',
-            'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
-        ]);
+        $validator                 = $this->validatorScheduleData($workScheduleData);
+        $windowExists              = $this->windowsExistsValidator($workScheduleData, $updateCollisions);
+        $workHoursRangeSum         = $this->getHoursSum($nurseInfoId, $workScheduleData);
+        $invalidWorkHoursCommitted = $this->invalidWorkHoursValidator($workHoursRangeSum, $workScheduleData['work_hours']);
 
-        $windowExists = ! $updateCollisions ? $this->fullCalendarService->checkIfWindowsExists($workScheduleData) : false;
+        //@todo: $invalidWorkHoursCommitted needs handling in client side.
+        if ($validator->fails() || $windowExists || $invalidWorkHoursCommitted) {
+            $validationResponse = $this->returnValidationResponse($windowExists, $validator, $invalidWorkHoursCommitted);
 
-        $hoursSum = $this->getHoursSum($nurseInfoId, $workScheduleData);
-
-        $invalidWorkHoursNumber = false;
-
-        if ($hoursSum < $workScheduleData['work_hours']) {
-            $invalidWorkHoursNumber = true;
-        }
-
-        if ($validator->fails() || $windowExists || $invalidWorkHoursNumber) {
-            if ($windowExists) {
-                $validator->getMessageBag()->add(
-                    'window_time_start',
-                    'This window is overlapping with an already existing window.'
-                );
-            }
-
-            if ($invalidWorkHoursNumber) {
-                $validator->getMessageBag()->add(
-                    'work_hours',
-                    'Daily work hours cannot be more than total window hours.'
-                );
-            }
-
-            if (request()->expectsJson()) {
-                return response()->json([
-                    'errors'    => 'Validation Failed',
-                    'validator' => $validator->getMessageBag(),
-                ], 422);
-            }
+            return response()->json([
+                'errors'    => 'Validation Failed',
+                'validator' => $validationResponse->getMessageBag(),
+            ], 422);
         }
 
         if ($isAdmin) {
-            $user = auth()->user();
             if ('does_not_repeat' !== $workScheduleData['repeat_freq']) {
                 return $this->saveRecurringEvents($nurseInfoId, $updateCollisions, $validator, $workScheduleData);
             }
-            $window = $this->nurseContactWindows->create([
-                'nurse_info_id'     => $nurseInfoId,
-                'date'              => $workScheduleData['date'],
-                'day_of_week'       => $workScheduleData['day_of_week'],
-                'window_time_start' => $workScheduleData['window_time_start'],
-                'window_time_end'   => $workScheduleData['window_time_end'],
-                'repeat_frequency'  => $workScheduleData['repeat_freq'],
-                'until'             => $workScheduleData['until'],
-            ]);
-
-            $nurseUser = Nurse::find($nurseInfoId)->user;
-
-            $dayName      = clhDayOfWeekToDayName($window->day_of_week);
-            $nurseMessage = "Admin {$user->display_name} assigned Nurse {$nurseUser->display_name} to work for";
-            //@todo: These mesaages needs to be adapted.
-            $message = "${nurseMessage} {$workScheduleData['work_hours']} hours on ${dayName} between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
-            sendSlackMessage('#carecoachscheduling', $message);
+            $window = $this->saveAdminSingleWindow($nurseInfoId, $workScheduleData);
+            $this->sendSlackMessage($nurseInfoId, $window, $workScheduleData);
         } else {
-            $user = auth()->user();
             if ('does_not_repeat' !== $workScheduleData['repeat_freq']) {
                 return $this->saveRecurringEvents($nurseInfoId, $updateCollisions, $validator, $workScheduleData);
             }
-            $window = $user->nurseInfo->windows()->create([
-                'date'              => $workScheduleData['date'],
-                'day_of_week'       => $workScheduleData['day_of_week'],
-                'window_time_start' => $workScheduleData['window_time_start'],
-                'window_time_end'   => $workScheduleData['window_time_end'],
-                'repeat_frequency'  => $workScheduleData['repeat_freq'],
-                'until'             => $workScheduleData['until'],
-            ]);
+            $window = $this->saveNurseSingleWindow($workScheduleData);
         }
-
+        // Update Work Hours.
         $workHours = $this->updateWorkHours($nurseInfoId, $workScheduleData);
 
         if (request()->expectsJson()) {

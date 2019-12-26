@@ -6,63 +6,21 @@
 
 namespace App\FullCalendar;
 
+use App\Traits\ValidatesWorkScheduleCalendar;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Nurse;
-use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 class NurseCalendarService
 {
+    use ValidatesWorkScheduleCalendar;
     const ALL_DAY = 'allDay';
     const END     = 'end';
     const LABEL   = 'label';
     const START   = 'start';
     const TITLE   = 'title';
-
-    /**
-     * @param $nurseInfoId
-     * @param $windowTimeStart
-     * @param $windowTimeEnd
-     * @param $windowDayOfWeek
-     * @param mixed $windowDate
-     * @param mixed $workScheduleData
-     *
-     * @return Builder|Model|object|null
-     */
-    public function checkIfWindowsExists($workScheduleData)
-    {
-        $nurseInfoId     = $workScheduleData['nurse_info_id'];
-        $windowTimeStart = $workScheduleData['window_time_start'];
-        $windowTimeEnd   = $workScheduleData['window_time_end'];
-        $windowDate      = $workScheduleData['date'];
-
-        return NurseContactWindow::where([
-            [
-                'nurse_info_id',
-                '=',
-                $nurseInfoId,
-            ],
-            [
-                'window_time_end',
-                '>=',
-                $windowTimeStart,
-            ],
-            [
-                'window_time_start',
-                '<=',
-                $windowTimeEnd,
-            ],
-            [
-                'date',
-                '=',
-                $windowDate,
-            ],
-        ])->first();
-    }
 
     /**
      * @param $diffRange
@@ -98,6 +56,47 @@ class NurseCalendarService
 
         return $defaultRecurringDates;
     }
+
+//    /**
+//     * @param $nurseInfoId
+//     * @param $windowTimeStart
+//     * @param $windowTimeEnd
+//     * @param $windowDayOfWeek
+//     * @param mixed $windowDate
+//     * @param mixed $workScheduleData
+//     *
+//     * @return Builder|Model|object|null
+//     */
+//    public function windowsExistsValidator($workScheduleData)
+//    {
+//        $nurseInfoId     = $workScheduleData['nurse_info_id'];
+//        $windowTimeStart = $workScheduleData['window_time_start'];
+//        $windowTimeEnd   = $workScheduleData['window_time_end'];
+//        $windowDate      = $workScheduleData['date'];
+//
+//        return NurseContactWindow::where([
+//            [
+//                'nurse_info_id',
+//                '=',
+//                $nurseInfoId,
+//            ],
+//            [
+//                'window_time_end',
+//                '>=',
+//                $windowTimeStart,
+//            ],
+//            [
+//                'window_time_start',
+//                '<=',
+//                $windowTimeEnd,
+//            ],
+//            [
+//                'date',
+//                '=',
+//                $windowDate,
+//            ],
+//        ])->first();
+//    }
 
     /**
      * @param $nurseInfoId
@@ -230,7 +229,7 @@ class NurseCalendarService
     {
         $askForConfirmationEvents = [];
         foreach ($recurringEventsToSave as $event) {
-            $windowsExists = ! $updateCollisions ? $this->checkIfWindowsExists($event) : false;
+            $windowsExists = ! $updateCollisions ? $this->windowsExistsValidator($event) : false;
 
             if ($windowsExists) {
                 $askForConfirmationEvents[] = $windowsExists;
