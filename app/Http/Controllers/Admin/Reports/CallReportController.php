@@ -22,6 +22,7 @@ class CallReportController extends Controller
      */
     public function exportxls(Request $request, CallFilters $filters)
     {
+        ini_set('memory_limit', '128M'); // remove memory limit
         ini_set('max_execution_time', 60);
 
         $date = Carbon::now()->startOfMonth();
