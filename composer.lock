@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ce87a064d556c065dc28e36354e7e111",
+    "content-hash": "d625783b235971f178f7ec161bb2908c",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -701,7 +701,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-cpm-migrations.git",
-                "reference": "e5354520353265d69c44fcecd310bbf6b2050da0"
+                "reference": "7386550a104aac08a6ec9a563233098bf39ae463"
             },
             "type": "laravel-module",
             "extra": {
@@ -723,15 +723,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-12-09T10:52:21+00:00"
+            "time": "2019-12-26T21:23:20+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.5.4",
+            "version": "v1.5.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "4e3650229e104eacba6fd286d96fad7eeb5fc408"
+                "reference": "a02cad3eb253208a0329e23e2df5e528554c6fa4"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
@@ -764,7 +764,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-27T01:40:43+00:00"
+            "time": "2019-12-26T21:24:37+00:00"
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
