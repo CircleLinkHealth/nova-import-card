@@ -259,12 +259,10 @@ class CarePlan extends BaseModel implements PdfReport
 
         if ($cpmSettings->efax_pdf_careplan) {
             $channels[] = FaxChannel::class;
-            Log::debug('CarePlan: Will forward to fax');
         }
 
         if ($cpmSettings->dm_pdf_careplan) {
             $channels[] = DirectMailChannel::class;
-            Log::debug('CarePlan: Will forward to direct mail');
         }
 
         return $channels;
