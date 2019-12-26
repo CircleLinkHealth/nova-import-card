@@ -8,7 +8,6 @@ namespace App\Services\Phaxio;
 
 use App\Contracts\Efax;
 use App\Contracts\FaxableNotification;
-use App\FaxLog;
 use Illuminate\Support\Collection;
 use Phaxio;
 
@@ -68,13 +67,7 @@ class PhaxioFaxService implements Efax
             $options['file'] = $this->prepareFiles($options['file']);
         }
 
-        $response = $this->fax->faxes()->create($options->all());
-
-        if ($this->shouldLogResponse($response->getArrayCopy())) {
-            $log = $this->logResponse($response);
-        }
-
-        return $response;
+        return $this->fax->faxes()->create($options->all());
     }
 
     public function sendNotification($notifiable, FaxableNotification &$notification, array $options = [])
@@ -102,20 +95,6 @@ class PhaxioFaxService implements Efax
         return $this;
     }
 
-    private function logResponse(Phaxio\Fax $response)
-    {
-        $response = $response->retrieve();
-
-        return FaxLog::create(
-            [
-                'fax_id'    => $response['id'],
-                'status'    => $response['status'],
-                'direction' => $response['direction'],
-                'response'  => $response,
-            ]
-        );
-    }
-
     private function prepareFiles($files)
     {
         if ( ! $files) {
@@ -139,10 +118,5 @@ class PhaxioFaxService implements Efax
         }
 
         return $handles;
-    }
-
-    private function shouldLogResponse(array $response)
-    {
-        return array_key_exists('id', $response) && ! empty($response['id']);
     }
 }

@@ -8,6 +8,7 @@ namespace App\Providers;
 
 use App\Contracts\Efax;
 use App\Services\Phaxio\PhaxioFaxService;
+use App\Services\Phaxio\PhaxioFaxServiceLogger;
 use Illuminate\Support\ServiceProvider;
 use Phaxio;
 
@@ -39,7 +40,7 @@ class FaxServiceProvider extends ServiceProvider
 
             $phaxio = new Phaxio($config['key'], $config['secret'], $config['host']);
 
-            return new PhaxioFaxService($phaxio);
+            return new PhaxioFaxServiceLogger(new PhaxioFaxService($phaxio));
         });
     }
 }
