@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2755878aee7ad5140ae1d610cd5a0aa7",
+    "content-hash": "47396d79394ef769f1a21684bd719fde",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -698,7 +698,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-cpm-migrations.git",
-                "reference": "e5354520353265d69c44fcecd310bbf6b2050da0"
+                "reference": "a8a5ccb033b107910fe15b0ed49a0d5fcc591a30"
             },
             "type": "laravel-module",
             "extra": {
@@ -720,7 +720,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-12-09T10:52:21+00:00"
+            "time": "2019-12-24T18:57:55+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -1656,16 +1656,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "2.1.11",
+            "version": "2.1.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "92dd169c32f6f55ba570c309d83f5209cefb5e23"
+                "reference": "a6255605af39f2db7f5cb62e672bd8a7bad8d208"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/92dd169c32f6f55ba570c309d83f5209cefb5e23",
-                "reference": "92dd169c32f6f55ba570c309d83f5209cefb5e23",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/a6255605af39f2db7f5cb62e672bd8a7bad8d208",
+                "reference": "a6255605af39f2db7f5cb62e672bd8a7bad8d208",
                 "shasum": ""
             },
             "require": {
@@ -1710,7 +1710,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2019-08-13T17:33:27+00:00"
+            "time": "2019-12-20T12:49:39+00:00"
         },
         {
             "name": "erusev/parsedown",
@@ -1760,16 +1760,16 @@
         },
         {
             "name": "fideloper/proxy",
-            "version": "4.2.1",
+            "version": "4.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fideloper/TrustedProxy.git",
-                "reference": "03085e58ec7bee24773fa5a8850751a6e61a7e8a"
+                "reference": "790194d5d3da89a713478875d2e2d05855a90a81"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fideloper/TrustedProxy/zipball/03085e58ec7bee24773fa5a8850751a6e61a7e8a",
-                "reference": "03085e58ec7bee24773fa5a8850751a6e61a7e8a",
+                "url": "https://api.github.com/repos/fideloper/TrustedProxy/zipball/790194d5d3da89a713478875d2e2d05855a90a81",
+                "reference": "790194d5d3da89a713478875d2e2d05855a90a81",
                 "shasum": ""
             },
             "require": {
@@ -1810,7 +1810,7 @@
                 "proxy",
                 "trusted proxy"
             ],
-            "time": "2019-09-03T16:45:42+00:00"
+            "time": "2019-12-20T13:11:11+00:00"
         },
         {
             "name": "firebase/php-jwt",
@@ -4920,16 +4920,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "1.25.2",
+            "version": "1.25.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "d5e2fb341cb44f7e2ab639d12a1e5901091ec287"
+                "reference": "fa82921994db851a8becaf3787a9e73c5976b6f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/d5e2fb341cb44f7e2ab639d12a1e5901091ec287",
-                "reference": "d5e2fb341cb44f7e2ab639d12a1e5901091ec287",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/fa82921994db851a8becaf3787a9e73c5976b6f1",
+                "reference": "fa82921994db851a8becaf3787a9e73c5976b6f1",
                 "shasum": ""
             },
             "require": {
@@ -4994,7 +4994,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2019-11-13T10:00:05+00:00"
+            "time": "2019-12-20T14:15:16+00:00"
         },
         {
             "name": "moontoast/math",
@@ -5727,16 +5727,16 @@
         },
         {
             "name": "phaxio/phaxio",
-            "version": "1.0.3",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phaxio/phaxio-php.git",
-                "reference": "71325401e91825f8994e31e6e777d1ef40f6fec5"
+                "reference": "6ad1f76b4f1ff1f68176dab9509ae66fdaa85487"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phaxio/phaxio-php/zipball/71325401e91825f8994e31e6e777d1ef40f6fec5",
-                "reference": "71325401e91825f8994e31e6e777d1ef40f6fec5",
+                "url": "https://api.github.com/repos/phaxio/phaxio-php/zipball/6ad1f76b4f1ff1f68176dab9509ae66fdaa85487",
+                "reference": "6ad1f76b4f1ff1f68176dab9509ae66fdaa85487",
                 "shasum": ""
             },
             "require": {
@@ -5745,7 +5745,8 @@
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "Phaxio\\": "lib/"
+                    "Phaxio\\": "lib/",
+                    "Phaxio": "lib/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -5758,7 +5759,7 @@
                 "fax",
                 "phaxio"
             ],
-            "time": "2017-06-09T18:00:44+00:00"
+            "time": "2019-03-08T19:14:29+00:00"
         },
         {
             "name": "php-http/guzzle6-adapter",
@@ -11515,16 +11516,16 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "4.3.2",
+            "version": "4.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "b83ff7cfcfee7827e1e78b637a5904fe6a96698e"
+                "reference": "2ecaa9fef01634c83bfa8dc1fe35fb5cef223a62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/b83ff7cfcfee7827e1e78b637a5904fe6a96698e",
-                "reference": "b83ff7cfcfee7827e1e78b637a5904fe6a96698e",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/2ecaa9fef01634c83bfa8dc1fe35fb5cef223a62",
+                "reference": "2ecaa9fef01634c83bfa8dc1fe35fb5cef223a62",
                 "shasum": ""
             },
             "require": {
@@ -11562,7 +11563,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2019-09-12T14:27:41+00:00"
+            "time": "2019-12-20T13:40:23+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
