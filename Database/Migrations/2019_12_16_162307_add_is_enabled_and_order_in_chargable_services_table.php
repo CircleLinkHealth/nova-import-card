@@ -55,10 +55,10 @@ class AddIsEnabledAndOrderInChargableServicesTable extends Migration
 
         $this->setOrder('CPT 99490', 1);
         $this->setOrder('CPT 99484', 2);
-        $this->setOrder('G0511', 4);
-        $this->setOrder('Software-Only', 5);
-        $this->setOrder('AWV: G0438', 6);
-        $this->setOrder('AWV: G0439', 7);
+        $this->setOrder('G0511', 5);
+        $this->setOrder('Software-Only', 6);
+        $this->setOrder('AWV: G0438', 7);
+        $this->setOrder('AWV: G0439', 8);
     }
 
     private function setOrder(string $code, int $order)
@@ -86,14 +86,22 @@ class AddIsEnabledAndOrderInChargableServicesTable extends Migration
             }
         });
 
-        $g2058 = DB::table('chargeable_services')
-                   ->where('code', '=', 'G2058')
-                   ->first();
+        $g2058_1 = DB::table('chargeable_services')
+                     ->where('code', '=', 'G2058(>40mins)')
+                     ->first();
 
-        if ($g2058) {
+        if ($g2058_1) {
             DB::table('chargeable_services')
-              ->delete($g2058->id);
+              ->delete($g2058_1->id);
         }
 
+        $g2058_2 = DB::table('chargeable_services')
+                     ->where('code', '=', 'G2058(>60mins)')
+                     ->first();
+
+        if ($g2058_2) {
+            DB::table('chargeable_services')
+              ->delete($g2058_2->id);
+        }
     }
 }
