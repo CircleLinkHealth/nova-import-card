@@ -20,16 +20,16 @@ trait ValidatesWorkScheduleCalendar
     {
         if ($windowExists) {
             $validator->getMessageBag()->add(
-                    'window_time_start',
-                    'This window is overlapping with an already existing window.'
-                );
+                'window_time_start',
+                'This window is overlapping with an already existing window.'
+            );
         }
 
         if ($invalidWorkHoursCommitted) {
             $validator->getMessageBag()->add(
-                    'work_hours',
-                    'Daily work hours cannot be more than total window hours.'
-                );
+                'work_hours',
+                'Daily work hours cannot be more than total window hours.'
+            );
         }
 
         return $validator;

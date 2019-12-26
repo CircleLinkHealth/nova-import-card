@@ -16,11 +16,10 @@ use Illuminate\Database\Eloquent\Collection;
 class NurseCalendarService
 {
     use ValidatesWorkScheduleCalendar;
-    const ALL_DAY = 'allDay';
-    const END     = 'end';
-    const LABEL   = 'label';
-    const START   = 'start';
-    const TITLE   = 'title';
+
+    const END   = 'end';
+    const START = 'start';
+    const TITLE = 'title';
 
     /**
      * @param $diffRange
@@ -56,47 +55,6 @@ class NurseCalendarService
 
         return $defaultRecurringDates;
     }
-
-//    /**
-//     * @param $nurseInfoId
-//     * @param $windowTimeStart
-//     * @param $windowTimeEnd
-//     * @param $windowDayOfWeek
-//     * @param mixed $windowDate
-//     * @param mixed $workScheduleData
-//     *
-//     * @return Builder|Model|object|null
-//     */
-//    public function windowsExistsValidator($workScheduleData)
-//    {
-//        $nurseInfoId     = $workScheduleData['nurse_info_id'];
-//        $windowTimeStart = $workScheduleData['window_time_start'];
-//        $windowTimeEnd   = $workScheduleData['window_time_end'];
-//        $windowDate      = $workScheduleData['date'];
-//
-//        return NurseContactWindow::where([
-//            [
-//                'nurse_info_id',
-//                '=',
-//                $nurseInfoId,
-//            ],
-//            [
-//                'window_time_end',
-//                '>=',
-//                $windowTimeStart,
-//            ],
-//            [
-//                'window_time_start',
-//                '<=',
-//                $windowTimeEnd,
-//            ],
-//            [
-//                'date',
-//                '=',
-//                $windowDate,
-//            ],
-//        ])->first();
-//    }
 
     /**
      * @param $nurseInfoId
@@ -247,9 +205,7 @@ class NurseCalendarService
      */
     public function getHolidays(Collection $nurses, $startDate, $endDate)
     {
-        $limitDate = Carbon::parse(now())->startOfYear()->subMonth(2)->toDate();
-
-        return $nurses->map(function ($nurse) use ($limitDate, $startDate, $endDate) {
+        return $nurses->map(function ($nurse) use ($startDate, $endDate) {
             $holidays = $nurse->nurseInfo->nurseHolidaysWithCompanyHolidays($startDate, $endDate);
 
             return $this->prepareHolidaysData($holidays, $nurse, $startDate, $endDate);
