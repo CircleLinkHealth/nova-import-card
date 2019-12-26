@@ -52,11 +52,8 @@ class Generator
     /**
      * Generator constructor.
      *
-     * @param array  $nurseUserIds
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     * @param bool   $sendToCareCoaches
-     * @param bool   $storeInvoicesForNurseReview
+     * @param bool $sendToCareCoaches
+     * @param bool $storeInvoicesForNurseReview
      */
     public function __construct(
         array $nurseUserIds,
@@ -88,26 +85,41 @@ class Generator
                     $this->startDate,
                     $this->endDate
                 );
-                $variablePayMap = VariablePayCalculator::get(
+
+                $variablePayCalculator = new VariablePayCalculator(
                     $nurseUsers->where('nurseInfo.is_variable_rate', true)->pluck('nurseInfo.id')->all(),
                     $this->startDate,
                     $this->endDate
                 );
 
+                $variablePayMap = $variablePayCalculator->getForNurses();
+
                 $nurseSystemTimeMap->each(
                     function ($nurseAggregatedTotalTime) use (
                         $nurseUsers,
                         $variablePayMap,
-                        $invoices
+                        $invoices,
+                        $variablePayCalculator
                     ) {
                         $userId = $nurseAggregatedTotalTime->first()->first()->user_id;
+
+                        /** @var User $user */
                         $user = $nurseUsers->firstWhere('id', '=', $userId);
 
                         if ( ! $user) {
                             throw new \Exception("User `$userId` not found");
                         }
 
-                        $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
+                        $variablePaySummary = $variablePayMap->filter(function ($f) use ($user) {
+                            return $f->nurse_id === $user->nurseInfo->id;
+                        });
+
+                        $viewModel = $this->createViewModel(
+                            $user,
+                            $nurseAggregatedTotalTime,
+                            $variablePaySummary,
+                            $variablePayCalculator
+                        );
 
                         if ($this->storeInvoicesForNurseReview) {
                             $invoice = $this->saveInvoiceData($user->nurseInfo->id, $viewModel, $this->startDate);
@@ -122,20 +134,21 @@ class Generator
     }
 
     /**
-     * @param User       $nurse
-     * @param Collection $aggregatedTotalTime
-     * @param Collection $variablePayMap
-     *
      * @return Invoice
      */
-    private function createViewModel(User $nurse, Collection $aggregatedTotalTime, Collection $variablePayMap)
-    {
+    private function createViewModel(
+        User $nurse,
+        Collection $aggregatedTotalTime,
+        Collection $variablePaySummary,
+        VariablePayCalculator $variablePayCalculator
+    ) {
         return new Invoice(
             $nurse,
             $this->startDate,
             $this->endDate,
             $aggregatedTotalTime,
-            $variablePayMap
+            $variablePaySummary,
+            $variablePayCalculator
         );
     }
 
@@ -161,49 +174,48 @@ class Generator
         return User::withTrashed()
             ->careCoaches()
             ->with(
-                [
-                    'nurseBonuses' => function ($q) {
-                        $q->whereBetween('date', [$this->startDate, $this->endDate]);
-                    },
-                    'nurseInfo',
-                ]
-            )
+                       [
+                           'nurseBonuses' => function ($q) {
+                               $q->whereBetween('date', [$this->startDate, $this->endDate]);
+                           },
+                           'nurseInfo',
+                       ]
+                   )
             ->has('nurseInfo')
             ->when(
-                is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
-                function ($q) {
-                    $q->whereIn('id', $this->nurseUserIds);
-                }
-            )
+                       is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
+                       function ($q) {
+                           $q->whereIn('id', $this->nurseUserIds);
+                       }
+                   )
             ->when(
-                empty($this->nurseUserIds),
-                function ($q) {
-                    $q->whereHas(
-                        'pageTimersAsProvider',
-                        function ($s) {
-                            $s->whereBetween(
-                                'start_time',
-                                [
-                                    $this->startDate->copy()->startOfDay(),
-                                    $this->endDate->copy()->endOfDay(),
-                                ]
+                       empty($this->nurseUserIds),
+                       function ($q) {
+                           $q->whereHas(
+                               'pageTimersAsProvider',
+                               function ($s) {
+                                   $s->whereBetween(
+                                       'start_time',
+                                       [
+                                           $this->startDate->copy()->startOfDay(),
+                                           $this->endDate->copy()->endOfDay(),
+                                       ]
                                    );
-                        }
-                    )
-                        ->whereHas(
-                            'nurseInfo',
-                            function ($s) {
-                                $s->where('is_demo', false);
-                            }
+                               }
+                           )
+                               ->whereHas(
+                                 'nurseInfo',
+                                 function ($s) {
+                                     $s->where('is_demo', false);
+                                 }
                              );
-                }
-            );
+                       }
+                   );
     }
 
     /**
      * @param $nurseInfoId
      * @param $viewModel
-     * @param Carbon $startDate
      *
      * @return mixed
      */
