@@ -4,6 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+Route::post('webhooks/on-sent-fax', [
+    'uses' => 'PhaxioWebhookController@onFaxSent',
+    'as'   => 'webhook.on-fax-sent',
+]);
+
 Route::group(['middleware' => ['auth', 'cacheResponse']], function () {
     Route::get('profiles', 'API\ProfileController@index')->middleware(
         ['permission:user.read,role.read', 'cacheResponse']
