@@ -462,7 +462,20 @@
                         this.throwSuccessNotification("Holiday has been saved.");
                     }
                 )).catch((error) => {
-                    console.log(error);
+                    console.log(error.response.data);
+                    if (error.response.status === 422) {
+                        this.manipulateError(error);
+                    }
+                });
+            },
+
+            manipulateError(error) {
+                const validatorError = error.response.data.validator;
+                this.refetchEvents();
+                this.loader = false;
+                // this.toggleModal();
+                Object.keys(validatorError).forEach(key => {
+                    this.throwWarningNotification(validatorError[key][0]);
                 });
             },
 
@@ -589,15 +602,7 @@
                     .catch((error) => {
                         console.log(error.response.data);
                         if (error.response.status === 422) {
-                            const validatorError = error.response.data.validator;
-                            this.refetchEvents();
-                            this.loader = false;
-                            // this.toggleModal();
-                            Object.keys(validatorError).forEach(key => {
-                                this.throwWarningNotification(validatorError[key][0]);
-                            });
-
-
+                        this.manipulateError(error);
                         }
                     });
             },

@@ -470,7 +470,7 @@ class WorkScheduleController extends Controller
         $workHoursRangeSum         = $this->getHoursSum($nurseInfoId, $workScheduleData);
         $invalidWorkHoursCommitted = $this->invalidWorkHoursValidator($workHoursRangeSum, $workScheduleData['work_hours']);
 
-        if ($validator->fails() || $windowExists || $invalidWorkHoursCommitted || ('does_not_repeat' !== $workScheduleData['repeat_freq'] && null === $workScheduleData['until'])) {
+        if ($windowExists || $invalidWorkHoursCommitted || ('does_not_repeat' !== $workScheduleData['repeat_freq'] && null === $workScheduleData['until'])) {
             $validationResponse = $this->returnValidationResponse($windowExists, $validator, $invalidWorkHoursCommitted, $workScheduleData['repeat_freq'], $workScheduleData['until']);
 
             return response()->json([
@@ -526,7 +526,7 @@ class WorkScheduleController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'errors'    => 'Validation Failed',
-                'validator' => $validator, //@todo: Fix message in UI
+                'validator' => $validator->errors(),
             ], 422);
         }
 
