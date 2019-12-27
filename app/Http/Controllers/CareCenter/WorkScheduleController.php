@@ -237,19 +237,19 @@ class WorkScheduleController extends Controller
             ->get()
             ->sum(function ($window) {
                 return Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_end
-                    )->diffInHours(Carbon::createFromFormat(
-                        'H:i:s',
-                        $window->window_time_start
-                    ));
-            }) + Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_end']
+                    'H:i:s',
+                    $window->window_time_end
                 )->diffInHours(Carbon::createFromFormat(
-                    'H:i',
-                    $workScheduleData['window_time_start']
+                    'H:i:s',
+                    $window->window_time_start
                 ));
+            }) + Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_end']
+            )->diffInHours(Carbon::createFromFormat(
+                'H:i',
+                $workScheduleData['window_time_start']
+            ));
     }
 
     public function getSelectedNurseCalendarData(Request $request)
@@ -361,7 +361,7 @@ class WorkScheduleController extends Controller
         $workScheduleData
     ): JsonResponse {
         $recurringEventsToSave = $this->fullCalendarService->createRecurringEvents($nurseInfoId, $workScheduleData);
-//        It should never happen. We can also use it in the future to give the option to choose what to do with each event.
+//        It should never happen. Same validation exist in client...We can also use it in the future to give the option to choose what to do with each event.
         $confirmationNeededEvents = $this->fullCalendarService->getEventsToAskConfirmation($recurringEventsToSave, $updateCollisions);
         if ( ! empty($confirmationNeededEvents) && ! $updateCollisions) {
             $collidingDates = $this->fullCalendarService->getCollidingDates($confirmationNeededEvents);
@@ -369,7 +369,7 @@ class WorkScheduleController extends Controller
             return response()->json([
                 'errors'    => 'Validation Failed',
                 'validator' => $validator->getMessageBag()->add(
-                    'window_time_start',
+                    'error',
                     "This window is overlapping with an existing window in $collidingDates."
                 ),
                 'collidingEvents' => $confirmationNeededEvents,
@@ -449,23 +449,30 @@ class WorkScheduleController extends Controller
             $inputDate                       = $workScheduleData['date'];
             $workScheduleData['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
         }
+        $validator = $this->validatorScheduleData($workScheduleData);
 
         $updateCollisions = null === $workScheduleData['updateCollisions'] ? false : $workScheduleData['updateCollisions'];
         $isAdmin          = auth()->user()->isAdmin();
         $nurseInfoId      = $isAdmin ? $nurseInfoId : auth()->user()->nurseInfo->id;
 
-        if ( ! $nurseInfoId) {
-            $nurseInfoId = auth()->user()->nurseInfo->id;
+//        if ( ! $nurseInfoId) {
+//            $nurseInfoId = auth()->user()->nurseInfo->id;
+//        }
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors'    => 'Validation Failed',
+                'validator' => $validator->errors(),
+            ], 422);
         }
 
-        $validator                 = $this->validatorScheduleData($workScheduleData);
         $windowExists              = $this->windowsExistsValidator($workScheduleData, $updateCollisions);
         $workHoursRangeSum         = $this->getHoursSum($nurseInfoId, $workScheduleData);
         $invalidWorkHoursCommitted = $this->invalidWorkHoursValidator($workHoursRangeSum, $workScheduleData['work_hours']);
 
         //@todo: $invalidWorkHoursCommitted needs handling in client side.
-        if ($validator->fails() || $windowExists || $invalidWorkHoursCommitted) {
-            $validationResponse = $this->returnValidationResponse($windowExists, $validator, $invalidWorkHoursCommitted);
+        if ($validator->fails() || $windowExists || $invalidWorkHoursCommitted || ('does_not_repeat' !== $workScheduleData['repeat_freq'] && null === $workScheduleData['until'])) {
+            $validationResponse = $this->returnValidationResponse($windowExists, $validator, $invalidWorkHoursCommitted, $workScheduleData['repeat_freq'], $workScheduleData['until']);
 
             return response()->json([
                 'errors'    => 'Validation Failed',

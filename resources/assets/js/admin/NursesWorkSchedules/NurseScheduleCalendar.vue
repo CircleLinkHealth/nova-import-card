@@ -1,25 +1,25 @@
 <template>
     <div>
         <div class="calendar-menu">
-           <div v-if="authIsAdmin"
-                class="col-lg-2">
-               <div class="show-holidays">
-                   <input id="holidaysCheckbox"
-                          type="checkbox"
-                          class="holidays-button"
-                          @click="refetchEvents()"
-                          v-model="showHolidays">
-                   Holidays
-               </div>
-               <div class="show-work">
-                   <input id="workCheckbox"
-                          type="checkbox"
-                          class="work-button"
-                          @click="refetchEvents()"
-                          v-model="showWorkEvents">
-                   Work Events
-               </div>
-           </div>
+            <div v-if="authIsAdmin"
+                 class="col-lg-2">
+                <div class="show-holidays">
+                    <input id="holidaysCheckbox"
+                           type="checkbox"
+                           class="holidays-button"
+                           @click="refetchEvents()"
+                           v-model="showHolidays">
+                    Holidays
+                </div>
+                <div class="show-work">
+                    <input id="workCheckbox"
+                           type="checkbox"
+                           class="work-button"
+                           @click="refetchEvents()"
+                           v-model="showWorkEvents">
+                    Work Events
+                </div>
+            </div>
 
             <div class="search-filter">
                 <vue-select ref="searchFilter"
@@ -200,7 +200,7 @@
     import 'fullcalendar/dist/fullcalendar.css';
     import VueSelect from 'vue-select';
     import {mapActions} from 'vuex';
-    import {addNotification} from '../../../../../resources/assets/js/store/actions.js'; //@todo:doesnt work yet.
+    import {addNotification} from '../../../../../resources/assets/js/store/actions.js';
     import CalendarLoader from './CalendarLoader';
     import axios from "../../bootstrap-axios";
 
@@ -498,46 +498,8 @@
                         }
                     }
 
-                    if (this.addNewEventMainClicked) {
-                        if (this.selectedDate.length === 0) {
-                            this.loader = false;
-                            this.throwWarningNotification("Choose event date, is required");
-                            return;
-                        }
-                    }
-
-                    if (repeatFreq !== 'does_not_repeat' && repeatUntil === null) {
-                        this.loader = false;
-                        this.throwWarningNotification("Choose repeat until date, is required");
-                        return;
-                    }
-
-                    if (this.workRangeStarts === '') {
-                        this.loader = false;
-                        this.throwWarningNotification("Work start time is required");
-                        return;
-                    }
-                    if (this.workRangeEnds === '') {
-                        this.loader = false;
-                        this.throwWarningNotification("Work end time is required");
-                        return;
-                    }
-                    if (this.hoursToWork === '') {
-                        this.loader = false;
-                        this.throwWarningNotification("Hours to work for this day is required");
-                        return;
-                    }
-
-                    this.getExistingEventsForSelectedNurse(nurseId, workDate).then(events => {
-                        const conflicts = this.getConflicts(events, workDate);
-                        const conflictExist = conflicts.length !== 0;
+                   this.getExistingEventsForSelectedNurse(nurseId, workDate).then(events => {
                         const eventsToConfirmTemporary = [];
-                        if (repeatFreq === 'does_not_repeat' && conflictExist) {
-                            this.loader = false;
-                            this.throwWarningNotification("This window is overlapping with an existing window");
-                            return;
-                        }
-
                         if (repeatFreq !== 'does_not_repeat') {
                             // Create temporary recurring dates to evaluate and prompt user to act in front-end
                             const until = [];
@@ -554,7 +516,6 @@
 
                             const recurringDatesToEvent = new RRule({                       //https://github.com/jakubroztocil/rrule
                                 freq: frequency[0],
-                                // byweekday: [q.data.clhDayOfWeek],
                                 dtstart: new Date(workDate),
                                 until: until[0],
                             });
@@ -623,10 +584,18 @@
                     }
                 ))
                     .catch((error) => {
+                        console.log(error.response.data);
                         if (error.response.status === 422) {
-                            console.log(error.response.data.validator.window_time_start);
-                            this.errors = error;
-                            alert(this.errors.response.data.validator.window_time_start);
+                            const validatorError = error.response.data.validator;
+                            this.refetchEvents();
+                            this.loader = false;
+                            // this.toggleModal();
+                            Object.keys(validatorError).forEach(key=>{
+                                this.throwWarningNotification(validatorError[key][0]);
+                            });
+
+
+
                         }
                     });
             },

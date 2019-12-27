@@ -16,18 +16,24 @@ trait ValidatesWorkScheduleCalendar
         return $committedWorkHours > $workHoursRangeSum ? true : false;
     }
 
-    public function returnValidationResponse($windowExists, $validator, $invalidWorkHoursCommitted)
+    public function returnValidationResponse($windowExists, $validator, $invalidWorkHoursCommitted, $repeatFr, $until)
     {
+        if ('does_not_repeat' !== $repeatFr && null === $until) {
+            $validator->getMessageBag()->add(
+                'error',
+                'Please choose a repeat until date'
+            );
+        }
         if ($windowExists) {
             $validator->getMessageBag()->add(
-                'window_time_start',
+                'error',
                 'This window is overlapping with an already existing window.'
             );
         }
 
         if ($invalidWorkHoursCommitted) {
             $validator->getMessageBag()->add(
-                'work_hours',
+                'error',
                 'Daily work hours cannot be more than total window hours.'
             );
         }
@@ -40,7 +46,9 @@ trait ValidatesWorkScheduleCalendar
         return Validator::make($workScheduleData, [
             'day_of_week'       => 'required',
             'window_time_start' => 'required|date_format:H:i',
-            'window_time_end'   => 'required|date_format:H:i|after:window_time_start',
+            'window_time_end'   => 'required|date_format:H:i',
+            'work_hours'        => 'required|numeric',
+            'date'              => 'required|date',
         ]);
     }
 
