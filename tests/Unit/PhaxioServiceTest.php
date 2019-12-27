@@ -50,7 +50,7 @@ class PhaxioServiceTest extends TestCase
         ];
 
         return [
-            'fax'        => $faxObject,
+            'fax'        => json_encode($faxObject),
             'event_type' => 'fax_completed',
         ];
     }

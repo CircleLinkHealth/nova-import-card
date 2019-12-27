@@ -7,13 +7,13 @@
 namespace App\Http\Controllers;
 
 use App\FaxLog;
-use Illuminate\Http\Request;
+use App\Http\Requests\PhaxioWebhookRequest;
 
 class PhaxioWebhookController extends Controller
 {
-    public function onFaxSent(Request $request)
+    public function onFaxSent(PhaxioWebhookRequest $request)
     {
-        $fax       = $request->input('fax');
+        $fax       = json_decode($request->input('fax'), true);
         $eventType = $request->input('event_type');
 
         $log = FaxLog::create([
