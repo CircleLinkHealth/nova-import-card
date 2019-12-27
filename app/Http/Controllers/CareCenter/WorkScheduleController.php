@@ -236,17 +236,17 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                return Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_end
+                    return Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_end
+                    )->diffInHours(Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_start
+                    ));
+                }) + Carbon::createFromFormat(
+                    'H:i',
+                    $workScheduleData['window_time_end']
                 )->diffInHours(Carbon::createFromFormat(
-                    'H:i:s',
-                    $window->window_time_start
-                ));
-            }) + Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_end']
-            )->diffInHours(Carbon::createFromFormat(
                 'H:i',
                 $workScheduleData['window_time_start']
             ));
@@ -465,7 +465,7 @@ class WorkScheduleController extends Controller
                 'validator' => $validator->errors(),
             ], 422);
         }
-
+        //@todo; validate - dont allow workday add when holiday exist on the same day
         $windowExists              = $this->windowsExistsValidator($workScheduleData, $updateCollisions);
         $workHoursRangeSum         = $this->getHoursSum($nurseInfoId, $workScheduleData);
         $invalidWorkHoursCommitted = $this->invalidWorkHoursValidator($workHoursRangeSum, $workScheduleData['work_hours']);
