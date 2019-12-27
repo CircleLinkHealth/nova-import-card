@@ -498,39 +498,8 @@
                         }
                     }
 
-                   this.getExistingEventsForSelectedNurse(nurseId, workDate).then(events => {
-                        const eventsToConfirmTemporary = [];
-                        if (repeatFreq !== 'does_not_repeat') {
-                            // Create temporary recurring dates to evaluate and prompt user to act in front-end
-                            const until = [];
-                            const frequency = [];
-
-                            if (repeatFreq === 'weekly') {
-                                frequency.push(RRule.WEEKLY);
-                                until.push(new Date(repeatUntil))
-                            }
-                            if (repeatFreq === 'daily') {
-                                frequency.push(RRule.DAILY);
-                                until.push(new Date(repeatUntil))
-                            }
-
-                            const recurringDatesToEvent = new RRule({                       //https://github.com/jakubroztocil/rrule
-                                freq: frequency[0],
-                                dtstart: new Date(workDate),
-                                until: until[0],
-                            });
-
-                            const recurringDates = recurringDatesToEvent.all();
-                            for (var i = 0; i < recurringDates.length; i++) {
-                                const date = this.formatDate(recurringDates[i]);
-                                const eventsToAskConfirmation = this.getConflicts(events, date);
-                                if (eventsToAskConfirmation.length !== 0) {
-                                    this.loader = false;
-                                    eventsToConfirmTemporary.push(...eventsToAskConfirmation);
-                                }
-                            }
-                        }
-
+                    this.getExistingEventsForSelectedNurse(nurseId, workDate).then(events => {
+                        const eventsToConfirmTemporary = this.getEventsToConfirmTemporary(events, repeatFreq, repeatUntil, workDate);
                         if (eventsToConfirmTemporary.length !== 0) {
                             if (eventsToConfirmTemporary.filter(event => event.data.eventType === 'holiday' || event.data.eventType === 'companyHoliday').length !== 0) {
                                 if (confirm("There are windows overlapping some of your days-off. We will not replace your days-off.")) {
@@ -549,6 +518,40 @@
                 }
             },
 
+            getEventsToConfirmTemporary(events, repeatFreq, repeatUntil, workDate) {
+                // Create temporary recurring dates to evaluate and prompt user to act in front-end
+                const eventsToConfirmTemporary = [];
+                if (repeatFreq !== 'does_not_repeat') {
+                    const until = [];
+                    const frequency = [];
+
+                    if (repeatFreq === 'weekly') {
+                        frequency.push(RRule.WEEKLY);
+                        until.push(new Date(repeatUntil))
+                    }
+                    if (repeatFreq === 'daily') {
+                        frequency.push(RRule.DAILY);
+                        until.push(new Date(repeatUntil))
+                    }
+
+                    const recurringDatesToEvent = new RRule({                  //https://github.com/jakubroztocil/rrule
+                        freq: frequency[0],
+                        dtstart: new Date(workDate),
+                        until: until[0],
+                    });
+
+                    const recurringDates = recurringDatesToEvent.all();
+                    for (var i = 0; i < recurringDates.length; i++) {
+                        const date = this.formatDate(recurringDates[i]);
+                        const eventsToAskConfirmation = this.getConflicts(events, date);
+                        if (eventsToAskConfirmation.length !== 0) {
+                            this.loader = false;
+                            eventsToConfirmTemporary.push(...eventsToAskConfirmation);
+                        }
+                    }
+                }
+                return eventsToConfirmTemporary;
+            },
             getConflicts(events, date) {
                 return events.filter(event => event.data.date === date);
             },
@@ -590,10 +593,9 @@
                             this.refetchEvents();
                             this.loader = false;
                             // this.toggleModal();
-                            Object.keys(validatorError).forEach(key=>{
+                            Object.keys(validatorError).forEach(key => {
                                 this.throwWarningNotification(validatorError[key][0]);
                             });
-
 
 
                         }
