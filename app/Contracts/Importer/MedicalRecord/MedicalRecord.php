@@ -88,6 +88,11 @@ interface MedicalRecord
     public function getPatient(): User;
 
     /**
+     * Guess Practice, Location and Billing Provider.
+     */
+    public function guessPracticeLocationProvider(): MedicalRecord;
+
+    /**
      * Handles importing a MedicalRecord for QA.
      *
      * @return ImportedMedicalRecord
@@ -128,19 +133,4 @@ interface MedicalRecord
      * Import Providers for QA.
      */
     public function importProviders(): MedicalRecord;
-
-    /**
-     * Predict which BillingProvider should be attached to this MedicalRecord.
-     */
-    public function predictBillingProvider(): MedicalRecord;
-
-    /**
-     * Predict which Location should be attached to this MedicalRecord.
-     */
-    public function predictLocation(): MedicalRecord;
-
-    /**
-     * Predict which Practice should be attached to this MedicalRecord.
-     */
-    public function predictPractice(): MedicalRecord;
 }
