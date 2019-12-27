@@ -88,10 +88,12 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
         return $this->practice_id;
     }
 
+    abstract public function getReferringProviderName();
+
     public function guessPracticeLocationProvider(): MedicalRecord
     {
-        if ($this->referring_provider_name) {
-            $this->setAllPracticeInfoFromProvider($this->referring_provider_name);
+        if ($term = $this->getReferringProviderName()) {
+            $this->setAllPracticeInfoFromProvider($term);
         }
 
         if ( ! $this->getPracticeId()) {
