@@ -56,6 +56,20 @@ class ImporterController extends Controller
 
                 if ( ! $summary->billing_provider_id) {
                     $mr = $mr->guessPracticeLocationProvider();
+
+                    $summary->billing_provider_id = $mr->getBillingProviderId();
+
+                    if ( ! $summary->location_id) {
+                        $summary->location_id = $mr->getLocationId();
+                    }
+
+                    if ( ! $summary->practice_id) {
+                        $summary->practice_id = $mr->getPracticeId();
+                    }
+
+                    if ($summary->isDirty()) {
+                        $summary->save();
+                    }
                 }
 
                 $providers = $mr->providers()->where([

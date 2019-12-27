@@ -24,7 +24,8 @@ interface MedicalRecord
     const CAREPLAN_CREATED = 'careplan_created';
 
     /**
-     * status: A record created for the purpose of determining whether the patient is eligible to be called for enrollment.
+     * status: A record created for the purpose of determining whether the patient is eligible to be called for
+     * enrollment.
      */
     const DETERMINE_ENROLLEMENT_ELIGIBILITY = 'determine_enrollement_eligibility';
 
@@ -75,7 +76,11 @@ interface MedicalRecord
      */
     public function createLogs(): MedicalRecord;
 
+    public function getBillingProviderId(): ?int;
+
     public function getDocumentCustodian(): string;
+
+    public function getLocationId(): ?int;
 
     /**
      * Get the Transformer.
@@ -86,6 +91,8 @@ interface MedicalRecord
      * Get the User to whom this record belongs to, if one exists.
      */
     public function getPatient(): User;
+
+    public function getPracticeId(): ?int;
 
     /**
      * Guess Practice, Location and Billing Provider.
