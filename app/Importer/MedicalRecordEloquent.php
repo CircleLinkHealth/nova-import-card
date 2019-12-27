@@ -24,6 +24,7 @@ use App\Importer\Section\Importers\Insurance;
 use App\Importer\Section\Importers\Medications;
 use App\Importer\Section\Importers\Problems;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
+use App\Search\ProviderByName;
 use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -33,11 +34,6 @@ use Illuminate\Support\Collection;
 abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\BaseModel implements MedicalRecord
 {
     use MedicalRecordItemLoggerRelationships;
-
-    /**
-     * @var integer;
-     */
-    protected $billingProviderIdPrediction;
 
     /**
      * @var ImportedMedicalRecord
@@ -52,41 +48,14 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     protected $insurances;
 
     /**
-     * @var int
-     */
-    protected $locationIdPrediction;
-
-    /**
-     * @var int
-     */
-    protected $practiceIdPrediction;
-
-    /**
      * A collection of the patient's problems () separated in groups (monitored, not_monitored, do_not_import).
      *
      * @var Collection
      */
     protected $problemsInGroups;
 
-    public function createImportedMedicalRecord(): MedicalRecord
-    {
-        $this->importedMedicalRecord = ImportedMedicalRecord::create(
-            [
-                'medical_record_type' => get_class($this),
-                'medical_record_id'   => $this->id,
-                'billing_provider_id' => $this->getBillingProviderIdPrediction(),
-                'location_id'         => $this->getLocationIdPrediction(),
-                'practice_id'         => $this->getPracticeIdPrediction(),
-            ]
-        );
-
-        return $this;
-    }
-
     /**
      * Log the data into MedicalRecordSectionLogs, so that they can be fed to the Importer.
-     *
-     * @return MedicalRecord
      */
     public function createLogs(): MedicalRecord
     {
@@ -98,9 +67,9 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     /**
      * @return mixed
      */
-    public function getBillingProviderIdPrediction()
+    public function getBillingProviderId()
     {
-        return $this->billingProviderIdPrediction;
+        return $this->billing_provider_id;
     }
 
     public function getId(): ?int
@@ -111,22 +80,49 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     /**
      * @return mixed
      */
-    public function getLocationIdPrediction()
+    public function getLocationId()
     {
-        return $this->locationIdPrediction;
+        return $this->location_id;
     }
 
     /**
      * @return mixed
      */
-    public function getPracticeIdPrediction()
+    public function getPracticeId()
     {
-        return $this->practiceIdPrediction;
+        return $this->practice_id;
     }
+
+    abstract public function getReferringProviderName();
 
     public function getType(): ?string
     {
         return get_class($this);
+    }
+
+    public function guessPracticeLocationProvider(): MedicalRecord
+    {
+        if ($term = $this->getReferringProviderName()) {
+            $this->setAllPracticeInfoFromProvider($term);
+        }
+
+        if ( ! $this->getPracticeId()) {
+            $this->predictPractice();
+        }
+
+        if ( ! $this->getLocationId()) {
+            $this->predictLocation();
+        }
+
+        if ( ! $this->getBillingProviderId()) {
+            $this->predictBillingProvider();
+        }
+
+        if ($this->isDirty()) {
+            $this->save();
+        }
+
+        return $this;
     }
 
     /**
@@ -137,9 +133,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     public function import()
     {
         $this->createLogs()
-            ->predictPractice()
-            ->predictLocation()
-            ->predictBillingProvider()
+            ->guessPracticeLocationProvider()
             ->createImportedMedicalRecord()
             ->importAllergies()
             ->importDemographics()
@@ -155,8 +149,6 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     /**
      * Import Allergies for QA.
-     *
-     * @return MedicalRecord
      */
     public function importAllergies(): MedicalRecord
     {
@@ -168,8 +160,6 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     /**
      * Import Demographics for QA.
-     *
-     * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
     public function importDemographics(): MedicalRecord
     {
@@ -181,8 +171,6 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     /**
      * Import Document for QA.
-     *
-     * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
     public function importDocument(): MedicalRecord
     {
@@ -196,8 +184,6 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     /**
      * Import Insurance Policies for QA.
-     *
-     * @return MedicalRecord
      */
     public function importInsurance(): MedicalRecord
     {
@@ -209,8 +195,6 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     /**
      * Import Medications for QA.
-     *
-     * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
     public function importMedications(): MedicalRecord
     {
@@ -222,8 +206,6 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     /**
      * Import Problems for QA.
-     *
-     * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
     public function importProblems(): MedicalRecord
     {
@@ -235,8 +217,6 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     /**
      * Import Providers for QA.
-     *
-     * @return \App\Contracts\Importer\MedicalRecord\MedicalRecord
      */
     public function importProviders(): MedicalRecord
     {
@@ -245,18 +225,10 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     /**
      * Predict which BillingProvider should be attached to this MedicalRecord.
-     *
-     * @return MedicalRecord
      */
     public function predictBillingProvider(): MedicalRecord
     {
-        if ($this->billing_provider_id) {
-            $this->setBillingProviderIdPrediction($this->billing_provider_id);
-
-            return $this;
-        }
-
-        if ($this->getBillingProviderIdPrediction()) {
+        if ($this->getBillingProviderId()) {
             return $this;
         }
 
@@ -265,9 +237,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
         $historicPrediction = $historicPredictor->predict();
 
         if ($historicPrediction) {
-            $this->setBillingProviderIdPrediction($historicPrediction);
-
-            return $this;
+            $this->setBillingProviderId($historicPrediction);
         }
 
         return $this;
@@ -275,18 +245,10 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     /**
      * Predict which Location should be attached to this MedicalRecord.
-     *
-     * @return MedicalRecord
      */
     public function predictLocation(): MedicalRecord
     {
-        if ($this->getLocationIdPrediction()) {
-            return $this;
-        }
-
-        if ( ! empty($this->location_id)) {
-            $this->setLocationIdPrediction($this->location_id);
-
+        if ($this->getLocationId()) {
             return $this;
         }
 
@@ -294,20 +256,19 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
         $historicPredictor  = new HistoricLocationPredictor($this->getDocumentCustodian(), $this->providers);
         $historicPrediction = $historicPredictor->predict();
 
-        if ($this->getPracticeIdPrediction()) {
-            $practice = Practice::find($this->getPracticeIdPrediction());
+        if ($this->getPracticeId()) {
+            $practice = Practice::find($this->getPracticeId());
 
-            $this->setLocationIdPrediction($practice->primary_location_id);
+            $this->setLocationId($practice->primary_location_id);
         }
 
         if ($historicPrediction) {
-            if (isset($practice) && ! $practice->locations->pluck('id')->contains($historicPrediction)) {
-                ! $practice->primary_location_id
-                    ?: $this->setLocationIdPrediction($practice->primary_location_id);
+            if (isset($practice) && ! $practice->locations->pluck('id')->contains($historicPrediction) && $primaryLocationId = $practice->getPrimaryLocationIdAttribute()) {
+                $this->setLocationId($primaryLocationId);
 
                 return $this;
             }
-            $this->setLocationIdPrediction($historicPrediction);
+            $this->setLocationId($historicPrediction);
         }
 
         return $this;
@@ -315,18 +276,10 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     /**
      * Predict which Practice should be attached to this MedicalRecord.
-     *
-     * @return MedicalRecord
      */
     public function predictPractice(): MedicalRecord
     {
-        if ($this->practice_id) {
-            $this->setPracticeIdPrediction($this->practice_id);
-
-            return $this;
-        }
-
-        if ($this->getPracticeIdPrediction()) {
+        if ($this->getPracticeId()) {
             return $this;
         }
 
@@ -335,9 +288,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
         $historicPrediction = $historicPredictor->predict();
 
         if ($historicPrediction) {
-            $this->setPracticeIdPrediction($historicPrediction);
-
-            return $this;
+            $this->setPracticeId($historicPrediction);
         }
 
         return $this;
@@ -362,37 +313,58 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     }
 
     /**
-     * @param mixed $billingProviderId
+     * Search for a Billing Provider using a search term, and.
      *
-     * @return MedicalRecord
+     * @return $this
      */
-    public function setBillingProviderIdPrediction($billingProviderId): MedicalRecord
+    public function searchBillingProvider(string $term): ?User
     {
-        $this->billingProviderIdPrediction = $billingProviderId;
+        return (new ProviderByName())->query($term)->when( ! empty($this->practice_id), function ($q) {
+            $q->ofPractice($this->practice_id);
+        })->first();
+    }
+
+    /**
+     * @param mixed $billingProviderId
+     */
+    public function setBillingProviderId($billingProviderId): MedicalRecord
+    {
+        $this->billing_provider_id = $billingProviderId;
 
         return $this;
     }
 
     /**
      * @param mixed $locationId
-     *
-     * @return MedicalRecord
      */
-    public function setLocationIdPrediction($locationId): MedicalRecord
+    public function setLocationId($locationId): MedicalRecord
     {
-        $this->locationIdPrediction = $locationId;
+        $this->location_id = $locationId;
 
         return $this;
     }
 
     /**
      * @param mixed $practiceId
-     *
-     * @return MedicalRecord
      */
-    public function setPracticeIdPrediction($practiceId): MedicalRecord
+    public function setPracticeId($practiceId): MedicalRecord
     {
-        $this->practiceIdPrediction = $practiceId;
+        $this->practice_id = $practiceId;
+
+        return $this;
+    }
+
+    protected function createImportedMedicalRecord(): MedicalRecord
+    {
+        $this->importedMedicalRecord = ImportedMedicalRecord::create(
+            [
+                'medical_record_type' => get_class($this),
+                'medical_record_id'   => $this->id,
+                'billing_provider_id' => $this->getBillingProviderId(),
+                'location_id'         => $this->getLocationId(),
+                'practice_id'         => $this->getPracticeId(),
+            ]
+        );
 
         return $this;
     }
@@ -407,7 +379,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
                 function ($p) {
                     return $p['attributes']['cpm_problem_id'];
                 }
-                                      )
+            )
             ->where('is_behavioral', true)
             ->count() >= 1;
     }
@@ -422,7 +394,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
                 function ($p) {
                     return $p['attributes']['cpm_problem_id'];
                 }
-                                      )
+            )
             ->count() >= 2;
     }
 
@@ -435,7 +407,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
             function ($i) {
                 return ! str_contains(strtolower($i->name.$i->type), 'medicare');
             }
-            )
+        )
             ->count() >= 1;
     }
 
@@ -461,7 +433,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
                 function ($q) use ($demos) {
                     $q->whereBirthDate($demos->dob);
                 }
-                     );
+            );
         if ($practiceId) {
             $query = $query->where('program_id', $practiceId);
         }
@@ -490,5 +462,21 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
         }
 
         return false;
+    }
+
+    private function setAllPracticeInfoFromProvider(string $term)
+    {
+        $searchProvider = $this->searchBillingProvider($term);
+
+        if ( ! $searchProvider) {
+            return;
+        }
+
+        if ( ! $this->getPracticeId()) {
+            $this->setPracticeId($searchProvider->program_id);
+        }
+
+        $this->setBillingProviderId($searchProvider->id);
+        $this->setLocationId(optional($searchProvider->loadMissing('locations')->locations->first())->id);
     }
 }
