@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "47396d79394ef769f1a21684bd719fde",
+    "content-hash": "50825d989017cc86532f877e83a07c4d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -621,7 +621,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git",
-                "reference": "c3898a97cb9054998685266797fe50fbf40f0afb"
+                "reference": "a4a3473bcabf79d85540abe45166c4abb4f5a8dd"
             },
             "type": "library",
             "extra": {
@@ -653,7 +653,7 @@
                 }
             ],
             "description": "PHP wrapper for bluebutton nodejs",
-            "time": "2019-12-20T07:15:06+00:00"
+            "time": "2019-12-28T00:15:19+00:00"
         },
         {
             "name": "circlelinkhealth/core",
@@ -698,7 +698,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-cpm-migrations.git",
-                "reference": "a8a5ccb033b107910fe15b0ed49a0d5fcc591a30"
+                "reference": "458586e57741eac216455ba4f169093e4b3b7350"
             },
             "type": "laravel-module",
             "extra": {
@@ -720,7 +720,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-12-24T18:57:55+00:00"
+            "time": "2019-12-28T00:08:15+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
@@ -765,7 +765,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-development",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",

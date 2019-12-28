@@ -78,10 +78,6 @@
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git"
-    },
-    {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git"
     }
   ],
   "require": {
