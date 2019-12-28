@@ -78,9 +78,6 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         );
     }
 
-    /**
-     * @return int
-     */
     public function chunkSize(): int
     {
         return 200;

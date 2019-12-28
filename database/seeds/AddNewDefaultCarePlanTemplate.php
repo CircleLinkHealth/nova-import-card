@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\AppConfig;
 use App\CarePlanTemplate;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Models\CPM\CpmInstruction;
@@ -13,11 +14,50 @@ use Illuminate\Database\Seeder;
 class AddNewDefaultCarePlanTemplate extends Seeder
 {
     /**
+     * Run the database seeds.
+     */
+    public function run()
+    {
+        $oldCpt = CarePlanTemplate::updateOrCreate([
+            'display_name' => 'Old CLH Default (Deprecated)',
+            'type'         => 'Old CLH Default (Deprecated)',
+        ]);
+
+        $newCpt = CarePlanTemplate::updateOrCreate([
+            'display_name' => 'CLH Default',
+            'type'         => 'CLH Default',
+        ]);
+
+        $config = AppConfig::updateOrCreate([
+            'config_key'   => 'default_care_plan_template_id',
+            'config_value' => $newCpt->id,
+        ]);
+
+        $this->setupCpmProblems();
+
+        foreach ($this->problems() as $problemName => $data) {
+            if ($data['instructions']) {
+                $instruction = CpmInstruction::create([
+                    'is_default' => true,
+                    'name'       => $data['instructions'],
+                ]);
+
+                $cpmProblem = CpmProblem::whereName($problemName)->first();
+
+                $rel = $newCpt->cpmProblems()->updateExistingPivot($cpmProblem->id, [
+                    'has_instruction'    => true,
+                    'cpm_instruction_id' => $instruction->id,
+                ]);
+            }
+        }
+    }
+
+    /**
      * The array of instructions to be added.
      *
      * @return array
      */
-    public function problems(): array
+    private function problems(): array
     {
         $problems['Acquired Hypothyroidism'] = [
             'instructions' => '',
@@ -266,58 +306,9 @@ class AddNewDefaultCarePlanTemplate extends Seeder
         return $problems;
     }
 
-    /**
-     * Run the database seeds.
-     */
-    public function run()
+    private function setupCpmProblems()
     {
-        //this means the seeder has already run
-        //we don't wanna run twice
-        if (CarePlanTemplate::whereDisplayName('Old CLH Default (Deprecated)')->exists()) {
-            return;
-        }
-
-        $newCpt = CarePlanTemplate::create([
-            'display_name' => str_random(),
-            'type'         => str_random(),
-        ]);
-
-        $default = CarePlanTemplate::whereType('CLH Default')
-            ->update([
-                'display_name' => 'Old CLH Default (Deprecated)',
-                'type'         => 'Old CLH Default (Deprecated)',
-            ]);
-
-        $newCpt->display_name = 'CLH Default';
-        $newCpt->type         = 'CLH Default';
-        $newCpt->save();
-
-        $this->setupCpmProblems();
-
-        foreach ($this->problems() as $problemName => $data) {
-            if ($data['instructions']) {
-                $instruction = CpmInstruction::create([
-                    'is_default' => true,
-                    'name'       => $data['instructions'],
-                ]);
-
-                $cpmProblem = CpmProblem::whereName($problemName)->first();
-
-                $rel = $newCpt->cpmProblems()->updateExistingPivot($cpmProblem->id, [
-                    'has_instruction'    => true,
-                    'cpm_instruction_id' => $instruction->id,
-                ]);
-
-                $newCpt->save();
-            }
-        }
-
-        setAppConfig('default_care_plan_template_id', $newCpt->id);
-    }
-
-    public function setupCpmProblems()
-    {
-        $defaultCarePlan = getDefaultCarePlanTemplate();
+        $defaultCarePlan = CarePlanTemplate::findOrFail(AppConfig::pull('default_care_plan_template_id'));
 
         CpmProblem::get()->map(function ($cpmProblem) use ($defaultCarePlan) {
             if ( ! in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
@@ -335,7 +326,7 @@ class AddNewDefaultCarePlanTemplate extends Seeder
                 'snomed_code'    => 0,
             ]);
 
-            $this->command->info("{$cpmProblem->name} has been added");
+//            $this->command->info("{$cpmProblem->name} has been added");
         });
     }
 }

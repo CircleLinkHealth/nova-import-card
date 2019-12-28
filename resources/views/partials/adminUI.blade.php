@@ -91,7 +91,6 @@
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ route('admin.users.index') }}">All Users</a></li>
                                     <li><a href="{{ route('admin.users.create') }}">New User</a></li>
-                                    <li><a href="{{ route('admin.observations.index') }}">Observations</a></li>
                                     <li><a href="{{ route('observations-dashboard.index') }}">Edit/Delete
                                             Observations</a></li>
                                 </ul>
@@ -160,8 +159,6 @@
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                 <li><a href="{{ route('import.ccd.remix', []) }}">CCDs To Import</a></li>
-                                <li><a href="{{ route('EthnicityReportController.getReport', []) }}">Ethnicity/Race
-                                    </a></li>
                                 <li><a href="{{ route('get.patients.for.insurance.check') }}">Patients For Insurance
                                         Check
                                     </a></li>
@@ -180,9 +177,6 @@
                                 </li>
                                 <li><a href="{{ route('admin.reports.nurse.metrics') }}">
                                         Nurse Performance Report</a></li>
-                                <li>
-                                    <a href="{{route('OpsDashboard.billingChurn')}}">Billing Churn</a>
-                                </li>
                                 <li>
                                     <a href="{{route('revisions.all.activity')}}">All Activity</a>
                                 </li>
@@ -220,7 +214,6 @@
                                 <li>
                                     <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
                                 </li>
-                                <li><a href="{{ route('locations.index', []) }}">Locations</a></li>
                                 <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
                                         Patient Report</a></li>
                             </ul>

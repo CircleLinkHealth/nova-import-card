@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Providers\CpmArtisanServiceProvider;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use Circlelinkhealth\ImportPracticeStaffCsv\CardServiceProvider;
@@ -194,6 +195,8 @@ return [
         App\Providers\AppServiceProvider::class,
         App\Providers\AppDeferredServiceProvider::class,
 
+        App\Providers\BroadcastServiceProvider::class,
+
         App\Providers\HtmlToPdfServiceProvider::class,
         App\Providers\DirectMailServiceProvider::class,
         App\Providers\FaxServiceProvider::class,
@@ -212,6 +215,7 @@ return [
         EligibilityServiceProvider::class,
         CardServiceProvider::class,
         CcdaParserProcessorProvider::class,
+        CpmArtisanServiceProvider::class,
     ],
 
     /*

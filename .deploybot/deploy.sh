@@ -69,6 +69,7 @@ composer dump-autoload --no-dev --classmap-authoritative --no-scripts
 
 # Run migrations
 php artisan migrate --force
+php artisan migrate:views
 
 # Exit if the migrations fail.
 if [ $? -ne 0 ]; then

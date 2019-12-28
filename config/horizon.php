@@ -86,12 +86,22 @@ return [
         ],
         'staging' => [
             'supervisor-1' => [
-                'connection' => 'redis',
-                'queue'      => ['high', 'default', 'low'],
-                'balance'    => 'auto',
-                'processes'  => 8,
-                'tries'      => 1,
-                'timeout'    => 300,
+                'connection'    => 'redis',
+                'queue'         => ['default', 'low', 'demanding'],
+                'balance'       => 'auto',
+                'min-processes' => 1,
+                'max-processes' => 2,
+                'tries'         => 1,
+                'timeout'       => 60,
+            ],
+            'supervisor-2' => [
+                'connection'    => 'redis',
+                'queue'         => ['high'],
+                'balance'       => 'simple',
+                'min-processes' => 2,
+                'max-processes' => 7,
+                'tries'         => 1,
+                'timeout'       => 30,
             ],
         ],
         'production_v3' => [

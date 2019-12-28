@@ -22,7 +22,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Support\Carbon|null                                                $updated_at
  * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoice                          $nurseInvoice
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute query()
@@ -36,7 +35,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute whereSuggestedFormattedTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property int|null $revision_history_count
  */
 class NurseInvoiceDailyDispute extends BaseModel

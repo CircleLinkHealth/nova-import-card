@@ -13,8 +13,6 @@ class PracticeObserver
 {
     /**
      * Listen to the Practice created event.
-     *
-     * @param \CircleLinkHealth\Customer\Entities\Practice $practice
      */
     public function created(Practice $practice)
     {
@@ -24,7 +22,7 @@ class PracticeObserver
             ->with('roles')
             ->has('roles')
             ->whereDoesntHave('practices', function ($q) use ($practice) {
-                $q->whereId($practice->id);
+                $q->where('practices.id', $practice->id);
             })
             ->get()
             ->map(function ($user) use ($practice) {
@@ -34,8 +32,6 @@ class PracticeObserver
 
     /**
      * Listen to the Practice creating event.
-     *
-     * @param Practice $practice
      */
     public function creating(Practice $practice)
     {

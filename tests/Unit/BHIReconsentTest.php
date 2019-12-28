@@ -17,12 +17,11 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class BHIReconsentTest extends TestCase
 {
-    use UserHelpers;
+    use \App\Traits\Tests\UserHelpers;
 
     public function test_it_hides_flag_past_tomorrow_if_patient_has_more_calls_today_and_not_now_was_clicked()
     {
