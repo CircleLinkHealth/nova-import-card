@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c060faa560e62aee32c7bd8298550003",
+    "content-hash": "10b63cf9fa8920819be86cc1489901f5",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -657,11 +657,11 @@
         },
         {
             "name": "circlelinkhealth/core",
-            "version": "v1.32",
+            "version": "v1.33",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "07ab1482f85d3d51e4fd806d74ab4d918710aed5"
+                "reference": "3ef667e3a3862d6e4cb3b1761339be8c36f284e2"
             },
             "type": "library",
             "extra": {
@@ -687,7 +687,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-12-28T08:02:24+00:00"
+            "time": "2019-12-28T08:40:10+00:00"
         },
         {
             "name": "circlelinkhealth/cpmmigrations",
