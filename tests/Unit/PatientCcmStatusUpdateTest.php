@@ -7,6 +7,7 @@
 namespace Tests\Unit;
 
 use App\CLH\Repositories\UserRepository;
+use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
@@ -15,7 +16,6 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class PatientCcmStatusUpdateTest extends TestCase
