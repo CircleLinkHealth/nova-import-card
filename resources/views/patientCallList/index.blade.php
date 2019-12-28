@@ -60,7 +60,7 @@ function formatTime($time)
             $(document).ready(function () {
                 const table = $('#cpmEditableTable');
                 table.DataTable({
-                    order: [[2, "asc"]],
+                    order: [],
                     processing: true,
                     scrollX: true,
                     fixedHeader: true,
@@ -69,12 +69,6 @@ function formatTime($time)
 
 
                 });
-
-                // $('#filter-select').change(function () {
-                //     table.column($(this).data('column'))
-                //         .search($(this).val())
-                //         .draw();
-                // });
 
                 function addClickListener() {
                     const row = $('.patientNameLink');
@@ -208,9 +202,15 @@ function formatTime($time)
                                                 if ($call->scheduled_date == $curDate && $call->call_time_end < $curTime && 'addendum_response' !== $call->type) {
                                                     $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                 }
-                                                if ('Call Back' === $call->type || $call->asap && 'reached' !== $call->status && 'done' !== $call->status) {
+                                                if (($call->asap || 'Call Back' === $call->type) && 'reached' !== $call->status && 'done' !== $call->status) {
                                                     $boldRow   = 'bold-row';
                                                     $textBlack = 'color:black;';
+                                                }
+
+                                                $route = route('patient.careplan.print', ['patient' => $call->patient_id]);
+
+                                                if ('addendum_response' === $call->type) {
+                                                    $route = route('redirect.readonly.activity', ['callId' => $call->id]);
                                                 }
                                                 ?>
                                                 <tr class="{{$boldRow}}" style="{{ $rowBg . $textBlack }}">
@@ -236,7 +236,7 @@ function formatTime($time)
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="{{ route('patient.careplan.print', array('patient' => $call->patient_id)) }}"
+                                                        <a href="{{ $route }}"
                                                            class="patientNameLink" call-id="{{ $call->id }}"
                                                            style="font-weight:bold;"
                                                            data-template='<div class="tooltip" style="text-align:left" role="tooltip"><div class="arrow"></div><div class="tooltip-inner" style="text-align:left"></div></div>'
@@ -259,7 +259,7 @@ function formatTime($time)
                                                         @if($call->type !== 'addendum_response')
                                                             <td>{{ $call->call_time_start }}</td>
                                                             <td>{{ $call->call_time_end }}</td>
-                                                            @else
+                                                        @else
                                                             <td>{{ 'N/A' }}</td>
                                                             <td>{{ 'N/A' }}</td>
                                                         @endif
@@ -344,6 +344,15 @@ function formatTime($time)
     <!-- call attempt_note modals -->
     @if (count($calls) > 0)
         @foreach($calls as $call)
+            <?php
+            $route      = route('patient.careplan.print', ['patient' => $call->patient_id]);
+            $buttonName = 'Continue to care plan';
+
+            if ('addendum_response' === $call->type) {
+                $route      = route('redirect.readonly.activity', ['callId' => $call->id]);
+                $buttonName = 'Continue to note';
+            }
+            ?>
             @if ((!empty($call->attempt_note) || !empty($call->general_comment)) )
                 <!-- Modal -->
                 <div id="attemptNoteCall{{ $call->id }}" class="modal fade" role="dialog">
@@ -365,8 +374,8 @@ function formatTime($time)
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <a href="{{ route('patient.careplan.print', array('patient' => $call->patient_id)) }}"
-                                   class="btn btn-primary">Continue to care plan</a>
+                                <a href="{{$route}}"
+                                   class="btn btn-primary">{{$buttonName}}</a>
                             </div>
                         </div>
 

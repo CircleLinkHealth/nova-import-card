@@ -4,11 +4,18 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+Route::post('webhooks/on-sent-fax', [
+    'uses' => 'PhaxioWebhookController@onFaxSent',
+    'as'   => 'webhook.on-fax-sent',
+]);
+
 Route::group(['middleware' => ['auth', 'cacheResponse']], function () {
     Route::get('profiles', 'API\ProfileController@index')->middleware(
         ['permission:user.read,role.read', 'cacheResponse']
     );
 });
+
+Route::get('hirefire/{token}/info', 'HireFireController@getQueueSize');
 
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
@@ -555,6 +562,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'get.CCDViewerController.show',
     ])->middleware('permission:ccda.read');
 
+    Route::get('ccd/download/xml/{ccdaId}', [
+        'uses' => 'CCDViewer\CCDViewerController@downloadXml',
+        'as'   => 'download.ccda.xml',
+    ])->middleware('permission:ccda.read');
+
     Route::post('ccd', [
         'uses' => 'CCDViewer\CCDViewerController@showUploadedCcd',
         'as'   => 'ccd-viewer.post',
@@ -1014,6 +1026,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'DirectMailController@show',
                 'as'   => 'direct-mail.show',
             ]);
+
+            Route::get('inbox/check', [
+                'uses' => 'DirectMailController@checkInbox',
+                'as'   => 'direct-mail.check',
+            ]);
         });
 
         Route::group(['prefix' => 'revisions'], function () {
@@ -1081,7 +1098,12 @@ Route::group(['middleware' => 'auth'], function () {
 
                 Route::get('/eligible-csv', [
                     'uses' => 'EligibilityBatchController@downloadEligibleCsv',
-                    'as'   => 'eligibility.download.eligible',
+                    'as'   => 'eligibility.download.csv.eligible',
+                ])->middleware('permission:enrollee.read');
+
+                Route::get('/entire-patient-list-csv', [
+                    'uses' => 'EligibilityBatchController@downloadAllPatientsCsv',
+                    'as'   => 'eligibility.download.all',
                 ])->middleware('permission:enrollee.read');
 
                 Route::get('supplemental-insurance-info-csv', [
@@ -2284,6 +2306,11 @@ Route::get('notifications', [
 Route::post('/redirect-mark-read/{notificationId}', [
     'uses' => 'NotificationController@markNotificationAsRead',
     'as'   => 'notification.redirect',
+]);
+
+Route::get('/redirect-mark-done/{callId}', [
+    'uses' => 'PatientCallListController@markAddendumActivitiesDone',
+    'as'   => 'redirect.readonly.activity',
 ]);
 
 Route::get('see-all-notifications', [

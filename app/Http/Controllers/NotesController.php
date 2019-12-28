@@ -132,16 +132,16 @@ class NotesController extends Controller
                 ->where('inbound_cpm_id', '=', $patientId)
                 ->where('outbound_cpm_id', '=', $author_id)
                 ->select(
-                    [
-                        'id',
-                        'type',
-                        'sub_type',
-                        'attempt_note',
-                        'scheduled_date',
-                        'window_start',
-                        'window_end',
-                    ]
-                )
+                                           [
+                                               'id',
+                                               'type',
+                                               'sub_type',
+                                               'attempt_note',
+                                               'scheduled_date',
+                                               'window_start',
+                                               'window_end',
+                                           ]
+                                       )
                 ->get();
         }
 
@@ -232,7 +232,9 @@ class NotesController extends Controller
     ) {
         $date = Carbon::now()->subMonth(2);
         if (true == $showAll) {
-            $date = 0;
+            //earliest day possible
+            //works with both mysql and pgsql
+            $date = '1900-01-01';
         }
 
         $patient = User::with(
@@ -241,7 +243,7 @@ class NotesController extends Controller
                     $q->where('logged_from', '=', 'manual_input')
                         ->where('performed_at', '>=', $date)
                         ->with('meta')
-                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type, lv_activities.id'))
                         ->orderBy('performed_at', 'desc');
                 },
                 'appointments' => function ($q) use ($date) {
@@ -530,16 +532,13 @@ class NotesController extends Controller
                                 ->withInput();
                         }
 
+                        //'reached' | 'not-reached'
                         $call->status = $input['call_status'];
 
                         //Updates when the patient was successfully contacted last
                         //use $note->created_at, in case we are editing a note
                         $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
-
-                        //took this from below :)
-                        if (auth()->user()->hasRole('provider')) {
-                            $this->patientRepo->updateCallLogs($patient->patientInfo, true, true, $note->performed_at);
-                        }
+                        $this->patientRepo->updateCallLogs($patient->patientInfo, true, true, $note->performed_at);
                     } else {
                         $call->status = 'done';
                     }
@@ -806,11 +805,11 @@ class NotesController extends Controller
     {
         return Practice::whereId($patient->program_id)
             ->where(
-                function ($q) {
-                    $q->where('name', '=', 'phoenix-heart')
-                        ->orWhere('name', '=', 'demo');
-                }
-            )
+                           function ($q) {
+                               $q->where('name', '=', 'phoenix-heart')
+                                   ->orWhere('name', '=', 'demo');
+                           }
+                       )
             ->exists();
     }
 

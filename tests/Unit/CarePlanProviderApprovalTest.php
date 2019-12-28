@@ -16,14 +16,12 @@ use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class CarePlanProviderApprovalTest extends TestCase
 {
+    use \App\Traits\Tests\UserHelpers;
     use CarePlanHelpers;
-    
-    use UserHelpers;
 
     /**
      * @var CarePlan
@@ -39,7 +37,7 @@ class CarePlanProviderApprovalTest extends TestCase
      * @var
      */
     protected $patient;
-    
+
     /**
      * @var Practice
      */

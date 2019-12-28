@@ -53,8 +53,6 @@ abstract class BaseScoutSearch implements ScoutSearch
 
     /**
      * How long to store in cache for.
-     *
-     * @return int
      */
     public function duration(): int
     {
@@ -63,8 +61,6 @@ abstract class BaseScoutSearch implements ScoutSearch
 
     /**
      * Search using given term.
-     *
-     * @param string $term
      *
      * @return mixed
      */
@@ -75,15 +71,13 @@ abstract class BaseScoutSearch implements ScoutSearch
                 self::key($term),
                 $this->duration(),
                 function () use ($term) {
-                    return $this->query($term);
+                    return $this->query($term)->first();
                 }
-                     );
+            );
     }
 
     /**
      * Essentially a static wrapper for find so that we can do `ProviderByName::first($term)`.
-     *
-     * @param string $term
      *
      * @return mixed
      */
@@ -93,8 +87,6 @@ abstract class BaseScoutSearch implements ScoutSearch
     }
 
     /**
-     * @param string $term
-     *
      * @return string
      */
     public function key(string $term)
@@ -104,8 +96,6 @@ abstract class BaseScoutSearch implements ScoutSearch
 
     /**
      * The name of this search. Will be used in cache keys, tags.
-     *
-     * @return string
      */
     public function name(): string
     {
@@ -114,8 +104,6 @@ abstract class BaseScoutSearch implements ScoutSearch
 
     /**
      * Tags for this search.
-     *
-     * @return array
      */
     public function tags(): array
     {
