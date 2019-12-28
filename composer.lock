@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "50825d989017cc86532f877e83a07c4d",
+    "content-hash": "c3aedf0deaaeb6741053592269ae8d56",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -657,14 +657,11 @@
         },
         {
             "name": "circlelinkhealth/core",
-            "version": "1.31",
+            "version": "v1.32",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "483be4ac83a25c50cb64474c1034878d2af50f05"
-            },
-            "require": {
-                "venturecraft/revisionable": "*"
+                "reference": "07ab1482f85d3d51e4fd806d74ab4d918710aed5"
             },
             "type": "library",
             "extra": {
@@ -690,7 +687,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-29T15:46:51+00:00"
+            "time": "2019-12-28T08:02:24+00:00"
         },
         {
             "name": "circlelinkhealth/cpmmigrations",
@@ -724,11 +721,11 @@
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.5.4",
+            "version": "v1.5.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "4e3650229e104eacba6fd286d96fad7eeb5fc408"
+                "reference": "a02cad3eb253208a0329e23e2df5e528554c6fa4"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
@@ -761,7 +758,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-11-27T01:40:43+00:00"
+            "time": "2019-12-26T21:24:37+00:00"
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
@@ -9166,59 +9163,6 @@
             "time": "2017-03-13T22:00:13+00:00"
         },
         {
-            "name": "venturecraft/revisionable",
-            "version": "1.33.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/VentureCraft/revisionable.git",
-                "reference": "31034cf307808eae0bf776e9c13793495d7f19f3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/VentureCraft/revisionable/zipball/31034cf307808eae0bf776e9c13793495d7f19f3",
-                "reference": "31034cf307808eae0bf776e9c13793495d7f19f3",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "~4.0|~5.0|~5.1|^6.0",
-                "laravel/framework": "~5.4|^6.0",
-                "php": ">=5.4.0"
-            },
-            "require-dev": {
-                "orchestra/testbench": "~3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/migrations"
-                ],
-                "psr-0": {
-                    "Venturecraft\\Revisionable": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Chris Duell",
-                    "email": "me@chrisduell.com"
-                }
-            ],
-            "description": "Keep a revision history for your models without thinking, created as a package for use with Laravel",
-            "homepage": "http://github.com/venturecraft/revisionable",
-            "keywords": [
-                "Audit",
-                "ardent",
-                "history",
-                "laravel",
-                "model",
-                "revision"
-            ],
-            "time": "2019-10-27T06:37:42+00:00"
-        },
-        {
             "name": "vlucas/phpdotenv",
             "version": "v2.6.1",
             "source": {
@@ -13188,6 +13132,59 @@
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
             "time": "2019-06-13T22:48:21+00:00"
+        },
+        {
+            "name": "venturecraft/revisionable",
+            "version": "1.33.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/VentureCraft/revisionable.git",
+                "reference": "31034cf307808eae0bf776e9c13793495d7f19f3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/VentureCraft/revisionable/zipball/31034cf307808eae0bf776e9c13793495d7f19f3",
+                "reference": "31034cf307808eae0bf776e9c13793495d7f19f3",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~4.0|~5.0|~5.1|^6.0",
+                "laravel/framework": "~5.4|^6.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/migrations"
+                ],
+                "psr-0": {
+                    "Venturecraft\\Revisionable": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Duell",
+                    "email": "me@chrisduell.com"
+                }
+            ],
+            "description": "Keep a revision history for your models without thinking, created as a package for use with Laravel",
+            "homepage": "http://github.com/venturecraft/revisionable",
+            "keywords": [
+                "Audit",
+                "ardent",
+                "history",
+                "laravel",
+                "model",
+                "revision"
+            ],
+            "time": "2019-10-27T06:37:42+00:00"
         },
         {
             "name": "webmozart/assert",
