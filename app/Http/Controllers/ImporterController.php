@@ -46,8 +46,6 @@ class ImporterController extends Controller
             ->with('billingProvider')
             ->get()
             ->transform(function (ImportedMedicalRecord $summary) {
-                $summary['flag'] = false;
-
                 $mr = $summary->medicalRecord();
 
                 if ( ! $mr) {
@@ -80,6 +78,7 @@ class ImporterController extends Controller
                     return $m->first_name.$m->last_name;
                 });
 
+                $summary['flag'] = false;
                 if ($providers->count() > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
                     $summary['flag'] = true;
                 }
