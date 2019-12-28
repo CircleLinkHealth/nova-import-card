@@ -151,7 +151,7 @@ class WorkScheduleController extends Controller
 
         if ( ! $holiday) {
             $errors['holiday'] = 'This holiday does not exist.';
-
+            //@todo:return response here
             return redirect()->route('care.center.work.schedule.index')
                 ->withErrors($errors)
                 ->withInput();
@@ -160,7 +160,7 @@ class WorkScheduleController extends Controller
         if (auth()->user()->nurseInfo) {
             if ($holiday->nurse_info_id != auth()->user()->nurseInfo->id) {
                 $errors['holiday'] = 'This holiday does not belong to you.';
-
+                //@todo:return response here
                 return redirect()->route('care.center.work.schedule.index')
                     ->withErrors($errors)
                     ->withInput();
@@ -236,20 +236,20 @@ class WorkScheduleController extends Controller
         ])
             ->get()
             ->sum(function ($window) {
-                    return Carbon::createFromFormat(
+                return Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_end
                     )->diffInHours(Carbon::createFromFormat(
                         'H:i:s',
                         $window->window_time_start
                     ));
-                }) + Carbon::createFromFormat(
+            }) + Carbon::createFromFormat(
                     'H:i',
                     $workScheduleData['window_time_end']
                 )->diffInHours(Carbon::createFromFormat(
-                'H:i',
-                $workScheduleData['window_time_start']
-            ));
+                    'H:i',
+                    $workScheduleData['window_time_start']
+                ));
     }
 
     public function getSelectedNurseCalendarData(Request $request)
