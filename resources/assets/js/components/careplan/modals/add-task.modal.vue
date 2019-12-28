@@ -62,18 +62,30 @@
                                 </v-select>
                             </td>
                             <td>
-                                <input class="form-control" type="date" name="scheduled_date" v-model="action.data.date"
+                                <span class="asap_label" style="font-weight: bold">ASAP</span>
+                                <a data-toggle="tooltip" data-placement="top"
+                                   style="color: #000;"
+                                   title="Tick to schedule as:'As soon as possible'">
+                                    <input v-model="action.data.asapChecked"
+                                           id="asap"
+                                           type="checkbox"
+                                           name="asap_check"
+                                           style="float: right; margin-top: -18px; display: block;"
+                                           :disabled="action.disabled">
+                                </a>
+
+                                <input class="form-control height-40" type="date" name="scheduled_date" v-model="action.data.date"
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
                                 <input class="form-control" type="time" name="window_start"
                                        v-model="action.data.startTime"
-                                       :disabled="action.disabled" required/>
+                                       :disabled="action.data.asapChecked || action.disabled" required/>
                             </td>
                             <td>
                                 <input class="form-control" type="time" name="window_end"
                                        v-model="action.data.endTime"
-                                       :disabled="action.disabled" required/>
+                                       :disabled="action.data.asapChecked || action.disabled" required/>
                             </td>
                             <td>
                                 <input class="form-control" type="text" name="text" v-model="action.data.text"
@@ -176,6 +188,7 @@
         },
         data() {
             return {
+                asapChecked: 0,
                 errors: {
                     submit: null
                 },
@@ -261,8 +274,7 @@
                         if (type.value === "call") {
                             this.actions[actionIndex].data.type = 'call';
                             this.actions[actionIndex].data.subType = null;
-                        }
-                        else {
+                        } else {
                             this.actions[actionIndex].data.type = 'task';
                             this.actions[actionIndex].data.subType = type.value;
                         }
@@ -332,6 +344,7 @@
                                 window_end: data.endTime,
                                 attempt_note: data.text,
                                 is_manual: data.isManual,
+                                asap: data.asapChecked,
                                 family_override: data.familyOverride
                             };
                         });
@@ -375,11 +388,9 @@
 
                                             if (familyOverrideError) {
                                                 msg += CALL_MUST_OVERRIDE_WARNING;
-                                            }
-                                            else if (Array.isArray(action.errors)) {
+                                            } else if (Array.isArray(action.errors)) {
                                                 msg += action.errors.join(', ');
-                                            }
-                                            else {
+                                            } else {
                                                 const errorsMessages = Object.values(action.errors).map(x => x[0]).join(', ');
                                                 msg += errorsMessages;
                                             }
@@ -389,8 +400,7 @@
                                                 type: 'error',
                                                 noTimeout: true
                                             });
-                                        }
-                                        else {
+                                        } else {
                                             Event.$emit('notifications-add-action-modal:create', {
                                                 text: `Action[${index + 1}]: Created successfully`,
                                                 noTimeout: true
@@ -400,13 +410,11 @@
 
                                     });
 
-                                }
-                                else {
+                                } else {
                                     this.clearOpenModal();
                                 }
 
-                            }
-                            else {
+                            } else {
                                 throw new Error('Could not create call. Patient already has a scheduled call')
                             }
                         }).catch(err => {
@@ -429,13 +437,11 @@
                                     const errors = err.response.data.errors;
                                     if (Array.isArray(errors)) {
                                         msg += `: ${errors.join(', ')}`;
-                                    }
-                                    else {
+                                    } else {
                                         const errorsMessages = Object.values(errors).map(x => x[0]).join(', ');
                                         msg += `: ${errorsMessages}`;
                                     }
-                                }
-                                else if (err.response.data.message) {
+                                } else if (err.response.data.message) {
                                     msg += `: ${err.response.data.message}`;
                                 }
 
@@ -611,11 +617,9 @@
         white-space: nowrap;
         overflow: hidden;
     }
-
-    a.my-tool-tip {
-        float: right;
-        margin-right: 4px;
+    .asap_label {
+        margin-left: 67%;
+        position: absolute;
+        margin-top: -10%;
     }
-
-
 </style>

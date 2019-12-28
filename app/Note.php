@@ -6,11 +6,12 @@
 
 namespace App;
 
+use App\Contracts\AttachableToNotification;
 use App\Contracts\PdfReport;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;
-use App\Traits\IsAddendumable;
+use App\Traits\Addendumable;
 use App\Traits\NotificationAttachable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
@@ -84,10 +85,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $notifications_count
  * @property int|null $revision_history_count
  */
-class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport
+class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport, AttachableToNotification
 {
+    use Addendumable;
     use Filterable;
-    use IsAddendumable;
     use NotificationAttachable;
     use PdfReportTrait;
     use SoftDeletes;

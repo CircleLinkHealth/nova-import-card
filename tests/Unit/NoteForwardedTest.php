@@ -10,14 +10,13 @@ use App\Notifications\NoteForwarded;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Notification;
-use Tests\Helpers\UserHelpers;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class NoteForwardedTest extends TestCase
 {
     use
-        UserHelpers;
+        \App\Traits\Tests\UserHelpers;
     use WithoutMiddleware;
     protected $admin;
     protected $nurse;

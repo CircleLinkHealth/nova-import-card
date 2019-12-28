@@ -9,6 +9,7 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Titasgailius\SearchRelations\SearchesRelations;
 
@@ -114,6 +115,8 @@ class Nurse extends Resource
 
             Text::make('+ Days Payment', 'pay_interval')
                 ->rules('required'),
+
+            Number::make('Case Load Capacity', 'case_load_capacity'),
 
             Boolean::make('Is Demo?', 'is_demo'),
             Boolean::make('Variable Rate', 'is_variable_rate'),

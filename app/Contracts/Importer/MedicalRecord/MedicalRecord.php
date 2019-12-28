@@ -80,6 +80,8 @@ interface MedicalRecord
 
     public function getDocumentCustodian(): string;
 
+    public function getId(): ?int;
+
     public function getLocationId(): ?int;
 
     /**
@@ -93,6 +95,8 @@ interface MedicalRecord
     public function getPatient(): User;
 
     public function getPracticeId(): ?int;
+
+    public function getType(): ?string;
 
     /**
      * Guess Practice, Location and Billing Provider.

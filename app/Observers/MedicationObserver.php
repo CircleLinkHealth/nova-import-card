@@ -18,7 +18,7 @@ class MedicationObserver
      */
     public function creating(Medication $medication)
     {
-        if ($medication->name) {
+        if ( ! $medication->medication_group_id && $medication->name) {
             $medication->medication_group_id = MedicationGroupsMap::getGroup($medication->name);
         }
     }

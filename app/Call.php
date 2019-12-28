@@ -6,6 +6,8 @@
 
 namespace App;
 
+use App\Contracts\AttachableToNotification;
+use App\Traits\NotificationAttachable;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -42,6 +44,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\Note|null                                                                 $note
  * @property \CircleLinkHealth\Customer\Entities\User|null                                  $outboundUser
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAttemptNote($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCallTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCalledDate($value)
@@ -61,6 +64,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowEnd($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowStart($value)
  * @mixin \Eloquent
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newQuery()
@@ -71,13 +75,19 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereIsManual($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereSubType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereType($value)
+ *
  * @property int $asap
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAsap($value)
- * @property int|null $revision_history_count
+ *
+ * @property int|null                                                                                                        $revision_history_count
+ * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
+ * @property int|null                                                                                                        $notifications_count
  */
-class Call extends BaseModel
+class Call extends BaseModel implements AttachableToNotification
 {
     use Filterable;
+    use NotificationAttachable;
 
     //patient was reached/not reached but this call is to be ignored
     //eg. patient was reached but was busy, so ignore call from reached/not reached reports
@@ -104,6 +114,7 @@ class Call extends BaseModel
 
         'scheduler',
         'is_manual',
+        'asap',
 
         /*
         Mini-documentation for call statuses:
@@ -216,7 +227,6 @@ class Call extends BaseModel
      * Scope for calls for the given month.
      *
      * @param $builder
-     * @param Carbon $monthYear
      */
     public function scopeOfMonth($builder, Carbon $monthYear)
     {
@@ -264,5 +274,12 @@ class Call extends BaseModel
             'outboundUser.nurseInfo',
             'note',
         ]);
+    }
+
+    public function shouldSendLiveNotification(): bool
+    {
+        return $this->outbound_cpm_id !== auth()->id()
+            && true === $this->asap
+            && 'addendum_response' !== $this->sub_type;
     }
 }

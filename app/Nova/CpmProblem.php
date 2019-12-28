@@ -26,7 +26,7 @@ class CpmProblem extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name',
+        'id', 'name', 'default_icd_10_code',
     ];
 
     /**

@@ -6,15 +6,18 @@
 
 namespace App\Notifications;
 
+use App\Contracts\FaxableNotification;
+use App\Contracts\HasAttachment;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NoteForwarded extends Notification implements ShouldQueue
+class NoteForwarded extends Notification implements ShouldQueue, HasAttachment, FaxableNotification
 {
     use Queueable;
     public $attachment;
@@ -30,24 +33,23 @@ class NoteForwarded extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      *
-     * @param Note  $note
      * @param array $channels
      */
     public function __construct(
         Note $note,
         $channels = ['mail']
     ) {
-        $this->attachment = $this->note = $note;
+        $this->note = $note;
 
         $this->channels = array_merge($this->channels, $channels);
     }
 
     /**
-     * @return mixed
+     * Returns an Eloquent model.
      */
-    public function getAttachment()
+    public function getAttachment(): ?Model
     {
-        return $this->attachment;
+        return $this->note;
     }
 
     /**
@@ -99,26 +101,21 @@ class NoteForwarded extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'channels' => $this->channels,
-
+            'channels'    => $this->channels,
             'sender_id'   => auth()->id(),
             'sender_type' => auth()->check()
                 ? User::class
                 : null,
-            'sender_email' => optional(auth()->user())->email,
-
+            'sender_email'   => optional(auth()->user())->email,
             'receiver_type'  => get_class($notifiable),
             'receiver_id'    => $notifiable->id,
             'receiver_email' => $notifiable->email,
-
-            'email_body' => $this->getEmailBody(),
-            'dm_body'    => $this->getDMBody(),
-            'link'       => $this->note->link(),
-            'subject'    => $this->getSubject(),
-
-            'note_id' => $this->note->id,
-
-            'pathToPdf' => $this->pathToPdf,
+            'email_body'     => $this->getEmailBody(),
+            'dm_body'        => $this->getDMBody(),
+            'link'           => $this->note->link(),
+            'subject'        => $this->getSubject(),
+            'note_id'        => $this->note->id,
+            'pathToPdf'      => $this->pathToPdf,
         ];
     }
 
@@ -146,15 +143,13 @@ class NoteForwarded extends Notification implements ShouldQueue
      *
      * @param $notifiable
      *
-     * @return bool|string
+     * @return array
      */
-    public function toFax($notifiable)
+    public function toFax($notifiable = null) : array
     {
-        if ( ! $notifiable || ! $notifiable->fax) {
-            return false;
-        }
-
-        return $this->toPdf();
+        return [
+            'file' => $this->toPdf(),
+        ];
     }
 
     /**
