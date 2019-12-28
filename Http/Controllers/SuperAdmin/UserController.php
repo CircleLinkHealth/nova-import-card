@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Customer\Http\Controllers\SuperAdmin;
 
 use App\CLH\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateMultipleEnrollees;
 use App\Note;
 use Auth;
 use Carbon\Carbon;
@@ -151,6 +152,8 @@ class UserController extends Controller
 
     /**
      * Perform actions on multiple users.
+     *
+     * @param Request $request
      *
      * @return Response
      */
@@ -597,31 +600,45 @@ class UserController extends Controller
         //need to make sure that we are creating notes for participants
         //and withdrawn patients that are not already withdrawn
         $participantIds = User::ofType('participant')
+            ->select('id')
+            ->withCount(['inboundCalls'])
             ->whereHas('patientInfo', function ($query) {
-                                  $query->where('ccm_status', '!=', 'withdrawn');
+                                  $query->whereNotIn('ccm_status', [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]);
                               })
             ->whereIn('id', $userIds)
-            ->select(['id'])
-            ->pluck('id')
-            ->all();
+            ->pluck('id', 'inbound_calls_count');
 
-        Patient::whereIn('user_id', $participantIds)
+        //See which patients are on first call to update statuses accordingly
+        list($withdrawn1stCall, $withdrawn) = $participantIds->partition(function($value, $key){
+            return $key <= 1;
+        });
+
+        Patient::whereIn('user_id', $withdrawn)
             ->update([
-                'ccm_status'       => 'withdrawn',
+                'ccm_status'       => Patient::WITHDRAWN,
                 'withdrawn_reason' => $withdrawnReason,
                 'date_withdrawn'   => Carbon::now()->toDateTimeString(),
             ]);
 
+        Patient::whereIn('user_id', $withdrawn1stCall)
+               ->update([
+                   'ccm_status'       => Patient::WITHDRAWN_1ST_CALL,
+                   'withdrawn_reason' => $withdrawnReason,
+                   'date_withdrawn'   => Carbon::now()->toDateTimeString(),
+               ]);
+
         $authorId = auth()->id();
 
         $notes = [];
-        foreach ($participantIds as $userId) {
+        foreach ($participantIds->all() as $count => $userId) {
             $notes[] = [
                 'patient_id'   => $userId,
                 'author_id'    => $authorId,
                 'logger_id'    => $authorId,
                 'body'         => $withdrawnReason,
                 'type'         => 'Other',
+                'created_at'   => Carbon::now(),
+                'updated_at'   => Carbon::now(),
                 'performed_at' => Carbon::now(),
             ];
         }

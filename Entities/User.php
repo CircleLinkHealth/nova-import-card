@@ -2052,6 +2052,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(Call::class, 'inbound_cpm_id', 'id');
     }
 
+    public function onFirstCall($isNoteCreatePageAndSuccessfullCall = false) : bool
+    {
+        $onFirstCall = 1;
+        if ($isNoteCreatePageAndSuccessfullCall){
+            $onFirstCall = 0;
+        }
+        return $this->inboundCalls()
+                    ->where('status', 'reached')->count() <= $onFirstCall;
+    }
+
     public function inboundScheduledCalls(Carbon $after = null)
     {
         return $this->inboundCalls()
