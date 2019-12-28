@@ -64,6 +64,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Scout\Searchable;
@@ -357,6 +358,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     notOfPracticeRequiringSpecialBhiConsent()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     ofPracticeRequiringSpecialBhiConsent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isNotDemo()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -1224,7 +1226,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return '';
         }
 
-        return $this->patientInfo->birth_date;
+        if (! is_null($this->patientInfo->birth_date)){
+            return $this->patientInfo->birth_date->toDateString();
+        }
+
+        return '';
     }
 
     public function getAgentEmail()
@@ -2509,6 +2515,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function regularDoctor()
     {
+        DB::table('users')->get();
         return $this->careTeamMembers()->where('type', '=', CarePerson::REGULAR_DOCTOR);
     }
 
@@ -2605,6 +2612,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'created_at'    => optional($this->created_at)->format('c') ?? null,
             'updated_at'    => optional($this->updated_at)->format('c') ?? null,
         ];
+    }
+
+    public function canSeePhi(){
+        return $this->hasPermission('phi.read');
+    }
+
+    public function setCanSeePhi(bool $shouldSee = true)
+    {
+        $phiRead = Permission::whereName('phi.read')->first();
+        if ($phiRead){
+            $this->attachPermission($phiRead, $shouldSee);
+        }
     }
 
     /**
@@ -3153,7 +3172,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! $this->patientInfo) {
             return '';
         }
-        $this->patientInfo->birth_date = str_replace('-', '/', $value);
+
+        if (! is_a($value, Carbon::class)){
+            $value = Carbon::parse($value);
+        }
+
+        $this->patientInfo->birth_date = $value;
         $this->patientInfo->save();
 
         return true;
