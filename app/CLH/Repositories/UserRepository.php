@@ -395,6 +395,16 @@ class UserRepository
             ) {
                 continue 1;
             }
+
+            if ('ccm_status' == $key) {
+                $ccmStatus = $params->get($key);
+                if (Patient::WITHDRAWN == $ccmStatus && $user->onFirstCall()) {
+                    $ccmStatus = Patient::WITHDRAWN_1ST_CALL;
+                }
+                $user->patientInfo->ccm_status = $ccmStatus;
+                continue;
+            }
+
             if ($params->get($key)) {
                 $user->patientInfo->$key = $params->get($key);
             }

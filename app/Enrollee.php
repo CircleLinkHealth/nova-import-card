@@ -339,6 +339,7 @@ class Enrollee extends BaseModel
         if (empty($this->agent_details)) {
             return null;
         }
+
         if ( ! array_key_exists($key, $this->agent_details)) {
             return null;
         }
