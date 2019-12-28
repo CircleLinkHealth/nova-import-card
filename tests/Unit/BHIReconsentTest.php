@@ -10,6 +10,7 @@ use App\AppConfig;
 use App\Call;
 use App\Models\CPM\CpmProblem;
 use App\Services\Calls\SchedulerService;
+use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\CarePerson;
