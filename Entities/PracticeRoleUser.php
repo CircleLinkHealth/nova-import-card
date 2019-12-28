@@ -31,13 +31,13 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereUserId($value)
  * @mixin \Eloquent
  * @property-read int|null $revision_history_count
- * @property int $id
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereId($value)
  * @property int $key_id
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PracticeRoleUser whereKeyId($value)
  */
 class PracticeRoleUser extends BaseModel
 {
+    protected $primaryKey = 'key_id';
+    
     protected $fillable = [
         'program_id',
         'user_id',

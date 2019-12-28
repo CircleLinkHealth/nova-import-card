@@ -545,6 +545,12 @@ class UserController extends Controller
             $wpUser->setBillingProviderid($request->input('provider_id'));
         }
 
+        if ($request->has('provider_id')) {
+            $wpUser->setBillingProviderid($request->input('provider_id'));
+        }
+
+        $wpUser->setCanSeePhi($request->has('can_see_phi'));
+        
         return redirect()->back()->with('messages', ['successfully updated user']);
     }
 

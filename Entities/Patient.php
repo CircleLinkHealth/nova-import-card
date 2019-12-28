@@ -189,6 +189,7 @@ class Patient extends BaseModel
     ];
 
     protected $dates = [
+        'birth_date',
         'consent_date',
         'date_withdrawn',
         'date_paused',
@@ -242,6 +243,7 @@ class Patient extends BaseModel
         'next_call_id',
         'family_id',
         'date_welcomed',
+        'is_awv'
     ];
 
     /**
