@@ -2525,7 +2525,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function regularDoctor()
     {
-        DB::table('users')->get();
         return $this->careTeamMembers()->where('type', '=', CarePerson::REGULAR_DOCTOR);
     }
 
