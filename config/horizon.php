@@ -99,7 +99,7 @@ return [
                 'queue'         => ['high'],
                 'balance'       => 'simple',
                 'min-processes' => 2,
-                'max-processes' => 7,
+                'max-processes' => 3,
                 'tries'         => 1,
                 'timeout'       => 30,
             ],
