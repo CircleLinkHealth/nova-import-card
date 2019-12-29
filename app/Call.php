@@ -83,6 +83,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call calledLastThreeMonths()
  */
 class Call extends BaseModel implements AttachableToNotification
 {
@@ -221,6 +223,22 @@ class Call extends BaseModel implements AttachableToNotification
     public function schedulerUser()
     {
         return $this->belongsTo(User::class, 'scheduler', 'id');
+    }
+
+    /**
+     * Get all calls that happened in the last 3 months.
+     *
+     * @param $builder
+     */
+    public function scopeCalledLastThreeMonths($builder)
+    {
+        $builder->whereNotNull('called_date')
+            ->where(
+                    'called_date',
+                    '>=',
+                    Carbon::now()->subMonth(3)->startOfMonth()->startOfDay()
+                )
+            ->where('called_date', '<=', Carbon::now()->endOfDay());
     }
 
     /**
