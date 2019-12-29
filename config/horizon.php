@@ -58,7 +58,7 @@ return [
     */
 
     'trim' => [
-        'recent' => 1440,
+        'recent' => 60,
         'failed' => 10080,
     ],
 
@@ -84,8 +84,6 @@ return [
                 'timeout'    => 300,
             ],
         ],
-        'production' => [
-        ],
         'staging' => [
             'supervisor-1' => [
                 'connection'    => 'redis',
@@ -101,18 +99,18 @@ return [
                 'queue'         => ['high'],
                 'balance'       => 'simple',
                 'min-processes' => 2,
-                'max-processes' => 7,
+                'max-processes' => 3,
                 'tries'         => 1,
                 'timeout'       => 30,
             ],
         ],
-        'worker' => [
+        'production_v3' => [
             'supervisor-1' => [
                 'connection'    => 'redis',
-                'queue'         => ['default', 'low', 'demanding'],
+                'queue'         => ['default'],
                 'balance'       => 'auto',
-                'min-processes' => 1,
-                'max-processes' => 2,
+                'min-processes' => 3,
+                'max-processes' => 6,
                 'tries'         => 1,
                 'timeout'       => 60,
             ],
@@ -120,10 +118,19 @@ return [
                 'connection'    => 'redis',
                 'queue'         => ['high'],
                 'balance'       => 'simple',
-                'min-processes' => 2,
-                'max-processes' => 7,
+                'min-processes' => 4,
+                'max-processes' => 10,
                 'tries'         => 1,
-                'timeout'       => 30,
+                'timeout'       => 40,
+            ],
+            'supervisor-3' => [
+                'connection'    => 'redis',
+                'queue'         => ['low', 'demanding'],
+                'balance'       => 'auto',
+                'min-processes' => 1,
+                'max-processes' => 4,
+                'tries'         => 1,
+                'timeout'       => 60,
             ],
         ],
     ],

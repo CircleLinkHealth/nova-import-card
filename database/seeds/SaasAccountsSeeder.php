@@ -14,7 +14,7 @@ class SaasAccountsSeeder extends Seeder
      */
     public function run()
     {
-        SaasAccount::create(
+        SaasAccount::updateOrCreate(
             [
                 'name' => 'CircleLink Health',
             ]

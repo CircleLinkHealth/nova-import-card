@@ -321,8 +321,8 @@
                 this.tableData = []
                 this.url = null;
                 this.$refs.tblBillingReport.setPage(1)
-                this.retrieve()
                 this.getCounts()
+                this.retrieve()
             },
             detachChargeableService(e) {
                 if (e) e.preventDefault()
@@ -696,18 +696,19 @@
             this.selectedMonth = (this.months[0] || {}).label;
             this.selectedPractice = this.practices[0].id;
 
-            this.retrieve();
+            // this.retrieve();
 
             //todo
             //this.getChargeableServices();
 
-            this.getCounts();
+            // this.getCounts();
 
             Event.$on('vue-tables.pagination', (page) => {
                 const $table = this.$refs.tblBillingReport;
                 if (page === $table.totalPages) {
                     console.log('next page clicked');
                     this.retrieve();
+                    this.getCounts()
                 }
             })
         }

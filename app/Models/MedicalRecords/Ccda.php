@@ -12,14 +12,16 @@ use App\DirectMailMessage;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Entities\CcdaRequest;
+use App\Exceptions\InvalidCcdaException;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\TargetPatient;
 use App\Traits\Relationships\BelongsToPatientUser;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
@@ -56,6 +58,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \App\Importer\Models\ItemLogs\ProblemLog[]|\Illuminate\Database\Eloquent\Collection    $problems
  * @property \App\Importer\Models\ItemLogs\ProviderLog[]|\Illuminate\Database\Eloquent\Collection   $providers
  * @property \App\Models\MedicalRecords\ImportedMedicalRecord                                       $qaSummary
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda onlyTrashed()
  * @method static bool|null restore()
@@ -81,17 +84,20 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda withoutTrashed()
  * @mixin \Eloquent
+ *
  * @property int|null                                                                       $direct_mail_message_id
  * @property int|null                                                                       $batch_id
  * @property \App\DirectMailMessage                                                         $directMessage
  * @property \App\Media[]|\Illuminate\Database\Eloquent\Collection                          $media
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda exclude($value = array())
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereDirectMailMessageId($value)
+ *
  * @property \App\EligibilityBatch|null                        $batch
  * @property \CircleLinkHealth\Customer\Entities\Practice|null $practice
  * @property int|null                                          $allergies_count
@@ -140,7 +146,6 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         'billing_provider_id',
         'user_id',
         'patient_id',
-        'vendor_id',
         'source',
         'imported',
         'json',
@@ -164,12 +169,12 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         }
 
         if ( ! $this->json) {
-            $xml = $this->getMedia('ccd')->first()->getFile();
-            if ( ! is_string($xml) || strlen($xml) < 1 || false == stripos($xml, '<ClinicalDocument')) {
-                throw new \Exception("CCD appears to be invalid. CCD: `$xml`");
+            if ($parsedJson = $this->getParsedJson()) {
+                $this->json = $parsedJson;
+                $this->save();
+            } else {
+                $this->parseToJson();
             }
-            $this->json = $this->parseToJson($xml);
-            $this->save();
         }
 
         return json_decode($this->json);
@@ -198,16 +203,26 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
         $ccda = static::query()->create($attributes);
 
-        \Storage::disk('storage')->put("ccda-{$ccda->id}.xml", $xml);
-        $ccda->addMedia(storage_path("ccda-{$ccda->id}.xml"))->toMediaCollection('ccd');
+        $filename = null;
+        if (array_key_exists('filename', $attributes)) {
+            $filename = $attributes['filename'];
+            unset($attributes['filename']);
+        }
+
+        if ( ! $filename) {
+            $filename = "ccda-{$ccda->id}.xml";
+        }
+
+        \Storage::disk('storage')->put($filename, $xml);
+        $ccda->addMedia(storage_path($filename))->toMediaCollection('ccd');
 
         return $ccda;
     }
 
     /**
-     * @return \App\EligibilityJob
+     * @throws \Exception
      */
-    public function createEligibilityJobFromMedicalRecord(): EligibilityJob
+    public function createEligibilityJobFromMedicalRecord(): ?EligibilityJob
     {
         $adapter = new CcdaToEligibilityJobAdapter($this, $this->practice, $this->batch);
 
@@ -219,9 +234,6 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         return $this->belongsTo(DirectMailMessage::class);
     }
 
-    /**
-     * @return string
-     */
     public function getDocumentCustodian(): string
     {
         if ($this->document->first()) {
@@ -233,8 +245,6 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
     /**
      * Get the Logger.
-     *
-     * @return MedicalRecordLogger
      */
     public function getLogger(): MedicalRecordLogger
     {
@@ -243,12 +253,15 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
     /**
      * Get the User to whom this record belongs to, if one exists.
-     *
-     * @return \CircleLinkHealth\Customer\Entities\User
      */
     public function getPatient(): User
     {
         return $this->patient;
+    }
+
+    public function getReferringProviderName()
+    {
+        return $this->referring_provider_name;
     }
 
     public function importedMedicalRecord()
@@ -295,34 +308,57 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         return $this->hasOne(TargetPatient::class);
     }
 
-    protected function parseToJson($xml)
+    protected function parseToJson()
     {
-        $id = $this->id ?? '';
+        $xmlMedia = $this->getMedia('ccd')->first();
+        $xml      = $xmlMedia->getFile();
+        if ( ! is_string($xml) || strlen($xml) < 1 || false == stripos($xml, '<ClinicalDocument')) {
+            $this->json   = null;
+            $this->status = 'invalid';
+            $this->save();
+            throw new InvalidCcdaException($this->id);
+        }
 
         if ( ! is_string($xml) || strlen($xml) < 1 || false == stripos($xml, '<ClinicalDocument')) {
-            throw new \Exception("CCD with ${id} appears to be invalid.");
+            throw new \Exception("CCD with ID {$this->id} appears to be invalid.");
         }
 
-        $client = new Client([
-            'base_uri' => config('services.ccd-parser.base-uri'),
+        $xmlPath = storage_path("ccdas/import/media_{$xmlMedia->id}.xml");
+        file_put_contents($xmlPath, $xml);
+
+        $jsonPath = storage_path("ccdas/import/ccda_{$this->id}.json");
+
+        Artisan::call('ccd:parse', [
+            'ccdaId'     => $this->id,
+            'inputPath'  => $xmlPath,
+            'outputPath' => $jsonPath,
         ]);
 
-        $response = $client->request('POST', '/api/parser', [
-            'headers' => ['Content-Type' => 'text/xml', 'CCDA-ID' => $this->id ?? 'N/A'],
-            'body'    => $xml,
-        ]);
-
-        $responseBody = (string) $response->getBody();
-
-        if ( ! in_array($response->getStatusCode(), [200, 201])) {
-            $data = json_encode([
-                $response->getStatusCode(),
-                $response->getReasonPhrase(),
-            ]);
-
-            throw new \Exception("Could not process ccd ${id}. Data: ${data}");
+        if (file_exists($xmlPath)) {
+            \Storage::delete($xmlPath);
         }
 
-        return $responseBody;
+        if (file_exists($jsonPath)) {
+            $this->json = file_get_contents($jsonPath);
+            $this->save();
+            \Storage::delete($jsonPath);
+
+            return;
+        }
+
+        $json = $this->getParsedJson();
+
+        $this->json = $json;
+        $this->save();
+    }
+
+    /**
+     * Gets the parsed json from the parser's table, if it was already parsed.
+     *
+     * @return string|null
+     */
+    private function getParsedJson()
+    {
+        return optional(DB::table(config('ccda-parser.db_table'))->where('ccda_id', '=', $this->id)->first())->result;
     }
 }

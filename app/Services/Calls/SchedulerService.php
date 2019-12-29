@@ -139,7 +139,7 @@ class SchedulerService
         })
             ->where('inbound_cpm_id', $patient->id)
             ->whereIn('status', ['reached', 'not reached'])
-            ->where('called_date', '!=', '')
+            ->whereNotNull('called_date')
             ->where('called_date', '<', Carbon::today()->startOfDay()->toDateTimeString())
             ->orderBy('called_date', 'desc')
             ->first();

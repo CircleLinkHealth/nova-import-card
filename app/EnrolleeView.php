@@ -6,8 +6,8 @@
 
 namespace App;
 
+use CircleLinkHealth\Core\Entities\SqlViewModel;
 use CircleLinkHealth\Core\Filters\Filterable;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\EnrolleeView.
@@ -136,10 +136,37 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed|null $agent_details
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereAgentDetails($value)
+ *
+ * @property int|null $family_enrollee_id
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereFamilyEnrolleeId($value)
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property int|null                                                                       $revision_history_count
  */
-class EnrolleeView extends Model
+class EnrolleeView extends SqlViewModel
 {
     use Filterable;
+
+    public $phi = [
+        'first_name',
+        'last_name',
+        'address',
+        'address_2',
+        'city',
+        'state',
+        'zip',
+        'primary_phone',
+        'cell_phone',
+        'home_phone',
+        'other_phone',
+        'primary_insurance',
+        'secondary_insurance',
+        'tertiary_insurance',
+        'has_copay',
+        'email',
+        'agent_details',
+    ];
 
     protected $table = 'enrollees_view';
 }

@@ -1,5 +1,5 @@
-<div id="bloodhound" class="col-lg-4 col-sm-8 col-md-10 col-xs-7">
-    <input id="patient-search-text-box" class="form-control typeahead form-item-spacing col-md-12" type="text"
+<div id="bloodhound">
+    <input id="patient-search-text-box" class="form-control typeahead form-item-spacing" type="text"
            name="users" autofocus="autofocus"
            placeholder="{{ !empty($patient->id) ? $patient->getFullName() : 'Enter a Patient Name, MRN or DOB (mm-dd-yyyy)' }}">
     <div class="search loader" style="display: none;"></div>
@@ -10,6 +10,8 @@
 
         #bloodhound {
             position: relative;
+            display: inline-block;
+            width: 100%;
         }
 
         .search.loader {

@@ -4,11 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Providers\CpmArtisanServiceProvider;
+use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use Circlelinkhealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
-use CircleLinkHealth\SqlViews\Providers\SqlViewsServiceProvider;
 
 return [
     /*
@@ -213,7 +214,8 @@ return [
         NurseInvoicesDeferredBindingsServiceProvider::class,
         EligibilityServiceProvider::class,
         CardServiceProvider::class,
-        SqlViewsServiceProvider::class,
+        CcdaParserProcessorProvider::class,
+        CpmArtisanServiceProvider::class,
     ],
 
     /*
@@ -251,7 +253,7 @@ return [
         'Password'     => Illuminate\Support\Facades\Password::class,
         'Queue'        => Illuminate\Support\Facades\Queue::class,
         'Redirect'     => Illuminate\Support\Facades\Redirect::class,
-        'Redis'        => Illuminate\Support\Facades\Redis::class,
+        'RedisManager' => Illuminate\Support\Facades\Redis::class,
         'Request'      => Illuminate\Support\Facades\Request::class,
         'Response'     => Illuminate\Support\Facades\Response::class,
         'Route'        => Illuminate\Support\Facades\Route::class,
@@ -287,4 +289,25 @@ return [
     |
     */
     'app_version' => env('APP_VERSION', ''),
+
+    // Hide these variables from debug screens (Whoops, Raygun, etc)
+    'debug_blacklist' => [
+        '_COOKIE' => array_keys($_COOKIE),
+        '_SERVER' => array_keys($_SERVER),
+        '_ENV'    => array_except(array_keys($_ENV), ['APP_ENV']),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Nurse Pay Algorithm
+    |--------------------------------------------------------------------------
+    |
+    | Adjusted for new CCM code G2058.
+    |
+    | Choose between option_1 and option_2.
+    |
+    */
+    'nurse_ccm_plus_pay_algo'             => env('NURSE_CCM_PLUS_PAY_ALGO', 'option_1'),
+    'nurse_ccm_plus_enabled_for_all'      => env('NURSE_CCM_PLUS_ENABLED_FOR_ALL', false),
+    'nurse_ccm_plus_enabled_for_user_ids' => env('NURSE_CCM_PLUS_ENABLED_FOR_USER_IDS', null),
 ];

@@ -51,6 +51,8 @@ class AttachBillableProblemsToLastMonthSummary extends Command
      */
     public function handle()
     {
+        ini_set('max_execution_time', 600);
+
         $practiceIds = array_filter(explode(',', $this->argument('practiceIds')));
 
         $datePassed = $this->argument('date');
@@ -64,16 +66,16 @@ class AttachBillableProblemsToLastMonthSummary extends Command
                 function ($q) use ($practiceIds) {
                     $q->whereIn('id', $practiceIds);
                 }
-                )
+            )
             ->chunk(
-                5,
+                1,
                 function ($practices) use ($month) {
                     foreach ($practices as $practice) {
                         $this->comment("BEGIN processing $practice->display_name for {$month->toDateString()}");
 
                         $this->billablePatientsRepo->billablePatients($practice->id, $month)
                             ->chunk(
-                                50,
+                                30,
                                 function ($users) {
                                     foreach ($users as $user) {
                                         $pms = $user->patientSummaries->first();
@@ -82,7 +84,7 @@ class AttachBillableProblemsToLastMonthSummary extends Command
                                             $pms->reset();
                                             $pms->save();
                                         }
-    
+
                                         if ((bool) $this->option('reset-actor')) {
                                             $pms->actor_id = null;
                                             $pms->save();
@@ -90,16 +92,16 @@ class AttachBillableProblemsToLastMonthSummary extends Command
 
                                         AttachBillableProblemsToSummary::dispatch(
                                             $pms
-                                                                   );
+                                        );
                                     }
                                 }
-                                                       );
+                            );
 
                         $this->output->success(
                             "END processing $practice->display_name for {$month->toDateString()}"
-                            );
+                        );
                     }
                 }
-                );
+            );
     }
 }
