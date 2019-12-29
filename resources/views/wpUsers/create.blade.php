@@ -26,13 +26,13 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-2">{!! Form::label('username', 'Username (for login)') !!}</div>
-                                        <div class="col-xs-12 col-md-6">{!! Form::text('username', '', ['class' => 'form-control' ]) !!}</div>
+                                        <div class="col-xs-12 col-md-6">{!! Form::text('username', '', ['class' => 'form-control', 'placeholder' => 'jane.doe678']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-2">{!! Form::label('email', 'Email:') !!}</div>
-                                        <div class="col-xs-12 col-md-6">{!! Form::text('email', '', ['class' => 'form-control' ]) !!}</div>
+                                        <div class="col-xs-12 col-md-6">{!! Form::text('email', '', ['class' => 'form-control', 'placeholder' => 'jane.doe@example.com']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -58,14 +58,14 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-2">{!! Form::label('first_name', 'First Name:') !!}</div>
-                                        <div class="col-xs-12 col-md-6">{!! Form::text('first_name', '', ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-12 col-md-6">{!! Form::text('first_name', '', ['class' => 'form-control', 'placeholder' => 'Jane']) !!}</div>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-12 col-md-2">{!! Form::label('last_name', 'Last Name:') !!}</div>
-                                        <div class="col-xs-12 col-md-6">{!! Form::text('last_name', '', ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-12 col-md-6">{!! Form::text('last_name', '', ['class' => 'form-control', 'placeholder' => 'Doe']) !!}</div>
                                     </div>
                                 </div>
                             </div>
