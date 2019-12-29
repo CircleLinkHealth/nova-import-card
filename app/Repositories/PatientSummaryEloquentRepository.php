@@ -17,6 +17,10 @@ use Illuminate\Support\Collection;
 
 class PatientSummaryEloquentRepository
 {
+    const MINUTES_20 = 1200;
+    const MINUTES_40 = 2400;
+    const MINUTES_60 = 3600;
+
     public $callRepo;
     public $patientRepo;
 
@@ -40,18 +44,18 @@ class PatientSummaryEloquentRepository
                         array_filter([$summary->problem_1, $summary->problem_2])
                     )
                         ->update(
-                               [
-                                   'billable' => false,
-                               ]
-                           );
+                            [
+                                'billable' => false,
+                            ]
+                        );
                 }
 
                 Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
                     ->update(
-                           [
-                               'billable' => true,
-                           ]
-                       );
+                        [
+                            'billable' => true,
+                        ]
+                    );
             }
         } else {
             $summary->approved = false;
@@ -88,10 +92,10 @@ class PatientSummaryEloquentRepository
             $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
                 ->orderBy('month_year', 'desc')
                 ->where(
-                                                     'month_year',
-                                                     '<=',
-                                                     $summary->month_year->copy()->subMonth()->startOfMonth()
-                                                 )
+                    'month_year',
+                    '<=',
+                    $summary->month_year->copy()->subMonth()->startOfMonth()
+                )
                 ->whereApproved(true)
                 ->with(['billableProblem1', 'billableProblem2'])
                 ->first();
@@ -265,20 +269,20 @@ class PatientSummaryEloquentRepository
         if ($summary->approved && ($summary->problem_1 || $summary->problem_2)) {
             Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
                 ->update(
-                       [
-                           'billable' => true,
-                       ]
-                   );
+                    [
+                        'billable' => true,
+                    ]
+                );
 
             Problem::whereNotIn(
                 'id',
                 array_filter([$summary->problem_1, $summary->problem_2])
             )
                 ->update(
-                       [
-                           'billable' => false,
-                       ]
-                   );
+                    [
+                        'billable' => false,
+                    ]
+                );
         }
 
         return $summary;
@@ -350,21 +354,21 @@ class PatientSummaryEloquentRepository
         return $patient->ccdProblems->where('cpm_problem_id', '!=', 1)
             ->where('is_monitored', '=', true)
             ->reject(
-                                        function ($problem) {
-                                            return ! validProblemName($problem->name);
-                                        }
-                                    )
+                function ($problem) {
+                    return ! validProblemName($problem->name);
+                }
+            )
             ->reject(
-                                        function ($problem) {
-                                            return ! $problem->icd10Code();
-                                        }
-                                    )
+                function ($problem) {
+                    return ! $problem->icd10Code();
+                }
+            )
             ->unique('cpm_problem_id')
             ->sortByDesc(
-                                        function ($ccdProblem) {
-                                            return optional($ccdProblem->cpmProblem)->weight;
-                                        }
-                                    )
+                function ($ccdProblem) {
+                    return optional($ccdProblem->cpmProblem)->weight;
+                }
+            )
             ->values();
     }
 
@@ -383,8 +387,11 @@ class PatientSummaryEloquentRepository
      */
     public function lacksProblemCodes(PatientMonthlySummary $summary)
     {
-        return ! $summary->billable_problem1_code || ! $summary->billable_problem2_code || $summary->billableBhiProblems(
-            )->whereNull('icd_10_code')->where('icd_10_code', '=', '')->exists();
+        return ! $summary->billable_problem1_code || ! $summary->billable_problem2_code || $summary->billableBhiProblems()->whereNull('icd_10_code')->where(
+            'icd_10_code',
+            '=',
+            ''
+        )->exists();
     }
 
     /**
@@ -494,10 +501,10 @@ class PatientSummaryEloquentRepository
             if ( ! $isValid) {
                 Problem::where('id', $summary->{"problem_${problemNo}"})
                     ->update(
-                           [
-                               'billable' => false,
-                           ]
-                       );
+                        [
+                            'billable' => false,
+                        ]
+                    );
                 $summary->{"problem_${problemNo}"} = null;
             }
         }
@@ -587,12 +594,14 @@ class PatientSummaryEloquentRepository
      */
     private function shouldAttachChargeableService(ChargeableService $service, PatientMonthlySummary $summary)
     {
-        return 'CPT 99484'        == $service->code && $summary->bhi_time >= 1200
-               || 'CPT 99490'     == $service->code && $summary->ccm_time >= 1200
-               || 'G0511'         == $service->code && $summary->ccm_time >= 1200
-               || 'Software-Only' == $service->code && $summary->patient->primaryPractice->hasServiceCode(
-                   'Software-Only'
-               ) && 0 == $summary->timeFromClhCareCoaches();
+        //FIXME: this is confusing. Might need a few extra parenthesis.
+        return ChargeableService::BHI                        == $service->code && $summary->bhi_time >= self::MINUTES_20
+               || ChargeableService::CCM                     == $service->code && $summary->ccm_time >= self::MINUTES_20
+               || ChargeableService::GENERAL_CARE_MANAGEMENT == $service->code && $summary->ccm_time >= self::MINUTES_20
+               || ChargeableService::CCM_PLUS_40             == $service->code && $summary->ccm_time >= self::MINUTES_40 && $summary->patient->primaryPractice->hasServiceCode(ChargeableService::CCM_PLUS_40)
+               || ChargeableService::CCM_PLUS_60             == $service->code && $summary->ccm_time >= self::MINUTES_60 && $summary->patient->primaryPractice->hasServiceCode(ChargeableService::CCM_PLUS_60)
+               || (ChargeableService::SOFTWARE_ONLY == $service->code && $summary->patient->primaryPractice->hasServiceCode(ChargeableService::SOFTWARE_ONLY)
+                  && 0 == $summary->timeFromClhCareCoaches());
     }
 
     /**

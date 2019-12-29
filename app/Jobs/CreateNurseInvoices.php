@@ -57,12 +57,8 @@ class CreateNurseInvoices implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     * @param array  $nurseUserIds
-     * @param bool   $sendToCareCoaches
-     * @param int    $requestedBy
-     * @param bool   $storeInvoicesForNurseReview
+     * @param int  $requestedBy
+     * @param bool $storeInvoicesForNurseReview
      */
     public function __construct(
         Carbon $startDate,
@@ -93,13 +89,15 @@ class CreateNurseInvoices implements ShouldQueue
         if ($invoices->isEmpty()) {
             \Log::info('Invoices not generated due to no data for selected nurses and range.');
 
-            return;
+            return null;
         }
 
         if ($this->requestedBy) {
             $link = $this->storeInJobsCompleted($invoices);
             $this->notifyRequestor($link);
         }
+
+        return $invoices;
     }
 
     /**
@@ -115,8 +113,6 @@ class CreateNurseInvoices implements ShouldQueue
 
     /**
      * Store in our DIY view cache.
-     *
-     * @param Collection $invoices
      *
      * @throws \Exception
      *
