@@ -104,6 +104,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download',
     ])->middleware('doNotCacheResponse');
 
+    Route::get('download-media-collection-zip/{collectionName}', [
+        'uses' => 'DownloadController@downloadUserMediaCollectionAsZip',
+        'as'   => 'download.collection-as-zip',
+    ])->middleware('doNotCacheResponse');
+
     Route::get('download-google-drive-csv/{filename}/{dir?}/{recursive?}', [
         'uses' => 'DownloadController@downloadCsvFromGoogleDrive',
         'as'   => 'download.google.csv',
