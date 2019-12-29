@@ -64,6 +64,10 @@
       "url": "./nova-components/ImportPracticeStaffCsv"
     },
     {
+      "type": "path",
+      "url": "./nova-components/GeneratePatientCallDataCsv"
+    },
+    {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-revisionable.git"
     },
@@ -144,7 +148,8 @@
     "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
     "wikimedia/composer-merge-plugin": "^1.4",
-    "yajra/laravel-datatables-oracle": "~8.0"
+    "yajra/laravel-datatables-oracle": "~8.0",
+    "circlelinkhealth/generate-patient-call-data-csv": "*"
   },
   "require-dev": {
     "ext-xdebug": "*",
