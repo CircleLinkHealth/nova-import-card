@@ -53,7 +53,7 @@ class ProtectPHITest extends TestCase
         $this->patient    = $this->createUser($this->practice->id, 'participant');
         $this->patientPhi = $this->collectPatientPhiValues();
 
-        $this->enrollee = factory(Enrollee::class)->create()->first();
+        $this->enrollee = factory(Enrollee::class)->create();
     }
 
     public function test_auth_user_cannot_see_phi_on_pages()
@@ -132,6 +132,7 @@ class ProtectPHITest extends TestCase
 
     public function test_trait_hides_phi_fields_correctly()
     {
+        auth()->login($this->admin);
         //User model
         $this->assertHiddenPhiForModel($this->patient);
 
