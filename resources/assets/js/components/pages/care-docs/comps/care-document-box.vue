@@ -109,8 +109,8 @@
                 type: Object,
                 required: false
             },
-            patient: {
-                type: Object,
+            patientId: {
+                type: String,
                 required: true
             }
         },
@@ -139,7 +139,7 @@
                 const query = {
                     file: this.doc
                 };
-                return rootUrl('/view-care-document/' + this.patient.id + '/' + this.doc.id);
+                return rootUrl('/view-care-document/' + this.patientId + '/' + this.doc.id);
             },
             downloadApi() {
                 if (! this.doc){
@@ -148,7 +148,7 @@
                 const query = {
                     file: this.doc
                 };
-                return rootUrl('/download-care-document/' + this.patient.id + '/' + this.doc.id);
+                return rootUrl('/download-care-document/' + this.patientId + '/' + this.doc.id);
             },
             openSendModal(channel) {
                 if (! this.doc){
@@ -178,7 +178,7 @@
                 this.loading = true;
 
                 return this.axios
-                    .post(rootUrl('/send-care-doc/' + this.patient.id + '/' + this.doc.id + '/' + this.channel + '/' + this.addressOrFax))
+                    .post(rootUrl('/send-care-doc/' + this.patientId + '/' + this.doc.id + '/' + this.channel + '/' + this.addressOrFax))
                     .then(response => {
                         this.loading = false;
                         this.showSendModal = false;

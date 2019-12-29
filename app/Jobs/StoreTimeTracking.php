@@ -6,10 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Services\ActivityService;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
@@ -26,6 +23,7 @@ class StoreTimeTracking implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
     // Do not count time for these routes
     const UNTRACKED_ROUTES = [
         'patient.activity.create',
@@ -34,14 +32,19 @@ class StoreTimeTracking implements ShouldQueue
     ];
 
     /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 3;
+
+    /**
      * @var ParameterBag
      */
     protected $params;
 
     /**
      * Create a new job instance.
-     *
-     * @param ParameterBag $params
      */
     public function __construct(ParameterBag $params)
     {
@@ -50,13 +53,11 @@ class StoreTimeTracking implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @param ActivityService $service
      */
-    public function handle(ActivityService $service)
+    public function handle()
     {
         $provider = User::with('nurseInfo')
-            ->find($this->params->get('providerId', null));
+            ->findOrFail($this->params->get('providerId', null));
 
         $isPatientBhi = User::isBhiChargeable()
             ->where('id', $this->params->get('patientId'))
@@ -70,23 +71,31 @@ class StoreTimeTracking implements ShouldQueue
             $pageTimer = $this->createPageTimer($activity);
 
             if ($this->isBillableActivity($pageTimer, $provider)) {
-                $newActivity = $this->createActivity($pageTimer, $provider, $isBehavioral);
-                $service->processMonthlyActivityTime([$this->params->get('patientId')]);
-                $this->handleNurseLogs($newActivity, $provider);
+                $newActivity = $this->createActivity($pageTimer, $isBehavioral);
+                ProcessMonthltyPatientTime::dispatchNow($this->params->get('patientId'));
+                ProcessNurseMonthlyLogs::dispatchNow($newActivity);
             }
         }
     }
 
     /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        return ['storetime', 'patient:'.$this->params->get('patientId'), 'provider:'.$this->params->get('providerId', null)];
+    }
+
+    /**
      * Create an Activity.
      *
-     * @param PageTimer $pageTimer
-     * @param User|null $provider
-     * @param bool      $isBehavioral
+     * @param bool $isBehavioral
      *
      * @return Activity|\Illuminate\Database\Eloquent\Model
      */
-    private function createActivity(PageTimer $pageTimer, User $provider = null, $isBehavioral = false)
+    private function createActivity(PageTimer $pageTimer, $isBehavioral = false)
     {
         return Activity::create(
             [
@@ -129,7 +138,7 @@ class StoreTimeTracking implements ShouldQueue
         $pageTimer->end_time          = $endTime->toDateTimeString();
         $pageTimer->url_full          = $activity['url'];
         $pageTimer->url_short         = $activity['url_short'];
-        $pageTimer->program_id        = $this->params->get('programId');
+        $pageTimer->program_id        = $this->params->get('programId', null);
         $pageTimer->ip_addr           = $this->params->get('ipAddr');
         $pageTimer->activity_type     = $activity['name'];
         $pageTimer->title             = $activity['title'];
@@ -140,28 +149,7 @@ class StoreTimeTracking implements ShouldQueue
     }
 
     /**
-     * @param Activity $activity
-     * @param User     $provider
-     */
-    private function handleNurseLogs(Activity $activity, User $provider)
-    {
-        $activity->load('patient.patientInfo');
-
-        $nurse = $provider->nurseInfo;
-
-        if ( ! is_a($nurse, Nurse::class)) {
-            return;
-        }
-
-        (new AlternativeCareTimePayableCalculator($nurse))
-            ->adjustNursePayForActivity($activity);
-    }
-
-    /**
      * Returns true if an activity should be created, and false if it should not.
-     *
-     * @param PageTimer $pageTimer
-     * @param User|null $provider
      *
      * @return bool
      */

@@ -6,7 +6,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use CircleLinkHealth\Core\Entities\SqlViewModel;
 
 /**
  * App\CarePlanPrintListView.
@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $approver_full_name
  * @property string|null $provider_full_name
  * @property int|null    $patient_ccm_time
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView query()
@@ -49,8 +50,17 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereProviderDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereProviderFullName($value)
  * @mixin \Eloquent
+ *
+ * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property int|null                                                                       $revision_history_count
  */
-class CarePlanPrintListView extends Model
+class CarePlanPrintListView extends SqlViewModel
 {
+    public $phi = [
+        'patient_full_name',
+        'patient_first_name',
+        'patient_last_name',
+    ];
+
     protected $table = 'careplan_print_list_view';
 }

@@ -31,6 +31,7 @@ class BloodPressure extends BaseStorageStrategy implements StorageStrategy
         } catch (\Exception $e) {
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
+                //                    @todo:heroku query to see if it exists, then attach
                 $errorCode = $e->errorInfo[1];
                 if (1062 == $errorCode) {
                     //do nothing

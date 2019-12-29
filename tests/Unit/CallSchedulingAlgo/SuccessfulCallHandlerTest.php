@@ -7,14 +7,14 @@
 namespace Tests\Unit\CallsAlgo;
 
 use App\Algorithms\Calls\SuccessfulHandler;
+use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class SuccessfulCallHandlerTest extends TestCase
 {
-    use UserHelpers;
+    use \App\Traits\Tests\UserHelpers;
 
     /**
      * @var \CircleLinkHealth\Customer\Entities\User

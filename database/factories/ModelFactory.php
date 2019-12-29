@@ -4,6 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+use App\Call;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
@@ -36,8 +37,9 @@ $factory->define(
     }
 );
 
-$factory->define(Patient::class, function (Faker\Generator $faker) {
+$factory->define(Patient::class, function (Faker\Generator $faker) use ($factory) {
     return [
+        'user_id'    => $factory->create(\CircleLinkHealth\Customer\Entities\User::class)->id,
         'birth_date' => $faker->dateTimeBetween('-90 years', '-30 years'),
         'ccm_status' => $faker->randomElement([Patient::ENROLLED, Patient::PAUSED, Patient::WITHDRAWN]),
         'gender'     => $faker->randomElement(['M', 'F']),
@@ -145,10 +147,10 @@ $factory->define(Invite::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(Enrollee::class, function (Faker\Generator $faker) {
+$factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factory) {
     return [
-        'provider_id' => 2430,
-        'practice_id' => 8,
+        'provider_id' => factory(\CircleLinkHealth\Customer\Entities\User::class)->create()->id,
+        'practice_id' => factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create()->id,
         'mrn'         => $faker->randomNumber(6),
         'dob'         => $faker->date('Y-m-d'),
 
@@ -259,5 +261,25 @@ $factory->define(TargetPatient::class, function (Faker\Generator $faker) {
         'ehr_patient_id'    => $faker->numberBetween(1, 2),
         'ehr_practice_id'   => $faker->numberBetween(1, 5000),
         'ehr_department_id' => $faker->numberBetween(1, 10),
+    ];
+});
+
+$factory->define(Call::class, function (Faker\Generator $faker) {
+    return [
+        'type'            => $faker->randomElement(['call', 'task']),
+        'sub_type'        => $faker->randomElement(['Call Back', 'CP Review', 'Get Appt.', 'Other Task', 'Refill', 'Send Info']),
+        'inbound_cpm_id'  => null, // to be filled in during test
+        'outbound_cpm_id' => null, // to be filled in during test
+        'scheduled_date'  => $faker->date(),
+        'window_start'    => '09:00',
+        'window_end'      => '17:00',
+        'attempt_note'    => $faker->text(30),
+        'is_manual'       => $faker->boolean,
+        'asap'            => $faker->boolean,
+        'note_id'         => null,
+        'is_cpm_outbound' => 1,
+        'service'         => 'phone',
+        'status'          => $faker->randomElement(['scheduled', 'reached', 'done']),
+        'scheduler'       => null, // to be filled in during test
     ];
 });

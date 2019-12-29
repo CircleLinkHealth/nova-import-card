@@ -54,7 +54,7 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
      *
      * @return EligibilityJob
      */
-    public function adaptToEligibilityJob(): EligibilityJob
+    public function adaptToEligibilityJob(): ?EligibilityJob
     {
         $this->decodedCcda = $this->ccda->bluebuttonJson();
 
@@ -69,7 +69,7 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
                                 ? false
                                 : $code['code'];
                     }
-                    )->filter()->values()->first() ?? ['name' => null, 'code' => null, 'code_system_name' => null];
+                )->filter()->values()->first() ?? ['name' => null, 'code' => null, 'code_system_name' => null];
 
                 return Problem::create(
                     [
@@ -107,7 +107,7 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
         if (is_array($provider) && array_key_exists('first_name', $provider) && array_key_exists(
             'last_name',
             $provider
-            )) {
+        )) {
             $providerFullName = "{$provider['first_name']} {$provider['last_name']}";
             $patient          = $patient->put('referring_provider_name', $providerFullName);
         } else {
@@ -145,11 +145,18 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
         return $patient;
     }
 
-    private function createEligibilityJob($patient)
+    private function createEligibilityJob($patient): ?EligibilityJob
     {
         $mrn = $patient['mrn_number'] ?? $patient['mrn'] ?? '';
 
         $hash = $this->practice->name.$patient['first_name'].$patient['last_name'].$mrn.$patient['city'].$patient['state'].$patient['zip'];
+
+        if (EligibilityJob::where([
+            ['batch_id', '=', $this->batch->id],
+            ['hash', '=', $hash],
+        ])->exists()) {
+            return null;
+        }
 
         return EligibilityJob::create(
             [
