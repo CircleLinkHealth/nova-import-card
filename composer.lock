@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e293ac0b69d0e040c867d5b0feab409d",
+    "content-hash": "02dcadd738be8bb168949383cd18f99d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -721,11 +721,11 @@
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.5.7",
+            "version": "v1.5.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "fae01a933b76e3c5fd0f55d7edf10db0475b96ce"
+                "reference": "cc061b077efdf71e32d1a370babe9f239444759f"
             },
             "require": {
                 "circlelinkhealth/core": "^1.0",
@@ -758,7 +758,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-12-28T16:18:27+00:00"
+            "time": "2019-12-29T04:34:03+00:00"
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
@@ -4735,7 +4735,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
+                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
                 "reference": "6a42f69cd6dd2e47724879f6234ce81b2cb688a2"
             },
             "dist": {
@@ -13460,7 +13460,8 @@
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
-        "xethron/migrations-generator": 20
+        "xethron/migrations-generator": 20,
+        "michalisantoniou6/laravel-cerberus": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
