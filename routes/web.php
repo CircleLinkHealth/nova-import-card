@@ -144,6 +144,16 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
     });
 
+    Route::group([
+        'prefix'     => 'patient-user',
+        'middleware' => ['auth', 'checkPatientUserData'],
+    ], function () {
+        Route::get('view-careplan', [
+            'uses' => 'PatientUserController@viewCareplan',
+            'as'   => 'patient-user.careplan',
+        ]);
+    });
+
     // API
     Route::group(['prefix' => 'api', 'middleware' => ['cacheResponse']], function () {
         Route::group(['prefix' => 'admin'], function () {

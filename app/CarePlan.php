@@ -12,6 +12,7 @@ use App\Models\Pdf;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
+use App\Notifications\NotifyPatientCarePlanApproved;
 use App\Rules\HasAtLeast2CcmOr1BhiProblems;
 use App\Rules\HasValidNbiMrn;
 use App\Services\CareplanService;
@@ -117,6 +118,11 @@ class CarePlan extends BaseModel implements PdfReport
         'created_at',
         'updated_at',
     ];
+
+    public function alertPatientAboutApproval()
+    {
+        $this->patient->notify(new NotifyPatientCarePlanApproved($this));
+    }
 
     public function carePlanTemplate()
     {

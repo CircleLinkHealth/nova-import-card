@@ -94,8 +94,8 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
                 : null,
             'sender_email' => optional(auth()->user())->email,
 
-            'receiver_type'  => $notifiable->id,
-            'receiver_id'    => get_class($notifiable),
+            'receiver_type'  => get_class($notifiable),
+            'receiver_id'    => $notifiable->id,
             'receiver_email' => $notifiable->email,
 
             'body'    => $this->getBody(),
