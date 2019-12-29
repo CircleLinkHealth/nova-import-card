@@ -718,15 +718,8 @@ AND patient_info.ccm_status = 'enrolled'"
         )
             ->getFile();
 
-        if ( ! $json) {
-            return response()->json([
-                'message' => "File does not exist for: '{$day->toDateString()}'",
-            ], 400);
-        }
-        if ( ! is_json($json)) {
-            return response()->json([
-                'message' => 'File retrieved is not in json format.',
-            ], 400);
+        if ( ! $json || ! is_json($json)) {
+            return collect();
         }
 
         return collect(json_decode($json, true));
