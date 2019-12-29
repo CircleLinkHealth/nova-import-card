@@ -7,6 +7,7 @@
 namespace Tests\Unit\CallsAlgo;
 
 use App\Algorithms\Calls\CallAlgoHelper;
+use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use Tests\TestCase;
 

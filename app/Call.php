@@ -296,6 +296,8 @@ class Call extends BaseModel implements AttachableToNotification
 
     public function shouldSendLiveNotification(): bool
     {
-        return true === $this->asap && 'addendum_response' !== $this->sub_type;
+        return $this->outbound_cpm_id !== auth()->id()
+            && true === $this->asap
+            && 'addendum_response' !== $this->sub_type;
     }
 }
