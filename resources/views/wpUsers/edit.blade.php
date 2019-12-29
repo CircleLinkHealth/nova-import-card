@@ -33,7 +33,7 @@
         }
     </style>
     @endpush
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="col-md-12">
                 <h1><span>Editing </span>{{ $patient->getFullName() }}</h1>
@@ -131,8 +131,6 @@
                                 <div class="form-group">
                                     <div class="col-xs-1">{!! Form::label('access_disabled', 'Access Disabled') !!}</div>
                                     <div class="col-xs-3">{!! Form::select('access_disabled', array('0' => 'No', '1' => 'Yes'), $patient->access_disabled, ['class' => 'form-control select-picker']) !!}</div>
-                                    <div class="col-xs-1">{!! Form::label('user_status', 'User Status:') !!}</div>
-                                    <div class="col-xs-3">{!! Form::select('user_status', array('0' => 'Inactive', '1' => 'Active'), $patient->user_status, ['class' => 'form-control select-picker']) !!}</div>
                                     <div class="col-xs-1">{!! Form::label('timezone', 'Timezone:') !!}</div>
                                     <div class="col-xs-3">{!! Form::select('timezone',
                                     [
@@ -164,25 +162,34 @@
                                 <div class="form-group">
                                     <div class="col-xs-1">{!! Form::label('home_phone_number', 'Home Phone Number:') !!}</div>
                                     <div class="col-xs-3">{!! Form::text('home_phone_number', $patient->getHomePhoneNumber(), ['class' => 'form-control']) !!}</div>
-                                    <div class="col-xs-2">{!! Form::label('can_see_phi', 'Grant access to see PHI:') !!}</div>
-                                    <div class="col-xs-1">{!! Form::checkbox('can_see_phi', 0, $patient->canSeePhi(), ['class' => 'form-check-input']) !!}</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-2">{!! Form::label('provider_id', 'Billing Provider:') !!}</div>
+                                    <div class="col-xs-4">{!! Form::select('provider_id', [], '', ['class' => 'form-control select-picker', 'style' => 'width:80%;', 'value' => $patient->getBillingProviderId()]) !!}</div>
                                 </div>
 
 
 
                                 <h2><a data-toggle="collapse" data-target="#programCollapse" class="">Practices</a></h2>
 
-                                <div id="programCollapse" class="collapse in" style="background:#888;padding:20px;">
+                                <div id="programCollapse" class="collapse in" style="background:#eeeeee;padding:20px;">
                                     <div class="form-group">
-                                        <div class="col-xs-2">{!! Form::label('program_id', 'Practice') !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('program_id', 'Primary Practice') !!}</div>
                                         <div class="col-xs-4">{!! Form::select('program_id', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                        <div class="col-xs-2">{!! Form::label('provider_id', 'Billing Provider:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::select('provider_id', [], '', ['class' => 'form-control select-picker', 'style' => 'width:80%;', 'value' => $patient->getBillingProviderId()]) !!}</div>
-                                        <div class="col-xs-6"></div>
-                                        <div class="col-xs-4">{!! Form::label('auto_attach_programs', 'Give access to all of ' . auth()->user()->saasAccountName() . '\'s practices') !!}</div>
-                                        <div class="col-xs-2">
-                                            {!! Form::checkbox('auto_attach_programs', 1, !! $patient->auto_attach_programs) !!}
+                                        <div class="col-xs-12 col-md-6">
+                                            <div class="row">
+                                                <div class="col-xs-8">{!! Form::label('auto_attach_programs', 'Give access to all of ' . auth()->user()->saasAccountName() . '\'s practices') !!}</div>
+                                                <div class="col-xs-4">
+                                                    {!! Form::checkbox('auto_attach_programs', 1, !! $patient->auto_attach_programs) !!}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-8">{!! Form::label('can_see_phi', 'Grant access to see PHI:') !!}</div>
+                                                <div class="col-xs-4">{!! Form::checkbox('can_see_phi', 0, $patient->canSeePhi(), ['class' => 'form-check-input']) !!}</div>
+                                            </div>
                                         </div>
+
                                         @push('scripts')
                                             <script>
                                                 (function () {
@@ -221,8 +228,7 @@
                                         <button class="btn-primary btn-xs" id="programsUncheckAll">Uncheck All</button>
 
                                         @foreach( $wpBlogs as $wpBlogId => $domain )
-                                            <div class="row" id="program_{{ $wpBlogId }}"
-                                                 style="border-bottom:1px solid #000;">
+                                            <div class="row" id="program_{{ $wpBlogId }}">
                                                 <div class="col-sm-2">
                                                     <div class="text-right">
                                                         @if( in_array($wpBlogId, $userPractices) )
@@ -232,7 +238,7 @@
                                                         @endif
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-10">{!! Form::label('Value', 'Program: '.$domain, array('class' => '')) !!}</div>
+                                                <div class="col-sm-6">{!! Form::label('Value', 'Program: '.$domain, array('class' => '')) !!}</div>
                                             </div>
                                         @endforeach
                                     </div>
