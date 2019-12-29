@@ -59,16 +59,18 @@ trait UserHelpers
     /**
      * @param int    $practiceId
      * @param string $roleName
+     * @param mixed  $ccmStatus
      */
     public function createUser(
         $practiceId = 8,
-        $roleName = 'provider'
+        $roleName = 'provider',
+        $ccmStatus = 'enrolled'
     ): User {
         $practiceId = parseIds($practiceId)[0];
         $roles      = (array) Role::whereName($roleName)->firstOrFail()->id;
 
         //creates the User
-        $user = $this->setupUser($practiceId, $roles);
+        $user = $this->setupUser($practiceId, $roles, $ccmStatus);
 
         $email     = $user->email;
         $locations = $user->locations->pluck('id')->all();
@@ -171,7 +173,7 @@ trait UserHelpers
         return (app(PatientWriteRepository::class))->updateCallLogs($patient, true);
     }
 
-    public function setupUser($practiceId, $roles)
+    public function setupUser($practiceId, $roles, $ccmStatus = 'enrolled')
     {
         $faker = Factory::create();
 
@@ -209,14 +211,14 @@ trait UserHelpers
                 //phones
                 'home_phone_number' => $workPhone,
 
-                'ccm_status' => 'enrolled',
+                'ccm_status' => $ccmStatus,
             ]
         );
 
         //create a user
         $user = (new UserRepository())->createNewUser(new User(), $bag);
 
-        $practice = Practice::with('locations')->find($practiceId);
+        $practice = Practice::with('locations')->findOrFail($practiceId);
 
         $locations = $practice->locations
             ->pluck('id')

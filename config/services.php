@@ -100,4 +100,11 @@ return [
     'awv' => [
         'url' => env('AWV_URL', ''),
     ],
+    
+    'phaxio' => [
+        'host' => 'https://api.phaxio.com/v2.1/',
+
+        'key'    => env('PHAXIO_KEY', null),
+        'secret' => env('PHAXIO_SECRET', null),
+    ]
 ];

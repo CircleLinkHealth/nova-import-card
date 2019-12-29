@@ -13,6 +13,7 @@ use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
+use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
@@ -80,6 +81,8 @@ class Kernel extends ConsoleKernel
         $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:01')->onOneServer();
 
         $schedule->command(TuneScheduledCalls::class)->dailyAt('00:05')->onOneServer();
+
+        $schedule->command(CheckEnrolledPatientsForScheduledCalls::class)->dailyAt('00:10')->onOneServer();
 
         //family calls will be scheduled in RescheduleMissedCalls
         //$schedule->command(SyncFamilialCalls::class)->dailyAt('00:30')->onOneServer();

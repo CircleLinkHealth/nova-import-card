@@ -6,6 +6,7 @@
 
 namespace Tests\Feature;
 
+use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
 

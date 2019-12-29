@@ -12,6 +12,7 @@ use App\Models\Pdf;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
+use App\Notifications\NotifyPatientCarePlanApproved;
 use App\Rules\HasAtLeast2CcmOr1BhiProblems;
 use App\Rules\HasValidNbiMrn;
 use App\Services\CareplanService;
@@ -118,6 +119,11 @@ class CarePlan extends BaseModel implements PdfReport
         'updated_at',
     ];
 
+    public function alertPatientAboutApproval()
+    {
+        $this->patient->notify(new NotifyPatientCarePlanApproved($this));
+    }
+
     public function carePlanTemplate()
     {
         return $this->belongsTo(CarePlanTemplate::class);
@@ -137,24 +143,12 @@ class CarePlan extends BaseModel implements PdfReport
             ]
         );
 
-        $cpmSettings = $this->patient->primaryPractice->cpmSettings();
-
-        $channels = [];
-
-        if ($cpmSettings->efax_pdf_careplan) {
-            $channels[] = FaxChannel::class;
-            Log::debug('CarePlan: Will forward to fax');
-        }
-
-        if ($cpmSettings->dm_pdf_careplan) {
-            $channels[] = DirectMailChannel::class;
-            Log::debug('CarePlan: Will forward to direct mail');
-        }
+        $channels = $this->notificationChannels();
 
         if (empty($channels)) {
             $patientId = $this->patient->id;
             $practice  = $this->patient->primaryPractice->name;
-            Log::debug(
+            Log::error(
                 "CarePlan: Will not be forwarded because primary practice[${practice}] for patient[${patientId}] does not have any enabled channels."
             );
 
@@ -164,7 +158,7 @@ class CarePlan extends BaseModel implements PdfReport
         $location = $this->patient->patientInfo->location;
         if (null == $location) {
             $patientId = $this->patient->id;
-            Log::debug(
+            Log::error(
                 "CarePlan: Will not be forwarded because patient[${patientId}] does not have a preferred contact location."
             );
 
@@ -258,6 +252,26 @@ class CarePlan extends BaseModel implements PdfReport
                 'patientId' => $this->user_id,
             ]
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function notificationChannels()
+    {
+        $channels = ['database'];
+
+        $cpmSettings = $this->patient->primaryPractice->cpmSettings();
+
+        if ($cpmSettings->efax_pdf_careplan) {
+            $channels[] = FaxChannel::class;
+        }
+
+        if ($cpmSettings->dm_pdf_careplan) {
+            $channels[] = DirectMailChannel::class;
+        }
+
+        return $channels;
     }
 
     /**
