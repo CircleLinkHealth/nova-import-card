@@ -35,7 +35,9 @@ class UserController extends Controller
 
         $wpUser = new User();
 
-        $roles = Role::pluck('display_name', 'id')->all();
+        $roles = Role::whereNotIn('name', array_merge(Role::CCM_TIME_ROLES, ['participant', 'care-center-external',
+                                                                             'med_assistant',
+                                                                             'provider','api-ccd-vendor', 'api-data-consumer', 'no-access', 'office-admin', 'practice-lead', 'office_admin', 'registered-nurse', 'no-ccm-care-center', 'specialist']))->orderBy('display_name')->pluck('display_name', 'id')->all();
 
         // set role
         $wpRole = '';
