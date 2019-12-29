@@ -19,7 +19,7 @@ use Faker\Factory;
 
 trait SetupTestCustomerTrait
 {
-    use UserHelpers;
+    use \App\Traits\Tests\UserHelpers;
 
     /**
      * @return \CircleLinkHealth\Customer\Entities\User

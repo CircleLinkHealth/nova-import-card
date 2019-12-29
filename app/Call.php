@@ -161,6 +161,16 @@ class Call extends BaseModel implements AttachableToNotification
         return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
     }
 
+    /**
+     * Mark the Notification this Model is attached to as read.
+     *
+     * @param $notifiable
+     */
+    public function markAttachmentNotificationAsRead($notifiable)
+    {
+        // TODO: Implement markAttachmentNotificationAsRead() method.
+    }
+
     public function note()
     {
         return $this->belongsTo(Note::class, 'note_id', 'id');
@@ -234,10 +244,10 @@ class Call extends BaseModel implements AttachableToNotification
     {
         $builder->whereNotNull('called_date')
             ->where(
-                    'called_date',
-                    '>=',
-                    Carbon::now()->subMonth(3)->startOfMonth()->startOfDay()
-                )
+                'called_date',
+                '>=',
+                Carbon::now()->subMonth(3)->startOfMonth()->startOfDay()
+            )
             ->where('called_date', '<=', Carbon::now()->endOfDay());
     }
 
