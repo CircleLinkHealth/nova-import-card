@@ -143,24 +143,12 @@ class CarePlan extends BaseModel implements PdfReport
             ]
         );
 
-        $cpmSettings = $this->patient->primaryPractice->cpmSettings();
-
-        $channels = [];
-
-        if ($cpmSettings->efax_pdf_careplan) {
-            $channels[] = FaxChannel::class;
-            Log::debug('CarePlan: Will forward to fax');
-        }
-
-        if ($cpmSettings->dm_pdf_careplan) {
-            $channels[] = DirectMailChannel::class;
-            Log::debug('CarePlan: Will forward to direct mail');
-        }
+        $channels = $this->notificationChannels();
 
         if (empty($channels)) {
             $patientId = $this->patient->id;
             $practice  = $this->patient->primaryPractice->name;
-            Log::debug(
+            Log::error(
                 "CarePlan: Will not be forwarded because primary practice[${practice}] for patient[${patientId}] does not have any enabled channels."
             );
 
@@ -170,7 +158,7 @@ class CarePlan extends BaseModel implements PdfReport
         $location = $this->patient->patientInfo->location;
         if (null == $location) {
             $patientId = $this->patient->id;
-            Log::debug(
+            Log::error(
                 "CarePlan: Will not be forwarded because patient[${patientId}] does not have a preferred contact location."
             );
 
@@ -267,6 +255,26 @@ class CarePlan extends BaseModel implements PdfReport
     }
 
     /**
+     * @return array
+     */
+    public function notificationChannels()
+    {
+        $channels = ['database'];
+
+        $cpmSettings = $this->patient->primaryPractice->cpmSettings();
+
+        if ($cpmSettings->efax_pdf_careplan) {
+            $channels[] = FaxChannel::class;
+        }
+
+        if ($cpmSettings->dm_pdf_careplan) {
+            $channels[] = DirectMailChannel::class;
+        }
+
+        return $channels;
+    }
+
+    /**
      * Returns the notifications that included this resource as an attachment.
      *
      * @return MorphMany
@@ -310,8 +318,6 @@ class CarePlan extends BaseModel implements PdfReport
      * Create a PDF of this resource and return the path to it.
      *
      * @param null $scale
-     *
-     * @return string
      */
     public function toPdf($scale = null): string
     {
@@ -392,6 +398,9 @@ class CarePlan extends BaseModel implements PdfReport
                 'mrn'             => ['required', new HasValidNbiMrn($patient)],
                 'name'            => 'required',
                 'billingProvider' => 'required|numeric',
+            ],
+            [
+                'phoneNumber.phone' => 'The patient has an invalid phone number.',
             ]
         );
     }

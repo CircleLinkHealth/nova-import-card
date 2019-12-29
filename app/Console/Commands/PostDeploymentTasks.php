@@ -7,6 +7,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 
 class PostDeploymentTasks extends Command
 {
@@ -38,34 +39,28 @@ class PostDeploymentTasks extends Command
      */
     public function handle()
     {
+        if (app()->environment(['local', 'testing'])) {
+            echo 'Not running because env is '.app()->environment().PHP_EOL;
+
+            return;
+        }
+
         collect(
             [
-                'horizon:terminate',
-                'nova:publish',
                 'view:clear',
+                'view:cache',
                 'route:cache',
                 'config:cache',
                 'opcache:clear',
                 'opcache:optimize',
+                'horizon:terminate',
                 'queue:restart',
             ]
         )->each(
             function ($command) {
-                if ( ! isQueueWorkerEnv() && in_array(
-                    $command,
-                    [
-                        'horizon:terminate',
-                        'queue:restart',
-                    ]
-                )) {
-                    //@todo: start using envoyer scripts
-                    //Do not run Queue commands on production, as Worker now takes care of Prod jobs
-                    return;
-                }
-
                 $this->output->note("Running ${command}");
 
-                \Artisan::call($command);
+                Artisan::call($command);
 
                 $this->output->success("Finished running ${command}");
             }

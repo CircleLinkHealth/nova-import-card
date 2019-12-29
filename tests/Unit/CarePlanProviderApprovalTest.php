@@ -16,14 +16,12 @@ use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class CarePlanProviderApprovalTest extends TestCase
 {
+    use \App\Traits\Tests\UserHelpers;
     use CarePlanHelpers;
-    
-    use UserHelpers;
 
     /**
      * @var CarePlan
@@ -39,7 +37,7 @@ class CarePlanProviderApprovalTest extends TestCase
      * @var
      */
     protected $patient;
-    
+
     /**
      * @var Practice
      */
@@ -169,7 +167,7 @@ class CarePlanProviderApprovalTest extends TestCase
         $this->carePlan->status = CarePlan::QA_APPROVED;
         $this->carePlan->save();
 
-        $response = $this->call('POST', route('patient.careplan.approve', ['patientId' => $this->patient->id]));
+        $response = $this->actingAs($this->provider)->call('POST', route('patient.careplan.approve', ['patientId' => $this->patient->id]));
 
         $response->assertStatus(302);
         $response->assertRedirect(route('patient.careplan.print', [

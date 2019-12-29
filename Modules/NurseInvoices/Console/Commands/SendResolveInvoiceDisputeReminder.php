@@ -129,7 +129,7 @@ class SendResolveInvoiceDisputeReminder extends Command
     public function unresolvedDisputesCount($month)
     {
         return NurseInvoice::where('month_year', $month)
-            ->whereHas('dispute', function ($q) use ($month) {
+            ->whereHas('disputes', function ($q) use ($month) {
                 $q->whereNull('resolved_at');
             })
             ->count();

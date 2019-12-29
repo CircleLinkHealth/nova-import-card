@@ -6,7 +6,6 @@
 
 namespace App\Http\Resources;
 
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\Resource;
 use Illuminate\Support\Collection;
 
@@ -27,11 +26,9 @@ class NurseInfo extends Resource
             $nurse['states'] = (new Collection($nurse['states']))->map(function ($s) {
                 return $s['code'];
             });
-            $user = User::find($nurse['user_id']);
-            if ($user) {
-                $nurse['practices'] = $user->practices()->get(['id'])->map(function ($p) {
-                    return $p->id;
-                });
+            $this->loadMissing('user.practices');
+            if ($this->user) {
+                $nurse['practices'] = $this->user->practices->pluck('id');
             }
         }
 

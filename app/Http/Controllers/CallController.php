@@ -129,7 +129,6 @@ class CallController extends Controller
      * This handler is only used by nurses, so calls scheduled from here
      * have is_manual = true.
      *
-     * @param Request $request
      * @param $patientId
      *
      * @return \Illuminate\Http\RedirectResponse
@@ -343,7 +342,6 @@ class CallController extends Controller
      * Software-Only role cannot change clh nurse to in-house nurse
      * CPM-660.
      *
-     * @param Call $call
      * @param $newCareCoachUserId
      *
      * @return bool
@@ -442,9 +440,9 @@ class CallController extends Controller
         if ('call' === $input['type'] && $patient->inboundCalls) {
             $scheduledCall = $patient->inboundCalls()
                 ->where(function ($q) {
-                                         $q->whereNull('type')
-                                             ->orWhere('type', '=', 'call');
-                                     })
+                    $q->whereNull('type')
+                        ->orWhere('type', '=', 'call');
+                })
                 ->where('status', '=', 'scheduled')
                 ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
                 ->first();
@@ -558,7 +556,6 @@ class CallController extends Controller
     }
 
     /**
-     * @param User $user
      * @param $input
      *
      * @return Call

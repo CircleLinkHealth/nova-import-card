@@ -15,6 +15,7 @@ use App\Importer\Models\ItemLogs\ProblemCodeLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
+use App\Search\ProviderByName;
 use App\Services\Eligibility\Entities\Problem as ProblemEntity;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -49,8 +50,6 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
     /**
      * Log Allergies Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
     {
@@ -99,8 +98,6 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
     /**
      * Log Demographics Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logDemographicsSection(): MedicalRecordLogger
     {
@@ -139,8 +136,6 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
     /**
      * Log Document Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logDocumentSection(): MedicalRecordLogger
     {
@@ -149,8 +144,6 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
     /**
      * Log Insurance Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logInsuranceSection(): MedicalRecordLogger
     {
@@ -181,8 +174,6 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
     /**
      * Log Medications Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
     {
@@ -214,8 +205,6 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
     /**
      * Log Problems Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
     {
@@ -267,11 +256,29 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
     /**
      * Log Providers Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logProvidersSection(): MedicalRecordLogger
     {
+        $searchProvider = ProviderByName::first($this->medicalRecord->provider_name);
+
+        if ($searchProvider) {
+            $data['provider_id'] = $data['billing_provider_id'] = $searchProvider->id;
+            $data['practice_id'] = $searchProvider->program_id;
+            $data['location_id'] = optional($searchProvider->loadMissing('locations')->locations->first())->id;
+        }
+
+        if ($searchProvider) {
+            ProviderLog::updateOrCreate(
+                array_merge([
+                    'first_name' => $searchProvider->first_name,
+                    'last_name'  => $searchProvider->last_name,
+                ], $this->foreignKeys),
+                array_merge($data, $this->foreignKeys)
+            );
+
+            return $this;
+        }
+
         $delimiter = ' ';
 
         if (str_contains($this->medicalRecord->provider_name, ',')) {
@@ -317,7 +324,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         $provider = ProviderLog::create(array_merge([
             'first_name'  => trim($name[0] ?? ''),
             'last_name'   => trim($name[1] ?? ''),
-            'location_id' => $this->practice->primary_location_id ?? optional($this->practice->locations->first())->id,
+            'location_id' => $this->practice->primary_location_id ?? optional(optional($this->practice)->locations)->first()->id ?? null,
         ], $this->foreignKeys));
 
         return $this;

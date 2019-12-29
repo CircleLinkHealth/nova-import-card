@@ -6,10 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\AppConfig;
 use App\Importer\CarePlanHelper;
 use App\Models\PatientData\NBI\PatientData;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Console\Command;
 
@@ -38,7 +36,7 @@ class OverwriteNBIPatientMRN extends Command
     {
         $result = Patient::with('user')->whereHas('user', function ($q) {
             $q->ofType('participant')->whereHas('practices', function ($q) {
-                $q->where('name', CarePlanHelper::NBI_PRACTICE_NAME);
+                $q->where('practices.name', CarePlanHelper::NBI_PRACTICE_NAME);
             });
         })->whereNotIn('mrn_number', function ($q) {
             $q->select('mrn')->from((new PatientData())->getTable());

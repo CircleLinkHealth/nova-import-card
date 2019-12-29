@@ -87,7 +87,7 @@ if (isset($patient) && ! empty($patient)) {
                         <div style="margin-left: 40px">
                             <div>
                                 <div>
-                                    <care-docs-index :patient="{{$patient}}" awv-url="{{config('services.awv.url')}}" ref="CareDocs"></care-docs-index>
+                                    <care-docs-index patient-id="{{$patient->id}}" awv-url="{{config('services.awv.url')}}" ref="CareDocs"></care-docs-index>
                                 </div>
                             </div>
                         </div>

@@ -20,6 +20,7 @@ use App\Services\PatientService;
 use App\Services\PdfService;
 use Auth;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\AppConfig\PracticesRequiringMedicareDisclaimer;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -177,7 +178,7 @@ class PatientCareplanController extends Controller
         // create pdf for each user
         $p = 1;
         foreach ($users as $user_id) {
-            $user = User::with(['careTeamMembers', 'carePlan.pdfs'])->find($user_id);
+            $user = User::with(['careTeamMembers', 'carePlan.pdfs', 'primaryPractice'])->find($user_id);
 
             if ( ! $user) {
                 return response()->json("User with id: {$user->id} not found.");
@@ -193,18 +194,20 @@ class PatientCareplanController extends Controller
                 return false;
             }
 
-            $pageCount = 0;
+            $pageCount                    = 0;
+            $shouldShowMedicareDisclaimer = PracticesRequiringMedicareDisclaimer::shouldShowMedicareDisclaimer($user->primaryPractice->name);
 
             if ($request->filled('render') && 'html' == $request->input('render')) {
                 return view(
                     'wpUsers.patient.multiview',
                     [
-                        'careplans'    => [$user_id => $careplan],
-                        'isPdf'        => true,
-                        'letter'       => $letter,
-                        'problemNames' => $careplan['problem'],
-                        'careTeam'     => $user->careTeamMembers,
-                        'data'         => $careplanService->careplan($user_id),
+                        'careplans'                    => [$user_id => $careplan],
+                        'isPdf'                        => true,
+                        'letter'                       => $letter,
+                        'problemNames'                 => $careplan['problem'],
+                        'careTeam'                     => $user->careTeamMembers,
+                        'shouldShowMedicareDisclaimer' => $shouldShowMedicareDisclaimer,
+                        'data'                         => $careplanService->careplan($user_id),
                     ]
                 );
             }
@@ -217,13 +220,14 @@ class PatientCareplanController extends Controller
             $fileNameWithPath = $this->pdfService->createPdfFromView(
                 'wpUsers.patient.multiview',
                 [
-                    'careplans'    => [$user_id => $careplan],
-                    'isPdf'        => true,
-                    'letter'       => $letter,
-                    'problemNames' => $careplan['problem'],
-                    'careTeam'     => $user->careTeamMembers,
-                    'data'         => $careplanService->careplan($user_id),
-                    'pdfCareplan'  => $pdfCareplan,
+                    'careplans'                    => [$user_id => $careplan],
+                    'isPdf'                        => true,
+                    'letter'                       => $letter,
+                    'problemNames'                 => $careplan['problem'],
+                    'careTeam'                     => $user->careTeamMembers,
+                    'data'                         => $careplanService->careplan($user_id),
+                    'shouldShowMedicareDisclaimer' => $shouldShowMedicareDisclaimer,
+                    'pdfCareplan'                  => $pdfCareplan,
                 ],
                 null,
                 Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
@@ -293,8 +297,6 @@ class PatientCareplanController extends Controller
 
         return redirect()->route('patient.pdf.careplan.print', ['patientId' => $cp->user_id]);
     }
-
-    //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
 
     /**
      * Change CarePlan Mode to Web.
@@ -450,6 +452,7 @@ class PatientCareplanController extends Controller
         $insurancePolicies = $patient->ccdInsurancePolicies()->get();
 
         $contact_days_array = [];
+        $contactWindows     = [];
         if ($patient->patientInfo()->exists()) {
             $contactWindows     = $patient->patientInfo->contactWindows;
             $contact_days_array = $contactWindows->pluck('day_of_week')->toArray();
@@ -460,8 +463,6 @@ class PatientCareplanController extends Controller
             compact(
                 [
                     'patient',
-                    'userMeta',
-                    'userConfig',
                     'states',
                     'locations',
                     'timezones',
@@ -480,6 +481,8 @@ class PatientCareplanController extends Controller
             )
         );
     }
+
+    //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
 
     private function storeOrUpdateDemographics(
         Request $request
@@ -500,7 +503,7 @@ class PatientCareplanController extends Controller
         }
 
         //moving here to cover all cases
-        if ('withdrawn' == $params->get('ccm_status')) {
+        if (in_array($params->get('ccm_status'), [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
             if ('Other' == $params->get('withdrawn_reason')) {
                 $params->set('withdrawn_reason', $params->get('withdrawn_reason_other'));
             }
