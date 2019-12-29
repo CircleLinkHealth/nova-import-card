@@ -22,7 +22,7 @@ use Tests\TestCase;
 
 class BHIReconsentTest extends TestCase
 {
-    use \App\Traits\Tests\UserHelpers;
+    use UserHelpers;
 
     public function test_it_hides_flag_past_tomorrow_if_patient_has_more_calls_today_and_not_now_was_clicked()
     {
