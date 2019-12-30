@@ -85,8 +85,6 @@ const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './adm
 const PusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-notifications')
 const PusherSeeAllNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-see-all-notifications')
 
-import EventBus from './admin/time-tracker/comps/event-bus'
-import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
 
 Vue.component('billing-report', BillingComponent);
 Vue.component('component-proxy', ComponentProxy);
