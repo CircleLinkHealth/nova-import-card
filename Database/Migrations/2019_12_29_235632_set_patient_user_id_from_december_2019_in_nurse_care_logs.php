@@ -21,7 +21,11 @@ class SetPatientUserIdFromDecember2019InNurseCareLogs extends Migration
           ->chunk(50, function (\Illuminate\Support\Collection $list) {
               $list->each(function ($record) {
                   $activityId = $record->activity_id;
-                  $activity   = DB::table('lv_activities')->find($activityId);
+                  $activity   = DB::table('lv_activities')->whereExists(function ($query) {
+                      $query->select('id')
+                            ->from('users')
+                            ->whereRaw('lv_activities.patient_id = users.id');
+                  })->find($activityId);
                   if ( ! $activity) {
                       return;
                   }
