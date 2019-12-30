@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class SetPatientUserIdFromDecember2019InNurseCareLogs extends Migration
 {
+    const QUERY_FROM_DATE = '2019-12-01';
     const ACTIVITY_NEW_NOTE = 'Patient Note Creation';
     const NOTE_COMPLETE = 'complete';
     const CALL_REACHED = 'reached';
@@ -16,7 +17,7 @@ class SetPatientUserIdFromDecember2019InNurseCareLogs extends Migration
     public function up()
     {
         DB::table('nurse_care_rate_logs')
-          ->where('created_at', '>=', \Carbon\Carbon::parse('2019-12-01'))
+          ->where('created_at', '>=', \Carbon\Carbon::parse(self::QUERY_FROM_DATE))
           ->orderBy('created_at')
           ->chunk(50, function (\Illuminate\Support\Collection $list) {
               $list->each(function ($record) {
@@ -84,7 +85,7 @@ class SetPatientUserIdFromDecember2019InNurseCareLogs extends Migration
     public function down()
     {
         DB::table('nurse_care_rate_logs')
-          ->where('created_at', '>=', \Carbon\Carbon::parse('2019-12-01'))
+          ->where('created_at', '>=', \Carbon\Carbon::parse(self::QUERY_FROM_DATE))
           ->update([
               'patient_user_id' => null,
           ]);
