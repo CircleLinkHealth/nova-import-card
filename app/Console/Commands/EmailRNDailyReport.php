@@ -59,9 +59,14 @@ class EmailRNDailyReport extends Command
             $date = Carbon::parse($date);
         }
 
-        $this->report = $this->service->showDataFromS3($date);
+        $report = $this->service->showDataFromS3($date);
 
-        if ( ! $this->report) {
+        if ($report->isEmpty()) {
+            \Artisan::call(NursesPerformanceDailyReport::class);
+            $report = $this->service->showDataFromS3($date);
+        }
+
+        if ($report->isEmpty()) {
             $this->error('No data found for '.$date->toDateString());
 
             return;
@@ -86,10 +91,10 @@ class EmailRNDailyReport extends Command
             )
             ->chunk(
                 10,
-                function ($nurses) use (&$counter, &$emailsSent, $date) {
+                function ($nurses) use (&$counter, &$emailsSent, $date, $report) {
                     foreach ($nurses as $nurse) {
                         $this->warn("Processing $nurse->id");
-                        $reportDataForNurse = $this->report->where('nurse_id', $nurse->id)->first();
+                        $reportDataForNurse = $report->where('nurse_id', $nurse->id)->first();
 
                         //In case something goes wrong with nurses and states report, or transitioning to new metrics issues
                         if ( ! $reportDataForNurse || ! $this->validateReportData($reportDataForNurse)) {
