@@ -6,6 +6,7 @@
 
 namespace Tests\Feature;
 
+use App\AppConfig;
 use App\Call;
 use App\Jobs\CreateNurseInvoices;
 use App\Jobs\StoreTimeTracking;
@@ -17,7 +18,7 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Support\Facades\Config;
+use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Tests\TestCase;
 
@@ -1423,10 +1424,18 @@ class NursePaymentAlgo extends TestCase
         $nurse->nurseInfo->save();
 
         if ($enableCcmPlus) {
-            $current = Config::get('app.nurse_ccm_plus_enabled_for_user_ids', '');
-            Config::set('app.nurse_ccm_plus_enabled_for_user_ids', $current.(empty($current)
-                    ? ''
-                    : ',').$nurse->id);
+            $current = implode(',', NurseCcmPlusConfig::enabledForUserIds());
+
+            AppConfig::updateOrCreate(
+                [
+                    'config_key' => NurseCcmPlusConfig::NURSE_CCM_PLUS_ENABLED_FOR_USER_IDS,
+                ],
+                [
+                    'config_value' => $current.(empty($current)
+                            ? ''
+                            : ',').$nurse->id,
+                ]
+            );
         }
 
         return $nurse;

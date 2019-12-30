@@ -296,18 +296,4 @@ return [
         '_SERVER' => array_keys($_SERVER),
         '_ENV'    => array_except(array_keys($_ENV), ['APP_ENV']),
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Nurse Pay Algorithm
-    |--------------------------------------------------------------------------
-    |
-    | Adjusted for new CCM code G2058.
-    |
-    | Choose between option_1 and option_2.
-    |
-    */
-    'nurse_ccm_plus_pay_algo'             => env('NURSE_CCM_PLUS_PAY_ALGO', 'option_1'),
-    'nurse_ccm_plus_enabled_for_all'      => env('NURSE_CCM_PLUS_ENABLED_FOR_ALL', false),
-    'nurse_ccm_plus_enabled_for_user_ids' => env('NURSE_CCM_PLUS_ENABLED_FOR_USER_IDS', null),
 ];
