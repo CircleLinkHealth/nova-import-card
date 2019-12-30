@@ -9,6 +9,7 @@ namespace CircleLinkHealth\NurseInvoices;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use Illuminate\Support\Collection;
 
 class VariablePayCalculator
@@ -216,20 +217,18 @@ class VariablePayCalculator
 
     private function isAltAlgoEnabled()
     {
-        return 'option_1' !== config('app.nurse_ccm_plus_pay_algo');
+        return 'option_1' !== NurseCcmPlusConfig::getAlgorithm();
     }
 
     private function isNewNursePayAlgoEnabled($nurseUserId)
     {
-        if (config('app.nurse_ccm_plus_enabled_for_all')) {
+        if (NurseCcmPlusConfig::enabledForAll()) {
             return true;
         }
 
-        $enabledForUserIds = config('app.nurse_ccm_plus_enabled_for_user_ids');
+        $enabledForUserIds = NurseCcmPlusConfig::enabledForUserIds();
         if ($enabledForUserIds) {
-            $userIds = explode(',', $enabledForUserIds);
-
-            return in_array($nurseUserId, $userIds);
+            return in_array($nurseUserId, $enabledForUserIds);
         }
 
         return false;
