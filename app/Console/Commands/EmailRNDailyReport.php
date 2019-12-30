@@ -26,7 +26,7 @@ class EmailRNDailyReport extends Command
      *
      * @var string
      */
-    protected $signature = 'nurses:emailDailyReport {nurseUserIds? : Comma separated user IDs of nurses to email report to.} {date? : Date to generate report for in YYYY-MM-DD.}';
+    protected $signature = 'nurses:emailDailyReport {date? : Date to generate report for in YYYY-MM-DD.} {nurseUserIds? : Comma separated user IDs of nurses to email report to.} ';
 
     private $report;
     private $service;
@@ -61,6 +61,12 @@ class EmailRNDailyReport extends Command
 
         $this->report = $this->service->showDataFromS3($date);
 
+        if ( ! $this->report) {
+            $this->error('No data found for '.$date->toDateString());
+
+            return;
+        }
+
         $counter    = 0;
         $emailsSent = [];
 
@@ -79,9 +85,10 @@ class EmailRNDailyReport extends Command
                 }
             )
             ->chunk(
-                20,
+                10,
                 function ($nurses) use (&$counter, &$emailsSent, $date) {
                     foreach ($nurses as $nurse) {
+                        $this->warn("Processing $nurse->id");
                         $reportDataForNurse = $this->report->where('nurse_id', $nurse->id)->first();
 
                         //In case something goes wrong with nurses and states report, or transitioning to new metrics issues
@@ -157,6 +164,8 @@ class EmailRNDailyReport extends Command
                         ];
 
                         $nurse->notify(new NurseDailyReport($data, $date));
+
+                        $this->warn("Notified $nurse->id");
 
                         $emailsSent[] = [
                             'nurse' => $nurse->getFullName(),

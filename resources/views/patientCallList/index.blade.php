@@ -44,10 +44,6 @@ function formatTime($time)
                 margin-top: -2%;
             }
 
-            .dataTables_wrapper .dataTables_paginate {
-                visibility: hidden;
-            }
-
             .dataTables_wrapper .dataTables_length label {
                 padding-top: 10%;
             }
