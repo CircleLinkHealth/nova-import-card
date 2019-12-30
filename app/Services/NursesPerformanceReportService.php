@@ -73,7 +73,7 @@ class NursesPerformanceReportService
                 }
             )
             ->chunk(
-                20,
+                35,
                 function ($nurses) use (&$data, $date) {
                     $aggregatedTime = new AggregatedTotalTimePerNurse(
                         $nurses->pluck('id')->all(),
