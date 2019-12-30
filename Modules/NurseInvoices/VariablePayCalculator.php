@@ -62,22 +62,27 @@ class VariablePayCalculator
             $payForPatient = 0.0;
 
             $patientUserId = $p->first()->patient_user_id;
-            $patient = User::with('primaryPractice.chargeableServices')->find($patientUserId);
-            if ($this->isNewNursePayAlgoEnabled($nurseUserId) && is_a($patient, User::class) && $patient->primaryPractice->hasCCMPlusServiceCode()) {
-                $totalCcm = $patient->patientSummaryForMonth($this->startDate)->ccm_time;
-                $ranges = $this->separateTimeAccruedInRanges($p);
-                if ($this->isAltAlgoEnabled()) {
-                    $payForPatient = $this->getPayForPatientWithCcmPlusAltAlgo(
-                        $nurseHighRate,
-                        $nurseLowRate,
-                        $totalCcm,
-                        $ranges
-                    );
-                } else {
-                    $payForPatient = $this->getPayForPatientWithCcmPlusAlgo($nurseVisitFee, $totalCcm, $ranges);
-                }
-            } else {
+            if ( ! $patientUserId) {
+                //we reach here when we have old records
                 $payForPatient = $this->getPayForPatientWithDefaultAlgo($nurseHighRate, $nurseLowRate, $p);
+            } else {
+                $patient = User::with('primaryPractice.chargeableServices')->find($patientUserId);
+                if ($this->isNewNursePayAlgoEnabled($nurseUserId) && $patient->primaryPractice->hasCCMPlusServiceCode()) {
+                    $totalCcm = $patient->patientSummaryForMonth($this->startDate)->ccm_time;
+                    $ranges = $this->separateTimeAccruedInRanges($p);
+                    if ($this->isAltAlgoEnabled()) {
+                        $payForPatient = $this->getPayForPatientWithCcmPlusAltAlgo(
+                            $nurseHighRate,
+                            $nurseLowRate,
+                            $totalCcm,
+                            $ranges
+                        );
+                    } else {
+                        $payForPatient = $this->getPayForPatientWithCcmPlusAlgo($nurseVisitFee, $totalCcm, $ranges);
+                    }
+                } else {
+                    $payForPatient = $this->getPayForPatientWithDefaultAlgo($nurseHighRate, $nurseLowRate, $p);
+                }
             }
 
             $totalPay += $payForPatient;

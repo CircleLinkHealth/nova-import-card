@@ -138,7 +138,7 @@ class AlternativeCareTimePayableCalculator
         if ( ! empty($noteIds)) {
             $hasSuccessfulCall = Call::whereIn('note_id', $noteIds)
                 ->where('status', '=', Call::REACHED)
-                ->count();
+                ->count() > 0;
         }
 
         return $hasSuccessfulCall;
