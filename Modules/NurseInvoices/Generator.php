@@ -92,12 +92,9 @@ class Generator
                     $this->endDate
                 );
 
-                $variablePayMap = $variablePayCalculator->getForNurses();
-
                 $nurseSystemTimeMap->each(
                     function ($nurseAggregatedTotalTime) use (
                         $nurseUsers,
-                        $variablePayMap,
                         $invoices,
                         $variablePayCalculator
                     ) {
@@ -110,14 +107,9 @@ class Generator
                             throw new \Exception("User `$userId` not found");
                         }
 
-                        $variablePaySummary = $variablePayMap->filter(function ($f) use ($user) {
-                            return $f->nurse_id === $user->nurseInfo->id;
-                        });
-
                         $viewModel = $this->createViewModel(
                             $user,
                             $nurseAggregatedTotalTime,
-                            $variablePaySummary,
                             $variablePayCalculator
                         );
 
@@ -139,7 +131,6 @@ class Generator
     private function createViewModel(
         User $nurse,
         Collection $aggregatedTotalTime,
-        Collection $variablePaySummary,
         VariablePayCalculator $variablePayCalculator
     ) {
         return new Invoice(
@@ -147,7 +138,6 @@ class Generator
             $this->startDate,
             $this->endDate,
             $aggregatedTotalTime,
-            $variablePaySummary,
             $variablePayCalculator
         );
     }
@@ -192,23 +182,23 @@ class Generator
                 empty($this->nurseUserIds),
                 function ($q) {
                     $q->whereHas(
-                               'pageTimersAsProvider',
-                               function ($s) {
-                                   $s->whereBetween(
-                                       'start_time',
-                                       [
-                                           $this->startDate->copy()->startOfDay(),
-                                           $this->endDate->copy()->endOfDay(),
-                                       ]
-                                   );
-                               }
-                           )
+                        'pageTimersAsProvider',
+                        function ($s) {
+                            $s->whereBetween(
+                                'start_time',
+                                [
+                                    $this->startDate->copy()->startOfDay(),
+                                    $this->endDate->copy()->endOfDay(),
+                                ]
+                            );
+                        }
+                    )
                         ->whereHas(
-                                   'nurseInfo',
-                                   function ($s) {
-                                       $s->where('is_demo', false);
-                                   }
-                               );
+                            'nurseInfo',
+                            function ($s) {
+                                $s->where('is_demo', false);
+                            }
+                        );
                 }
             );
     }

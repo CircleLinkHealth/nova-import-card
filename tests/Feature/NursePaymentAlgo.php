@@ -6,6 +6,7 @@
 
 namespace Tests\Feature;
 
+use App\AppConfig;
 use App\Call;
 use App\Jobs\CreateNurseInvoices;
 use App\Jobs\StoreTimeTracking;
@@ -17,7 +18,7 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Support\Facades\Config;
+use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Tests\TestCase;
 
@@ -74,6 +75,53 @@ class NursePaymentAlgo extends TestCase
 
     /**
      * - Hourly Rate = 10$
+     * - High Rate = $30
+     * - Low Rate = $30
+     * - CCM Plus Algo - Variable Rate
+     * - CCM = 45 minutes
+     * - Total CPM time = 45 minutes
+     * - CCM Plus (G2058).
+     *
+     * Result: $20.83. ($30/hr in 0-20 ccm range) + ($30 + 20-40 ccm range) + ($10 * 5 minutes in 40-60 ccm range).
+     * yields $10.
+     *
+     * @throws \Exception
+     */
+    public function test_ccm_plus_algo_over_40()
+    {
+        $nurseHourlyRate = 10.0;
+        $practice        = $this->setupPractice(true);
+        $this->provider  = $this->createUser($practice->id);
+        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true);
+        $patient         = $this->setupPatient($practice);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        $this->addTime($nurse, $patient, 15, true, true);
+        $this->addTime($nurse, $patient, 10, true, false);
+        $this->addTime($nurse, $patient, 10, true, true);
+        $this->addTime($nurse, $patient, 10, true, false);
+
+        $invoices = (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoiceData = $invoices->first()->invoice_data;
+        $fixedRate   = $invoiceData['fixedRatePay'];
+        self::assertEquals(10, $fixedRate);
+
+        $pay = $invoiceData['baseSalary'];
+        self::assertEquals(20.83, $pay);
+    }
+
+    /**
+     * - Hourly Rate = 10$
      * - CCM Plus Algo - Variable Rate
      * - CCM = 25 minutes
      * - Total CPM time = 35 minutes
@@ -83,7 +131,7 @@ class NursePaymentAlgo extends TestCase
      *
      * @throws \Exception
      */
-    public function test_ccm_plus_algo_over_20_total_over_30()
+    public function test_ccm_plus_alt_algo_over_20_total_over_30()
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 10.0;
@@ -123,7 +171,7 @@ class NursePaymentAlgo extends TestCase
      *
      * @throws \Exception
      */
-    public function test_ccm_plus_algo_over_20_total_under_30()
+    public function test_ccm_plus_alt_algo_over_20_total_under_30()
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 10.0;
@@ -162,7 +210,7 @@ class NursePaymentAlgo extends TestCase
      *
      * @throws \Exception
      */
-    public function test_ccm_plus_algo_over_40()
+    public function test_ccm_plus_alt_algo_over_40()
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 10.0;
@@ -203,7 +251,7 @@ class NursePaymentAlgo extends TestCase
      *
      * @throws \Exception
      */
-    public function test_ccm_plus_algo_over_60()
+    public function test_ccm_plus_alt_algo_over_60()
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 10.0;
@@ -250,7 +298,7 @@ class NursePaymentAlgo extends TestCase
      *
      * @throws \Exception
      */
-    public function test_ccm_plus_algo_under_20_total_over_30()
+    public function test_ccm_plus_alt_algo_under_20_total_over_30()
     {
         $nurseHourlyRate = 10.0;
         $practice        = $this->setupPractice(true);
@@ -288,7 +336,7 @@ class NursePaymentAlgo extends TestCase
      *
      * @throws \Exception
      */
-    public function test_ccm_plus_algo_under_20_total_under_20()
+    public function test_ccm_plus_alt_algo_under_20_total_under_20()
     {
         $nurseHourlyRate = 10.0;
         $practice        = $this->setupPractice(true);
@@ -1199,14 +1247,17 @@ class NursePaymentAlgo extends TestCase
      * - Variable Pay = true.
      *
      * Two nurses, 1 patient with ccm plus algo.
-     * Nurse 1 has successful calls in 0-20 and 20-40 ranges.
-     * Nurse 2 has successful call in 0-20 range only.
+     * Nurse 1 has successful call in 0-20 range only.
+     * Nurse 2 has successful calls in 0-20 and 20-40 ranges.
      * Nurse 1 has 15 minutes in 0-20 range and 10 minutes in 20-40 range.
      * Nurse 2 has 5 minutes in 0-20 range and 10 minutes in 20-40 range.
      *
+     * NOTE: Nurse 2 gets paid for whole of 20-40 range since he/she is the only one with a successful call in that
+     * range.
+     *
      * Result:
-     * Nurse 1 -> $10: 15/20 * $12.50 vs minimum 30 minutes * $20
-     * Nurse 2 -> $10: 5/20: 5/20 * $12.50 + 10/20 * $12.50 vs minimum 30 minutes * $20
+     * Nurse 1 -> $10   : $9.375 (15/20 * $12.50) VS $10 (minimum 30 minutes * $20)
+     * Nurse 2 -> $15.63: $3.125 (5/20 * $12.50) + $12.50 (20/20 * $12.50) VS $10 (minimum 30 minutes * $20)
      */
     public function test_two_nurses_one_patient_one_nurse_has_more_successful_calls()
     {
@@ -1248,8 +1299,8 @@ class NursePaymentAlgo extends TestCase
         $pay             = $invoice2Data['baseSalary'];
 
         self::assertEquals(10.00, $fixedRatePay);
-        self::assertEquals(9.38, $variableRatePay);
-        self::assertEquals(10.00, $pay);
+        self::assertEquals(15.63, $variableRatePay);
+        self::assertEquals(15.63, $pay);
     }
 
     /**
@@ -1414,19 +1465,43 @@ class NursePaymentAlgo extends TestCase
         bool $variableRate = true,
         float $hourlyRate = 29.0,
         bool $enableCcmPlus = false,
-        float $visitFee = 12.50
+        float $visitFee = null
     ) {
         $nurse                              = $this->createUser($practiceId, 'care-center');
         $nurse->nurseInfo->is_variable_rate = $variableRate;
         $nurse->nurseInfo->hourly_rate      = $hourlyRate;
-        $nurse->nurseInfo->visit_fee        = $visitFee;
+        $nurse->nurseInfo->high_rate        = 30;
+        $nurse->nurseInfo->low_rate         = 10;
+
+        if ($visitFee) {
+            $nurse->nurseInfo->visit_fee = $visitFee;
+        }
+
         $nurse->nurseInfo->save();
 
-        if ($enableCcmPlus) {
-            $current = Config::get('app.nurse_ccm_plus_enabled_for_user_ids', '');
-            Config::set('app.nurse_ccm_plus_enabled_for_user_ids', $current.(empty($current)
-                    ? ''
-                    : ',').$nurse->id);
+        AppConfig::updateOrCreate(
+            [
+                'config_key' => NurseCcmPlusConfig::NURSE_CCM_PLUS_ENABLED_FOR_ALL,
+            ],
+            [
+                'config_value' => $enableCcmPlus
+                    ? 'true'
+                    : 'false',
+            ]
+        );
+
+        if ($enableCcmPlus && $visitFee) {
+            $current = implode(',', NurseCcmPlusConfig::altAlgoEnabledForUserIds());
+            AppConfig::updateOrCreate(
+                [
+                    'config_key' => NurseCcmPlusConfig::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS,
+                ],
+                [
+                    'config_value' => $current.(empty($current)
+                            ? ''
+                            : ',').$nurse->id,
+                ]
+            );
         }
 
         return $nurse;

@@ -43,10 +43,8 @@ class DetermineEnrollmentEligibility
 
     /**
      * @param $ehrPracticeId
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     * @param bool   $offset
-     * @param null   $batchId
+     * @param bool $offset
+     * @param null $batchId
      *
      * @throws \Exception
      */
@@ -60,6 +58,10 @@ class DetermineEnrollmentEligibility
         $departments = \Cache::tags(['athena_api', "ehr_practice_id:$ehrPracticeId"])->remember("athena_api:$ehrPracticeId:department_ids", 5, function () use ($ehrPracticeId) {
             return $this->api->getDepartmentIds($ehrPracticeId);
         });
+
+        if ( ! is_countable($departments)) {
+            throw new \Exception('Departments is not countable. response:'.json_encode($departments));
+        }
 
         $count = count($departments);
 

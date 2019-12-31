@@ -73,7 +73,7 @@ class Invoice extends ViewModel
     /**
      * @var Collection
      */
-    protected $variablePaySummary;
+    protected $variablePayForNurse;
     /**
      * @var mixed
      */
@@ -110,7 +110,6 @@ class Invoice extends ViewModel
         Carbon $startDate,
         Carbon $endDate,
         Collection $aggregatedTotalTime,
-        Collection $variablePaySummary,
         VariablePayCalculator $variablePayCalculator
     ) {
         $this->user                  = $user;
@@ -126,8 +125,14 @@ class Invoice extends ViewModel
         $this->nurseHourlyRate       = $user->nurseInfo->hourly_rate;
         $this->nurseVisitFee         = $user->nurseInfo->visit_fee;
         $this->nurseFullName         = $user->getFullName();
-        $this->variablePaySummary    = $variablePaySummary;
         $this->variablePayCalculator = $variablePayCalculator;
+
+        $variablePayMap     = $this->variablePayCalculator->getForNurses();
+        $variablePaySummary = $variablePayMap->filter(function ($f) use ($user) {
+            return $f->nurse_id === $user->nurseInfo->id;
+        });
+
+        $this->variablePayForNurse = $variablePaySummary;
 
         $this->determineBaseSalary();
     }
@@ -313,7 +318,7 @@ class Invoice extends ViewModel
             ];
 
             if ($this->variablePay) {
-                $towards = $this->variablePaySummary->first(
+                $towards = $this->variablePayForNurse->first(
                     function ($careLog) use ($dateStr) {
                         return 'accrued_towards_ccm' == $careLog->ccm_type && $careLog->date == $dateStr;
                     }
@@ -323,7 +328,7 @@ class Invoice extends ViewModel
                     ? round($towards->total_time / 3600, 1)
                     : 0;
 
-                $after = $this->variablePaySummary->first(
+                $after = $this->variablePayForNurse->first(
                     function ($careLog) use ($dateStr) {
                         return 'accrued_after_ccm' == $careLog->ccm_type && $careLog->date == $dateStr;
                     }
@@ -350,7 +355,7 @@ class Invoice extends ViewModel
     {
         if (is_null($this->totalTimeAfterCcm)) {
             $this->totalTimeAfterCcm = round(
-                $this->variablePaySummary
+                $this->variablePayForNurse
                     ->where('ccm_type', 'accrued_after_ccm')
                     ->sum('total_time') / 3600,
                 1
@@ -367,7 +372,7 @@ class Invoice extends ViewModel
     {
         if (is_null($this->totalTimeTowardsCcm)) {
             $this->totalTimeTowardsCcm = round(
-                $this->variablePaySummary
+                $this->variablePayForNurse
                     ->where('ccm_type', 'accrued_towards_ccm')
                     ->sum('total_time') / 3600,
                 1
@@ -459,7 +464,7 @@ class Invoice extends ViewModel
      */
     private function getVariableRatePay()
     {
-        return $this->variablePayCalculator->calculate($this->user, $this->variablePaySummary);
+        return $this->variablePayCalculator->calculate($this->user);
     }
 
     /**
