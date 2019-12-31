@@ -22,7 +22,7 @@ class CcmPlusAlgoEnabledForAll extends Migration
                   'config_key' => self::NURSE_CCM_PLUS_ENABLED_FOR_ALL,
               ],
               [
-                  'config_value' => 'true',
+                  'config_value' => 'false',
               ]
           );
 
