@@ -6,8 +6,10 @@
 
 namespace CircleLinkHealth\Customer\Providers;
 
+use CircleLinkHealth\CpmMigrations\Providers\CpmMigrationsServiceProvider;
 use CircleLinkHealth\Customer\Console\Commands\CreateOrReplacePatientAWVSurveyInstanceStatusTable;
 use CircleLinkHealth\Customer\Console\Commands\CreateRolesPermissionsMigration;
+use CircleLinkHealth\SqlViews\Providers\SqlViewsServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
@@ -33,6 +35,8 @@ class CustomerServiceProvider extends ServiceProvider
         $this->registerViews();
         $this->registerFactories();
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+        $this->app->register(CpmMigrationsServiceProvider::class);
+        $this->app->register(SqlViewsServiceProvider::class);
     }
 
     /**
