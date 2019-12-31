@@ -137,7 +137,13 @@ class VariablePayCalculator
             return $this->nurseCareRateLogs;
         }
 
-        $this->nurseCareRateLogs = NurseCareRateLog::whereIn('nurse_id', $this->nurseInfoIds)
+        $patientUserIds = NurseCareRateLog::whereIn('nurse_id', $this->nurseInfoIds)
+            ->select(['patient_user_id'])
+            ->distinct()
+            ->get()
+            ->toArray();
+
+        $this->nurseCareRateLogs = NurseCareRateLog::whereIn('patient_user_id', $patientUserIds)
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->get();
 
