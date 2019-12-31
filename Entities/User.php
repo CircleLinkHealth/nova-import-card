@@ -2624,7 +2624,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     public function canSeePhi(){
-        return $this->hasPermission('phi.read');
+        return Cache::remember("user_id:$this->id:can-see-phi", 2, function () {
+            return $this->hasPermission('phi.read');
+        });
     }
 
     public function setCanSeePhi(bool $shouldSee = true)
