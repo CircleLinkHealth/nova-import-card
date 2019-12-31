@@ -11,35 +11,19 @@ use App\AppConfig;
 class NurseCcmPlusConfig
 {
     /**
+     * This flag toggles ccm plus algorithm for specific nurses (comma separated).
+     */
+    const NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS = 'nurse_ccm_plus_alt_algo_enabled_for_user_ids';
+
+    /**
      * This flag toggles ccm plus algorithm for all nurses.
      */
     const NURSE_CCM_PLUS_ENABLED_FOR_ALL = 'nurse_ccm_plus_enabled_for_all';
 
-    /**
-     * This flag toggles ccm plus algorithm for specific nurses (comma separated).
-     */
-    const NURSE_CCM_PLUS_ENABLED_FOR_USER_IDS = 'nurse_ccm_plus_enabled_for_user_ids';
-
-    /**
-     * This flag allows to choose between two payment algorithms.
-     * 'option_1' or 'option_2'.
-     */
-    const NURSE_CCM_PLUS_PAY_ALGO = 'nurse_ccm_plus_pay_algo';
-
-    public static function enabledForAll(): bool
+    public static function altAlgoEnabledForUserIds(): array
     {
-        return \Cache::remember(self::NURSE_CCM_PLUS_ENABLED_FOR_ALL, 2, function () {
-            $val = AppConfig::where('config_key', '=', self::NURSE_CCM_PLUS_ENABLED_FOR_ALL)
-                ->firstOrFail()->config_value;
-
-            return filter_var($val, FILTER_VALIDATE_BOOLEAN);
-        });
-    }
-
-    public static function enabledForUserIds(): array
-    {
-        return \Cache::remember(self::NURSE_CCM_PLUS_ENABLED_FOR_USER_IDS, 2, function () {
-            $val = AppConfig::where('config_key', '=', self::NURSE_CCM_PLUS_ENABLED_FOR_USER_IDS)
+        return \Cache::remember(self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS, 2, function () {
+            $val = AppConfig::where('config_key', '=', self::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS)
                 ->firstOrFail()->config_value;
             if (empty($val)) {
                 return [];
@@ -49,11 +33,13 @@ class NurseCcmPlusConfig
         });
     }
 
-    public static function getAlgorithm()
+    public static function enabledForAll(): bool
     {
-        return \Cache::remember(self::NURSE_CCM_PLUS_PAY_ALGO, 2, function () {
-            return AppConfig::where('config_key', '=', self::NURSE_CCM_PLUS_PAY_ALGO)
+        return \Cache::remember(self::NURSE_CCM_PLUS_ENABLED_FOR_ALL, 2, function () {
+            $val = AppConfig::where('config_key', '=', self::NURSE_CCM_PLUS_ENABLED_FOR_ALL)
                 ->firstOrFail()->config_value;
+
+            return filter_var($val, FILTER_VALIDATE_BOOLEAN);
         });
     }
 }
