@@ -32,7 +32,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection               $cpmSymptomsToBeActivated
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $patient
  * @property App\Models\CPM\CpmInstructable                                                      $instructable
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereContains($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereDefaultIcd10Code($value)
@@ -44,14 +43,12 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property int                                                                                         $is_behavioral
  * @property int                                                                                         $weight
  * @property \App\Importer\Models\ImportedItems\ProblemImport[]|\Illuminate\Database\Eloquent\Collection $problemImports
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]              $revisionHistory
  * @property \App\CLH\CCD\Importer\SnomedToCpmIcdMap[]|\Illuminate\Database\Eloquent\Collection          $snomedMaps
  * @property \App\Models\CPM\CpmProblemUser[]|\Illuminate\Database\Eloquent\Collection                   $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem query()
@@ -59,7 +56,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereWeight($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem withIcd10Codes()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem withLatestCpmInstruction()
- *
  * @property int|null $care_plan_templates_count
  * @property int|null $cpm_biometrics_to_be_activated_count
  * @property int|null $cpm_instructions_count
