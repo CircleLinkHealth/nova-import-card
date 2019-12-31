@@ -11,7 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SendSignedUrlToDownloadPatientProblemsReport extends Notification implements ShouldQueue
+class SendSignedUrlToDownloadPracticeReport extends Notification implements ShouldQueue
 {
     use Queueable;
     /**
@@ -20,13 +20,34 @@ class SendSignedUrlToDownloadPatientProblemsReport extends Notification implemen
     public $signedLink;
 
     /**
+     * @var string
+     */
+    protected $reportClass;
+
+    /**
+     * @var int
+     */
+    protected $practiceId;
+
+
+    /**
+     * @var int
+     */
+    protected $mediaId;
+
+    /**
      * Create a new notification instance.
      *
+     * @param string $reportClass
      * @param string $signedUrl
+     * @param int $practiceId
      */
-    public function __construct(string $signedUrl)
+    public function __construct(string $reportClass, string $signedUrl, int $practiceId, int $mediaId)
     {
-        $this->signedLink = $signedUrl;
+        $this->signedLink  = $signedUrl;
+        $this->reportClass = $reportClass;
+        $this->practiceId  = $practiceId;
+        $this->mediaId = $mediaId;
     }
 
     /**
@@ -39,6 +60,9 @@ class SendSignedUrlToDownloadPatientProblemsReport extends Notification implemen
     public function toArray($notifiable)
     {
         return [
+            'report_class'  => $this->reportClass,
+            'practice_id'   => $this->practiceId,
+            'media_id'      => $this->mediaId
         ];
     }
 

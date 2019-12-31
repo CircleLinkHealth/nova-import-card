@@ -72,6 +72,10 @@ class WelcomeController extends Controller
             );
         }
 
+        if ($user->hasRole('participant')) {
+            return redirect()->route('patient-user.careplan');
+        }
+
         return \App::call('App\Http\Controllers\Patient\PatientController@showDashboard');
     }
 }

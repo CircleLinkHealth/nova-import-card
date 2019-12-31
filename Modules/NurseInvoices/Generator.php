@@ -52,11 +52,8 @@ class Generator
     /**
      * Generator constructor.
      *
-     * @param array  $nurseUserIds
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     * @param bool   $sendToCareCoaches
-     * @param bool   $storeInvoicesForNurseReview
+     * @param bool $sendToCareCoaches
+     * @param bool $storeInvoicesForNurseReview
      */
     public function __construct(
         array $nurseUserIds,
@@ -88,7 +85,8 @@ class Generator
                     $this->startDate,
                     $this->endDate
                 );
-                $variablePayMap = VariablePayCalculator::get(
+
+                $variablePayCalculator = new VariablePayCalculator(
                     $nurseUsers->where('nurseInfo.is_variable_rate', true)->pluck('nurseInfo.id')->all(),
                     $this->startDate,
                     $this->endDate
@@ -97,17 +95,23 @@ class Generator
                 $nurseSystemTimeMap->each(
                     function ($nurseAggregatedTotalTime) use (
                         $nurseUsers,
-                        $variablePayMap,
-                        $invoices
+                        $invoices,
+                        $variablePayCalculator
                     ) {
                         $userId = $nurseAggregatedTotalTime->first()->first()->user_id;
+
+                        /** @var User $user */
                         $user = $nurseUsers->firstWhere('id', '=', $userId);
 
                         if ( ! $user) {
                             throw new \Exception("User `$userId` not found");
                         }
 
-                        $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
+                        $viewModel = $this->createViewModel(
+                            $user,
+                            $nurseAggregatedTotalTime,
+                            $variablePayCalculator
+                        );
 
                         if ($this->storeInvoicesForNurseReview) {
                             $invoice = $this->saveInvoiceData($user->nurseInfo->id, $viewModel, $this->startDate);
@@ -122,20 +126,19 @@ class Generator
     }
 
     /**
-     * @param User       $nurse
-     * @param Collection $aggregatedTotalTime
-     * @param Collection $variablePayMap
-     *
      * @return Invoice
      */
-    private function createViewModel(User $nurse, Collection $aggregatedTotalTime, Collection $variablePayMap)
-    {
+    private function createViewModel(
+        User $nurse,
+        Collection $aggregatedTotalTime,
+        VariablePayCalculator $variablePayCalculator
+    ) {
         return new Invoice(
             $nurse,
             $this->startDate,
             $this->endDate,
             $aggregatedTotalTime,
-            $variablePayMap
+            $variablePayCalculator
         );
     }
 
@@ -182,11 +185,11 @@ class Generator
                         'pageTimersAsProvider',
                         function ($s) {
                             $s->whereBetween(
-                                'start_time',
-                                [
-                                    $this->startDate->copy()->startOfDay(),
-                                    $this->endDate->copy()->endOfDay(),
-                                ]
+                                       'start_time',
+                                       [
+                                           $this->startDate->copy()->startOfDay(),
+                                           $this->endDate->copy()->endOfDay(),
+                                       ]
                                    );
                         }
                     )
@@ -195,7 +198,7 @@ class Generator
                             function ($s) {
                                 $s->where('is_demo', false);
                             }
-                             );
+                        );
                 }
             );
     }
@@ -203,7 +206,6 @@ class Generator
     /**
      * @param $nurseInfoId
      * @param $viewModel
-     * @param Carbon $startDate
      *
      * @return mixed
      */

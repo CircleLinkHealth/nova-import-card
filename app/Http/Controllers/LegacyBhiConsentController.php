@@ -77,7 +77,7 @@ class LegacyBhiConsentController extends Controller
         $tomorrow = $now->copy()->addDay()->startOfDay()->addHours(7);
 
         return null !== $nextScheduledCallDate
-            ? Carbon::parse($nextScheduledCallDate)->diffInMinutes($now)
+            ? Carbon::parse($nextScheduledCallDate)->setTime(11, 30)->diffInMinutes($now)
             : $tomorrow->diffInMinutes($now);
     }
 

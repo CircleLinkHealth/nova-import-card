@@ -16,7 +16,11 @@
         "bower_install": "./node_modules/bower/bin/bower -V install",
         "build-import-practice-staff-csv": "cd nova-components/ImportPracticeStaffCsv && npm run dev",
         "build-import-practice-staff-csv-prod": "cd nova-components/ImportPracticeStaffCsv && npm run prod",
-        "postinstall": "npm run bower_install && if [ \"$NODE_ENV\" = \"production\" ]; then npm run prod; else npm run dev; fi"
+        "postinstall": "npm run bower_install && if [ \"$NODE_ENV\" = \"production\" ]; then npm run prod; else npm run dev; fi",
+        "build-generate-patient-call-data-csv": "cd nova-components/GeneratePatientCallDataCsv && npm run dev",
+        "build-generate-patient-call-data-csv-prod": "cd nova-components/GeneratePatientCallDataCsv && npm run prod",
+        "build-clhImportCardExtended": "cd nova-components/ClhImportCardExtended && npm run dev",
+        "build-clhImportCardExtended-prod": "cd nova-components/ClhImportCardExtended && npm run prod"
     },
     "jest": {
         "verbose": true,

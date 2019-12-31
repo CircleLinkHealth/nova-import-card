@@ -7,16 +7,16 @@
 namespace Tests\Unit;
 
 use App\Notifications\NoteForwarded;
+use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
-class NoteForwardedTest extends TestCase
+class OnNoteForwardedTest extends TestCase
 {
-    use
-        \App\Traits\Tests\UserHelpers;
+    use UserHelpers;
     use WithoutMiddleware;
     protected $admin;
     protected $nurse;

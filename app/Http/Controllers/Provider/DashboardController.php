@@ -47,7 +47,9 @@ class DashboardController extends Controller
     {
         $practiceChargeableRel = $this->primaryPractice->chargeableServices;
 
-        $allChargeableServices = ChargeableService::all()
+        $allChargeableServices = ChargeableService::where('is_enabled', '=', 1)
+            ->orderBy('order')
+            ->get()
             ->map(function ($service) use ($practiceChargeableRel) {
                 $existing = $practiceChargeableRel
                     ->where('id', '=', $service->id)

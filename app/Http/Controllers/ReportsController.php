@@ -780,6 +780,9 @@ class ReportsController extends Controller
         Request $request,
         $patientId = false
     ) {
+        ini_set('max_execution_time', 150);
+        ini_set('memory_limit', '512M');
+
         if ( ! $patientId) {
             return 'Patient Not Found..';
         }

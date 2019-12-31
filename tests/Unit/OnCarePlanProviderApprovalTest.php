@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\TestCase;
 
-class CarePlanProviderApprovalTest extends TestCase
+class OnCarePlanProviderApprovalTest extends TestCase
 {
     use \App\Traits\Tests\UserHelpers;
     use CarePlanHelpers;
@@ -167,7 +167,7 @@ class CarePlanProviderApprovalTest extends TestCase
         $this->carePlan->status = CarePlan::QA_APPROVED;
         $this->carePlan->save();
 
-        $response = $this->call('POST', route('patient.careplan.approve', ['patientId' => $this->patient->id]));
+        $response = $this->actingAs($this->provider)->call('POST', route('patient.careplan.approve', ['patientId' => $this->patient->id]));
 
         $response->assertStatus(302);
         $response->assertRedirect(route('patient.careplan.print', [
