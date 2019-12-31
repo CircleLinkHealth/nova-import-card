@@ -799,7 +799,9 @@ class ReportsController extends Controller
             return 'Careplan not found...';
         }
 
-        $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
+//        To phase out
+//        $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
+        $showInsuranceReviewFlag = false;
 
         $skippedAssessment = $request->has('skippedAssessment');
 
