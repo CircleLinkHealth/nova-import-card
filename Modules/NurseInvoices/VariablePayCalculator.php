@@ -441,7 +441,7 @@ class VariablePayCalculator
             }
 
             if ($add_to_accrued_after_60) {
-                $ranges[4][$nurseInfoId] = $this->getEntryForRange(
+                $ranges[3][$nurseInfoId] = $this->getEntryForRange(
                     $ranges,
                     3,
                     $nurseInfoId,
