@@ -112,7 +112,7 @@ return [
                 'min-processes' => 1,
                 'max-processes' => 3,
                 'tries'         => 1,
-                'timeout'       => 60,
+                'timeout'       => 90,
             ],
             'supervisor-2' => [
                 'connection'    => 'redis',
