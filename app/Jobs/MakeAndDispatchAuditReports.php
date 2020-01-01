@@ -92,7 +92,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
 
             if ($settings->efax_audit_reports && $fax) {
                 $number = (new StringManipulation())->formatPhoneNumberE164($fax);
-                $this->eFax->createFaxFor($number)->send(['file' => $path]);
+                $this->eFax->createFaxFor($number)->send(['file' => $path, 'batch_delay' => 60, 'batch_collision_avoidance' => true]);
             }
 
             return $location;
