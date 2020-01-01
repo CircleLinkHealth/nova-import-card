@@ -76,10 +76,13 @@ class Generator
         $invoices = collect();
 
         $this->nurseUsers()->chunk(
-            20,
+            5,
             function ($nurseUsers) use (&$invoices) {
+                $delay = 10;
+
                 foreach ($nurseUsers as $nurseUser) {
-                    GenerateNurseInvoice::dispatch($nurseUser, $this->startDate, $this->endDate);
+                    GenerateNurseInvoice::dispatch($nurseUser, $this->startDate, $this->endDate)->delay(now()->addSeconds($delay));
+                    $delay = $delay + 10;
                 }
             }
         );
