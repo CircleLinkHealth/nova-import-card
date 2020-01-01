@@ -609,10 +609,6 @@ class WebixFormatter implements ReportFormatter
 
             $locationName = $patient->getPreferredLocationName();
 
-            if ( ! $locationName) {
-                $locationName = 'N/A';
-            }
-
             try {
                 $patientData[] = [
                     'key' => $patient->id,
