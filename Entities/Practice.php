@@ -125,6 +125,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int $is_demo
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     whereIsDemo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice opsDashboardQuery(\Carbon\Carbon $startOfMonth, \Carbon\Carbon $revisionsFromDate)
  */
 class Practice extends BaseModel implements HasMedia
 {

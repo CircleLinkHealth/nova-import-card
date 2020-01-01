@@ -38,6 +38,13 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  */
 class ChargeableService extends BaseModel
 {
+    const BHI = 'CPT 99484';
+    const CCM = 'CPT 99490';
+    const CCM_PLUS_40 = 'G2058(>40mins)';
+    const CCM_PLUS_60 = 'G2058(>60mins)';
+    const GENERAL_CARE_MANAGEMENT = 'G0511';
+    const SOFTWARE_ONLY = 'Software-Only';
+
     const AWV_INITIAL = 'AWV: G0438';
     const AWV_SUBSEQUENT = 'AWV: G0439';
     /**

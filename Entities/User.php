@@ -64,6 +64,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Scout\Searchable;
@@ -357,6 +358,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     notOfPracticeRequiringSpecialBhiConsent()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     ofPracticeRequiringSpecialBhiConsent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isNotDemo()
  */
 class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia
 {
@@ -1224,7 +1226,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return '';
         }
 
-        return $this->patientInfo->birth_date;
+        if (! is_null($this->patientInfo->birth_date)){
+            return $this->patientInfo->birth_date->toDateString();
+        }
+
+        return '';
     }
 
     public function getAgentEmail()
@@ -2046,6 +2052,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany(Call::class, 'inbound_cpm_id', 'id');
     }
 
+    public function onFirstCall($isNoteCreatePageAndSuccessfullCall = false) : bool
+    {
+        $onFirstCall = 1;
+        if ($isNoteCreatePageAndSuccessfullCall){
+            $onFirstCall = 0;
+        }
+        return $this->inboundCalls()
+                    ->where('status', 'reached')->count() <= $onFirstCall;
+    }
+
     public function inboundScheduledCalls(Carbon $after = null)
     {
         return $this->inboundCalls()
@@ -2607,6 +2623,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         ];
     }
 
+    public function canSeePhi(){
+        return $this->hasPermission('phi.read');
+    }
+
+    public function setCanSeePhi(bool $shouldSee = true)
+    {
+        $phiRead = Permission::whereName('phi.read')->first();
+        if ($phiRead){
+            $this->attachPermission($phiRead, $shouldSee);
+        }
+    }
+
     /**
      *For the moment we will just check if primary practice is not demo.
      * May implement something else in the future.
@@ -3153,7 +3181,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! $this->patientInfo) {
             return '';
         }
-        $this->patientInfo->birth_date = str_replace('-', '/', $value);
+
+        if (! is_a($value, Carbon::class)){
+            $value = Carbon::parse($value);
+        }
+
+        $this->patientInfo->birth_date = $value;
         $this->patientInfo->save();
 
         return true;

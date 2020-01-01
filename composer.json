@@ -30,14 +30,10 @@
         "circlelinkhealth/core": "^1.0",
         "laravel/passport": "^7.0",
         "laravel/scout": "^7.1",
-        "michalisantoniou6/laravel-cerberus": "dev-master",
+        "circlelinkhealth/cerberus-gatekeeper": "^v3.0.2",
         "spatie/laravel-medialibrary": "^7.0.0"
     },
     "repositories": [
-        {
-            "type": "git",
-            "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git"
-        },
         {
             "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-core.git"

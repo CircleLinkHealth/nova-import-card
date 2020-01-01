@@ -24,6 +24,7 @@ use Illuminate\Support\Collection;
  * @property string              $billing_type
  * @property int                 $low_rate
  * @property int                 $high_rate
+ * @property float               $visit_fee //for the new ccm plus algo
  * @property int                 $spanish
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
