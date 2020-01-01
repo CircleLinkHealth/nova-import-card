@@ -607,6 +607,12 @@ class WebixFormatter implements ReportFormatter
                 $lastObservationDate = date('m/d/Y', strtotime($lastObservation[0]->obs_date));
             }
 
+            $locationName = $patient->getPreferredLocationName();
+
+            if ( ! $locationName) {
+                $locationName = 'N/A';
+            }
+
             try {
                 $patientData[] = [
                     'key' => $patient->id,
@@ -646,6 +652,7 @@ class WebixFormatter implements ReportFormatter
                     //$meta[$part->id]['cur_month_activity_time'][0]
                     'provider' => $bpName,
                     'site'     => $programName,
+                    'location' => $locationName,
                 ];
             } catch (\Exception $e) {
                 \Log::critical("{$patient->id} has no patient info");
