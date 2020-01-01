@@ -6,18 +6,13 @@
 
 namespace App\Jobs;
 
-use App\Notifications\NurseInvoicesCreated;
-use App\Repositories\Cache\UserNotificationList;
-use App\Repositories\Cache\View;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Generator;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Collection;
 
 class CreateNurseInvoices implements ShouldQueue
 {
