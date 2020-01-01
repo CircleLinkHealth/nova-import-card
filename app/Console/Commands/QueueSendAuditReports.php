@@ -43,7 +43,7 @@ class QueueSendAuditReports extends Command
     {
         $date = Carbon::now()->subMonth()->firstOfMonth();
 
-        $patients = User::ofType('participant')
+        User::ofType('participant')
             ->with('patientInfo')
             ->with('patientSummaries')
             ->with('primaryPractice')
@@ -59,13 +59,11 @@ class QueueSendAuditReports extends Command
                 $query->where('total_time', '>', 0)
                     ->where('month_year', $date->toDateString());
             })
-            ->get();
-
-        foreach ($patients as $patient) {
-            $job = (new MakeAndDispatchAuditReports($patient, $date))
-                ->onQueue('high');
-
-            dispatch($job);
-        }
+            ->chunkById(50, function ($patients) use ($date) {
+                foreach ($patients as $patient) {
+                    MakeAndDispatchAuditReports::dispatch($patient, $date)
+                        ->onQueue('high');
+                }
+            });
     }
 }

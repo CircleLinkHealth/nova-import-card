@@ -15,6 +15,7 @@ class FaxLog extends Model
     ];
     protected $fillable = [
         'fax_id',
+        'event_type',
         'status',
         'direction',
         'response',
