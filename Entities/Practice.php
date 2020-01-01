@@ -405,6 +405,7 @@ class Practice extends BaseModel implements HasMedia
                                         ->where('approved', '=', true);
                                 },
                                 'billingProvider',
+                                'patientInfo.location'
                             ]
                         )
                         ->whereProgramId($this->id)
@@ -415,7 +416,8 @@ class Practice extends BaseModel implements HasMedia
                                       ->where('approved', '=', true);
                             }
                         )
-                        ->chunk(
+            ->has('patientInfo')
+                        ->chunkById(
                             500,
                             function ($patients) use (&$data, $repo, $month) {
                                 foreach ($patients as $u) {
@@ -447,6 +449,7 @@ class Practice extends BaseModel implements HasMedia
                                     $patientData->setBhiProblem(
                                         optional(optional($summary->billableProblems->first())->pivot)->name
                                     );
+                                    $patientData->setLocationName($u->getPreferredLocationName());
 
                                     $data['patientData'][$u->id] = $patientData;
                                 }
