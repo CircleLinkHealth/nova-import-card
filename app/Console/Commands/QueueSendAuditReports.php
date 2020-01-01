@@ -60,9 +60,12 @@ class QueueSendAuditReports extends Command
                     ->where('month_year', $date->toDateString());
             })
             ->chunkById(50, function ($patients) use ($date) {
+                $delay = 1;
+
                 foreach ($patients as $patient) {
                     MakeAndDispatchAuditReports::dispatch($patient, $date)
-                        ->onQueue('high');
+                        ->onQueue('high')->delay(now()->addSeconds($delay));
+                    ++$delay;
                 }
             });
     }
