@@ -59,8 +59,8 @@ class QueueSendAuditReports extends Command
                 $query->where('total_time', '>', 0)
                     ->where('month_year', $date->toDateString());
             })
-            ->chunkById(50, function ($patients) use ($date) {
-                $delay = 1;
+            ->chunkById(20, function ($patients) use ($date) {
+                $delay = 2;
 
                 foreach ($patients as $patient) {
                     MakeAndDispatchAuditReports::dispatch($patient, $date)
