@@ -234,10 +234,10 @@ class Call extends BaseModel implements AttachableToNotification
     {
         $builder->whereNotNull('called_date')
             ->where(
-                    'called_date',
-                    '>=',
-                    Carbon::now()->subMonth(3)->startOfMonth()->startOfDay()
-                )
+                'called_date',
+                '>=',
+                Carbon::now()->subMonth(3)->startOfMonth()->startOfDay()
+            )
             ->where('called_date', '<=', Carbon::now()->endOfDay());
     }
 
