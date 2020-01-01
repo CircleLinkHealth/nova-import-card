@@ -30,7 +30,7 @@ class CreateNurseInvoices implements ShouldQueue
      *
      * @var int
      */
-    public $tries = 3;
+    public $tries = 2;
     /**
      * @var Carbon
      */
@@ -90,20 +90,7 @@ class CreateNurseInvoices implements ShouldQueue
     public function handle()
     {
         $generator = new Generator($this->nurseUserIds, $this->startDate, $this->endDate, $this->sendToCareCoaches, $this->storeInvoicesForNurseReview);
-        $invoices  = $generator->createAndNotifyNurses();
-
-        if ($invoices->isEmpty()) {
-            \Log::info('Invoices not generated due to no data for selected nurses and range.');
-
-            return null;
-        }
-
-        if ($this->requestedBy) {
-            $link = $this->storeInJobsCompleted($invoices);
-            $this->notifyRequestor($link);
-        }
-
-        return $invoices;
+        $generator->createAndNotifyNurses();
     }
 
     /**
