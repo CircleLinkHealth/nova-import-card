@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2aa49634be971f93fcd554203edab285",
+    "content-hash": "19ce433b0d1416bec71695961faa7ced",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -250,16 +250,16 @@
         },
         {
             "name": "appstract/laravel-opcache",
-            "version": "2.0.4",
+            "version": "2.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/appstract/laravel-opcache.git",
-                "reference": "a82e24d54b4f19c3eda5f4a754bd839cff107451"
+                "reference": "e512260bfd0eced3f533770b0a3b960f123d3172"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/appstract/laravel-opcache/zipball/a82e24d54b4f19c3eda5f4a754bd839cff107451",
-                "reference": "a82e24d54b4f19c3eda5f4a754bd839cff107451",
+                "url": "https://api.github.com/repos/appstract/laravel-opcache/zipball/e512260bfd0eced3f533770b0a3b960f123d3172",
+                "reference": "e512260bfd0eced3f533770b0a3b960f123d3172",
                 "shasum": ""
             },
             "require": {
@@ -307,7 +307,7 @@
                 "laravel",
                 "php"
             ],
-            "time": "2019-12-29T15:42:29+00:00"
+            "time": "2019-12-31T20:08:45+00:00"
         },
         {
             "name": "appstract/lush-http",
