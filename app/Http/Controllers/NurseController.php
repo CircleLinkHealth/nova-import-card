@@ -40,12 +40,13 @@ class NurseController extends Controller
             $endDate,
             $nurseUserIds,
             false,
-            auth()->user()->id
+            auth()->user()->id,
+            false
         );
 
         return 'We will send you an email when everything is done. You can always see previous jobs completed at '.link_to(
             '/jobs/completed'
-            );
+        );
     }
 
     public function makeDailyReport()
