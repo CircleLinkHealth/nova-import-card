@@ -26,6 +26,12 @@ class CreateNurseInvoices implements ShouldQueue
     use Queueable;
     use SerializesModels;
     /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 3;
+    /**
      * @var Carbon
      */
     protected $endDate;
