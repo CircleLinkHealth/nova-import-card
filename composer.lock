@@ -740,7 +740,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-CPM-1786-fax-approved-cp-generate-consent-forms",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -879,7 +879,7 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-CPM-1687-create-page-patient-call-data",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
