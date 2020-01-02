@@ -115,7 +115,7 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
      *
      * @return bool|string
      */
-    public function toDirectMail($notifiable)
+    public function toDirectMail($notifiable): SimpleNotification
     {
         if ( ! $notifiable || ! $notifiable->emr_direct_address) {
             return false;
@@ -131,10 +131,8 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
      * Get a pdf representation of the note to send via Fax.
      *
      * @param $notifiable
-     *
-     * @return array
      */
-    public function toFax($notifiable = null) : array
+    public function toFax($notifiable = null): array
     {
         return [
             'file' => $this->toPdf($notifiable),
