@@ -48,9 +48,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\WorkHours newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\WorkHours newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\WorkHours query()
- * @property int|null $revision_history_count
- * @property \Illuminate\Support\Carbon $work_week_start
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\WorkHours whereWorkWeekStart($value)
+ * @property-read int|null $revision_history_count
  */
 class WorkHours extends \CircleLinkHealth\Core\Entities\BaseModel
 {

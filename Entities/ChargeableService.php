@@ -35,6 +35,10 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property-read int|null $practices_count
  * @property-read int|null $providers_count
  * @property-read int|null $revision_history_count
+ * @property int|null $order
+ * @property int $is_enabled
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereIsEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\ChargeableService whereOrder($value)
  */
 class ChargeableService extends BaseModel
 {

@@ -1853,19 +1853,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function getPreferredLocationName()
     {
         if ( ! $this->patientInfo) {
-            return '';
+            return 'N/A';
         }
-        $locationId = $this->patientInfo->preferred_contact_location;
-        if (empty($locationId)) {
-            return false;
-        }
-        $location = Location::find($locationId);
 
-        return (isset($location->name))
-            ?
-            $location->name
-            :
-            '';
+        return optional($this->patientInfo->location)->name ?? 'N/A';
     }
 
     public function getPrefix()
@@ -2347,7 +2338,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                              );
                        }
                    )
-                   ->with('primaryPractice')
                    ->with(
                        [
                            'observations' => function ($query) {
@@ -2358,6 +2348,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                            'phoneNumbers' => function ($q) {
                                $q->where('type', '=', PhoneNumber::HOME);
                            },
+                           'patientInfo.location',
+                           'primaryPractice',
                        ]
                    );
     }
@@ -2624,11 +2616,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     public function canSeePhi(){
-        return $this->hasPermission('phi.read');
+        return Cache::remember("user_id:$this->id:can-see-phi", 2, function () {
+            return $this->hasPermission('phi.read');
+        });
     }
 
     public function setCanSeePhi(bool $shouldSee = true)
     {
+        Cache::forget("user_id:$this->id:can-see-phi");
         $phiRead = Permission::whereName('phi.read')->first();
         if ($phiRead){
             $this->attachPermission($phiRead, $shouldSee);

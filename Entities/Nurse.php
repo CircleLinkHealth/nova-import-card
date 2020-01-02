@@ -84,6 +84,7 @@ use Illuminate\Support\Collection;
  * @property int|null $case_load_capacity
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereCaseLoadCapacity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee($value)
  */
 class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 {
