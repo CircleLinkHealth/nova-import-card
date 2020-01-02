@@ -11,6 +11,7 @@
     <table class="table table-bordered">
         <tr>
             <th>Provider Name</th>
+            <th>Location</th>
             <th>Patient Name</th>
             <th>DOB</th>
             <th>Billing Code</th>
@@ -27,6 +28,7 @@
 
                 <tr>
                     <td>{{$data->getProvider()}}</td>
+                    <td>{{$data->getLocationName()}}</td>
                     <td>{{$data->getName()}}</td>
                     <td>{{$data->getDob()}}</td>
                     <td>{{$data->getBillingCodes()}}</td>

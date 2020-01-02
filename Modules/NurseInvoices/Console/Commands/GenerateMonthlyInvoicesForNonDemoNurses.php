@@ -10,10 +10,13 @@ use App\Jobs\CreateNurseInvoices;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use CircleLinkHealth\NurseInvoices\Traits\TakesMonthAndUsersAsInputArguments;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Input\InputOption;
 
 class GenerateMonthlyInvoicesForNonDemoNurses extends Command
 {
-    use DryRunnable;
+    use DryRunnable {
+        getOptions as dryGetOptions;
+    }
     use TakesMonthAndUsersAsInputArguments;
 
     /**
@@ -50,7 +53,11 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
             $start = now()->subMonth()->startOfMonth();
             $end   = $start->copy()->endOfMonth();
         } elseif ($this->month()->isCurrentMonth(true)) {
-            $end = now()->subDay()->endOfDay();
+            if ($this->option('allow-same-day')) {
+                $end = now()->endOfDay();
+            } else {
+                $end = now()->subDay()->endOfDay();
+            }
         } else {
             $end = $this->month()->endOfMonth();
         }
@@ -75,5 +82,14 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
         $this->info(
             "Will create invoices for {$start->format('Y-m')}, for $forNurses."
         );
+    }
+
+    protected function getOptions()
+    {
+        $arr = $this->dryGetOptions();
+
+        return array_merge($arr, [
+            ['allow-same-day', 'a', InputOption::VALUE_NONE, 'Allow same day invoice.', null],
+        ]);
     }
 }

@@ -355,7 +355,7 @@ class NotesController extends Controller
 
         $note->forward($input['notify_careteam'], $input['notify_circlelink_support']);
 
-        return redirect()->route('patient.note.index', [$noteId]);
+        return redirect()->route('patient.note.index', [$patientId, $noteId]);
     }
 
     public function show(
@@ -569,7 +569,7 @@ class NotesController extends Controller
             }
         } else {
             if (Auth::user()->isCareCoach()) {
-                $is_withdrawn = 'withdrawn' == $info->ccm_status;
+                $is_withdrawn = in_array($info->ccm_status, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]);
 
                 if ( ! $is_phone_session && $is_withdrawn) {
                     return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
@@ -845,11 +845,16 @@ class NotesController extends Controller
 
         if (isset($input['ccm_status']) && in_array(
             $input['ccm_status'],
-            [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED]
+            [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL]
         )) {
-            $info->ccm_status = $input['ccm_status'];
+            $inputCcmStatus = $input['ccm_status'];
+            if (Patient::WITHDRAWN === $inputCcmStatus && $patient->onFirstCall(isset($input['welcome_call']) || isset($input['other_call']))) {
+                $inputCcmStatus = Patient::WITHDRAWN_1ST_CALL;
+            }
 
-            if ('withdrawn' == $input['ccm_status']) {
+            $info->ccm_status = $inputCcmStatus;
+
+            if (in_array($inputCcmStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
                 $withdrawnReason = $input['withdrawn_reason'];
                 if ('Other' == $withdrawnReason) {
                     $withdrawnReason = $input['withdrawn_reason_other'];

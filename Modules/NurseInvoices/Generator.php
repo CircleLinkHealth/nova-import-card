@@ -6,12 +6,10 @@
 
 namespace CircleLinkHealth\NurseInvoices;
 
-use App\Notifications\NurseInvoiceCreated;
 use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
-use CircleLinkHealth\NurseInvoices\ViewModels\Invoice;
+use CircleLinkHealth\NurseInvoices\Jobs\GenerateNurseInvoice;
 use Illuminate\Support\Collection;
 
 class Generator
@@ -52,11 +50,8 @@ class Generator
     /**
      * Generator constructor.
      *
-     * @param array  $nurseUserIds
-     * @param Carbon $startDate
-     * @param Carbon $endDate
-     * @param bool   $sendToCareCoaches
-     * @param bool   $storeInvoicesForNurseReview
+     * @param bool $sendToCareCoaches
+     * @param bool $storeInvoicesForNurseReview
      */
     public function __construct(
         array $nurseUserIds,
@@ -81,74 +76,18 @@ class Generator
         $invoices = collect();
 
         $this->nurseUsers()->chunk(
-            20,
+            5,
             function ($nurseUsers) use (&$invoices) {
-                $nurseSystemTimeMap = TotalTimeAggregator::get(
-                    $nurseUsers->pluck('id')->all(),
-                    $this->startDate,
-                    $this->endDate
-                );
-                $variablePayMap = VariablePayCalculator::get(
-                    $nurseUsers->where('nurseInfo.is_variable_rate', true)->pluck('nurseInfo.id')->all(),
-                    $this->startDate,
-                    $this->endDate
-                );
+                $delay = 10;
 
-                $nurseSystemTimeMap->each(
-                    function ($nurseAggregatedTotalTime) use (
-                        $nurseUsers,
-                        $variablePayMap,
-                        $invoices
-                    ) {
-                        $userId = $nurseAggregatedTotalTime->first()->first()->user_id;
-                        $user = $nurseUsers->firstWhere('id', '=', $userId);
-
-                        if ( ! $user) {
-                            throw new \Exception("User `$userId` not found");
-                        }
-
-                        $viewModel = $this->createViewModel($user, $nurseAggregatedTotalTime, $variablePayMap);
-
-                        if ($this->storeInvoicesForNurseReview) {
-                            $invoice = $this->saveInvoiceData($user->nurseInfo->id, $viewModel, $this->startDate);
-                            $invoices->push($invoice);
-                        }
-                    }
-                );
+                foreach ($nurseUsers as $nurseUser) {
+                    GenerateNurseInvoice::dispatch($nurseUser, $this->startDate, $this->endDate)->delay(now()->addSeconds($delay));
+                    $delay = $delay + 10;
+                }
             }
         );
 
         return $invoices;
-    }
-
-    /**
-     * @param User       $nurse
-     * @param Collection $aggregatedTotalTime
-     * @param Collection $variablePayMap
-     *
-     * @return Invoice
-     */
-    private function createViewModel(User $nurse, Collection $aggregatedTotalTime, Collection $variablePayMap)
-    {
-        return new Invoice(
-            $nurse,
-            $this->startDate,
-            $this->endDate,
-            $aggregatedTotalTime,
-            $variablePayMap
-        );
-    }
-
-    private function forwardToCareCoach(Invoice $viewModel, $pdf)
-    {
-        if ($this->sendToCareCoaches) {
-            $viewModel->user()->notify(
-                new NurseInvoiceCreated($pdf['link'], "{$this->startDate->englishMonth} {$this->startDate->year}")
-            );
-            $viewModel->user()->addMedia($pdf['pdf_path'])->toMediaCollection(
-                "monthly_invoice_{$this->startDate->year}_{$this->startDate->month}"
-            );
-        }
     }
 
     /**
@@ -160,14 +99,6 @@ class Generator
     {
         return User::withTrashed()
             ->careCoaches()
-            ->with(
-                [
-                    'nurseBonuses' => function ($q) {
-                        $q->whereBetween('date', [$this->startDate, $this->endDate]);
-                    },
-                    'nurseInfo',
-                ]
-            )
             ->has('nurseInfo')
             ->when(
                 is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
@@ -187,7 +118,7 @@ class Generator
                                     $this->startDate->copy()->startOfDay(),
                                     $this->endDate->copy()->endOfDay(),
                                 ]
-                                   );
+                            );
                         }
                     )
                         ->whereHas(
@@ -195,28 +126,8 @@ class Generator
                             function ($s) {
                                 $s->where('is_demo', false);
                             }
-                             );
+                        );
                 }
             );
-    }
-
-    /**
-     * @param $nurseInfoId
-     * @param $viewModel
-     * @param Carbon $startDate
-     *
-     * @return mixed
-     */
-    private function saveInvoiceData($nurseInfoId, $viewModel, Carbon $startDate)
-    {
-        return NurseInvoice::updateOrCreate(
-            [
-                'month_year'    => $startDate,
-                'nurse_info_id' => $nurseInfoId,
-            ],
-            [
-                'invoice_data' => $viewModel->toArray(),
-            ]
-        );
     }
 }

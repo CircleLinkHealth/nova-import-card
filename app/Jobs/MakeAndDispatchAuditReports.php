@@ -14,11 +14,13 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 class MakeAndDispatchAuditReports implements ShouldQueue
 {
+    use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -48,7 +50,6 @@ class MakeAndDispatchAuditReports implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param User   $patient
      * @param Carbon $date
      */
     public function __construct(User $patient, Carbon $date = null)
@@ -72,7 +73,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
 
         $path = storage_path("download/${fileName}");
 
-        if ( ! $path) {
+        if ( ! is_readable($path)) {
             \Log::error("File not found: ${path}");
 
             return;
@@ -91,7 +92,7 @@ class MakeAndDispatchAuditReports implements ShouldQueue
 
             if ($settings->efax_audit_reports && $fax) {
                 $number = (new StringManipulation())->formatPhoneNumberE164($fax);
-                $this->eFax->send($number, $path);
+                $this->eFax->createFaxFor($number)->send(['file' => $path, 'batch_delay' => 60, 'batch_collision_avoidance' => true]);
             }
 
             return $location;

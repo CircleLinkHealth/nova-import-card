@@ -23,6 +23,7 @@ class BillablePatientsEloquentRepository
             'patientSummaries' => function ($query) use ($month) {
                 $query->where('month_year', $month)
                     ->where('total_time', '>=', 1200)
+                    ->where('no_of_successful_calls', '>=', 1)
                     ->with('chargeableServices');
             },
             'cpmProblems',
@@ -35,7 +36,8 @@ class BillablePatientsEloquentRepository
             ->has('patientInfo')
             ->whereHas('patientSummaries', function ($query) use ($month) {
                 $query->where('month_year', $month)
-                    ->where('total_time', '>=', 1200);
+                    ->where('total_time', '>=', 1200)
+                    ->where('no_of_successful_calls', '>=', 1);
             })
             ->ofType('participant')
             ->where('program_id', '=', $practiceId);

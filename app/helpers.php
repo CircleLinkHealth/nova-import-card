@@ -1432,8 +1432,7 @@ if ( ! function_exists('incrementInvoiceNo')) {
      */
     function incrementInvoiceNo()
     {
-        $num = AppConfig::where('config_key', 'billing_invoice_count')
-            ->firstOrFail();
+        $num = AppConfig::firstOrCreate(['config_key' => 'billing_invoice_count'], ['config_value' => 0]);
 
         $current = $num->config_value;
 
@@ -1493,5 +1492,21 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
             \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
         }
+    }
+}
+
+if ( ! function_exists('getModelFromTable')) {
+    function getModelFromTable($table)
+    {
+        foreach (get_declared_classes() as $class) {
+            if (is_subclass_of($class, 'Illuminate\Database\Eloquent\Model')) {
+                $model = new $class();
+                if ($model->getTable() === $table) {
+                    return $class;
+                }
+            }
+        }
+
+        return false;
     }
 }

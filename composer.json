@@ -64,6 +64,10 @@
       "url": "./nova-components/ImportPracticeStaffCsv"
     },
     {
+      "type": "path",
+      "url": "./nova-components/GeneratePatientCallDataCsv"
+    },
+    {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-revisionable.git"
     },
@@ -76,8 +80,8 @@
       "url": "git@github.com:CircleLinkHealth/module-sqlviews.git"
     },
     {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git"
+      "type": "path",
+      "url": "./nova-components/ClhImportCardExtended"
     },
     {
       "type": "git",
@@ -97,12 +101,12 @@
     "algolia/algoliasearch-client-php": "^2.2",
     "algolia/scout-extended": "^1.8",
     "amnuts/opcache-gui": "dev-master",
-    "appstract/laravel-opcache": "^2.0",
+    "appstract/laravel-opcache": "~2.0.5",
     "barryvdh/laravel-snappy": "0.4.4",
     "circlelinkhealth/ccda-parser-processor-php": "dev-master",
-    "circlelinkhealth/core": "1.31",
+    "circlelinkhealth/core": "1.33",
     "circlelinkhealth/cpmmigrations": "dev-master",
-    "circlelinkhealth/customer": "1.5.4",
+    "circlelinkhealth/customer": "1.6.4",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/revisionable": "*",
@@ -133,9 +137,10 @@
     "league/flysystem-aws-s3-v3": "~1.0",
     "league/fractal": "0.12.*",
     "maatwebsite/excel": "^3.1",
+    "circlelinkhealth/cerberus-gatekeeper": "^v3.0.2",
     "nao-pon/flysystem-google-drive": "~1.1",
+    "phaxio/phaxio": "^2.0",
     "nvanheuverzwijn/monolog-logdna": "^2.1",
-    "phaxio/phaxio": "^1.0",
     "pragmarx/version": "^0.2.8",
     "propaganistas/laravel-phone": "^3.0",
     "pusher/pusher-php-server": "^4.0",
@@ -148,7 +153,9 @@
     "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
     "wikimedia/composer-merge-plugin": "^1.4",
-    "yajra/laravel-datatables-oracle": "~8.0"
+    "yajra/laravel-datatables-oracle": "~8.0",
+    "circlelinkhealth/generate-patient-call-data-csv": "*",
+    "circlelinkhealth/clh-import-card-extended": "*"
   },
   "require-dev": {
     "ext-xdebug": "*",

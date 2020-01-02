@@ -6,6 +6,7 @@
 
 namespace App\Reports;
 
+use App\Exceptions\FileNotFoundException;
 use App\Note;
 use App\Services\PdfService;
 use Carbon\Carbon;
@@ -88,16 +89,27 @@ class PatientDailyAuditReport
         return $this->data;
     }
 
+    /**
+     * @throws \Exception
+     *
+     * @return bool|string
+     */
     public function renderPDF()
     {
         $pdfService = app(PdfService::class);
 
-        $name = $this->patient->user->last_name.'-'.Carbon::now()->timestamp;
+        $name = $this->patient->user->id.'-'.Carbon::now()->timestamp;
         $path = storage_path("download/${name}.pdf");
 
         $this->renderData();
 
-        $pdf = $pdfService->createPdfFromView('wpUsers.patient.audit', ['data' => $this->data], $path);
+        try {
+            $pdf = $pdfService->createPdfFromView('wpUsers.patient.audit', ['data' => $this->data], $path);
+        } catch (FileNotFoundException $e) {
+            \Log::channel('logdna')->error($e->getMessage());
+
+            return false;
+        }
 
         $collName = 'audit_report_'.$this->data['month'];
 

@@ -45,13 +45,29 @@ class ImporterController extends Controller
             ->with('location')
             ->with('billingProvider')
             ->get()
-            ->transform(function ($summary) {
-                $summary['flag'] = false;
-
+            ->transform(function (ImportedMedicalRecord $summary) {
                 $mr = $summary->medicalRecord();
 
                 if ( ! $mr) {
                     return false;
+                }
+
+                if ( ! $summary->billing_provider_id) {
+                    $mr = $mr->guessPracticeLocationProvider();
+
+                    $summary->billing_provider_id = $mr->getBillingProviderId();
+
+                    if ( ! $summary->location_id) {
+                        $summary->location_id = $mr->getLocationId();
+                    }
+
+                    if ( ! $summary->practice_id) {
+                        $summary->practice_id = $mr->getPracticeId();
+                    }
+
+                    if ($summary->isDirty()) {
+                        $summary->save();
+                    }
                 }
 
                 $providers = $mr->providers()->where([
@@ -62,6 +78,7 @@ class ImporterController extends Controller
                     return $m->first_name.$m->last_name;
                 });
 
+                $summary['flag'] = false;
                 if ($providers->count() > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
                     $summary['flag'] = true;
                 }
@@ -270,8 +287,6 @@ class ImporterController extends Controller
     /**
      * Receives XML files, saves them in DB, and returns them JSON Encoded.
      *
-     * @param Request $request
-     *
      * @throws \Exception
      *
      * @return string
@@ -287,8 +302,6 @@ class ImporterController extends Controller
      * Route: /api/ccd-importer/import-medical-records.
      *
      * Receives XML and XLSX files, saves them in DB, and returns them JSON Encoded
-     *
-     * @param Request $request
      *
      * @throws \Exception
      *

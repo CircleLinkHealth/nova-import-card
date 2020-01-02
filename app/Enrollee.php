@@ -154,6 +154,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property int|null $family_enrollee_id
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereFamilyEnrolleeId($value)
+ *
+ * @property string|null $soft_rejected_callback
  */
 class Enrollee extends BaseModel
 {
@@ -339,6 +341,7 @@ class Enrollee extends BaseModel
         if (empty($this->agent_details)) {
             return null;
         }
+
         if ( ! array_key_exists($key, $this->agent_details)) {
             return null;
         }

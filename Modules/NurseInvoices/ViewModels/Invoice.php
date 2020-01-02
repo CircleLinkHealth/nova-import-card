@@ -9,6 +9,7 @@ namespace CircleLinkHealth\NurseInvoices\ViewModels;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\VariablePayCalculator;
 use Illuminate\Support\Collection;
 use Spatie\ViewModels\ViewModel;
 
@@ -27,14 +28,24 @@ class Invoice extends ViewModel
      * @var bool
      */
     public $changedToFixedRateBecauseItYieldedMore = false;
+
+    /**
+     * @var float the total pay with fixed rate algorithm
+     */
+    public $fixedRatePay = 0.0;
     public $nurseFullName;
     public $nurseHighRate;
     public $nurseHourlyRate;
     public $nurseLowRate;
+    public $nurseVisitFee;
     /**
      * @var bool
      */
     public $variablePay;
+    /**
+     * @var float the total pay with variable rate algorithm
+     */
+    public $variableRatePay = 0.0;
     /**
      * @var Carbon
      */
@@ -62,16 +73,11 @@ class Invoice extends ViewModel
     /**
      * @var Collection
      */
-    protected $variablePaySummary;
+    protected $variablePayForNurse;
     /**
      * @var mixed
      */
     private $bonus;
-
-    /**
-     * @var float the total pay with fixed rate algorithm
-     */
-    private $fixedRatePay;
     /**
      * @var \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
@@ -92,49 +98,41 @@ class Invoice extends ViewModel
      * @var User
      */
     private $user;
-    /**
-     * @var float the total pay with variable rate algorithm
-     */
-    private $variableRatePay;
+
+    /** @var VariablePayCalculator $variablePayCalculator */
+    private $variablePayCalculator;
 
     /**
      * Invoice constructor.
-     *
-     * @param User       $user
-     * @param Carbon     $startDate
-     * @param Carbon     $endDate
-     * @param Collection $aggregatedTotalTime
-     * @param Collection $variablePayMap
      */
     public function __construct(
         User $user,
         Carbon $startDate,
         Carbon $endDate,
         Collection $aggregatedTotalTime,
-        Collection $variablePayMap
+        VariablePayCalculator $variablePayCalculator
     ) {
-        $this->user                = $user;
-        $this->startDate           = $startDate;
-        $this->endDate             = $endDate;
-        $this->aggregatedTotalTime = $aggregatedTotalTime->flatten();
-        $this->variablePay         = (bool) $user->nurseInfo->is_variable_rate;
-        $this->totalSystemTime     = $this->totalSystemTimeInSeconds();
-        $this->bonus               = $this->getBonus($user->nurseBonuses);
-        $this->extraTime           = $this->getAddedDuration($user->nurseBonuses);
-        $this->nurseHighRate       = $user->nurseInfo->high_rate;
-        $this->nurseLowRate        = $user->nurseInfo->low_rate;
-        $this->nurseHourlyRate     = $user->nurseInfo->hourly_rate;
-        $this->nurseFullName       = $user->getFullName();
-        $this->variablePaySummary  = collect();
+        $this->user                  = $user;
+        $this->startDate             = $startDate;
+        $this->endDate               = $endDate;
+        $this->aggregatedTotalTime   = $aggregatedTotalTime->flatten();
+        $this->variablePay           = (bool) $user->nurseInfo->is_variable_rate;
+        $this->totalSystemTime       = $this->totalSystemTimeInSeconds();
+        $this->bonus                 = $this->getBonus($user->nurseBonuses);
+        $this->extraTime             = $this->getAddedDuration($user->nurseBonuses);
+        $this->nurseHighRate         = $user->nurseInfo->high_rate;
+        $this->nurseLowRate          = $user->nurseInfo->low_rate;
+        $this->nurseHourlyRate       = $user->nurseInfo->hourly_rate;
+        $this->nurseVisitFee         = $user->nurseInfo->visit_fee;
+        $this->nurseFullName         = $user->getFullName();
+        $this->variablePayCalculator = $variablePayCalculator;
 
-        if ($this->variablePay) {
-            $variablePaySummary = $variablePayMap->first(
-                function ($value, $key) use ($user) {
-                    return $key === $user->nurseInfo->id;
-                }
-                ) ?? collect();
-            $this->variablePaySummary = $variablePaySummary->flatten();
-        }
+        $variablePayMap     = $this->variablePayCalculator->getForNurses();
+        $variablePaySummary = $variablePayMap->filter(function ($f) use ($user) {
+            return $f->nurse_id === $user->nurseInfo->id;
+        });
+
+        $this->variablePayForNurse = $variablePaySummary;
 
         $this->determineBaseSalary();
     }
@@ -320,7 +318,7 @@ class Invoice extends ViewModel
             ];
 
             if ($this->variablePay) {
-                $towards = $this->variablePaySummary->first(
+                $towards = $this->variablePayForNurse->first(
                     function ($careLog) use ($dateStr) {
                         return 'accrued_towards_ccm' == $careLog->ccm_type && $careLog->date == $dateStr;
                     }
@@ -330,7 +328,7 @@ class Invoice extends ViewModel
                     ? round($towards->total_time / 3600, 1)
                     : 0;
 
-                $after = $this->variablePaySummary->first(
+                $after = $this->variablePayForNurse->first(
                     function ($careLog) use ($dateStr) {
                         return 'accrued_after_ccm' == $careLog->ccm_type && $careLog->date == $dateStr;
                     }
@@ -353,11 +351,11 @@ class Invoice extends ViewModel
     /**
      * @return float|int|null
      */
-    public function totalTimeAfterCcm()
+    public function totalTimeAfterCcmInHours()
     {
         if (is_null($this->totalTimeAfterCcm)) {
             $this->totalTimeAfterCcm = round(
-                $this->variablePaySummary
+                $this->variablePayForNurse
                     ->where('ccm_type', 'accrued_after_ccm')
                     ->sum('total_time') / 3600,
                 1
@@ -370,11 +368,11 @@ class Invoice extends ViewModel
     /**
      * @return float|int|null
      */
-    public function totalTimeTowardsCcm()
+    public function totalTimeTowardsCcmInHours()
     {
         if (is_null($this->totalTimeTowardsCcm)) {
             $this->totalTimeTowardsCcm = round(
-                $this->variablePaySummary
+                $this->variablePayForNurse
                     ->where('ccm_type', 'accrued_towards_ccm')
                     ->sum('total_time') / 3600,
                 1
@@ -401,12 +399,12 @@ class Invoice extends ViewModel
      */
     private function determineBaseSalary()
     {
-        $this->fixedRatePay = $this->systemTimeInHours() * $this->user->nurseInfo->hourly_rate;
+        $this->fixedRatePay = $this->getFixedRatePay();
         if ( ! $this->variablePay) {
             $this->baseSalary = $this->fixedRatePay;
         } else {
-            $this->variableRatePay = $this->totalTimeAfterCcm() * $this->user->nurseInfo->low_rate
-                                     + $this->totalTimeTowardsCcm() * $this->user->nurseInfo->high_rate;
+            $this->variableRatePay = $this->getVariableRatePay();
+
             if ($this->fixedRatePay > $this->variableRatePay) {
                 $this->baseSalary                             = $this->fixedRatePay;
                 $this->changedToFixedRateBecauseItYieldedMore = true;
@@ -444,6 +442,29 @@ class Invoice extends ViewModel
         return $nurseExtras
             ->where('unit', 'usd')
             ->sum('value');
+    }
+
+    private function getFixedRatePay()
+    {
+        return $this->systemTimeInHours() * $this->user->nurseInfo->hourly_rate;
+    }
+
+    /**
+     * 1. Need to go through each patient
+     * 2. Check if ccm plus is enabled for patient
+     * 3. If not enabled, sum app total time per ccm_type and
+     *    pay with low and high rates.
+     * 4. If enabled:
+     * 4.1 get total time of patient (to know which ranges have been satisfied,
+     * 4.2 get total time of ccm in each range
+     * 4.3 get successful call in each range
+     * 4.4 pay percentage of time in range * VF.
+     *
+     * @return float|int
+     */
+    private function getVariableRatePay()
+    {
+        return $this->variablePayCalculator->calculate($this->user);
     }
 
     /**

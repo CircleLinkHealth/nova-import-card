@@ -85,6 +85,8 @@ class UpdateCarePlanStatus
             $user->setCarePlanQADate(date('Y-m-d H:i:s')); // careplan_qa_date
         }
 
+        $user->carePlan->alertPatientAboutApproval();
+
         $user->save();
     }
 
