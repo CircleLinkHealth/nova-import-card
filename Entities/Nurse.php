@@ -22,6 +22,7 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @property string              $billing_type
  * @property int                 $low_rate
  * @property int                 $high_rate
+ * @property float               $visit_fee //for the new ccm plus algo
  * @property int                 $spanish
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
@@ -74,6 +75,7 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @property-read int|null $workhourables_count
  * @property int|null $case_load_capacity
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereCaseLoadCapacity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee($value)
  */
 class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 {

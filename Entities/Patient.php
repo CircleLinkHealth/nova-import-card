@@ -173,6 +173,10 @@ class Patient extends BaseModel
     const TO_ENROLL = 'to_enroll';
     const UNREACHABLE = 'unreachable';
     const WITHDRAWN = 'withdrawn';
+    /**
+     * Withdrawn on 1st Call
+     * */
+    const WITHDRAWN_1ST_CALL = 'withdrawn_1st_call';
 
     public $phi = [
         'agent_name',
@@ -185,6 +189,7 @@ class Patient extends BaseModel
     ];
 
     protected $dates = [
+        'birth_date',
         'consent_date',
         'date_withdrawn',
         'date_paused',
@@ -578,7 +583,7 @@ class Patient extends BaseModel
                          ]);
             })
                   ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                      $subQuery->ccmStatus(Patient::WITHDRAWN)
+                      $subQuery->ccmStatus([Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])
                                ->where([
                                    ['date_withdrawn', '>=', $fromDate],
                                    ['date_withdrawn', '<=', $toDate],
@@ -603,7 +608,11 @@ class Patient extends BaseModel
      */
     public function scopeCcmStatus($builder, $status, $operator = '=')
     {
-        $builder->where('ccm_status', $operator, $status);
+        if (is_array($status)) {
+            $builder->whereIn('ccm_status', $operator, $status);
+        } else {
+            $builder->where('ccm_status', $operator, $status);
+        }
     }
 
     public function scopeEnrolled($query)
@@ -641,7 +650,7 @@ class Patient extends BaseModel
             if (Patient::PAUSED == $value) {
                 $this->attributes['date_paused'] = Carbon::now()->toDateTimeString();
             }
-            if (Patient::WITHDRAWN == $value) {
+            if (in_array($value, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
                 $this->attributes['date_withdrawn'] = Carbon::now()->toDateTimeString();
             }
             if (Patient::UNREACHABLE == $value) {

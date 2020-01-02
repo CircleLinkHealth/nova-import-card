@@ -51,6 +51,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'observation.create',
                     'observation.update',
                     'observation.read',
+                    'phi.read'
                 ],
             ],
             [
@@ -68,6 +69,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'location.read',
                     'practice.read',
                     'careplan-pdf.create',
+                    'phi.read'
                 ],
             ],
             [
@@ -84,6 +86,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'location.read',
                     'practice.read',
                     'careplan-pdf.create',
+                    'phi.read'
                 ],
             ],
             [
@@ -116,6 +119,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'careplan-pdf.create',
                     'careplan-pdf.read',
                     'carePerson.read',
+                    'phi.read'
                 ],
             ],
             [
@@ -218,6 +222,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivity.create',
                     'change-patient-enrollment-status',
                     'vitals-survey-complete',
+                    'phi.read'
                 ],
             ],
             [
@@ -284,6 +289,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.create',
                     'comment.read',
                     'comment.update',
+                    'phi.read'
                 ],
             ],
             [
@@ -359,6 +365,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'medicationGroup.read',
                     'nurseReport.read',
                     'careplan.read',
+                    'phi.read'
                 ],
             ],
             [
@@ -451,6 +458,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.read',
                     'comment.update',
                     'comment.delete',
+                    'phi.read'
                 ],
             ],
             [
@@ -552,6 +560,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'role.read',
                     'offlineActivity.create',
                     'vitals-survey-complete',
+                    'phi.read'
                 ],
             ],
             [
@@ -591,6 +600,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'user.read',
                     'role.read',
                     'offlineActivity.create',
+                    'phi.read'
                 ],
             ],
             [
@@ -608,6 +618,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'location.read',
                     'practice.read',
                     'careplan-pdf.create',
+                    'phi.read'
                 ],
             ],
             [
@@ -624,6 +635,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'practice.read',
                     'provider.read',
                     'ambassador.read',
+                    'phi.read'
                 ],
             ],
             [
@@ -655,6 +667,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'appointment.read',
                     'careplan-pdf.create',
                     'users-view-all',
+                    'phi.read'
                 ],
             ],
             [
@@ -749,6 +762,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'role.read',
                     'offlineActivity.create',
                     'care-plan-approve',
+                    'phi.read'
                 ],
             ],
             [
@@ -870,6 +884,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivity.create',
                     'change-patient-enrollment-status',
                     'vitals-survey-complete',
+                    'phi.read'
                 ],
             ],
             [
@@ -993,6 +1008,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'has-schedule',
                     'change-patient-enrollment-status',
                     'vitals-survey-complete',
+                    'phi.read'
                 ],
             ],
             [
@@ -1115,6 +1131,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'offlineActivityRequest.read',
                     'has-schedule',
                     'vitals-survey-complete',
+                    'phi.read'
                 ],
             ],
             [
@@ -1237,6 +1254,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'ccd-import',
                     'use-onboarding',
                     'nurseReport.read',
+                    'phi.read'
                 ],
             ],
             [
@@ -1257,6 +1275,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'call.create',
                     'call.update',
                     'call.delete',
+                    'phi.read'
                 ],
             ],
             [

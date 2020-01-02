@@ -96,6 +96,10 @@ class RequiredPermissionsTableSeeder extends Seeder
             [
                 'name'         => 'ehr-report-writer-access',
                 'display_name' => 'Has access to EHR Report Writer panel.'
+            ],
+            [
+                'name'         => 'phi.read',
+                'display_name' => 'Can view PHI.'
             ]
         ];
 

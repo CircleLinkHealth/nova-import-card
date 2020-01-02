@@ -64,6 +64,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Scout\Searchable;
@@ -1226,7 +1227,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return '';
         }
 
-        return $this->patientInfo->birth_date;
+        if (! is_null($this->patientInfo->birth_date)){
+            return $this->patientInfo->birth_date->toDateString();
+        }
+
+        return '';
     }
 
     public function getAgentEmail()
@@ -1849,19 +1854,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function getPreferredLocationName()
     {
         if ( ! $this->patientInfo) {
-            return '';
+            return 'N/A';
         }
-        $locationId = $this->patientInfo->preferred_contact_location;
-        if (empty($locationId)) {
-            return false;
-        }
-        $location = Location::find($locationId);
 
-        return (isset($location->name))
-            ?
-            $location->name
-            :
-            '';
+        return optional($this->patientInfo->location)->name ?? 'N/A';
     }
 
     public function getPrefix()
@@ -2046,6 +2042,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function inboundActivities()
     {
         return $this->hasMany(Call::class, 'inbound_cpm_id', 'id');
+    }
+
+    public function onFirstCall($isNoteCreatePageAndSuccessfullCall = false) : bool
+    {
+        $onFirstCall = 1;
+        if ($isNoteCreatePageAndSuccessfullCall){
+            $onFirstCall = 0;
+        }
+        return $this->inboundCalls()
+                    ->where('status', 'reached')->count() <= $onFirstCall;
     }
 
     public function inboundScheduledCalls(Carbon $after = null)
@@ -2333,7 +2339,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                              );
                        }
                    )
-                   ->with('primaryPractice')
                    ->with(
                        [
                            'observations' => function ($query) {
@@ -2344,6 +2349,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                            'phoneNumbers' => function ($q) {
                                $q->where('type', '=', PhoneNumber::HOME);
                            },
+                           'patientInfo.location',
+                           'primaryPractice',
                        ]
                    );
     }
@@ -2607,6 +2614,21 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'created_at'    => optional($this->created_at)->format('c') ?? null,
             'updated_at'    => optional($this->updated_at)->format('c') ?? null,
         ];
+    }
+
+    public function canSeePhi(){
+        return Cache::remember("user_id:$this->id:can-see-phi", 2, function () {
+            return $this->hasPermission('phi.read');
+        });
+    }
+
+    public function setCanSeePhi(bool $shouldSee = true)
+    {
+        Cache::forget("user_id:$this->id:can-see-phi");
+        $phiRead = Permission::whereName('phi.read')->first();
+        if ($phiRead){
+            $this->attachPermission($phiRead, $shouldSee);
+        }
     }
 
     /**
@@ -3155,7 +3177,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! $this->patientInfo) {
             return '';
         }
-        $this->patientInfo->birth_date = str_replace('-', '/', $value);
+
+        if (! is_a($value, Carbon::class)){
+            $value = Carbon::parse($value);
+        }
+
+        $this->patientInfo->birth_date = $value;
         $this->patientInfo->save();
 
         return true;
