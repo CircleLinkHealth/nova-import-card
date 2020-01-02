@@ -11,15 +11,18 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
 /**
  * CircleLinkHealth\Customer\Entities\NurseCareRateLog.
  *
- * @property int                                                   $id
- * @property int                                                   $nurse_id
- * @property int|null                                              $activity_id
- * @property string                                                $ccm_type
- * @property int                                                   $increment
- * @property \Carbon\Carbon|null                                   $created_at
- * @property \Carbon\Carbon|null                                   $updated_at
+ * @property int $id
+ * @property int|null $time_before
+ * @property bool|null $is_successful_call
+ * @property int $nurse_id
+ * @property int|null $activity_id
+ * @property int|null $patient_user_id
+ * @property string $ccm_type
+ * @property int $increment
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity|null $activity
- * @property \CircleLinkHealth\Customer\Entities\Nurse             $nurse
+ * @property \CircleLinkHealth\Customer\Entities\Nurse $nurse
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereActivityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereCcmType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereCreatedAt($value)
@@ -29,14 +32,27 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\NurseCareRateLog whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog
+ *     newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog query()
  * @property-read int|null $revision_history_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog whereIsSuccessfulCall($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog wherePatientUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog whereTimeBefore($value)
  */
 class NurseCareRateLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    protected $fillable = ['nurse_id', 'activity_id', 'ccm_type', 'increment', 'created_at'];
+    protected $fillable = [
+        'nurse_id',
+        'activity_id',
+        'ccm_type',
+        'increment',
+        'created_at',
+        'patient_user_id',
+        'time_before',
+        'is_successful_call',
+    ];
 
     public function activity()
     {

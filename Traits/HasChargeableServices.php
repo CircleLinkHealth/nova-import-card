@@ -30,7 +30,22 @@ trait HasChargeableServices
             }
         );
 
-        return $chargeableServices->has('AWV: G0438') || $chargeableServices->has('AWV: G0439');
+        return $chargeableServices->has(ChargeableService::AWV_INITIAL) || $chargeableServices->has(ChargeableService::AWV_SUBSEQUENT);
+    }
+
+    public function hasCCMPlusServiceCode()
+    {
+        $class = get_called_class();
+
+        $chargeableServices = Cache::remember(
+            "${class}:{$this->id}:chargeableServices",
+            2,
+            function () {
+                return $this->chargeableServices->keyBy('code');
+            }
+        );
+
+        return $chargeableServices->has(ChargeableService::CCM_PLUS_40) || $chargeableServices->has(ChargeableService::CCM_PLUS_60);
     }
 
     public function hasServiceCode($code)
