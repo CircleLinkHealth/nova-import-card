@@ -2615,11 +2615,26 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'updated_at'    => optional($this->updated_at)->format('c') ?? null,
         ];
     }
-
+    
+    private $isAllowedToSeePhi = null;
+    /**
+     * @return mixed
+     */
     public function canSeePhi(){
-        return Cache::remember("user_id:$this->id:can-see-phi", 2, function () {
-            return $this->hasPermission('phi.read');
-        });
+        /**
+         * This is making the site very slow.
+         * @todo make this more performant and enable
+         */
+        return true;
+        if (!$this->id) return false;
+        
+        if (is_null($this->isAllowedToSeePhi)) {
+            $this->isAllowedToSeePhi = Cache::remember("user_id:$this->id:can-see-phi", 2, function () {
+                return $this->hasPermission('phi.read');
+            });
+        }
+        
+        return $this->isAllowedToSeePhi;
     }
 
     public function setCanSeePhi(bool $shouldSee = true)
