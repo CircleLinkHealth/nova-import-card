@@ -111,7 +111,7 @@
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/revisionable": "*",
     "circlelinkhealth/sqlviews": "dev-master",
-    "circlelinkhealth/timetracking": "1.1.3",
+    "circlelinkhealth/timetracking": "1.1.4",
     "circlelinkhealth/twofa": "1.1.2",
     "daltcore/lara-pdf-merger": "dev-master",
     "dillingham/nova-button": "^1.0",
