@@ -2620,6 +2620,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      * @return mixed
      */
     public function canSeePhi(){
+        /**
+         * This is making the site very slow.
+         * @todo make this more performant and enable
+         */
+        return true;
         if (!$this->id) return false;
         
         if (is_null($this->isAllowedToSeePhi)) {
