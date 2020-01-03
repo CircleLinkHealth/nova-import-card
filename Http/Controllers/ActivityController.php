@@ -12,6 +12,7 @@ use App\Http\Requests\ShowPatientActivities;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\ActivityService;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\ActivityMeta;
@@ -333,11 +334,21 @@ class ActivityController extends Controller
             }
         }
         $activity = Activity::create($input);
+        $activity->pageTime()->create([
+                                          'billable_duration' => $activity->duration,
+                                          'duration' => $activity->duration,
+                                          'duration_unit' => $activity->duration_unit,
+                                          'patient_id' => $activity->patient_id,
+                                          'provider_id' => $activity->provider_id,
+                                          'start_time' => $activity->performed_at,
+                                          'end_time' => Carbon::parse($activity->performed_at)->addSeconds($activity->duration)->toDateTimeString(),
+                                          'program_id' => optional($patient)->program_id,
+                                      ]);
         
         $nurse = null;
         
         if ($activity->provider_id) {
-            $nurse = User::find($activity->provider_id)->nurseInfo;
+            $nurse = Nurse::whereUserId($activity->provider_id)->first();
         }
         
         // store meta
