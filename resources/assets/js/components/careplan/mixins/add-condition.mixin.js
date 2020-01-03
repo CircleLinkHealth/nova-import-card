@@ -12,7 +12,8 @@ export default {
                 icd10: null,
                 cpm_problem_id: null
             },
-            cpmProblems: [],
+            patient_id: null,
+            cpm_problems: []
         }
     },
     mixins: [CareplanMixin],
@@ -21,6 +22,9 @@ export default {
             if (!this.selectedProblem) return (this.newProblem.name !== '') && this.problems.findIndex(problem => (problem.name || '').toLowerCase() == (this.newProblem.name || '').toLowerCase()) >= 0
             else return (this.selectedProblem.name !== '') && this.problems.findIndex(problem => (problem != this.selectedProblem) && ((problem.name || '').toLowerCase() == (this.selectedProblem.name || '').toLowerCase())) >= 0
         },
+        cpmProbs(){
+            return this.cpmProblems ? this.cpmProblems : this.cpm_problems;
+        }
     },
     methods: {
         /**
@@ -60,7 +64,13 @@ export default {
         },
     },
     mounted() {
-        this.cpmProblems = this.careplan().allCpmProblems || []
+        if(! this.cpmProblems){
+            this.cpm_problems = this.careplan().allCpmProblems || []
+        }
         this.getSystemCodes()
+
+        Event.$on('modal-attest-call-conditions:show', (patient) => {
+            this.patient_id = toString(patient.id)
+        })
     }
 }

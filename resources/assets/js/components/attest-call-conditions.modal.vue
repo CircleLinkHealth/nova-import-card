@@ -20,7 +20,7 @@
                     <div class="col-sm-12 add-condition">
                         <button v-on:click="toggleAddCondition()" type="button" class="btn btn-info">{{addConditionLabel}}</button>
                         <div v-if="addCondition" style="padding-top: 20px">
-                            <add-condition :patient-id="patientId" :problems="problems"></add-condition>
+                            <add-condition :cpm-problems="cpmProblems" :patient-id="pId" :problems="problems"></add-condition>
                         </div>
                     </div>
                 </div>
@@ -49,21 +49,31 @@
         },
         props: {
             'patientId': String,
+            'cpmProblems': Array,
         },
         mounted() {
             App.$on('show-attest-call-conditions-modal', () => {
                 this.$refs['attest-call-conditions-modal'].visible = true;
             });
 
-            this.getPatientBillableProblems();
+            if (this.patientId && ! this.ccdProblems){
+                this.getPatientBillableProblems();
+            }
 
             Event.$on('full-conditions:add', (ccdProblem) => {
                 if (ccdProblem) this.problems.push(ccdProblem)
                 this.addCondition = false;
             })
+
+            Event.$on('modal-attest-call-conditions:show', (patient) => {
+                this.$refs['attest-call-conditions-modal'].visible = true;
+                this.patient_id = toString(patient.id)
+                this.problems = patient.problems
+            })
         },
         data(){
             return {
+                patient_id: null,
                 problems: [],
                 attestedProblems: [],
                 addCondition: false,
@@ -82,6 +92,9 @@
                     'm-top-15': this.errorExists,
                     'm-top-5': !this.errorExists,
                 }
+            },
+            pId(){
+                return this.patient_id ? this.patient_id : this.patientId;
             }
         },
         methods: {

@@ -15,13 +15,12 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Carbon;
 use Tests\Helpers\CarePlanHelpers;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class AutomateCallSchedulingTest extends TestCase
 {
+    use \App\Traits\Tests\UserHelpers;
     use CarePlanHelpers;
-    use UserHelpers;
 
     /** @var SchedulerService $schedulerService */
     protected $schedulerService;

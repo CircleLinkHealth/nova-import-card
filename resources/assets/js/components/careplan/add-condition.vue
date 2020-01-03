@@ -53,7 +53,8 @@
         props: {
             'patient-id': String,
             'problems': Array,
-            'shouldSelectIsMonitored':  Boolean
+            'shouldSelectIsMonitored':  Boolean,
+            'cpmProblems': Array
         },
         mixins: [
             CareplanMixin,
@@ -77,11 +78,12 @@
                     removeCode: null,
                     editCode: null
                 },
+                patient_id: null
             }
         },
         computed: {
             cpmProblemsForAutoComplete() {
-                return this.cpmProblems.filter(p => p && p.name).reduce((pA, pB) => {
+                return this.cpmProbs.filter(p => p && p.name).reduce((pA, pB) => {
                     return pA.concat([{
                         name: pB.name,
                         id: pB.id,
@@ -96,12 +98,15 @@
                 }, []).distinct(p => p.name)
                     .sort((a, b) => (+b.is_snomed) - (+a.is_snomed) || b.name.localeCompare(a.name));
             },
+            pId(){
+                return this.patient_id ? this.patient_id : this.patientId;
+            }
         },
         methods: {
             addCcdProblem(e) {
                 e.preventDefault()
                 this.loaders.addProblem = true
-                return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), {
+                return this.axios.post(rootUrl(`api/patients/${this.pId}/problems/ccd`), {
                     name: this.newProblem.name,
                     cpm_problem_id: this.newProblem.cpm_problem_id,
                     is_monitored: this.newProblem.is_monitored,

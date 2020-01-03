@@ -148,7 +148,7 @@
                 <template slot="CCM Problem Codes" slot-scope="props">
                     <div>
                         <span class="blue pointer"
-                              @click="showCcmModal(props.row, 1)">{{props.row['CCM Problem Codes'] || '&lt;Edit&gt;'}}</span>
+                              @click="showCcmModal(props.row)">{{props.row['CCM Problem Codes'] || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['problem_1']"></loader>
                     </div>
                 </template>
@@ -176,6 +176,7 @@
                 <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
                 <loader v-if="loaders.openMonth"></loader>
             </div>
+            <attest-call-conditions-modal ref="attestCallConditionsModal" :cpm-problems="cpmProblems"></attest-call-conditions-modal>
             <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
             <chargeable-services-modal ref="chargeableServicesModal"
                                        :services="selectedPracticeChargeableServices"></chargeable-services-modal>
@@ -508,7 +509,7 @@
                 this.showProblemsModal(patient, type);
             },
 
-            showCcmModal(patient, type) {
+            showCcmModal(patient) {
                 // if (!patient.isCcmEligible()) {
                 //     Event.$emit('notifications-billing:create', {
                 //         text: `Cannot edit CCM Problem. Check that both Practice and Patient are chargeable for ${SERVICES.CPT_99490}.`,
@@ -520,70 +521,20 @@
 
                 if (!patient.hasOver20MinutesCCMTime()) {
                     Event.$emit('notifications-billing:create', {
-                        text: 'Cannot edit CCM Problem. The Patient has less than 20 minutes CCM time.',
+                        text: 'Cannot edit CCM Problems. The Patient has less than 20 minutes CCM time.',
                         type: 'warning',
                         interval: 5000
                     });
                     return;
                 }
 
-                this.showProblemsModal(patient, type);
+                this.showProblemsModal(patient);
             },
 
-            showProblemsModal(patient, type) {
+            showProblemsModal(patient) {
                 const self = this;
-                Event.$emit('modal-patient-problem:show', patient, type, function (modified) {
-                    /** callback done function */
-                    const tablePatient = self.tableData.find(pt => pt.id === patient.id)
-                    console.log('table-patient', tablePatient, modified)
-                    if (tablePatient) {
-                        if (modified.id == 'Other') {
-                            modified.name = (this.cpmProblems.find(problem => problem.id == modified.cpm_id) || {}).name || modified.name
-                        }
-                        if (type === 1) {
-                            tablePatient['CCM Problem 1 Code'] = modified.code
-                            tablePatient['CCM Problem 1'] = modified.name
-                        }
-                        else if (type == 2) {
-                            tablePatient['CCM Problem 2 Code'] = modified.code
-                            tablePatient['CCM Problem 2'] = modified.name
-                        }
-                        else if (type == 3) {
-                            tablePatient['BHI Problem Code'] = modified.code
-                            tablePatient['BHI Problem'] = modified.name
-                        }
-                        const problemKey = (type === 1) ? 'problem_1' : (type === 2 ? 'problem_2' : 'bhi_problem')
-                        tablePatient.promises[problemKey] = true
-                        return self.axios.post(rootUrl('admin/reports/monthly-billing/v2/storeProblem'), {
-                            code: modified.code,
-                            id: modified.id,
-                            name: modified.name,
-                            problem_no: problemKey,
-                            report_id: tablePatient.reportId,
-                            cpm_problem_id: modified.cpm_id
-                        }).then((response) => {
-                            tablePatient.promises[problemKey] = false
-                            console.log('billing-change-problem', response)
-                            if (problemKey == 'bhi_problem' && !response) {
-                                Event.$emit('notifications-billing:create', {
-                                    text: 'An error occurred when performing this action',
-                                    type: 'error',
-                                    interval: 3000
-                                })
-                            }
-                        }).catch(err => {
-                            tablePatient.promises[problemKey] = false
-                            console.error('billing-change-problem', err)
-                            Event.$emit('notifications-billing:create', {
-                                text: err.message,
-                                type: 'error',
-                                interval: 3000
-                            })
-                        })
-                        console.log('table-patient-promises', tablePatient.promises)
-                    }
-                    else console.error('could not find tablePatient')
-                })
+                Event.$emit('modal-attest-call-conditions:show', patient);
+
             },
 
             showErrorModal(id, name) {
