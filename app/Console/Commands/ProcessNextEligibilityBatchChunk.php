@@ -36,6 +36,8 @@ class ProcessNextEligibilityBatchChunk extends Command
         if ($batch = $this->getNextBatch()) {
             ProcessEligibilityBatch::dispatch($batch);
             $this->line("Scheduled command to process batch:$batch->id");
+
+            return;
         }
 
         $this->warn('No batches pending processing. Did not schedule anything.');

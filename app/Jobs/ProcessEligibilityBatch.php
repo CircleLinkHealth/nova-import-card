@@ -12,6 +12,7 @@ use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use App\TargetPatient;
+use CircleLinkHealth\Eligibility\Jobs\ProcessTargetPatientForEligibility;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -162,19 +163,12 @@ class ProcessEligibilityBatch implements ShouldQueue
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
     {
         $query          = TargetPatient::whereBatchId($batch->id)->whereStatus(TargetPatient::STATUS_TO_PROCESS);
-        $targetPatients = $query->with('batch')->chunkById(50, function ($targetPatients) use ($batch) {
+        $targetPatients = $query->with('batch')->chunkById(30, function ($targetPatients) use ($batch) {
             $batch->status = EligibilityBatch::STATUSES['processing'];
             $batch->save();
 
             $targetPatients->each(function (TargetPatient $targetPatient) use ($batch) {
-                try {
-                    $targetPatient->processEligibility();
-                } catch (\Exception $exception) {
-                    $targetPatient->status = TargetPatient::STATUS_ERROR;
-                    $targetPatient->save();
-
-                    throw $exception;
-                }
+                ProcessTargetPatientForEligibility::dispatch($targetPatient);
             });
         });
 
