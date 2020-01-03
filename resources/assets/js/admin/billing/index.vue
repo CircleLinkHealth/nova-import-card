@@ -407,7 +407,7 @@
                     const ids = this.tableData.map(i => i.id)
                     this.url = pagination.next_page_url
                     this.isClosed = !!Number(response.headers['is-closed'])
-                    this.tableData = this.tableData.concat(pagination.data.filter(patient => !ids.includes(patient.id)).map((patient, index) => {
+                    this.tableData = this.tableData.concat((pagination.data || []).filter(patient => !ids.includes(patient.id)).map((patient, index) => {
                         const item = {
                             id: patient.id,
                             MRN: patient.mrn,
