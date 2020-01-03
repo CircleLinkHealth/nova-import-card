@@ -62,17 +62,17 @@ class ActivityController extends Controller
             ->orderBy('first_name')
             ->get()
             ->mapWithKeys(
-                                 function ($user) use ($patient) {
-                                     return [
-                                         $user->id => $user->getFullName().($user->hasRoleForSite(
-                                             'care-center-external',
-                                             $patient->primaryProgramId()
-                                         )
-                                                 ? ' (in-house)'
-                                                 : ''),
-                                     ];
-                                 }
-                             )
+                function ($user) use ($patient) {
+                    return [
+                        $user->id => $user->getFullName().($user->hasRoleForSite(
+                            'care-center-external',
+                            $patient->primaryProgramId()
+                        )
+                                ? ' (in-house)'
+                                : ''),
+                    ];
+                }
+            )
             ->all();
 
         $view_data = [
@@ -333,13 +333,17 @@ class ActivityController extends Controller
                 }
             }
         }
+
+        $startTime = Carbon::createFromFormat('Y-m-d H:i', str_replace('T', ' ', $input['performed_at']));
+
         $pageTimer = PageTimer::create([
             'billable_duration' => $input['duration'],
             'duration'          => $input['duration'],
             'duration_unit'     => $input['duration_unit'],
             'patient_id'        => $input['patient_id'],
             'provider_id'       => $input['provider_id'],
-            'start_time'        => $input['performed_at'],
+            'start_time'        => $startTime,
+            'end_time'          => $startTime->copy()->addSeconds($input['duration']),
             'program_id'        => optional($patient)->program_id,
         ]);
 
@@ -393,26 +397,26 @@ class ActivityController extends Controller
     {
         $acts = DB::table('lv_activities')
             ->select(
-                      DB::raw(
+                DB::raw(
                           'lv_activities.id,lv_activities.logged_from,DATE(lv_activities.performed_at)as performed_at, lv_activities.type, SUM(lv_activities.duration) as duration, lv_activities.is_behavioral, users.first_name as provider_first_name, users.last_name as provider_last_name, users.suffix as provider_suffix'
                       )
-                  )
+            )
             ->join('users', 'users.id', '=', 'lv_activities.provider_id')
             ->where('lv_activities.performed_at', '>=', $start)
             ->where('lv_activities.performed_at', '<=', $end)
             ->where('lv_activities.patient_id', $patientId)
             ->where(
-                      function ($q) {
-                          $q->where('lv_activities.logged_from', 'activity')
-                              ->orWhere('lv_activities.logged_from', 'manual_input')
-                              ->orWhere('lv_activities.logged_from', 'pagetimer');
-                      }
-                  )
+                function ($q) {
+                    $q->where('lv_activities.logged_from', 'activity')
+                        ->orWhere('lv_activities.logged_from', 'manual_input')
+                        ->orWhere('lv_activities.logged_from', 'pagetimer');
+                }
+            )
             ->groupBy(
-                      DB::raw(
+                DB::raw(
                           'lv_activities.provider_id, DATE(lv_activities.performed_at),lv_activities.type,lv_activities.is_behavioral'
                       )
-                  )
+            )
             ->orderBy('lv_activities.created_at', 'desc')
             ->get();
 
