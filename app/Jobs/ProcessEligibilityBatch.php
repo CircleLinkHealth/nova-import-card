@@ -4,81 +4,74 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\Commands;
+namespace App\Jobs;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
-use App\Jobs\MakePhoenixHeartWelcomeCallList;
-use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
-use App\Services\GoogleDrive;
 use App\TargetPatient;
-use Illuminate\Console\Command;
-use Storage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class QueueEligibilityBatchForProcessing extends Command
+class ProcessEligibilityBatch implements ShouldQueue
 {
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
     /**
-     * The console command description.
-     *
-     * @var string
+     * @var EligibilityBatch
      */
-    protected $description = 'Process an eligibility batch of CCDAs.';
+    protected $batch;
 
     /**
      * @var ProcessEligibilityService
      */
-    protected $processEligibilityService;
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'batch:process';
+    private $processEligibilityService;
 
     /**
-     * Create a new command instance.
+     * Create a new job instance.
      */
-    public function __construct(ProcessEligibilityService $processEligibilityService)
+    public function __construct(EligibilityBatch $batch)
     {
-        parent::__construct();
-        $this->processEligibilityService = $processEligibilityService;
+        $this->batch = $batch;
     }
 
     /**
-     * Execute the console command.
+     * Execute the job.
      *
-     * @return mixed
+     * @throws \League\Flysystem\FileNotFoundException
+     *
+     * @return void
      */
-    public function handle()
+    public function handle(ProcessEligibilityService $processEligibilityService)
     {
-        $batch = $this->getBatch();
+        $this->processEligibilityService = $processEligibilityService;
 
-        if ( ! $batch) {
-            return null;
-        }
-
-        switch ($batch->type) {
+        switch ($this->batch->type) {
             case EligibilityBatch::TYPE_ONE_CSV:
-                $batch = $this->queueSingleCsvJobs($batch);
+                $this->batch = $this->queueSingleCsvJobs($this->batch);
                 break;
             case EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS:
-                $batch = $this->queueGoogleDriveJobs($batch);
+                $this->batch = $this->queueGoogleDriveJobs($this->batch);
                 break;
             case EligibilityBatch::TYPE_PHX_DB_TABLES:
-                $batch = $this->queuePHXJobs($batch);
+                $this->batch = $this->queuePHXJobs($this->batch);
                 break;
             case EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE:
-                $batch = $this->queueClhMedicalRecordTemplateJobs($batch);
+                $this->batch = $this->queueClhMedicalRecordTemplateJobs($this->batch);
                 break;
             case EligibilityBatch::ATHENA_API:
-                $batch = $this->queueAthenaJobs($batch);
+                $this->batch = $this->queueAthenaJobs($this->batch);
                 break;
         }
 
-        $this->afterProcessingHook($batch);
+        $this->afterProcessingHook($this->batch);
     }
 
     /**
@@ -164,13 +157,6 @@ class QueueEligibilityBatchForProcessing extends Command
 
             throw $e;
         }
-    }
-
-    private function getBatch(): ?EligibilityBatch
-    {
-        return EligibilityBatch::where('status', '<', 2)
-            ->with('practice')
-            ->first();
     }
 
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
@@ -308,9 +294,6 @@ class QueueEligibilityBatchForProcessing extends Command
         return $batch->fresh();
     }
 
-    /**
-     * @throws \Exception
-     */
     private function queueSingleCsvJobs(EligibilityBatch $batch): EligibilityBatch
     {
         $result = null;

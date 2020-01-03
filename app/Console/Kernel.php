@@ -19,7 +19,7 @@ use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
 use App\Console\Commands\OverwriteNBIPatientMRN;
-use App\Console\Commands\QueueEligibilityBatchForProcessing;
+use App\Console\Commands\ProcessNextEligibilityBatchChunk;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
 use App\Console\Commands\QueueResetAssignedCareAmbassadorsFromEnrollees;
@@ -71,7 +71,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(DetermineTargetPatientEligibility::class)
             ->dailyAt('04:00')->onOneServer();
 
-        $schedule->command(QueueEligibilityBatchForProcessing::class)
+        $schedule->command(ProcessNextEligibilityBatchChunk::class)
             ->everyFiveMinutes()
             ->withoutOverlapping()->onOneServer();
 
