@@ -23,7 +23,7 @@
         }
     },
     "require": {
-        "circlelinkhealth/customer": "^1.1"
+        "circlelinkhealth/customer": "*"
     },
     "repositories": [
         {
