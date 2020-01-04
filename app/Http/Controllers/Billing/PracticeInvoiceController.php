@@ -139,8 +139,6 @@ class PracticeInvoiceController extends Controller
      */
     public function data(Request $request)
     {
-        ini_set('max_execution_time', 300);
-
         $practice_id = $request->input('practice_id');
         $date        = $request->input('date');
 
