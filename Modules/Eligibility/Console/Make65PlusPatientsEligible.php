@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Console;
 
+use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
 use Carbon\Carbon;
@@ -36,17 +37,22 @@ class Make65PlusPatientsEligible extends Command
      */
     public function handle()
     {
+        $batch = EligibilityBatch::findOrFail($this->argument('batchId'));
+
         $cutoffDate = Carbon::parse('65 years ago')->startOfDay();
-        EligibilityJob::whereBatchId($this->argument('batchId'))->with('batch')->doesntHave('enrollee')->chunkById(50, function (Collection $jobs) use ($cutoffDate) {
-            $jobs->each(function (EligibilityJob $job) use ($cutoffDate) {
+
+        $recordsAdded = 0;
+
+        EligibilityJob::whereBatchId($this->argument('batchId'))->doesntHave('enrollee')->chunkById(50, function (Collection $jobs) use ($batch, $cutoffDate, &$recordsAdded) {
+            $jobs->each(function (EligibilityJob $job) use ($batch, $cutoffDate, &$recordsAdded) {
                 $dob = $job->data['dob'] ?? null;
-                if ($dob && Carbon::parse($dob)->lte($cutoffDate)) {
+                if ($dob && Carbon::parse($dob)->isBefore($cutoffDate)) {
                     $this->warn("Creating enrollee for $job->id");
                     $enrollee = Enrollee::create([
                         'batch_id'           => $job->batch_id,
                         'eligibility_job_id' => $job->id,
 
-                        'practice_id' => $job->batch->practice_id,
+                        'practice_id' => $batch->practice_id,
 
                         'mrn' => $job->data['mrn_number'],
                         'dob' => $job->data['dob'],
@@ -76,12 +82,19 @@ class Make65PlusPatientsEligible extends Command
                         'problems'                => json_encode($job->data['problems']),
                     ]);
 
-                    $this->line("job:$job->id enrollee:job:$enrollee->id");
+                    ++$recordsAdded;
+
+                    $this->line("job:$job->id enrollee:$enrollee->id");
                 }
             });
         });
 
-        $this->line('Command finished.');
+        $options                                  = $batch->options;
+        $options['makeAllPatientsOver65Eligible'] = 'Ran last on '.presentDate(now())." and added $recordsAdded new eligible patients.";
+        $batch->options                           = $options;
+        $batch->save();
+
+        $this->line("Command finished. $recordsAdded patients over 65 were marked as eligible.");
     }
 
     /**
