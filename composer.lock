@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1abf62541228feebf3a095e8a7cc9194",
+    "content-hash": "41da8ff0853fa3fe9624804325e71bce",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -838,11 +838,11 @@
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.6.4",
+            "version": "v1.6.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "41dc26fe37e572e0c95e670508c98d6abf628cde"
+                "reference": "8ec7759f4d65e3cc1656fa05cb5abd49624105a2"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper": "^v3.0.2",
@@ -875,7 +875,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-01T20:41:58+00:00"
+            "time": "2020-01-03T05:26:10+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1072,14 +1072,14 @@
         },
         {
             "name": "circlelinkhealth/timetracking",
-            "version": "v1.1.2",
+            "version": "v1.1.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "acd472d1a0b35242793ede8552134b46f4c6861d"
+                "reference": "f9f76a1ab6fe73c8a5442f1f5e9a875f64aeb038"
             },
             "require": {
-                "circlelinkhealth/customer": "^1.1"
+                "circlelinkhealth/customer": "*"
             },
             "type": "library",
             "extra": {
@@ -1101,7 +1101,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-10T08:40:30+00:00"
+            "time": "2020-01-03T23:44:23+00:00"
         },
         {
             "name": "circlelinkhealth/twofa",

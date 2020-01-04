@@ -7,6 +7,7 @@
 namespace App\Console\Commands\Athena;
 
 use App\TargetPatient;
+use CircleLinkHealth\Eligibility\Jobs\ProcessTargetPatientForEligibility;
 use Illuminate\Console\Command;
 
 class DetermineTargetPatientEligibility extends Command
@@ -33,9 +34,10 @@ class DetermineTargetPatientEligibility extends Command
     {
         TargetPatient::where('status', '=', 'to_process')
             ->with('batch')
-            ->get()
-            ->each(function (TargetPatient $targetPatient) {
-                $targetPatient->processEligibility();
+            ->chunkById(50, function ($tps) {
+                $tps->each(function (TargetPatient $targetPatient) {
+                    ProcessTargetPatientForEligibility::dispatch($targetPatient);
+                });
             });
     }
 }

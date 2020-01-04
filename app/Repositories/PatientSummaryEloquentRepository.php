@@ -73,7 +73,7 @@ class PatientSummaryEloquentRepository
      */
     public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
-        if ($summary->actor_id) {
+        if ($this->shouldNotTouch($summary)) {
             return $summary;
         }
 
@@ -203,7 +203,7 @@ class PatientSummaryEloquentRepository
     {
         $patient = $summary->patient;
 
-        if ($summary->actor_id) {
+        if ($this->shouldNotTouch($summary)) {
             return $summary;
         }
 
@@ -602,6 +602,14 @@ class PatientSummaryEloquentRepository
                || ChargeableService::CCM_PLUS_60             == $service->code && $summary->ccm_time >= self::MINUTES_60 && $summary->patient->primaryPractice->hasServiceCode(ChargeableService::CCM_PLUS_60)
                || (ChargeableService::SOFTWARE_ONLY == $service->code && $summary->patient->primaryPractice->hasServiceCode(ChargeableService::SOFTWARE_ONLY)
                   && 0 == $summary->timeFromClhCareCoaches());
+    }
+
+    /**
+     * Is it ok for the system to process this record?
+     */
+    private function shouldNotTouch(PatientMonthlySummary $summary): bool
+    {
+        return (bool) $summary->actor_id || $summary->approved;
     }
 
     /**

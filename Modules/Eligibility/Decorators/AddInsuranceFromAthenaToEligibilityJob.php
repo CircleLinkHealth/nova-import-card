@@ -32,16 +32,16 @@ class AddInsuranceFromAthenaToEligibilityJob
     }
 
     /**
-     * @param EligibilityJob $eligibilityJob
-     * @param TargetPatient  $targetPatient
-     * @param Ccda           $ccda
-     *
      * @throws \Exception
      *
      * @return EligibilityJob
      */
     public function addInsurancesFromAthena(EligibilityJob $eligibilityJob, TargetPatient $targetPatient, Ccda $ccda)
     {
+        if (array_key_exists('insurances', $eligibilityJob->data) && ! empty($eligibilityJob->data['insurances'])) {
+            return $eligibilityJob;
+        }
+
         $response = $this->getAndStoreInsuranceFromAthenaApi($targetPatient, $ccda);
 
         if (is_array($response) && array_key_exists('insurances', $response)) {
@@ -56,8 +56,6 @@ class AddInsuranceFromAthenaToEligibilityJob
     }
 
     /**
-     * @param TargetPatient $targetPatient
-     *
      * @throws \Exception
      *
      * @return Insurances
@@ -70,15 +68,15 @@ class AddInsuranceFromAthenaToEligibilityJob
             $targetPatient->ehr_department_id
         );
 
-        return tap($insurances, function (array $insurances) use ($ccda) {
-            $this->storeInsuranceFromAthenaApi($insurances, $ccda);
-        });
+        return tap(
+            $insurances,
+            function (array $insurances) use ($ccda) {
+                $this->storeInsuranceFromAthenaApi($insurances, $ccda);
+            }
+        );
     }
 
     /**
-     * @param array         $insurances
-     * @param MedicalRecord $medicalRecord
-     *
      * @return Collection
      */
     private function storeInsuranceFromAthenaApi(array $insurances, MedicalRecord $medicalRecord)
@@ -87,17 +85,21 @@ class AddInsuranceFromAthenaToEligibilityJob
 
         if (array_key_exists('insurances', $insurances)) {
             foreach ($insurances['insurances'] as $insurance) {
-                $this->insuranceCollection->push(InsuranceLog::updateOrCreate([
-                    'medical_record_id'   => optional($medicalRecord)->id,
-                    'medical_record_type' => get_class($medicalRecord),
-                    'name'                => $insurance['insuranceplanname'] ?? null,
-                    'type'                => $insurance['insurancetype'] ?? null,
-                    'policy_id'           => $insurance['policynumber'] ?? null,
-                    'relation'            => $insurance['relationshiptoinsured'] ?? null,
-                    'subscriber'          => $insurance['insurancepolicyholder'] ?? null,
-                    'import'              => 1,
-                    'raw'                 => $insurance,
-                ]));
+                $this->insuranceCollection->push(
+                    InsuranceLog::updateOrCreate(
+                        [
+                            'medical_record_id'   => optional($medicalRecord)->id,
+                            'medical_record_type' => get_class($medicalRecord),
+                            'name'                => $insurance['insuranceplanname'] ?? null,
+                            'type'                => $insurance['insurancetype'] ?? null,
+                            'policy_id'           => $insurance['policynumber'] ?? null,
+                            'relation'            => $insurance['relationshiptoinsured'] ?? null,
+                            'subscriber'          => $insurance['insurancepolicyholder'] ?? null,
+                            'import'              => 1,
+                            'raw'                 => $insurance,
+                        ]
+                    )
+                );
             }
         }
 
