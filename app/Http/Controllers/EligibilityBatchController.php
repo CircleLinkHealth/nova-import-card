@@ -392,10 +392,8 @@ class EligibilityBatchController extends Controller
                 'p1.name as ccm_condition_1',
                 'p2.name as ccm_condition_2',
             ])
-                ->when( ! isset($batch->options['makeAllPatientsOver65Eligible']), function ($q) {
-                    $q->join('cpm_problems as p1', 'p1.id', '=', 'enrollees.cpm_problem_1')
-                        ->leftJoin('cpm_problems as p2', 'p2.id', '=', 'enrollees.cpm_problem_2');
-                })
+                ->leftJoin('cpm_problems as p1', 'p1.id', '=', 'enrollees.cpm_problem_1')
+                ->leftJoin('cpm_problems as p2', 'p2.id', '=', 'enrollees.cpm_problem_2')
                 ->whereBatchId($batch->id)
                 ->whereNull('user_id')
                 ->with('eligibilityJob')
