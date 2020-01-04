@@ -90,7 +90,7 @@ class Make65PlusPatientsEligible extends Command
         });
 
         $options                                  = $batch->options;
-        $options['makeAllPatientsOver65Eligible'] = 'Ran last on '.presentDate(now())." and added $recordsAdded new eligible patients.";
+        $options['makeAllPatientsOver65Eligible'] = 'Ran last on '.presentDate(now())." and yielded $recordsAdded additional eligible patients.";
         $batch->options                           = $options;
         $batch->save();
 
