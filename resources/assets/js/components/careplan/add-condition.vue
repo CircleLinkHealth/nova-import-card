@@ -135,6 +135,11 @@
                 this.newProblem.icd10 = null
             },
         },
+        mounted() {
+            Event.$on('modal-attest-call-conditions:show', (patient) => {
+                this.patient_id = String(patient.id)
+            })
+        }
     }
 </script>
 

@@ -69,8 +69,5 @@ export default {
         }
         this.getSystemCodes()
 
-        Event.$on('modal-attest-call-conditions:show', (patient) => {
-            this.patient_id = toString(patient.id)
-        })
     }
 }

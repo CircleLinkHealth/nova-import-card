@@ -67,7 +67,7 @@
 
             Event.$on('modal-attest-call-conditions:show', (patient) => {
                 this.$refs['attest-call-conditions-modal'].visible = true;
-                this.patient_id = toString(patient.id)
+                this.patient_id = String(patient.id)
                 this.problems = patient.problems
             })
         },
