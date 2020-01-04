@@ -148,7 +148,7 @@
                 <template slot="CCM Problem Codes" slot-scope="props">
                     <div>
                         <span class="blue pointer"
-                              @click="showCcmModal(props.row)">{{props.row['CCM Problem Codes'] || '&lt;Edit&gt;'}}</span>
+                              @click="showCcmModal(props.row)">{{attestedProblemCodes(props.row) || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['problem_1']"></loader>
                     </div>
                 </template>
@@ -160,7 +160,8 @@
                     </div>
                 </template>
                 <template slot="chargeable_services" slot-scope="props">
-                    <div class="blue" :class="isSoftwareOnly ? '' : 'pointer'" @click="showChargeableServicesModal(props.row)">
+                    <div class="blue" :class="isSoftwareOnly ? '' : 'pointer'"
+                         @click="showChargeableServicesModal(props.row)">
                         <div v-if="props.row.chargeable_services.length">
                             <label class="label label-info margin-5 inline-block"
                                    v-for="service in props.row.chargeables()" :key="service.id">{{service.code}}</label>
@@ -176,7 +177,8 @@
                 <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
                 <loader v-if="loaders.openMonth"></loader>
             </div>
-            <attest-call-conditions-modal ref="attestCallConditionsModal" :cpm-problems="cpmProblems"></attest-call-conditions-modal>
+            <attest-call-conditions-modal ref="attestCallConditionsModal"
+                                          :cpm-problems="cpmProblems"></attest-call-conditions-modal>
             <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
             <chargeable-services-modal ref="chargeableServicesModal"
                                        :services="selectedPracticeChargeableServices"></chargeable-services-modal>
@@ -417,6 +419,7 @@
                             'CCM Mins': timeDisplay(patient.ccm_time),
                             'BHI Mins': timeDisplay(patient.bhi_time),
                             'CCM Problem Codes': patient.ccm_problem_codes,
+                            attested_problems: patient.attested_problems,
                             'BHI Problem': patient.bhi_problem,
                             'BHI Problem Code': patient.bhi_problem_code,
                             '#Successful Calls': patient.no_of_successful_calls,
@@ -586,6 +589,15 @@
                     console.error('billable:open-month', err)
                 })
             },
+            attestedProblemCodes(patient) {
+                return patient.problems.filter(function (p) {
+                    return patient.attested_problems.includes(p.id);
+                })
+                    .map(function (p) {
+                        return p.code;
+                    })
+                    .join();
+            },
             closeMonth() {
                 this.loaders.closeMonth = true
                 return this.$http.post(rootUrl('admin/reports/monthly-billing/v2/close'), {
@@ -640,6 +652,16 @@
             //this.getChargeableServices();
 
             // this.getCounts();
+
+            //call route, update row, hide modal
+            App.$on('call-conditions-attested', (data) => {
+
+                //call route then finish things off in this
+                this.tableData.filter(function (p) {
+                    return String(p.id) === String(data.patient_id);
+                })[0].attested_problems = data.attested_problems;
+                App.$emit('modal-attest-call-conditions:hide');
+            });
 
             Event.$on('vue-tables.pagination', (page) => {
                 const $table = this.$refs.tblBillingReport;

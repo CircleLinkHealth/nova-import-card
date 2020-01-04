@@ -14,13 +14,16 @@
                 </div>
                 <div class="col-sm-12" v-bind:class="sectionSpaceClass">
                     <div v-for="problem in problems">
-                        <input type="checkbox"  :id="problem.id" :value="problem.id" v-model="attestedProblems">
-                        <label :for="problem.id"><span> </span>{{problem.name}}</label>
+                        <input type="checkbox" :id="problem.id" :value="problem.id" v-model="attestedProblems">
+                        <label :for="problem.id"><span> </span>{{problem.name}} ({{problem.code}})</label>
                     </div>
                     <div class="col-sm-12 add-condition">
-                        <button v-on:click="toggleAddCondition()" type="button" class="btn btn-info">{{addConditionLabel}}</button>
+                        <button v-on:click="toggleAddCondition()" type="button" class="btn btn-info">
+                            {{addConditionLabel}}
+                        </button>
                         <div v-if="addCondition" style="padding-top: 20px">
-                            <add-condition :cpm-problems="cpmProblems" :patient-id="pId" :problems="problems"></add-condition>
+                            <add-condition :cpm-problems="cpmProblems" :patient-id="pId"
+                                           :problems="problems"></add-condition>
                         </div>
                     </div>
                 </div>
@@ -56,7 +59,7 @@
                 this.$refs['attest-call-conditions-modal'].visible = true;
             });
 
-            if (this.patientId && ! this.ccdProblems){
+            if (this.patientId && !this.ccdProblems) {
                 this.getPatientBillableProblems();
             }
 
@@ -65,13 +68,18 @@
                 this.addCondition = false;
             })
 
+            App.$on('modal-attest-call-conditions:hide', () => {
+                this.hideModal();
+            })
+
             Event.$on('modal-attest-call-conditions:show', (patient) => {
                 this.$refs['attest-call-conditions-modal'].visible = true;
                 this.patient_id = String(patient.id)
+                this.attestedProblems = (patient.attested_problems);
                 this.problems = patient.problems
             })
         },
-        data(){
+        data() {
             return {
                 patient_id: null,
                 problems: [],
@@ -81,7 +89,7 @@
             }
         },
         computed: {
-            addConditionLabel (){
+            addConditionLabel() {
                 return this.addCondition ? 'Close Other Condition Section' : 'Add Other Condition';
             },
             errorExists() {
@@ -93,13 +101,13 @@
                     'm-top-5': !this.errorExists,
                 }
             },
-            pId(){
+            pId() {
                 return this.patient_id ? this.patient_id : this.patientId;
             }
         },
         methods: {
-            getPatientBillableProblems(){
-                this.axios.get(rootUrl(`/api/patients/`+ this.patientId + `/problems/ccd`))
+            getPatientBillableProblems() {
+                this.axios.get(rootUrl(`/api/patients/` + this.patientId + `/problems/ccd`))
                     .then(resp => {
                         this.problems = resp.data;
                     })
@@ -113,19 +121,22 @@
                 this.$refs['attest-call-conditions-modal'].visible = false;
             },
             submitForm() {
-                if (this.attestedProblems.length == 0){
+                if (this.attestedProblems.length == 0) {
                     this.error = "Please select at least one condition."
                     return;
                 }
 
-                if (this.addCondition){
+                if (this.addCondition) {
                     this.error = "It looks like you are still trying to enter a condition manually. Please press 'Add Condition' when you are finished, or 'Close Other Condition Section' if you are not adding a condition manually."
                     return;
                 }
-                App.$emit('call-conditions-attested', this.attestedProblems);
+                App.$emit('call-conditions-attested', {
+                    attested_problems: this.attestedProblems,
+                    patient_id: this.pId
+                });
             },
-            toggleAddCondition(){
-                this.addCondition = ! this.addCondition;
+            toggleAddCondition() {
+                this.addCondition = !this.addCondition;
             }
         },
     }
@@ -142,6 +153,7 @@
         padding-top: 5px;
         padding-bottom: 10px;
     }
+
     .btn.btn-secondary {
         background-color: #ddd;
         padding: 10 20 10 20;
