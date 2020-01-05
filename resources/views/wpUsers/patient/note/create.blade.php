@@ -918,11 +918,6 @@
 
                     }
 
-                    if (callIsSuccess && userIsCareCoach) {
-                        App.$emit('show-attest-call-conditions-modal');
-                        return;
-                    }
-
                     if (showModal) {
                         $('#confirm-note-create').modal('show');
                         return;

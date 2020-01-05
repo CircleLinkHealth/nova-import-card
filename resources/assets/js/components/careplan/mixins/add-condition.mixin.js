@@ -33,13 +33,13 @@ export default {
         checkPatientBehavioralStatus() {
             const ccmCount = this.problems.filter(problem => {
                 if (problem.is_monitored) {
-                    const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
+                    const cpmProblem = this.cpmProbs.find(cpm => cpm.id == problem.cpm_id)
                     return cpmProblem ? !cpmProblem.is_behavioral : false
                 }
                 return false
             }).length
             const bhiCount = this.problems.filter(problem => {
-                const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
+                const cpmProblem = this.cpmProbs.find(cpm => cpm.id == problem.cpm_id)
                 return cpmProblem ? cpmProblem.is_behavioral : false
             }).length
             console.log('ccm', ccmCount, 'bhi', bhiCount)

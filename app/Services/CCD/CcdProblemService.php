@@ -157,6 +157,7 @@ class CcdProblemService
                 'original_name' => $p->original_name,
                 'cpm_id'        => $p->cpm_problem_id,
                 'codes'         => $p->codes,
+                'code'          => $p->icd10code(),
                 'is_monitored'  => $p->is_monitored,
                 'instruction'   => $p->cpmInstruction,
             ];

@@ -178,7 +178,7 @@
                 return this.problems.distinct((p) => p.name)
             },
             cpmProblemsForSelect() {
-                return this.cpmProblems.map(p => ({
+                return this.cpmProbs.map(p => ({
                     label: p.name,
                     value: p.id
                 })).sort((a, b) => a.label < b.label ? -1 : 1)
@@ -217,7 +217,7 @@
                 this.selectedInstruction = instruction
             },
             updateInstructions(event) {
-                let cpmProblem = this.cpmProblems.find(problem => {
+                let cpmProblem = this.cpmProbs.find(problem => {
                     return problem.id == event.target.value
                 })
 
