@@ -212,6 +212,7 @@ class RequiredPermissionsTableSeeder extends Seeder
             'nurseReport',
             'offlineActivityRequest',
             'offlineActivity',
+            'attestedProblems'
         ]);
     }
 }
