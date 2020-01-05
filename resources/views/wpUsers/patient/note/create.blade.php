@@ -648,11 +648,11 @@
             $(document).ready(function () {
 
                 //Once nurse has attested call conditions add as form inputs and submit form
-                App.$on('call-conditions-attested', (attestedConditions) => {
+                App.$on('call-conditions-attested', (data) => {
                     conditionsAttested = true;
 
                     let i = 0;
-                    attestedConditions.map(function (condition) {
+                    data.attested_problems.map(function (condition) {
                         $("<input>")
                             .attr("id", "attested_problems")
                             .attr("type", "hidden")

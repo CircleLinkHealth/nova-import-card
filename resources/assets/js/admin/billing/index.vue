@@ -146,7 +146,7 @@
                     <a :href="props.row.patientUrl" target="_blank" class="blue">{{props.row.Patient}}</a>
                 </template>
                 <template slot="CCM Problem Codes" slot-scope="props">
-                    <div style="max-width: 100px">
+                    <div class="ccm-problem-codes">
                         <span class="blue pointer" style="overflow-wrap: break-word"
                               @click="showCcmModal(props.row)">{{attestedProblemCodes(props.row) || '&lt;Edit&gt;'}}</span>
                     </div>
@@ -178,7 +178,6 @@
             </div>
             <attest-call-conditions-modal ref="attestCallConditionsModal"
                                           :cpm-problems="cpmProblems"></attest-call-conditions-modal>
-            <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
             <chargeable-services-modal ref="chargeableServicesModal"
                                        :services="selectedPracticeChargeableServices"></chargeable-services-modal>
             <error-modal ref="errorModal"></error-modal>
@@ -661,8 +660,6 @@
                     })[0].attested_problems = data.attested_problems;
                     App.$emit('modal-attest-call-conditions:hide');
                 }).catch(err => {
-                    this.loaders.closeMonth = false
-                    console.error('billable:close-month', err)
                 })
             });
 
@@ -777,5 +774,9 @@
 
     div.notifications-billing div.alert {
         margin-right: 30px;
+    }
+
+    .ccm-problem-codes {
+        max-width: 150px;
     }
 </style>
