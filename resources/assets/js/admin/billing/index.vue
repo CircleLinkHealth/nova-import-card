@@ -146,8 +146,8 @@
                     <a :href="props.row.patientUrl" target="_blank" class="blue">{{props.row.Patient}}</a>
                 </template>
                 <template slot="CCM Problem Codes" slot-scope="props">
-                    <div>
-                        <span class="blue pointer"
+                    <div style="max-width: 100px">
+                        <span class="blue pointer" style="overflow-wrap: break-word"
                               @click="showCcmModal(props.row)">{{attestedProblemCodes(props.row) || '&lt;Edit&gt;'}}</span>
                     </div>
                 </template>
