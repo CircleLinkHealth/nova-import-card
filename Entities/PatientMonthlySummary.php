@@ -11,6 +11,7 @@ use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
+use Illuminate\Support\Facades\DB;
 
 /**
  * CircleLinkHealth\Customer\Entities\PatientMonthlySummary.
@@ -338,5 +339,17 @@ class PatientMonthlySummary extends BaseModel
                 'ccm_time' => $ccmTime,
             ]
         );
+    }
+
+    public function syncAttestedProblems(Array $attestedProblems){
+        //remove summary id without detaching. We may still need the association of the problem with the call
+        $this->attestedProblems()->update(['call_problems.patient_monthly_summary_id' => null]);
+
+        DB::table('call_problems')
+          ->whereNull('call_id')
+            ->whereNull('patient_monthly_summary_id')
+            ->delete();
+
+        $this->attestedProblems()->attach($attestedProblems);
     }
 }
