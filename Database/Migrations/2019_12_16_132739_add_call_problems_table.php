@@ -27,8 +27,7 @@ class AddCallProblemsTable extends Migration
 
             $table->foreign('ccd_problem_id')
                   ->references('id')
-                  ->on('ccd_problems')
-                  ->onDelete('cascade');
+                  ->on('ccd_problems');
 
             $table->foreign('patient_monthly_summary_id')
                   ->references('id')
