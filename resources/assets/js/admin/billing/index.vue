@@ -653,14 +653,19 @@
 
             // this.getCounts();
 
-            //call route, update row, hide modal
             App.$on('call-conditions-attested', (data) => {
-
-                //call route then finish things off in this
-                this.tableData.filter(function (p) {
-                    return String(p.id) === String(data.patient_id);
-                })[0].attested_problems = data.attested_problems;
-                App.$emit('modal-attest-call-conditions:hide');
+                this.$http.post(rootUrl(`api/patients/${data.patient_id}/problems/attest-summary-problems`), {
+                    attested_problems: data.attested_problems,
+                    date: this.selectedMonth
+                }).then(response => {
+                    this.tableData.filter(function (p) {
+                        return String(p.id) === String(data.patient_id);
+                    })[0].attested_problems = data.attested_problems;
+                    App.$emit('modal-attest-call-conditions:hide');
+                }).catch(err => {
+                    this.loaders.closeMonth = false
+                    console.error('billable:close-month', err)
+                })
             });
 
             Event.$on('vue-tables.pagination', (page) => {
