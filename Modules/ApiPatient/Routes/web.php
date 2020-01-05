@@ -26,7 +26,7 @@ Route::group(['prefix' => 'api'], function () {
                         Route::delete('ccd/{ccdProblemId}', 'CcdProblemController@destroy')->middleware('permission:patientProblem.delete');
 
                         //todo: add permissions
-                        Route::post('attest-summary-problems', 'AttestedConditionsController@update');
+                        Route::post('attest-summary-problems', 'AttestedConditionsController@update')->middleware('permission:attestedProblems.update,attestedProblems.delete');
                     }
                 );
 
