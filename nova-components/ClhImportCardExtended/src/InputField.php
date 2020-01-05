@@ -74,6 +74,6 @@ class InputField
 
     private function getRules()
     {
-        return $this->field->inputRules ?: [];
+        return property_exists($this->field, 'inputRules') ? $this->field->inputRules : [];
     }
 }
