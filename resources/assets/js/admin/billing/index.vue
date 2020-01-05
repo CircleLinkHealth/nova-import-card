@@ -149,7 +149,6 @@
                     <div>
                         <span class="blue pointer"
                               @click="showCcmModal(props.row)">{{attestedProblemCodes(props.row) || '&lt;Edit&gt;'}}</span>
-                        <loader v-if="props.row.promises['problem_1']"></loader>
                     </div>
                 </template>
                 <template slot="BHI Problem" slot-scope="props">
@@ -418,7 +417,6 @@
                             Status: patient.status,
                             'CCM Mins': timeDisplay(patient.ccm_time),
                             'BHI Mins': timeDisplay(patient.bhi_time),
-                            'CCM Problem Codes': patient.ccm_problem_codes,
                             attested_problems: patient.attested_problems,
                             'BHI Problem': patient.bhi_problem,
                             'BHI Problem Code': patient.bhi_problem_code,
@@ -537,7 +535,6 @@
             showProblemsModal(patient) {
                 const self = this;
                 Event.$emit('modal-attest-call-conditions:show', patient);
-
             },
 
             showErrorModal(id, name) {
@@ -564,7 +561,8 @@
                             return a
                         }, {}),
                         data: this.tableData.map(row => (Object.assign({}, row, {
-                            chargeable_services: row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code)
+                            chargeable_services: row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code),
+                            'CCM Problem Codes': row.attested_problems.map(id => (row.problems.find(problem => problem.id == id) || {}).code)
                         })))
                     }
                 ])
