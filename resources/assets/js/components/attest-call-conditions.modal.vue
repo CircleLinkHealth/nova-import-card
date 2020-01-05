@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div>
-                        <h4 style="text-align: center">Please select all conditions addressed in this call</h4>
+                        <h4 style="text-align: center">{{title}}</h4>
                     </div>
                 </div>
                 <div v-if="error" class="col-sm-12">
@@ -103,6 +103,10 @@
             },
             pId() {
                 return this.patient_id ? this.patient_id : this.patientId;
+            },
+            title(){
+                //if patient id prop has been passed in, then this is for the notes pages, else, approve billable patients page
+                return this.patientId ? 'Please select all conditions addressed in this call:' : 'Edit CCM Problem Codes';
             }
         },
         methods: {
