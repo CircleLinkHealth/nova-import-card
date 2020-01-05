@@ -657,9 +657,10 @@
                 }).then(response => {
                     this.tableData.filter(function (p) {
                         return String(p.id) === String(data.patient_id);
-                    })[0].attested_problems = data.attested_problems;
+                    })[0].attested_problems = response.data.attested_problems;
                     App.$emit('modal-attest-call-conditions:hide');
                 }).catch(err => {
+                    console.error(err)
                 })
             });
 

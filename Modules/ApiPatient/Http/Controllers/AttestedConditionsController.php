@@ -30,16 +30,16 @@ class AttestedConditionsController extends Controller
     public function update($userId, SafeRequest $request)
     {
         try {
-            $date = Carbon::parse($request->input('date'))->startOfMonth();
+            $date = Carbon::parse('asdasdas')->startOfMonth();
         } catch (\Exception $exception) {
             throw $exception;
         }
 
         $patient = User::ofType('participant')
             ->with(['patientSummaries' => function ($pms) use ($date) {
-                           $pms->with('attestedProblems')
-                               ->getForMonth($date);
-                       }])
+                $pms->with('attestedProblems')
+                    ->getForMonth($date);
+            }])
             ->findOrFail($userId);
 
         $summary = $patient->patientSummaries->first();
@@ -50,7 +50,7 @@ class AttestedConditionsController extends Controller
 
         return response()->json([
             'status'            => 200,
-            'attested_problems' => [],
+            'attested_problems' => $summary->attestedProblems()->pluck('ccd_problems.id'),
         ]);
     }
 }

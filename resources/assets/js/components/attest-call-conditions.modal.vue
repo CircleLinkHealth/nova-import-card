@@ -14,7 +14,7 @@
                 </div>
                 <div class="col-sm-12" v-bind:class="sectionSpaceClass">
                     <div v-for="problem in problems">
-                        <input type="checkbox" :id="problem.id" :value="problem.id" v-model="attestedProblems">
+                        <input type="checkbox" :id="problem.id" :value="problem.id" style="display: none !important" v-model="attestedProblems">
                         <label :for="problem.id"><span> </span>{{problem.name}} ({{problem.code}})</label>
                     </div>
                     <div class="col-sm-12 add-condition">
