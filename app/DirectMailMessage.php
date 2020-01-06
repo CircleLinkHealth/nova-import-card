@@ -25,6 +25,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Illuminate\Support\Carbon|null                                            $updated_at
  * @property \App\Models\MedicalRecords\Ccda[]|\Illuminate\Database\Eloquent\Collection $ccdas
  * @property \App\Media[]|\Illuminate\Database\Eloquent\Collection                      $media
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage query()
@@ -38,14 +39,19 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property int|null $ccdas_count
  * @property int|null $media_count
  */
 class DirectMailMessage extends Model implements HasMedia
 {
     use HasMediaTrait;
+    const DIRECTION_RECEIVED = 'received';
+    const DIRECTION_SENT     = 'sent';
+    const STATUS_FAIL        = 'fail';
 
-    protected $fillable = [
+    const STATUS_SUCCESS = 'success';
+    protected $fillable  = [
         //We get this from PhiMail API
         'message_id',
         'from',

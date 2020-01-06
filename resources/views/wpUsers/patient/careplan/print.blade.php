@@ -149,7 +149,7 @@ if (isset($patient) && ! empty($patient)) {
                                     @else
                                         <pdf-careplans v-cloak>
                                             <template slot="careplanViewOptions">
-                                                @if(auth()->user()->providerInfo && auth()->user()->hasRole('provider'))
+                                                @if(auth()->user()->providerInfo && auth()->user()->isProvider())
                                                     <form class="inline-block" style="text-align: left"
                                                           action="{{route('provider.update-approve-own')}}"
                                                           method="POST">
@@ -190,7 +190,7 @@ if (isset($patient) && ! empty($patient)) {
                                                        type="submit" value="Approve">
                                                 </form>
 
-                                                @if(auth()->user()->hasRole('provider'))
+                                                @if(auth()->user()->isProvider())
                                                     <form action="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
                                                           method="POST" style="display: inline">
                                                         {{ csrf_field() }}
