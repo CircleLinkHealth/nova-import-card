@@ -449,9 +449,6 @@ class Practice extends BaseModel implements HasMedia
                                     $patientData->setBhiCode(
                                         optional(optional($summary->billableProblems->first())->pivot)->icd_10_code
                                     );
-                                    $patientData->setBhiProblem(
-                                        optional(optional($summary->billableProblems->first())->pivot)->name
-                                    );
                                     $patientData->setLocationName($u->getPreferredLocationName());
 
                                     $data['patientData'][$u->id] = $patientData;
