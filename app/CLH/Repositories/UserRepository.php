@@ -98,13 +98,13 @@ class UserRepository
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
         // participant info
-        if ($user->hasRole('participant')) {
+        if ($user->isParticipant()) {
             $this->saveOrUpdatePatientInfo($user, $params);
             $this->saveOrUpdatePatientMonthlySummary($user);
         }
 
         // provider info
-        if ($user->hasRole('provider')) {
+        if ($user->isProvider()) {
             $this->saveOrUpdateProviderInfo($user, $params);
         }
 
@@ -151,7 +151,7 @@ class UserRepository
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
         // participant info
-        if ($user->hasRole('participant')) {
+        if ($user->isParticipant()) {
             $this->saveOrUpdatePatientInfo($user, $params);
         }
 
@@ -161,7 +161,7 @@ class UserRepository
         }
 
         // provider info
-        if ($user->hasRole('provider')) {
+        if ($user->isProvider()) {
             $this->saveOrUpdateProviderInfo($user, $params);
         }
 
@@ -515,7 +515,7 @@ class UserRepository
         $this->clearRolesCache($user);
 
         // add patient info
-        if ($user->hasRole('participant') && ! $user->patientInfo) {
+        if ($user->isParticipant() && ! $user->patientInfo) {
             $patientInfo          = new Patient();
             $patientInfo->user_id = $user->id;
             $patientInfo->save();
@@ -523,7 +523,7 @@ class UserRepository
         }
 
         // add provider info
-        if ($user->hasRole('provider') && ! $user->providerInfo) {
+        if ($user->isProvider() && ! $user->providerInfo) {
             $providerInfo          = new ProviderInfo();
             $providerInfo->user_id = $user->id;
             $providerInfo->save();
@@ -597,9 +597,19 @@ class UserRepository
      */
     private function clearRolesCache(User $user)
     {
-        $cacheKey = 'cerberus_roles_for_user_'.$user->id;
+        $keys = [
+            'cerberus_roles_for_user_'.$user->id,
+            'cerberus_permissions_for_user_'.$user->id,
+            $user->getCpmRolesCacheKey(),
+        ];
         if (\Cache::getStore() instanceof TaggableStore) {
-            $forgotten = \Cache::tags(Config::get('cerberus.role_user_site_table'))->forget($cacheKey);
+            $store = \Cache::tags(Config::get('cerberus.role_user_site_table'));
+        } else {
+            $store = \Cache::getStore();
+        }
+
+        foreach ($keys as $key) {
+            $store->forget($key);
         }
     }
 
