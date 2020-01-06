@@ -46,7 +46,7 @@
 
                         <div class="row" style="">
                             <div class="col-sm-12">
-                                @if($patient->hasRole('participant'))
+                                @if($patient->isParticipant())
                                     <div class="pull-left" style="margin-left:10px;">
                                         <a href="{{ route('patient.summary', array('patientId' => $patient->id)) }}"
                                            class="btn btn-info">Go To Provider UI</a>
@@ -64,22 +64,6 @@
                             <li role="presentation" class="active">
                                 <a href="#program" aria-controls="program" role="tab" data-toggle="tab">User Info</a>
                             </li>
-                            @if($patient->hasRole('participant'))
-                                <li role="presentation">
-                                    <a href="#patientinfo" aria-controls="patientinfo" role="tab" data-toggle="tab">Patient
-                                        Info</a>
-                                </li>
-                                <li role="presentation">
-                                    <a href="#usercareteam" aria-controls="usercareteam" role="tab" data-toggle="tab">Care
-                                        Team</a>
-                                </li>
-                            @endif
-                            @if($patient->hasRole('provider'))
-                                <li role="presentation">
-                                    <a href="#providerinfo" aria-controls="providerinfo" role="tab" data-toggle="tab">Provider
-                                        Info</a>
-                                </li>
-                            @endif
                             @if($patient->isCareCoach() && $patient->nurseInfo)
                                 <li role="presentation">
                                     <a href="#nurseinfo" aria-controls="nurseinfo" role="tab" data-toggle="tab">Nurse
@@ -219,7 +203,7 @@
                                 </div>
                             </div>
 
-                            @if($patient->hasRole('provider'))
+                            @if($patient->isProvider())
                                 <div role="tabpanel" class="tab-pane" id="providerinfo">
                                     <h2>Provider Info</h2>
                                     <div class="form-group">
