@@ -60,7 +60,9 @@ class PostDeploymentTasks extends Command
             function ($command) {
                 $this->output->note("Running ${command}");
 
-                Artisan::call($command);
+                Artisan::call($command, [
+                    '-vvv' => true,
+                ]);
 
                 $this->output->success("Finished running ${command}");
             }
