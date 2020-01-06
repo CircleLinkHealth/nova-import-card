@@ -42,21 +42,13 @@ class ApprovableBillablePatient extends Resource
             'patient' => $this->patient->id,
         ]);
 
-        $problems = [
-            'bhi_problem'      => 'N/A',
-            'bhi_problem_code' => 'N/A',
-            'problem1'         => 'N/A',
-            'problem1_code'    => 'N/A',
-            'problem2'         => 'N/A',
-            'problem2_code'    => 'N/A',
-        ];
+        $bhiProblemCode = 'N/A';
 
         if ($this->hasServiceCode('CPT 99484')) {
             $bhiProblem = $this->billableBhiProblems()->first();
 
             if ($bhiProblem) {
-                $problems['bhi_problem']      = $bhiProblem->pivot->name ?? null;
-                $problems['bhi_problem_code'] = $bhiProblem->pivot->icd_10_code ?? null;
+                $bhiProblemCode = $bhiProblem->pivot->icd_10_code ?? null;
             }
         }
 
@@ -65,12 +57,7 @@ class ApprovableBillablePatient extends Resource
             $status = $this->patient->patientInfo->ccm_status;
         }
 
-        $problems['problem1']      = $this->billable_problem1;
-        $problems['problem1_code'] = $this->billable_problem1_code;
-        $problems['problem2']      = $this->billable_problem2;
-        $problems['problem2_code'] = $this->billable_problem2_code;
-
-        return array_merge([
+        return [
             'id'       => $this->patient->id,
             'mrn'      => $this->patient->getMRN(),
             'name'     => $name,
@@ -95,6 +82,7 @@ class ApprovableBillablePatient extends Resource
             'qa'                     => $this->needs_qa || ( ! $this->approved && ! $this->rejected),
             'attested_problems'      => $this->attestedProblems()->get()->pluck('id'),
             'chargeable_services'    => ChargeableService::collection($this->whenLoaded('chargeableServices')),
-        ], $problems);
+            'bhi_problem_code'       => $bhiProblemCode,
+        ];
     }
 }

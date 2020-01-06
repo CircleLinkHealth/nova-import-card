@@ -151,13 +151,6 @@
                               @click="showCcmModal(props.row)">{{attestedProblemCodes(props.row) || '&lt;Edit&gt;'}}</span>
                     </div>
                 </template>
-                <template slot="BHI Problem" slot-scope="props">
-                    <div>
-                        <span class="blue pointer"
-                              @click="showBhiModal(props.row, 3)">{{props.row['BHI Problem'] || '&lt;Edit&gt;'}}</span>
-                        <loader v-if="props.row.promises['bhi_problem']"></loader>
-                    </div>
-                </template>
                 <template slot="chargeable_services" slot-scope="props">
                     <div class="blue" :class="isSoftwareOnly ? '' : 'pointer'"
                          @click="showChargeableServicesModal(props.row)">
@@ -255,7 +248,6 @@
                     'CCM Mins',
                     'BHI Mins',
                     'CCM Problem Codes',
-                    'BHI Problem',
                     'BHI Problem Code',
                     '#Successful Calls',
                     'approved',
@@ -417,14 +409,10 @@
                             'CCM Mins': timeDisplay(patient.ccm_time),
                             'BHI Mins': timeDisplay(patient.bhi_time),
                             attested_problems: patient.attested_problems,
-                            'BHI Problem': patient.bhi_problem,
                             'BHI Problem Code': patient.bhi_problem_code,
                             '#Successful Calls': patient.no_of_successful_calls,
                             chargeable_services: (patient.chargeable_services || []).map(item => item.id),
                             promises: {
-                                problem_1: false,
-                                problem_2: false,
-                                bhi_problem: false,
                                 approve_reject: false,
                                 update_chargeables: false
                             },

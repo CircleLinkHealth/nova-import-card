@@ -16,8 +16,6 @@ class PatientReportData
 
     protected $bhiCode;
 
-    protected $bhiProblem;
-
     protected $bhiTime;
 
     protected $billingCodes;
@@ -50,14 +48,6 @@ class PatientReportData
     public function getBhiCode()
     {
         return $this->bhiCode;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBhiProblem()
-    {
-        return $this->bhiProblem;
     }
 
     /**
@@ -146,14 +136,6 @@ class PatientReportData
     public function setBhiCode($bhiCode): void
     {
         $this->bhiCode = $bhiCode;
-    }
-
-    /**
-     * @param mixed $bhiProblem
-     */
-    public function setBhiProblem($bhiProblem): void
-    {
-        $this->bhiProblem = $bhiProblem;
     }
 
     /**

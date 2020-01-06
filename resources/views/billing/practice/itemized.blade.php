@@ -18,7 +18,6 @@
             <th>CCM Mins</th>
             <th>BHI Mins</th>
             <th>CCM Problem Codes</th>
-            <th>BHI Problem</th>
             <th>BHI Code</th>
 
         </tr>
@@ -35,7 +34,6 @@
                     <td>{{$data->getCcmTime()}}</td>
                     <td>{{$data->getBhiTime()}}</td>
                     <td>{{$data->getCcmProblemCodes()}}</td>
-                    <td>{{$data->getBhiProblem()}}</td>
                     <td>{{$data->getBhiCode()}}</td>
                 </tr>
             @endforeach
