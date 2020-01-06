@@ -189,7 +189,7 @@ class CarePlan extends BaseModel implements PdfReport
                 )
                 ->count();
         } else {
-            if ($user->hasRole(['provider'])) {
+            if ($user->isProvider()) {
                 $pendingApprovals = User::ofType('participant')
                     ->intersectPracticesWith($user)
                     ->whereHas(

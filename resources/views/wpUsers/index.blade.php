@@ -270,8 +270,10 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if (count($wpUser->roles) > 0)
-                                                {{$wpUser->roles->unique('display_name')->implode('display_name', ', ')}}
+                                            {{$wpUser->roles->unique('display_name')->implode('display_name', ', ')}}
+
+                                            @if($wpUser->isParticipant())
+                                                ({{ucfirst($wpUser->patientInfo->ccm_status)}})
                                             @endif
                                         </td>
                                         <td>{{ $wpUser->email }}</td>

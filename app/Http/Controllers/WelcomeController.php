@@ -72,7 +72,7 @@ class WelcomeController extends Controller
             );
         }
 
-        if ($user->hasRole('participant')) {
+        if ($user->isParticipant()) {
             return redirect()->route('patient-user.careplan');
         }
 
