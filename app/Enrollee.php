@@ -13,7 +13,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Laravel\Scout\Searchable;
 
 /**
  * App\Enrollee.
@@ -161,7 +160,6 @@ use Laravel\Scout\Searchable;
 class Enrollee extends BaseModel
 {
     use Filterable;
-    use Searchable;
 
     // Agent array keys
     const AGENT_EMAIL_KEY        = 'email';
@@ -404,7 +402,9 @@ class Enrollee extends BaseModel
 
     public function getLastEncounterAttribute($lastEncounter)
     {
-        return $lastEncounter ? optional(Carbon::parse($lastEncounter))->toDateString() : null;
+        return $lastEncounter
+            ? optional(Carbon::parse($lastEncounter))->toDateString()
+            : null;
     }
 
     /**
