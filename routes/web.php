@@ -4,11 +4,18 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+Route::post('webhooks/on-sent-fax', [
+    'uses' => 'PhaxioWebhookController@onFaxSent',
+    'as'   => 'webhook.on-fax-sent',
+]);
+
 Route::group(['middleware' => ['auth', 'cacheResponse']], function () {
     Route::get('profiles', 'API\ProfileController@index')->middleware(
         ['permission:user.read,role.read', 'cacheResponse']
     );
 });
+
+Route::get('hirefire/{token}/info', 'HireFireController@getQueueSize');
 
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
@@ -97,6 +104,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download',
     ])->middleware('doNotCacheResponse');
 
+    Route::get('download-media-collection-zip/{collectionName}', [
+        'uses' => 'DownloadController@downloadUserMediaCollectionAsZip',
+        'as'   => 'download.collection-as-zip',
+    ])->middleware('doNotCacheResponse');
+
     Route::get('download-google-drive-csv/{filename}/{dir?}/{recursive?}', [
         'uses' => 'DownloadController@downloadCsvFromGoogleDrive',
         'as'   => 'download.google.csv',
@@ -134,6 +146,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('google-drive', [
             'uses' => 'EhrReportWriterController@redirectToGoogleDriveFolder',
             'as'   => 'report-writer.google-drive',
+        ]);
+    });
+
+    Route::group([
+        'prefix'     => 'patient-user',
+        'middleware' => ['auth', 'checkPatientUserData'],
+    ], function () {
+        Route::get('view-careplan', [
+            'uses' => 'PatientUserController@viewCareplan',
+            'as'   => 'patient-user.careplan',
         ]);
     });
 
@@ -565,6 +587,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('ccd/show/{ccdaId}', [
         'uses' => 'CCDViewer\CCDViewerController@show',
         'as'   => 'get.CCDViewerController.show',
+    ])->middleware('permission:ccda.read');
+
+    Route::get('ccd/download/xml/{ccdaId}', [
+        'uses' => 'CCDViewer\CCDViewerController@downloadXml',
+        'as'   => 'download.ccda.xml',
     ])->middleware('permission:ccda.read');
 
     Route::post('ccd', [
@@ -1026,6 +1053,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'DirectMailController@show',
                 'as'   => 'direct-mail.show',
             ]);
+
+            Route::get('inbox/check', [
+                'uses' => 'DirectMailController@checkInbox',
+                'as'   => 'direct-mail.check',
+            ]);
         });
 
         Route::group(['prefix' => 'revisions'], function () {
@@ -1093,7 +1125,12 @@ Route::group(['middleware' => 'auth'], function () {
 
                 Route::get('/eligible-csv', [
                     'uses' => 'EligibilityBatchController@downloadEligibleCsv',
-                    'as'   => 'eligibility.download.eligible',
+                    'as'   => 'eligibility.download.csv.eligible',
+                ])->middleware('permission:enrollee.read');
+
+                Route::get('/entire-patient-list-csv', [
+                    'uses' => 'EligibilityBatchController@downloadAllPatientsCsv',
+                    'as'   => 'eligibility.download.all',
                 ])->middleware('permission:enrollee.read');
 
                 Route::get('supplemental-insurance-info-csv', [
@@ -1606,23 +1643,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'admin.families.update',
             ]);
         });
-
-        //these fall under the admin-access permission
-        Route::get('reports/nurse/invoice', [
-            'uses' => 'NurseController@makeInvoice',
-            'as'   => 'admin.reports.nurse.invoice',
-        ])->middleware('permission:nurseInvoice.read');
-
-        Route::post('reports/nurse/invoice/generate', [
-            'uses' => 'NurseController@generateInvoice',
-            'as'   => 'admin.reports.nurse.generate',
-        ])->middleware('permission:nurseInvoice.create');
-
-        Route::post('reports/nurse/invoice/send', [
-            'uses' => 'NurseController@sendInvoice',
-            'as'   => 'admin.reports.nurse.send',
-        ])->middleware('permission:nurseInvoice.view');
-
+        
         Route::get('reports/nurse/daily', [
             'uses' => 'NurseController@makeDailyReport',
             'as'   => 'admin.reports.nurse.daily',
@@ -2307,3 +2328,61 @@ Route::get('see-all-notifications', [
     'uses' => 'NotificationController@seeAllNotifications',
     'as'   => 'notifications.seeAll',
 ])->middleware('permission:provider.read,note.read');
+
+Route::prefix('admin')->group(
+    function () {
+        Route::prefix('users')->group(
+            function () {
+                Route::get(
+                    '',
+                    [
+                        'uses' => 'SuperAdmin\UserController@index',
+                        'as'   => 'admin.users.index',
+                    ]
+                )->middleware('permission:user.read,practice.read');
+                Route::post(
+                    '',
+                    [
+                        'uses' => 'SuperAdmin\UserController@store',
+                        'as'   => 'admin.users.store',
+                    ]
+                )->middleware('permission:user.create');
+                Route::get(
+                    'create',
+                    [
+                        'uses' => 'SuperAdmin\UserController@create',
+                        'as'   => 'admin.users.create',
+                    ]
+                )->middleware('permission:user.read,practice.read,location.read,role.read');
+                Route::get(
+                    'doAction',
+                    [
+                        'uses' => 'SuperAdmin\UserController@doAction',
+                        'as'   => 'admin.users.doAction',
+                    ]
+                );
+                Route::get(
+                    '{id}/edit',
+                    [
+                        'uses' => 'SuperAdmin\UserController@edit',
+                        'as'   => 'admin.users.edit',
+                    ]
+                )->middleware('permission:user.read,practice.read,location.read,role.read');
+                Route::get(
+                    '{id}/destroy',
+                    [
+                        'uses' => 'SuperAdmin\UserController@destroy',
+                        'as'   => 'admin.users.destroy',
+                    ]
+                )->middleware('permission:user.delete');
+                Route::post(
+                    '{id}/edit',
+                    [
+                        'uses' => 'SuperAdmin\UserController@update',
+                        'as'   => 'admin.users.update',
+                    ]
+                )->middleware('permission:user.update');
+            }
+        );
+    }
+);

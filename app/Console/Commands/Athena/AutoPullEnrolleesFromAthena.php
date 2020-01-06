@@ -36,8 +36,6 @@ class AutoPullEnrolleesFromAthena extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param ProcessEligibilityService $service
      */
     public function __construct(ProcessEligibilityService $service)
     {
@@ -95,7 +93,7 @@ class AutoPullEnrolleesFromAthena extends Command
         if (0 == $practices->count()) {
             if (isProductionEnv()) {
                 sendSlackMessage(
-                    ' #parse_enroll_import',
+                    '#parse_enroll_import',
                     "No Practices with checked 'api-auto-pull' setting were found for the weekly Athena Data Pull."
                 );
             } else {

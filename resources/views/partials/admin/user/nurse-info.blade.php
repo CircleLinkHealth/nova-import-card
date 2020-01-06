@@ -11,6 +11,11 @@
         <div class="col-xs-3">{!! Form::text('low_rate', optional($nurseInfo)->low_rate, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
     </div>
 
+    <div class="row" style="padding: 10px 0px;">
+        <div class="col-xs-2">{!! Form::label('visit_fee', 'Visit Fee:') !!}</div>
+        <div class="col-xs-3">{!! Form::text('visit_fee', optional($nurseInfo)->visit_fee, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+    </div>
+
     <div class="row">
         <div class="col-xs-2">{!! Form::label('status', 'Status') !!}</div>
         <div class="col-xs-4">{!! Form::select('status', array('inactive' => 'Inactive', 'active' => 'Active'), optional($nurseInfo)->status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>

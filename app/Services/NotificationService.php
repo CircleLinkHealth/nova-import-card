@@ -113,7 +113,7 @@ class NotificationService
      */
     public function notificationElapsedTime(Carbon $createdDateTime)
     {
-        return $createdDateTime->diffForHumans(Carbon::parse(now()));
+        return $createdDateTime->diffForHumans();
     }
 
     /**

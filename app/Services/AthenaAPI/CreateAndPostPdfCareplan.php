@@ -31,7 +31,7 @@ class CreateAndPostPdfCareplan
 
         $departments = $this->api->getDepartmentIds($practiceId);
 
-        if ( ! array_key_exists('departments', $departments)) {
+        if ( ! is_array($departments) || ! array_key_exists('departments', $departments)) {
             return false;
         }
 

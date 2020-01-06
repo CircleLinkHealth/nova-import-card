@@ -59,8 +59,6 @@ class OverwriteNBIImportedData extends Command
     }
 
     /**
-     * @param ImportedMedicalRecord $imr
-     *
      * @return bool
      */
     public function lookupAndReplacePatientData(ImportedMedicalRecord $imr)
@@ -89,10 +87,8 @@ class OverwriteNBIImportedData extends Command
             ];
 
             if ($datas->provider) {
-                $term = strtoupper($datas->provider);
-                $this->warn("Searching for provider with term `$term`");
+                $term                     = strtoupper($datas->provider);
                 $imr->billing_provider_id = $map[$term] ?? null;
-                $this->warn("Provider result: {$imr->billing_provider_id}");
             }
 
             $imr->practice_id = 201;

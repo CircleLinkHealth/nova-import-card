@@ -9,13 +9,13 @@ namespace Tests\Unit;
 use App\EligibilityBatch;
 use App\Jobs\ProcessSinglePatientEligibility;
 use App\Services\CCD\ProcessEligibilityService;
+use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class CsvEligibilityValidationTest extends TestCase
 {
-    use UserHelpers;
+    use \App\Traits\Tests\UserHelpers;
 
     private $practice;
 

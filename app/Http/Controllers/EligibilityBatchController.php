@@ -49,6 +49,52 @@ class EligibilityBatchController extends Controller
         return view('eligibilityBatch.methods.single-csv');
     }
 
+    public function downloadAllPatientsCsv(EligibilityBatch $batch)
+    {
+        ini_set('max_execution_time', 300);
+
+        $practice = Practice::findOrFail($batch->practice_id);
+        $fileName = "{$practice->display_name} patient list from batch {$batch->id} exported at".Carbon::now()->toAtomString();
+
+        $response = new StreamedResponse(function () use ($batch) {
+            // Open output stream
+            $handle = fopen('php://output', 'w');
+
+            $firstIteration = true;
+
+            $batch->eligibilityJobs()
+                ->chunk(500, function ($jobs) use ($handle, &$firstIteration) {
+                    foreach ($jobs as $job) {
+                        $data = $job->data;
+
+                        if ($firstIteration) {
+                            // Add CSV headers
+                            fputcsv($handle, array_keys($data));
+
+                            $firstIteration = false;
+                        }
+
+                        foreach ($data as $key => $value) {
+                            if (is_array($value)) {
+                                $data[$key] = json_encode($value);
+                            }
+                        }
+
+                        // Add a new row with data
+                        fputcsv($handle, $data);
+                    }
+                });
+
+            // Close the output stream
+            fclose($handle);
+        }, 200, [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="'.$fileName.'.csv"',
+        ]);
+
+        return $response;
+    }
+
     public function downloadAthenaApiInsuranceCopaysCsv(EligibilityBatch $batch)
     {
         ini_set('max_execution_time', 300);
@@ -346,7 +392,7 @@ class EligibilityBatchController extends Controller
                 'p1.name as ccm_condition_1',
                 'p2.name as ccm_condition_2',
             ])
-                ->join('cpm_problems as p1', 'p1.id', '=', 'enrollees.cpm_problem_1')
+                ->leftJoin('cpm_problems as p1', 'p1.id', '=', 'enrollees.cpm_problem_1')
                 ->leftJoin('cpm_problems as p2', 'p2.id', '=', 'enrollees.cpm_problem_2')
                 ->whereBatchId($batch->id)
                 ->whereNull('user_id')

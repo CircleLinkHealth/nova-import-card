@@ -37,8 +37,9 @@ $factory->define(
     }
 );
 
-$factory->define(Patient::class, function (Faker\Generator $faker) {
+$factory->define(Patient::class, function (Faker\Generator $faker) use ($factory) {
     return [
+        'user_id'    => $factory->create(\CircleLinkHealth\Customer\Entities\User::class)->id,
         'birth_date' => $faker->dateTimeBetween('-90 years', '-30 years'),
         'ccm_status' => $faker->randomElement([Patient::ENROLLED, Patient::PAUSED, Patient::WITHDRAWN]),
         'gender'     => $faker->randomElement(['M', 'F']),
@@ -146,10 +147,10 @@ $factory->define(Invite::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factory){
+$factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factory) {
     return [
-        'provider_id' => $factory->create(\CircleLinkHealth\Customer\Entities\User::class)->id,
-        'practice_id' => $factory->create(Practice::class)->id,
+        'provider_id' => factory(\CircleLinkHealth\Customer\Entities\User::class)->create()->id,
+        'practice_id' => factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create()->id,
         'mrn'         => $faker->randomNumber(6),
         'dob'         => $faker->date('Y-m-d'),
 

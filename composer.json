@@ -64,35 +64,55 @@
       "url": "./nova-components/ImportPracticeStaffCsv"
     },
     {
+      "type": "path",
+      "url": "./nova-components/GeneratePatientCallDataCsv"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/module-revisionable.git"
+    },
+    {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-cpm-migrations.git"
     },
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/module-sqlviews.git"
+    },
+    {
+      "type": "path",
+      "url": "./nova-components/ClhImportCardExtended"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git"
     }
   ],
   "require": {
-    "php": ">=7.2.0",
+    "php": "~7.2.11",
     "ext-bcmath": "*",
     "ext-dom": "*",
     "ext-json": "*",
     "ext-libxml": "*",
+    "ext-pdo": "*",
+    "ext-redis": "*",
     "ext-simplexml": "*",
     "alexbowers/nova-prepopulate-searchable": "^1.0",
     "algolia/algoliasearch-client-php": "^2.2",
     "algolia/scout-extended": "^1.8",
     "amnuts/opcache-gui": "dev-master",
-    "appstract/laravel-opcache": "^2.0",
+    "appstract/laravel-opcache": "~2.0.5",
     "barryvdh/laravel-snappy": "0.4.4",
-    "circlelinkhealth/core": "1.3",
-    "circlelinkhealth/customer": "1.5.4",
+    "circlelinkhealth/ccda-parser-processor-php": "dev-master",
+    "circlelinkhealth/core": "1.33",
+    "circlelinkhealth/cpmmigrations": "dev-master",
+    "circlelinkhealth/customer": "1.6.5",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/raygun": "dev-master",
-    "circlelinkhealth/timetracking": "1.1.2",
-    "circlelinkhealth/twofa": "1.1.2",
-    "circlelinkhealth/cpmmigrations": "dev-master",
+    "circlelinkhealth/revisionable": "*",
     "circlelinkhealth/sqlviews": "dev-master",
+    "circlelinkhealth/timetracking": "1.1.4",
+    "circlelinkhealth/twofa": "1.1.2",
     "daltcore/lara-pdf-merger": "dev-master",
     "dillingham/nova-button": "^1.0",
     "doctrine/dbal": "2.9.2",
@@ -117,11 +137,11 @@
     "league/flysystem-aws-s3-v3": "~1.0",
     "league/fractal": "0.12.*",
     "maatwebsite/excel": "^3.1",
+    "circlelinkhealth/cerberus-gatekeeper": "^v3.0.2",
     "nao-pon/flysystem-google-drive": "~1.1",
+    "phaxio/phaxio": "^2.0",
     "nvanheuverzwijn/monolog-logdna": "^2.1",
-    "phaxio/phaxio": "^1.0",
     "pragmarx/version": "^0.2.8",
-    "predis/predis": "^1.1",
     "propaganistas/laravel-phone": "^3.0",
     "pusher/pusher-php-server": "^4.0",
     "seld/jsonlint": "^1.7",
@@ -133,9 +153,12 @@
     "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
     "wikimedia/composer-merge-plugin": "^1.4",
-    "yajra/laravel-datatables-oracle": "~8.0"
+    "yajra/laravel-datatables-oracle": "~8.0",
+    "circlelinkhealth/generate-patient-call-data-csv": "*",
+    "circlelinkhealth/clh-import-card-extended": "*"
   },
   "require-dev": {
+    "ext-xdebug": "*",
     "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
     "brianium/paratest": "*",
@@ -240,8 +263,8 @@
     },
     "merge-plugin": {
       "include": [
-        "Modules/*/composer.json",
-        "CLHPackages/*/composer.json"
+        "CLHPackages/*/composer.json",
+        "Modules/*/composer.json"
       ],
       "require": [],
       "recurse": true,

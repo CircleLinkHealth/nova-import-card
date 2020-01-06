@@ -7,7 +7,7 @@
 namespace App\Notifications\Channels;
 
 use App\Contracts\Efax;
-use Illuminate\Notifications\Notification;
+use App\Contracts\FaxableNotification;
 
 class FaxChannel
 {
@@ -22,11 +22,10 @@ class FaxChannel
      * @param mixed                                  $notifiable
      * @param \Illuminate\Notifications\Notification $notification
      */
-    public function send($notifiable, Notification $notification)
+    public function send($notifiable, FaxableNotification $notification)
     {
         if ($notifiable->fax) {
-            $message = $notification->toFax($notifiable);
-            $this->fax->send($notifiable->fax, $message);
+            $fax = $this->fax->createFaxFor($notifiable->fax)->sendNotification($notifiable, $notification);
         }
     }
 }

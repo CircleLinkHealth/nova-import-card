@@ -395,6 +395,16 @@ class UserRepository
             ) {
                 continue 1;
             }
+
+            if ('ccm_status' == $key) {
+                $ccmStatus = $params->get($key);
+                if (Patient::WITHDRAWN == $ccmStatus && $user->onFirstCall()) {
+                    $ccmStatus = Patient::WITHDRAWN_1ST_CALL;
+                }
+                $user->patientInfo->ccm_status = $ccmStatus;
+                continue;
+            }
+
             if ($params->get($key)) {
                 $user->patientInfo->$key = $params->get($key);
             }
@@ -548,13 +558,10 @@ class UserRepository
             $user->email = $params->get('email');
         }
 
-        if ($params->get('access_disabled')) {
-            $user->access_disabled = $params->get('access_disabled');
-        } else {
-            $user->access_disabled = 0; // 0 = good, 1 = disabled
-        }
+        $user->access_disabled = $params->get('access_disabled', false);
 
-        $user->auto_attach_programs = $params->get('auto_attach_programs');
+        $user->auto_attach_programs = $params->has('auto_attach_programs');
+
         if ($params->get('first_name')) {
             $user->setFirstName($params->get('first_name'));
         }

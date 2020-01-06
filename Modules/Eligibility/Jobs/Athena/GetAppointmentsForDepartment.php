@@ -24,6 +24,12 @@ class GetAppointmentsForDepartment implements ShouldQueue
     use Queueable;
     use SerializesModels;
     /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 3;
+    /**
      * @var null
      */
     protected $batchId;
@@ -51,12 +57,8 @@ class GetAppointmentsForDepartment implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param int    $departmentId
-     * @param int    $ehrPracticeId
-     * @param Carbon $start
-     * @param Carbon $end
-     * @param bool   $offset
-     * @param null   $batchId
+     * @param bool $offset
+     * @param null $batchId
      */
     public function __construct(
         int $departmentId,
@@ -114,13 +116,15 @@ class GetAppointmentsForDepartment implements ShouldQueue
                 continue;
             }
 
-            $target = TargetPatient::updateOrCreate([
-                'practice_id'       => Practice::where('external_id', $this->ehrPracticeId)->value('id'),
-                'ehr_id'            => Constants::athenaEhrId(),
-                'ehr_patient_id'    => $ehrPatientId,
-                'ehr_practice_id'   => $this->ehrPracticeId,
-                'ehr_department_id' => $departmentId,
-            ]);
+            $target = TargetPatient::updateOrCreate(
+                [
+                    'practice_id'       => Practice::where('external_id', $this->ehrPracticeId)->value('id'),
+                    'ehr_id'            => Constants::athenaEhrId(),
+                    'ehr_patient_id'    => $ehrPatientId,
+                    'ehr_practice_id'   => $this->ehrPracticeId,
+                    'ehr_department_id' => $departmentId,
+                ]
+            );
 
             if (null !== $this->batchId) {
                 $target->batch_id = $this->batchId;
@@ -131,5 +135,23 @@ class GetAppointmentsForDepartment implements ShouldQueue
                 $target->save();
             }
         }
+    }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        return [
+            'athena',
+            'batchid:'.$this->batchId,
+            'departmentid:'.$this->departmentId,
+            'ehrpracticeid:'.$this->ehrPracticeId,
+            'end:'.$this->end->toDateTimeString(),
+            'offset:'.$this->offset,
+            'start:'.$this->start->toDateTimeString(),
+        ];
     }
 }

@@ -83,6 +83,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call calledLastThreeMonths()
  */
 class Call extends BaseModel implements AttachableToNotification
 {
@@ -224,6 +226,22 @@ class Call extends BaseModel implements AttachableToNotification
     }
 
     /**
+     * Get all calls that happened in the last 3 months.
+     *
+     * @param $builder
+     */
+    public function scopeCalledLastThreeMonths($builder)
+    {
+        $builder->whereNotNull('called_date')
+            ->where(
+                'called_date',
+                '>=',
+                Carbon::now()->subMonth(3)->startOfMonth()->startOfDay()
+            )
+            ->where('called_date', '<=', Carbon::now()->endOfDay());
+    }
+
+    /**
      * Scope for calls for the given month.
      *
      * @param $builder
@@ -278,6 +296,8 @@ class Call extends BaseModel implements AttachableToNotification
 
     public function shouldSendLiveNotification(): bool
     {
-        return true === $this->asap && 'addendum_response' !== $this->sub_type;
+        return $this->outbound_cpm_id !== auth()->id()
+            && true === $this->asap
+            && 'addendum_response' !== $this->sub_type;
     }
 }

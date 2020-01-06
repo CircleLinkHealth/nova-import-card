@@ -10,6 +10,7 @@ use App\AppConfig;
 use App\Call;
 use App\Models\CPM\CpmProblem;
 use App\Services\Calls\SchedulerService;
+use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -17,7 +18,6 @@ use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class BHIReconsentTest extends TestCase

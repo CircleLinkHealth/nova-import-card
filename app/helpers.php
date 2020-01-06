@@ -139,11 +139,11 @@ if ( ! function_exists('activeNurseNames')) {
                     },
                 ]
             )->whereHas(
-                       'nurseInfo',
-                       function ($q) {
-                           $q->where('is_demo', '!=', true);
-                       }
-                   )->where('user_status', 1)
+                'nurseInfo',
+                function ($q) {
+                    $q->where('is_demo', '!=', true);
+                }
+            )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -303,9 +303,7 @@ if ( ! function_exists('parseCsvToArray')) {
             }
             foreach ($row as $k => $value) {
                 if ( ! array_key_exists($k, $fields)) {
-                    throw new CsvFieldNotFoundException(
-                        "Could not find CSV Field with index $k. Check row number $i for bad data."
-                    );
+                    throw new CsvFieldNotFoundException("Could not find CSV Field with index $k. Check row number $i for bad data.");
                 }
                 $csvArray[$i][$fields[$k]] = trim($value);
             }
@@ -483,8 +481,7 @@ if ( ! function_exists('carbonGetNext')) {
     /**
      * Get carbon instance of the next $day.
      *
-     * @param string      $day
-     * @param Carbon|null $fromDate
+     * @param string $day
      *
      * @return Carbon|false
      */
@@ -773,8 +770,6 @@ if ( ! function_exists('timezones')) {
 if ( ! function_exists('defaultCarePlanTemplate')) {
     /**
      * Returns CircleLink's default CarePlanTemplate.
-     *
-     * @return CarePlanTemplate|null
      */
     function getDefaultCarePlanTemplate(): ?CarePlanTemplate
     {
@@ -786,8 +781,7 @@ if ( ! function_exists('setAppConfig')) {
     /**
      * Save an AppConfig key, value and then return it.
      *
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return CarePlanTemplate
      */
@@ -940,8 +934,6 @@ if ( ! function_exists('getProblemCodeSystemName')) {
     /**
      * Get a problem code system name from an array of clues.
      *
-     * @param array $clues
-     *
      * @return string|null
      */
     function getProblemCodeSystemName(array $clues)
@@ -970,8 +962,6 @@ if ( ! function_exists('getProblemCodeSystemName')) {
 if ( ! function_exists('getProblemCodeSystemCPMId')) {
     /**
      * Get the id of an App\ProblemCodeSystem from an array of clues.
-     *
-     * @param array $clues
      *
      * @return int|null
      */
@@ -1029,11 +1019,11 @@ if ( ! function_exists('validProblemName')) {
                 'check',
             ]
         ) && ! in_array(
-                strtolower($name),
-                [
-                    'fu',
-                ]
-            );
+            strtolower($name),
+            [
+                'fu',
+            ]
+        );
     }
 }
 
@@ -1204,23 +1194,22 @@ if ( ! function_exists('read_file_using_generator')) {
 if ( ! function_exists('getEhrReportWritersFolderUrl')) {
     function getEhrReportWritersFolderUrl()
     {
-        if (isProductionEnv()) {
-            return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
-        }
-
         //this is to make local environments faster for devs
         //comment out this if section to use the feature
         if (app()->environment('local')) {
             return null;
         }
 
-        $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
-
-        if ( ! $dir) {
-            return null;
-        }
-
-        return "https://drive.google.com/drive/folders/{$dir['path']}";
+        return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
+//        Commenting out due to Heroku migration
+//        @todo:heroku change this to a nova variable
+//        $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
+//
+//        if ( ! $dir) {
+//            return null;
+//        }
+//
+//        return "https://drive.google.com/drive/folders/{$dir['path']}";
     }
 }
 
@@ -1331,6 +1320,8 @@ if ( ! function_exists('tryDropForeignKey')) {
         try {
             $table->dropForeign($key);
         } catch (QueryException $e) {
+            //                    @todo:heroku review error code below
+
             $errorCode = $e->errorInfo[1];
             if (1091 == $errorCode) {
                 Log::debug("Key `${key}` does not exist. Nothing to delete.".__FILE__);
@@ -1350,9 +1341,6 @@ if ( ! function_exists('presentDate')) {
      * Due to the fact that we don't have a way to sort dates m-d-Y dates in tables yet, we are using $forceHumanForm so that developers can choose when to "force" m-d-Y format.
      *
      * @param $date
-     * @param bool $withTime
-     * @param bool $withTimezone
-     * @param bool $forceHumanForm
      *
      * @return string
      */
@@ -1444,8 +1432,7 @@ if ( ! function_exists('incrementInvoiceNo')) {
      */
     function incrementInvoiceNo()
     {
-        $num = AppConfig::where('config_key', 'billing_invoice_count')
-            ->firstOrFail();
+        $num = AppConfig::firstOrCreate(['config_key' => 'billing_invoice_count'], ['config_value' => 0]);
 
         $current = $num->config_value;
 
@@ -1505,5 +1492,21 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
             \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
         }
+    }
+}
+
+if ( ! function_exists('getModelFromTable')) {
+    function getModelFromTable($table)
+    {
+        foreach (get_declared_classes() as $class) {
+            if (is_subclass_of($class, 'Illuminate\Database\Eloquent\Model')) {
+                $model = new $class();
+                if ($model->getTable() === $table) {
+                    return $class;
+                }
+            }
+        }
+
+        return false;
     }
 }
