@@ -364,7 +364,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 {
     use Authenticatable;
     use CanResetPassword;
-    use CerberusSiteUserTrait;
+    use CerberusSiteUserTrait {
+        hasRole as cerberusHasRole;
+        hasPermission as cerberusHasPermission;
+    }
+    use HasCpmRoles {
+        HasCpmRoles::hasPermission insteadof CerberusSiteUserTrait;
+        HasCpmRoles::hasRole insteadof CerberusSiteUserTrait;
+    }
     use Filterable;
     use HasApiTokens;
     use HasEmrDirectAddress;
@@ -812,26 +819,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->isAdmin();
     }
 
-    /**
-     * Returns whether the user is an administrator.
-     *
-     * @return bool
-     */
-    public function isAdmin()
-    {
-        return $this->hasRole('administrator');
-    }
-    
-    /**
-     * Returns whether the user is an administrator.
-     *
-     * @return bool
-     */
-    public function isParticipant()
-    {
-        return $this->hasRole('participant');
-    }
-
     public function canQAApproveCarePlans()
     {
         return $this->hasPermissionForSite('care-plan-qa-approve', $this->getPrimaryPracticeId());
@@ -1094,7 +1081,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function firstOrNewProviderInfo()
     {
-        if ( ! $this->hasRole('provider')) {
+        if ( ! $this->isProvider()) {
             return false;
         }
 
@@ -2144,16 +2131,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->patientInfo->ccm_status;
     }
 
-    /**
-     * Returns whether the user is an administrator.
-     *
-     * @return bool
-     */
-    public function isSoftwareOnly()
-    {
-        return $this->hasRole('software-only');
-    }
-
     public function lastObservation()
     {
         return $this->observations()->orderBy('id', 'desc');
@@ -2191,7 +2168,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             return route('admin.users.edit', ['id' => $this->id]);
         }
 
-        if ($this->hasRole('participant')) {
+        if ($this->isParticipant()) {
             return route('patient.careplan.print', ['id' => $this->id]);
         }
 
@@ -2203,11 +2180,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isInternalUser()
     {
         return $this->hasRole(Constants::CLH_INTERNAL_USER_ROLE_NAMES);
-    }
-
-    public function isPracticeStaff()
-    {
-        return $this->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
     }
 
     public function notes()
@@ -2630,26 +2602,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      * @return mixed
      */
     public function canSeePhi(){
-        /**
-         * This is making the site very slow.
-         * @todo make this more performant and enable
-         */
-        return true;
-        if (!$this->id) return false;
-        
-        if (is_null($this->isAllowedToSeePhi)) {
-            $this->isAllowedToSeePhi = Cache::remember("user_id:$this->id:can-see-phi", 2, function () {
-                return $this->hasPermission('phi.read');
-            });
-        }
-        
-        return $this->isAllowedToSeePhi;
+        return $this->hasPermission('phi.read');
     }
 
     public function setCanSeePhi(bool $shouldSee = true)
     {
-        Cache::forget("user_id:$this->id:can-see-phi");
-        $phiRead = Permission::whereName('phi.read')->first();
+        $permName = 'phi.read';
+        \RedisManager::hdel($this->getCpmRolesCacheKey(), $permName);
+        $phiRead = Permission::whereName($permName)->first();
         if ($phiRead){
             $this->attachPermission($phiRead, $shouldSee);
         }
@@ -3740,18 +3700,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
-     * Returns whether the user is a Care Coach (AKA Care Center).
-     * A Care Coach can be employed from CLH ['care-center']
-     * or not ['care-center-external'].
-     *
-     * @return bool
-     */
-    public function isCareCoach()
-    {
-        return $this->hasRole(['care-center', 'care-center-external']);
-    }
-
-    /**
      * Determines if current time is within invoice review period.
      *
      * @return bool
@@ -3792,16 +3740,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function shouldBeSearchable()
     {
         return $this->loadMissing('roles')->isProvider();
-    }
-
-    /**
-     * Returns whether the user is an administrator.
-     *
-     * @return bool
-     */
-    public function isProvider()
-    {
-        return $this->hasRole('provider');
     }
 
     public function userConfig()
