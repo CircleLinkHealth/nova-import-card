@@ -54,15 +54,15 @@ class WelcomeController extends Controller
             return \App::call('App\Http\Controllers\Admin\DashboardController@index');
         }
 
-        if ($user->hasRole('saas-admin')) {
+        if ($user->isSaasAdmin()) {
             return \App::call('App\Http\Controllers\Patient\PatientController@showDashboard');
         }
 
-        if ($user->hasRole('care-ambassador') || $user->hasRole('care-ambassador-view-only')) {
+        if ($user->isCareAmbassador()) {
             return \App::call('App\Http\Controllers\Enrollment\EnrollmentCenterController@dashboard');
         }
 
-        if ($user->hasRole('ehr-report-writer')) {
+        if ($user->isEhrReportWriter()) {
             if ( ! isProductionEnv()) {
                 return \App::call('App\Http\Controllers\EhrReportWriterController@index');
             }
