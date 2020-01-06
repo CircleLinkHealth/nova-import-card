@@ -6,8 +6,8 @@
 
 return [
     'url'         => env('OPCACHE_URL', config('app.url')),
-    'verify_ssl'  => true,
-    'verify_host' => 2,
+    'verify_ssl'  => false,
+    'verify_host' => 0,
     'headers'     => [],
     'directories' => [
         base_path('app'),
