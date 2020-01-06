@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "22489be209843e2ee98f3343cf6dd055",
+    "content-hash": "a4e36dfddd2a8331fa55d1197fbda21e",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -13651,6 +13651,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/ccda-parser-processor-php": 20,
+        "circlelinkhealth/customer": 20,
         "circlelinkhealth/raygun": 20,
         "circlelinkhealth/sqlviews": 20,
         "daltcore/lara-pdf-merger": 20,

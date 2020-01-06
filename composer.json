@@ -106,7 +106,7 @@
     "circlelinkhealth/ccda-parser-processor-php": "dev-master",
     "circlelinkhealth/core": "1.33",
     "circlelinkhealth/cpmmigrations": "1.0",
-    "circlelinkhealth/customer": "1.6.8",
+    "circlelinkhealth/customer": "dev-CPM-1658_method_to_nurse_model",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/raygun": "dev-master",
     "circlelinkhealth/revisionable": "*",
