@@ -27,6 +27,7 @@ class StoreSuggestedTime extends FormRequest
      */
     public function messages()
     {
+//        git push testing
         return [
             'suggestedFormattedTime.required' => "Please input work time value in 'hh:mm' format",
         ];
