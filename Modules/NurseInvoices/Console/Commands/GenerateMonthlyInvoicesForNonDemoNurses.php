@@ -30,7 +30,7 @@ class GenerateMonthlyInvoicesForNonDemoNurses extends Command
      *
      * @var string
      */
-    protected $name = 'nurseinvoices:create {--allow-same-day}';
+    protected $name = 'nurseinvoices:create';
 
     public function defaultMonth()
     {

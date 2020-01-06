@@ -1431,8 +1431,7 @@ if ( ! function_exists('incrementInvoiceNo')) {
      */
     function incrementInvoiceNo()
     {
-        $num = AppConfig::where('config_key', 'billing_invoice_count')
-            ->firstOrFail();
+        $num = AppConfig::firstOrCreate(['config_key' => 'billing_invoice_count'], ['config_value' => 0]);
 
         $current = $num->config_value;
 

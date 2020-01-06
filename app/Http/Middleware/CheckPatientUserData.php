@@ -14,7 +14,6 @@ class CheckPatientUserData
      * Handle an incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
      *
      * @return mixed
      */
@@ -22,7 +21,7 @@ class CheckPatientUserData
     {
         $loggedUser = auth()->user();
 
-        if ( ! $loggedUser->hasRole('participant')) {
+        if ( ! $loggedUser->isParticipant()) {
             auth()->logout();
 
             return redirect('login')->withErrors(['This page can be accessed only by patients.']);

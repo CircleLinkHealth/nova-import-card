@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Eligibility\Providers;
 
 use App\Services\AthenaAPI\Calls;
 use App\Services\AthenaAPI\Connection;
+use CircleLinkHealth\Eligibility\Console\Make65PlusPatientsEligible;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use Illuminate\Database\Eloquent\Factory;
@@ -32,6 +33,9 @@ class EligibilityServiceProvider extends ServiceProvider
         $this->registerViews();
         $this->registerFactories();
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+        $this->commands([
+            Make65PlusPatientsEligible::class,
+        ]);
     }
 
     /**

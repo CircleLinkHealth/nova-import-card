@@ -16,12 +16,15 @@ class PhaxioWebhookController extends Controller
         $fax       = json_decode($request->input('fax'), true);
         $eventType = $request->input('event_type');
 
-        $log = FaxLog::create([
-            'fax_id'    => $fax['id'],
-            'status'    => $eventType,
-            'direction' => $fax['direction'],
-            'response'  => $fax,
-        ]);
+        $log = FaxLog::create(
+            [
+                'fax_id'     => $fax['id'],
+                'event_type' => $eventType,
+                'status'     => $fax['status'],
+                'direction'  => $fax['direction'],
+                'response'   => $fax,
+            ]
+        );
 
         return $this->ok();
     }

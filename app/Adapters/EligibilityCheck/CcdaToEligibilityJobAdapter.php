@@ -51,10 +51,8 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
 
     /**
      * @throws \Exception
-     *
-     * @return EligibilityJob
      */
-    public function adaptToEligibilityJob(): ?EligibilityJob
+    public function adaptToEligibilityJob(): EligibilityJob
     {
         $this->decodedCcda = $this->ccda->bluebuttonJson();
 
@@ -151,18 +149,13 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
 
         $hash = $this->practice->name.$patient['first_name'].$patient['last_name'].$mrn.$patient['city'].$patient['state'].$patient['zip'];
 
-        if (EligibilityJob::where([
-            ['batch_id', '=', $this->batch->id],
-            ['hash', '=', $hash],
-        ])->exists()) {
-            return null;
-        }
-
-        return EligibilityJob::create(
+        return EligibilityJob::firstOrCreate(
             [
                 'batch_id' => $this->batch->id,
                 'hash'     => $hash,
-                'data'     => $patient,
+            ],
+            [
+                'data' => $patient,
             ]
         );
     }

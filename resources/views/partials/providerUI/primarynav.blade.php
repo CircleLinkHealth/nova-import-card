@@ -78,7 +78,7 @@ $user = auth()->user();
             <div class="col-lg-8 col-sm-12 col-xs-12">
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $user->hasRole('care-center') && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
+                        @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $user->isCareCoach() && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
                             <li>
                                 <time-tracker-call-mode ref="timeTrackerCallMode"
                                                         :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"

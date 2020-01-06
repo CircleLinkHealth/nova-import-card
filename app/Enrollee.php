@@ -146,6 +146,12 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property array|null $agent_details
  * @property-read mixed $agent
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereAgentDetails($value)
+ *
+ * @property int|null $family_enrollee_id
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereFamilyEnrolleeId($value)
+ *
+ * @property string|null $soft_rejected_callback
  */
 class Enrollee extends BaseModel
 {
