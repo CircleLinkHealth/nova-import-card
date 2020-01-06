@@ -74,6 +74,36 @@ trait HasCpmRoles
         return $this->getCachedRole('provider');
     }
     
+    /**
+     * Returns whether the user is an administrator.
+     *
+     * @return bool
+     */
+    public function isCareAmbassador($includeViewOnly = true): bool
+    {
+        return $this->getCachedRole(['care-ambassador', 'care-ambassador-view-only']);
+    }
+    
+    /**
+     * Returns whether the user is an administrator.
+     *
+     * @return bool
+     */
+    public function isSaasAdmin(): bool
+    {
+        return $this->getCachedRole('saas-admin');
+    }
+    
+    /**
+     * Returns whether the user is an administrator.
+     *
+     * @return bool
+     */
+    public function isEhrReportWriter(): bool
+    {
+        return $this->getCachedRole('ehr-report-writer');
+    }
+    
     public function isPracticeStaff(): bool
     {
         return $this->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
