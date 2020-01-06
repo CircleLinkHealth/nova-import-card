@@ -821,6 +821,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->hasRole('administrator');
     }
+    
+    /**
+     * Returns whether the user is an administrator.
+     *
+     * @return bool
+     */
+    public function isParticipant()
+    {
+        return $this->hasRole('participant');
+    }
 
     public function canQAApproveCarePlans()
     {
