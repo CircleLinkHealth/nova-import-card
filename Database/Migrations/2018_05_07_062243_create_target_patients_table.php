@@ -32,7 +32,7 @@ class CreateTargetPatientsTable extends Migration
             $table->integer('ehr_patient_id')->unsigned();
             $table->integer('practice_id')->unsigned();
             $table->integer('department_id')->unsigned();
-            $table->enum('status', ['to_process', 'eligible', 'ineligible', 'consented', 'enrolled', 'error'])->nullable();
+            $table->enum('status', ['to_process', 'eligible', 'ineligible', 'consented', 'enrolled', 'error', 'duplicate'])->nullable();
             $table->timestamps();
             $table->string('description');
             $table->foreign('eligibility_job_id')->references('id')->on('eligibility_jobs')->onDelete('cascade')->onUpdate('cascade');
