@@ -156,6 +156,13 @@ class Call extends BaseModel implements AttachableToNotification
             ->getCurrent()
             ->first();
 
+        if ( ! $summary) {
+            \Log::channel('logdna')->info('Patient monthly summary not found.', [
+                'patient_id' => $this->inbound_cpm_id,
+                'month'      => Carbon::now()->startOfMonth()->toDateString(),
+            ]);
+        }
+
         $this->attestedProblems()->attach($attestedProblems, [
             'patient_monthly_summary_id' => $summary ? $summary->id : null,
         ]);
