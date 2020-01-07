@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41da8ff0853fa3fe9624804325e71bce",
+    "content-hash": "85848a1aee5d5b1a2ac63c473c6ebdb8",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -808,11 +808,11 @@
         },
         {
             "name": "circlelinkhealth/cpmmigrations",
-            "version": "dev-master",
+            "version": "v1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-cpm-migrations.git",
-                "reference": "c89d53057a11c53ae144c5fa1ffd368f6effdf4a"
+                "reference": "3e94a7d1af19597bcadd3fb8750aa02233991a3d"
             },
             "type": "laravel-module",
             "extra": {
@@ -834,15 +834,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-01T10:05:29+00:00"
+            "time": "2020-01-06T15:45:19+00:00"
         },
         {
             "name": "circlelinkhealth/customer",
-            "version": "v1.6.5",
+            "version": "v1.6.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "8ec7759f4d65e3cc1656fa05cb5abd49624105a2"
+                "reference": "a431e5b6fe35b6694052642fb747f0d7ab3677a9"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper": "^v3.0.2",
@@ -875,7 +875,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-03T05:26:10+00:00"
+            "time": "2020-01-06T21:50:44+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -5106,6 +5106,7 @@
                 "bcmath",
                 "math"
             ],
+            "abandoned": "brick/math",
             "time": "2017-02-16T16:54:46+00:00"
         },
         {
@@ -13650,7 +13651,6 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/ccda-parser-processor-php": 20,
-        "circlelinkhealth/cpmmigrations": 20,
         "circlelinkhealth/raygun": 20,
         "circlelinkhealth/sqlviews": 20,
         "daltcore/lara-pdf-merger": 20,
