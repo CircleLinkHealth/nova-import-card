@@ -3731,6 +3731,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 'first_name' => $this->first_name,
                 'last_name'  => $this->last_name,
                 'suffix'     => $this->suffix,
+                'practice_ids' => $this->practices->pluck('id')->all(),
+                'location_ids' => $this->locations->pluck('id')->all(),
             ];
         }
 
