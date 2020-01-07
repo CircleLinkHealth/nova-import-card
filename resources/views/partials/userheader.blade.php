@@ -124,10 +124,10 @@
                         style="margin-top: -8px; margin-bottom: 20px !important; margin-left: -20px !important;">
                         @foreach($ccdMonitoredProblems as $problem)
                             @if($problem['name'] != 'Diabetes')
-                                <li class="inline-block"><input type="checkbox" id="item27" name="condition27"
+                                <li class="inline-block"><input type="checkbox" id="item-{{$problem['id']}}" name="item-{{$problem['id']}}"
                                                                 value="Active"
                                                                 checked="checked" disabled="disabled">
-                                    <label for="condition27"><span> </span>{{$problem['name']}}</label>
+                                    <label for="item-{{$problem['id']}}"><span> </span>{{$problem['name']}}</label>
                                 </li>
                             @endif
                         @endforeach
