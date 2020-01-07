@@ -86,7 +86,8 @@
                                 <div v-else>
                                     <div v-if="this.suggested_family_members_exist">
                                         <p style="font-weight: lighter; padding-left: 15px">Check to confirm family member(s):</p>
-                                        <ul>
+                                        <hr>
+                                        <ul class="scrollable-list">
                                             <li v-for="member in this.suggested_family_members" class="sidebar-demo-list" style="height: auto !important;">
                                                 <label>
                                                     <input type="checkbox">
@@ -1116,6 +1117,8 @@
         width: 25%;
         margin-top: 65px;
         position: fixed;
+        max-height: 90%;
+        overflow: scroll;
     }
 
     .side-nav a {
@@ -1154,6 +1157,11 @@
 
     .phone-label {
         margin-bottom: 10px;
+    }
+
+    .scrollable-list {
+        max-height: 200px;
+        overflow: scroll;
     }
 
 </style>
