@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2db672ec396c81873ac05859c42d5f61",
+    "content-hash": "8a8daa34dbc1e44b99d1043f4fd050d5",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -948,11 +948,11 @@
         },
         {
             "name": "circlelinkhealth/raygun",
-            "version": "dev-master",
+            "version": "v0.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "af9a3bcd7b525a23a933cac05c8ee9cdb98846a5"
+                "reference": "318f3fc85a28a7649ec0f52b97746d5d8efc2468"
             },
             "require": {
                 "illuminate/contracts": "^5.0",
@@ -979,7 +979,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-02T13:24:06+00:00"
+            "time": "2020-01-07T18:45:19+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable",
@@ -13651,7 +13651,6 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/ccda-parser-processor-php": 20,
-        "circlelinkhealth/raygun": 20,
         "circlelinkhealth/sqlviews": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,

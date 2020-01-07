@@ -108,7 +108,7 @@
     "circlelinkhealth/cpmmigrations": "1.0",
     "circlelinkhealth/customer": "1.6.9",
     "circlelinkhealth/import-practice-staff-csv": "*",
-    "circlelinkhealth/raygun": "dev-master",
+    "circlelinkhealth/raygun": "0.6",
     "circlelinkhealth/revisionable": "*",
     "circlelinkhealth/sqlviews": "dev-master",
     "circlelinkhealth/timetracking": "1.1.4",
