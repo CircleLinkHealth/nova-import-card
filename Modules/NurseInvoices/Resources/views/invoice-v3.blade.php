@@ -159,8 +159,8 @@ such as <style>, as they will not be parsed.--}}
                 <td>{{$formattedSystemTime}}</td>
 
                 @if($variablePay)
-                    <td>{{$totalTimeAfterCcmInHours ?? $totalTimeTowardsCcm}}</td>
-                    <td>{{$totalTimeTowardsCcmInHours ?? $totalTimeAfterCcm}}</td>
+                    <td>{{$totalTimeAfterCcmInHours ?? $totalTimeAfterCcm}}</td>
+                    <td>{{$totalTimeTowardsCcmInHours ?? $totalTimeTowardsCcm}}</td>
                 @endif
             </tr>
 
