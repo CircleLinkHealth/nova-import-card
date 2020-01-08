@@ -51,7 +51,7 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         $this->attributes = $attributes;
         $this->rules      = $rules;
         $this->modelClass = $modelClass;
-        $this->practice   = $resource->practice;
+        $this->practice   = $resource->fields->getFieldValue('practice');
         $this->fileName   = $resource->fileName;
         $this->repo       = new UserRepository();
     }

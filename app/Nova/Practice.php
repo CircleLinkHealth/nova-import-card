@@ -72,7 +72,7 @@ class Practice extends Resource
                 Text::make('email')
                     ->withModel(\CircleLinkHealth\Customer\Entities\User::class, 'email')
                     ->inputRules(['required', 'email']),
-            ]),
+            ], 'Create and Send Patient Consent Letters'),
         ];
     }
 
