@@ -4,15 +4,18 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Jobs;
+namespace CircleLinkHealth\Eligibility\Jobs;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
+use App\Jobs\GoogleDrive;
+use App\Jobs\MakePhoenixHeartWelcomeCallList;
+use App\Jobs\ProcessSinglePatientEligibility;
+use App\Jobs\Storage;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use App\TargetPatient;
-use CircleLinkHealth\Eligibility\Jobs\ProcessTargetPatientForEligibility;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

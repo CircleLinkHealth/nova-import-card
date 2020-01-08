@@ -18,6 +18,7 @@ use CircleLinkHealth\Eligibility\Console\Athena\GetPatientIdFromLastYearAppointm
 use CircleLinkHealth\Eligibility\Console\Athena\PostPatientCarePlanAsAppointmentNote;
 use CircleLinkHealth\Eligibility\Console\Athena\UpdatePracticeAppointments;
 use CircleLinkHealth\Eligibility\Console\Make65PlusPatientsEligible;
+use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use Illuminate\Database\Eloquent\Factory;
@@ -53,6 +54,7 @@ class EligibilityServiceProvider extends ServiceProvider
             PostPatientCarePlanAsAppointmentNote::class,
             UpdatePracticeAppointments::class,
             Make65PlusPatientsEligible::class,
+            ProcessNextEligibilityBatchChunk::class,
         ]);
     }
 
