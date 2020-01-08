@@ -49,15 +49,16 @@ class FixBatch235 extends Command
     {
         TargetPatient::with(['eligibilityJob.enrollee', 'ccda'])->whereBatchId(235)->chunkById(100, function (Collection $tPs) {
             $tPs->each(function (TargetPatient $tp) {
-                $this->warn("Starting CCD $tp->id");
-                $tp->json = null;
+                $ccd = $tp->ccda;
+                $this->warn("Starting CCD $ccd->id");
+                $ccd->json = null;
 
-                $json = $tp->bluebuttonJson();
+                $json = $ccd->bluebuttonJson();
 
-                $targetPatient = $tp->targetPatient;
+                $targetPatient = $ccd->targetPatient;
 
                 if ( ! $targetPatient) {
-                    $this->error("No target patient for CCD $tp->id");
+                    $this->error("No target patient for CCD $ccd->id");
 
                     return;
                 }
@@ -65,7 +66,7 @@ class FixBatch235 extends Command
                 $eligibilityJob = $targetPatient->eligibilityJob;
 
                 if ( ! $eligibilityJob) {
-                    $this->error("No eligibility job for CCD $tp->id");
+                    $this->error("No eligibility job for CCD $ccd->id");
 
                     return;
                 }
@@ -73,7 +74,7 @@ class FixBatch235 extends Command
                 $enrollee = $eligibilityJob->enrollee;
 
                 if ( ! $enrollee) {
-                    $this->error("No enrollee for CCD $tp->id");
+                    $this->error("No enrollee for CCD $ccd->id");
 
                     return;
                 }
@@ -93,16 +94,16 @@ class FixBatch235 extends Command
                     }
                 }
 
-                $careTeam = $this->athenaApiImplementation->getCareTeam($tp->targetPatient->ehr_patient_id, $tp->targetPatient->ehr_practice_id, $tp->targetPatient->ehr_department_id);
+                $careTeam = $this->athenaApiImplementation->getCareTeam($ccd->targetPatient->ehr_patient_id, $ccd->targetPatient->ehr_practice_id, $ccd->targetPatient->ehr_department_id);
 
                 if (is_array($careTeam)) {
                     foreach ($careTeam['members'] as $member) {
                         if (array_key_exists('firstname', $member)) {
                             $providerName = $member['name'];
 
-                            $enrollee->referring_provider_name = $tp->referring_provider_name = $providerName;
+                            $enrollee->referring_provider_name = $ccd->referring_provider_name = $providerName;
                             $enrollee->save();
-                            $tp->save();
+                            $ccd->save();
 
                             $data = $eligibilityJob->data;
                             $data['referring_provider_name'] = $providerName;
@@ -113,7 +114,7 @@ class FixBatch235 extends Command
                     }
                 }
 
-                $this->line("Finished CCD $tp->id!");
+                $this->line("Finished CCD $ccd->id!");
             });
         });
     }
