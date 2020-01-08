@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
 use App\Models\MedicalRecords\Ccda;
+use App\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use Illuminate\Console\Command;
@@ -47,22 +48,34 @@ class FixBatch235 extends Command
      */
     public function handle()
     {
-        Ccda::with('targetPatient.eligibilityJob.enrollee')->has('targetPatient')->whereBatchId(235)->chunkById(100, function (Collection $ccdas) {
+        TargetPatient::with(['eligibilityJob.enrollee', 'ccda'])->whereBatchId(235)->chunkById(100, function (Collection $ccdas) {
             $ccdas->each(function (Ccda $ccd) {
                 $this->warn("Starting CCD $ccd->id");
                 $ccd->json = null;
 
                 $json = $ccd->bluebuttonJson();
 
-                $eligibilityJob = $ccd->targetPatient->eligibilityJob;
+                $targetPatient = $ccd->targetPatient;
+
+                if ( ! $targetPatient) {
+                    $this->error("No target patient for CCD $ccd->id");
+
+                    return;
+                }
+
+                $eligibilityJob = $targetPatient->eligibilityJob;
 
                 if ( ! $eligibilityJob) {
+                    $this->error("No eligibility job for CCD $ccd->id");
+
                     return;
                 }
 
                 $enrollee = $eligibilityJob->enrollee;
 
                 if ( ! $enrollee) {
+                    $this->error("No enrollee for CCD $ccd->id");
+
                     return;
                 }
 
