@@ -324,21 +324,21 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
         $baseQuery = (new ProviderByName())->query($term);
 
         if ('algolia' === config('scout.driver')) {
-            return $baseQuery->when(
-                ! empty($this->practice_id),
-                function ($q) {
-                    $q->ofPractice($this->practice_id);
-                }
-            )->first();
+            return $baseQuery
+                ->with([
+                    'typoTolerance' => true,
+                ])->when( ! empty($this->practice_id), function ($q) {
+                           $q->whereIn('practice_ids', [$this->practice_id]);
+                       })
+                ->first();
         }
 
-        return $baseQuery
-            ->with([
-                'typoTolerance' => true,
-            ])->when( ! empty($this->practice_id), function ($q) {
-                $q->whereIn('practice_ids', [$this->practice_id]);
-            })
-            ->first();
+        return $baseQuery->when(
+            ! empty($this->practice_id),
+            function ($q) {
+                $q->ofPractice($this->practice_id);
+            }
+        )->first();
     }
 
     /**
