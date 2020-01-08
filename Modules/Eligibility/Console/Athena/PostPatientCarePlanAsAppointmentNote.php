@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\Commands\Athena;
+namespace CircleLinkHealth\Eligibility\Console\Athena;
 
 use App\CarePlan;
 use App\Services\AthenaAPI\Calls;
@@ -30,8 +30,6 @@ class PostPatientCarePlanAsAppointmentNote extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param Calls $api
      */
     public function __construct(Calls $api)
     {
@@ -70,7 +68,7 @@ class PostPatientCarePlanAsAppointmentNote extends Command
                     $practiceId,
                     $c->user_id,
                     false
-                                );
+                );
                 $sortedAppointments = collect($appointments['appointments'])->sortBy('date');
                 $nextAppointment = $sortedAppointments->first();
 
@@ -79,7 +77,7 @@ class PostPatientCarePlanAsAppointmentNote extends Command
                     $nextAppointment['appointmentid'],
                     $link,
                     true
-                                );
+                );
             });
     }
 }

@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\Commands\Athena;
+namespace CircleLinkHealth\Eligibility\Console\Athena;
 
 use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
 use Carbon\Carbon;
@@ -34,8 +34,6 @@ class GetPatientIdFromLastYearAppointments extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param DetermineEnrollmentEligibility $athenaApi
      */
     public function __construct(DetermineEnrollmentEligibility $athenaApi)
     {
