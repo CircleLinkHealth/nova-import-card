@@ -45,6 +45,7 @@ class FixBatch235 extends Command
     {
         Ccda::with('targetPatient.eligibilityJob.enrollee')->whereBatchId(235)->chunkById(100, function (Collection $ccdas) {
             $ccdas->each(function (Ccda $ccd) {
+                $this->warn("Starting CCD $ccd->id");
                 $ccd->json = null;
 
                 $json = $ccd->bluebuttonJson();
@@ -69,6 +70,7 @@ class FixBatch235 extends Command
                         $enrollee->save();
                     }
                 }
+                $this->line("Finished CCD $ccd->id!");
             });
         });
     }
