@@ -621,7 +621,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git",
-                "reference": "497e51d0fa93f4a1a0492bd5eda423530ded5492"
+                "reference": "d631882f0a08bbf4b62a5275a557e4d4c4c51e2b"
             },
             "type": "library",
             "extra": {
