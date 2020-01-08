@@ -123,6 +123,17 @@ interface AthenaApiImplementation
     );
 
     /**
+     * Get care team associated with the patient and chart.
+     *
+     * @see https://developer.athenahealth.com/docs/read/chart/Care_Team#section-1
+     *
+     * @throws \Exception
+     *
+     * @return mixed
+     */
+    public function getCareTeam(int $patientId, int $practiceId, int $departmentId);
+
+    /**
      * Get a patient's CCDA record.
      *
      * @param $patientId
