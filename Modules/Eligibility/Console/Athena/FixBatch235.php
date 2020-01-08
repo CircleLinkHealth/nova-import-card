@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
-use App\Models\MedicalRecords\Ccda;
 use App\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -48,17 +47,17 @@ class FixBatch235 extends Command
      */
     public function handle()
     {
-        TargetPatient::with(['eligibilityJob.enrollee', 'ccda'])->whereBatchId(235)->chunkById(100, function (Collection $ccdas) {
-            $ccdas->each(function (Ccda $ccd) {
-                $this->warn("Starting CCD $ccd->id");
-                $ccd->json = null;
+        TargetPatient::with(['eligibilityJob.enrollee', 'ccda'])->whereBatchId(235)->chunkById(100, function (Collection $tPs) {
+            $tPs->each(function (TargetPatient $tp) {
+                $this->warn("Starting CCD $tp->id");
+                $tp->json = null;
 
-                $json = $ccd->bluebuttonJson();
+                $json = $tp->bluebuttonJson();
 
-                $targetPatient = $ccd->targetPatient;
+                $targetPatient = $tp->targetPatient;
 
                 if ( ! $targetPatient) {
-                    $this->error("No target patient for CCD $ccd->id");
+                    $this->error("No target patient for CCD $tp->id");
 
                     return;
                 }
@@ -66,7 +65,7 @@ class FixBatch235 extends Command
                 $eligibilityJob = $targetPatient->eligibilityJob;
 
                 if ( ! $eligibilityJob) {
-                    $this->error("No eligibility job for CCD $ccd->id");
+                    $this->error("No eligibility job for CCD $tp->id");
 
                     return;
                 }
@@ -74,7 +73,7 @@ class FixBatch235 extends Command
                 $enrollee = $eligibilityJob->enrollee;
 
                 if ( ! $enrollee) {
-                    $this->error("No enrollee for CCD $ccd->id");
+                    $this->error("No enrollee for CCD $tp->id");
 
                     return;
                 }
@@ -94,16 +93,16 @@ class FixBatch235 extends Command
                     }
                 }
 
-                $careTeam = $this->athenaApiImplementation->getCareTeam($ccd->targetPatient->ehr_patient_id, $ccd->targetPatient->ehr_practice_id, $ccd->targetPatient->ehr_department_id);
+                $careTeam = $this->athenaApiImplementation->getCareTeam($tp->targetPatient->ehr_patient_id, $tp->targetPatient->ehr_practice_id, $tp->targetPatient->ehr_department_id);
 
                 if (is_array($careTeam)) {
                     foreach ($careTeam['members'] as $member) {
                         if (array_key_exists('firstname', $member)) {
                             $providerName = $member['name'];
 
-                            $enrollee->referring_provider_name = $ccd->referring_provider_name = $providerName;
+                            $enrollee->referring_provider_name = $tp->referring_provider_name = $providerName;
                             $enrollee->save();
-                            $ccd->save();
+                            $tp->save();
 
                             $data = $eligibilityJob->data;
                             $data['referring_provider_name'] = $providerName;
@@ -114,7 +113,7 @@ class FixBatch235 extends Command
                     }
                 }
 
-                $this->line("Finished CCD $ccd->id!");
+                $this->line("Finished CCD $tp->id!");
             });
         });
     }
