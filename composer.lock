@@ -621,7 +621,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git",
-                "reference": "a4a3473bcabf79d85540abe45166c4abb4f5a8dd"
+                "reference": "497e51d0fa93f4a1a0492bd5eda423530ded5492"
             },
             "type": "library",
             "extra": {
@@ -653,7 +653,7 @@
                 }
             ],
             "description": "PHP wrapper for bluebutton nodejs",
-            "time": "2019-12-28T00:15:19+00:00"
+            "time": "2020-01-08T00:22:22+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper",
