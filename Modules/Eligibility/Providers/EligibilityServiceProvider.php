@@ -8,6 +8,15 @@ namespace CircleLinkHealth\Eligibility\Providers;
 
 use App\Services\AthenaAPI\Calls;
 use App\Services\AthenaAPI\Connection;
+use CircleLinkHealth\Eligibility\Console\Athena\AutoPullEnrolleesFromAthena;
+use CircleLinkHealth\Eligibility\Console\Athena\DetermineTargetPatientEligibility;
+use CircleLinkHealth\Eligibility\Console\Athena\FixBatch235;
+use CircleLinkHealth\Eligibility\Console\Athena\GetAppointments;
+use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
+use CircleLinkHealth\Eligibility\Console\Athena\GetPatientIdFromAppointments;
+use CircleLinkHealth\Eligibility\Console\Athena\GetPatientIdFromLastYearAppointments;
+use CircleLinkHealth\Eligibility\Console\Athena\PostPatientCarePlanAsAppointmentNote;
+use CircleLinkHealth\Eligibility\Console\Athena\UpdatePracticeAppointments;
 use CircleLinkHealth\Eligibility\Console\Make65PlusPatientsEligible;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -34,6 +43,15 @@ class EligibilityServiceProvider extends ServiceProvider
         $this->registerFactories();
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         $this->commands([
+            AutoPullEnrolleesFromAthena::class,
+            DetermineTargetPatientEligibility::class,
+            FixBatch235::class,
+            GetAppointments::class,
+            GetCcds::class,
+            GetPatientIdFromAppointments::class,
+            GetPatientIdFromLastYearAppointments::class,
+            PostPatientCarePlanAsAppointmentNote::class,
+            UpdatePracticeAppointments::class,
             Make65PlusPatientsEligible::class,
         ]);
     }
