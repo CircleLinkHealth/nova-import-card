@@ -12,7 +12,6 @@ use App\EligibilityJob;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use App\Services\Eligibility\Entities\Problem;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Support\Collection;
 
@@ -173,17 +172,22 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
         )->filter();
     }
 
-    private function handleLastEncounter($patient, $ccdaJson)
+    private function handleLastEncounter($patient, $parsedCcdObj)
     {
         $lastEncounter = false;
         $patient->put('last_encounter', '');
 
-        if (isset($ccdaJson->encounters)
-            && array_key_exists(0, $ccdaJson->encounters)
-            && isset($ccdaJson->encounters[0]->date)) {
-            if ($ccdaJson->encounters[0]->date) {
-                $lastEncounter = $ccdaJson->encounters[0]->date;
-                $patient->put('last_encounter', Carbon::parse($lastEncounter));
+        $encounters = collect($parsedCcdObj->encounters);
+
+        $lastEncounter = $encounters->sortByDesc(function ($el) {
+            return $el->date;
+        })->first();
+
+        if (property_exists($lastEncounter, 'date')) {
+            $v = \Validator::make(['date' => $lastEncounter->date], ['date' => 'required|date']);
+
+            if ($v->passes()) {
+                $patient['last_encounter'] = $lastEncounter->date;
             }
         }
 
