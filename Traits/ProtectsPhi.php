@@ -4,6 +4,7 @@ namespace CircleLinkHealth\Core\Traits;
 
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
 
 trait ProtectsPhi
 {
@@ -47,7 +48,7 @@ trait ProtectsPhi
     {
         $value = parent::getAttribute($key);
 
-        if ($key === 'id') {
+        if ($key === 'id' || ($this instanceof User && ! $this->isParticipant())) {
             return $value;
         }
 
