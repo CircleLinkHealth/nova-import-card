@@ -439,7 +439,7 @@ class PatientCareplanController extends Controller
         }
 
         $showApprovalButton = false; // default hide
-        if (Auth::user()->hasRole(['provider'])) {
+        if (Auth::user()->isProvider()) {
             if ('provider_approved' != $patient->getCarePlanStatus()) {
                 $showApprovalButton = true;
             }

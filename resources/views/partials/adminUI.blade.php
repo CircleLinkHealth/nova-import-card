@@ -82,7 +82,6 @@
 
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        @if ( ! Auth::guest())
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -95,9 +94,7 @@
                                             Observations</a></li>
                                 </ul>
                             </li>
-                        @endif
 
-                        @if ( ! Auth::guest())
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -114,9 +111,7 @@
                                     <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
                                 </ul>
                             </li>
-                        @endif
 
-                        @if ( ! Auth::guest())
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -132,7 +127,6 @@
 
                                 </ul>
                             </li>
-                        @endif
 
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"

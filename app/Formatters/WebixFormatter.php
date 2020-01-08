@@ -495,7 +495,7 @@ class WebixFormatter implements ReportFormatter
         $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
         $isCareCenter          = $auth->isCareCoach();
         $isAdmin               = $auth->isAdmin();
-        $isProvider            = $auth->hasRole('provider');
+        $isProvider            = $auth->isProvider();
         $isPracticeStaff       = $auth->hasRole(['office_admin', 'med_assistant']);
 
         return compact(
@@ -526,7 +526,7 @@ class WebixFormatter implements ReportFormatter
         $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
         $isCareCenter          = $auth->isCareCoach();
         $isAdmin               = $auth->isAdmin();
-        $isProvider            = $auth->hasRole('provider');
+        $isProvider            = $auth->isProvider();
         $isPracticeStaff       = $auth->hasRole(['office_admin', 'med_assistant']);
 
         foreach ($patients as $patient) {
