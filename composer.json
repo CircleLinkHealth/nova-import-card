@@ -104,7 +104,7 @@
     "appstract/laravel-opcache": "~2.0.5",
     "barryvdh/laravel-snappy": "0.4.4",
     "circlelinkhealth/ccda-parser-processor-php": "dev-master",
-    "circlelinkhealth/core": "1.33",
+    "circlelinkhealth/core": "1.35",
     "circlelinkhealth/cpmmigrations": "1.0",
     "circlelinkhealth/customer": "1.6.9",
     "circlelinkhealth/import-practice-staff-csv": "*",
