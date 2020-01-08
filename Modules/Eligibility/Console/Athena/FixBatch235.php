@@ -6,7 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
-use App\TargetPatient;
+use App\Enrollee;
+use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use Illuminate\Console\Command;
@@ -47,37 +48,15 @@ class FixBatch235 extends Command
      */
     public function handle()
     {
-        TargetPatient::with(['eligibilityJob.enrollee', 'ccda'])->whereBatchId(235)->chunkById(100, function (Collection $tPs) {
-            $tPs->each(function (TargetPatient $tp) {
-                $ccd = $tp->ccda;
+        Enrollee::where('referring_provider_name', '')->where('batch_id', 235)->with('eligibilityJob.targetPatient.ccda')->chunkById(100, function (Collection $enrollees) {
+            $enrollees->each(function (Enrollee $enrollee) {
+                $eligibilityJob = $enrollee->eligibilityJob;
+                /** @var Ccda $ccd */
+                $ccd = $eligibilityJob->targetPatient->ccda;
                 $this->warn("Starting CCD $ccd->id");
                 $ccd->json = null;
 
                 $json = $ccd->bluebuttonJson();
-
-                $targetPatient = $ccd->targetPatient;
-
-                if ( ! $targetPatient) {
-                    $this->error("No target patient for CCD $ccd->id");
-
-                    return;
-                }
-
-                $eligibilityJob = $targetPatient->eligibilityJob;
-
-                if ( ! $eligibilityJob) {
-                    $this->error("No eligibility job for CCD $ccd->id");
-
-                    return;
-                }
-
-                $enrollee = $eligibilityJob->enrollee;
-
-                if ( ! $enrollee) {
-                    $this->error("No enrollee for CCD $ccd->id");
-
-                    return;
-                }
 
                 $encounters = collect($json->encounters);
 
@@ -89,8 +68,14 @@ class FixBatch235 extends Command
                     $v = \Validator::make(['date' => $lastEncounter->date], ['date' => 'required|date']);
 
                     if ($v->passes()) {
-                        $enrollee->last_encounter = Carbon::parse($lastEncounter->date);
+                        $lastEncounterCarbon = Carbon::parse($lastEncounter->date);
+                        $enrollee->last_encounter = $lastEncounterCarbon;
                         $enrollee->save();
+
+                        $data = $eligibilityJob->data;
+                        $data['last_encounter'] = $lastEncounterCarbon->toDateTimeString();
+                        $eligibilityJob->data = $data;
+                        $eligibilityJob->save();
                     }
                 }
 
@@ -98,7 +83,7 @@ class FixBatch235 extends Command
 
                 if (is_array($careTeam)) {
                     foreach ($careTeam['members'] as $member) {
-                        if (array_key_exists('firstname', $member)) {
+                        if (array_key_exists('name', $member)) {
                             $providerName = $member['name'];
 
                             $enrollee->referring_provider_name = $ccd->referring_provider_name = $providerName;
@@ -107,6 +92,7 @@ class FixBatch235 extends Command
 
                             $data = $eligibilityJob->data;
                             $data['referring_provider_name'] = $providerName;
+                            $eligibilityJob->data = $data;
                             $eligibilityJob->save();
 
                             break;
