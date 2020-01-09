@@ -9,8 +9,8 @@ namespace App\Console\Commands;
 use App\Enrollee;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ItemLogs\DemographicsLog;
+use App\Models\MedicalRecords\TabularMedicalRecord;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Console\Command;
 
 class FixFalseDOBs extends Command
@@ -45,30 +45,47 @@ class FixFalseDOBs extends Command
      */
     public function handle()
     {
-        Patient::where('birth_date', '>=', \Carbon\Carbon::now()->subWeek())->where('birth_date', '<=', \Carbon\Carbon::now()->addWeek())->chunkById(100, function ($patients) {
-            $patients->each(function (Patient $patient) {
-                $imr = \App\Models\MedicalRecords\ImportedMedicalRecord::find($patient->imported_medical_record_id);
-                $mr = $imr->medicalRecord();
+        TabularMedicalRecord::whereNull('dob')->chunkById(
+            100,
+            function ($tmr) {
+                $tmr->each(
+                    function (TabularMedicalRecord $mr) {
+                        $e = Enrollee::where(
+                            function ($q) use ($mr) {
+                                $q->whereMedicalRecordType(get_class($mr))->whereMedicalRecordId($mr->id);
+                            }
+                        )->orWhere('mrn', $mr->mrn)->first();
 
-                $e = Enrollee::where('mrn', $mr->mrn)->firstOrFail();
+                        if ( ! $e) {
+                            return;
+                        }
+                        if ($e->dob->gte(Carbon::createFromDate(2000, 1, 1))) {
+                            $e->dob = $e->dob->subYears(100)->toDateTimeString();
+                            $e->save();
+                        }
 
-                if ($e->dob->gte(Carbon::createFromDate(2000, 1, 1))) {
-                    $e->dob = $e->dob->subYears(100)->toDateTimeString();
-                    $e->save();
-                }
+                        $mr->dob = $e->dob;
 
-                $patient->birth_date = $mr->dob = $e->dob;
-                $patient->save();
-                $mr->save();
+                        $mr->save();
 
-                $imprtsCnt = DemographicsImport::whereMedicalRecordType(get_class($mr))->whereMedicalRecordId($mr->id)->update([
-                    'dob' => $e->dob,
-                ]);
+                        $imprtsCnt = DemographicsImport::whereMedicalRecordType(get_class($mr))->whereMedicalRecordId(
+                            $mr->id
+                        )->update(
+                            [
+                                'dob' => $e->dob,
+                            ]
+                        );
 
-                $logCnt = DemographicsLog::whereMedicalRecordType(get_class($mr))->whereMedicalRecordId($mr->id)->update([
-                    'dob' => $e->dob,
-                ]);
-            });
-        });
+                        $logCnt = DemographicsLog::whereMedicalRecordType(get_class($mr))->whereMedicalRecordId(
+                            $mr->id
+                        )->update(
+                            [
+                                'dob' => $e->dob,
+                            ]
+                        );
+                    }
+                );
+            }
+        );
     }
 }
