@@ -28,6 +28,30 @@ if (getenv('DATABASE_URL')) {
     ];
 }
 
+if (getenv('CLEARDB_DATABASE_URL')) {
+    $clearDBBUrl = parse_url(getenv('CLEARDB_DATABASE_URL'));
+
+    $clearDBBhost     = $clearDBBUrl['host'];
+    $clearDBBusername = $clearDBBUrl['user'];
+    $clearDBBpassword = $clearDBBUrl['pass'];
+    $clearDBBdatabase = substr($clearDBBUrl['path'], 1);
+
+    $clearDBConfig = [
+        'driver'         => 'mysql',
+        'charset'        => 'utf8mb4',
+        'collation'      => 'utf8mb4_unicode_ci',
+        'prefix'         => '',
+        'prefix_indexes' => true,
+        'strict'         => false,
+        'engine'         => null,
+    ];
+
+    $clearDBConfig['host']     = $clearDBBhost;
+    $clearDBConfig['database'] = $clearDBBdatabase;
+    $clearDBConfig['username'] = $clearDBBusername;
+    $clearDBConfig['password'] = $clearDBBpassword;
+}
+
 // for heroku
 if (getenv('REDIS_URL')) {
     $redisUrl = parse_url(getenv('REDIS_URL'));
@@ -74,6 +98,8 @@ return [
             'prefix'                  => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
+
+        'cleardb' => $clearDBConfig,
 
         'mysql' => [
             'driver'         => 'mysql',

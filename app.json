@@ -7,7 +7,6 @@
   "logo": "https://www.careplanmanager.com/img/logos/LogoHorizontal_Color.svg?id=e08f4611feae12f4f909",
   "success_url": "/",
   "scripts": {
-    "postdeploy": "php artisan deploy:post"
   },
   "env": {
 
