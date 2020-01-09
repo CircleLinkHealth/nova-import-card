@@ -44,14 +44,14 @@ class PostDeploymentTasks extends Command
 
             return;
         }
-
+        echo \Config::get('opcache.url');
         collect(
             [
                 'view:clear',
                 'view:cache',
                 'route:cache',
                 'config:cache',
-                'opcache:clear',
+                //                'opcache:clear',
                 'opcache:optimize',
                 'horizon:terminate',
                 'queue:restart',

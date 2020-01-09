@@ -112,7 +112,7 @@
     "circlelinkhealth/revisionable": "*",
     "circlelinkhealth/sqlviews": "dev-master",
     "circlelinkhealth/timetracking": "1.1.4",
-    "circlelinkhealth/twofa": "1.1.2",
+    "circlelinkhealth/twofa": "1.1.3",
     "daltcore/lara-pdf-merger": "dev-master",
     "dillingham/nova-button": "^1.0",
     "doctrine/dbal": "2.9.2",
