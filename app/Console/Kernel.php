@@ -6,10 +6,6 @@
 
 namespace App\Console;
 
-use App\Console\Commands\Athena\AutoPullEnrolleesFromAthena;
-use App\Console\Commands\Athena\DetermineTargetPatientEligibility;
-use App\Console\Commands\Athena\GetAppointments;
-use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
@@ -21,7 +17,6 @@ use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
 use App\Console\Commands\OverwriteNBIImportedData;
 use App\Console\Commands\OverwriteNBIPatientMRN;
-use App\Console\Commands\ProcessNextEligibilityBatchChunk;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
 use App\Console\Commands\QueueResetAssignedCareAmbassadorsFromEnrollees;
@@ -33,7 +28,11 @@ use App\Console\Commands\ResetPatients;
 use App\Console\Commands\RunScheduler;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
-use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\Console\Athena\AutoPullEnrolleesFromAthena;
+use CircleLinkHealth\Eligibility\Console\Athena\DetermineTargetPatientEligibility;
+use CircleLinkHealth\Eligibility\Console\Athena\GetAppointments;
+use CircleLinkHealth\Eligibility\Console\Athena\GetCcds;
+use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
 use CircleLinkHealth\NurseInvoices\Console\Commands\GenerateMonthlyInvoicesForNonDemoNurses;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendMonthlyNurseInvoiceLAN;
 use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeReminder;
@@ -183,9 +182,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->dailyAt('00:10')->onOneServer();
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)->monthlyOn(1, '08:30')->onOneServer();
-    
+
         $schedule->command(CheckForYesterdaysActivitiesAndUpdateContactWindows::class)->dailyAt('00:06')->onOneServer();
-        
+
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)->everyMinute()->when(function () {
             return SendMonthlyNurseInvoiceLAN::shouldSend();
         })->onOneServer();

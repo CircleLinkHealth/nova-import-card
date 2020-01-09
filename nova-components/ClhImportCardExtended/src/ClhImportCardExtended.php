@@ -17,13 +17,13 @@ class ClhImportCardExtended extends Card
      */
     public $width = '1/2';
 
-    public function __construct($resource, array $fields)
+    public function __construct($resource, array $fields, $label = null)
     {
         parent::__construct();
 
         $this->withMeta([
             'fields'        => $fields,
-            'resourceLabel' => $resource::label(),
+            'resourceLabel' => $label ? ': '.$label : $resource::label(),
             'resource'      => $resource::uriKey(),
         ]);
     }

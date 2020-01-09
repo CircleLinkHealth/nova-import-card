@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \App\EligibilityBatch                                                          $batch
  * @property \App\Enrollee                                                                  $enrollee
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob eligible()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob newModelQuery()
@@ -80,6 +81,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withoutTrashed()
  * @mixin \Eloquent
+ *
  * @property \App\EligibilityJob $eligibilityJob
  * @property int|null            $revision_history_count
  */
@@ -252,6 +254,11 @@ class EligibilityJob extends BaseModel
     public function scopeEligible($builder)
     {
         return $builder->where('outcome', '=', self::ELIGIBLE);
+    }
+
+    public function targetPatient()
+    {
+        return $this->hasOne(TargetPatient::class);
     }
 
     public function wasAlreadyFoundEligibleInAPreviouslyCreatedBatch()

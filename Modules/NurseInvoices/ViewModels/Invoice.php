@@ -318,24 +318,32 @@ class Invoice extends ViewModel
             ];
 
             if ($this->variablePay) {
-                $towards = $this->variablePayForNurse->first(
+                $towards = $this->variablePayForNurse->sum(
                     function ($careLog) use ($dateStr) {
-                        return 'accrued_towards_ccm' == $careLog->ccm_type && $careLog->date == $dateStr;
+                        if ('accrued_towards_ccm' == $careLog->ccm_type && $careLog->created_at->startOfMonth()->toDateString() === $dateStr) {
+                            return $careLog->increment;
+                        }
+
+                        return 0;
                     }
                 );
 
                 $row['towards'] = $towards
-                    ? round($towards->total_time / 3600, 1)
+                    ? $towards / 3600
                     : 0;
 
-                $after = $this->variablePayForNurse->first(
+                $after = $this->variablePayForNurse->sum(
                     function ($careLog) use ($dateStr) {
-                        return 'accrued_after_ccm' == $careLog->ccm_type && $careLog->date == $dateStr;
+                        if ('accrued_after_ccm' == $careLog->ccm_type && $careLog->created_at->startOfMonth()->toDateString() === $dateStr) {
+                            return $careLog->increment;
+                        }
+
+                        return 0;
                     }
                 );
 
                 $row['after'] = $after
-                    ? round($after->total_time / 3600, 1)
+                    ? $after / 3600
                     : 0;
             }
 

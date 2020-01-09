@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\Commands\Athena;
+namespace CircleLinkHealth\Eligibility\Console\Athena;
 
 use App\EligibilityBatch;
 use App\Services\CCD\ProcessEligibilityService;

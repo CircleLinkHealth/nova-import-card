@@ -4,10 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\Console\Commands;
+namespace CircleLinkHealth\Eligibility\Console;
 
 use App\EligibilityBatch;
-use App\Jobs\ProcessEligibilityBatch;
+use CircleLinkHealth\Eligibility\Jobs\ProcessEligibilityBatch;
 use Illuminate\Console\Command;
 
 class ProcessNextEligibilityBatchChunk extends Command

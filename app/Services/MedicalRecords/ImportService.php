@@ -27,7 +27,7 @@ class ImportService
      */
     public function createTabularMedicalRecordAndImport($row, Practice $practice)
     {
-        $row['dob']         = $this->parseDate($row['dob']);
+        $row['dob']         = $this->parseDOBDate($row['dob']);
         $row['practice_id'] = $practice->id;
         $row['location_id'] = $practice->primary_location_id;
 
@@ -190,6 +190,23 @@ class ImportService
         return stripcslashes($medicalRecordType) == stripcslashes(Ccda::class);
     }
 
+    /**
+     * Subtracts 100 years off date if it's after 1/1/2000.
+     *
+     * @return Carbon
+     */
+    private function correctCenturyIfNeeded(Carbon &$date)
+    {
+        //If a DOB is after 2000 it's because at some point the date incorrectly assumed to be in the 2000's, when it was actually in the 1900's. For example, this date 10/05/04.
+        $cutoffDate = Carbon::createFromDate(2000, 1, 1);
+
+        if ($date->gte($cutoffDate)) {
+            $date->subYears(100);
+        }
+
+        return $date;
+    }
+
     private function lookupPHXmrn($firstName, $lastName, $dob, $mrn)
     {
         $dob = Carbon::parse($dob)->format('n/j/Y');
@@ -213,14 +230,27 @@ class ImportService
         return null;
     }
 
-    private function parseDate($dob)
+    /**
+     * @param $dob
+     *
+     * @throws \Exception
+     *
+     * @return Carbon|null
+     */
+    private function parseDOBDate($dob)
     {
+        if ($dob instanceof Carbon) {
+            return $this->correctCenturyIfNeeded($dob);
+        }
+
         try {
             $date = Carbon::parse($dob);
 
             if ($date->isToday()) {
                 throw new \InvalidArgumentException('date note parsed correctly');
             }
+
+            return $this->correctCenturyIfNeeded($date);
         } catch (\InvalidArgumentException $e) {
             if ( ! $dob) {
                 return null;

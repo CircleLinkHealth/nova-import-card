@@ -99,23 +99,23 @@
     "ext-simplexml": "*",
     "alexbowers/nova-prepopulate-searchable": "^1.0",
     "algolia/algoliasearch-client-php": "^2.2",
-    "algolia/scout-extended": "^1.6",
+    "algolia/scout-extended": "^1.8",
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "~2.0.5",
     "barryvdh/laravel-snappy": "0.4.4",
     "circlelinkhealth/ccda-parser-processor-php": "dev-master",
-    "circlelinkhealth/core": "1.33",
+    "circlelinkhealth/core": "1.35",
     "circlelinkhealth/cpmmigrations": "1.0",
     "circlelinkhealth/customer": "dev-CPM-1658_method_to_nurse_model",
     "circlelinkhealth/import-practice-staff-csv": "*",
-    "circlelinkhealth/raygun": "dev-master",
+    "circlelinkhealth/raygun": "0.6",
     "circlelinkhealth/revisionable": "*",
     "circlelinkhealth/sqlviews": "dev-master",
     "circlelinkhealth/timetracking": "1.1.4",
     "circlelinkhealth/twofa": "1.1.2",
     "daltcore/lara-pdf-merger": "dev-master",
     "dillingham/nova-button": "^1.0",
-    "doctrine/dbal": "~2.3",
+    "doctrine/dbal": "2.9.2",
     "fideloper/proxy": "^4.0",
     "fourstacks/nova-checkboxes": "^0.1.5",
     "fzaninotto/faker": "~1.4",
@@ -181,8 +181,7 @@
   "autoload": {
     "classmap": [
       "database/seeds",
-      "database/factories",
-      "database/views"
+      "database/factories"
     ],
     "psr-4": {
       "App\\": "app/"
