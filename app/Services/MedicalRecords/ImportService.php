@@ -215,6 +215,10 @@ class ImportService
 
     private function parseDate($dob)
     {
+        if ($dob instanceof Carbon) {
+            return $dob;
+        }
+
         try {
             $date = Carbon::parse($dob);
 
