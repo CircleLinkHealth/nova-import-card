@@ -148,6 +148,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     whereNurseUserId($value)
  * @property int $is_awv
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereIsAwv($value)
+ * @property-read \App\Models\MedicalRecords\ImportedMedicalRecord $importedMedicalRecord
  */
 class Patient extends BaseModel
 {
