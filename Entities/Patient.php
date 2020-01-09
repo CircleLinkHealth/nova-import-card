@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\Call;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -761,5 +762,9 @@ class Patient extends BaseModel
         return empty($result)
             ? null
             : $result;
+    }
+    
+    public function importedMedicalRecord() {
+        return $this->hasOne(ImportedMedicalRecord::class);
     }
 }
