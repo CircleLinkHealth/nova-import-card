@@ -89,7 +89,7 @@
     }
   ],
   "require": {
-    "php": "~7.4.0",
+    "php": "~7.3.0",
     "ext-bcmath": "*",
     "ext-dom": "*",
     "ext-json": "*",
@@ -106,7 +106,7 @@
     "circlelinkhealth/ccda-parser-processor-php": "dev-master",
     "circlelinkhealth/core": "1.35",
     "circlelinkhealth/cpmmigrations": "1.0",
-    "circlelinkhealth/customer": "dev-CPM-1658_method_to_nurse_model",
+    "circlelinkhealth/customer": "dev-CPM-1658_method_to_nurse_model_plus_calendarFields",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/raygun": "0.6",
     "circlelinkhealth/revisionable": "*",
