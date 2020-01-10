@@ -7,16 +7,6 @@
             "email": "mantoniou@cirlelinkhealth.com"
         }
     ],
-    "extra": {
-        "laravel": {
-            "providers": [
-                "CircleLinkHealth\\CarePlanModels\\Providers\\CarePlanModelsServiceProvider"
-            ],
-            "aliases": {
-
-            }
-        }
-    },
     "autoload": {
         "psr-4": {
             "CircleLinkHealth\\CarePlanModels\\": ""
