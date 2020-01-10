@@ -1,6 +1,6 @@
 {
     "name": "circlelinkhealth/eligibility",
-    "type": "laravel-module",
+    "type": "composer-plugin",
     "description": "",
     "authors": [
         {
