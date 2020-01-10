@@ -99,7 +99,7 @@ return [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
-        'cleardb' => $clearDBConfig,
+        'cleardb' => $clearDBConfig ?? [],
 
         'mysql' => [
             'driver'         => 'mysql',
