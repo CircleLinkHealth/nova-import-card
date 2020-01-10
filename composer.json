@@ -21,5 +21,14 @@
         "psr-4": {
             "CircleLinkHealth\\Eligibility\\": ""
         }
-    }
+    },
+    "require": {
+        "circlelinkhealth/customer": "*"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:CircleLinkHealth/module-customer.git"
+        }
+    ]
 }
