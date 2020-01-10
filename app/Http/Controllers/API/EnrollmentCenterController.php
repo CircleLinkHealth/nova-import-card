@@ -14,7 +14,8 @@ class EnrollmentCenterController extends ApiController
     {
         $enrollee = Enrollee::find($enrolleeId);
 
-        $query = Enrollee::where('id', '!=', $enrolleeId);
+//        $query = Enrollee::
+//        where('id', '!=', $enrolleeId);
 
         $columns = implode(',', ['address', 'address_2']);
 
@@ -30,19 +31,19 @@ class EnrollmentCenterController extends ApiController
              * because smaller ones are not indexed by mysql
              */
             if (strlen($word) >= 3) {
-                $words[$key] = '+'.$word.'*';
+                $words[$key] = $word.'*';
             }
         }
 
         $searchTerm = implode(' ', $words);
 
-        //        $query->whereRaw("MATCH ({$columns}) AGAINST (? IN BOOLEAN MODE)", $searchTerm);
+        $query = Enrollee::whereRaw("MATCH ({$columns}) AGAINST (?)", $searchTerm);
 
         $suggestedFamilyMembers = $query
-            ->take(4)
             ->get()
             ->map(function ($e) {
                 return [
+                    'id'         => $e->id,
                     'first_name' => $e->first_name,
                     'last_name'  => $e->last_name,
                     'phone'      => [

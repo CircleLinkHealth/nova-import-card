@@ -84,8 +84,21 @@
                             <div v-else>
                                 <div v-if="showBanner" class="banner-class">{{this.bannerText}}</div>
                                 <div v-else>
-                                    <div v-if="this.suggested_family_members_exist">
-                                        <suggested-family-list :suggested-family-members="this.suggested_family_members"></suggested-family-list>
+                                    <div v-if="suggested_family_members_exist">
+                                        <p style="font-weight: lighter; padding-left: 15px">Check to confirm family member(s):</p>
+                                        <hr>
+                                        <ul class="scrollable-list">
+                                            <li v-for="member in suggested_family_members" class="sidebar-demo-list" style="height: auto !important;">
+                                                <label>
+                                                    <input type="checkbox" :value="member.id" v-model="confirmed_family_members">
+                                                    <span>{{member.first_name}} {{member.last_name}}</span>
+                                                    <ul style="padding-left: 10px">
+                                                        <li><strong>Address:</strong>{{member.address.value}}</li>
+                                                        <li><strong>Phone:</strong>{{member.phone.value}}</li>
+                                                    </ul>
+                                                </label>
+                                            </li>
+                                        </ul>
                                     </div>
                                     <div v-else>
                                         <p style="font-weight: lighter; padding-left: 15px">No suggested family members found.</p>
@@ -222,7 +235,7 @@
 
         <!-- Success / Patient Consented -->
         <div id="consented" class="modal confirm modal-fixed-footer consented_modal">
-            <form method="post" id="consented_form" :action="consentedUrl">
+            <form method="post" id="consented_form" :action="consentedUrl" v-on:submit="handleSubmit($event)">
 
                 <input type="hidden" name="_token" :value="csrf">
 
@@ -395,7 +408,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button name="submit" type="submit"
+                    <button name="btnSubmit" type="submit"
                             :disabled="home_is_invalid || cell_is_invalid || other_is_invalid"
                             class="modal-action waves-effect waves-light btn">Confirm and call next patient
                     </button>
@@ -409,7 +422,7 @@
 
         <!-- Unable To Contact -->
         <div id="utc" class="modal confirm modal-fixed-footer">
-            <form method="post" id="utc_form" :action="utcUrl">
+            <form method="post" id="utc_form" :action="utcUrl" v-on:submit="handleSubmit($event)">
 
                 <input type="hidden" name="_token" :value="csrf">
 
@@ -455,7 +468,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button name="submit" type="submit"
+                    <button name="btnSubmit" type="submit"
                             class="modal-action waves-effect waves-light btn">Call Next Patient
                     </button>
                     <div v-if="onCall === true" style="text-align: center">
@@ -468,7 +481,7 @@
 
         <!-- Rejected -->
         <div id="rejected" class="modal confirm modal-fixed-footer" style="height: 50% !important;">
-            <form method="post" id="rejected_form" :action="rejectedUrl">
+            <form ref="rejected" method="post" id="rejected_form" :action="rejectedUrl" v-on:submit="handleSubmit($event)">
 
                 <input type="hidden" name="_token" :value="csrf">
 
@@ -508,7 +521,7 @@
 
                 </div>
                 <div class="modal-footer" style="padding-right: 60px">
-                    <button name="submit" type="submit"
+                    <button name="btnSubmit" type="submit"
                             class="modal-action waves-effect waves-light btn">Call Next Patient
                     </button>
                     <div v-if="onCall === true" style="text-align: center">
@@ -518,6 +531,31 @@
                 </div>
             </form>
         </div>
+
+        <!-- Suggested Family Members modal -->
+        <div id="suggested-family-members-modal" class="modal confirm modal-fixed-footer" style="height: 50% !important;" href="#suggested-family-members-modal">
+            <div>
+                <p style="font-weight: lighter; padding-left: 15px">Check to confirm family member(s):</p>
+                <hr>
+                <ul class="scrollable-list">
+                    <li v-for="member in suggested_family_members" class="sidebar-demo-list" style="height: auto !important;">
+                        <label>
+                            <input type="checkbox" :value="member.id" v-model="confirmed_family_members">
+                            <span>{{member.first_name}} {{member.last_name}}</span>
+                            <ul style="padding-left: 10px">
+                                <li><strong>Address:</strong>{{member.address.value}}</li>
+                                <li><strong>Phone:</strong>{{member.phone.value}}</li>
+                            </ul>
+                        </label>
+                    </li>
+                </ul>
+                <div class="modal-footer" style="padding-right: 60px">
+                    <button class="modal-action waves-effect waves-light btn" type="submit" v-on:click="submitPendingForm()">Proceed</button>
+                </div>
+
+            </div>
+        </div>
+
 
         <!-- Enrollment tips -->
         <div id="tips" class="modal confirm modal-fixed-footer">
@@ -795,6 +833,9 @@
                 agent_relationship: '',
 
                 suggested_family_members: [],
+                confirmed_family_members: [],
+
+                pending_form: null
             };
         },
         mounted: function () {
@@ -815,6 +856,9 @@
             $(document).ready(function () {
 
                 M.Modal.init($('#consented'));
+
+                M.Modal.init($('#suggested-family-members-modal'));
+
                 M.Modal.init($('#utc'), {
                     onOpenEnd: function () {
                         M.Datepicker.init($('#utc_callback'), {
@@ -873,6 +917,18 @@
             this.getSuggestedFamilyMembers();
         },
         methods: {
+            handleSubmit (event){
+                if (this.suggested_family_members.length > 0 && this.confirmed_family_members.length == 0){
+
+                    event.preventDefault();
+                    this.pending_form = event.target;
+                    let modal = M.Modal.getInstance(document.getElementById('suggested-family-members-modal'));
+                    modal.open();
+                }
+            },
+            submitPendingForm(){
+                this.pending_form.submit();
+            },
             getSuggestedFamilyMembers(){
                 return this.axios
                     .get(rootUrl('/enrollment/get-suggested-family-members/' + enrollee.id))
