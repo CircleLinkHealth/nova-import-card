@@ -36,7 +36,7 @@ class EnrollmentCenterController extends ApiController
 
         $searchTerm = implode(' ', $words);
 
-        $query->whereRaw("MATCH ({$columns}) AGAINST (? IN BOOLEAN MODE)", $searchTerm);
+        //        $query->whereRaw("MATCH ({$columns}) AGAINST (? IN BOOLEAN MODE)", $searchTerm);
 
         $suggestedFamilyMembers = $query
             ->take(4)

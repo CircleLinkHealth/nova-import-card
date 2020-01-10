@@ -85,20 +85,7 @@
                                 <div v-if="showBanner" class="banner-class">{{this.bannerText}}</div>
                                 <div v-else>
                                     <div v-if="this.suggested_family_members_exist">
-                                        <p style="font-weight: lighter; padding-left: 15px">Check to confirm family member(s):</p>
-                                        <hr>
-                                        <ul class="scrollable-list">
-                                            <li v-for="member in this.suggested_family_members" class="sidebar-demo-list" style="height: auto !important;">
-                                                <label>
-                                                    <input type="checkbox">
-                                                    <span>{{member.first_name}} {{member.last_name}}</span>
-                                                    <ul style="padding-left: 10px">
-                                                        <li><strong>Address:</strong>{{member.address.value}}</li>
-                                                        <li><strong>Phone:</strong>{{member.phone.value}}</li>
-                                                    </ul>
-                                                </label>
-                                            </li>
-                                        </ul>
+                                        <suggested-family-list :suggested-family-members="this.suggested_family_members"></suggested-family-list>
                                     </div>
                                     <div v-else>
                                         <p style="font-weight: lighter; padding-left: 15px">No suggested family members found.</p>
@@ -582,6 +569,8 @@
     import NoCoPayEs from './call-scripts/no-copay-es';
     import Loader from '../loader.vue';
 
+    import SuggestedFamilyList from './components/suggested-family';
+
     //Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
     //for some reason i could not pass these as props from blade.php
@@ -602,6 +591,7 @@
             'copay-es': CoPayEs,
             'no-copay-es': NoCoPayEs,
             'loader': Loader,
+            SuggestedFamilyList
         },
         computed: {
             enrolleeId: function () {
