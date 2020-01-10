@@ -3040,16 +3040,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         $settings = $this->emailSettings()->firstOrNew([]);
 
-        return EmailSettings::DAILY == $settings->frequency
-            ? true
-            : (EmailSettings::WEEKLY == $settings->frequency) && 1 == Carbon::today()->dayOfWeek
-                ? true
-                : (EmailSettings::MWF == $settings->frequency) &&
-                  (1 == Carbon::today()->dayOfWeek
-                   || 3 == Carbon::today()->dayOfWeek
-                   || 5 == Carbon::today()->dayOfWeek)
-                    ? true
-                    : false;
+        if(EmailSettings::DAILY == $settings->frequency) {
+            return true;
+        } elseif(EmailSettings::WEEKLY == $settings->frequency && 1 == Carbon::today()->dayOfWeek) {
+            return true;
+        } elseif (EmailSettings::MWF == $settings->frequency && (1 == Carbon::today()->dayOfWeek
+                                    || 3 == Carbon::today()->dayOfWeek
+                   || 5 == Carbon::today()->dayOfWeek)) {
+            return true;
+        }
+        
+        return false;
     }
 
     public function emailSettings()
