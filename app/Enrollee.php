@@ -328,6 +328,11 @@ class Enrollee extends BaseModel
         return $this->belongsTo(User::class, 'care_ambassador_user_id');
     }
 
+    public function confirmedFamilyMembers()
+    {
+        return $this->belongsToMany(Enrollee::class, 'enrollee_family_members', 'enrollee_id', 'family_member_id');
+    }
+
     public function eligibilityJob()
     {
         return $this->belongsTo(EligibilityJob::class);
