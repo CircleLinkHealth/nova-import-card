@@ -26,8 +26,6 @@ class CreateEnrolleeFamilyMembersTable extends Migration
                   ->references('id')
                   ->on('enrollees')
                   ->onDelete('cascade');
-
-            $table->timestamps();
         });
     }
 
