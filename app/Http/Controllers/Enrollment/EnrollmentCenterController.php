@@ -22,6 +22,11 @@ class EnrollmentCenterController extends Controller
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
 
+        //todo: decide if check is needed
+        if ($request->has('confirmed_family_members')) {
+            $enrollee->attachFamilyMembers($request->input('confirmed_family_members'));
+        }
+
         //update report for care ambassador:
         $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
         $report->no_enrolled          = $report->no_enrolled + 1;
@@ -161,14 +166,17 @@ class EnrollmentCenterController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function rejected(Request $request)
     {
         $enrollee       = Enrollee::find($request->input('enrollee_id'));
         $careAmbassador = auth()->user()->careAmbassador;
+
+        //todo: decide if check is needed
+        if ($request->has('confirmed_family_members')) {
+            $enrollee->attachFamilyMembers($request->input('confirmed_family_members'));
+        }
 
         //soft_rejected or rejected
         $status = $request->input('status', Enrollee::REJECTED);
@@ -214,6 +222,11 @@ class EnrollmentCenterController extends Controller
     {
         $enrollee       = Enrollee::find($request->input('enrollee_id'));
         $careAmbassador = auth()->user()->careAmbassador;
+
+        //todo: decide if check is needed
+        if ($request->has('confirmed_family_members')) {
+            $enrollee->attachFamilyMembers($request->input('confirmed_family_members'));
+        }
 
         //update report for care ambassador:
         $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);

@@ -323,6 +323,19 @@ class Enrollee extends BaseModel
 
     protected $table = 'enrollees';
 
+    public function attachFamilyMembers($input)
+    {
+        if (empty($input)) {
+            return false;
+        }
+
+        if ( ! is_array($input)) {
+            $input = explode(',', $input);
+        }
+
+        $this->confirmedFamilyMembers()->attach($input);
+    }
+
     public function careAmbassador()
     {
         return $this->belongsTo(User::class, 'care_ambassador_user_id');

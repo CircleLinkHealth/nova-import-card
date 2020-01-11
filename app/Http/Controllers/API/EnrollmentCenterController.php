@@ -40,6 +40,7 @@ class EnrollmentCenterController extends ApiController
         $query = Enrollee::whereRaw("MATCH ({$columns}) AGAINST (?)", $searchTerm);
 
         $suggestedFamilyMembers = $query
+            ->take(20)
             ->get()
             ->map(function ($e) {
                 return [
