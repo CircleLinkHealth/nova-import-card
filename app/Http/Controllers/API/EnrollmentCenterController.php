@@ -47,12 +47,12 @@ class EnrollmentCenterController extends ApiController
                     'id'         => $e->id,
                     'first_name' => $e->first_name,
                     'last_name'  => $e->last_name,
-                    'phone'      => [
-                        'value'       => $e->primary_phone,
+                    'phones'     => [
+                        'value'       => collect([$e->cell_phone, $e->home_phone, $e->other_phone])->filter()->implode(', '),
                         'is_matching' => 1,
                     ],
-                    'address' => [
-                        'value'       => $e->address,
+                    'addresses' => [
+                        'value'       => collect([$e->address, $e->address_2])->filter()->implode(', '),
                         'is_matching' => 1,
                     ],
                 ];
