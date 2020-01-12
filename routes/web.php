@@ -1643,7 +1643,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'admin.families.update',
             ]);
         });
-        
+
         Route::get('reports/nurse/daily', [
             'uses' => 'NurseController@makeDailyReport',
             'as'   => 'admin.reports.nurse.daily',
@@ -2048,7 +2048,7 @@ Route::group([
     ]);
 
     Route::group(['middleware' => 'auth'], function () {
-        Route::get('/', [
+        Route::get('/{previousEnrolleeId?}', [
             'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
             'as'   => 'enrollment-center.dashboard',
         ])->middleware('permission:enrollee.read,enrollee.update');

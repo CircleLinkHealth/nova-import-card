@@ -96,10 +96,10 @@ class EnrollmentCenterController extends Controller
 
         ImportConsentedEnrollees::dispatch([$enrollee->id], $enrollee->batch);
 
-        return redirect()->route('enrollment-center.dashboard');
+        return redirect()->route('enrollment-center.dashboard', ['previousEnrolleeId' => $enrollee->id]);
     }
 
-    public function dashboard()
+    public function dashboard($previousEnrolleeId = null)
     {
         $careAmbassador = auth()->user()->careAmbassador;
 
@@ -110,39 +110,55 @@ class EnrollmentCenterController extends Controller
             ]);
         }
 
-        //if logged in ambassador is spanish, pick up a spanish patient
-        if ($careAmbassador->speaks_spanish) {
-            $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
-                ->toCall()
-                ->where('lang', 'ES')
-                ->orderBy('attempt_count')
-                ->with(['practice.enrollmentTips', 'provider.providerInfo'])
-                ->first();
+        //if previous enrollee id, try to get call_queue or maybe engaged family enrollees
+        $previousEnrollee = Enrollee::whereId($previousEnrolleeId)
+            ->with([
+                'confirmedFamilyMembers' => function ($e) use ($previousEnrolleeId) {
+                    //ask ethan, how about utc enrollees? or soft declined?
+                    $e->where('id', '!=', $previousEnrolleeId)
+                        ->whereNotIn('status', ['consented']);
+                },
+            ])
+            ->first();
 
-            //if no spanish, get a EN user.
-            if (null == $enrollee) {
+        $enrollee = $previousEnrollee->confirmedFamilyMembers
+            ->first();
+
+        if ( ! $enrollee) {
+            //if logged in ambassador is spanish, pick up a spanish patient
+            if ($careAmbassador->speaks_spanish) {
+                $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
+                    ->toCall()
+                    ->where('lang', 'ES')
+                    ->orderBy('attempt_count')
+                    ->with(['practice.enrollmentTips', 'provider.providerInfo'])
+                    ->first();
+
+                //if no spanish, get a EN user.
+                if (null == $enrollee) {
+                    $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
+                        ->toCall()
+                        ->orderBy('attempt_count')
+                        ->with(['practice.enrollmentTips', 'provider.providerInfo'])
+                        ->first();
+                }
+            } else { // auth ambassador doesn't speak ES, get a regular user.
                 $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
                     ->toCall()
                     ->orderBy('attempt_count')
                     ->with(['practice.enrollmentTips', 'provider.providerInfo'])
                     ->first();
             }
-        } else { // auth ambassador doesn't speak ES, get a regular user.
-            $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
-                ->toCall()
+
+            $engagedEnrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
+                ->where('status', '=', Enrollee::ENGAGED)
                 ->orderBy('attempt_count')
                 ->with(['practice.enrollmentTips', 'provider.providerInfo'])
                 ->first();
-        }
 
-        $engagedEnrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
-            ->where('status', '=', Enrollee::ENGAGED)
-            ->orderBy('attempt_count')
-            ->with(['practice.enrollmentTips', 'provider.providerInfo'])
-            ->first();
-
-        if ($engagedEnrollee) {
-            $enrollee = $engagedEnrollee;
+            if ($engagedEnrollee) {
+                $enrollee = $engagedEnrollee;
+            }
         }
 
         if (null == $enrollee) {
@@ -210,7 +226,7 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
-        return redirect()->route('enrollment-center.dashboard');
+        return redirect()->route('enrollment-center.dashboard', ['previousEnrolleeId' => $enrollee->id]);
     }
 
     public function training()
@@ -258,6 +274,6 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
-        return redirect()->route('enrollment-center.dashboard');
+        return redirect()->route('enrollment-center.dashboard', ['previousEnrolleeId' => $enrollee->id]);
     }
 }
