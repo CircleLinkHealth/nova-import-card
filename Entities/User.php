@@ -207,7 +207,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Role[]|\Illuminate\Database\Eloquent\Collection        $roles
  * @property mixed                                                                                      $email_address
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                                 $ucp
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User exceptType($type)
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User hasBillingProvider($billing_provider_id)
@@ -248,7 +247,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\User withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
  * @mixin \Eloquent
- *
  * @property int|null    $saas_account_id
  * @property int         $skip_browser_checks Skip compatible browser checks when the user logs in
  * @property string|null $last_session_id
@@ -279,7 +277,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Permission[]|\Illuminate\Database\Eloquent\Collection $perms
  * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null                                      $saasAccount
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[]                        $tokens
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     filter(\App\Filters\QueryFilters $filters)
@@ -298,17 +295,14 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     whereSaasAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     whereSkipBrowserChecks($value)
- *
  * @property \App\Models\CPM\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection                      $cpmMiscUserPivot
  * @property \CircleLinkHealth\NurseInvoices\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection $disputes
  * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra[]|\Illuminate\Database\Eloquent\Collection
  *     $nurseBonuses
  * @property \CircleLinkHealth\Customer\Entities\PatientAWVSummary[]|\Illuminate\Database\Eloquent\Collection
  *     $patientAWVSummaries
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     ofActiveBillablePractice()
- *
  * @property int|null $activities_count
  * @property int|null $activities_as_provider_count
  * @property int|null $appointments_count
@@ -358,7 +352,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null $roles_count
  * @property int|null $tokens_count
  * @property int|null $ucp_count
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User practiceStaff()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     notOfPracticeRequiringSpecialBhiConsent()
