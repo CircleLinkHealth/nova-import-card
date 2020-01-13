@@ -2,7 +2,6 @@
     <div id="enrollment_calls">
 
         <div class="side-nav fixed">
-
             <div style="height: 150%; overflow-y: hidden">
                 <div class="row">
                     <div class="col s6">
@@ -54,7 +53,8 @@
                             <div class="card-content">
                                 <ul>
                                     <li class="sidebar-demo-list"><span :title="name"><b>Name:</b> {{name}}</span></li>
-                                    <li class="sidebar-demo-list"><span :title="lang"><b>Language:</b> {{lang}}</span></li>
+                                    <li class="sidebar-demo-list"><span :title="lang"><b>Language:</b> {{lang}}</span>
+                                    </li>
                                     <li class="sidebar-demo-list"><span :title="practice_name"><b>Practice Name:</b> {{practice_name}}</span>
                                     </li>
                                     <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b> {{providerFullName}}</span>
@@ -78,32 +78,38 @@
                     <div class="col s12">
                         <div class="card">
                             <div class="card-content">
-                                <p style="text-align: center; padding-bottom: 10px"><strong>Suggested Family Members</strong></p>
+                                <p style="text-align: center; padding-bottom: 10px"><strong>Suggested Family
+                                    Members</strong></p>
                                 <div v-if="this.family_loading">
                                     <loader style="margin-left: 45%"/>
                                 </div>
                                 <div v-else>
                                     <div v-if="showBanner" class="banner-class">{{this.bannerText}}</div>
                                     <div v-else>
-                                        <div style="overflow-y: hidden" v-if="suggested_family_members_exist">
-                                            <p style="font-weight: lighter; padding-left: 15px">Check to confirm family member(s):</p>
+                                        <div v-if="suggested_family_members_exist">
+                                            <p style="font-weight: lighter; padding-left: 15px">Check to confirm family
+                                                member(s):</p>
                                             <hr>
                                             <div class="scrollable-list">
 
-                                                <div v-for="member in suggested_family_members" class="sidebar-demo-list" style="height: auto !important;">
+                                                <div v-for="member in suggested_family_members"
+                                                     class="sidebar-demo-list" style="height: auto !important; white-space: initial">
                                                     <label>
-                                                        <input type="checkbox" :value="member.id" v-model="confirmed_family_members">
+                                                        <input type="checkbox" :value="member.id" style="position: relative"
+                                                               v-model="confirmed_family_members">
                                                         <span>{{member.first_name}} {{member.last_name}}</span>
                                                         <div style="padding-left: 10px">
-                                                            <div><strong>Address:</strong>{{member.addresses.value}}</div>
-                                                            <div><strong>Phone:</strong>{{member.phones.value}}</div>
+                                                            <div><strong>Addresses:</strong>{{member.addresses.value}}
+                                                            </div>
+                                                            <div><strong>Phones:</strong>{{member.phones.value}}</div>
                                                         </div>
                                                     </label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div v-else>
-                                            <p style="font-weight: lighter; padding-left: 15px">No suggested family members found.</p>
+                                            <p style="font-weight: lighter; padding-left: 15px">No suggested family
+                                                members found.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -126,7 +132,8 @@
                                     <div v-if="onCall === true" style="text-align: center">
 
                                         <blockquote>Call Status: {{ this.callStatus }}</blockquote>
-                                        <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                                        <a v-on:click="hangUp" class="waves-effect waves-light btn"
+                                           style="background: red"><i
                                                 class="material-icons left">call_end</i>Hang Up</a>
                                     </div>
                                     <div v-else style="text-align: center">
@@ -487,7 +494,8 @@
 
         <!-- Rejected -->
         <div id="rejected" class="modal confirm modal-fixed-footer" style="height: 50% !important;">
-            <form ref="rejected" method="post" id="rejected_form" :action="rejectedUrl" v-on:submit="handleSubmit($event)">
+            <form ref="rejected" method="post" id="rejected_form" :action="rejectedUrl"
+                  v-on:submit="handleSubmit($event)">
 
                 <input type="hidden" name="_token" :value="csrf">
 
@@ -540,28 +548,33 @@
 
         <!-- Suggested Family Members modal -->
         <div id="suggested-family-members-modal" class="modal confirm-family-members-modal modal-fixed-footer" href="#suggested-family-members-modal">
-            <div class="modal-content">
-                <h5 style="color: #47beab">Are you sure you want to proceed without confirming any family members for this patient?</h5>
-                <blockquote style="border-left: 5px solid #26a69a;">Check to confirm family member(s):</blockquote>
-                <hr>
-                <div class="scrollable-list">
-                    <ul>
-                        <li v-for="member in suggested_family_members" class="" style="height: auto !important;">
-                            <label>
-                                <input type="checkbox" :value="member.id" v-model="confirmed_family_members">
-                                <span>{{member.first_name}} {{member.last_name}}</span>
-                                <ul style="padding-left: 10px">
-                                    <li><strong>Address:</strong>{{member.addresses.value}}</li>
-                                    <li><strong>Phone:</strong>{{member.phones.value}}</li>
-                                </ul>
-                            </label>
-                        </li>
-                    </ul>
-                </div>
-                <div class="modal-footer" style="padding-right: 60px">
-                    <button class="modal-action waves-effect waves-light btn" type="submit" v-on:click="submitPendingForm()">Proceed</button>
-                </div>
 
+            <div class="modal-content" style="overflow-y: hidden !important">
+                <div>
+                    <h5 style="color: #47beab">Are you sure you want to proceed without confirming any family members
+                        for this patient?</h5>
+                    <blockquote style="border-left: 5px solid #26a69a;">Check to confirm family member(s):</blockquote>
+                    <hr>
+                    <div class="scrollable-list-modal">
+                        <ul>
+                            <li v-for="member in suggested_family_members" class="" style="height: auto !important;">
+                                <label>
+                                    <input type="checkbox" :value="member.id" style="position: relative" v-model="confirmed_family_members">
+                                    <span>{{member.first_name}} {{member.last_name}}</span>
+                                    <ul style="padding-left: 10px">
+                                        <li><strong>Addresses:</strong>{{member.addresses.value}}</li>
+                                        <li><strong>Phones:</strong>{{member.phones.value}}</li>
+                                    </ul>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding-right: 60px">
+                <button class="modal-action waves-effect waves-light btn" type="submit"
+                        v-on:click="submitPendingForm()">Proceed
+                </button>
             </div>
         </div>
 
@@ -926,18 +939,18 @@
             this.getSuggestedFamilyMembers();
         },
         methods: {
-            handleSubmit (event){
-                if (this.suggested_family_members.length > 0 && this.confirmed_family_members.length == 0){
+            handleSubmit(event) {
+                if (this.suggested_family_members.length > 0 && this.confirmed_family_members.length == 0) {
                     event.preventDefault();
                     this.pending_form = event.target;
                     let modal = M.Modal.getInstance(document.getElementById('suggested-family-members-modal'));
                     modal.open();
                 }
             },
-            submitPendingForm(){
+            submitPendingForm() {
                 this.pending_form.submit();
             },
-            getSuggestedFamilyMembers(){
+            getSuggestedFamilyMembers() {
                 return this.axios
                     .get(rootUrl('/enrollment/get-suggested-family-members/' + enrollee.id))
                     .then(response => {
@@ -1089,6 +1102,7 @@
         padding: 15px;
         border-radius: 5px;
     }
+
     .phone-label {
         margin-bottom: 10px;
     }
@@ -1102,9 +1116,8 @@
 
     .confirm-family-members-modal {
         max-height: 80% !important;
-        overflow: scroll;
+        overflow: auto;
     }
-
 
     .sidebar-demo-list {
         height: 24px;
@@ -1195,6 +1208,12 @@
         height: 200px;
         overflow-y: auto;
 
+    }
+
+    .scrollable-list-modal {
+        height: calc(90% - 86px);
+        width: 100%;
+        overflow-y: auto;
     }
 
 </style>
