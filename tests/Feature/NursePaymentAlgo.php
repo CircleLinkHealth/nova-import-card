@@ -104,7 +104,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 10, true, true);
         $this->addTime($nurse, $patient, 10, true, false);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -113,8 +113,11 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $invoiceData = $invoices->first()->invoice_data;
-        $fixedRate   = $invoiceData['fixedRatePay'];
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $fixedRate = $invoiceData['fixedRatePay'];
         self::assertEquals(10, $fixedRate);
 
         $pay = $invoiceData['baseSalary'];
@@ -148,7 +151,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 10, true, true);
         $this->addTime($nurse, $patient, 10, false, false);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -157,7 +160,11 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $pay = $invoices->first()->invoice_data['baseSalary'];
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         self::assertEquals($nurseVisitFee, $pay);
     }
 
@@ -187,7 +194,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 15, true, true);
         $this->addTime($nurse, $patient, 10, true, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -196,7 +203,11 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $pay = $invoices->first()->invoice_data['baseSalary'];
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         self::assertEquals($nurseVisitFee, $pay);
     }
 
@@ -228,7 +239,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 10, true, true);
         $this->addTime($nurse, $patient, 10, true, false);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -237,7 +248,11 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $pay = $invoices->first()->invoice_data['baseSalary'];
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         self::assertEquals($nurseVisitFee * 2, $pay);
     }
 
@@ -319,7 +334,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 15, true, true);
         $this->addTime($nurse, $patient, 20, false, false);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -328,7 +343,11 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $pay = $invoices->first()->invoice_data['baseSalary'];
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         self::assertEquals($nurseHourlyRate, $pay);
     }
 
@@ -356,7 +375,7 @@ class NursePaymentAlgo extends TestCase
 
         $this->addTime($nurse, $patient, 15, true, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -365,7 +384,11 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $pay = $invoices->first()->invoice_data['baseSalary'];
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         self::assertEquals($nurseHourlyRate / 2, $pay);
     }
 
@@ -393,7 +416,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 25, true);
         $this->addTime($nurse, $patient, 20, false);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -402,7 +425,12 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        self::assertEquals($nurseHourlyRate, $invoices->first()->invoice_data['baseSalary']);
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
+        self::assertEquals($nurseHourlyRate, $pay);
     }
 
     /**
@@ -429,7 +457,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 25, true);
         $this->addTime($nurse, $patient, 20, false);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -438,7 +466,12 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        self::assertEquals($nurseHourlyRate, $invoices->first()->invoice_data['baseSalary']);
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
+        self::assertEquals($nurseHourlyRate, $pay);
     }
 
     /**
@@ -464,7 +497,7 @@ class NursePaymentAlgo extends TestCase
 
         $this->addTime($nurse, $patient, 25, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -473,8 +506,13 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         //0.5 hours * 30 = 15.0
-        self::assertEquals($nurseHourlyRate / 2, $invoices->first()->invoice_data['baseSalary']);
+        self::assertEquals($nurseHourlyRate / 2, $pay);
     }
 
     /**
@@ -500,7 +538,7 @@ class NursePaymentAlgo extends TestCase
 
         $this->addTime($nurse, $patient, 25, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -509,8 +547,13 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         //0.5 hours * 30 = 15.0
-        self::assertEquals($nurseHourlyRate / 2, $invoices->first()->invoice_data['baseSalary']);
+        self::assertEquals($nurseHourlyRate / 2, $pay);
     }
 
     /**
@@ -537,7 +580,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 25, true);
         $this->addTime($nurse, $patient, 20, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -546,7 +589,12 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        self::assertEquals($nurseHourlyRate, $invoices->first()->invoice_data['baseSalary']);
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
+        self::assertEquals($nurseHourlyRate, $pay);
     }
 
     /**
@@ -573,7 +621,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 25, true);
         $this->addTime($nurse, $patient, 20, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -582,7 +630,12 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        self::assertEquals($nurseHourlyRate, $invoices->first()->invoice_data['baseSalary']);
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
+        self::assertEquals($nurseHourlyRate, $pay);
     }
 
     /**
@@ -610,7 +663,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 20, true);
         $this->addTime($nurse, $patient, 20, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -619,7 +672,12 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        self::assertEquals($nurseHourlyRate * 2, $invoices->first()->invoice_data['baseSalary']);
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
+        self::assertEquals($nurseHourlyRate * 2, $pay);
     }
 
     /**
@@ -647,7 +705,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 20, true);
         $this->addTime($nurse, $patient, 20, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -656,7 +714,12 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        self::assertEquals($nurseHourlyRate * 2, $invoices->first()->invoice_data['baseSalary']);
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
+        self::assertEquals($nurseHourlyRate * 2, $pay);
     }
 
     /**
@@ -683,7 +746,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 10, true);
         $this->addTime($nurse, $patient, 30, false);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -692,7 +755,11 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $pay = $invoices->first()->invoice_data['baseSalary'];
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         self::assertEquals($nurseHourlyRate, $pay);
     }
 
@@ -720,7 +787,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 10, true);
         $this->addTime($nurse, $patient, 30, false);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -729,7 +796,11 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $pay = $invoices->first()->invoice_data['baseSalary'];
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         self::assertEquals($nurseHourlyRate, $pay);
     }
 
@@ -756,7 +827,7 @@ class NursePaymentAlgo extends TestCase
 
         $this->addTime($nurse, $patient, 15, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -765,7 +836,12 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        self::assertEquals($nurseHourlyRate / 2, $invoices->first()->invoice_data['baseSalary']);
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
+        self::assertEquals($nurseHourlyRate / 2, $pay);
     }
 
     /**
@@ -791,7 +867,7 @@ class NursePaymentAlgo extends TestCase
 
         $this->addTime($nurse, $patient, 10, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -800,8 +876,13 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         //0.5 hours * 30 = 15.0
-        self::assertEquals($nurseHourlyRate / 2, $invoices->first()->invoice_data['baseSalary']);
+        self::assertEquals($nurseHourlyRate / 2, $pay);
     }
 
     /**
@@ -828,7 +909,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 25, true);
         $this->addTime($nurse, $patient, 20, false);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -837,7 +918,12 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        self::assertEquals($nurseHourlyRate, $invoices->first()->invoice_data['baseSalary']);
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
+        self::assertEquals($nurseHourlyRate, $pay);
     }
 
     /**
@@ -864,7 +950,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 25, true);
         $this->addTime($nurse, $patient, 20, false);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -873,7 +959,12 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        self::assertEquals($nurseHourlyRate, $invoices->first()->invoice_data['baseSalary']);
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
+        self::assertEquals($nurseHourlyRate, $pay);
     }
 
     /**
@@ -899,7 +990,7 @@ class NursePaymentAlgo extends TestCase
 
         $this->addTime($nurse, $patient, 25, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -908,8 +999,13 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         //0.5 hours * 30 = 15.0
-        self::assertEquals($nurseHourlyRate / 2, $invoices->first()->invoice_data['baseSalary']);
+        self::assertEquals($nurseHourlyRate / 2, $pay);
     }
 
     /**
@@ -935,7 +1031,7 @@ class NursePaymentAlgo extends TestCase
 
         $this->addTime($nurse, $patient, 25, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -944,8 +1040,13 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         //0.5 hours * 30 = 15.0
-        self::assertEquals($nurseHourlyRate / 2, $invoices->first()->invoice_data['baseSalary']);
+        self::assertEquals($nurseHourlyRate / 2, $pay);
     }
 
     /**
@@ -973,7 +1074,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 25, true);
         $this->addTime($nurse, $patient, 20, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -982,7 +1083,11 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $pay = $invoices->first()->invoice_data['baseSalary'];
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         self::assertEquals(14.17, $pay);
     }
 
@@ -1011,7 +1116,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 25, true);
         $this->addTime($nurse, $patient, 20, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -1020,7 +1125,11 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $pay = $invoices->first()->invoice_data['baseSalary'];
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         self::assertEquals(14.17, $pay);
     }
 
@@ -1050,7 +1159,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 20, true);
         $this->addTime($nurse, $patient, 20, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -1059,7 +1168,12 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        self::assertEquals(20.00, $invoices->first()->invoice_data['baseSalary']);
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
+        self::assertEquals(20.00, $pay);
     }
 
     /**
@@ -1088,7 +1202,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 20, true);
         $this->addTime($nurse, $patient, 20, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -1097,7 +1211,12 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        self::assertEquals(20.00, $invoices->first()->invoice_data['baseSalary']);
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
+        self::assertEquals(20.00, $pay);
     }
 
     /**
@@ -1124,7 +1243,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 10, true);
         $this->addTime($nurse, $patient, 30, false);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -1133,7 +1252,11 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $pay = $invoices->first()->invoice_data['baseSalary'];
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         self::assertEquals($nurseHourlyRate, $pay);
     }
 
@@ -1161,7 +1284,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 10, true);
         $this->addTime($nurse, $patient, 30, false);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -1170,7 +1293,11 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $pay = $invoices->first()->invoice_data['baseSalary'];
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         self::assertEquals($nurseHourlyRate, $pay);
     }
 
@@ -1197,7 +1324,7 @@ class NursePaymentAlgo extends TestCase
 
         $this->addTime($nurse, $patient, 10, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -1206,8 +1333,13 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         //0.5 hours * 30 = 15.0
-        self::assertEquals($nurseHourlyRate / 2, $invoices->first()->invoice_data['baseSalary']);
+        self::assertEquals($nurseHourlyRate / 2, $pay);
     }
 
     /**
@@ -1233,7 +1365,7 @@ class NursePaymentAlgo extends TestCase
 
         $this->addTime($nurse, $patient, 10, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -1242,8 +1374,13 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
+        $pay = $invoiceData['baseSalary'];
         //0.5 hours * 30 = 15.0
-        self::assertEquals($nurseHourlyRate / 2, $invoices->first()->invoice_data['baseSalary']);
+        self::assertEquals($nurseHourlyRate / 2, $pay);
     }
 
     /**
@@ -1282,7 +1419,7 @@ class NursePaymentAlgo extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse1->id, $nurse2->id],
@@ -1291,7 +1428,9 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $invoice1Data    = $invoices->first()->invoice_data;
+        $invoice1Data = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
         $fixedRatePay    = $invoice1Data['fixedRatePay'];
         $variableRatePay = $invoice1Data['variableRatePay'];
         $pay             = $invoice1Data['baseSalary'];
@@ -1300,7 +1439,9 @@ class NursePaymentAlgo extends TestCase
         self::assertEquals(9.38, $variableRatePay);
         self::assertEquals(10.00, $pay);
 
-        $invoice2Data    = $invoices->last()->invoice_data;
+        $invoice2Data = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
         $fixedRatePay    = $invoice2Data['fixedRatePay'];
         $variableRatePay = $invoice2Data['variableRatePay'];
         $pay             = $invoice2Data['baseSalary'];
@@ -1342,7 +1483,7 @@ class NursePaymentAlgo extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse1->id, $nurse2->id],
@@ -1351,14 +1492,18 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $invoice1Data = $invoices->first()->invoice_data;
+        $invoice1Data = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
         $fixedRatePay = $invoice1Data['fixedRatePay'];
         $pay          = $invoice1Data['baseSalary'];
 
         self::assertEquals(10.00, $fixedRatePay);
         self::assertEquals(15.63, $pay);
 
-        $invoice2Data    = $invoices->last()->invoice_data;
+        $invoice2Data = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
         $fixedRatePay    = $invoice2Data['fixedRatePay'];
         $variableRatePay = $invoice2Data['variableRatePay'];
         $pay             = $invoice2Data['baseSalary'];
@@ -1404,7 +1549,7 @@ class NursePaymentAlgo extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -1413,7 +1558,10 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $invoiceData  = $invoices->first()->invoice_data;
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first()->invoice_data;
+
         $fixedRatePay = $invoiceData['fixedRatePay'];
         $pay          = $invoiceData['baseSalary'];
 
