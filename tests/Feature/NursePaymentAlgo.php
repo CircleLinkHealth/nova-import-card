@@ -19,6 +19,7 @@ use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
+use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Tests\TestCase;
 
@@ -270,7 +271,7 @@ class NursePaymentAlgo extends TestCase
         $this->addTime($nurse, $patient, 10, true, false);
         $this->addTime($nurse, $patient, 10, true, true);
 
-        $invoices = (new CreateNurseInvoices(
+        (new CreateNurseInvoices(
             $start,
             $end,
             [$nurse->id],
@@ -279,7 +280,13 @@ class NursePaymentAlgo extends TestCase
             true
         ))->handle();
 
-        $invoiceData  = $invoices->first()->invoice_data;
+        /** @var NurseInvoice $invoice */
+        $invoice = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+            ->orderBy('month_year', 'desc')
+            ->first();
+
+        $invoiceData = $invoice->invoice_data;
+
         $fixedRatePay = $invoiceData['fixedRatePay'];
         self::assertEquals(20.00, $fixedRatePay);
 

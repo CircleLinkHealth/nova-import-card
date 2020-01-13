@@ -10,7 +10,6 @@ use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Jobs\GenerateNurseInvoice;
-use Illuminate\Support\Collection;
 
 class Generator
 {
@@ -68,13 +67,8 @@ class Generator
         $this->storeInvoicesForNurseReview = $storeInvoicesForNurseReview;
     }
 
-    /**
-     * @return Collection
-     */
     public function createAndNotifyNurses()
     {
-        $invoices = collect();
-
         $this->nurseUsers()->chunk(
             5,
             function ($nurseUsers) use (&$invoices) {
@@ -86,8 +80,6 @@ class Generator
                 }
             }
         );
-
-        return $invoices;
     }
 
     /**
