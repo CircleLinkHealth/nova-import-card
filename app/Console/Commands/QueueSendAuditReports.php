@@ -24,7 +24,7 @@ class QueueSendAuditReports extends Command
      *
      * @var string
      */
-    protected $signature = 'send:audit-reports';
+    protected $signature = 'send:audit-reports {practiceId?}';
 
     /**
      * Create a new command instance.
@@ -53,6 +53,8 @@ class QueueSendAuditReports extends Command
                     ->whereHas('settings', function ($query) {
                         $query->where('dm_audit_reports', '=', true)
                             ->orWhere('efax_audit_reports', '=', true);
+                    })->when($this->hasArgument('practiceId'), function ($q) {
+                        $q->where('id', '=', $this->argument('practiceId'));
                     });
             })
             ->whereHas('patientSummaries', function ($query) use ($date) {
