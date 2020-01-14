@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8106535d92066963fffb3d89cd8eb799",
+    "content-hash": "bbbf700438f984855e3833e83f1e9874",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -740,7 +740,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-development",
+            "version": "dev-break-off-admin",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -878,8 +878,41 @@
             "time": "2020-01-13T15:56:06+00:00"
         },
         {
+            "name": "circlelinkhealth/eligibility",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
+                "reference": "273a1c3acac1b154d0172c59c8f38acc04e24149"
+            },
+            "require": {
+                "circlelinkhealth/customer": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\Eligibility\\Providers\\EligibilityServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\Eligibility\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-01-14T02:56:16+00:00"
+        },
+        {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-development",
+            "version": "dev-break-off-admin",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
@@ -913,7 +946,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-development",
+            "version": "dev-break-off-admin",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -1036,6 +1069,28 @@
             },
             "abandoned": true,
             "time": "2019-12-09T10:50:51+00:00"
+        },
+        {
+            "name": "circlelinkhealth/shared-models-module",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
+                "reference": "82c99d8d78874280f74f8787a1aeea7a37c0f68a"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\CarePlanModels\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-01-13T15:17:04+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews",
@@ -13525,6 +13580,8 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/ccda-parser-processor-php": 20,
+        "circlelinkhealth/eligibility": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/sqlviews": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
