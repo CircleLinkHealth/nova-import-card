@@ -318,7 +318,9 @@ class Calls implements AthenaApiImplementation
      */
     public function getDemographics($patientId, $practiceId)
     {
-        $response = $this->api()->GET("${practiceId}/patients/${patientId}");
+        $this->api()->setPracticeId($practiceId);
+
+        $response = $this->api()->GET("patients/{$patientId}");
 
         return $this->response($response);
     }
@@ -542,6 +544,17 @@ class Calls implements AthenaApiImplementation
         $response = $this->api()->GET('customfields', [
             'practiceid' => $practiceId,
         ]);
+
+        return $this->response($response);
+    }
+
+    public function getProvider(
+        $practiceId,
+        $providerId
+    ) {
+        $this->api()->setPracticeId($practiceId);
+
+        $response = $this->api()->GET("providers/{$providerId}");
 
         return $this->response($response);
     }
