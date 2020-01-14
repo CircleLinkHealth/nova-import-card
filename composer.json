@@ -171,7 +171,6 @@
     "ext-xdebug": "*",
     "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
-    "brianium/paratest": "^3.1.1",
     "darkaonline/l5-swagger": "^5.5",
     "filp/whoops": "~2.0",
     "friendsofphp/php-cs-fixer": "^2.13",
@@ -229,20 +228,9 @@
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
       "@php artisan nova:publish"
     ],
-    "paratest": [
-      "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p8"
-    ],
-    "coverage": [
-      "php artisan --env=testing test:prepare-test_suite-db",
-      "APP_ENV=testing COMPOSER_PROCESS_TIMEOUT=700 ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --coverage-text"
-    ],
     "unit-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",
-      "APP_ENV=testing ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3"
-    ],
-    "profile-unit-tests": [
-      "php artisan --env=testing test:prepare-test_suite-db",
-      "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --log-junit tests_profiles.xml"
+      "APP_ENV=testing ./vendor/phpunit/phpunit/phpunit --testsuite=Unit --stop-on-failure --colors"
     ],
     "clear": [
       "php artisan clear-compiled",

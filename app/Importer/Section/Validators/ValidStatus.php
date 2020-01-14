@@ -6,12 +6,11 @@
 
 namespace App\Importer\Section\Validators;
 
-
 use App\Contracts\Importer\MedicalRecord\Section\Validator as SectionValidator;
 
 class ValidStatus implements SectionValidator
 {
-    public function isValid(ItemLog $item): bool
+    public function isValid($item): bool
     {
         if ( ! $this->shouldValidate($item)) {
             return false;
@@ -20,7 +19,7 @@ class ValidStatus implements SectionValidator
         return true;
     }
 
-    public function shouldValidate(ItemLog $item): bool
+    public function shouldValidate($item): bool
     {
         return empty($item->status)
             ? false

@@ -81,7 +81,7 @@ use CircleLinkHealth\Eligibility\BelongsToCcda;
  */
 class ProviderLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    use CircleLinkHealth\Eligibility\BelongsToCcda;
+    use BelongsToCcda;
 
     protected $fillable = [
         'location_id',

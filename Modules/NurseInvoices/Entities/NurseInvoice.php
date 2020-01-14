@@ -7,9 +7,9 @@
 namespace CircleLinkHealth\NurseInvoices\Entities;
 
 use App\Contracts\Pdfable;
-use CircleLinkHealth\Core\PdfService;
 use App\Traits\NotificationAttachable;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\NurseInvoices\Traits\Disputable;
 use CircleLinkHealth\NurseInvoices\Traits\Nursable;

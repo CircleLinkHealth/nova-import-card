@@ -91,7 +91,7 @@ use CircleLinkHealth\Eligibility\BelongsToCcda;
  */
 class DemographicsImport extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    use CircleLinkHealth\Eligibility\BelongsToCcda;
+    use BelongsToCcda;
 
     protected $fillable = [
         'medical_record_type',

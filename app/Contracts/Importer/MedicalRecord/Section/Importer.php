@@ -15,14 +15,13 @@ use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
  */
 interface Importer
 {
-    public function chooseValidator(ItemLog $item);
+    public function chooseValidator($item);
 
     /**
      * This will import a Section (eg. Problems, Demographics, Meds), and attach it to an ImportedMedicalRecord for QA.
      *
      * @param $medicalRecordId
      * @param $medicalRecordType
-     * @param \CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord $importedMedicalRecord
      *
      * @return mixed
      */
@@ -32,7 +31,7 @@ interface Importer
         ImportedMedicalRecord $importedMedicalRecord
     );
 
-    public function validate(ItemLog $item);
+    public function validate($item);
 
     /**
      * @return Validator[]
