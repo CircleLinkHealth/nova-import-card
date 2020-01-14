@@ -6,13 +6,12 @@
 
 namespace App\Importer\Section\Validators;
 
-
 use App\Contracts\Importer\MedicalRecord\Section\Validator as SectionValidator;
 use Carbon\Carbon;
 
 class ValidEndDate implements SectionValidator
 {
-    public function isValid(ItemLog $item): bool
+    public function isValid($item): bool
     {
         if ( ! $this->shouldValidate($item)) {
             return false;
@@ -23,7 +22,7 @@ class ValidEndDate implements SectionValidator
         return ! empty($endDate) && ! $endDate->isPast();
     }
 
-    public function shouldValidate(ItemLog $item): bool
+    public function shouldValidate($item): bool
     {
         return ! empty($item->end);
     }

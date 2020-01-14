@@ -6,14 +6,13 @@
 
 namespace App\Importer\Section\Importers;
 
-use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
 use App\Contracts\Importer\MedicalRecord\Section\Importer as SectionImporter;
-
 use App\Contracts\Importer\MedicalRecord\Section\Validator;
+use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
 
 abstract class BaseImporter implements SectionImporter
 {
-    public function chooseValidator(ItemLog $item)
+    public function chooseValidator($item)
     {
         foreach ($this->validators() as $className) {
             $validator = app($className);
@@ -32,7 +31,7 @@ abstract class BaseImporter implements SectionImporter
         ImportedMedicalRecord $importedMedicalRecord
     );
 
-    public function validate(ItemLog $item)
+    public function validate($item)
     {
         $validator = $this->chooseValidator($item);
 
