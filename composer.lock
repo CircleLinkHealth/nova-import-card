@@ -1137,7 +1137,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "1fe06ea91e3a76902f5dd767f16de01cf2a52c36"
+                "reference": "5c751954e89e743daeb642c39fa7132f25bbc2ae"
             },
             "type": "library",
             "autoload": {
@@ -1151,7 +1151,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-14T21:08:46+00:00"
+            "time": "2020-01-14T22:55:40+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews",
