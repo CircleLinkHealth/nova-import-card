@@ -306,4 +306,12 @@ interface AthenaApiImplementation
         $documentSubClass = 'CLINICALDOCUMENT',
         $contentType = 'multipart/form-data'
     );
+    
+    /**
+     * @param $practiceId
+     * @param $providerId
+     *
+     * @return mixed
+     */
+    public function getProvider($practiceId, $providerId);
 }
