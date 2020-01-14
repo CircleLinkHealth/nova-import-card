@@ -40,7 +40,7 @@ interface ImportedMedicalRecord
     /**
      * Get the Medications that were imported for QA.
      *
-     * @return \CircleLinkHealth\CarePlanModels\Entities\MedicationImport[]
+     * @return \CircleLinkHealth\SharedModels\Entities\MedicationImport[]
      */
     public function medications();
 

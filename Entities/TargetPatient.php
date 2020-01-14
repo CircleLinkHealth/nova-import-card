@@ -59,7 +59,7 @@ use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient wherePracticeId($value)
  *
  * @property int|null                             $ccda_id
- * @property \CircleLinkHealth\CarePlanModels\Entities\Ccda|null $ccda
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda|null $ccda
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient whereCcdaId($value)
  *

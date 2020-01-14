@@ -41,7 +41,7 @@ use CircleLinkHealth\Eligibility\BelongsToCcda;
  * @property string|null                                                                             $deleted_at
  * @property \Carbon\Carbon                                                                          $created_at
  * @property \Carbon\Carbon                                                                          $updated_at
- * @property \CircleLinkHealth\CarePlanModels\Entities\Ccda                                                         $ccda
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda                                                         $ccda
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemCodeLog[]|\Illuminate\Database\Eloquent\Collection $codes
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport                                        $importedItem
  * @property \App\Models\CCD\CcdVendor|null                                                          $vendor

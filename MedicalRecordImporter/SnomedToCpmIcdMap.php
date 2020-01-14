@@ -23,7 +23,7 @@ use CircleLinkHealth\SharedModels\Entities\CpmProblem;
  * @property float                           $icd_9_avg_usage
  * @property int                             $icd_9_is_nec
  * @property int|null                        $cpm_problem_id
- * @property \CircleLinkHealth\CarePlanModels\Entities\CpmProblem|null $cpmProblem
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem|null $cpmProblem
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap
  *     whereCpmProblemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToCpmIcdMap whereCreatedAt($value)

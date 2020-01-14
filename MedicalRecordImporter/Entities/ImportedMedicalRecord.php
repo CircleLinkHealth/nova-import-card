@@ -36,11 +36,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon|null                                                                            $created_at
  * @property \Carbon\Carbon|null                                                                            $updated_at
  * @property string|null                                                                                    $deleted_at
- * @property \CircleLinkHealth\CarePlanModels\Entities\AllergyImport[]|\Illuminate\Database\Eloquent\Collection    $allergies
+ * @property \CircleLinkHealth\SharedModels\Entities\AllergyImport[]|\Illuminate\Database\Eloquent\Collection    $allergies
  * @property \CircleLinkHealth\Customer\Entities\User|null                                                  $billingProvider
  * @property \App\Importer\Models\ImportedItems\DemographicsImport                                          $demographics
  * @property \CircleLinkHealth\Customer\Entities\Location|null                                              $location
- * @property \CircleLinkHealth\CarePlanModels\Entities\MedicationImport[]|\Illuminate\Database\Eloquent\Collection $medications
+ * @property \CircleLinkHealth\SharedModels\Entities\MedicationImport[]|\Illuminate\Database\Eloquent\Collection $medications
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                                              $practice
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport[]|\Illuminate\Database\Eloquent\Collection    $problems
  * @method static bool|null forceDelete()
@@ -56,7 +56,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord wherePatientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord wherePracticeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord withMedicalRecord($id, $type = 'CircleLinkHealth\CarePlanModels\Entities\Ccda')
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord withMedicalRecord($id, $type = 'CircleLinkHealth\SharedModels\Entities\Ccda')
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\ImportedMedicalRecord withoutTrashed()
  * @mixin \Eloquent
