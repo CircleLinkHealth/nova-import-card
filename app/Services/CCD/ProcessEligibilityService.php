@@ -22,12 +22,13 @@ use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Facades\Storage;
 
 class ProcessEligibilityService
 {
-    use CircleLinkHealth\Eligibility\ValidatesEligibility;
+    use ValidatesEligibility;
 
     /**
      * @param $type
