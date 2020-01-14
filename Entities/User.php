@@ -27,7 +27,7 @@ use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 use CircleLinkHealth\SharedModels\Entities\CpmLifestyle;
 use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
-use App\Models\CPM\CpmMiscUser;
+use CircleLinkHealth\SharedModels\Entities\CpmMiscUser;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
 use App\Models\EmailSettings;
@@ -295,7 +295,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     whereSaasAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     whereSkipBrowserChecks($value)
- * @property \App\Models\CPM\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection                      $cpmMiscUserPivot
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection                      $cpmMiscUserPivot
  * @property \CircleLinkHealth\NurseInvoices\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection $disputes
  * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra[]|\Illuminate\Database\Eloquent\Collection
  *     $nurseBonuses
