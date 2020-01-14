@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use App\Models\CPM\CpmMiscUser;
-use App\Models\CPM\Instructable;
+use CircleLinkHealth\SharedModels\Entities\CpmMiscUser;
+use CircleLinkHealth\SharedModels\Entities\Instructable;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -24,7 +24,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $patient
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]      $revisionHistory
- * @property \App\Models\CPM\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection              $users
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection              $users
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc query()

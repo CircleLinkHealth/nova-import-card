@@ -6,12 +6,12 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use App\Models\CPM\CpmBiometric;
-use App\Models\CPM\CpmLifestyle;
-use App\Models\CPM\CpmMedicationGroup;
+use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
+use CircleLinkHealth\SharedModels\Entities\CpmLifestyle;
+use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
-use App\Models\CPM\CpmProblem;
-use App\Models\CPM\CpmSymptom;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
 
 /**
  * CircleLinkHealth\SharedModels\Entities\CpmInstruction.
@@ -27,12 +27,12 @@ use App\Models\CPM\CpmSymptom;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \App\Models\CPM\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection        $cpmBiometrics
- * @property \App\Models\CPM\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection        $cpmLifestyles
- * @property \App\Models\CPM\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection  $cpmMedicationGroups
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection        $cpmBiometrics
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection        $cpmLifestyles
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection  $cpmMedicationGroups
  * @property \CircleLinkHealth\SharedModels\Entities\CpmMisc[]|\Illuminate\Database\Eloquent\Collection             $cpmMisc
- * @property \App\Models\CPM\CpmProblem[]|\Illuminate\Database\Eloquent\Collection          $cpmProblems
- * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection          $cpmSymptom
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem[]|\Illuminate\Database\Eloquent\Collection          $cpmProblems
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection          $cpmSymptom
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstruction newQuery()
