@@ -79,7 +79,7 @@ class MedicationController extends Controller
     
     public function retrieveMedication(Request $request)
     {
-        $medication                        = new \App\Models\CCD\Medication();
+        $medication                        = new \CircleLinkHealth\CarePlanModels\Entities\Medication();
         $medication->active                = $request->input('active');
         $medication->medication_import_id  = $request->input('medication_import_id');
         $medication->ccda_id               = $request->input('ccda_id');

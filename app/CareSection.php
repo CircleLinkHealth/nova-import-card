@@ -17,7 +17,7 @@ namespace App;
  * @property \Carbon\Carbon                                               $created_at
  * @property \Carbon\Carbon                                               $updated_at
  * @property \App\CarePlanItem[]|\Illuminate\Database\Eloquent\Collection $carePlanItems
- * @property \App\CarePlan[]|\Illuminate\Database\Eloquent\Collection     $carePlans
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CarePlan[]|\Illuminate\Database\Eloquent\Collection     $carePlans
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereDisplayName($value)
@@ -74,6 +74,6 @@ class CareSection extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function carePlans()
     {
-        return $this->belongsToMany('App\CarePlan', 'care_item_care_plan', 'section_id', 'plan_id');
+        return $this->belongsToMany('CircleLinkHealth\CarePlanModels\Entities\CarePlan', 'care_item_care_plan', 'section_id', 'plan_id');
     }
 }

@@ -24,12 +24,12 @@ use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
  * @property string|null                                                                                      $custodian_name
  * @property \Carbon\Carbon                                                                                   $created_at
  * @property \Carbon\Carbon                                                                                   $updated_at
- * @property \App\Importer\Models\ItemLogs\AllergyLog[]|\Illuminate\Database\Eloquent\Collection              $allergies
+ * @property \CircleLinkHealth\CarePlanModels\Entities\AllergyLog[]|\Illuminate\Database\Eloquent\Collection              $allergies
  * @property \App\Importer\Models\ItemLogs\DemographicsLog[]|\Illuminate\Database\Eloquent\Collection         $demographics
  * @property \App\Importer\Models\ImportedItems\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection $demographicsImports
  * @property \App\Importer\Models\ItemLogs\DocumentLog[]|\Illuminate\Database\Eloquent\Collection             $document
- * @property \App\Importer\Models\ItemLogs\MedicationLog[]|\Illuminate\Database\Eloquent\Collection           $medications
- * @property \App\Importer\Models\ItemLogs\ProblemLog[]|\Illuminate\Database\Eloquent\Collection              $problems
+ * @property \CircleLinkHealth\CarePlanModels\Entities\MedicationLog[]|\Illuminate\Database\Eloquent\Collection           $medications
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog[]|\Illuminate\Database\Eloquent\Collection              $problems
  * @property \App\Importer\Models\ItemLogs\ProviderLog[]|\Illuminate\Database\Eloquent\Collection             $providers
  * @property \App\CLH\CCD\ImportRoutine\CcdImportRoutine                                                      $routine
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdVendor whereCcdImportRoutineId($value)

@@ -6,7 +6,7 @@
 
 namespace App\Http\Middleware;
 
-use App\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use Closure;
 
 class CheckCarePlanMode

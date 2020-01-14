@@ -6,9 +6,9 @@
 
 namespace Tests\Unit;
 
-use App\AppConfig;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use App\Call;
-use App\Models\CPM\CpmProblem;
+use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
 use App\Services\Calls\SchedulerService;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;

@@ -4,8 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Models\CCD\Problem;
-use App\Models\CPM\CpmProblem;
+use CircleLinkHealth\CarePlanModels\Entities\Problem;
+use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
 use Illuminate\Database\Seeder;
 
 class NGDCIcd10CodeCorrections extends Seeder

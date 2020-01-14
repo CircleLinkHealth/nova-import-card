@@ -5,11 +5,11 @@
  */
 
 use App\Call;
-use App\EligibilityBatch;
-use App\EligibilityJob;
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
-use App\TargetPatient;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Ehr;
 use CircleLinkHealth\Customer\Entities\Invite;
@@ -72,7 +72,8 @@ $factory->define(App\Note::class, function (Faker\Generator $faker) use ($factor
     ];
 });
 
-$factory->define(\App\Models\CPM\Biometrics\CpmWeight::class, function (Faker\Generator $faker) {
+$factory->define(
+    \CircleLinkHealth\CarePlanModels\Entities\CpmWeight::class, function (Faker\Generator $faker) {
     $starting = rand(300, 450);
 
     return [
@@ -83,7 +84,8 @@ $factory->define(\App\Models\CPM\Biometrics\CpmWeight::class, function (Faker\Ge
     ];
 });
 
-$factory->define(\App\Models\CPM\Biometrics\CpmBloodPressure::class, function (Faker\Generator $faker) {
+$factory->define(
+    \CircleLinkHealth\CarePlanModels\Entities\CpmBloodPressure::class, function (Faker\Generator $faker) {
     $systolicStarting = rand(110, 140);
     $diastolicStarting = rand(60, 70);
 
@@ -97,7 +99,8 @@ $factory->define(\App\Models\CPM\Biometrics\CpmBloodPressure::class, function (F
     ];
 });
 
-$factory->define(\App\Models\CPM\Biometrics\CpmBloodSugar::class, function (Faker\Generator $faker) {
+$factory->define(
+    \CircleLinkHealth\CarePlanModels\Entities\CpmBloodSugar::class, function (Faker\Generator $faker) {
     return [
         //        'patient_id' => '', this has to be passed in when calling the factory
         'starting'     => rand(140, 300),
@@ -105,7 +108,8 @@ $factory->define(\App\Models\CPM\Biometrics\CpmBloodSugar::class, function (Fake
     ];
 });
 
-$factory->define(\App\Models\CPM\Biometrics\CpmSmoking::class, function (Faker\Generator $faker) {
+$factory->define(
+    \CircleLinkHealth\CarePlanModels\Entities\CpmSmoking::class, function (Faker\Generator $faker) {
     return [
         //        'patient_id' => '', this has to be passed in when calling the factory
         'starting' => rand(15, 50),
@@ -113,7 +117,8 @@ $factory->define(\App\Models\CPM\Biometrics\CpmSmoking::class, function (Faker\G
     ];
 });
 
-$factory->define(\App\Models\CCD\CcdInsurancePolicy::class, function (Faker\Generator $faker) {
+$factory->define(
+    \CircleLinkHealth\CarePlanModels\Entities\CcdInsurancePolicy::class, function (Faker\Generator $faker) {
     $types = [
         'Medicare',
         'Medicaid',

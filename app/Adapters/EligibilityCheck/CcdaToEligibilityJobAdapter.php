@@ -7,10 +7,10 @@
 namespace App\Adapters\EligibilityCheck;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
-use App\EligibilityBatch;
-use App\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use App\Services\Eligibility\Entities\Problem;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Support\Collection;
@@ -26,7 +26,7 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
      */
     protected $practice;
     /**
-     * @var Ccda
+     * @var \CircleLinkHealth\CarePlanModels\Entities\Ccda
      */
     private $ccda;
 

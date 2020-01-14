@@ -6,7 +6,7 @@
 
 namespace App\Services\AthenaAPI;
 
-use App\TargetPatient;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Jobs\Athena\GetAppointmentsForDepartment;

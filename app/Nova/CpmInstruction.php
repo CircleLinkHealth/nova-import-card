@@ -17,7 +17,7 @@ class CpmInstruction extends Resource
      *
      * @var string
      */
-    public static $model = \App\Models\CPM\CpmInstruction::class;
+    public static $model = \CircleLinkHealth\CarePlanModels\Entities\CpmInstruction::class;
 
     /**
      * The columns that should be searched.

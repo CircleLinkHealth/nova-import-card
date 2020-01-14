@@ -7,7 +7,7 @@
 namespace App\Traits\Tests;
 
 use App\Call;
-use App\CLH\Helpers\StringManipulation;
+use CircleLinkHealth\Core\StringManipulation;
 use App\CLH\Repositories\UserRepository;
 use App\Repositories\PatientWriteRepository;
 use Carbon\Carbon;
@@ -113,7 +113,7 @@ trait UserHelpers
         if ('participant' == $roleName) {
             $user->carePlan()->updateOrCreate(
                 [
-                    'care_plan_template_id' => \App\AppConfig::pull('default_care_plan_template_id'),
+                    'care_plan_template_id' => \CircleLinkHealth\Core\Entities\AppConfig::pull('default_care_plan_template_id'),
                 ],
                 [
                     'status' => 'draft',

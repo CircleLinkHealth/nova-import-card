@@ -7,11 +7,11 @@
 namespace App\Traits\Relationships;
 
 use App\Importer\Models\ImportedItems\DemographicsImport;
-use App\Importer\Models\ItemLogs\AllergyLog;
+use CircleLinkHealth\CarePlanModels\Entities\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Importer\Models\ItemLogs\DocumentLog;
-use App\Importer\Models\ItemLogs\MedicationLog;
-use App\Importer\Models\ItemLogs\ProblemLog;
+use CircleLinkHealth\CarePlanModels\Entities\MedicationLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 
 /**

@@ -9,8 +9,8 @@ namespace App\Http\Controllers;
 use App\CLH\Repositories\UserRepository;
 use App\Notifications\EhrReportWriterNotification;
 use App\Services\CCD\ProcessEligibilityService;
-use App\Services\GoogleDrive;
-use App\Traits\ValidatesEligibility;
+use CircleLinkHealth\Core\GoogleDrive;
+use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class EhrReportWriterController extends Controller
 {
-    use ValidatesEligibility;
+    use CircleLinkHealth\Eligibility\ValidatesEligibility;
 
     private $googleDrive;
 

@@ -6,7 +6,7 @@
 
 namespace App\Notifications;
 
-use App\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use App\Contracts\FaxableNotification;
 use App\Note;
 use App\ValueObjects\SimpleNotification;

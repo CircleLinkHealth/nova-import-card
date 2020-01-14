@@ -80,6 +80,14 @@
       "url": "git@github.com:CircleLinkHealth/module-sqlviews.git"
     },
     {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
+    },
+    {
       "type": "path",
       "url": "./nova-components/ClhImportCardExtended"
     },
@@ -106,10 +114,12 @@
     "circlelinkhealth/ccda-parser-processor-php": "dev-master",
     "circlelinkhealth/core-module": "1.35",
     "circlelinkhealth/cpmmigrations": "1.0",
+    "circlelinkhealth/eligibility": "dev-master",
     "circlelinkhealth/customer": "1.7.0",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/raygun": "0.6",
     "circlelinkhealth/revisionable": "*",
+    "circlelinkhealth/shared-models-module": "dev-master",
     "circlelinkhealth/sqlviews": "dev-master",
     "circlelinkhealth/timetracking": "1.1.4",
     "circlelinkhealth/twofa": "1.1.2",

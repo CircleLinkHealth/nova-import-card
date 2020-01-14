@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
-use App\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use App\CareplanAssessment;
 use App\Note;
 use CircleLinkHealth\Customer\Entities\Patient;

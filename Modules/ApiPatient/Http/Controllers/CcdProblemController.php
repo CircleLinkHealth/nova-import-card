@@ -38,7 +38,8 @@ class CcdProblemController extends Controller
     public function destroy($userId, $ccdProblemId)
     {
         if ($userId && $ccdProblemId) {
-            return \response()->json(\App\Models\CCD\Problem::where(['patient_id' => $userId, 'id' => $ccdProblemId])->delete());
+            return \response()->json(
+                \CircleLinkHealth\CarePlanModels\Entities\Problem::where(['patient_id' => $userId, 'id' => $ccdProblemId])->delete());
         }
 
         return \response()->json('"userId" and "ccdProblemId" are important', 400);

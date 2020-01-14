@@ -7,8 +7,8 @@
 namespace App\Formatters;
 
 use App\Contracts\ReportFormatter;
-use App\Models\CPM\CpmBiometric;
-use App\Models\CPM\CpmMisc;
+use CircleLinkHealth\CarePlanModels\Entities\CpmBiometric;
+use CircleLinkHealth\CarePlanModels\Entities\CpmMisc;
 use App\Note;
 use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;

@@ -1,6 +1,6 @@
 <?php
 
-use App\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use Illuminate\Database\Seeder;
 
 class CareplanJsonStatusFixSeeder extends Seeder

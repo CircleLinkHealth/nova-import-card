@@ -7,7 +7,7 @@
 namespace App\Importer\Models\ImportedItems;
 
 use App\Importer\Models\ItemLogs\DemographicsLog;
-use App\Traits\Relationships\BelongsToCcda;
+use CircleLinkHealth\Eligibility\BelongsToCcda;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -45,7 +45,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property string|null                                   $preferred_call_times
  * @property string|null                                   $preferred_call_days
  * @property \App\Importer\Models\ItemLogs\DemographicsLog $ccdLog
- * @property \App\Models\MedicalRecords\Ccda               $ccda
+ * @property \CircleLinkHealth\CarePlanModels\Entities\Ccda               $ccda
  * @property \CircleLinkHealth\Customer\Entities\User|null $provider
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport whereCellPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport whereCity($value)
@@ -87,7 +87,7 @@ use CircleLinkHealth\Customer\Entities\User;
  */
 class DemographicsImport extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    use BelongsToCcda;
+    use CircleLinkHealth\Eligibility\BelongsToCcda;
 
     protected $fillable = [
         'medical_record_type',

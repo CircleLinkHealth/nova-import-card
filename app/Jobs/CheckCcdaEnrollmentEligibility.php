@@ -6,8 +6,8 @@
 
 namespace App\Jobs;
 
-use App\EligibilityBatch;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

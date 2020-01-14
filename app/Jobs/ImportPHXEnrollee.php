@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Services\MedicalRecords\ImportService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,7 +28,7 @@ class ImportPHXEnrollee implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param Enrollee $enrollee
+     * @param \CircleLinkHealth\Eligibility\Entities\Enrollee $enrollee
      */
     public function __construct(Enrollee $enrollee)
     {

@@ -10,7 +10,7 @@ use App\Mail\SalesPracticeReport;
 use App\Reports\Sales\Location\SalesByLocationReport;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
 use App\Reports\Sales\Provider\SalesByProviderReport;
-use App\Services\PdfService;
+use CircleLinkHealth\Core\PdfService;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;

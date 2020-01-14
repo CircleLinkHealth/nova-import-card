@@ -9,7 +9,7 @@ namespace App\CLH\CCD\Importer\ParsingStrategies\Location;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\Importer\Models\ItemLogs\ProviderLog;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use CircleLinkHealth\Customer\Entities\Location;
 
 class ProviderLocation implements ParsingStrategy

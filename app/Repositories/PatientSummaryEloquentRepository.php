@@ -6,8 +6,8 @@
 
 namespace App\Repositories;
 
-use App\Exceptions\InvalidArgumentException;
-use App\Models\CCD\Problem;
+use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
+use CircleLinkHealth\CarePlanModels\Entities\Problem;
 use Cache;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;

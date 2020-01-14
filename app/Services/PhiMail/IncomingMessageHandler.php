@@ -8,7 +8,7 @@ namespace App\Services\PhiMail;
 
 use App\DirectMailMessage;
 use App\Jobs\ImportCcda;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use Carbon\Carbon;
 
 /**

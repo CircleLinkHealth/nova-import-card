@@ -6,7 +6,7 @@
 
 namespace App\Services\CPM;
 
-use App\Models\CCD\Medication;
+use CircleLinkHealth\CarePlanModels\Entities\Medication;
 use App\Repositories\CpmMedicationRepository;
 use CircleLinkHealth\Customer\Entities\User;
 

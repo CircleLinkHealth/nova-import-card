@@ -7,9 +7,9 @@
 namespace App\Adapters\EligibilityCheck;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
-use App\EligibilityJob;
-use App\Models\MedicalRecords\Ccda;
-use App\TargetPatient;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Decorators\AddInsuranceFromAthenaToEligibilityJob;
 use Illuminate\Support\Collection;
 
@@ -37,7 +37,7 @@ class AddInsurancesFromAthena implements EligibilityCheckAdapter
      *
      * @param EligibilityCheckAdapter $adapter
      * @param TargetPatient           $targetPatient
-     * @param Ccda                    $ccda
+     * @param \CircleLinkHealth\CarePlanModels\Entities\Ccda                    $ccda
      */
     public function __construct(EligibilityCheckAdapter $adapter, TargetPatient $targetPatient, Ccda $ccda)
     {
@@ -49,7 +49,7 @@ class AddInsurancesFromAthena implements EligibilityCheckAdapter
     /**
      * @throws \Exception
      *
-     * @return EligibilityJob
+     * @return \CircleLinkHealth\Eligibility\Entities\EligibilityJob
      */
     public function adaptToEligibilityJob(): EligibilityJob
     {

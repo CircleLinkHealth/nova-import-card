@@ -4,11 +4,11 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\AppConfig;
-use App\CarePlanTemplate;
-use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
-use App\Models\CPM\CpmInstruction;
-use App\Models\CPM\CpmProblem;
+use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlanTemplate;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
+use CircleLinkHealth\CarePlanModels\Entities\CpmInstruction;
+use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
 use Illuminate\Database\Seeder;
 
 class AddNewDefaultCarePlanTemplate extends Seeder

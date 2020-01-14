@@ -6,8 +6,8 @@
 
 namespace App\Importer\Models\ItemLogs;
 
-use App\Models\CCD\CcdInsurancePolicy;
-use App\Traits\Relationships\BelongsToVendor;
+use CircleLinkHealth\CarePlanModels\Entities\CcdInsurancePolicy;
+
 
 /**
  * App\Importer\Models\ItemLogs\InsuranceLog.
@@ -23,8 +23,8 @@ use App\Traits\Relationships\BelongsToVendor;
  * @property int                                $import
  * @property \Carbon\Carbon|null                $created_at
  * @property \Carbon\Carbon|null                $updated_at
- * @property \App\Models\MedicalRecords\Ccda    $ccda
- * @property \App\Models\CCD\CcdInsurancePolicy $importedItem
+ * @property \CircleLinkHealth\CarePlanModels\Entities\Ccda    $ccda
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CcdInsurancePolicy $importedItem
  * @property \App\Models\CCD\CcdVendor          $vendor
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereId($value)
@@ -48,7 +48,7 @@ use App\Traits\Relationships\BelongsToVendor;
  */
 class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    use BelongsToVendor;
+    
 
     protected $casts = [
         'raw' => 'array',

@@ -7,7 +7,7 @@
 namespace App\Exports\PracticeReports;
 
 use App\Contracts\Reports\PracticeDataExport;
-use App\Models\CCD\Problem;
+use CircleLinkHealth\CarePlanModels\Entities\Problem;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 

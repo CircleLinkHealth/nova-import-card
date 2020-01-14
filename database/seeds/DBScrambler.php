@@ -7,7 +7,7 @@
 use App\Call;
 use App\CareplanAssessment;
 use App\Models\Addendum;
-use App\Models\CCD\CcdInsurancePolicy;
+use CircleLinkHealth\CarePlanModels\Entities\CcdInsurancePolicy;
 use App\Note;
 use CircleLinkHealth\Customer\Entities\Appointment;
 use CircleLinkHealth\Customer\Entities\Location;

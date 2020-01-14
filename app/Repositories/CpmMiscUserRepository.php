@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use App\Models\CPM\CpmMisc;
+use CircleLinkHealth\CarePlanModels\Entities\CpmMisc;
 use App\Models\CPM\CpmMiscUser;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Collection;

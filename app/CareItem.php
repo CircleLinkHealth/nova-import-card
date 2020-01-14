@@ -22,7 +22,7 @@ namespace App;
  * @property string                                                   $description
  * @property \Carbon\Carbon                                           $created_at
  * @property \Carbon\Carbon                                           $updated_at
- * @property \App\CarePlan[]|\Illuminate\Database\Eloquent\Collection $carePlans
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CarePlan[]|\Illuminate\Database\Eloquent\Collection $carePlans
  * @property \App\CareItem[]|\Illuminate\Database\Eloquent\Collection $children
  * @property mixed                                                    $meta_key
  * @property \App\CareItem                                            $parents
@@ -65,7 +65,7 @@ class CareItem extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function carePlans()
     {
-        return $this->belongsToMany('App\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
+        return $this->belongsToMany('CircleLinkHealth\CarePlanModels\Entities\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
     }
 
     // START ATTRIBUTES

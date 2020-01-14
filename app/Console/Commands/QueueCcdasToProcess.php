@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\ProcessCcda;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 

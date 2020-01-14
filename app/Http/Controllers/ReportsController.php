@@ -6,11 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use App\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use App\Contracts\ReportFormatter;
 use App\Exports\FromArray;
 use App\Http\Requests\GetUnder20MinutesReport;
-use App\Models\CPM\CpmMisc;
+use CircleLinkHealth\CarePlanModels\Entities\CpmMisc;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanAssessmentService;
 use App\Services\CareplanService;

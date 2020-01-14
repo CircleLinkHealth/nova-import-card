@@ -6,9 +6,9 @@
 
 namespace Tests\Feature;
 
-use App\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
 

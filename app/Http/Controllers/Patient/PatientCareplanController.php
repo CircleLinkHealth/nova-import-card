@@ -6,18 +6,18 @@
 
 namespace App\Http\Controllers\Patient;
 
-use App\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use App\CarePlanPrintListView;
 use App\CLH\Repositories\UserRepository;
 use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
-use App\Models\CCD\CcdInsurancePolicy;
+use CircleLinkHealth\CarePlanModels\Entities\CcdInsurancePolicy;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanService;
 use App\Services\PatientService;
-use App\Services\PdfService;
+use CircleLinkHealth\Core\PdfService;
 use Auth;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringMedicareDisclaimer;

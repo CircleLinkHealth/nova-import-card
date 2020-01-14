@@ -7,7 +7,7 @@
 namespace App\Observers;
 
 use App\Constants;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 
 class CcdaObserver
 {

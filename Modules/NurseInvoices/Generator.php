@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices;
 
-use App\Services\PdfService;
+use CircleLinkHealth\Core\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Jobs\GenerateNurseInvoice;
@@ -25,7 +25,7 @@ class Generator
     protected $nurseUserIds;
 
     /**
-     * @var PdfService
+     * @var \CircleLinkHealth\Core\PdfService
      */
     protected $pdfService;
 

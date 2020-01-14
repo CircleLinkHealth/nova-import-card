@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\ProblemCodeSystem;
+use CircleLinkHealth\CarePlanModels\Entities\ProblemCodeSystem;
 
 class ProblemCodeService
 {

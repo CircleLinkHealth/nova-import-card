@@ -32,7 +32,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Carbon\Carbon                                $updated_at
  * @property \CircleLinkHealth\Customer\Entities\User|null $approver
  * @property \CircleLinkHealth\Customer\Entities\User|null $patient
- * @property \App\CarePlan|null                            $carePlan
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CarePlan|null                            $carePlan
  * @mixin \Eloquent
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment newModelQuery()

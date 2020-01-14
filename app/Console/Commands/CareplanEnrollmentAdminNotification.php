@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use App\Notifications\SendAssessmentNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\CPM\CpmProblem;
+use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
 use Illuminate\Database\Seeder;
 
 class CpmRemoveBehavioralSeeder extends Seeder

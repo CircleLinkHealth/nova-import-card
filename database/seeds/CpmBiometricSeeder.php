@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\CPM\CpmBiometric;
+use CircleLinkHealth\CarePlanModels\Entities\CpmBiometric;
 use Illuminate\Database\Seeder;
 
 class CpmBiometricSeeder extends Seeder

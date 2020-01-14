@@ -6,7 +6,7 @@
 
 namespace App\Importer\Section\Importers;
 
-use App\Importer\Models\ItemLogs\ProblemLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
 
 trait ConsolidatesProblemInfo
 {

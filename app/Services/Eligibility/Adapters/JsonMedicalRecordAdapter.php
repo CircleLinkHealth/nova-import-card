@@ -6,10 +6,10 @@
 
 namespace App\Services\Eligibility\Adapters;
 
-use App\EligibilityBatch;
-use App\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use App\Services\Eligibility\Entities\MedicalRecord;
-use App\Traits\ValidatesEligibility;
+use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
@@ -17,7 +17,7 @@ use Seld\JsonLint\JsonParser;
 
 class JsonMedicalRecordAdapter
 {
-    use ValidatesEligibility;
+    use CircleLinkHealth\Eligibility\ValidatesEligibility;
 
     /**
      * @var bool
@@ -51,9 +51,9 @@ class JsonMedicalRecordAdapter
     }
 
     /**
-     * @param EligibilityBatch $eligibilityBatch
+     * @param \CircleLinkHealth\Eligibility\Entities\EligibilityBatch $eligibilityBatch
      *
-     * @return EligibilityJob|null
+     * @return \CircleLinkHealth\Eligibility\Entities\EligibilityJob|null
      */
     public function createEligibilityJob(EligibilityBatch $eligibilityBatch): ?EligibilityJob
     {

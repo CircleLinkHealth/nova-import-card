@@ -6,9 +6,9 @@
 
 namespace App\Importer\Section\Importers;
 
-use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
 use App\Importer\Models\ItemLogs\InsuranceLog;
-use App\Models\CCD\CcdInsurancePolicy;
+use CircleLinkHealth\CarePlanModels\Entities\CcdInsurancePolicy;
 
 class Insurance extends BaseImporter
 {

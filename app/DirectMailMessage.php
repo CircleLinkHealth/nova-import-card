@@ -6,7 +6,7 @@
 
 namespace App;
 
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
@@ -23,7 +23,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                                                   $num_attachments
  * @property \Illuminate\Support\Carbon|null                                            $created_at
  * @property \Illuminate\Support\Carbon|null                                            $updated_at
- * @property \App\Models\MedicalRecords\Ccda[]|\Illuminate\Database\Eloquent\Collection $ccdas
+ * @property \CircleLinkHealth\CarePlanModels\Entities\Ccda[]|\Illuminate\Database\Eloquent\Collection $ccdas
  * @property \App\Media[]|\Illuminate\Database\Eloquent\Collection                      $media
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage newModelQuery()

@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use App\Services\CcdaService;
 use Illuminate\Http\Request;
 

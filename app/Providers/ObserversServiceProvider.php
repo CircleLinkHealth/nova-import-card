@@ -6,15 +6,15 @@
 
 namespace App\Providers;
 
-use App\AppConfig;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use App\Call;
-use App\CarePlan;
-use App\CarePlanTemplate;
-use App\EligibilityBatch;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlanTemplate;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use App\Models\Addendum;
-use App\Models\CCD\Medication;
-use App\Models\CCD\Problem;
-use App\Models\ProblemCode;
+use CircleLinkHealth\CarePlanModels\Entities\Medication;
+use CircleLinkHealth\CarePlanModels\Entities\Problem;
+use CircleLinkHealth\CarePlanModels\Entities\ProblemCode;
 use App\Observers\AddendumObserver;
 use App\Observers\AppConfigObserver;
 use App\Observers\CallObserver;

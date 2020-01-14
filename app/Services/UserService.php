@@ -21,7 +21,7 @@ class UserService
      *
      * @param \CircleLinkHealth\Customer\Entities\User|null $user
      *
-     * @return \App\CarePlan
+     * @return \CircleLinkHealth\CarePlanModels\Entities\CarePlan
      */
     public function firstOrDefaultCarePlan(User $user)
     {

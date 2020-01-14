@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\CCDModels\Items;
 
 use App\Http\Controllers\Controller;
-use App\Models\CCD\Allergy;
+use CircleLinkHealth\CarePlanModels\Entities\Allergy;
 use Illuminate\Http\Request;
 
 /**

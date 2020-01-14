@@ -6,8 +6,8 @@
 
 namespace App\Repositories;
 
-use App\Models\CCD\Medication;
-use App\Models\CPM\CpmMedicationGroup;
+use CircleLinkHealth\CarePlanModels\Entities\Medication;
+use CircleLinkHealth\CarePlanModels\Entities\CpmMedicationGroup;
 
 class CpmMedicationGroupRepository
 {

@@ -6,8 +6,12 @@
 
 namespace App\Models\CPM;
 
+use CircleLinkHealth\CarePlanModels\Entities\CpmInstruction;
+use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
+use CircleLinkHealth\CarePlanModels\Entities\Instructable;
+
 /**
- * App\Models\CPM\CpmProblem.
+ * CircleLinkHealth\CarePlanModels\Entities\CpmProblem.
  *
  * @property int                            $id
  * @property int                            $cpm_instruction_id
@@ -15,10 +19,10 @@ namespace App\Models\CPM;
  * @property int                            $cpm_problem_id
  * @property \Carbon\Carbon                 $created_at
  * @property \Carbon\Carbon                 $updated_at
- * @property \App\Models\CPM\CpmInstruction $instruction
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmInstruction $instruction
  * @mixin \Eloquent
- * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection      $cpmInstructions
- * @property \App\Models\CPM\CpmProblem                                                     $problems
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection      $cpmInstructions
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmProblem                                                     $problems
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser newQuery()
@@ -29,7 +33,7 @@ namespace App\Models\CPM;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser wherePatientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser whereUpdatedAt($value)
- * @property \App\Models\CPM\CpmProblem $problem
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmProblem $problem
  * @property int|null                   $cpm_instructions_count
  * @property int|null                   $revision_history_count
  */

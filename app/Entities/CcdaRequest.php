@@ -6,7 +6,7 @@
 
 namespace App\Entities;
 
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 
 /**
  * App\Entities\CcdaRequest.
@@ -21,7 +21,7 @@ use App\Models\MedicalRecords\Ccda;
  * @property int|null                             $document_id
  * @property \Carbon\Carbon|null                  $created_at
  * @property \Carbon\Carbon|null                  $updated_at
- * @property \App\Models\MedicalRecords\Ccda|null $ccda
+ * @property \CircleLinkHealth\CarePlanModels\Entities\Ccda|null $ccda
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest whereCcdaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest whereDepartmentId($value)

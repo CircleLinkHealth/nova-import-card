@@ -6,9 +6,9 @@
 
 namespace App\Importer\Models\ItemLogs;
 
-use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
-use App\Traits\Relationships\BelongsToCcda;
-use App\Traits\Relationships\BelongsToVendor;
+
+use CircleLinkHealth\Eligibility\BelongsToCcda;
+
 
 /**
  * App\Importer\Models\ItemLogs\ProviderLog.
@@ -40,7 +40,7 @@ use App\Traits\Relationships\BelongsToVendor;
  * @property string|null                                   $deleted_at
  * @property \Carbon\Carbon                                $created_at
  * @property \Carbon\Carbon                                $updated_at
- * @property \App\Models\MedicalRecords\Ccda               $ccda
+ * @property \CircleLinkHealth\CarePlanModels\Entities\Ccda               $ccda
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $providerLoggable
  * @property \App\Models\CCD\CcdVendor|null                $vendor
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog whereBillingProviderId($value)
@@ -77,10 +77,10 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog query()
  * @property int|null $revision_history_count
  */
-class ProviderLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog
+class ProviderLog extends \CircleLinkHealth\Core\Entities\BaseModel 
 {
-    use BelongsToCcda;
-    use BelongsToVendor;
+    use CircleLinkHealth\Eligibility\BelongsToCcda;
+    
 
     protected $fillable = [
         'location_id',

@@ -6,11 +6,11 @@
 
 namespace Tests\Feature;
 
-use App\AppConfig;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use App\Call;
 use App\Jobs\CreateNurseInvoices;
 use App\Jobs\StoreTimeTracking;
-use App\Models\CPM\CpmProblem;
+use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
 use App\Note;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;

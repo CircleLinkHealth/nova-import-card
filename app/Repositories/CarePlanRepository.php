@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use App\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 

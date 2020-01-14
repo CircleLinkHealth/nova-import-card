@@ -6,9 +6,9 @@
 
 namespace App\Jobs;
 
-use App\Exceptions\InvalidCcdaException;
+use CircleLinkHealth\Core\Exceptions\InvalidCcdaException;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -44,7 +44,7 @@ class ProcessCcda implements ShouldQueue
      */
     public function handle()
     {
-        /** @var Ccda $ccda */
+        /** @var \CircleLinkHealth\CarePlanModels\Entities\Ccda $ccda */
         $ccda = $this->ccda;
 
         try {

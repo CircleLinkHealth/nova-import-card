@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMedicationGroupMapRequest;
 use App\MedicationGroupsMap;
-use App\Models\CPM\CpmMedicationGroup;
+use CircleLinkHealth\CarePlanModels\Entities\CpmMedicationGroup;
 use Illuminate\Http\Request;
 
 class MedicationGroupsMapController extends Controller

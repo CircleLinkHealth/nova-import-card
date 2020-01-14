@@ -6,10 +6,6 @@
 
 namespace App\Services\CCD;
 
-use App\EligibilityBatch;
-use App\EligibilityJob;
-use App\Enrollee;
-use App\Exceptions\FileNotFoundException;
 use App\Importer\Loggers\Allergy\NumberedAllergyFields;
 use App\Importer\Loggers\Medication\NumberedMedicationFields;
 use App\Importer\Loggers\Problem\NumberedProblemFields;
@@ -17,18 +13,21 @@ use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessCcdaFromGoogleDrive;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
-use App\Models\MedicalRecords\Ccda;
-use App\Services\Eligibility\Csv\CsvPatientList;
-use App\Services\GoogleDrive;
-use App\Traits\ValidatesEligibility;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
+use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
+use CircleLinkHealth\Core\GoogleDrive;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Support\Facades\Storage;
 
 class ProcessEligibilityService
 {
-    use ValidatesEligibility;
+    use CircleLinkHealth\Eligibility\ValidatesEligibility;
 
     /**
      * @param $type
@@ -174,7 +173,7 @@ class ProcessEligibilityService
      * @param $filterInsurance
      * @param $filterProblems
      *
-     * @return EligibilityBatch
+     * @return \CircleLinkHealth\Eligibility\Entities\EligibilityBatch
      */
     public function createSingleCSVBatch(
         int $practiceId,
@@ -409,7 +408,7 @@ class ProcessEligibilityService
      * @param $filterProblems
      * @param $reprocessingMethod
      *
-     * @return EligibilityBatch
+     * @return \CircleLinkHealth\Eligibility\Entities\EligibilityBatch
      */
     public function prepareClhMedicalRecordTemplateBatchForReprocessing(
         EligibilityBatch $batch,

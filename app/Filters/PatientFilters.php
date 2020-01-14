@@ -6,7 +6,7 @@
 
 namespace App\Filters;
 
-use App\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use App\Repositories\PatientReadRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;

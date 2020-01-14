@@ -6,7 +6,7 @@
 
 namespace App\Listeners;
 
-use App\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use App\Contracts\Efax;
 use App\Events\CarePlanWasApproved;
 use App\Events\PdfableCreated;

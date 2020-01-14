@@ -6,9 +6,9 @@
 
 namespace App\Observers;
 
-use App\CarePlan;
-use App\Models\CPM\CpmInstruction;
-use App\Models\CPM\CpmMisc;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CpmInstruction;
+use CircleLinkHealth\CarePlanModels\Entities\CpmMisc;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;

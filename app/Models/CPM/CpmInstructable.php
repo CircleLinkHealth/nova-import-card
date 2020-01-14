@@ -6,6 +6,9 @@
 
 namespace App\Models\CPM;
 
+use CircleLinkHealth\CarePlanModels\Entities\CpmInstruction;
+use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
+
 /**
  * App\Models\CPM\CpmMiscUser.
  *
@@ -15,11 +18,11 @@ namespace App\Models\CPM;
  * @property int                            $instruction_type
  * @property \Carbon\Carbon                 $created_at
  * @property \Carbon\Carbon                 $updated_at
- * @property \App\Models\CPM\CpmInstruction $cpmInstruction
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereUpdatedAt($value)
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmInstruction $cpmInstruction
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\CarePlanModels\Entities\CpmMisc whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\CarePlanModels\Entities\CpmMisc whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\CarePlanModels\Entities\CpmMisc whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\CarePlanModels\Entities\CpmMisc whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property string                                                                         $instructable_type
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
@@ -29,7 +32,7 @@ namespace App\Models\CPM;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable whereCpmInstructionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable whereInstructableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable whereInstructableType($value)
- * @property \App\Models\CPM\CpmProblem[]|\Illuminate\Database\Eloquent\Collection $cpmProblem
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmProblem[]|\Illuminate\Database\Eloquent\Collection $cpmProblem
  * @property int|null                                                              $cpm_problem_count
  * @property int|null                                                              $revision_history_count
  */

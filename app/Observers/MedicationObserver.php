@@ -7,7 +7,7 @@
 namespace App\Observers;
 
 use App\MedicationGroupsMap;
-use App\Models\CCD\Medication;
+use CircleLinkHealth\CarePlanModels\Entities\Medication;
 
 class MedicationObserver
 {

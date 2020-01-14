@@ -8,7 +8,7 @@ namespace App\Services\AthenaAPI;
 
 use App\Entities\CcdaRequest;
 use App\Jobs\ImportCcda;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use Carbon\Carbon;
 
 class CreateAndPostPdfCareplan

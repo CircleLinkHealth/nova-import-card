@@ -6,13 +6,13 @@
 
 namespace App\Http\Controllers;
 
-use App\EligibilityBatch;
-use App\EligibilityJob;
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Exports\FromArray;
 use App\Importer\Models\ItemLogs\InsuranceLog;
-use App\Models\CPM\CpmProblem;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordEligibilityJobToCsvAdapter;
 use Carbon\Carbon;

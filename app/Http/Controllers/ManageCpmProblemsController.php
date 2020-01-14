@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CPM\CpmProblem;
+use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
 use Illuminate\Http\Request;
 
 class ManageCpmProblemsController extends Controller

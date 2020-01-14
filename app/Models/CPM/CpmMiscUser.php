@@ -6,6 +6,9 @@
 
 namespace App\Models\CPM;
 
+use CircleLinkHealth\CarePlanModels\Entities\CpmInstruction;
+use CircleLinkHealth\CarePlanModels\Entities\CpmMisc;
+use CircleLinkHealth\CarePlanModels\Entities\Instructable;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -17,16 +20,16 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property int                                      $cpm_misc_is
  * @property \Carbon\Carbon                           $created_at
  * @property \Carbon\Carbon                           $updated_at
- * @property \App\Models\CPM\CpmInstruction           $cpmInstruction
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmInstruction           $cpmInstruction
  * @property \CircleLinkHealth\Customer\Entities\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\CarePlanModels\Entities\CpmMisc whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\CarePlanModels\Entities\CpmMisc whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\CarePlanModels\Entities\CpmMisc whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\CarePlanModels\Entities\CpmMisc whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property int                                                                            $cpm_misc_id
- * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection      $cpmInstructions
- * @property \App\Models\CPM\CpmMisc                                                        $cpmMisc
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection      $cpmInstructions
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmMisc                                                        $cpmMisc
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMiscUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMiscUser newQuery()

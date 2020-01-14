@@ -4,8 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\CarePlanTemplate;
-use App\Models\CPM\CpmBiometric;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlanTemplate;
+use CircleLinkHealth\CarePlanModels\Entities\CpmBiometric;
 use Illuminate\Database\Seeder;
 
 class CpmBiometricsTableSeeder extends Seeder

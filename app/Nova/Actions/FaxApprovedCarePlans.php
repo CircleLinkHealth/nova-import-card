@@ -6,7 +6,7 @@
 
 namespace App\Nova\Actions;
 
-use App\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use App\Jobs\FaxPatientCarePlansToLocation;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\FaxChannel;

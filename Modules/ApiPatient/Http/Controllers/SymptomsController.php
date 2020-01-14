@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\ApiPatient\Http\Controllers;
 
-use App\Models\CPM\CpmSymptomUser;
+use CircleLinkHealth\CarePlanModels\Entities\CpmSymptomUser;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

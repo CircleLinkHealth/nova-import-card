@@ -6,13 +6,13 @@
 
 namespace App\Services;
 
-use App\Models\CPM\CpmBiometric;
-use App\Models\CPM\CpmLifestyle;
-use App\Models\CPM\CpmMedicationGroup;
-use App\Models\CPM\CpmMisc;
-use App\Models\CPM\CpmSymptom;
+use CircleLinkHealth\CarePlanModels\Entities\CpmBiometric;
+use CircleLinkHealth\CarePlanModels\Entities\CpmLifestyle;
+use CircleLinkHealth\CarePlanModels\Entities\CpmMedicationGroup;
+use CircleLinkHealth\CarePlanModels\Entities\CpmMisc;
+use CircleLinkHealth\CarePlanModels\Entities\CpmSymptom;
 use App\Note;
-use App\ProblemCodeSystem;
+use CircleLinkHealth\CarePlanModels\Entities\ProblemCodeSystem;
 use App\Repositories\CareplanRepository;
 use App\Services\CCD\CcdAllergyService;
 use App\Services\CCD\CcdProblemService;

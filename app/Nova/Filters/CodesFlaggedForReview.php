@@ -6,7 +6,7 @@
 
 namespace App\Nova\Filters;
 
-use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Laravel\Nova\Filters\Filter;

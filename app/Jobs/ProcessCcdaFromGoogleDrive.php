@@ -6,8 +6,8 @@
 
 namespace App\Jobs;
 
-use App\EligibilityBatch;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use CircleLinkHealth\Customer\Entities\Media;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -24,7 +24,7 @@ class ProcessCcdaFromGoogleDrive implements ShouldQueue
     use Queueable;
     use SerializesModels;
     /**
-     * @var EligibilityBatch
+     * @var \CircleLinkHealth\Eligibility\Entities\EligibilityBatch
      */
     protected $batch;
 

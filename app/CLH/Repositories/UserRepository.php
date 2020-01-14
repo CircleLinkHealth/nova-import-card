@@ -7,8 +7,8 @@
 namespace App\CLH\Repositories;
 
 use App\CareAmbassador;
-use App\CarePlan;
-use App\Services\GoogleDrive;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
+use CircleLinkHealth\Core\GoogleDrive;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;

@@ -6,8 +6,8 @@
 
 namespace App\Repositories;
 
-use App\Models\CPM\CpmSymptom;
-use App\Models\CPM\CpmSymptomUser;
+use CircleLinkHealth\CarePlanModels\Entities\CpmSymptom;
+use CircleLinkHealth\CarePlanModels\Entities\CpmSymptomUser;
 
 class CpmSymptomRepository
 {

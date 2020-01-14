@@ -6,9 +6,9 @@
 
 namespace App\Services;
 
-use App\CarePlan as CarePlan;
-use App\CarePlanTemplate;
-use App\Models\CPM\CpmMisc;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan as CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlanTemplate;
+use CircleLinkHealth\CarePlanModels\Entities\CpmMisc;
 use App\Models\CPM\UI\Biometrics;
 use App\Models\CPM\UI\Section;
 use CircleLinkHealth\Customer\Entities\User;

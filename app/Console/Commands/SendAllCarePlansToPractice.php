@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use Illuminate\Console\Command;

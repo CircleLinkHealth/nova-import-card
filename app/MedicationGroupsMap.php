@@ -6,7 +6,7 @@
 
 namespace App;
 
-use App\Models\CPM\CpmMedicationGroup;
+use CircleLinkHealth\CarePlanModels\Entities\CpmMedicationGroup;
 
 /**
  * App\MedicationGroupsMap.
@@ -16,7 +16,7 @@ use App\Models\CPM\CpmMedicationGroup;
  * @property int                                $medication_group_id
  * @property \Carbon\Carbon|null                $created_at
  * @property \Carbon\Carbon|null                $updated_at
- * @property \App\Models\CPM\CpmMedicationGroup $cpmMedicationGroup
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmMedicationGroup $cpmMedicationGroup
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereKeyword($value)

@@ -7,7 +7,7 @@
 namespace App\Nova;
 
 use App\Constants;
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Nova\Importers\EnroleeStatus as EnroleeStatusImporter;
 use Illuminate\Http\Request;
 use Jubeki\Nova\Cards\Linkable\LinkableAway;
