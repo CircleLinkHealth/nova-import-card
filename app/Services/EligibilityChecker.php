@@ -292,24 +292,24 @@ class EligibilityChecker
             function () {
                 return CpmProblem::all()
                     ->transform(
-                        function ($problem) {
-                            $problem->searchKeywords = collect(
-                                explode(',', $problem->contains),
-                                [$problem->name]
-                            )
-                                ->transform(
-                                    function ($keyword) {
-                                        return trim(strtolower($keyword));
-                                    }
-                                )
-                                ->filter()
-                                ->unique()
-                                ->values()
-                                ->toArray();
+                                     function ($problem) {
+                                         $problem->searchKeywords = collect(
+                                             explode(',', $problem->contains),
+                                             [$problem->name]
+                                         )
+                                             ->transform(
+                                                 function ($keyword) {
+                                                     return trim(strtolower($keyword));
+                                                 }
+                                             )
+                                             ->filter()
+                                             ->unique()
+                                             ->values()
+                                             ->toArray();
 
-                            return $problem;
-                        }
-                    );
+                                         return $problem;
+                                     }
+                                 );
             }
         );
 
@@ -537,7 +537,10 @@ class EligibilityChecker
         if ($ccmProbCount < 2 && 0 == $bhiProbCount) {
             $this->setEligibilityJobStatus(
                 3,
-                ['problems' => 'Patient has less than 2 ccm conditions', 'qualifyingCcmProblems' => $qualifyingCcmProblems, 'qualifyingBhiProblems' => $qualifyingBhiProblems],
+                ['problems'                 => 'Patient has less than 2 ccm conditions',
+                    'qualifyingCcmProblems' => $qualifyingCcmProblems,
+                    'qualifyingBhiProblems' => $qualifyingBhiProblems,
+                ],
                 EligibilityJob::INELIGIBLE,
                 'problems'
             );
@@ -660,10 +663,18 @@ class EligibilityChecker
 //                $args['status'] = Enrollee::TO_SMS;
 //            }
 
-        $args['home_phone']    = isset($args['home_phone']) ? (new StringManipulation())->formatPhoneNumberE164($args['home_phone']) : null;
-        $args['primary_phone'] = isset($args['primary_phone']) ? (new StringManipulation())->formatPhoneNumberE164($args['primary_phone']) : null;
-        $args['cell_phone']    = isset($args['cell_phone']) ? (new StringManipulation())->formatPhoneNumberE164($args['cell_phone']) : null;
-        $args['other_phone']   = isset($args['other_phone']) ? (new StringManipulation())->formatPhoneNumberE164($args['other_phone']) : null;
+        $args['home_phone'] = isset($args['home_phone'])
+            ? (new StringManipulation())->formatPhoneNumberE164($args['home_phone'])
+            : null;
+        $args['primary_phone'] = isset($args['primary_phone'])
+            ? (new StringManipulation())->formatPhoneNumberE164($args['primary_phone'])
+            : null;
+        $args['cell_phone'] = isset($args['cell_phone'])
+            ? (new StringManipulation())->formatPhoneNumberE164($args['cell_phone'])
+            : null;
+        $args['other_phone'] = isset($args['other_phone'])
+            ? (new StringManipulation())->formatPhoneNumberE164($args['other_phone'])
+            : null;
 
         if (array_key_exists('id', $args)) {
             unset($args['id']);
@@ -685,12 +696,18 @@ class EligibilityChecker
             $args['problems'] = json_encode($args['problems']);
         }
 
-        if (array_key_exists('insurances', $args) && ! (array_key_exists('primary_insurance', $args) && ! empty($args['primary_insurance']))) {
+        if (array_key_exists('insurances', $args) && ! (array_key_exists(
+            'primary_insurance',
+            $args
+        ) && ! empty($args['primary_insurance']))) {
             $insurances = is_array($args['insurances'])
                 ? collect($args['insurances'])
                 : $args['insurances'];
 
-            if (array_key_exists(0, $insurances) && array_keys_exist(['insurancetype', 'insuranceplanname'], $insurances[0])) {
+            if (array_key_exists(0, $insurances) && array_keys_exist(
+                ['insurancetype', 'insuranceplanname'],
+                $insurances[0]
+            )) {
                 //Athena
                 $args['primary_insurance']   = $insurances[0]['insuranceplanname'].'('.$insurances[0]['insurancetype'].')' ?? '';
                 $args['secondary_insurance'] = $insurances[1]['insuranceplanname'].'('.$insurances[1]['insurancetype'].')' ?? '';
@@ -776,18 +793,18 @@ class EligibilityChecker
 
         $enrolledPatientExists = User::withTrashed()
             ->where(
-                function ($u) use ($args) {
-                    $u->whereProgramId($args['practice_id'])
-                        ->whereHas(
-                            'patientInfo',
-                            function ($q) use ($args) {
-                                $q->withTrashed()->whereMrnNumber($args['mrn']);
-                            }
-                        );
-                }
-            )->orWhere(
-                function ($u) use ($args) {
-                    $u->where(
+                                         function ($u) use ($args) {
+                                             $u->whereProgramId($args['practice_id'])
+                                                 ->whereHas(
+                                                   'patientInfo',
+                                                   function ($q) use ($args) {
+                                                       $q->withTrashed()->whereMrnNumber($args['mrn']);
+                                                   }
+                                               );
+                                         }
+                                     )->orWhere(
+                                         function ($u) use ($args) {
+                                             $u->where(
                         [
                             [
                                 'program_id',
@@ -811,8 +828,8 @@ class EligibilityChecker
                             $q->withTrashed()->whereBirthDate($args['dob']);
                         }
                     );
-                }
-            )->first();
+                                         }
+                                     )->first();
 
         $duplicateMySqlError = false;
         $errorMsg            = null;
@@ -926,9 +943,14 @@ class EligibilityChecker
     private function setEligibilityJobStatusFromException(\Exception $e)
     {
         switch ((int) $e->getCode()) {
-            case 422: $reason = 'invalid data'; break;
-            case 500: $reason = 'possible bug'; break;
-            default: $reason  = null;
+            case 422:
+                $reason = 'invalid data';
+                break;
+            case 500:
+                $reason = 'possible bug';
+                break;
+            default:
+                $reason = null;
         }
 
         $this->setEligibilityJobStatus(
@@ -954,36 +976,36 @@ class EligibilityChecker
             if (array_key_exists('type', $insurance)) {
                 if ($this->eligibilityJob && ! empty($insurance) && $i < 3) {
                     switch ($i) {
-                    case 0:
-                        $this->eligibilityJob->primary_insurance = $insurance['type'];
+                        case 0:
+                            $this->eligibilityJob->primary_insurance = $insurance['type'];
 
-                        if (str_contains(strtolower($insurance['type']), 'medicare')
-                        ) {
-                            $isEligible = true;
-                        }
+                            if (str_contains(strtolower($insurance['type']), 'medicare')
+                            ) {
+                                $isEligible = true;
+                            }
 
-                        break;
-                    case 1:
-                        $this->eligibilityJob->secondary_insurance = $insurance['type'];
+                            break;
+                        case 1:
+                            $this->eligibilityJob->secondary_insurance = $insurance['type'];
 
-                        if (str_contains(strtolower($insurance['type']), 'medicare')
-                        ) {
-                            $isEligible = true;
-                        }
+                            if (str_contains(strtolower($insurance['type']), 'medicare')
+                            ) {
+                                $isEligible = true;
+                            }
 
-                        break;
-                    case 2:
-                        $this->eligibilityJob->tertiary_insurance = $insurance['type'];
+                            break;
+                        case 2:
+                            $this->eligibilityJob->tertiary_insurance = $insurance['type'];
 
-                        if (str_contains(strtolower($insurance['type']), 'medicare')
-                        ) {
-                            $isEligible = true;
-                        }
+                            if (str_contains(strtolower($insurance['type']), 'medicare')
+                            ) {
+                                $isEligible = true;
+                            }
 
-                        break;
-                    default:
-                        break;
-                }
+                            break;
+                        default:
+                            break;
+                    }
 
                     ++$i;
                 }
