@@ -28,7 +28,7 @@ use Validator;
  */
 class EligibilityChecker
 {
-    use CircleLinkHealth\Eligibility\ValidatesEligibility;
+    use ValidatesEligibility;
 
     /**
      * Create PreEnrollees.
