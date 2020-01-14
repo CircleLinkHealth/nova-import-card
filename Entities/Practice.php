@@ -47,7 +47,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Carbon\Carbon $updated_at
  * @property string|null $deleted_at
  * @property string|null $sms_marketing_number
- * @property \CircleLinkHealth\CarePlanModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection $careplan
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection $careplan
  * @property \CircleLinkHealth\Customer\Entities\Ehr|null $ehr
  * @property mixed $formatted_name
  * @property mixed $primary_location_id
@@ -165,7 +165,7 @@ class Practice extends BaseModel implements HasMedia
 
     public function careplan()
     {
-        return $this->hasMany('CircleLinkHealth\CarePlanModels\Entities\CarePlanTemplate', 'patient_id');
+        return $this->hasMany('CircleLinkHealth\SharedModels\Entities\CarePlanTemplate', 'patient_id');
     }
 
     public function cpmSettings()
