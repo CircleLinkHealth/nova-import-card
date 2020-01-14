@@ -7,13 +7,14 @@
 namespace App\Nova;
 
 use App\Nova\Importers\PracticeStaff as PracticeStaffImporter;
+use Circlelinkhealth\ClhImportCardExtended\ClhImportCardExtended;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Circlelinkhealth\ImportPracticeStaffCsv\ImportPracticeStaffCsv;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -57,8 +58,6 @@ class PracticeStaff extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function actions(Request $request)
@@ -69,26 +68,24 @@ class PracticeStaff extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function cards(Request $request)
     {
         $practices = Practice::whereIn('id', auth()->user()->viewableProgramIds())
             ->activeBillable()
-            ->pluck('id', 'display_name')
+            ->pluck('display_name', 'id')
             ->toArray();
 
         return [
-            new ImportPracticeStaffCsv(self::class, $practices),
+            new ClhImportCardExtended(self::class, [
+                Select::make('practice')->options($practices)->withModel(Practice::class),
+            ]),
         ];
     }
 
     /**
      * Get the fields displayed by the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -114,8 +111,6 @@ class PracticeStaff extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function filters(Request $request)
@@ -126,8 +121,7 @@ class PracticeStaff extends Resource
     /**
      * Build an "index" query for the given resource.
      *
-     * @param \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @param \Illuminate\Database\Eloquent\Builder   $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -144,8 +138,6 @@ class PracticeStaff extends Resource
     /**
      * Get the lenses available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function lenses(Request $request)
@@ -158,8 +150,7 @@ class PracticeStaff extends Resource
      *
      * This query determines which instances of the model may be attached to other resources.
      *
-     * @param \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @param \Illuminate\Database\Eloquent\Builder   $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
