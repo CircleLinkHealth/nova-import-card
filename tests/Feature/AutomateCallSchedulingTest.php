@@ -6,8 +6,8 @@
 
 namespace Tests\Feature;
 
-use App\CarePlan;
-use App\Models\CPM\CpmProblem;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
 use App\Services\Calls\SchedulerService;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\ChargeableService;

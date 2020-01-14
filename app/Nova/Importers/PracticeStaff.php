@@ -171,7 +171,7 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
 
         $user->phoneNumbers()->create(
             [
-                'number'    => (new \App\CLH\Helpers\StringManipulation())->formatPhoneNumber($row['phone_number']),
+                'number'    => (new \CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($row['phone_number']),
                 'type'      => $type,
                 'extension' => $row['phone_extension']
                     ?: null,
