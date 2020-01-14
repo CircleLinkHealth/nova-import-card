@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use App\Models\CPM\Biometrics\CpmBloodPressure;
-use App\Models\CPM\Biometrics\CpmBloodSugar;
-use App\Models\CPM\Biometrics\CpmSmoking;
-use App\Models\CPM\Biometrics\CpmWeight;
+use CircleLinkHealth\SharedModels\Entities\CpmBloodPressure;
+use CircleLinkHealth\SharedModels\Entities\CpmBloodSugar;
+use CircleLinkHealth\SharedModels\Entities\CpmSmoking;
+use CircleLinkHealth\SharedModels\Entities\CpmWeight;
 use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
@@ -26,8 +26,8 @@ use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
  * @property \CircleLinkHealth\Customer\Entities\User    $patient
  * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric                $biometric
  * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction              $instruction
- * @property \App\Models\CPM\Biometrics\CpmBloodPressure $bloodPressure
- * @property \App\Models\CPM\Biometrics\CpmBloodSugar    $bloodSugar
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodPressure $bloodPressure
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodSugar    $bloodSugar
  * @property \App\Models\CPM\Biometrics\CpmBloodSmoking  $smoking
  * @property \App\Models\CPM\Biometrics\CpmBloodWeight   $weight
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmBiometric whereCreatedAt($value)
