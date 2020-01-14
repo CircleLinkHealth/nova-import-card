@@ -6,7 +6,7 @@
 
 namespace App\Models\CPM;
 
-use App\CarePlanTemplate;
+use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Importer\Models\ImportedItems\ProblemImport;
 use CircleLinkHealth\Customer\Entities\User;
@@ -24,9 +24,9 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property string                                                                              $contains
  * @property \Carbon\Carbon                                                                      $created_at
  * @property \Carbon\Carbon                                                                      $updated_at
- * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                    $carePlanTemplates
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                    $carePlanTemplates
  * @property \App\Models\CPM\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection             $cpmBiometricsToBeActivated
- * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
  * @property \App\Models\CPM\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection             $cpmLifestylesToBeActivated
  * @property \App\Models\CPM\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection       $cpmMedicationGroupsToBeActivated
  * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection               $cpmSymptomsToBeActivated

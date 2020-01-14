@@ -7,6 +7,7 @@
 namespace App\Models\CPM;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 
 /**
  * App\Models\CPM\CpmSymptomUser.
@@ -18,13 +19,13 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Carbon\Carbon                                                                      $created_at
  * @property \Carbon\Carbon                                                                      $updated_at
  * @property \App\Models\CPM\CpmSymptom                                                          $cpmSymptom
- * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptomUser whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptomUser whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptomUser whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \App\Models\CPM\CpmInstruction                                                 $instruction
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction                                                 $instruction
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptomUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptomUser newQuery()

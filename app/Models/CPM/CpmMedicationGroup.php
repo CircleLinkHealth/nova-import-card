@@ -6,8 +6,8 @@
 
 namespace App\Models\CPM;
 
-use App\CarePlanTemplate;
-use App\Models\CCD\Medication;
+use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
+use CircleLinkHealth\SharedModels\Entities\Medication;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -18,9 +18,9 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property string                                                                              $name
  * @property \Carbon\Carbon                                                                      $created_at
  * @property \Carbon\Carbon                                                                      $updated_at
- * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                    $carePlanTemplates
- * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
- * @property \App\Models\CCD\Medication[]|\Illuminate\Database\Eloquent\Collection               $medications
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                    $carePlanTemplates
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
+ * @property \CircleLinkHealth\SharedModels\Entities\Medication[]|\Illuminate\Database\Eloquent\Collection               $medications
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $patient
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereCareItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereCreatedAt($value)

@@ -16,7 +16,6 @@ use App\Observers\CarePlanTemplateObserver;
 use App\Observers\EligibilityBatchObserver;
 use App\Observers\HolidayObserver;
 use App\Observers\MedicationObserver;
-use App\Observers\NotificationObserver;
 use App\Observers\NurseContactWindowObserver;
 use App\Observers\NurseInvoiceDailyDisputeObserver;
 use App\Observers\NurseInvoiceExtrasObserver;

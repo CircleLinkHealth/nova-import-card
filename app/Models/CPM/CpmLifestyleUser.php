@@ -7,6 +7,7 @@
 namespace App\Models\CPM;
 
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 
 /**
  * App\Models\CPM\CpmLifestyleUser.
@@ -25,7 +26,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection      $cpmInstructions
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection      $cpmInstructions
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyleUser newQuery()

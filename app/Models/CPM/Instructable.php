@@ -6,6 +6,8 @@
 
 namespace App\Models\CPM;
 
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
+
 trait Instructable
 {
     /**

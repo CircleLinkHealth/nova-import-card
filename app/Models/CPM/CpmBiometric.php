@@ -6,7 +6,7 @@
 
 namespace App\Models\CPM;
 
-use App\CarePlanTemplate;
+use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
@@ -20,8 +20,8 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Carbon\Carbon                                                                                                                                                  $created_at
  * @property \Carbon\Carbon                                                                                                                                                  $updated_at
  * @property \App\Models\CPM\Biometrics\CpmBloodPressure|\App\Models\CPM\Biometrics\CpmBloodSugar|\App\Models\CPM\Biometrics\CpmSmoking|\App\Models\CPM\Biometrics\CpmWeight $info
- * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                                                                                                $carePlanTemplates
- * @property \App\Models\CPM\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection                                                                                       $cpmInstructions
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                                                                                                $carePlanTemplates
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection                                                                                       $cpmInstructions
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection                                                                             $patient
  * @property \App\Models\CPM\CpmBiometricUser[]|\Illuminate\Database\Eloquent\Collection                                                                                     $users
  *
