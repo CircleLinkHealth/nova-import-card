@@ -91,28 +91,27 @@ class VariablePayCalculator
                     $patientCareRateLogs
                 );
             } else {
-                $patient = User::with('primaryPractice.chargeableServices')->find($patientUserId);
-                if ($this->isNewNursePayAlgoEnabled() && $this->practiceHasCcmPlusCode($patient->primaryPractice)) {
-                    //we reach here if new algo is enabled
+                if ($this->isNewNursePayAlgoEnabled()) {
+                    $patient = User::with('primaryPractice.chargeableServices')->find($patientUserId);
+                    $practiceHasCcmPlus = $patient->primaryPractice->hasCCMPlusServiceCode();
                     $totalCcm = $patient->patientSummaryForMonth($this->startDate)->ccm_time;
                     $ranges = $this->separateTimeAccruedInRanges($patientCareRateLogs);
-
-                    //testing alternative algorithm
                     if ($this->isNewNursePayAltAlgoEnabledForUser($nurseUserId)) {
                         $payForPatient = $this->getPayForPatientWithCcmPlusAltAlgo(
                             $nurseInfoId,
                             $nurseVisitFee,
                             $totalCcm,
-                            $ranges
+                            $ranges,
+                            $practiceHasCcmPlus
                         );
                     } else {
-                        //new algorithm for ccm plus codes
                         $payForPatient = $this->getPayForPatientWithCcmPlusAlgo(
                             $nurseInfoId,
                             $nurseHighRate,
                             $nurseLowRate,
                             $totalCcm,
-                            $ranges
+                            $ranges,
+                            $practiceHasCcmPlus
                         );
                     }
                 } else {
@@ -210,10 +209,11 @@ class VariablePayCalculator
      * @param $nurseLowRate
      * @param $totalCcm
      * @param $ranges
+     * @param bool $practiceHasCcmPlus
      *
      * @return float|int
      */
-    private function getPayForPatientWithCcmPlusAlgo($nurseInfoId, $nurseHighRate, $nurseLowRate, $totalCcm, $ranges)
+    private function getPayForPatientWithCcmPlusAlgo($nurseInfoId, $nurseHighRate, $nurseLowRate, $totalCcm, $ranges, $practiceHasCcmPlus = false)
     {
         $result = 0.0;
 
@@ -249,10 +249,10 @@ class VariablePayCalculator
                     $shouldPayHighRate = true;
                     break;
                 case 1:
-                    $shouldPayHighRate = $totalCcm >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
+                    $shouldPayHighRate = $practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
                     break;
                 case 2:
-                    $shouldPayHighRate = $totalCcm >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS;
+                    $shouldPayHighRate = $practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS;
                     break;
                 default:
                     $shouldPayHighRate = false;
@@ -268,7 +268,7 @@ class VariablePayCalculator
         return $result;
     }
 
-    private function getPayForPatientWithCcmPlusAltAlgo($nurseInfoId, $nurseVisitFee, $totalCcm, $ranges)
+    private function getPayForPatientWithCcmPlusAltAlgo($nurseInfoId, $nurseVisitFee, $totalCcm, $ranges, $practiceHasCcmPlus = false)
     {
         $result = 0.0;
 
@@ -283,10 +283,10 @@ class VariablePayCalculator
                     $shouldPay = $totalCcm >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
                     break;
                 case 1:
-                    $shouldPay = $totalCcm >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
+                    $shouldPay = $practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
                     break;
                 case 2:
-                    $shouldPay = $totalCcm >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS;
+                    $shouldPay = $practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS;
                     break;
                 default:
                     $shouldPay = false;
