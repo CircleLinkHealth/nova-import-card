@@ -6,7 +6,7 @@
 
 namespace App\ValueObjects\BlueButtonMedicalRecord;
 
-use App\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Customer\Entities\Practice;
 
 class MedicalRecord
@@ -16,7 +16,7 @@ class MedicalRecord
      */
     private $data;
     /**
-     * @var EligibilityJob
+     * @var \CircleLinkHealth\Eligibility\Entities\EligibilityJob
      */
     private $job;
     /**

@@ -6,13 +6,13 @@
 
 namespace App\Services\MedicalRecords;
 
-use App\Enrollee;
-use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class ImportService
 {
@@ -23,7 +23,7 @@ class ImportService
      *
      * @throws \Exception
      *
-     * @return \App\Models\MedicalRecords\ImportedMedicalRecord
+     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord
      */
     public function createTabularMedicalRecordAndImport($row, Practice $practice)
     {
@@ -167,7 +167,7 @@ class ImportService
     /**
      * @throws \Exception
      *
-     * @return \App\Models\MedicalRecords\ImportedMedicalRecord
+     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord
      */
     public function importPHXEnrollee(Enrollee $enrollee)
     {

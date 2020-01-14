@@ -1636,7 +1636,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'admin.families.update',
             ]);
         });
-        
+
         Route::get('reports/nurse/daily', [
             'uses' => 'NurseController@makeDailyReport',
             'as'   => 'admin.reports.nurse.daily',

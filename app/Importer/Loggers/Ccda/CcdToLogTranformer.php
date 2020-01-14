@@ -7,8 +7,9 @@
 namespace App\Importer\Loggers\Ccda;
 
 use App\CLH\CCD\Importer\ParsingStrategies\Helpers\UserMetaParserHelpers;
-use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
+use CircleLinkHealth\SharedModels\Entities\AllergyLog;
 
 /**
  * Takes data from the the json CCD and transforms it so that it can be saved as one of the transformer Models.
@@ -18,7 +19,7 @@ use App\Importer\Models\ItemLogs\DemographicsLog;
 class CcdToLogTranformer
 {
     /**
-     * @see AllergyLog
+     * @see \CircleLinkHealth\SharedModels\Entities\AllergyLog
      *
      * @param $allergy
      *
@@ -108,7 +109,7 @@ class CcdToLogTranformer
     }
 
     /**
-     * @see @see App\Importer\Models\ItemLogs\MedicationLog
+     * @see @see CircleLinkHealth\SharedModels\Entities\MedicationLog
      *
      * @param $medication
      *

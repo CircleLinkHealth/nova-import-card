@@ -8,7 +8,7 @@ namespace App\Jobs;
 
 use App\Importer\Models\ItemLogs\DocumentLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
-use App\Models\MedicalRecords\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\MedicalRecords\ImportService;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -101,7 +101,7 @@ class ImportCsvPatientList implements ShouldQueue
     /**
      * Get the most updated information from the csv (phone numbers, preferred call days/times, provider and so on).
      *
-     * @param ImportedMedicalRecord $importedMedicalRecord
+     * @param \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord $importedMedicalRecord
      * @param array                 $row
      */
     public function replaceWithValuesFromCsv(ImportedMedicalRecord $importedMedicalRecord, array $row)

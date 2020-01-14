@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Exceptions\FileNotFoundException;
+use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use App\Traits\RunsCommands;
 use Illuminate\Console\Command;
 

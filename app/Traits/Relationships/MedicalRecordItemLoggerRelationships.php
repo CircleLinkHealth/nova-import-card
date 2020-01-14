@@ -7,12 +7,12 @@
 namespace App\Traits\Relationships;
 
 use App\Importer\Models\ImportedItems\DemographicsImport;
-use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Importer\Models\ItemLogs\DocumentLog;
-use App\Importer\Models\ItemLogs\MedicationLog;
-use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
+use CircleLinkHealth\SharedModels\Entities\AllergyLog;
+use CircleLinkHealth\SharedModels\Entities\MedicationLog;
 
 /**
  * This trait defines all the CCD Logger relationships.

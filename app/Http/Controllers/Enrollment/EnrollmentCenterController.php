@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\Enrollment;
 
 use App\CareAmbassadorLog;
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Http\Controllers\Controller;
 use App\Jobs\ImportConsentedEnrollees;
 use App\TrixField;

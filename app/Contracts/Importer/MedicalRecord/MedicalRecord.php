@@ -6,8 +6,8 @@
 
 namespace App\Contracts\Importer\MedicalRecord;
 
-use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
-use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
+use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
+
 use CircleLinkHealth\Customer\Entities\User;
 
 /**

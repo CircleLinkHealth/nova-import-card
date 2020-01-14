@@ -10,56 +10,58 @@ use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Loggers\Csv\PhoenixHeartSectionsLogger;
 use App\Importer\Loggers\Csv\RappaSectionsLogger;
 use App\Importer\Loggers\Csv\TabularMedicalRecordSectionsLogger;
-use App\Importer\MedicalRecordEloquent;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicalRecordEloquent;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\MedicalRecords\TabularMedicalRecord.
  *
- * @property int                                                                                              $id
- * @property int|null                                                                                         $practice_id
- * @property int|null                                                                                         $location_id
- * @property int|null                                                                                         $billing_provider_id
- * @property int|null                                                                                         $uploaded_by
- * @property int|null                                                                                         $patient_id
- * @property string|null                                                                                      $patient_name
- * @property string|null                                                                                      $first_name
- * @property string|null                                                                                      $last_name
- * @property \Carbon\Carbon|null                                                                              $dob
- * @property string|null                                                                                      $problems_string
- * @property string|null                                                                                      $medications_string
- * @property string|null                                                                                      $allergies_string
- * @property string|null                                                                                      $provider_name
- * @property string|null                                                                                      $mrn
- * @property string|null                                                                                      $gender
- * @property string|null                                                                                      $language
- * @property \Carbon\Carbon                                                                                   $consent_date
- * @property string|null                                                                                      $primary_phone
- * @property string|null                                                                                      $cell_phone
- * @property string|null                                                                                      $home_phone
- * @property string|null                                                                                      $work_phone
- * @property string|null                                                                                      $email
- * @property string|null                                                                                      $address
- * @property string|null                                                                                      $address2
- * @property string|null                                                                                      $city
- * @property string|null                                                                                      $state
- * @property string|null                                                                                      $zip
- * @property string|null                                                                                      $primary_insurance
- * @property string|null                                                                                      $secondary_insurance
- * @property string|null                                                                                      $tertiary_insurance
- * @property \Carbon\Carbon|null                                                                              $created_at
- * @property \Carbon\Carbon|null                                                                              $updated_at
- * @property string|null                                                                                      $preferred_call_times
- * @property string|null                                                                                      $preferred_call_days
- * @property \App\Importer\Models\ItemLogs\AllergyLog[]|\Illuminate\Database\Eloquent\Collection              $allergies
- * @property \App\Importer\Models\ItemLogs\DemographicsLog[]|\Illuminate\Database\Eloquent\Collection         $demographics
- * @property \App\Importer\Models\ImportedItems\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection $demographicsImports
- * @property \App\Importer\Models\ItemLogs\DocumentLog[]|\Illuminate\Database\Eloquent\Collection             $document
- * @property \App\Importer\Models\ItemLogs\MedicationLog[]|\Illuminate\Database\Eloquent\Collection           $medications
- * @property \App\Importer\Models\ItemLogs\ProblemLog[]|\Illuminate\Database\Eloquent\Collection              $problems
- * @property \App\Importer\Models\ItemLogs\ProviderLog[]|\Illuminate\Database\Eloquent\Collection             $providers
+ * @property int                                                                                                                $id
+ * @property int|null                                                                                                           $practice_id
+ * @property int|null                                                                                                           $location_id
+ * @property int|null                                                                                                           $billing_provider_id
+ * @property int|null                                                                                                           $uploaded_by
+ * @property int|null                                                                                                           $patient_id
+ * @property string|null                                                                                                        $patient_name
+ * @property string|null                                                                                                        $first_name
+ * @property string|null                                                                                                        $last_name
+ * @property \Carbon\Carbon|null                                                                                                $dob
+ * @property string|null                                                                                                        $problems_string
+ * @property string|null                                                                                                        $medications_string
+ * @property string|null                                                                                                        $allergies_string
+ * @property string|null                                                                                                        $provider_name
+ * @property string|null                                                                                                        $mrn
+ * @property string|null                                                                                                        $gender
+ * @property string|null                                                                                                        $language
+ * @property \Carbon\Carbon                                                                                                     $consent_date
+ * @property string|null                                                                                                        $primary_phone
+ * @property string|null                                                                                                        $cell_phone
+ * @property string|null                                                                                                        $home_phone
+ * @property string|null                                                                                                        $work_phone
+ * @property string|null                                                                                                        $email
+ * @property string|null                                                                                                        $address
+ * @property string|null                                                                                                        $address2
+ * @property string|null                                                                                                        $city
+ * @property string|null                                                                                                        $state
+ * @property string|null                                                                                                        $zip
+ * @property string|null                                                                                                        $primary_insurance
+ * @property string|null                                                                                                        $secondary_insurance
+ * @property string|null                                                                                                        $tertiary_insurance
+ * @property \Carbon\Carbon|null                                                                                                $created_at
+ * @property \Carbon\Carbon|null                                                                                                $updated_at
+ * @property string|null                                                                                                        $preferred_call_times
+ * @property string|null                                                                                                        $preferred_call_days
+ * @property \CircleLinkHealth\SharedModels\Entities\AllergyLog[]|\Illuminate\Database\Eloquent\Collection                      $allergies
+ * @property \App\Importer\Models\ItemLogs\DemographicsLog[]|\Illuminate\Database\Eloquent\Collection                           $demographics
+ * @property \App\Importer\Models\ImportedItems\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection                   $demographicsImports
+ * @property \App\Importer\Models\ItemLogs\DocumentLog[]|\Illuminate\Database\Eloquent\Collection                               $document
+ * @property \CircleLinkHealth\SharedModels\Entities\MedicationLog[]|\Illuminate\Database\Eloquent\Collection                   $medications
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog[]|\Illuminate\Database\Eloquent\Collection $problems
+ * @property \App\Importer\Models\ItemLogs\ProviderLog[]|\Illuminate\Database\Eloquent\Collection                               $providers
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereAddress2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereAllergiesString($value)

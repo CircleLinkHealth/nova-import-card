@@ -80,6 +80,14 @@
       "url": "git@github.com:CircleLinkHealth/module-sqlviews.git"
     },
     {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
+    },
+    {
       "type": "path",
       "url": "./nova-components/ClhImportCardExtended"
     },
@@ -104,12 +112,14 @@
     "appstract/laravel-opcache": "~2.0.5",
     "barryvdh/laravel-snappy": "0.4.4",
     "circlelinkhealth/ccda-parser-processor-php": "dev-master",
-    "circlelinkhealth/core": "1.35",
+    "circlelinkhealth/core-module": "1.35",
     "circlelinkhealth/cpmmigrations": "1.0",
     "circlelinkhealth/customer": "dev-CPM-1658_method_to_nurse_model_plus_calendarFields",
+    "circlelinkhealth/eligibility": "dev-master",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/raygun": "0.6",
     "circlelinkhealth/revisionable": "*",
+    "circlelinkhealth/shared-models-module": "dev-master",
     "circlelinkhealth/sqlviews": "dev-master",
     "circlelinkhealth/timetracking": "1.1.4",
     "circlelinkhealth/twofa": "1.1.3",
@@ -161,7 +171,7 @@
     "ext-xdebug": "*",
     "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
-    "brianium/paratest": "*",
+    "brianium/paratest": "^3.1.1",
     "darkaonline/l5-swagger": "^5.5",
     "filp/whoops": "~2.0",
     "friendsofphp/php-cs-fixer": "^2.13",
@@ -170,7 +180,7 @@
     "mockery/mockery": "^1.0",
     "nwidart/laravel-modules": "^6.0",
     "orangehill/iseed": "dev-master",
-    "phpunit/phpunit": "^7.0",
+    "phpunit/phpunit": "^7.5.8",
     "spatie/phpunit-watcher": "^1.8",
     "squizlabs/php_codesniffer": "*",
     "symfony/css-selector": "^4.0",
@@ -195,7 +205,7 @@
       "Tests\\": "tests/"
     },
     "files": [
-      "vendor/circlelinkhealth/core/Helpers/helpers.php"
+      "vendor/circlelinkhealth/core-module/Helpers/helpers.php"
     ]
   },
   "scripts": {

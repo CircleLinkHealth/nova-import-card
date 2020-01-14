@@ -6,7 +6,7 @@
 
 namespace App\Contracts\Importer\MedicalRecord\Section;
 
-use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
 
 /**
  * This is a Section Importer. It allows for each Health Section to be able to be imported for QA.
@@ -22,7 +22,7 @@ interface Importer
      *
      * @param $medicalRecordId
      * @param $medicalRecordType
-     * @param ImportedMedicalRecord $importedMedicalRecord
+     * @param \CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord $importedMedicalRecord
      *
      * @return mixed
      */

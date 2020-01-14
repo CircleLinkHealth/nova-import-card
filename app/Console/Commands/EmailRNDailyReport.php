@@ -44,7 +44,7 @@ class EmailRNDailyReport extends Command
     /**
      * Execute the console command.
      *
-     * @throws \App\Exceptions\FileNotFoundException
+     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
      * @throws \Exception
      *
      * @return mixed

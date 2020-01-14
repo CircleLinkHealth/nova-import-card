@@ -132,7 +132,7 @@ class NurseInvoiceDisputeDeadline
     {
         $deadline = explode(
             ' ',
-            \App\AppConfig::pull(
+            \CircleLinkHealth\Core\Entities\AppConfig::pull(
                 self::NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_KEY,
                 self::DEFAULT_NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_DAY_AND_TIME
             )

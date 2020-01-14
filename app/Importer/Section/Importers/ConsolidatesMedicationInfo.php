@@ -6,7 +6,7 @@
 
 namespace App\Importer\Section\Importers;
 
-use App\Importer\Models\ItemLogs\MedicationLog;
+use CircleLinkHealth\SharedModels\Entities\MedicationLog;
 
 trait ConsolidatesMedicationInfo
 {
@@ -18,8 +18,6 @@ trait ConsolidatesMedicationInfo
     /**
      * Consolidate Medication info from BB Medication Product and BB Medication Product Translation sections.
      * Sometimes info is in product, or translation or both.
-     *
-     * @param MedicationLog $medicationLog
      *
      * @return mixed
      */

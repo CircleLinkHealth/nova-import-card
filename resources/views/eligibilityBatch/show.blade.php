@@ -60,7 +60,7 @@
                             </div>
                         @endif
 
-                        @if ($batch->type == App\EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
+                        @if ($batch->type == CircleLinkHealth\Eligibility\Entities\EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
                             <div class="pull-left" style="padding-left: 2%;">
                                 <a href="{{route('get.eligibility.reprocess', [$batch->id])}}"
                                    class="btn btn-danger">Reprocess</a>

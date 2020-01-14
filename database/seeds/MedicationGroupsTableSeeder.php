@@ -4,8 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\CarePlanTemplate;
-use App\Models\CPM\CpmMedicationGroup;
+use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
+use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
 use Illuminate\Database\Seeder;
 
 class MedicationGroupsTableSeeder extends Seeder

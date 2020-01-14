@@ -10,15 +10,15 @@ use App\CLH\Repositories\UserRepository;
 use App\Contracts\ReportFormatter;
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
-use App\Models\CPM\CpmProblem;
 use App\Services\CarePlanViewService;
-use App\Services\PdfService;
 use App\Testing\CBT\TestPatients;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -565,8 +565,6 @@ class PatientController extends Controller
 
     /**
      * Create Cross Browser Testing Patients.
-     *
-     * @param Request $request
      *
      * @return \Illuminate\Http\RedirectResponse
      */

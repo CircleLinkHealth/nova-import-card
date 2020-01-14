@@ -6,14 +6,14 @@
 
 namespace App\Jobs;
 
-use App\EligibilityBatch;
-use App\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\Eligibility\Entities\Problem;
-use App\Services\EligibilityChecker;
+use CircleLinkHealth\Eligibility\EligibilityChecker;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;

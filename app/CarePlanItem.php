@@ -10,15 +10,18 @@ namespace App;
  * App\CarePlanItem.
  *
  * @property \App\CareItem                                                $careItem
- * @property \App\CarePlan                                                $carePlan
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlan             $carePlan
  * @property \App\CareSection                                             $careSection
  * @property \App\CarePlanItem[]|\Illuminate\Database\Eloquent\Collection $children
  * @property \App\CarePlanItem                                            $parents
  * @mixin \Eloquent
+ *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem query()
+ *
  * @property int|null $children_count
  * @property int|null $revision_history_count
  */
@@ -54,7 +57,7 @@ class CarePlanItem extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function carePlan()
     {
-        return $this->belongsTo('App\CarePlan', 'plan_id', 'id');
+        return $this->belongsTo('CircleLinkHealth\SharedModels\Entities\CarePlan', 'plan_id', 'id');
     }
 
     public function careSection()

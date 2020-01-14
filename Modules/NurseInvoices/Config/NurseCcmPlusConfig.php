@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\NurseInvoices\Config;
 
-use App\AppConfig;
+use CircleLinkHealth\Core\Entities\AppConfig;
 
 class NurseCcmPlusConfig
 {

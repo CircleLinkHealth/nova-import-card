@@ -6,10 +6,8 @@
 
 namespace App\Importer\Models\ItemLogs;
 
-use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
 use App\Importer\Models\ImportedItems\DemographicsImport;
-use App\Traits\Relationships\BelongsToCcda;
-use App\Traits\Relationships\BelongsToVendor;
+use CircleLinkHealth\Eligibility\BelongsToCcda;
 
 /**
  * App\Importer\Models\ItemLogs\DemographicsLog.
@@ -45,9 +43,10 @@ use App\Traits\Relationships\BelongsToVendor;
  * @property \Carbon\Carbon                                        $updated_at
  * @property string|null                                           $preferred_call_times
  * @property string|null                                           $preferred_call_days
- * @property \App\Models\MedicalRecords\Ccda                       $ccda
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda          $ccda
  * @property \App\Importer\Models\ImportedItems\DemographicsImport $importedItem
  * @property \App\Models\CCD\CcdVendor|null                        $vendor
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog whereCellPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog whereCity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog whereConsentDate($value)
@@ -80,17 +79,18 @@ use App\Traits\Relationships\BelongsToVendor;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog whereWorkPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog whereZip($value)
  * @mixin \Eloquent
+ *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DemographicsLog query()
+ *
  * @property int|null $revision_history_count
  */
-class DemographicsLog extends \CircleLinkHealth\Core\Entities\BaseModel implements ItemLog
+class DemographicsLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use BelongsToCcda;
-    use
-        BelongsToVendor;
 
     protected $fillable = [
         'medical_record_type',
