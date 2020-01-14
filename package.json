@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "build-cpm": "composer install && php artisan migrate && php artisan migrate:views && npm install && npm run bower_install",
+        "build-cpm": "COMPOSER_MEMORY_LIMIT=-1 composer install && php artisan migrate && php artisan migrate:views && npm install && npm run bower_install",
         "build-dev": "npm run build-cpm && npm run dev && composer ide && sh ./scripts/install",
         "build-prod": "npm run build-cpm && npm run prod",
         "dev": "npm run development",

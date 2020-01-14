@@ -1,2 +1,2 @@
-eligibility-module/
-shared-models-module/
+*
+!.gitignore
