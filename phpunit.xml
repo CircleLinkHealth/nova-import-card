@@ -16,9 +16,6 @@
          stopOnFailure="true"
          verbose="true">
     <testsuites>
-        <testsuite name="Eligibility">
-            <directory suffix="Test.php">./Modules/Eligibility/Tests</directory>
-        </testsuite>
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
@@ -28,18 +25,6 @@
         <testsuite name="Deployment">
             <directory suffix="Test.php">./tests/integration/</directory>
             <directory suffix="Test.php">./tests/Unit</directory>
-        </testsuite>
-        <testsuite name="Notes">
-            <directory>./tests/Notes/</directory>
-        </testsuite>
-        <testsuite name="TimeTracking">
-            <directory>./tests/TimeTracking/</directory>
-        </testsuite>
-        <testsuite name="Calls">
-            <directory>./tests/Calls/</directory>
-        </testsuite>
-        <testsuite name="Care_Plan">
-            <directory>./tests/CarePlan/</directory>
         </testsuite>
         <testsuite name="Provider">
             <directory>./tests/Provider/</directory>

@@ -80,7 +80,7 @@ namespace App;
  * @property int|null                                                                                                        $cpm_lifestyles_count
  * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection           $cpmMedicationGroups
  * @property int|null                                                                                                        $cpm_medication_groups_count
- * @property \App\Models\CPM\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection                                          $cpmMiscUserPivot
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection                                          $cpmMiscUserPivot
  * @property int|null                                                                                                        $cpm_misc_user_pivot_count
  * @property \CircleLinkHealth\SharedModels\Entities\CpmMisc[]|\Illuminate\Database\Eloquent\Collection                      $cpmMiscs
  * @property int|null                                                                                                        $cpm_miscs_count

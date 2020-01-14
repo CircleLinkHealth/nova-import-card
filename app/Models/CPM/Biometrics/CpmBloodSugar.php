@@ -7,7 +7,7 @@
 namespace App\Models\CPM\Biometrics;
 
 use App\Contracts\Models\CPM\Biometric;
-use App\Models\CPM\CpmBiometric;
+use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 use CircleLinkHealth\Customer\Entities\User;
 
 /**
