@@ -21,6 +21,7 @@ use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Rules\HasValidNbiMrn;
+use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use CircleLinkHealth\SharedModels\Entities\Pdf;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Log;
@@ -42,7 +43,7 @@ use Validator;
  * @property string|null                                                $last_printed
  * @property \Carbon\Carbon                                             $created_at
  * @property \Carbon\Carbon                                             $updated_at
- * @property \App\CarePlanTemplate                                      $carePlanTemplate
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate                                      $carePlanTemplate
  * @property \App\CareplanAssessment                                    $assessment
  * @property \CircleLinkHealth\Customer\Entities\User                   $patient
  * @property \App\Models\Pdf[]|\Illuminate\Database\Eloquent\Collection $pdfs
