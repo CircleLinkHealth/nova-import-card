@@ -1,5 +1,6 @@
 {
     "name": "circlelinkhealth/customer",
+    "type": "laravel-module",
     "description": "",
     "authors": [
         {
@@ -27,10 +28,10 @@
         }
     },
     "require": {
-        "circlelinkhealth/core": "^1.0",
+        "circlelinkhealth/core-module": "*",
         "laravel/passport": "^7.0",
         "laravel/scout": "^7.1",
-        "circlelinkhealth/cerberus-gatekeeper": "^v3.0.2",
+        "circlelinkhealth/cerberus-gatekeeper": "*",
         "spatie/laravel-medialibrary": "^7.0.0"
     },
     "repositories": [

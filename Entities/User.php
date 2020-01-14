@@ -8,36 +8,36 @@ namespace CircleLinkHealth\Customer\Entities;
 
 use App\Call;
 use App\CareAmbassador;
-use App\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use App\CareplanAssessment;
 use App\Constants;
-use App\Exceptions\InvalidArgumentException;
+use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use App\ForeignId;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Message;
-use App\Models\CCD\Allergy;
-use App\Models\CCD\CcdInsurancePolicy;
-use App\Models\CCD\Medication;
-use App\Models\CCD\Problem;
-use App\Models\CPM\Biometrics\CpmBloodPressure;
-use App\Models\CPM\Biometrics\CpmBloodSugar;
-use App\Models\CPM\Biometrics\CpmSmoking;
-use App\Models\CPM\Biometrics\CpmWeight;
-use App\Models\CPM\CpmBiometric;
-use App\Models\CPM\CpmLifestyle;
-use App\Models\CPM\CpmMedicationGroup;
-use App\Models\CPM\CpmMisc;
-use App\Models\CPM\CpmMiscUser;
-use App\Models\CPM\CpmProblem;
-use App\Models\CPM\CpmSymptom;
+use CircleLinkHealth\SharedModels\Entities\Allergy;
+use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
+use CircleLinkHealth\SharedModels\Entities\Medication;
+use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\CpmBloodPressure;
+use CircleLinkHealth\SharedModels\Entities\CpmBloodSugar;
+use CircleLinkHealth\SharedModels\Entities\CpmSmoking;
+use CircleLinkHealth\SharedModels\Entities\CpmWeight;
+use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
+use CircleLinkHealth\SharedModels\Entities\CpmLifestyle;
+use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
+use CircleLinkHealth\SharedModels\Entities\CpmMiscUser;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
 use App\Models\EmailSettings;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
-use App\TargetPatient;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -106,24 +106,24 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Appointment[]|\Illuminate\Database\Eloquent\Collection      $appointments
  * @property \App\CareAmbassador                                                                             $careAmbassador
  * @property \App\CareItem[]|\Illuminate\Database\Eloquent\Collection                                        $careItems
- * @property \App\CarePlan                                                                                   $carePlan
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlan                                                                                   $carePlan
  * @property \CircleLinkHealth\Customer\Entities\CarePerson[]|\Illuminate\Database\Eloquent\Collection       $careTeamMembers
- * @property \App\Models\CCD\Allergy[]|\Illuminate\Database\Eloquent\Collection                              $ccdAllergies
- * @property \App\Models\CCD\CcdInsurancePolicy[]|\Illuminate\Database\Eloquent\Collection                   $ccdInsurancePolicies
- * @property \App\Models\CCD\Medication[]|\Illuminate\Database\Eloquent\Collection                           $ccdMedications
- * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection                              $ccdProblems
- * @property \App\Models\MedicalRecords\Ccda[]|\Illuminate\Database\Eloquent\Collection                      $ccdas
+ * @property \CircleLinkHealth\SharedModels\Entities\Allergy[]|\Illuminate\Database\Eloquent\Collection                              $ccdAllergies
+ * @property \CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy[]|\Illuminate\Database\Eloquent\Collection                   $ccdInsurancePolicies
+ * @property \CircleLinkHealth\SharedModels\Entities\Medication[]|\Illuminate\Database\Eloquent\Collection                           $ccdMedications
+ * @property \CircleLinkHealth\SharedModels\Entities\Problem[]|\Illuminate\Database\Eloquent\Collection                              $ccdProblems
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda[]|\Illuminate\Database\Eloquent\Collection                      $ccdas
  * @property \App\Comment[]|\Illuminate\Database\Eloquent\Collection                                         $comment
- * @property \App\Models\CPM\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection                         $cpmBiometrics
- * @property \App\Models\CPM\Biometrics\CpmBloodPressure                                                     $cpmBloodPressure
- * @property \App\Models\CPM\Biometrics\CpmBloodSugar                                                        $cpmBloodSugar
- * @property \App\Models\CPM\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection                         $cpmLifestyles
- * @property \App\Models\CPM\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection                   $cpmMedicationGroups
- * @property \App\Models\CPM\CpmMisc[]|\Illuminate\Database\Eloquent\Collection                              $cpmMiscs
- * @property \App\Models\CPM\CpmProblem[]|\Illuminate\Database\Eloquent\Collection                           $cpmProblems
- * @property \App\Models\CPM\Biometrics\CpmSmoking                                                           $cpmSmoking
- * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection                           $cpmSymptoms
- * @property \App\Models\CPM\Biometrics\CpmWeight                                                            $cpmWeight
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection                         $cpmBiometrics
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodPressure                                                     $cpmBloodPressure
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmBloodSugar                                                        $cpmBloodSugar
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection                         $cpmLifestyles
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection                   $cpmMedicationGroups
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMisc[]|\Illuminate\Database\Eloquent\Collection                              $cpmMiscs
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem[]|\Illuminate\Database\Eloquent\Collection                           $cpmProblems
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmSmoking                                                           $cpmSmoking
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection                           $cpmSymptoms
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmWeight                                                            $cpmWeight
  * @property \App\Models\EmailSettings                                                                       $emailSettings
  * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection $emrDirect
  * @property \App\ForeignId[]|\Illuminate\Database\Eloquent\Collection                                       $foreignId
@@ -207,7 +207,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Role[]|\Illuminate\Database\Eloquent\Collection        $roles
  * @property mixed                                                                                      $email_address
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                                 $ucp
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User exceptType($type)
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User hasBillingProvider($billing_provider_id)
@@ -248,7 +247,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\User withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
  * @mixin \Eloquent
- *
  * @property int|null    $saas_account_id
  * @property int         $skip_browser_checks Skip compatible browser checks when the user logs in
  * @property string|null $last_session_id
@@ -261,7 +259,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
  * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection
  *     $clinicalEmergencyContactLocations
- * @property \App\TargetPatient                                      $ehrInfo
+ * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                      $ehrInfo
  * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo $ehrReportWriterInfo
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection
  *     $forwardedAlertsBy
@@ -279,7 +277,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Permission[]|\Illuminate\Database\Eloquent\Collection $perms
  * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null                                      $saasAccount
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[]                        $tokens
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     filter(\App\Filters\QueryFilters $filters)
@@ -298,17 +295,14 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  *     whereSaasAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     whereSkipBrowserChecks($value)
- *
- * @property \App\Models\CPM\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection                      $cpmMiscUserPivot
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection                      $cpmMiscUserPivot
  * @property \CircleLinkHealth\NurseInvoices\Entities\Dispute[]|\Illuminate\Database\Eloquent\Collection $disputes
  * @property \CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra[]|\Illuminate\Database\Eloquent\Collection
  *     $nurseBonuses
  * @property \CircleLinkHealth\Customer\Entities\PatientAWVSummary[]|\Illuminate\Database\Eloquent\Collection
  *     $patientAWVSummaries
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     ofActiveBillablePractice()
- *
  * @property int|null $activities_count
  * @property int|null $activities_as_provider_count
  * @property int|null $appointments_count
@@ -358,7 +352,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null $roles_count
  * @property int|null $tokens_count
  * @property int|null $ucp_count
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User practiceStaff()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User
  *     notOfPracticeRequiringSpecialBhiConsent()
@@ -893,7 +886,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         return $this->phoneNumbers()->create(
             [
-                'number'     => (new \App\CLH\Helpers\StringManipulation())->formatPhoneNumber($number),
+                'number'     => (new \CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($number),
                 'type'       => PhoneNumber::getTypes()[$type] ?? null,
                 'is_primary' => $isPrimary,
                 'extension'  => $extension,
