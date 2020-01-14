@@ -104,9 +104,9 @@
     "appstract/laravel-opcache": "~2.0.5",
     "barryvdh/laravel-snappy": "0.4.4",
     "circlelinkhealth/ccda-parser-processor-php": "dev-master",
-    "circlelinkhealth/core": "1.35",
+    "circlelinkhealth/core-module": "1.35",
     "circlelinkhealth/cpmmigrations": "1.0",
-    "circlelinkhealth/customer": "1.6.9",
+    "circlelinkhealth/customer": "1.7.0",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/raygun": "0.6",
     "circlelinkhealth/revisionable": "*",
@@ -195,7 +195,7 @@
       "Tests\\": "tests/"
     },
     "files": [
-      "vendor/circlelinkhealth/core/Helpers/helpers.php"
+      "vendor/circlelinkhealth/core-module/Helpers/helpers.php"
     ]
   },
   "scripts": {
