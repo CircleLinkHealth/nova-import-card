@@ -84,6 +84,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property \App\EligibilityJob $eligibilityJob
  * @property int|null            $revision_history_count
+ * @property \App\TargetPatient  $targetPatient
  */
 class EligibilityJob extends BaseModel
 {
