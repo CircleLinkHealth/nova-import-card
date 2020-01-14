@@ -6,7 +6,6 @@
 
 namespace CircleLinkHealth\Core\Exceptions;
 
-use CircleLinkHealth\Eligibility\Exceptions\InvalidStructureException;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -41,7 +40,6 @@ class Handler extends ExceptionHandler
         ModelNotFoundException::class,
         TokenMismatchException::class,
         ValidationException::class,
-        InvalidStructureException::class,
     ];
 
     /**
