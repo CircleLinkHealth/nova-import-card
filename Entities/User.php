@@ -8,36 +8,36 @@ namespace CircleLinkHealth\Customer\Entities;
 
 use App\Call;
 use App\CareAmbassador;
-use App\CarePlan;
+use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use App\CareplanAssessment;
 use App\Constants;
-use App\Exceptions\InvalidArgumentException;
+use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use App\ForeignId;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Message;
-use App\Models\CCD\Allergy;
-use App\Models\CCD\CcdInsurancePolicy;
-use App\Models\CCD\Medication;
-use App\Models\CCD\Problem;
-use App\Models\CPM\Biometrics\CpmBloodPressure;
-use App\Models\CPM\Biometrics\CpmBloodSugar;
-use App\Models\CPM\Biometrics\CpmSmoking;
-use App\Models\CPM\Biometrics\CpmWeight;
-use App\Models\CPM\CpmBiometric;
-use App\Models\CPM\CpmLifestyle;
-use App\Models\CPM\CpmMedicationGroup;
-use App\Models\CPM\CpmMisc;
+use CircleLinkHealth\CarePlanModels\Entities\Allergy;
+use CircleLinkHealth\CarePlanModels\Entities\CcdInsurancePolicy;
+use CircleLinkHealth\CarePlanModels\Entities\Medication;
+use CircleLinkHealth\CarePlanModels\Entities\Problem;
+use CircleLinkHealth\CarePlanModels\Entities\CpmBloodPressure;
+use CircleLinkHealth\CarePlanModels\Entities\CpmBloodSugar;
+use CircleLinkHealth\CarePlanModels\Entities\CpmSmoking;
+use CircleLinkHealth\CarePlanModels\Entities\CpmWeight;
+use CircleLinkHealth\CarePlanModels\Entities\CpmBiometric;
+use CircleLinkHealth\CarePlanModels\Entities\CpmLifestyle;
+use CircleLinkHealth\CarePlanModels\Entities\CpmMedicationGroup;
+use CircleLinkHealth\CarePlanModels\Entities\CpmMisc;
 use App\Models\CPM\CpmMiscUser;
-use App\Models\CPM\CpmProblem;
-use App\Models\CPM\CpmSymptom;
+use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
+use CircleLinkHealth\CarePlanModels\Entities\CpmSymptom;
 use App\Models\EmailSettings;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
-use App\TargetPatient;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -106,24 +106,24 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Appointment[]|\Illuminate\Database\Eloquent\Collection      $appointments
  * @property \App\CareAmbassador                                                                             $careAmbassador
  * @property \App\CareItem[]|\Illuminate\Database\Eloquent\Collection                                        $careItems
- * @property \App\CarePlan                                                                                   $carePlan
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CarePlan                                                                                   $carePlan
  * @property \CircleLinkHealth\Customer\Entities\CarePerson[]|\Illuminate\Database\Eloquent\Collection       $careTeamMembers
- * @property \App\Models\CCD\Allergy[]|\Illuminate\Database\Eloquent\Collection                              $ccdAllergies
- * @property \App\Models\CCD\CcdInsurancePolicy[]|\Illuminate\Database\Eloquent\Collection                   $ccdInsurancePolicies
- * @property \App\Models\CCD\Medication[]|\Illuminate\Database\Eloquent\Collection                           $ccdMedications
- * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection                              $ccdProblems
- * @property \App\Models\MedicalRecords\Ccda[]|\Illuminate\Database\Eloquent\Collection                      $ccdas
+ * @property \CircleLinkHealth\CarePlanModels\Entities\Allergy[]|\Illuminate\Database\Eloquent\Collection                              $ccdAllergies
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CcdInsurancePolicy[]|\Illuminate\Database\Eloquent\Collection                   $ccdInsurancePolicies
+ * @property \CircleLinkHealth\CarePlanModels\Entities\Medication[]|\Illuminate\Database\Eloquent\Collection                           $ccdMedications
+ * @property \CircleLinkHealth\CarePlanModels\Entities\Problem[]|\Illuminate\Database\Eloquent\Collection                              $ccdProblems
+ * @property \CircleLinkHealth\CarePlanModels\Entities\Ccda[]|\Illuminate\Database\Eloquent\Collection                      $ccdas
  * @property \App\Comment[]|\Illuminate\Database\Eloquent\Collection                                         $comment
- * @property \App\Models\CPM\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection                         $cpmBiometrics
- * @property \App\Models\CPM\Biometrics\CpmBloodPressure                                                     $cpmBloodPressure
- * @property \App\Models\CPM\Biometrics\CpmBloodSugar                                                        $cpmBloodSugar
- * @property \App\Models\CPM\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection                         $cpmLifestyles
- * @property \App\Models\CPM\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection                   $cpmMedicationGroups
- * @property \App\Models\CPM\CpmMisc[]|\Illuminate\Database\Eloquent\Collection                              $cpmMiscs
- * @property \App\Models\CPM\CpmProblem[]|\Illuminate\Database\Eloquent\Collection                           $cpmProblems
- * @property \App\Models\CPM\Biometrics\CpmSmoking                                                           $cpmSmoking
- * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection                           $cpmSymptoms
- * @property \App\Models\CPM\Biometrics\CpmWeight                                                            $cpmWeight
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection                         $cpmBiometrics
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmBloodPressure                                                     $cpmBloodPressure
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmBloodSugar                                                        $cpmBloodSugar
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection                         $cpmLifestyles
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection                   $cpmMedicationGroups
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmMisc[]|\Illuminate\Database\Eloquent\Collection                              $cpmMiscs
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmProblem[]|\Illuminate\Database\Eloquent\Collection                           $cpmProblems
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmSmoking                                                           $cpmSmoking
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection                           $cpmSymptoms
+ * @property \CircleLinkHealth\CarePlanModels\Entities\CpmWeight                                                            $cpmWeight
  * @property \App\Models\EmailSettings                                                                       $emailSettings
  * @property \CircleLinkHealth\Customer\Entities\EmrDirectAddress[]|\Illuminate\Database\Eloquent\Collection $emrDirect
  * @property \App\ForeignId[]|\Illuminate\Database\Eloquent\Collection                                       $foreignId
@@ -259,7 +259,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
  * @property \CircleLinkHealth\Customer\Entities\Location[]|\Illuminate\Database\Eloquent\Collection
  *     $clinicalEmergencyContactLocations
- * @property \App\TargetPatient                                      $ehrInfo
+ * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                      $ehrInfo
  * @property \CircleLinkHealth\Customer\Entities\EhrReportWriterInfo $ehrReportWriterInfo
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection
  *     $forwardedAlertsBy
@@ -886,7 +886,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         return $this->phoneNumbers()->create(
             [
-                'number'     => (new \App\CLH\Helpers\StringManipulation())->formatPhoneNumber($number),
+                'number'     => (new \CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($number),
                 'type'       => PhoneNumber::getTypes()[$type] ?? null,
                 'is_primary' => $isPrimary,
                 'extension'  => $extension,

@@ -9,7 +9,7 @@
 namespace CircleLinkHealth\Customer\AppConfig;
 
 
-use App\AppConfig;
+use CircleLinkHealth\Core\Entities\AppConfig;
 
 class PatientSupportUser
 {

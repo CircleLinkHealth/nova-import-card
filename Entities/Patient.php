@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\Call;
-use App\Models\MedicalRecords\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -148,7 +148,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     whereNurseUserId($value)
  * @property int $is_awv
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Patient whereIsAwv($value)
- * @property-read \App\Models\MedicalRecords\ImportedMedicalRecord $importedMedicalRecord
+ * @property-read \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord $importedMedicalRecord
  */
 class Patient extends BaseModel
 {
