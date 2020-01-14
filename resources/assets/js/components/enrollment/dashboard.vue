@@ -59,14 +59,42 @@
                                     </li>
                                     <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b> {{providerFullName}}</span>
                                     </li>
-                                    <li class="sidebar-demo-list"><span :title="provider_pronunciation"><b>Provider Pronunciation:</b> {{provider_pronunciation}}</span>
+                                    <li v-if="provider_pronunciation_exists" class="sidebar-demo-list"><span
+                                            :title="provider_pronunciation"><b>Provider Pronunciation:</b> {{provider_pronunciation}}</span>
                                     </li>
-                                    <li class="sidebar-demo-list"><span :title="provider_sex"><b>Provider Sex:</b> {{provider_sex}}</span>
+                                    <li v-if="provider_sex_exists" class="sidebar-demo-list"><span
+                                            :title="provider_sex"><b>Provider Sex:</b> {{provider_sex}}</span>
                                     </li>
                                     <li class="sidebar-demo-list"><span :title="providerPhone"><b>Provider Phone:</b> {{providerPhone}}</span>
                                     </li>
                                     <li class="sidebar-demo-list"><span
                                             :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span>
+                                    </li>
+                                    <li class="sidebar-demo-list"><span
+                                            :title="last_attempt_at"><b>Last Attempt:</b> {{last_attempt_at}}</span>
+                                    </li>
+                                    <li class="sidebar-demo-list"><span
+                                            :title="enrollee_total_time_spent"><b>Total Time(Patient):</b> {{enrollee_total_time_spent}}</span>
+                                    </li>
+                                    <li class="sidebar-demo-list"><span
+                                            :title="attempt_count"><b>Attempt Count:</b> {{attempt_count}}</span>
+                                    </li>
+                                    <li class="sidebar-demo-list"><span> </span>
+                                    </li>
+                                    <li class="sidebar-demo-list"><span
+                                            :title="address"><b>Address:</b> {{address}}</span>
+                                    </li>
+                                    <li v-if="address_2_exists" class="sidebar-demo-list"><span
+                                            :title="address_2"><b>2nd Address:</b> {{address_2}}</span>
+                                    </li>
+                                    <li v-if="home_phone_exists" class="sidebar-demo-list"><span
+                                            :title="home_phone"><b>Home Phone:</b> {{home_phone}}</span>
+                                    </li>
+                                    <li v-if="cell_phone_exists" class="sidebar-demo-list"><span
+                                            :title="cell_phone"><b>Cell Phone:</b> {{cell_phone}}</span>
+                                    </li>
+                                    <li v-if="other_phone_exists" class="sidebar-demo-list"><span
+                                            :title="other_phone"><b>Other Phone:</b> {{other_phone}}</span>
                                     </li>
                                 </ul>
                             </div>
@@ -93,9 +121,11 @@
                                             <div class="scrollable-list">
 
                                                 <div v-for="member in suggested_family_members"
-                                                     class="sidebar-demo-list" style="height: auto !important; white-space: initial">
+                                                     class="sidebar-demo-list"
+                                                     style="height: auto !important; white-space: initial">
                                                     <label>
-                                                        <input type="checkbox" :value="member.id" style="position: relative"
+                                                        <input type="checkbox" :value="member.id"
+                                                               style="position: relative"
                                                                v-model="confirmed_family_members">
                                                         <span>{{member.first_name}} {{member.last_name}}</span>
                                                         <div style="padding-left: 10px">
@@ -221,7 +251,7 @@
 
         <div style="margin-left: 26%;">
 
-            <div style="padding: 0px 10px; font-size: 16px;">
+            <div class="padding-top-5" style="font-size: 16px;">
 
                 <blockquote v-if="last_call_outcome !== ''">
                     Last Call Outcome: {{ last_call_outcome }}
@@ -231,7 +261,7 @@
                     </span>
                 </blockquote>
 
-                <div class="padding-top-5 font-size-20">
+                <div class="font-size-20">
                     <p v-html="care_ambassador_script"></p>
                 </div>
             </div>
@@ -547,7 +577,8 @@
         </div>
 
         <!-- Suggested Family Members modal -->
-        <div id="suggested-family-members-modal" class="modal confirm-family-members-modal modal-fixed-footer" href="#suggested-family-members-modal">
+        <div id="suggested-family-members-modal" class="modal confirm-family-members-modal modal-fixed-footer"
+             href="#suggested-family-members-modal">
 
             <div class="modal-content" style="overflow-y: hidden !important">
                 <div>
@@ -559,7 +590,8 @@
                         <ul>
                             <li v-for="member in suggested_family_members" class="" style="height: auto !important;">
                                 <label>
-                                    <input type="checkbox" :value="member.id" style="position: relative" v-model="confirmed_family_members">
+                                    <input type="checkbox" :value="member.id" style="position: relative"
+                                           v-model="confirmed_family_members">
                                     <span>{{member.first_name}} {{member.last_name}}</span>
                                     <ul style="padding-left: 10px">
                                         <li><strong>Addresses:</strong>{{member.addresses.value}}</li>
@@ -774,6 +806,12 @@
             rejected_other() {
                 return this.reason === 'other';
             },
+            provider_pronunciation_exists() {
+                return providerInfo ? (!!providerInfo.pronunciation) : false;
+            },
+            provider_sex_exists() {
+                return providerInfo ? (!!providerInfo.sex) : false;
+            },
             provider_pronunciation: function () {
                 return providerInfo ? (providerInfo.pronunciation ? providerInfo.pronunciation : 'N/A') : 'N/A';
             },
@@ -800,6 +838,27 @@
             },
             suggested_family_members_exist: function () {
                 return Array.isArray(this.suggested_family_members) && this.suggested_family_members.length > 0;
+            },
+            enrollee_total_time_spent() {
+                return enrollee.total_time_spent ? new Date(1000 * enrollee.total_time_spent).toISOString().substr(11, 8) : 'N/A';
+            },
+            attempt_count() {
+                return enrollee.attempt_count || 0;
+            },
+            last_attempt_at() {
+                return enrollee.last_attempt_at || 'N/A';
+            },
+            address_2_exists() {
+                return !!enrollee.address_2;
+            },
+            home_phone_exists() {
+                return !!enrollee.home_phone;
+            },
+            cell_phone_exists() {
+                return !!enrollee.cell_phone;
+            },
+            other_phone_exists() {
+                return !!enrollee.other_phone;
             }
         },
         data: function () {

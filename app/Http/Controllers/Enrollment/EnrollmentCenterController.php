@@ -111,7 +111,7 @@ class EnrollmentCenterController extends Controller
         }
 
         //if previous enrollee id, try to get call_queue or maybe engaged family enrollees
-        $previousEnrollee = Enrollee::whereId($previousEnrolleeId)
+        $enrollee = Enrollee::whereId($previousEnrolleeId)
             ->with([
                 'confirmedFamilyMembers' => function ($e) use ($previousEnrolleeId) {
                     //ask ethan, how about utc enrollees? or soft declined?
@@ -121,8 +121,10 @@ class EnrollmentCenterController extends Controller
             ])
             ->first();
 
-        $enrollee = $previousEnrollee->confirmedFamilyMembers
-            ->first();
+        if ($enrollee) {
+            $enrollee = $enrollee->confirmedFamilyMembers
+                ->first();
+        }
 
         if ( ! $enrollee) {
             //if logged in ambassador is spanish, pick up a spanish patient
