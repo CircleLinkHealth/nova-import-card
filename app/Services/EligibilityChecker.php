@@ -7,6 +7,7 @@
 namespace App\Services;
 
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
+use App\CLH\Helpers\StringManipulation;
 use App\Constants;
 use App\EligibilityBatch;
 use App\EligibilityJob;
@@ -658,6 +659,11 @@ class EligibilityChecker
 //            if (isset($args['cell_phone'])) {
 //                $args['status'] = Enrollee::TO_SMS;
 //            }
+
+        $args['home_phone']    = isset($args['home_phone']) ? (new StringManipulation())->formatPhoneNumberE164($args['home_phone']) : null;
+        $args['primary_phone'] = isset($args['primary_phone']) ? (new StringManipulation())->formatPhoneNumberE164($args['primary_phone']) : null;
+        $args['cell_phone']    = isset($args['cell_phone']) ? (new StringManipulation())->formatPhoneNumberE164($args['cell_phone']) : null;
+        $args['other_phone']   = isset($args['other_phone']) ? (new StringManipulation())->formatPhoneNumberE164($args['other_phone']) : null;
 
         if (array_key_exists('id', $args)) {
             unset($args['id']);
