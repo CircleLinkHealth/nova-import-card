@@ -7,9 +7,8 @@
 namespace App\CLH\Repositories;
 
 use App\CareAmbassador;
-use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
-use CircleLinkHealth\Core\GoogleDrive;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -19,6 +18,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Config;
 use Illuminate\Cache\TaggableStore;

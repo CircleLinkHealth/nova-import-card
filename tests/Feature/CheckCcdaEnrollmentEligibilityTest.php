@@ -6,10 +6,10 @@
 
 namespace Tests\Feature;
 
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
-use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Tests\TestCase;
 
 class CheckCcdaEnrollmentEligibilityTest extends TestCase

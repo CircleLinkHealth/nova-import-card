@@ -6,13 +6,13 @@
 
 namespace App\Repositories;
 
-use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
-use CircleLinkHealth\CarePlanModels\Entities\Problem;
 use Cache;
+use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Support\Collection;
 
 class PatientSummaryEloquentRepository

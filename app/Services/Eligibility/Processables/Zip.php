@@ -8,8 +8,8 @@ namespace App\Services\Eligibility\Processables;
 
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
-use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use ZanySoft\Zip\ZipFacade;

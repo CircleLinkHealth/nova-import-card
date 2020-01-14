@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMedicationGroupMapRequest;
 use App\MedicationGroupsMap;
-use CircleLinkHealth\CarePlanModels\Entities\CpmMedicationGroup;
+use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
 use Illuminate\Http\Request;
 
 class MedicationGroupsMapController extends Controller
@@ -62,7 +62,7 @@ class MedicationGroupsMapController extends Controller
                         'text' => $m->name,
                     ];
                 }
-                                                     )
+            )
             ->toJson();
         $maps = MedicationGroupsMap::with('cpmMedicationGroup')
             ->get()
@@ -77,7 +77,7 @@ class MedicationGroupsMapController extends Controller
                         'medication_group'    => $m->cpmMedicationGroup->name,
                     ];
                 }
-                                               )
+            )
             ->toJson();
 
         return view('admin.medicationGroupsMaps.index', compact('medicationGroups', 'maps'));
@@ -116,8 +116,7 @@ class MedicationGroupsMapController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int                      $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */

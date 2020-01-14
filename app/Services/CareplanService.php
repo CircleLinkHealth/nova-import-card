@@ -6,13 +6,7 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\CarePlanModels\Entities\CpmBiometric;
-use CircleLinkHealth\CarePlanModels\Entities\CpmLifestyle;
-use CircleLinkHealth\CarePlanModels\Entities\CpmMedicationGroup;
-use CircleLinkHealth\CarePlanModels\Entities\CpmMisc;
-use CircleLinkHealth\CarePlanModels\Entities\CpmSymptom;
 use App\Note;
-use CircleLinkHealth\CarePlanModels\Entities\ProblemCodeSystem;
 use App\Repositories\CareplanRepository;
 use App\Services\CCD\CcdAllergyService;
 use App\Services\CCD\CcdProblemService;
@@ -24,6 +18,12 @@ use App\Services\CPM\CpmMiscService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\CPM\CpmProblemUserService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
+use CircleLinkHealth\SharedModels\Entities\CpmLifestyle;
+use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
+use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
+use CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem;
 
 class CareplanService
 {

@@ -6,26 +6,26 @@
 
 namespace App\Http\Controllers\Patient;
 
-use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use App\CarePlanPrintListView;
 use App\CLH\Repositories\UserRepository;
 use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
-use CircleLinkHealth\CarePlanModels\Entities\CcdInsurancePolicy;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanService;
 use App\Services\PatientService;
-use CircleLinkHealth\Core\PdfService;
 use Auth;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringMedicareDisclaimer;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;

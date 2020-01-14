@@ -6,8 +6,8 @@
 
 namespace App\Jobs;
 
-use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

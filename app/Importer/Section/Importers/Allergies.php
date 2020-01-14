@@ -7,8 +7,8 @@
 namespace App\Importer\Section\Importers;
 
 use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
-use CircleLinkHealth\CarePlanModels\Entities\AllergyImport;
-use CircleLinkHealth\CarePlanModels\Entities\AllergyLog;
+use CircleLinkHealth\SharedModels\Entities\AllergyImport;
+use CircleLinkHealth\SharedModels\Entities\AllergyLog;
 
 class Allergies extends BaseImporter
 {

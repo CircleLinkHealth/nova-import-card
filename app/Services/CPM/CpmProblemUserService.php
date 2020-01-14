@@ -6,10 +6,10 @@
 
 namespace App\Services\CPM;
 
-use CircleLinkHealth\CarePlanModels\Entities\CpmInstruction;
-use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
 use App\Models\CPM\CpmProblemUser;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 
 class CpmProblemUserService
 {
@@ -30,7 +30,10 @@ class CpmProblemUserService
         $problemUser = $this->create($patientId, $cpmProblemId, null);
         if ($problemUser) {
             return $this->cpmProblemService->setupProblem(
-                \CircleLinkHealth\CarePlanModels\Entities\CpmProblem::with(['cpmInstructions' => function($q) { $q->latest(); }, 'snomedMaps',])->find($cpmProblemId));
+                \CircleLinkHealth\SharedModels\Entities\CpmProblem::with(['cpmInstructions' => function ($q) {
+                    $q->latest();
+                }, 'snomedMaps'])->find($cpmProblemId)
+            );
         }
 
         return $problemUser;

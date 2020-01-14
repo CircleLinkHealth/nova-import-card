@@ -6,10 +6,10 @@
 
 namespace App\Importer\Section\Importers;
 
-use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
-use CircleLinkHealth\CarePlanModels\Entities\MedicationImport;
-use CircleLinkHealth\CarePlanModels\Entities\MedicationLog;
 use App\MedicationGroupsMap;
+use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\MedicationImport;
+use CircleLinkHealth\SharedModels\Entities\MedicationLog;
 
 class Medications extends BaseImporter
 {
@@ -52,7 +52,6 @@ class Medications extends BaseImporter
     /**
      * Import a single Medication from an Item Log.
      *
-     * @param \CircleLinkHealth\CarePlanModels\Entities\MedicationLog $itemLog
      * @param $consolidatedMed
      */
     public function importMedication(

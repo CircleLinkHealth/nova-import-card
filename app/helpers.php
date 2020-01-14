@@ -4,14 +4,14 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\CarePlanModels\Entities\CarePlanTemplate;
 use App\Constants;
-use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
 use App\Jobs\SendSlackMessage;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
@@ -783,7 +783,7 @@ if ( ! function_exists('setAppConfig')) {
      *
      * @param mixed $value
      *
-     * @return \CircleLinkHealth\CarePlanModels\Entities\CarePlanTemplate
+     * @return \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate
      */
     function setAppConfig(string $key, $value)
     {
@@ -961,7 +961,7 @@ if ( ! function_exists('getProblemCodeSystemName')) {
 
 if ( ! function_exists('getProblemCodeSystemCPMId')) {
     /**
-     * Get the id of an CircleLinkHealth\CarePlanModels\Entities\ProblemCodeSystem from an array of clues.
+     * Get the id of an CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem from an array of clues.
      *
      * @return int|null
      */

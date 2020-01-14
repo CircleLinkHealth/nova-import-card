@@ -19,8 +19,6 @@ class CcdProblemController extends Controller
 
     /**
      * CcdProblemController constructor.
-     *
-     * @param CcdProblemService $ccdProblemService
      */
     public function __construct(CcdProblemService $ccdProblemService)
     {
@@ -39,7 +37,8 @@ class CcdProblemController extends Controller
     {
         if ($userId && $ccdProblemId) {
             return \response()->json(
-                \CircleLinkHealth\CarePlanModels\Entities\Problem::where(['patient_id' => $userId, 'id' => $ccdProblemId])->delete());
+                \CircleLinkHealth\SharedModels\Entities\Problem::where(['patient_id' => $userId, 'id' => $ccdProblemId])->delete()
+            );
         }
 
         return \response()->json('"userId" and "ccdProblemId" are important', 400);
@@ -60,8 +59,7 @@ class CcdProblemController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param mixed       $userId
-     * @param SafeRequest $request
+     * @param mixed $userId
      *
      * @throws \Exception
      *
@@ -83,9 +81,8 @@ class CcdProblemController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param mixed       $userId
-     * @param mixed       $ccdProblemId
-     * @param SafeRequest $request
+     * @param mixed $userId
+     * @param mixed $ccdProblemId
      *
      * @return \Illuminate\Http\JsonResponse
      */

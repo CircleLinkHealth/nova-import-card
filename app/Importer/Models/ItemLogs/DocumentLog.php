@@ -6,31 +6,30 @@
 
 namespace App\Importer\Models\ItemLogs;
 
-
 use CircleLinkHealth\Eligibility\BelongsToCcda;
-
 
 /**
  * App\Importer\Models\ItemLogs\DocumentLog.
  *
- * @property int                             $id
- * @property int                             $ml_ignore
- * @property int|null                        $location_id
- * @property int|null                        $practice_id
- * @property int|null                        $billing_provider_id
- * @property string|null                     $medical_record_type
- * @property int|null                        $medical_record_id
- * @property int|null                        $vendor_id
- * @property string                          $type
- * @property string                          $custodian
- * @property int                             $import
- * @property int                             $invalid
- * @property int                             $edited
- * @property string|null                     $deleted_at
- * @property \Carbon\Carbon                  $created_at
- * @property \Carbon\Carbon                  $updated_at
- * @property \CircleLinkHealth\CarePlanModels\Entities\Ccda $ccda
- * @property \App\Models\CCD\CcdVendor|null  $vendor
+ * @property int                                          $id
+ * @property int                                          $ml_ignore
+ * @property int|null                                     $location_id
+ * @property int|null                                     $practice_id
+ * @property int|null                                     $billing_provider_id
+ * @property string|null                                  $medical_record_type
+ * @property int|null                                     $medical_record_id
+ * @property int|null                                     $vendor_id
+ * @property string                                       $type
+ * @property string                                       $custodian
+ * @property int                                          $import
+ * @property int                                          $invalid
+ * @property int                                          $edited
+ * @property string|null                                  $deleted_at
+ * @property \Carbon\Carbon                               $created_at
+ * @property \Carbon\Carbon                               $updated_at
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda $ccda
+ * @property \App\Models\CCD\CcdVendor|null               $vendor
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog whereBillingProviderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog whereCustodian($value)
@@ -48,13 +47,16 @@ use CircleLinkHealth\Eligibility\BelongsToCcda;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog whereVendorId($value)
  * @mixin \Eloquent
+ *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog query()
+ *
  * @property int|null $revision_history_count
  */
-class DocumentLog extends \CircleLinkHealth\Core\Entities\BaseModel 
+class DocumentLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use BelongsToCcda;
 

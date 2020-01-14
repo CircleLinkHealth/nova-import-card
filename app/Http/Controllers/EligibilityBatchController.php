@@ -6,17 +6,17 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Exports\FromArray;
 use App\Importer\Models\ItemLogs\InsuranceLog;
-use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
-use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordEligibilityJobToCsvAdapter;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;

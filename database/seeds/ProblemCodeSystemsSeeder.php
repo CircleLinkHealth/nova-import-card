@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\CarePlanModels\Entities\ProblemCodeSystem;
+use CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem;
 use Illuminate\Database\Seeder;
 
 class ProblemCodeSystemsSeeder extends Seeder

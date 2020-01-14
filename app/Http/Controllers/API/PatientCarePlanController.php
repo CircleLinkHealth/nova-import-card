@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers\API;
 
-use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
 use App\Http\Controllers\Controller;
-use CircleLinkHealth\CarePlanModels\Entities\Pdf;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Storage;

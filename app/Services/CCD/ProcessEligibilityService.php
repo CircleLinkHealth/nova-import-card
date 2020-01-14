@@ -13,16 +13,16 @@ use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessCcdaFromGoogleDrive;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
-use CircleLinkHealth\CarePlanModels\Entities\Ccda;
-use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
-use CircleLinkHealth\Core\GoogleDrive;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
+use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Facades\Storage;
 
 class ProcessEligibilityService

@@ -6,13 +6,13 @@
 
 namespace App\Jobs;
 
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\MedicalRecords\ImportService;
 use App\ValueObjects\BlueButtonMedicalRecord\MedicalRecord;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

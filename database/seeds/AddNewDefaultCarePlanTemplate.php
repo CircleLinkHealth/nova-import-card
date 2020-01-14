@@ -5,10 +5,10 @@
  */
 
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\CarePlanModels\Entities\CarePlanTemplate;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
-use CircleLinkHealth\CarePlanModels\Entities\CpmInstruction;
-use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Database\Seeder;
 
 class AddNewDefaultCarePlanTemplate extends Seeder
@@ -54,8 +54,6 @@ class AddNewDefaultCarePlanTemplate extends Seeder
 
     /**
      * The array of instructions to be added.
-     *
-     * @return array
      */
     private function problems(): array
     {

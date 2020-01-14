@@ -6,26 +6,26 @@
 
 namespace App\Importer\Models\ItemLogs;
 
-use CircleLinkHealth\CarePlanModels\Entities\CcdInsurancePolicy;
-
+use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 
 /**
  * App\Importer\Models\ItemLogs\InsuranceLog.
  *
- * @property int                                $id
- * @property string|null                        $medical_record_type
- * @property int|null                           $medical_record_id
- * @property string                             $name
- * @property string|null                        $type
- * @property string|null                        $policy_id
- * @property string|null                        $relation
- * @property string|null                        $subscriber
- * @property int                                $import
- * @property \Carbon\Carbon|null                $created_at
- * @property \Carbon\Carbon|null                $updated_at
- * @property \CircleLinkHealth\CarePlanModels\Entities\Ccda    $ccda
- * @property \CircleLinkHealth\CarePlanModels\Entities\CcdInsurancePolicy $importedItem
- * @property \App\Models\CCD\CcdVendor          $vendor
+ * @property int                                                        $id
+ * @property string|null                                                $medical_record_type
+ * @property int|null                                                   $medical_record_id
+ * @property string                                                     $name
+ * @property string|null                                                $type
+ * @property string|null                                                $policy_id
+ * @property string|null                                                $relation
+ * @property string|null                                                $subscriber
+ * @property int                                                        $import
+ * @property \Carbon\Carbon|null                                        $created_at
+ * @property \Carbon\Carbon|null                                        $updated_at
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda               $ccda
+ * @property \CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy $importedItem
+ * @property \App\Models\CCD\CcdVendor                                  $vendor
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereImport($value)
@@ -38,18 +38,21 @@ use CircleLinkHealth\CarePlanModels\Entities\CcdInsurancePolicy;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog query()
+ *
  * @property array|null $raw
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereRaw($value)
+ *
  * @property int|null $revision_history_count
  */
 class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {
-    
-
     protected $casts = [
         'raw' => 'array',
     ];

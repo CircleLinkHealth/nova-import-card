@@ -4,8 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use CircleLinkHealth\CarePlanModels\Entities\CpmInstruction;
-use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Database\Seeder;
 
 class CpmDefaultInstructionSeeder extends Seeder

@@ -6,13 +6,13 @@
 
 namespace App\Services\CCD;
 
-use CircleLinkHealth\CarePlanModels\Entities\Problem as CcdProblem;
-use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
-use CircleLinkHealth\CarePlanModels\Entities\Problem;
-use CircleLinkHealth\CarePlanModels\Entities\ProblemCode;
 use App\Repositories\CcdProblemRepository;
 use App\Services\CPM\CpmInstructionService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
+use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 
 class CcdProblemService
 {

@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\CarePlanModels\Entities\CpmSymptom;
+use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
 
 class SymptomController extends Controller
 {

@@ -8,8 +8,8 @@ namespace App\Http\Controllers\CCDViewer;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Controllers\Controller;
-use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaStream;
 

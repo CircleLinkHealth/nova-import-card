@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use CircleLinkHealth\CarePlanModels\Entities\Problem as CcdProblem;
+use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
 use Illuminate\Support\Facades\DB;
 
 class CcdProblemRepository

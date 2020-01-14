@@ -7,7 +7,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\CheckCcdaEnrollmentEligibility;
-use CircleLinkHealth\CarePlanModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 
 class QueueCcdaToDetermineEnrollmentEligibility extends Command

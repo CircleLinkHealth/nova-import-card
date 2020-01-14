@@ -6,12 +6,12 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
-use CircleLinkHealth\CarePlanModels\Entities\CpmBiometric;
-use CircleLinkHealth\CarePlanModels\Entities\CpmMisc;
 use App\Services\CPM\CpmMiscService;
 use App\Services\CPM\CpmProblemService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use Illuminate\Support\Facades\DB;
 
 class ReportsService
@@ -470,7 +470,7 @@ class ReportsService
                 'lv_observations.obs_value',
                 'lv_observations.obs_key',
                 'lv_observations.obs_message_id'
-                            )
+            )
             ->join('lv_observations', 'rules_questions.msg_id', '=', 'lv_observations.obs_message_id')
             ->join('rules_items', 'rules_questions.qid', '=', 'rules_items.qid')
             ->where('user_id', $user->id)

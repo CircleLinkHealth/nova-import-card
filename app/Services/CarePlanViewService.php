@@ -6,12 +6,12 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\CarePlanModels\Entities\CarePlan as CarePlan;
-use CircleLinkHealth\CarePlanModels\Entities\CarePlanTemplate;
-use CircleLinkHealth\CarePlanModels\Entities\CpmMisc;
 use App\Models\CPM\UI\Biometrics;
 use App\Models\CPM\UI\Section;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan as CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 
 /**
  * This Class does the needful to get the data needed for CarePlan Views and feed it to them.

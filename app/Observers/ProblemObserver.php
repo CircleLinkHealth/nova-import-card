@@ -7,14 +7,12 @@
 namespace App\Observers;
 
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\ProblemsToMonitor;
-use CircleLinkHealth\CarePlanModels\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 
 class ProblemObserver
 {
     /**
      * Listen to the Problem deleting event.
-     *
-     * @param Problem $problem
      */
     public function deleting(Problem $problem)
     {
@@ -29,8 +27,6 @@ class ProblemObserver
 
     /**
      * Listen to the Problem saving event.
-     *
-     * @param \CircleLinkHealth\CarePlanModels\Entities\Problem $problem
      */
     public function saving(Problem $problem)
     {

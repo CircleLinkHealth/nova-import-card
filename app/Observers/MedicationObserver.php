@@ -7,14 +7,12 @@
 namespace App\Observers;
 
 use App\MedicationGroupsMap;
-use CircleLinkHealth\CarePlanModels\Entities\Medication;
+use CircleLinkHealth\SharedModels\Entities\Medication;
 
 class MedicationObserver
 {
     /**
      * Listen to the Medication creating event.
-     *
-     * @param Medication $medication
      */
     public function creating(Medication $medication)
     {

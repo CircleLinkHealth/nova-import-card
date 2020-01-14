@@ -6,15 +6,8 @@
 
 namespace App\Providers;
 
-use CircleLinkHealth\Core\Entities\AppConfig;
 use App\Call;
-use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
-use CircleLinkHealth\CarePlanModels\Entities\CarePlanTemplate;
-use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use App\Models\Addendum;
-use CircleLinkHealth\CarePlanModels\Entities\Medication;
-use CircleLinkHealth\CarePlanModels\Entities\Problem;
-use CircleLinkHealth\CarePlanModels\Entities\ProblemCode;
 use App\Observers\AddendumObserver;
 use App\Observers\AppConfigObserver;
 use App\Observers\CallObserver;
@@ -36,6 +29,7 @@ use App\Observers\ProblemObserver;
 use App\Observers\RevisionObserver;
 use App\Observers\SaasAccountObserver;
 use App\Observers\UserObserver;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
@@ -44,8 +38,14 @@ use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
+use CircleLinkHealth\SharedModels\Entities\Medication;
+use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\ServiceProvider;
 use Venturecraft\Revisionable\Revision;

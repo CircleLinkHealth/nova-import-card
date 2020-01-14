@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use CircleLinkHealth\CarePlanModels\Entities\CpmMisc;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 
 class CpmMiscRepository
 {

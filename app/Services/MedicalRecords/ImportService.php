@@ -6,13 +6,13 @@
 
 namespace App\Services\MedicalRecords;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class ImportService
 {

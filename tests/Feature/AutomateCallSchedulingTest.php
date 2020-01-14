@@ -6,14 +6,14 @@
 
 namespace Tests\Feature;
 
-use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
-use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
 use App\Services\Calls\SchedulerService;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Carbon;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\TestCase;

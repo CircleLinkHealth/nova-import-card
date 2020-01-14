@@ -6,14 +6,14 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\CarePlanModels\Entities\CarePlan;
-use CircleLinkHealth\CarePlanModels\Entities\CpmProblem;
 use App\Notifications\CarePlanProviderApproved;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Permission;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\TestCase;

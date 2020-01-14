@@ -6,11 +6,11 @@
 
 namespace App\Repositories;
 
-use CircleLinkHealth\CarePlanModels\Entities\CpmBloodPressure;
-use CircleLinkHealth\CarePlanModels\Entities\CpmBloodSugar;
-use CircleLinkHealth\CarePlanModels\Entities\CpmSmoking;
-use CircleLinkHealth\CarePlanModels\Entities\CpmWeight;
-use CircleLinkHealth\CarePlanModels\Entities\CpmBiometricUser;
+use CircleLinkHealth\SharedModels\Entities\CpmBiometricUser;
+use CircleLinkHealth\SharedModels\Entities\CpmBloodPressure;
+use CircleLinkHealth\SharedModels\Entities\CpmBloodSugar;
+use CircleLinkHealth\SharedModels\Entities\CpmSmoking;
+use CircleLinkHealth\SharedModels\Entities\CpmWeight;
 
 class CpmBiometricUserRepository
 {

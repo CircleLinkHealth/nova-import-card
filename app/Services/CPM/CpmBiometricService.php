@@ -7,9 +7,9 @@
 namespace App\Services\CPM;
 
 use App\Contracts\Services\CpmModel;
-use CircleLinkHealth\CarePlanModels\Entities\CpmBiometric;
 use App\Repositories\CpmBiometricUserRepository;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 
 class CpmBiometricService implements CpmModel
 {
@@ -76,19 +76,19 @@ class CpmBiometricService implements CpmModel
         return $user->cpmBiometrics()->sync($ids);
     }
 
-    private function isEnabled(\CircleLinkHealth\CarePlanModels\Entities\CpmBiometric $biometric, User $user)
+    private function isEnabled(\CircleLinkHealth\SharedModels\Entities\CpmBiometric $biometric, User $user)
     {
         switch ($biometric->name) {
-            case \CircleLinkHealth\CarePlanModels\Entities\CpmBiometric::BLOOD_PRESSURE:
+            case \CircleLinkHealth\SharedModels\Entities\CpmBiometric::BLOOD_PRESSURE:
                 return $user->cpmBloodPressure;
                 break;
-            case \CircleLinkHealth\CarePlanModels\Entities\CpmBiometric::BLOOD_SUGAR:
+            case \CircleLinkHealth\SharedModels\Entities\CpmBiometric::BLOOD_SUGAR:
                 return $user->cpmBloodSugar;
                 break;
-            case \CircleLinkHealth\CarePlanModels\Entities\CpmBiometric::WEIGHT:
+            case \CircleLinkHealth\SharedModels\Entities\CpmBiometric::WEIGHT:
                 return $user->cpmWeight;
                 break;
-            case \CircleLinkHealth\CarePlanModels\Entities\CpmBiometric::SMOKING:
+            case \CircleLinkHealth\SharedModels\Entities\CpmBiometric::SMOKING:
                 return $user->cpmSmoking;
                 break;
         }
