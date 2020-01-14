@@ -46,7 +46,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \CircleLinkHealth\Eligibility\Entities\EligibilityBatch                                                          $batch
  * @property \CircleLinkHealth\Eligibility\Entities\Enrollee                                                                  $enrollee
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob eligible()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityJob newModelQuery()
@@ -84,9 +83,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\EligibilityJob withoutTrashed()
  * @mixin \Eloquent
- *
  * @property \App\EligibilityJob $eligibilityJob
  * @property int|null            $revision_history_count
+ * @property-read \CircleLinkHealth\Eligibility\Entities\TargetPatient $targetPatient
  */
 class EligibilityJob extends BaseModel
 {

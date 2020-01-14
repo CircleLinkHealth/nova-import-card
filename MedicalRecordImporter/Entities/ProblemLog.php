@@ -80,7 +80,7 @@ use CircleLinkHealth\Eligibility\BelongsToCcda;
 class ProblemLog extends \CircleLinkHealth\Core\Entities\BaseModel implements Problem
 {
     use BelongsToCcda;
-    use CircleLinkHealth\SharedModels\HasProblemCodes;
+    use HasProblemCodes;
 
     protected $fillable = [
         'medical_record_type',
