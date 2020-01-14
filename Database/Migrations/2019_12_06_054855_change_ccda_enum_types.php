@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\CarePlanModels\Entities\Ccda;
 use Illuminate\Database\Migrations\Migration;
 
 class ChangeCcdaEnumTypes extends Migration
