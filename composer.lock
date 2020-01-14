@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bc867baf779135c499a64a4db002bcaa",
+    "content-hash": "51299eb767a963dc9a3a5a05eec9358e",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -807,7 +807,7 @@
             "time": "2020-01-08T01:10:08+00:00"
         },
         {
-            "name": "circlelinkhealth/cpmmigrations",
+            "name": "circlelinkhealth/cpm-migrations-module",
             "version": "v1.0",
             "source": {
                 "type": "git",
@@ -13719,11 +13719,11 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/patientapi-module": 20,
-        "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/ccda-parser-processor-php": 20,
         "circlelinkhealth/customer": 20,
         "circlelinkhealth/eligibility": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
+        "circlelinkhealth/patientapi-module": 20,
         "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/sqlviews": 20,
         "daltcore/lara-pdf-merger": 20,
