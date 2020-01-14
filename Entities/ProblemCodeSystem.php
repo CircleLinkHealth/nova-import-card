@@ -4,12 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CarePlanModels\Entities;
+namespace CircleLinkHealth\SharedModels\Entities;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
- * CircleLinkHealth\CarePlanModels\Entities\ProblemCodeSystem.
+ * CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem.
  *
  * @property int                 $id
  * @property string              $name

@@ -4,12 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CarePlanModels\Entities;
+namespace CircleLinkHealth\SharedModels\Entities;
 
 use App\Constants;
 use App\Contracts\PdfReport;
 use App\Contracts\ReportFormatter;
-use CircleLinkHealth\CarePlanModels\Entities\Pdf;
+use CircleLinkHealth\SharedModels\Entities\Pdf;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
@@ -28,7 +28,7 @@ use Log;
 use Validator;
 
 /**
- * CircleLinkHealth\CarePlanModels\Entities\CarePlan.
+ * CircleLinkHealth\SharedModels\Entities\CarePlan.
  *
  * @property int                                                        $id
  * @property string                                                     $mode
@@ -43,10 +43,10 @@ use Validator;
  * @property string|null                                                $last_printed
  * @property \Carbon\Carbon                                             $created_at
  * @property \Carbon\Carbon                                             $updated_at
- * @property \CircleLinkHealth\CarePlanModels\Entities\CarePlanTemplate                                      $carePlanTemplate
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate                                      $carePlanTemplate
  * @property \App\CareplanAssessment                                    $assessment
  * @property \CircleLinkHealth\Customer\Entities\User                   $patient
- * @property \CircleLinkHealth\CarePlanModels\Entities\Pdf[]|\Illuminate\Database\Eloquent\Collection $pdfs
+ * @property \CircleLinkHealth\SharedModels\Entities\Pdf[]|\Illuminate\Database\Eloquent\Collection $pdfs
  * @property \CircleLinkHealth\Customer\Entities\User|null              $providerApproverUser
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCarePlanTemplateId($value)

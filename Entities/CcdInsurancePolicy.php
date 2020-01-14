@@ -4,14 +4,14 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CarePlanModels\Entities;
+namespace CircleLinkHealth\SharedModels\Entities;
 
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Scopes\MedicalRecordIdAndTypeTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * CircleLinkHealth\CarePlanModels\Entities\CcdInsurancePolicy.
+ * CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy.
  *
  * @property int                                           $id
  * @property int|null                                      $medical_record_id
@@ -43,7 +43,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy whereSubscriber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy withMedicalRecord($id, $type = 'CircleLinkHealth\CarePlanModels\Entities\Ccda')
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdInsurancePolicy withMedicalRecord($id, $type = 'CircleLinkHealth\SharedModels\Entities\Ccda')
  * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\CcdInsurancePolicy withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\CCD\CcdInsurancePolicy withoutTrashed()
  * @mixin \Eloquent

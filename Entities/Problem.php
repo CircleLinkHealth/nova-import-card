@@ -4,9 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CarePlanModels\Entities;
+namespace CircleLinkHealth\SharedModels\Entities;
 
-use CircleLinkHealth\CarePlanModels\HasProblemCodes;
+use CircleLinkHealth\SharedModels\HasProblemCodes;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
@@ -14,7 +14,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * CircleLinkHealth\CarePlanModels\Entities\Problem.
+ * CircleLinkHealth\SharedModels\Entities\Problem.
  *
  * @property int                                                                $id
  * @property int|null                                                           $problem_import_id
@@ -29,10 +29,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon                                                     $created_at
  * @property \Carbon\Carbon                                                     $updated_at
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog|null                      $ccdLog
- * @property \CircleLinkHealth\CarePlanModels\Entities\ProblemCode[]|\Illuminate\Database\Eloquent\Collection $codes
- * @property \CircleLinkHealth\CarePlanModels\Entities\CpmProblem|null                                    $cpmProblem
+ * @property \CircleLinkHealth\SharedModels\Entities\ProblemCode[]|\Illuminate\Database\Eloquent\Collection $codes
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem|null                                    $cpmProblem
  * @property \CircleLinkHealth\Customer\Entities\User                           $patient
- * @property \CircleLinkHealth\CarePlanModels\Entities\CpmInstruction                                     $cpmInstruction
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction                                     $cpmInstruction
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereActivate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCcdProblemLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCcdaId($value)
@@ -69,7 +69,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $patient_summaries_count
  * @property int|null $revision_history_count
  */
-class Problem extends BaseModel implements \CircleLinkHealth\CarePlanModels\Contracts\Problem
+class Problem extends BaseModel implements \CircleLinkHealth\SharedModels\Contracts\Problem
 {
     use HasProblemCodes;
     use SoftDeletes;

@@ -4,15 +4,15 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CarePlanModels\Entities;
+namespace CircleLinkHealth\SharedModels\Entities;
 
 
-use CircleLinkHealth\CarePlanModels\Entities\AllergyImport;
+use CircleLinkHealth\SharedModels\Entities\AllergyImport;
 use CircleLinkHealth\Eligibility\BelongsToCcda;
 
 
 /**
- * CircleLinkHealth\CarePlanModels\Entities\AllergyLog.
+ * CircleLinkHealth\SharedModels\Entities\AllergyLog.
  *
  * @property int                                              $id
  * @property string|null                                      $medical_record_type
@@ -28,8 +28,8 @@ use CircleLinkHealth\Eligibility\BelongsToCcda;
  * @property string|null                                      $deleted_at
  * @property \Carbon\Carbon                                   $created_at
  * @property \Carbon\Carbon                                   $updated_at
- * @property \CircleLinkHealth\CarePlanModels\Entities\Ccda                  $ccda
- * @property \CircleLinkHealth\CarePlanModels\Entities\AllergyImport $importedItem
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda                  $ccda
+ * @property \CircleLinkHealth\SharedModels\Entities\AllergyImport $importedItem
  * @property \App\Models\CCD\CcdVendor|null                   $vendor
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog whereAllergenName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog whereCreatedAt($value)

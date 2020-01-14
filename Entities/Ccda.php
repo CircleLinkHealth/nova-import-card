@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CarePlanModels\Entities;
+namespace CircleLinkHealth\SharedModels\Entities;
 
 use App\Adapters\EligibilityCheck\CcdaToEligibilityJobAdapter;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
@@ -27,7 +27,7 @@ use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
 /**
- * CircleLinkHealth\CarePlanModels\Entities\Ccda.
+ * CircleLinkHealth\SharedModels\Entities\Ccda.
  *
  * @property int                                                                                 $id
  * @property \Carbon\Carbon|null                                                                 $date
@@ -47,14 +47,14 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Carbon\Carbon                                                                      $created_at
  * @property \Carbon\Carbon                                                                      $updated_at
  * @property string|null                                                                         $deleted_at
- * @property \CircleLinkHealth\CarePlanModels\Entities\AllergyLog[]|\Illuminate\Database\Eloquent\Collection $allergies
+ * @property \CircleLinkHealth\SharedModels\Entities\AllergyLog[]|\Illuminate\Database\Eloquent\Collection $allergies
  * @property \App\Entities\CcdaRequest                                                           $ccdaRequest
  * @property \App\Importer\Models\ItemLogs\DemographicsLog[]|\Illuminate\Database\Eloquent\Collection
  *     $demographics
  * @property \App\Importer\Models\ImportedItems\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection
  *     $demographicsImports
  * @property \App\Importer\Models\ItemLogs\DocumentLog[]|\Illuminate\Database\Eloquent\Collection   $document
- * @property \CircleLinkHealth\CarePlanModels\Entities\MedicationLog[]|\Illuminate\Database\Eloquent\Collection $medications
+ * @property \CircleLinkHealth\SharedModels\Entities\MedicationLog[]|\Illuminate\Database\Eloquent\Collection $medications
  * @property \CircleLinkHealth\Customer\Entities\User|null                                          $patient
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog[]|\Illuminate\Database\Eloquent\Collection    $problems
  * @property \App\Importer\Models\ItemLogs\ProviderLog[]|\Illuminate\Database\Eloquent\Collection   $providers
@@ -74,7 +74,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereMrn($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda wherePatientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda wherePracticeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\CarePlanModels\Entities\Ccda
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda
  *     whereReferringProviderName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereSource($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereStatus($value)

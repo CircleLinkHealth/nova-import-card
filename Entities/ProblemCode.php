@@ -4,12 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CarePlanModels\Entities;
+namespace CircleLinkHealth\SharedModels\Entities;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * CircleLinkHealth\CarePlanModels\Entities\ProblemCode.
+ * CircleLinkHealth\SharedModels\Entities\ProblemCode.
  *
  * @property int                     $id
  * @property int                     $problem_id
@@ -20,8 +20,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon|null     $created_at
  * @property \Carbon\Carbon|null     $updated_at
  * @property string|null             $deleted_at
- * @property \CircleLinkHealth\CarePlanModels\Entities\Problem $problem
- * @property \CircleLinkHealth\CarePlanModels\Entities\ProblemCodeSystem  $system
+ * @property \CircleLinkHealth\SharedModels\Entities\Problem $problem
+ * @property \CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem  $system
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode onlyTrashed()
  * @method static bool|null restore()

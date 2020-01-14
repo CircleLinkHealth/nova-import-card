@@ -4,14 +4,14 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CarePlanModels\Contracts;
+namespace CircleLinkHealth\SharedModels\Contracts;
 
-use CircleLinkHealth\CarePlanModels\HasProblemCodes;
+use CircleLinkHealth\SharedModels\HasProblemCodes;
 use Illuminate\Support\Collection;
 
 /**
  * A condition a Patient has (Diabetes, Hypertension, etc)
- * Most of these methods are satisfied be CircleLinkHealth\CarePlanModels\HasProblemCodes.
+ * Most of these methods are satisfied be CircleLinkHealth\SharedModels\HasProblemCodes.
  *
  * @see HasProblemCodes
  *

@@ -4,12 +4,12 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\CarePlanModels\Entities;
+namespace CircleLinkHealth\SharedModels\Entities;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * CircleLinkHealth\CarePlanModels\Entities\Pdf.
+ * CircleLinkHealth\SharedModels\Entities\Pdf.
  *
  * @property int                                           $id
  * @property string                                        $pdfable_type
