@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9fc2f3c0e0e96f8f3f133495879911be",
+    "content-hash": "3c0ae53036bb5f7e8dc4bf1e04401f74",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -978,6 +978,67 @@
                 "laravel",
                 "nova"
             ]
+        },
+        {
+            "name": "circlelinkhealth/nurseinvoices-module",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
+                "reference": "ba314ede2108ce6647c1f015bfbcf3757c5b4b0d"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\NurseInvoices\\Providers\\NurseInvoicesServiceProvider",
+                        "CircleLinkHealth\\NurseInvoices\\Providers\\NurseInvoicesDeferredBindingsServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\NurseInvoices\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-01-14T22:49:15+00:00"
+        },
+        {
+            "name": "circlelinkhealth/patientapi-module",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
+                "reference": "90d131c9e95ffb166858f5867cdd0296830745ad"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\ApiPatient\\Providers\\ApiPatientServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\ApiPatient\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-01-14T22:50:13+00:00"
         },
         {
             "name": "circlelinkhealth/raygun",
@@ -13658,6 +13719,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/patientapi-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/ccda-parser-processor-php": 20,
         "circlelinkhealth/eligibility": 20,
         "circlelinkhealth/shared-models-module": 20,

@@ -94,6 +94,13 @@
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git"
+    },    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/patient-api-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git"
     }
   ],
   "require": {
@@ -111,6 +118,8 @@
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "~2.0.5",
     "barryvdh/laravel-snappy": "0.4.4",
+    "circlelinkhealth/patientapi-module": "dev-master",
+    "circlelinkhealth/nurseinvoices-module": "dev-master",
     "circlelinkhealth/ccda-parser-processor-php": "dev-master",
     "circlelinkhealth/core-module": "1.35",
     "circlelinkhealth/cpmmigrations": "1.0",
