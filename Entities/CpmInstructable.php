@@ -19,23 +19,19 @@ use CircleLinkHealth\SharedModels\Entities\CpmProblem;
  * @property \Carbon\Carbon                                         $created_at
  * @property \Carbon\Carbon                                         $updated_at
  * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction $cpmInstruction
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmMisc whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmMisc whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmMisc whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmMisc whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property string                                                                         $instructable_type
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable whereCpmInstructionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable whereInstructableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable whereInstructableType($value)
- *
  * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem[]|\Illuminate\Database\Eloquent\Collection $cpmProblem
  * @property int|null                                                                                      $cpm_problem_count
  * @property int|null                                                                                      $revision_history_count
