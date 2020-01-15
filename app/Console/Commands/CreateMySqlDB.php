@@ -37,10 +37,8 @@ class CreateMySqlDB extends Command
 
         config(['database.connections.mysql.database' => null]);
 
-        $query = "CREATE DATABASE IF NOT EXISTS $schemaName CHARACTER SET $charset COLLATE $collation;";
+        $query = "CREATE DATABASE IF NOT EXISTS `$schemaName`` CHARACTER SET `$charset`` COLLATE `$collation``;";
 
         DB::statement($query);
-
-        config(['database.connections.mysql.database' => $schemaName]);
     }
 }
