@@ -36,7 +36,6 @@
     "review": {
       "addons": ["heroku-redis:hobby-dev"],
       "scripts": {
-        "postdeploy": "php artisan reviewapp:postdeploy",
         "pr-predestroy": "php artisan reviewapp:predestroy"
       }
     }
