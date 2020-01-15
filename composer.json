@@ -104,7 +104,7 @@
     }
   ],
   "require": {
-    "php": "~7.2.0",
+    "php": "~7.2.11",
     "ext-bcmath": "*",
     "ext-dom": "*",
     "ext-json": "*",
@@ -120,12 +120,10 @@
     "barryvdh/laravel-snappy": "0.4.4",
     "circlelinkhealth/ccda-parser-processor-php-module": "dev-master",
     "circlelinkhealth/cerberus-gatekeeper": "^v3.0.2",
-    "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/core-module": "1.36",
     "circlelinkhealth/cpm-migrations-module": "1.0",
     "circlelinkhealth/customer-module": "dev-CPM-1658_method_to_nurse_model_plus_calendarFields",
     "circlelinkhealth/eligibility-module": "dev-master",
-    "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/nurseinvoices-module": "dev-master",
     "circlelinkhealth/patientapi-module": "dev-master",
@@ -174,8 +172,9 @@
     "twilio/sdk": "5.7",
     "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
-    "wikimedia/composer-merge-plugin": "^1.4",
-    "yajra/laravel-datatables-oracle": "~8.0"
+    "yajra/laravel-datatables-oracle": "~8.0",
+    "circlelinkhealth/generate-patient-call-data-csv": "*",
+    "circlelinkhealth/clh-import-card-extended": "*"
   },
   "require-dev": {
     "ext-xdebug": "*",
