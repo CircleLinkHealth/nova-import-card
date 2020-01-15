@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\NurseInvoices;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -58,12 +59,8 @@ class VariablePayCalculator
 
     public function calculate(User $nurse)
     {
-        $nurseUserId   = $nurse->id;
-        $nurseInfoId   = $nurse->nurseInfo->id;
-        $nurseVisitFee = $nurse->nurseInfo->visit_fee;
-        $nurseHighRate = $nurse->nurseInfo->high_rate;
-        $nurseLowRate  = $nurse->nurseInfo->low_rate;
-
+        $nurseUserId  = $nurse->id;
+        $nurseInfo    = $nurse->nurseInfo;
         $careRateLogs = $this->getForNurses();
 
         $perPatient = $careRateLogs->mapToGroups(function ($e) {
@@ -74,10 +71,7 @@ class VariablePayCalculator
         $perPatient->each(function (Collection $patientCareRateLogs) use (
             &$totalPay,
             $nurseUserId,
-            $nurseInfoId,
-            $nurseVisitFee,
-            $nurseHighRate,
-            $nurseLowRate
+            $nurseInfo
         ) {
             $payForPatient = 0.0;
 
@@ -85,30 +79,25 @@ class VariablePayCalculator
             if ( ! $patientUserId) {
                 //we reach here when we have old records
                 $payForPatient = $this->getPayForPatientWithDefaultAlgo(
-                    $nurseInfoId,
-                    $nurseHighRate,
-                    $nurseLowRate,
+                    $nurseInfo,
                     $patientCareRateLogs
                 );
             } else {
                 if ($this->isNewNursePayAlgoEnabled()) {
                     $patient = User::with('primaryPractice.chargeableServices')->find($patientUserId);
-                    $practiceHasCcmPlus = $patient->primaryPractice->hasCCMPlusServiceCode();
+                    $practiceHasCcmPlus = $this->practiceHasCcmPlusCode($patient->primaryPractice);
                     $totalCcm = $patient->patientSummaryForMonth($this->startDate)->ccm_time;
                     $ranges = $this->separateTimeAccruedInRanges($patientCareRateLogs);
                     if ($this->isNewNursePayAltAlgoEnabledForUser($nurseUserId)) {
                         $payForPatient = $this->getPayForPatientWithCcmPlusAltAlgo(
-                            $nurseInfoId,
-                            $nurseVisitFee,
+                            $nurseInfo,
                             $totalCcm,
                             $ranges,
                             $practiceHasCcmPlus
                         );
                     } else {
                         $payForPatient = $this->getPayForPatientWithCcmPlusAlgo(
-                            $nurseInfoId,
-                            $nurseHighRate,
-                            $nurseLowRate,
+                            $nurseInfo,
                             $totalCcm,
                             $ranges,
                             $practiceHasCcmPlus
@@ -116,9 +105,7 @@ class VariablePayCalculator
                     }
                 } else {
                     $payForPatient = $this->getPayForPatientWithDefaultAlgo(
-                        $nurseInfoId,
-                        $nurseHighRate,
-                        $nurseLowRate,
+                        $nurseInfo,
                         $patientCareRateLogs
                     );
                 }
@@ -175,47 +162,77 @@ class VariablePayCalculator
 
     /**
      * Get percentage of allocation of nurse in a specific range.
-     * This depends on the requirement that nurse must have a successful call in that range.
+     * Used only for the CCM Plus Alternate Algorithm (VISIT FEE based).
+     *
+     * 1 RN for the range -> 100%
+     * 2 RNs for the range ->
+     *          both succesfull call -> 50% / 50%
+     *          none with successfull call -> 50% / 50%
+     *          only one with successful call -> 100% / 0%
      *
      * @param $nurseInfoId
      * @param $range
      */
-    private function getNurseTimeAllocationInRange($nurseInfoId, $range): int
+    private function getNurseTimePercentageAllocationInRange($nurseInfoId, $range): int
     {
-        $filtered = collect($range)->filter(function ($f) {
+        $elqRange = collect($range);
+
+        //only 1 RN, pay the full VF, regardless of calls
+        if (1 === $elqRange->count()) {
+            return $elqRange->has($nurseInfoId)
+                ? self::MONTHLY_TIME_TARGET_IN_SECONDS
+                : 0;
+        }
+
+        $filtered = $elqRange->filter(function ($f) {
             return $f['has_successful_call'];
         });
 
-        if ( ! $filtered->has($nurseInfoId)) {
-            return 0;
+        //none of them had successful calls
+        //or all RNs had successful calls, split the VF proportionally
+        if ($filtered->isEmpty() || $elqRange->count() === $filtered->count()) {
+            return $elqRange[$nurseInfoId]['duration'] / self::MONTHLY_TIME_TARGET_IN_SECONDS;
         }
 
-        if (1 === $filtered->count()) {
-            return self::MONTHLY_TIME_TARGET_IN_SECONDS;
-        }
+        //if we reach here, it means that some RNs had successful calls in this range and some not
+        //we will have to build their proportional VF
+        //example 1: RN1: 5 minutes / no successful call | RN2: 15 minutes / successful call => RN2 gets 100% of VF
+        //example 2: RN1: 5 minutes / no successful call |
+        //           RN2: 10 minutes / successful call |
+        //           RN3: 5 minutes / successful call
+        //               => RN2: 10/15 * VF | RN3: 5/15 * VF
+        $sumOfAllWithCall = $filtered->sum(function ($f) {
+            return $f['duration'];
+        });
 
-        return $filtered[$nurseInfoId]['duration'];
+        return $filtered[$nurseInfoId]['duration'] / $sumOfAllWithCall;
     }
 
     /**
-     * 0. Must have at least one successful call.
-     * 1. High rate for 0-20 range.
-     * 2. High rate for 20-40 range only if completed.
-     * 3. High rate for 40-60 range only if completed.
+     * If practice has CCM Plus:
+     * 1. High rate 1 for 0-20 range.
+     * 2. High rate 2 for 20-40 range only if completed + have at least one successful call in any range.
+     * 3. High rate 3 for 40-60 range only if completed + have at least one successful call in any range.
      * 4. Low rate otherwise.
      *
-     * @param $nurseInfoId
-     * @param $nurseHighRate
-     * @param $nurseLowRate
+     * Else:
+     * 1. High rate 1 for 0-20 range.
+     * 2. Low rate for the rest.
+     *
      * @param $totalCcm
      * @param $ranges
      * @param bool $practiceHasCcmPlus
      *
      * @return float|int
      */
-    private function getPayForPatientWithCcmPlusAlgo($nurseInfoId, $nurseHighRate, $nurseLowRate, $totalCcm, $ranges, $practiceHasCcmPlus = false)
-    {
-        $result = 0.0;
+    private function getPayForPatientWithCcmPlusAlgo(
+        Nurse $nurseInfo,
+        $totalCcm,
+        $ranges,
+        $practiceHasCcmPlus = false
+    ) {
+        $nurseInfoId = $nurseInfo->id;
+        $result      = 0.0;
 
         $rangesForNurseOnly = collect($ranges)->map(function ($r) use ($nurseInfoId) {
             return array_key_exists($nurseInfoId, $r)
@@ -223,7 +240,6 @@ class VariablePayCalculator
                 : [];
         });
 
-        //nurse must have at least a successful call in any range in order for us to pay
         $hasSuccessfulCall = $rangesForNurseOnly
             ->filter(function ($f) {
                 if ( ! array_key_exists('has_successful_call', $f)) {
@@ -234,43 +250,57 @@ class VariablePayCalculator
             })
             ->isNotEmpty();
 
-        if ( ! $hasSuccessfulCall) {
-            return $result;
-        }
-
         foreach ($rangesForNurseOnly as $key => $value) {
             if ( ! array_key_exists('duration', $value)) {
                 continue;
             }
 
+            $rate = $nurseInfo->low_rate;
+
             switch ($key) {
                 case 0:
                     //0-20 always pays high rate
-                    $shouldPayHighRate = true;
+                    $rate = $nurseInfo->high_rate;
                     break;
                 case 1:
-                    $shouldPayHighRate = $practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
+                    if ($hasSuccessfulCall &&
+                        $practiceHasCcmPlus &&
+                        $totalCcm >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS) {
+                        $rate = $nurseInfo->high_rate_2;
+                    }
                     break;
                 case 2:
-                    $shouldPayHighRate = $practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS;
+                    if ($hasSuccessfulCall &&
+                        $practiceHasCcmPlus &&
+                        $totalCcm >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS) {
+                        $rate = $nurseInfo->high_rate_3;
+                    }
                     break;
                 default:
-                    $shouldPayHighRate = false;
+                    $rate = 0;
                     break;
             }
 
             $nurseCcmInRange = $value['duration'] / self::HOUR_IN_SECONDS;
-            $result += $nurseCcmInRange * ($shouldPayHighRate
-                    ? $nurseHighRate
-                    : $nurseLowRate);
+            $result += ($nurseCcmInRange * $rate);
         }
 
         return $result;
     }
 
-    private function getPayForPatientWithCcmPlusAltAlgo($nurseInfoId, $nurseVisitFee, $totalCcm, $ranges, $practiceHasCcmPlus = false)
-    {
+    private function getPayForPatientWithCcmPlusAltAlgo(
+        Nurse $nurseInfo,
+        $totalCcm,
+        $ranges,
+        $practiceHasCcmPlus = false
+    ) {
         $result = 0.0;
+
+        $patientHasAtLeastOneSuccessfulCall = collect($ranges)->filter(function ($f) {
+            return collect($f)->filter(function ($f2) {
+                return $f2['has_successful_call'];
+            })->isNotEmpty();
+        })->isNotEmpty();
 
         //if total ccm is greater than the range, then we can pay that range
         foreach ($ranges as $key => $value) {
@@ -278,54 +308,64 @@ class VariablePayCalculator
                 continue;
             }
 
+            $rate = 0.0;
+
             switch ($key) {
                 case 0:
-                    $shouldPay = $totalCcm >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
+                    if ($totalCcm >= self::MONTHLY_TIME_TARGET_IN_SECONDS) {
+                        $rate = $nurseInfo->visit_fee;
+                    }
                     break;
                 case 1:
-                    $shouldPay = $practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
+                    if ($patientHasAtLeastOneSuccessfulCall &&
+                        $practiceHasCcmPlus &&
+                        $totalCcm >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS) {
+                        $rate = $nurseInfo->visit_fee_2;
+                    }
                     break;
                 case 2:
-                    $shouldPay = $practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS;
+                    if ($patientHasAtLeastOneSuccessfulCall &&
+                        $practiceHasCcmPlus &&
+                        $totalCcm >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS) {
+                        $rate = $nurseInfo->visit_fee_3;
+                    }
                     break;
                 default:
-                    $shouldPay = false;
                     break;
             }
 
-            if ( ! $shouldPay) {
+            if (0.0 === $rate) {
                 continue;
             }
 
-            $maxForRange     = self::MONTHLY_TIME_TARGET_IN_SECONDS;
-            $nurseCcmInRange = $this->getNurseTimeAllocationInRange($nurseInfoId, $value);
-            $result += $nurseCcmInRange > 0
-                ? ($nurseCcmInRange / $maxForRange) * $nurseVisitFee
-                : 0.0;
+            $nurseCcmPercentageInRange = $this->getNurseTimePercentageAllocationInRange($nurseInfo->id, $value);
+            if (0 === $nurseCcmPercentageInRange) {
+                continue;
+            }
+
+            $result += $nurseCcmPercentageInRange * $rate;
         }
 
         return $result;
     }
 
     private function getPayForPatientWithDefaultAlgo(
-        $nurseInfoId,
-        $nurseHighRate,
-        $nurseLowRate,
+        Nurse $nurseInfo,
         Collection $patientCareRateLogs
     ) {
         $towardsCCm = $patientCareRateLogs
-            ->where('nurse_id', '=', $nurseInfoId)
+            ->where('nurse_id', '=', $nurseInfo->id)
             ->where('ccm_type', '=', 'accrued_towards_ccm')
             ->sum('increment');
         $towardsCCm = $towardsCCm / self::HOUR_IN_SECONDS;
 
         $afterCCm = $patientCareRateLogs
-            ->where('nurse_id', '=', $nurseInfoId)
+            ->where('nurse_id', '=', $nurseInfo->id)
             ->where('ccm_type', '=', 'accrued_after_ccm')
             ->sum('increment');
         $afterCCm = $afterCCm / self::HOUR_IN_SECONDS;
 
-        return ($towardsCCm * $nurseHighRate) + ($afterCCm * $nurseLowRate);
+        return ($towardsCCm * $nurseInfo->high_rate) + ($afterCCm * $nurseInfo->low_rate);
     }
 
     private function isNewNursePayAlgoEnabled()
