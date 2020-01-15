@@ -37,6 +37,7 @@ use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeRem
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Tests\Commands\CreateAndSeedTestSuiteDB;
 
 class Kernel extends ConsoleKernel
 {
@@ -45,6 +46,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         RunScheduler::class,
+        CreateAndSeedTestSuiteDB::class,
     ];
 
     /**
