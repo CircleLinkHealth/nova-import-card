@@ -52,15 +52,15 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h3 class="modal-title" id="exampleModalLabel">{{modalTitle}}</h3>
+                            <h3 class="modal-title" id="exampleModalLabel">{{this.modalTitle}}</h3>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div v-if="!this.clickedToViewEvent || !this.addNewEventMainClicked" class="display-date">
-                                <h4>{{this.dayInHumanLangForView}} {{workEventDate}}</h4>
-                            </div>
+                            <!--                            <div v-if="!clickedToViewEvent && !addNewEventMainClicked" class="display-date">-->
+                            <!--                                <h4>{{this.dayInHumanLangForView}} {{workEventDate}}</h4>-->
+                            <!--                            </div>-->
 
                             <!--  Filter Options-->
                             <div v-if="!clickedToViewEvent" class="filter-options">
@@ -72,9 +72,21 @@
                                     </vue-select>
                                 </div>
 
+                                <div class="choose-event-date">
+                                    <div v-if="addNewEventMainClicked">
+                                        <div style="display: inline-flex">Work on:
+                                            <input type="date"
+                                                   class="event-date-field"
+                                                   name="event_date"
+                                                   :min="calculateMinDate()"
+                                                   v-model="selectedDate">
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="modal-inputs col-md-12">
                                     <div class="work-hours">
-                                        <h5>Work For:</h5>
+                                        <h5>For:</h5>
                                         <input v-model="hoursToWork"
                                                type="number"
                                                :class="{disable: addHolidays}"
@@ -85,7 +97,7 @@
                                     </div>
                                     <div class="start-end-time">
                                         <div class="start-time">
-                                            <h5>Between (EDT):</h5>
+                                            <h5>start (EDT):</h5>
                                             <input v-model="workRangeStarts"
                                                    type="time"
                                                    :class="{disable: addHolidays}"
@@ -93,7 +105,7 @@
                                                    class="time-input">
                                         </div>
                                         <div class="end-time">
-                                            <h5>and (EDT):</h5>
+                                            <h5>end (EDT):</h5>
                                             <input v-model="workRangeEnds"
                                                    type="time"
                                                    :class="{disable: addHolidays}"
@@ -101,16 +113,6 @@
                                                    class="time-input">
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="choose-event-date">
-                                <div v-if="addNewEventMainClicked">
-                                    <h5>Event Date:</h5>
-                                    <input type="date"
-                                           name="event_date"
-                                           :min="calculateMinDate()"
-                                           v-model="selectedDate">
                                 </div>
                             </div>
 
@@ -141,28 +143,23 @@
                                                type="checkbox"
                                                class="add-holidays-button"
                                                v-model="addHolidays">
-                                        Add holiday window
+                                        I am taking the day off
                                     </div>
                                 </div>
-
                             </div>
 
                             <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'holiday'"
                                  class="view-event">
-                                <div class="nurse-name">{{this.eventToViewData[0].name}} holiday on</div>
-                                <div class="work-day-read">{{this.eventToViewData[0].day}}</div>
-                                <div class="work-day-read">{{this.eventToViewData[0].date}}</div>
+                                <div v-if="authIsAdmin" class="nurse-name">{{this.eventToViewData[0].name}}</div>
+                                <div class="work-day-read">Day off on {{this.eventToViewData[0].day}}
+                                    {{this.eventToViewData[0].date}}
+                                </div>
                             </div>
                             <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'workDay'"
                                  class="view-event">
-                                <div class="nurse-name">{{this.eventToViewData[0].name}}</div>
-                                <div class="work-day-read">on {{this.eventToViewData[0].day}} works for</div>
-                                <div class="work-hours-read">{{this.eventToViewData[0].workHours}} hours
-                                    <div style="display: flex; margin-left: 22%; margin-top: 1%;">
-                                        <div class="start-time-read">between {{this.eventToViewData[0].start}}</div>
-                                        <div style="margin-left: 5%; margin-right: 5%;">to</div>
-                                        <div class="end-time-read">{{this.eventToViewData[0].end}}</div>
-                                    </div>
+                                <div v-if="authIsAdmin" class="nurse-name">{{this.eventToViewData[0].name}}</div>
+                                <div class="work-hours-read">Work for {{this.eventToViewData[0].workHours}} hours
+                                    between {{this.eventToViewData[0].start}} and {{this.eventToViewData[0].end}}
                                 </div>
                             </div>
                         </div>
@@ -172,13 +169,13 @@
                             <button v-if="clickedToViewEvent"
                                     type="button"
                                     class="btn btn-primary"
-                                    @click="deleteEvent(false)">Delete selected
+                                    @click="deleteEvent(false)">Delete this event
                             </button>
 
                             <button v-if="clickedToViewEvent && isRecurringEvent"
                                     type="button"
                                     class="btn btn-primary" style="background-color: crimson; border-color: crimson"
-                                    @click="deleteEvent(true)">Delete all
+                                    @click="deleteEvent(true)">Delete all repeating events
                             </button>
 
                             <button v-if="!clickedToViewEvent" type="button"
@@ -265,6 +262,7 @@
                 addHolidays: false,
                 authIsAdmin: false,
                 authIsNurse: false,
+                clickedOnDay: false,
                 eventSources: [
                     { // has to be 'events()' else it doesnt work
                         events(start, end, timezone, callback) {
@@ -602,7 +600,7 @@
                     .catch((error) => {
                         console.log(error.response.data);
                         if (error.response.status === 422) {
-                        this.manipulateError(error);
+                            this.manipulateError(error);
                         }
                     });
             },
@@ -622,6 +620,7 @@
 
                 this.workEventDate = '';
                 this.workEventDate = clickedDate.format();
+                this.clickedOnDay = true;
 
                 if (clickedDate >= today) {
                     this.toggleModal();
@@ -685,6 +684,7 @@
                 this.workEventDate = '';
                 this.addHolidays = false;
                 this.selectedDate = '';
+                this.clickedOnDay = false;
             },
 
             nursesForSearchFilter() {
@@ -744,7 +744,19 @@
             },
 
             modalTitle() {
-                return this.clickedToViewEvent ? 'View / Delete Event' : 'Add new window';
+                if (this.addNewEventMainClicked) {
+                    return 'Add Event';
+                }
+                if (this.clickedToViewEvent && this.eventToViewData[0].eventType === 'workDay') {
+                    return `Workday: ${this.eventToViewData[0].day} (${this.eventToViewData[0].date})`
+                }
+
+                if (this.clickedToViewEvent && this.eventToViewData[0].eventType === 'holiday') {
+                    return `Day off on ${this.eventToViewData[0].day} (${this.eventToViewData[0].date})`
+                }
+                if (this.clickedOnDay) {
+                    return `Add Event for ${this.dayInHumanLangForView} (${this.workEventDate})`
+                }
             },
 
         },
@@ -802,7 +814,7 @@
 
     .nurse-name {
         text-align: left;
-        font-size: 20px;
+        font-size: 18px;
         letter-spacing: 1px;
         font-weight: 500;
         margin-bottom: 1%;
@@ -858,7 +870,7 @@
     }
 
     .choose-event-date {
-        margin-top: 19%;
+
     }
 
     .modal-inputs {
@@ -978,6 +990,10 @@
 
     #calendar > div.fc-toolbar.fc-header-toolbar > div.fc-right {
         margin-right: 15%;
+    }
+
+    .event-date-field{
+
     }
 </style>
 
