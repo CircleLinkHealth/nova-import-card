@@ -11,6 +11,10 @@ use Circlelinkhealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 
+$appUrl = env('APP_URL', 'http://cpm.dev');
+
+$appUrl= str_replace('${HEROKU_APP_NAME}', getenv('HEROKU_APP_NAME'),$appUrl);
+
 return [
     /*
      * Configure the editor you want to use:
@@ -73,7 +77,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://cpm.dev'),
+    'url' => $appUrl,
 
     'asset_url' => env('ASSET_URL', null),
 
