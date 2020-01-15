@@ -38,14 +38,12 @@ class ReviewAppPreDestroy extends Command
      */
     public function handle()
     {
-        if ($branchName = snake_case(getenv('HEROKU_BRANCH'))) {
-            if ('cpm_production' === $branchName) {
-                abort('It is not recommended to run this command on the production database');
-            }
-            config(['database.mysql.database' => $branchName]);
-    
-            Schema::getConnection()->getDoctrineSchemaManager()->dropDatabase("`{$branchName}`");
+        if ( ! app()->environment(['review', 'local'])) {
+            throw new \Exception('Only review and local environments can run this');
         }
+        
+        $dbName = config('database.connections.mysql.database');
+        Schema::getConnection()->getDoctrineSchemaManager()->dropDatabase("`{$dbName}`");
         
         $this->line('reviewapp:predestroy ran');
     }
