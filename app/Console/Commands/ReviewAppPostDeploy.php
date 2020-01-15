@@ -46,5 +46,7 @@ class ReviewAppPostDeploy extends Command
         if ($branchName) {
             $this->call('test:prepare-test_suite-db', ['-vvv' => true, 'dbName' => $branchName]);
         }
+    
+        $this->line('reviewapp:postdeploy ran');
     }
 }

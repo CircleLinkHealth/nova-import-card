@@ -46,5 +46,7 @@ class ReviewAppPreDestroy extends Command
     
             Schema::getConnection()->getDoctrineSchemaManager()->dropDatabase("`{$branchName}`");
         }
+        
+        $this->line('reviewapp:predestroy ran');
     }
 }
