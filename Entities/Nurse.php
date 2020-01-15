@@ -20,9 +20,13 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @property string              $license
  * @property int                 $hourly_rate
  * @property string              $billing_type
- * @property int                 $low_rate
- * @property int                 $high_rate
- * @property float               $visit_fee //for the new ccm plus algo
+ * @property float               $low_rate
+ * @property float               $high_rate
+ * @property float               $high_rate_2
+ * @property float               $high_rate_3
+ * @property float               $visit_fee
+ * @property float               $visit_fee_2
+ * @property float               $visit_fee_3
  * @property int                 $spanish
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
