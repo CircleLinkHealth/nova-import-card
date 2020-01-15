@@ -173,14 +173,14 @@ class VariablePayCalculator
      * @param $nurseInfoId
      * @param $range
      */
-    private function getNurseTimePercentageAllocationInRange($nurseInfoId, $range): int
+    private function getNurseTimePercentageAllocationInRange($nurseInfoId, $range): float
     {
         $elqRange = collect($range);
 
         //only 1 RN, pay the full VF, regardless of calls
         if (1 === $elqRange->count()) {
             return $elqRange->has($nurseInfoId)
-                ? self::MONTHLY_TIME_TARGET_IN_SECONDS
+                ? 1
                 : 0;
         }
 
@@ -192,6 +192,10 @@ class VariablePayCalculator
         //or all RNs had successful calls, split the VF proportionally
         if ($filtered->isEmpty() || $elqRange->count() === $filtered->count()) {
             return $elqRange[$nurseInfoId]['duration'] / self::MONTHLY_TIME_TARGET_IN_SECONDS;
+        }
+
+        if (! $filtered->has($nurseInfoId)) {
+            return 0;
         }
 
         //if we reach here, it means that some RNs had successful calls in this range and some not
