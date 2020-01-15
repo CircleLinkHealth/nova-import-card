@@ -34,9 +34,10 @@
   ],
   "environments": {
     "review": {
-      "addons": ["heroku-redis:hobby-dev", "cleardb:ignite"],
+      "addons": ["heroku-redis:hobby-dev"],
       "scripts": {
-        "postdeploy": "php artisan config:cache && php artisan --env=testing test:prepare-test_suite-db"
+        "postdeploy": "php artisan reviewapp:postdeploy",
+        "pr-predestroy": "php artisan reviewapp:predestroy"
       }
     }
   }

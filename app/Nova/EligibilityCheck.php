@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Laravel\Nova\Fields\ID;
 use Illuminate\Http\Request;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -13,7 +14,7 @@ class EligibilityCheck extends Resource
      *
      * @var string
      */
-    public static $model = 'App\EligibilityCheck';
+    public static $model = Enrollee::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
