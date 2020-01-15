@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Traits\RunsConsoleCommands;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class ReviewAppPostDeploy extends Command
@@ -43,18 +44,18 @@ class ReviewAppPostDeploy extends Command
             throw new \Exception('Only review and local environments can run this');
         }
         
-        $branchName = snake_case(getenv('HEROKU_BRANCH'));
+        $dbName = config('database.connections.mysql.database');
         
-        putenv("DB_DATABASE=$branchName");
+        try {
+            $hasUsers = User::exists();
+        } catch (\Exception $exception) {
+            $hasUsers = false;
+        }
         
-        config(['database.mysql.database' => $branchName]);
-        
-        $this->runCommand(['php', 'artisan', 'config:cache', '-vvv']);
-        
-        if ($branchName) {
-            $migrateInstallCommand  = $this->runCommand(['php', 'artisan', '-vvv', 'mysql:createdb', $branchName]);
-            $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh']);
-            $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:views']);
+        if ( ! $hasUsers) {
+            $migrateInstallCommand = $this->runCommand(['php', 'artisan', '-vvv', 'mysql:createdb', $dbName]);
+            $migrateCommand = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh']);
+            $migrateCommand = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:views']);
             $testSuiteSeederCommand = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed', '--class=TestSuiteSeeder']);
         }
         
