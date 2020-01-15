@@ -47,10 +47,6 @@ class ReviewAppPostDeploy extends Command
         
         putenv("DB_DATABASE=$branchName");
         
-        $this->warn(json_encode(getenv('DB_DATABASE')));
-        $this->warn(json_encode(env('DB_DATABASE')));
-        $this->warn(json_encode($_ENV));
-        
         config(['database.mysql.database' => $branchName]);
         
         $this->runCommand(['php', 'artisan', 'config:cache', '-vvv']);
