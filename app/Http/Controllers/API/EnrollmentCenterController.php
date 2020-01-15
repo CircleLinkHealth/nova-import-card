@@ -37,6 +37,7 @@ class EnrollmentCenterController extends ApiController
 
         $searchTerm = implode(' ', $words);
 
+
         $query = Enrollee::whereRaw("MATCH ({$columns}) AGAINST (?)", $searchTerm);
 
         $suggestedFamilyMembers = $query
