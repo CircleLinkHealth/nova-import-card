@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 
 class ReviewAppPostDeploy extends Command
 {
+    use RunsConsoleCommands;
     /**
      * The name and signature of the console command.
      *
@@ -41,12 +42,12 @@ class ReviewAppPostDeploy extends Command
         $branchName = snake_case(getenv('HEROKU_BRANCH'));
         putenv("DB_DATABASE=$branchName");
         config(['database.mysql.database' => $branchName]);
-        $this->call('config:cache', ['-vvv' => true]);
+        $this->runCommand(['php', 'artisan', 'config:cache', '-vvv']);
         
         if ($branchName) {
-            $this->call('test:prepare-test_suite-db', ['-vvv' => true, 'dbName' => $branchName]);
+            $this->runCommand(['php', 'artisan', 'test:prepare-test_suite-db', '-vvv', $branchName]);
         }
-    
-        $this->line('reviewapp:postdeploy ran');
+        
+        $this->warn('reviewapp:postdeploy ran');
     }
 }
