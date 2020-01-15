@@ -130,7 +130,7 @@
     "circlelinkhealth/nurseinvoices-module": "dev-master",
     "circlelinkhealth/patientapi-module": "dev-master",
     "circlelinkhealth/raygun-module": "0.7",
-    "circlelinkhealth/revisionable": "*",
+    "circlelinkhealth/revisionable-module": "dev-master",
     "circlelinkhealth/shared-models-module": "dev-master",
     "circlelinkhealth/sqlviews-module": "dev-master",
     "circlelinkhealth/timetracking-module": "1.1.5",

@@ -78,8 +78,8 @@ const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2
 const CcdUploader = () => import(/* webpackChunkName: "chunk-ccd-uploader" */ './components/importer/ccd-upload');
 const CcdViewer = () => import(/* webpackChunkName: "chunk-ccd-viewer" */ './components/importer/ccd-viewer');
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
-const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../vendor/circlelinkhealth/nurseinvoices-module/Resources/assets/js/components/dispute-invoice')
-const NurseInvoiceDailyDispute = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../vendor/circlelinkhealth/nurseinvoices-module/Resources/assets/js/components/nurseInvoiceDailyDispute');
+const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../Modules/Nurseinvoices/Resources/assets/js/components/dispute-invoice')
+const NurseInvoiceDailyDispute = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../Modules/Nurseinvoices/Resources/assets/js/components/nurseInvoiceDailyDispute');
 const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/NurseScheduleCalendar');
 const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/CalendarLoader');
 const PusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-notifications')

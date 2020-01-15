@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "da2dd5c146c8994f635bb2395e2f3b83",
+    "content-hash": "1e715bafe29a5f3c7653307178ec14a0",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -842,7 +842,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "0ba8859b6311aea17d020c7d94aeaa8fd90980dd"
+                "reference": "1e85712546307c1495301eb3fea3e085b3f5fa15"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper": "*",
@@ -875,7 +875,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-15T00:03:26+00:00"
+            "time": "2020-01-15T00:35:53+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -985,9 +985,9 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "ba314ede2108ce6647c1f015bfbcf3757c5b4b0d"
+                "reference": "6e2fe5d1c9caff554ff268a2da4b05fb8bed94d8"
             },
-            "type": "library",
+            "type": "laravel-module",
             "extra": {
                 "laravel": {
                     "providers": [
@@ -1008,7 +1008,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-14T22:49:15+00:00"
+            "time": "2020-01-15T00:37:08+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1016,9 +1016,9 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "90d131c9e95ffb166858f5867cdd0296830745ad"
+                "reference": "932d0948f923cb8e573b8af7377f34bdd7c08823"
             },
-            "type": "library",
+            "type": "laravel-module",
             "extra": {
                 "laravel": {
                     "providers": [
@@ -1038,7 +1038,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-14T22:50:13+00:00"
+            "time": "2020-01-15T00:42:50+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1076,12 +1076,12 @@
             "time": "2020-01-14T23:51:13+00:00"
         },
         {
-            "name": "circlelinkhealth/revisionable",
+            "name": "circlelinkhealth/revisionable-module",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-revisionable.git",
-                "reference": "7cc5b5f3ddf94a744b66f218df9bedce359f51f0"
+                "reference": "a469a2d0eb8a68e3707783a152233db0ad2d0c42"
             },
             "require": {
                 "illuminate/support": "~4.0|~5.0|~5.1",
@@ -1091,7 +1091,7 @@
             "require-dev": {
                 "orchestra/testbench": "~3.0"
             },
-            "type": "library",
+            "type": "laravel-module",
             "autoload": {
                 "classmap": [
                     "src/migrations"
@@ -1129,7 +1129,7 @@
                 "source": "https://github.com/VentureCraft/revisionable"
             },
             "abandoned": true,
-            "time": "2019-12-09T10:50:51+00:00"
+            "time": "2020-01-15T00:43:50+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -13578,6 +13578,7 @@
         "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/patientapi-module": 20,
+        "circlelinkhealth/revisionable-module": 20,
         "circlelinkhealth/shared-models-module": 20,
         "circlelinkhealth/sqlviews-module": 20,
         "daltcore/lara-pdf-merger": 20,
