@@ -24,7 +24,7 @@
         }
     },
     "require": {
-        "circlelinkhealth/customer": "*"
+        "circlelinkhealth/customer-module": "*"
     },
     "repositories": [
         {
