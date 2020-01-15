@@ -51,7 +51,7 @@ class HerokuOnRelease extends Command
         $this->runCommand(array_merge($base, ['deploy:post']));
         
         
-        $this->line('heroku:onrelease ran');
+        $this->warn('heroku:onrelease ran');
         
     }
 }
