@@ -80,6 +80,10 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @property int|null $case_load_capacity
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereCaseLoadCapacity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereHighRate2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereHighRate3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee3($value)
  */
 class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 {
