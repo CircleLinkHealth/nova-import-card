@@ -4,6 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+$sessionDomain = env('SESSION_DOMAIN', null);
+
+$sessionDomain = str_replace('${HEROKU_APP_NAME}', getenv('HEROKU_APP_NAME'), $sessionDomain);
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -153,9 +157,9 @@ return [
     | available to in your application. A sensible default has been set.
     |
     */
-
-    'domain' => env('SESSION_DOMAIN', null),
-
+    
+    'domain' => $sessionDomain,
+    
     /*
     |--------------------------------------------------------------------------
     | HTTPS Only Cookies
