@@ -129,12 +129,12 @@
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/nurseinvoices-module": "dev-master",
     "circlelinkhealth/patientapi-module": "dev-master",
-    "circlelinkhealth/raygun-module": "0.6",
+    "circlelinkhealth/raygun-module": "0.7",
     "circlelinkhealth/revisionable": "*",
     "circlelinkhealth/shared-models-module": "dev-master",
     "circlelinkhealth/sqlviews-module": "dev-master",
-    "circlelinkhealth/timetracking-module": "1.1.4",
-    "circlelinkhealth/twofa-module": "1.1.4",
+    "circlelinkhealth/timetracking-module": "1.1.5",
+    "circlelinkhealth/twofa-module": "1.1.5",
     "daltcore/lara-pdf-merger": "dev-master",
     "dillingham/nova-button": "^1.0",
     "doctrine/dbal": "2.9.2",
@@ -271,7 +271,6 @@
     },
     "merge-plugin": {
       "include": [
-        "CLHPackages/*/composer.json",
         "Modules/*/composer.json"
       ],
       "require": [],
