@@ -31,8 +31,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if ($this->app->environment('review'))
-        Schema::defaultStringLength(3072);
+        Schema::defaultStringLength(255);
         
         /*
          * If the current date is the 31st of the month, Carbon::now()->subMonth() will go back to the 31st of the previous month.
