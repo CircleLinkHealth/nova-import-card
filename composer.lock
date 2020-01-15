@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "86566896417556fc40b9af2e28c5d9f3",
+    "content-hash": "67f1677a929a2f1c6c8e1573cbb17f6c",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -740,7 +740,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-development",
+            "version": "dev-calendar_into_dev_v2",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -838,11 +838,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.7.1",
+            "version": "dev-CPM-1658_method_to_nurse_model_plus_calendarFields",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "65f28eebfd51b8ae906892c43e338599cba2b4eb"
+                "reference": "1e85712546307c1495301eb3fea3e085b3f5fa15"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper": "*",
@@ -875,7 +875,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-14T23:51:13+00:00"
+            "time": "2020-01-15T00:35:53+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -912,7 +912,7 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-development",
+            "version": "dev-calendar_into_dev_v2",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
@@ -946,7 +946,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-development",
+            "version": "dev-calendar_into_dev_v2",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -985,7 +985,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "6e2fe5d1c9caff554ff268a2da4b05fb8bed94d8"
+                "reference": "e1d362ed0bbf3c06d694b89c20aab72b487c4021"
             },
             "type": "laravel-module",
             "extra": {
@@ -1008,7 +1008,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-15T00:37:08+00:00"
+            "time": "2020-01-15T01:38:54+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -13525,6 +13525,7 @@
     "stability-flags": {
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/ccda-parser-processor-php-module": 20,
+        "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/eligibility-module": 20,
         "circlelinkhealth/nurseinvoices-module": 20,
         "circlelinkhealth/patientapi-module": 20,
