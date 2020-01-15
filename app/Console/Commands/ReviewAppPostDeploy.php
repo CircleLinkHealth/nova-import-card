@@ -20,7 +20,7 @@ class ReviewAppPostDeploy extends Command
      *
      * @var string
      */
-    protected $description = 'Commands to run on event postdeploy of a Heroku review app.';
+    protected $description = 'Commands to run on event postdeploy of a Heroku review app. Only run this for review apps.';
     
     /**
      * Create a new command instance.
@@ -39,15 +39,19 @@ class ReviewAppPostDeploy extends Command
      */
     public function handle()
     {
+        $this->warn(json_encode($_ENV));
         $branchName = snake_case(getenv('HEROKU_BRANCH'));
         putenv("DB_DATABASE=$branchName");
         config(['database.mysql.database' => $branchName]);
         $this->runCommand(['php', 'artisan', 'config:cache', '-vvv']);
         
         if ($branchName) {
-            $this->runCommand(['php', 'artisan', 'test:prepare-test_suite-db', '-vvv', $branchName]);
+            $migrateInstallCommand  = $this->runCommand(['php', 'artisan', '-vvv', 'mysql:createdb', $branchName]);
+            $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh']);
+            $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:views']);
+            $testSuiteSeederCommand = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed', '--class=TestSuiteSeeder']);
         }
-    
+        
         $this->warn('reviewapp:postdeploy ran');
     }
 }
