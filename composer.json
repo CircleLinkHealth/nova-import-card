@@ -121,7 +121,7 @@
     "circlelinkhealth/ccda-parser-processor-php-module": "dev-master",
     "circlelinkhealth/cerberus-gatekeeper": "^v3.0.2",
     "circlelinkhealth/core-module": "1.36",
-    "circlelinkhealth/cpm-migrations-module": "1.0",
+    "circlelinkhealth/cpm-migrations-module": "dev-master",
     "circlelinkhealth/customer-module": "dev-CPM-1658_method_to_nurse_model_plus_calendarFields",
     "circlelinkhealth/eligibility-module": "dev-master",
     "circlelinkhealth/import-practice-staff-csv": "*",
