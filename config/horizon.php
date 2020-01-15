@@ -84,6 +84,17 @@ return [
                 'timeout'    => 300,
             ],
         ],
+        'review' => [
+            'supervisor-1' => [
+                'connection' => 'redis',
+                'queue'      => ['high', 'default', 'low'],
+                'balance'    => 'auto',
+                'min-processes' => 1,
+                'max-processes' => 3,
+                'tries'         => 2,
+                'timeout'       => 30,
+            ],
+        ],
         'staging' => [
             'supervisor-1' => [
                 'connection'    => 'redis',
