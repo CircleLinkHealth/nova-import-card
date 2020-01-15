@@ -39,10 +39,20 @@ class ReviewAppPostDeploy extends Command
      */
     public function handle()
     {
-        $this->warn(json_encode($_ENV));
+        if ( ! app()->environment(['review', 'local'])) {
+            throw new \Exception('Only review and local environments can run this');
+        }
+        
         $branchName = snake_case(getenv('HEROKU_BRANCH'));
+        
         putenv("DB_DATABASE=$branchName");
+        
+        $this->warn(json_encode(getenv('DB_DATABASE')));
+        $this->warn(json_encode(env('DB_DATABASE')));
+        $this->warn(json_encode($_ENV));
+        
         config(['database.mysql.database' => $branchName]);
+        
         $this->runCommand(['php', 'artisan', 'config:cache', '-vvv']);
         
         if ($branchName) {

@@ -40,9 +40,11 @@ class HerokuOnRelease extends Command
      */
     public function handle()
     {
+        $this->warn('heroku:onrelease ran');
+    
         $base = ['php', 'artisan', '-vvv'];
         
-        if (empty(config('database.connections.mysql.database'))) {
+        if (app()->environment('review')) {
             $this->runCommand(array_merge($base, ['reviewapp:postdeploy']));
         }
         
@@ -52,6 +54,5 @@ class HerokuOnRelease extends Command
         
         
         $this->warn('heroku:onrelease ran');
-        
     }
 }
