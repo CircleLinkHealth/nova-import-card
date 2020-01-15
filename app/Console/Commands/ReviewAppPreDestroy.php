@@ -38,7 +38,11 @@ class ReviewAppPreDestroy extends Command
      */
     public function handle()
     {
-        if ($branchName = getenv('HEROKU_BRANCH')) {
+        if ($branchName = snake_case(getenv('HEROKU_BRANCH'))) {
+            if ('cpm_production' === $branchName) {
+                abort('It is not recommended to run this command on the production database');
+            }
+            
             Schema::getConnection()->getDoctrineSchemaManager()->dropDatabase("`{$branchName}`");
         }
     }
