@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\Importer\CarePlanHelper;
-use App\Models\PatientData\NBI\PatientData;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
+use CircleLinkHealth\Eligibility\Entities\PatientData;
 use CircleLinkHealth\Customer\Entities\Patient;
 use Illuminate\Console\Command;
 

@@ -6,11 +6,11 @@
 
 namespace App\Services\Eligibility\Adapters;
 
-use App\EligibilityBatch;
-use App\EligibilityJob;
 use App\Services\Eligibility\Entities\MedicalRecord;
-use App\Traits\ValidatesEligibility;
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
 use Seld\JsonLint\JsonParser;
@@ -50,11 +50,6 @@ class JsonMedicalRecordAdapter
         $this->source = $source;
     }
 
-    /**
-     * @param EligibilityBatch $eligibilityBatch
-     *
-     * @return EligibilityJob|null
-     */
     public function createEligibilityJob(EligibilityBatch $eligibilityBatch): ?EligibilityJob
     {
         //hack to fix Lakhsmi's broken json for River city list from september 2018
@@ -90,9 +85,6 @@ class JsonMedicalRecordAdapter
         return $job;
     }
 
-    /**
-     * @return MedicalRecord|null
-     */
     public function createMedicalRecord(): ?MedicalRecord
     {
     }
@@ -129,9 +121,6 @@ class JsonMedicalRecordAdapter
         return $this->medicalRecord;
     }
 
-    /**
-     * @return bool
-     */
     public function isValid(): bool
     {
         if ( ! is_null($this->isValid)) {

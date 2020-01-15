@@ -7,14 +7,14 @@
 namespace App\Jobs;
 
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Importer\CarePlanHelper;
 use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
-use App\Importer\Models\ImportedItems\ProblemImport;
-use App\Importer\Models\ItemLogs\ProblemLog;
-use App\Importer\Section\Importers\Problems;
-use App\Models\CCD\Problem;
-use App\Models\MedicalRecords\Ccda;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\Problems;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

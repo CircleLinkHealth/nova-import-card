@@ -7,8 +7,8 @@
 namespace App\Exports\PracticeReports;
 
 use App\Contracts\Reports\PracticeDataExport;
-use App\Models\CCD\Problem;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Database\Eloquent\Builder;
 
 class PatientProblemsReport extends PracticeReport
@@ -28,9 +28,6 @@ class PatientProblemsReport extends PracticeReport
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function filename(): string
     {
         if ( ! $this->filename) {
@@ -41,9 +38,6 @@ class PatientProblemsReport extends PracticeReport
         return $this->filename;
     }
 
-    /**
-     * @return array
-     */
     public function headings(): array
     {
         return [
@@ -57,8 +51,6 @@ class PatientProblemsReport extends PracticeReport
 
     /**
      * @param mixed $row
-     *
-     * @return array
      */
     public function map($row): array
     {
@@ -91,15 +83,12 @@ class PatientProblemsReport extends PracticeReport
         )->all();
     }
 
-    /**
-     * @return Builder
-     */
     public function query(): Builder
     {
         return User::ofPractice($this->practice)
-                   ->ofType('participant')
-                   ->has('patientInfo')
-                   ->with(
+            ->ofType('participant')
+            ->has('patientInfo')
+            ->with(
                        [
                            'patientInfo' => function ($q) {
                                $q->select('mrn_number', 'birth_date', 'id', 'user_id');

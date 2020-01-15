@@ -1,0 +1,43 @@
+{
+  "name": "CarePlan Manager",
+  "description": "CarePlan Manager - CircleLink Health",
+  "keywords": [],
+  "website": "https://www.careplanmanager.com/",
+  "repository": "https://github.com/CircleLinkHealth/app-cpm-web",
+  "logo": "https://www.careplanmanager.com/img/logos/LogoHorizontal_Color.svg?id=e08f4611feae12f4f909",
+  "success_url": "/",
+  "scripts": {
+  },
+  "env": {
+
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "hobby"
+    }
+  },
+  "image": "heroku/php",
+  "addons": [
+    "heroku-redis:hobby-dev"
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-php"
+    },
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-nodejs"
+    },
+    {
+      "url": "https://github.com/chap/wkhtmltopdf-heroku-18-buildpack"
+    }
+  ],
+  "environments": {
+    "review": {
+      "addons": ["heroku-redis:hobby-dev"],
+      "scripts": {
+        "pr-predestroy": "php artisan reviewapp:predestroy"
+      }
+    }
+  }
+}

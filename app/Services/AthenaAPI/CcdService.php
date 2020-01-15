@@ -6,8 +6,8 @@
 
 namespace App\Services\AthenaAPI;
 
-use App\Models\MedicalRecords\Ccda;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CcdService
 {

@@ -6,8 +6,8 @@
 
 namespace App\Jobs;
 
-use App\Models\MedicalRecords\Ccda;
-use App\Models\MedicalRecords\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -29,7 +29,7 @@ class ImportCcda implements ShouldQueue
     public $timeout = 120;
 
     /**
-     * @var Ccda
+     * @var \CircleLinkHealth\SharedModels\Entities\Ccda
      */
     private $ccda;
 

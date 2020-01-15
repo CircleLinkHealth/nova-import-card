@@ -9,10 +9,10 @@ namespace App\Http\Controllers;
 use App\CLH\Repositories\UserRepository;
 use App\Notifications\EhrReportWriterNotification;
 use App\Services\CCD\ProcessEligibilityService;
-use App\Services\GoogleDrive;
-use App\Traits\ValidatesEligibility;
+use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use Illuminate\Http\Request;
 use Storage;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -91,8 +91,6 @@ class EhrReportWriterController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function notifyReportWriter(Request $request)
@@ -134,9 +132,6 @@ class EhrReportWriterController extends Controller
     }
 
     /**
-     * @param Request                   $request
-     * @param ProcessEligibilityService $service
-     *
      * @return $this
      */
     public function submitFile(Request $request, ProcessEligibilityService $service)
@@ -210,8 +205,6 @@ class EhrReportWriterController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return $this
      */
     public function validateJson(Request $request)
@@ -261,8 +254,6 @@ class EhrReportWriterController extends Controller
     }
 
     /**
-     * @param EhrReportWriterInfo $info
-     *
      * @return \Illuminate\Support\Collection
      */
     private function getUnprocessedFilesFromGoogleFolder(EhrReportWriterInfo $info)

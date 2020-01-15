@@ -24,7 +24,28 @@ You can add it in the cards method of your Resource.
     }
 ```
 You can also add multiple fields to the card. 
-In case you are using a Select fields. which takes an array of `key => value` pairs as options, the **key** will be used as the value.
+In case you are using a Select fields, which takes an array of `key => value` pairs as options, the **key** will be used as the value.
+
+```
+/**
+     * Get the cards available for the request.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return array
+     */
+    public function cards(Request $request)
+    {
+        $practices = Practice::pluck('display_name', 'id')
+            ->toArray();
+
+        return [
+            new ClhImportCardExtended(self::class, [
+                Select::make('practice')->options($practices)->withModel(Practice::class)
+            ]),
+        ];
+    }
+```
 
 
 To pass validation rules into the card use the `->inputRules()` method, which accepts an array of rules. These rules will be passed in 
@@ -83,6 +104,8 @@ public function __construct($resource, $attributes, $rules, $modelClass)
     }
 ```
 
+
+*You can also customize the title of the card by passing in a 3rd arguement to the card.*
 
 ##Examples:
 See the `Practice` Nova Resource and `PatientConsentLetters` Importer class for an implementation.

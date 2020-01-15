@@ -13,7 +13,7 @@ namespace App\Contracts\Importer\MedicalRecord\Section;
  */
 interface Validator
 {
-    public function isValid(ItemLog $item): bool;
+    public function isValid($item): bool;
 
-    public function shouldValidate(ItemLog $item): bool;
+    public function shouldValidate($item): bool;
 }

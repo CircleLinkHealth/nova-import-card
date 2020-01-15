@@ -139,7 +139,7 @@ $user_info = [];
                                                                    class="form-control" name="home_phone_number"
                                                                    id="home_phone_number" placeholder="Telephone *"
                                                                    title="Please write a phone number in the format 123-345-7890"
-                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}">
+                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}">
                                                             <span class="help-block">{{ $errors->first('home_phone_number') }}</span>
                                                         </div>
                                                     </div>
@@ -152,7 +152,7 @@ $user_info = [];
                                                                    id="mobile_phone_number"
                                                                    placeholder="Mobile Telephone *"
                                                                    title="Please write a phone number in the format 123-345-7890"
-                                                                   value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}">
+                                                                   value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}">
                                                             <span class="help-block">{{ $errors->first('mobile_phone_number') }}</span>
                                                         </div>
                                                     </div>

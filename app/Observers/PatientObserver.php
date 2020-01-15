@@ -6,9 +6,9 @@
 
 namespace App\Observers;
 
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Services\Calls\SchedulerService;
-use App\TargetPatient;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 

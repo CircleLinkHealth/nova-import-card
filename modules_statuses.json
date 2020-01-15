@@ -3,5 +3,6 @@
     "CpmMigrations": true,
     "Eligibility": true,
     "NurseInvoices": true,
-    "SqlViews": true
+    "SqlViews": true,
+    "CarePlanModels": true
 }

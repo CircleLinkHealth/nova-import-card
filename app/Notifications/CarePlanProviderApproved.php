@@ -6,11 +6,11 @@
 
 namespace App\Notifications;
 
-use App\CarePlan;
 use App\Contracts\FaxableNotification;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -131,10 +131,8 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
      * Get a pdf representation of the note to send via Fax.
      *
      * @param $notifiable
-     *
-     * @return array
      */
-    public function toFax($notifiable = null) : array
+    public function toFax($notifiable = null): array
     {
         return [
             'file' => $this->toPdf($notifiable),

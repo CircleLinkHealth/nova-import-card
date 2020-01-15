@@ -6,9 +6,9 @@
 
 return [
     'biometrics' => [
-        \App\Models\CPM\Biometrics\CpmWeight::class,
-        \App\Models\CPM\Biometrics\CpmBloodPressure::class,
-        \App\Models\CPM\Biometrics\CpmBloodSugar::class,
-        \App\Models\CPM\Biometrics\CpmSmoking::class,
+        \CircleLinkHealth\SharedModels\Entities\CpmWeight::class,
+        \CircleLinkHealth\SharedModels\Entities\CpmBloodPressure::class,
+        \CircleLinkHealth\SharedModels\Entities\CpmBloodSugar::class,
+        \CircleLinkHealth\SharedModels\Entities\CpmSmoking::class,
     ],
 ];

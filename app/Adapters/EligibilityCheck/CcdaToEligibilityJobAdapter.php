@@ -7,13 +7,12 @@
 namespace App\Adapters\EligibilityCheck;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
-use App\EligibilityBatch;
-use App\EligibilityJob;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
-use App\Models\MedicalRecords\Ccda;
 use App\Services\Eligibility\Entities\Problem;
-use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Collection;
 
 class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
@@ -27,7 +26,7 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
      */
     protected $practice;
     /**
-     * @var Ccda
+     * @var \CircleLinkHealth\SharedModels\Entities\Ccda
      */
     private $ccda;
 
@@ -173,17 +172,22 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
         )->filter();
     }
 
-    private function handleLastEncounter($patient, $ccdaJson)
+    private function handleLastEncounter($patient, $parsedCcdObj)
     {
         $lastEncounter = false;
         $patient->put('last_encounter', '');
 
-        if (isset($ccdaJson->encounters)
-            && array_key_exists(0, $ccdaJson->encounters)
-            && isset($ccdaJson->encounters[0]->date)) {
-            if ($ccdaJson->encounters[0]->date) {
-                $lastEncounter = $ccdaJson->encounters[0]->date;
-                $patient->put('last_encounter', Carbon::parse($lastEncounter));
+        $encounters = collect($parsedCcdObj->encounters);
+
+        $lastEncounter = $encounters->sortByDesc(function ($el) {
+            return $el->date;
+        })->first();
+
+        if (property_exists($lastEncounter, 'date')) {
+            $v = \Validator::make(['date' => $lastEncounter->date], ['date' => 'required|date']);
+
+            if ($v->passes()) {
+                $patient['last_encounter'] = $lastEncounter->date;
             }
         }
 

@@ -7,7 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DownloadMediaWithSignedRequest;
-use App\Services\GoogleDrive;
+use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;

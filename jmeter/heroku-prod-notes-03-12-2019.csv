@@ -1,5 +1,0 @@
-Label,# Samples,Average,Min,Max,Std. Dev.,Error %,Throughput,Received KB/sec,Sent KB/sec,Avg. Bytes
-Notes And Activities:GET Login,200,1716,1281,3400,402.79,0.000%,2.52701,20.34,12.98,8243.2
-Notes And Activities:POST Login,200,3058,1497,12294,2064.76,0.000%,2.50335,383.78,50.11,156985.1
-Notes And Activities:Notes And Activities,200,2381,1045,4119,588.24,0.000%,2.57928,34.35,37.26,13637.7
-TOTAL,600,2385,1045,12294,1374.97,0.000%,7.14209,415.85,94.27,59622.0

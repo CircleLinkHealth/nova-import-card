@@ -6,7 +6,7 @@
 
 namespace App\Http\Middleware;
 
-use App\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Closure;
 
 class CheckCarePlanMode
@@ -15,7 +15,6 @@ class CheckCarePlanMode
      * Handle an incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
      *
      * @return mixed
      */
