@@ -18,7 +18,7 @@ class CpmProblem extends Resource
      *
      * @var string
      */
-    public static $model = \App\Models\CPM\CpmProblem::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\CpmProblem::class;
 
     /**
      * The columns that should be searched.

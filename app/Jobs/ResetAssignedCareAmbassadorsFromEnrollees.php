@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

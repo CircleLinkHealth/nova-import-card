@@ -7,7 +7,7 @@
 namespace App\Importer\Models\ImportedItems;
 
 use App\Importer\Models\ItemLogs\MedicationLog;
-use App\Models\CPM\CpmMedicationGroup;
+use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
 
 /**
  * App\Importer\Models\ImportedItems\MedicationImport.
@@ -29,7 +29,7 @@ use App\Models\CPM\CpmMedicationGroup;
  * @property \Carbon\Carbon                              $created_at
  * @property \Carbon\Carbon                              $updated_at
  * @property \App\Importer\Models\ItemLogs\MedicationLog $ccdLog
- * @property \App\Models\CPM\CpmMedicationGroup|null     $cpmMedicationGroup
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup|null     $cpmMedicationGroup
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport whereCcdMedicationLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport whereCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\MedicationImport whereCodeSystem($value)

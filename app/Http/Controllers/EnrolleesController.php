@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use App\EligibilityBatch;
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Jobs\ImportConsentedEnrollees;
 use App\Jobs\ImportMedicalRecordsById;
 use CircleLinkHealth\Customer\Entities\Practice;

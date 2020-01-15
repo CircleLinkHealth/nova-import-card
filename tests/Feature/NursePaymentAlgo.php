@@ -6,20 +6,20 @@
 
 namespace Tests\Feature;
 
-use App\AppConfig;
 use App\Call;
 use App\Jobs\CreateNurseInvoices;
 use App\Jobs\StoreTimeTracking;
-use App\Models\CPM\CpmProblem;
 use App\Note;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Tests\TestCase;
 

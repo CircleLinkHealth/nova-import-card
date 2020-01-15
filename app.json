@@ -7,7 +7,6 @@
   "logo": "https://www.careplanmanager.com/img/logos/LogoHorizontal_Color.svg?id=e08f4611feae12f4f909",
   "success_url": "/",
   "scripts": {
-    "postdeploy": "php artisan deploy:post"
   },
   "env": {
 
@@ -15,7 +14,7 @@
   "formation": {
     "web": {
       "quantity": 1,
-      "size": "hobby-dev"
+      "size": "hobby"
     }
   },
   "image": "heroku/php",
@@ -24,10 +23,10 @@
   ],
   "buildpacks": [
     {
-      "url": "https://github.com/heroku/heroku-buildpack-nodejs"
+      "url": "https://github.com/heroku/heroku-buildpack-php"
     },
     {
-      "url": "https://github.com/heroku/heroku-buildpack-php"
+      "url": "https://github.com/heroku/heroku-buildpack-nodejs"
     },
     {
       "url": "https://github.com/chap/wkhtmltopdf-heroku-18-buildpack"
@@ -35,7 +34,10 @@
   ],
   "environments": {
     "review": {
-      "addons": ["heroku-postgresql:hobby-dev"]
+      "addons": ["heroku-redis:hobby-dev"],
+      "scripts": {
+        "pr-predestroy": "php artisan reviewapp:predestroy"
+      }
     }
   }
 }

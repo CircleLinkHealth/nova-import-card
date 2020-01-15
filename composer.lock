@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8106535d92066963fffb3d89cd8eb799",
+    "content-hash": "86566896417556fc40b9af2e28c5d9f3",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.132.4",
+            "version": "3.132.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5dcf2fb87a3cde87a5fa0b9df03b8688dcfc4f19"
+                "reference": "276241cf558f883b639ecdefd0e9912f0df20b8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5dcf2fb87a3cde87a5fa0b9df03b8688dcfc4f19",
-                "reference": "5dcf2fb87a3cde87a5fa0b9df03b8688dcfc4f19",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/276241cf558f883b639ecdefd0e9912f0df20b8e",
+                "reference": "276241cf558f883b639ecdefd0e9912f0df20b8e",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-01-13T19:11:21+00:00"
+            "time": "2020-01-14T19:16:27+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -616,14 +616,14 @@
             "time": "2019-11-30T02:33:19+00:00"
         },
         {
-            "name": "circlelinkhealth/ccda-parser-processor-php",
+            "name": "circlelinkhealth/ccda-parser-processor-php-module",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git",
-                "reference": "d631882f0a08bbf4b62a5275a557e4d4c4c51e2b"
+                "reference": "b869a76f4dc2990e9d7cb28f44bf4b8aeaffa3e8"
             },
-            "type": "library",
+            "type": "laravel-module",
             "extra": {
                 "laravel": {
                     "providers": [
@@ -653,7 +653,7 @@
                 }
             ],
             "description": "PHP wrapper for bluebutton nodejs",
-            "time": "2020-01-08T05:52:36+00:00"
+            "time": "2020-01-15T00:05:43+00:00"
         },
         {
             "name": "circlelinkhealth/cerberus-gatekeeper",
@@ -774,11 +774,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.35",
+            "version": "v1.36",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "562020b28df2aa670f10dfda887e3ce696de377a"
+                "reference": "ba2d2807d9c1995dd56f3563870c9ae156a13d66"
             },
             "type": "laravel-module",
             "extra": {
@@ -804,10 +804,10 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-08T01:10:08+00:00"
+            "time": "2020-01-14T04:35:02+00:00"
         },
         {
-            "name": "circlelinkhealth/cpmmigrations",
+            "name": "circlelinkhealth/cpm-migrations-module",
             "version": "v1.0",
             "source": {
                 "type": "git",
@@ -837,12 +837,12 @@
             "time": "2020-01-06T15:45:19+00:00"
         },
         {
-            "name": "circlelinkhealth/customer",
-            "version": "v1.7.0",
+            "name": "circlelinkhealth/customer-module",
+            "version": "v1.7.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "1f84e7132e2ba470a9cad71b312112dedc2a9014"
+                "reference": "65f28eebfd51b8ae906892c43e338599cba2b4eb"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper": "*",
@@ -875,7 +875,40 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-13T15:56:06+00:00"
+            "time": "2020-01-14T23:51:13+00:00"
+        },
+        {
+            "name": "circlelinkhealth/eligibility-module",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
+                "reference": "4acb8a0de1795a097b2333a9afcd501a440f2288"
+            },
+            "require": {
+                "circlelinkhealth/customer-module": "*"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\Eligibility\\Providers\\EligibilityServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\Eligibility\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-01-15T00:05:44+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -947,19 +980,80 @@
             ]
         },
         {
-            "name": "circlelinkhealth/raygun",
-            "version": "v0.6",
+            "name": "circlelinkhealth/nurseinvoices-module",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
+                "reference": "6e2fe5d1c9caff554ff268a2da4b05fb8bed94d8"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\NurseInvoices\\Providers\\NurseInvoicesServiceProvider",
+                        "CircleLinkHealth\\NurseInvoices\\Providers\\NurseInvoicesDeferredBindingsServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\NurseInvoices\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-01-15T00:37:08+00:00"
+        },
+        {
+            "name": "circlelinkhealth/patientapi-module",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
+                "reference": "932d0948f923cb8e573b8af7377f34bdd7c08823"
+            },
+            "type": "laravel-module",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CircleLinkHealth\\ApiPatient\\Providers\\ApiPatientServiceProvider"
+                    ],
+                    "aliases": []
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\ApiPatient\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-01-15T00:42:50+00:00"
+        },
+        {
+            "name": "circlelinkhealth/raygun-module",
+            "version": "v0.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "318f3fc85a28a7649ec0f52b97746d5d8efc2468"
+                "reference": "d006cf3ad0aec4b500cc72c5a06533b9336682c8"
             },
             "require": {
                 "illuminate/contracts": "^5.0",
                 "mindscape/raygun4php": "1.*",
                 "psr/log": "^1.0"
             },
-            "type": "library",
+            "type": "laravel-module",
             "extra": {
                 "laravel": {
                     "providers": [
@@ -979,15 +1073,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-07T18:45:19+00:00"
+            "time": "2020-01-14T23:51:13+00:00"
         },
         {
-            "name": "circlelinkhealth/revisionable",
+            "name": "circlelinkhealth/revisionable-module",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-revisionable.git",
-                "reference": "7cc5b5f3ddf94a744b66f218df9bedce359f51f0"
+                "reference": "a469a2d0eb8a68e3707783a152233db0ad2d0c42"
             },
             "require": {
                 "illuminate/support": "~4.0|~5.0|~5.1",
@@ -997,7 +1091,7 @@
             "require-dev": {
                 "orchestra/testbench": "~3.0"
             },
-            "type": "library",
+            "type": "laravel-module",
             "autoload": {
                 "classmap": [
                     "src/migrations"
@@ -1035,17 +1129,39 @@
                 "source": "https://github.com/VentureCraft/revisionable"
             },
             "abandoned": true,
-            "time": "2019-12-09T10:50:51+00:00"
+            "time": "2020-01-15T00:43:50+00:00"
         },
         {
-            "name": "circlelinkhealth/sqlviews",
+            "name": "circlelinkhealth/shared-models-module",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
+                "reference": "df3ffd010b67aeeb56f822383145f2ae2c209ffb"
+            },
+            "type": "laravel-module",
+            "autoload": {
+                "psr-4": {
+                    "CircleLinkHealth\\SharedModels\\": ""
+                }
+            },
+            "authors": [
+                {
+                    "name": "Michalis Antoniou",
+                    "email": "mantoniou@cirlelinkhealth.com"
+                }
+            ],
+            "time": "2020-01-15T00:05:43+00:00"
+        },
+        {
+            "name": "circlelinkhealth/sqlviews-module",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
-                "reference": "f877e3d785477f1eea57ef7f70f6dac4a105055f"
+                "reference": "6e8a2ddace3ba0337846827af55b50b550f30c9c"
             },
-            "type": "library",
+            "type": "laravel-module",
             "extra": {
                 "laravel": {
                     "providers": [
@@ -1068,20 +1184,20 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-12-10T12:34:39+00:00"
+            "time": "2020-01-14T23:51:12+00:00"
         },
         {
-            "name": "circlelinkhealth/timetracking",
-            "version": "v1.1.4",
+            "name": "circlelinkhealth/timetracking-module",
+            "version": "v1.1.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "f9f76a1ab6fe73c8a5442f1f5e9a875f64aeb038"
+                "reference": "cfde1aadb29889d7d557ecae3c193961d7418ba4"
             },
             "require": {
-                "circlelinkhealth/customer": "*"
+                "circlelinkhealth/customer-module": "*"
             },
-            "type": "library",
+            "type": "laravel-module",
             "extra": {
                 "laravel": {
                     "providers": [
@@ -1101,21 +1217,21 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-03T23:44:23+00:00"
+            "time": "2020-01-15T00:04:44+00:00"
         },
         {
-            "name": "circlelinkhealth/twofa",
-            "version": "v1.1.2",
+            "name": "circlelinkhealth/twofa-module",
+            "version": "v1.1.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-two-fa.git",
-                "reference": "533b8d192da2f383fb2c4db17eef8a98451502ac"
+                "reference": "e281db1167697a00b9cc27537d4b5779e3f27a41"
             },
             "require": {
                 "authy/php": "^3.0",
-                "circlelinkhealth/customer": "^1.1"
+                "circlelinkhealth/customer-module": "*"
             },
-            "type": "library",
+            "type": "laravel-module",
             "extra": {
                 "laravel": {
                     "providers": [
@@ -1136,7 +1252,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2019-10-11T10:57:56+00:00"
+            "time": "2020-01-15T00:00:45+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -3148,6 +3264,44 @@
                 "security"
             ],
             "time": "2018-09-03T09:48:16+00:00"
+        },
+        {
+            "name": "joshbrw/laravel-module-installer",
+            "version": "v0.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joshbrw/laravel-module-installer.git",
+                "reference": "06bf72e947c313ba7d84c498fb6947a00ba313ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joshbrw/laravel-module-installer/zipball/06bf72e947c313ba7d84c498fb6947a00ba313ef",
+                "reference": "06bf72e947c313ba7d84c498fb6947a00ba313ef",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.1",
+                "php": "^5.4|7.*"
+            },
+            "require-dev": {
+                "composer/composer": "^1.3",
+                "mockery/mockery": "~1.0",
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Joshbrw\\LaravelModuleInstaller\\LaravelModuleInstallerPlugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Joshbrw\\LaravelModuleInstaller\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "time": "2017-11-08T10:06:42+00:00"
         },
         {
             "name": "jubeki/nova-card-linkable",
@@ -9441,55 +9595,6 @@
             "time": "2019-07-25T15:45:09+00:00"
         },
         {
-            "name": "wikimedia/composer-merge-plugin",
-            "version": "v1.4.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/wikimedia/composer-merge-plugin.git",
-                "reference": "81c6ac72a24a67383419c7eb9aa2b3437f2ab100"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/composer-merge-plugin/zipball/81c6ac72a24a67383419c7eb9aa2b3437f2ab100",
-                "reference": "81c6ac72a24a67383419c7eb9aa2b3437f2ab100",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "^1.0",
-                "php": ">=5.3.2"
-            },
-            "require-dev": {
-                "composer/composer": "~1.0.0",
-                "jakub-onderka/php-parallel-lint": "~0.8",
-                "phpunit/phpunit": "~4.8|~5.0",
-                "squizlabs/php_codesniffer": "~2.1.0"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.3.x-dev"
-                },
-                "class": "Wikimedia\\Composer\\MergePlugin"
-            },
-            "autoload": {
-                "psr-4": {
-                    "Wikimedia\\Composer\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bryan Davis",
-                    "email": "bd808@wikimedia.org"
-                }
-            ],
-            "description": "Composer plugin to merge multiple composer.json files",
-            "time": "2017-04-25T02:31:25+00:00"
-        },
-        {
             "name": "yajra/laravel-datatables-oracle",
             "version": "v8.13.7",
             "source": {
@@ -9819,111 +9924,6 @@
             "time": "2018-12-13T10:34:14+00:00"
         },
         {
-            "name": "brianium/habitat",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/brianium/habitat.git",
-                "reference": "d0979e3bb379cbc78ecb42b3ac171bc2b7e06d96"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/brianium/habitat/zipball/d0979e3bb379cbc78ecb42b3ac171bc2b7e06d96",
-                "reference": "d0979e3bb379cbc78ecb42b3ac171bc2b7e06d96",
-                "shasum": ""
-            },
-            "require-dev": {
-                "monolog/monolog": ">=1.5.0",
-                "phpunit/phpunit": ">=3.7.21"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Habitat": [
-                        "src/"
-                    ]
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Brian",
-                    "email": "scaturrob@gmail.com",
-                    "homepage": "http://brianscaturro.com",
-                    "role": "Lead"
-                }
-            ],
-            "description": "A dependable php environment",
-            "time": "2013-06-08T04:42:29+00:00"
-        },
-        {
-            "name": "brianium/paratest",
-            "version": "3.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/paratestphp/paratest.git",
-                "reference": "44695abca76a2c3fedc5b4ccac31e8f98de714d5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/44695abca76a2c3fedc5b4ccac31e8f98de714d5",
-                "reference": "44695abca76a2c3fedc5b4ccac31e8f98de714d5",
-                "shasum": ""
-            },
-            "require": {
-                "brianium/habitat": "1.0.0",
-                "composer/semver": "~1.2",
-                "ext-pcre": "*",
-                "ext-reflection": "*",
-                "ext-simplexml": "*",
-                "php": "^7.1",
-                "phpunit/php-code-coverage": "^6.1.4|^7.0.2",
-                "phpunit/php-timer": "^2.0",
-                "phpunit/phpunit": "^7.5.8|^8.0",
-                "symfony/console": "^3.4|^4.0",
-                "symfony/process": "^3.4|^4.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.3.2",
-                "squizlabs/php_codesniffer": "^3.5"
-            },
-            "bin": [
-                "bin/paratest"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ParaTest\\": [
-                        "src/"
-                    ]
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Brian Scaturro",
-                    "email": "scaturrob@gmail.com",
-                    "homepage": "http://brianscaturro.com",
-                    "role": "Lead"
-                }
-            ],
-            "description": "Parallel testing for PHP",
-            "homepage": "https://github.com/paratestphp/paratest",
-            "keywords": [
-                "concurrent",
-                "parallel",
-                "phpunit",
-                "testing"
-            ],
-            "time": "2019-11-12T09:49:35+00:00"
-        },
-        {
             "name": "clue/stdio-react",
             "version": "v2.3.0",
             "source": {
@@ -10095,16 +10095,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "1.9.1",
+            "version": "1.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "bb01f2180df87ce7992b8331a68904f80439dd2f"
+                "reference": "7a04aa0201ddaa0b3cf64d41022bd8cdcd7fafeb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/bb01f2180df87ce7992b8331a68904f80439dd2f",
-                "reference": "bb01f2180df87ce7992b8331a68904f80439dd2f",
+                "url": "https://api.github.com/repos/composer/composer/zipball/7a04aa0201ddaa0b3cf64d41022bd8cdcd7fafeb",
+                "reference": "7a04aa0201ddaa0b3cf64d41022bd8cdcd7fafeb",
                 "shasum": ""
             },
             "require": {
@@ -10171,7 +10171,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2019-11-01T16:20:17+00:00"
+            "time": "2020-01-14T15:30:32+00:00"
         },
         {
             "name": "composer/semver",
@@ -13524,8 +13524,13 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/ccda-parser-processor-php": 20,
-        "circlelinkhealth/sqlviews": 20,
+        "circlelinkhealth/ccda-parser-processor-php-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
+        "circlelinkhealth/patientapi-module": 20,
+        "circlelinkhealth/revisionable-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
+        "circlelinkhealth/sqlviews-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,

@@ -1,7 +1,0 @@
-Label,# Samples,Average,Min,Max,Std. Dev.,Error %,Throughput,Received KB/sec,Sent KB/sec,Avg. Bytes
-Thread Group:GET Login,20,950,472,2317,352.02,0.000%,.11111,0.72,0.20,6623.6
-Thread Group:POST Login,20,2888,2364,6109,797.76,0.000%,.11052,2.93,0.48,27136.6
-Thread Group:Home,20,2430,2202,2959,191.02,0.000%,.11280,0.94,0.36,8556.0
-Thread Group:View CarePlan,20,2107,1730,4382,547.34,0.000%,.11306,5.45,0.24,49384.2
-"Thread Group:GET Login, POST Login, Home, View CarePlan",20,9440,8359,16297,1643.56,0.000%,.10592,9.49,1.21,91700.4
-TOTAL,100,3563,472,16297,3131.46,0.000%,.52962,18.97,2.42,36680.1

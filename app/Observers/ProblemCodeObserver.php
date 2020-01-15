@@ -6,14 +6,12 @@
 
 namespace App\Observers;
 
-use App\Models\ProblemCode;
+use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 
 class ProblemCodeObserver
 {
     /**
      * Listen to the ProblemCode saving event.
-     *
-     * @param ProblemCode $problemCode
      */
     public function saving(ProblemCode $problemCode)
     {

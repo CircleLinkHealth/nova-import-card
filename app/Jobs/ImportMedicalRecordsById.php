@@ -6,8 +6,8 @@
 
 namespace App\Jobs;
 
-use App\Models\MedicalRecords\Ccda;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

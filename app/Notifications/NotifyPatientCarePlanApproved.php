@@ -6,7 +6,7 @@
 
 namespace App\Notifications;
 
-use App\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -27,9 +27,6 @@ class NotifyPatientCarePlanApproved extends Notification
 
     /**
      * Create a new notification instance.
-     *
-     * @param CarePlan $carePlan
-     * @param array    $channels
      */
     public function __construct(CarePlan $carePlan, array $channels = ['mail'])
     {

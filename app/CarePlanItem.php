@@ -10,7 +10,7 @@ namespace App;
  * App\CarePlanItem.
  *
  * @property \App\CareItem                                                $careItem
- * @property \App\CarePlan                                                $carePlan
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlan             $carePlan
  * @property \App\CareSection                                             $careSection
  * @property \App\CarePlanItem[]|\Illuminate\Database\Eloquent\Collection $children
  * @property \App\CarePlanItem                                            $parents
@@ -54,7 +54,7 @@ class CarePlanItem extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function carePlan()
     {
-        return $this->belongsTo('App\CarePlan', 'plan_id', 'id');
+        return $this->belongsTo('CircleLinkHealth\SharedModels\Entities\CarePlan', 'plan_id', 'id');
     }
 
     public function careSection()

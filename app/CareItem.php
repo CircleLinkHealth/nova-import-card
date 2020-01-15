@@ -9,24 +9,24 @@ namespace App;
 /**
  * App\CareItem.
  *
- * @property int                                                      $id
- * @property string|null                                              $model_field_name
- * @property int|null                                                 $type_id
- * @property string|null                                              $type
- * @property string                                                   $relationship_fn_name
- * @property int                                                      $parent_id
- * @property int                                                      $qid
- * @property string                                                   $obs_key
- * @property string                                                   $name
- * @property string                                                   $display_name
- * @property string                                                   $description
- * @property \Carbon\Carbon                                           $created_at
- * @property \Carbon\Carbon                                           $updated_at
- * @property \App\CarePlan[]|\Illuminate\Database\Eloquent\Collection $carePlans
- * @property \App\CareItem[]|\Illuminate\Database\Eloquent\Collection $children
- * @property mixed                                                    $meta_key
- * @property \App\CareItem                                            $parents
- * @property \App\CPRulesQuestions                                    $question
+ * @property int                                                                                         $id
+ * @property string|null                                                                                 $model_field_name
+ * @property int|null                                                                                    $type_id
+ * @property string|null                                                                                 $type
+ * @property string                                                                                      $relationship_fn_name
+ * @property int                                                                                         $parent_id
+ * @property int                                                                                         $qid
+ * @property string                                                                                      $obs_key
+ * @property string                                                                                      $name
+ * @property string                                                                                      $display_name
+ * @property string                                                                                      $description
+ * @property \Carbon\Carbon                                                                              $created_at
+ * @property \Carbon\Carbon                                                                              $updated_at
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlan[]|\Illuminate\Database\Eloquent\Collection $carePlans
+ * @property \App\CareItem[]|\Illuminate\Database\Eloquent\Collection                                    $children
+ * @property mixed                                                                                       $meta_key
+ * @property \App\CareItem                                                                               $parents
+ * @property \App\CPRulesQuestions                                                                       $question
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereDisplayName($value)
@@ -65,7 +65,7 @@ class CareItem extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function carePlans()
     {
-        return $this->belongsToMany('App\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
+        return $this->belongsToMany('CircleLinkHealth\SharedModels\Entities\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
     }
 
     // START ATTRIBUTES

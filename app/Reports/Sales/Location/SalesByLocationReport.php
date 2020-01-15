@@ -6,7 +6,7 @@
 
 namespace App\Reports\Sales\Location;
 
-use App\Services\PdfService;
+use CircleLinkHealth\Core\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;

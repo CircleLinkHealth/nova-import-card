@@ -6,10 +6,10 @@
 
 namespace Tests\Feature;
 
-use App\EligibilityBatch;
-use App\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use App\Services\CCD\ProcessEligibilityService;
-use App\Services\EligibilityChecker;
+use CircleLinkHealth\Eligibility\EligibilityChecker;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
 

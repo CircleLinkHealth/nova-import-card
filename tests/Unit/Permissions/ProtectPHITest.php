@@ -6,7 +6,7 @@
 
 namespace Tests\Unit;
 
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;

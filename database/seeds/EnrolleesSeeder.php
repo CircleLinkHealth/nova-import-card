@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Database\Seeder;
 
 class EnrolleesSeeder extends Seeder

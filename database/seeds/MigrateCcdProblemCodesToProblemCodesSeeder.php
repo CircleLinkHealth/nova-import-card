@@ -4,8 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Models\CCD\Problem;
-use App\Models\ProblemCode;
+use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 use Illuminate\Database\Seeder;
 
 class MigrateCcdProblemCodesToProblemCodesSeeder extends Seeder

@@ -6,10 +6,10 @@
 
 namespace App\CLH\CCD\Importer\StorageStrategies\Problems;
 
-use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
-use App\CLH\Contracts\CCD\StorageStrategy;
-use App\Models\CPM\CpmInstruction;
-use App\Models\CPM\CpmMisc;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\BaseStorageStrategy;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategy;
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 
 class ProblemsList extends BaseStorageStrategy implements StorageStrategy
 {

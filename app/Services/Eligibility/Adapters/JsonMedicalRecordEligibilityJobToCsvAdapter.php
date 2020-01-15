@@ -6,12 +6,12 @@
 
 namespace App\Services\Eligibility\Adapters;
 
-use App\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 
 class JsonMedicalRecordEligibilityJobToCsvAdapter
 {
     /**
-     * @var EligibilityJob
+     * @var \CircleLinkHealth\Eligibility\Entities\EligibilityJob
      */
     private $job;
 
