@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\NurseInvoices;
 
-use App\Services\PdfService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Jobs\GenerateNurseInvoice;
 
