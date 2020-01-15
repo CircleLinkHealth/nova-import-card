@@ -40,6 +40,7 @@ class ReviewAppPostDeploy extends Command
     {
         $branchName = snake_case(getenv('HEROKU_BRANCH'));
         putenv("DB_DATABASE=$branchName");
+        config(['database.mysql.database' => $branchName]);
         $this->call('config:cache', ['-vvv' => true]);
         
         if ($branchName) {

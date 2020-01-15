@@ -42,7 +42,8 @@ class ReviewAppPreDestroy extends Command
             if ('cpm_production' === $branchName) {
                 abort('It is not recommended to run this command on the production database');
             }
-            
+            config(['database.mysql.database' => $branchName]);
+    
             Schema::getConnection()->getDoctrineSchemaManager()->dropDatabase("`{$branchName}`");
         }
     }
