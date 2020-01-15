@@ -36,7 +36,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurse
  * @property \CircleLinkHealth\Customer\Entities\Nurse                                                                       $nurseInfo
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice approved()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice newQuery()
@@ -54,7 +53,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereSentToAccountantAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoice whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property int|null                                                                                    $daily_disputes_count
  * @property int|null                                                                                    $media_count
  * @property int|null                                                                                    $notifications_count
