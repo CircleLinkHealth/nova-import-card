@@ -36,9 +36,11 @@ class CreateMySqlDB extends Command
         $collation  = config('database.connections.mysql.collation', 'utf8mb4_unicode_ci');
 
         config(['database.connections.mysql.database' => null]);
-
+    
         $query = "CREATE DATABASE IF NOT EXISTS `$schemaName` CHARACTER SET `$charset` COLLATE `$collation`;";
-
+    
         DB::statement($query);
+    
+        config(['database.connections.mysql.database' => $schemaName]);
     }
 }
