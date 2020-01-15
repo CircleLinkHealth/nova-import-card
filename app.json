@@ -19,7 +19,7 @@
   },
   "image": "heroku/php",
   "addons": [
-    "heroku-redis:hobby-dev"
+
   ],
   "buildpacks": [
     {
@@ -34,7 +34,7 @@
   ],
   "environments": {
     "review": {
-      "addons": ["heroku-redis:hobby-dev"],
+      "addons": ["heroku-redis:premium-0"],
       "scripts": {
         "pr-predestroy": "php artisan reviewapp:predestroy"
       }
