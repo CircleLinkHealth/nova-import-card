@@ -121,7 +121,7 @@
     "circlelinkhealth/ccda-parser-processor-php-module": "dev-master",
     "circlelinkhealth/cerberus-gatekeeper": "^v3.0.2",
     "circlelinkhealth/clh-import-card-extended": "*",
-    "circlelinkhealth/core-module": "1.35",
+    "circlelinkhealth/core-module": "1.36",
     "circlelinkhealth/cpm-migrations-module": "1.0",
     "circlelinkhealth/customer-module": "dev-CPM-1658_method_to_nurse_model_plus_calendarFields",
     "circlelinkhealth/eligibility-module": "dev-master",
@@ -214,7 +214,7 @@
       "Tests\\": "tests/"
     },
     "files": [
-      "vendor/circlelinkhealth/core-module/Helpers/helpers.php"
+      "Modules/Core/Helpers/helpers.php"
     ]
   },
   "scripts": {
@@ -268,19 +268,6 @@
         "laravel/dusk",
         "barryvdh/laravel-snappy"
       ]
-    },
-    "merge-plugin": {
-      "include": [
-        "Modules/*/composer.json"
-      ],
-      "require": [],
-      "recurse": true,
-      "replace": true,
-      "ignore-duplicates": false,
-      "merge-dev": true,
-      "merge-extra": false,
-      "merge-extra-deep": false,
-      "merge-scripts": false
     }
   },
   "prefer-stable": true,
