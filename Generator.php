@@ -6,11 +6,10 @@
 
 namespace CircleLinkHealth\NurseInvoices;
 
-use CircleLinkHealth\Core\PdfService;
+use App\Services\PdfService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Jobs\GenerateNurseInvoice;
-use Illuminate\Support\Collection;
 
 class Generator
 {
@@ -25,7 +24,7 @@ class Generator
     protected $nurseUserIds;
 
     /**
-     * @var \CircleLinkHealth\Core\PdfService
+     * @var PdfService
      */
     protected $pdfService;
 
@@ -68,26 +67,20 @@ class Generator
         $this->storeInvoicesForNurseReview = $storeInvoicesForNurseReview;
     }
 
-    /**
-     * @return Collection
-     */
     public function createAndNotifyNurses()
     {
-        $invoices = collect();
-
         $this->nurseUsers()->chunk(
             5,
             function ($nurseUsers) use (&$invoices) {
                 $delay = 10;
 
                 foreach ($nurseUsers as $nurseUser) {
-                    GenerateNurseInvoice::dispatch($nurseUser, $this->startDate, $this->endDate)->delay(now()->addSeconds($delay));
+                    GenerateNurseInvoice::dispatch($nurseUser, $this->startDate,
+                        $this->endDate)->delay(now()->addSeconds($delay));
                     $delay = $delay + 10;
                 }
             }
         );
-
-        return $invoices;
     }
 
     /**
@@ -98,36 +91,36 @@ class Generator
     private function nurseUsers()
     {
         return User::withTrashed()
-            ->careCoaches()
-            ->has('nurseInfo')
-            ->when(
-                is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
-                function ($q) {
-                    $q->whereIn('id', $this->nurseUserIds);
-                }
-            )
-            ->when(
-                empty($this->nurseUserIds),
-                function ($q) {
-                    $q->whereHas(
-                        'pageTimersAsProvider',
-                        function ($s) {
-                            $s->whereBetween(
-                                'start_time',
-                                [
-                                    $this->startDate->copy()->startOfDay(),
-                                    $this->endDate->copy()->endOfDay(),
-                                ]
-                            );
-                        }
-                    )
-                        ->whereHas(
-                            'nurseInfo',
-                            function ($s) {
-                                $s->where('is_demo', false);
-                            }
-                        );
-                }
-            );
+                   ->careCoaches()
+                   ->has('nurseInfo')
+                   ->when(
+                       is_array($this->nurseUserIds) && ! empty($this->nurseUserIds),
+                       function ($q) {
+                           $q->whereIn('id', $this->nurseUserIds);
+                       }
+                   )
+                   ->when(
+                       empty($this->nurseUserIds),
+                       function ($q) {
+                           $q->whereHas(
+                               'pageTimersAsProvider',
+                               function ($s) {
+                                   $s->whereBetween(
+                                       'start_time',
+                                       [
+                                           $this->startDate->copy()->startOfDay(),
+                                           $this->endDate->copy()->endOfDay(),
+                                       ]
+                                   );
+                               }
+                           )
+                             ->whereHas(
+                                 'nurseInfo',
+                                 function ($s) {
+                                     $s->where('is_demo', false);
+                                 }
+                             );
+                       }
+                   );
     }
 }

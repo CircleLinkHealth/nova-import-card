@@ -116,7 +116,7 @@ class Invoice extends ViewModel
         $this->startDate             = $startDate;
         $this->endDate               = $endDate;
         $this->aggregatedTotalTime   = $aggregatedTotalTime->flatten();
-        $this->variablePay           = (bool) $user->nurseInfo->is_variable_rate;
+        $this->variablePay           = (bool)$user->nurseInfo->is_variable_rate;
         $this->totalSystemTime       = $this->totalSystemTimeInSeconds();
         $this->bonus                 = $this->getBonus($user->nurseBonuses);
         $this->extraTime             = $this->getAddedDuration($user->nurseBonuses);
@@ -217,7 +217,7 @@ class Invoice extends ViewModel
      */
     public function formattedInvoiceTotalAmount()
     {
-        return '$'.round($this->invoiceTotalAmount(), 2);
+        return '$' . round($this->invoiceTotalAmount(), 2);
     }
 
     /**
@@ -320,7 +320,7 @@ class Invoice extends ViewModel
             if ($this->variablePay) {
                 $towards = $this->variablePayForNurse->sum(
                     function ($careLog) use ($dateStr) {
-                        if ('accrued_towards_ccm' == $careLog->ccm_type && $careLog->created_at->startOfMonth()->toDateString() === $dateStr) {
+                        if ('accrued_towards_ccm' == $careLog->ccm_type && $careLog->created_at->toDateString() === $dateStr) {
                             return $careLog->increment;
                         }
 
@@ -329,12 +329,12 @@ class Invoice extends ViewModel
                 );
 
                 $row['towards'] = $towards
-                    ? $towards / 3600
+                    ? round($towards / 3600, 2)
                     : 0;
 
                 $after = $this->variablePayForNurse->sum(
                     function ($careLog) use ($dateStr) {
-                        if ('accrued_after_ccm' == $careLog->ccm_type && $careLog->created_at->startOfMonth()->toDateString() === $dateStr) {
+                        if ('accrued_after_ccm' == $careLog->ccm_type && $careLog->created_at->toDateString() === $dateStr) {
                             return $careLog->increment;
                         }
 
@@ -343,7 +343,7 @@ class Invoice extends ViewModel
                 );
 
                 $row['after'] = $after
-                    ? $after / 3600
+                    ? round($after / 3600, 2)
                     : 0;
             }
 
@@ -482,7 +482,7 @@ class Invoice extends ViewModel
      */
     private function totalSystemTimeInSeconds()
     {
-        return (int) $this->aggregatedTotalTime
+        return (int)$this->aggregatedTotalTime
             ->where('is_billable', false)
             ->sum('total_time');
     }
