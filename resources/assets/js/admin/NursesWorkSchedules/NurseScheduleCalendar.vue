@@ -34,8 +34,8 @@
         </div>
         <div class="calendar">
             <!-- Add new event - main button-->
-            <div class="add-event-main col-md-2">
-                <button class="btn btn-primary" @click="openMainEventModal">Add new window</button>
+            <div class="add-event-main col-md-3">
+                <button class="btn btn-primary" @click="openMainEventModal">Add Workday/Holiday</button>
             </div>
             <full-calendar ref="calendar"
                            :event-sources="eventSources"
@@ -793,15 +793,15 @@
     }
 
     .modal-title {
-        text-align: center;
+        text-align: left;
     }
 
     .display-date {
-        text-align: center;
+        text-align: left;
     }
 
     .nurse-name {
-        text-align: center;
+        text-align: left;
         font-size: 20px;
         letter-spacing: 1px;
         font-weight: 500;
@@ -810,14 +810,14 @@
     }
 
     .work-hours-read {
-        text-align: center;
+        text-align: left;
         font-size: 17px;
         letter-spacing: 1px;
         font-weight: 500;
     }
 
     .work-day-read {
-        text-align: center;
+        text-align: left;
         font-size: 17px;
         letter-spacing: 1px;
         font-weight: 500;
