@@ -46,6 +46,8 @@ class CreateCalendarRecurringEventsCommand extends Command
      */
     public function handle()
     {
+        ini_set('memory_limit', '512M');
+        
         $today          = Carbon::parse(now())->toDateString();
         $currentWeekMap = createWeekMap($today);
 
@@ -81,12 +83,6 @@ class CreateCalendarRecurringEventsCommand extends Command
 
         $startDate = Carbon::parse($today)->startOfDay()->toDateString();
         $endDate   = Carbon::parse($startDate)->endOfDay()->toDateString();
-
-        $windows = NurseContactWindow::whereNotNull('repeat_frequency')
-            ->where([
-                ['date', '>=', $startDate],
-                ['date', '<=', $endDate],
-            ])->get();
 
         return info('Success! "Calendar Recurring Events" have been created');
     }
