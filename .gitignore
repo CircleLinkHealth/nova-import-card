@@ -1,5 +1,5 @@
-/vendor/
-/node_modules/
-/bower_components/
 .idea/
 composer.lock
+/bower_components/
+/node_modules/
+/vendor/
