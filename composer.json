@@ -26,7 +26,7 @@
     },
     "require": {
         "authy/php": "^3.0",
-        "circlelinkhealth/customer": "*"
+        "circlelinkhealth/customer-module": "*"
     },
     "repositories": [
         {
