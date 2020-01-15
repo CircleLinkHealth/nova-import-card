@@ -28,7 +28,6 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @property string|null $approver_full_name
  * @property string|null $provider_full_name
  * @property int|null    $patient_ccm_time
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView query()
@@ -50,7 +49,6 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereProviderDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereProviderFullName($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property int|null                                                                       $revision_history_count
  */

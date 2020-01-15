@@ -25,7 +25,6 @@ use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda               $ccda
  * @property \CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy $importedItem
  * @property \App\Models\CCD\CcdVendor                                  $vendor
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereImport($value)
@@ -38,17 +37,12 @@ use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog query()
- *
  * @property array|null $raw
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\InsuranceLog whereRaw($value)
- *
  * @property int|null $revision_history_count
  */
 class InsuranceLog extends \CircleLinkHealth\Core\Entities\BaseModel
