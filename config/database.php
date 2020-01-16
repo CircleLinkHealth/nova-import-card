@@ -61,9 +61,9 @@ if (getenv('REDIS_URL')) {
     putenv('REDIS_PASSWORD='.$redisUrl['pass']);
 }
 
-$mysqlDBName = env('DB_DATABASE', null);
+$mysqlDBName = env('DB_DATABASE', 'nothing');
 
-if (!$mysqlDBName) {
+if ('nothing' === $mysqlDBName) {
     $mysqlDBName = snake_case(getenv('HEROKU_BRANCH'));
 }
 
