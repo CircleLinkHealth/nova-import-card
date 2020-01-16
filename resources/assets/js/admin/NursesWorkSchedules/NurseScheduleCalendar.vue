@@ -200,6 +200,11 @@
                                     class="btn btn-primary"
                                     @click="addNewEvent">Save
                             </button>
+                            <button type="button"
+                                    class="btn btn-primary"
+                                    style="float: right; background-color:#d9534f;"
+                                    @click="cancelModalAction">Cancel
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -692,6 +697,11 @@
                 //@todo:do nothing for now.
             },
 
+            cancelModalAction() {
+                this.resetModalValues();
+                this.toggleModal();
+            },
+
             resetModalValues() {
                 this.clickedToViewEvent = false;
                 this.eventToViewData = [];
@@ -1042,7 +1052,7 @@
         padding-top: 15px;
     }
 
-    .day-off{
+    .day-off {
         padding-left: 14em;
     }
 </style>

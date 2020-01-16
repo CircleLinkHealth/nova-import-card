@@ -16,8 +16,14 @@ trait ValidatesWorkScheduleCalendar
         return $committedWorkHours > $workHoursRangeSum ? true : false;
     }
 
-    public function returnValidationResponse($windowExists, $validator, $invalidWorkHoursCommitted, $repeatFr, $until)
+    public function returnValidationResponse($windowExists, $validator, $invalidWorkHoursCommitted, $repeatFr, $until, $holidayExists)
     {
+        if ($holidayExists) {
+            $validator->getMessageBag()->add(
+                'error',
+                'This day is assigned as day-off'
+            );
+        }
         if ('does_not_repeat' !== $repeatFr && null === $until) {
             $validator->getMessageBag()->add(
                 'error',
