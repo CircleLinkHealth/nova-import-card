@@ -7,11 +7,11 @@
 namespace App\Http\Controllers\Enrollment;
 
 use App\CareAmbassadorLog;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Http\Controllers\Controller;
 use App\Jobs\ImportConsentedEnrollees;
 use App\TrixField;
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 
 class EnrollmentCenterController extends Controller
@@ -112,14 +112,14 @@ class EnrollmentCenterController extends Controller
 
         //if previous enrollee id, try to get call_queue or maybe engaged family enrollees
         $enrollee = Enrollee::whereId($previousEnrolleeId)
-            ->with([
-                'confirmedFamilyMembers' => function ($e) use ($previousEnrolleeId) {
-                    //ask ethan, how about utc enrollees? or soft declined?
-                    $e->where('id', '!=', $previousEnrolleeId)
-                        ->whereNotIn('status', ['consented']);
-                },
-            ])
-            ->first();
+                            ->with([
+                                'confirmedFamilyMembers' => function ($e) use ($previousEnrolleeId) {
+                                    //ask ethan, how about utc enrollees? or soft declined?
+                                    $e->where('id', '!=', $previousEnrolleeId)
+                                      ->whereNotIn('status', ['consented']);
+                                },
+                            ])
+                            ->first();
 
         if ($enrollee) {
             $enrollee = $enrollee->confirmedFamilyMembers
@@ -130,33 +130,33 @@ class EnrollmentCenterController extends Controller
             //if logged in ambassador is spanish, pick up a spanish patient
             if ($careAmbassador->speaks_spanish) {
                 $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
-                    ->toCall()
-                    ->where('lang', 'ES')
-                    ->orderBy('attempt_count')
-                    ->with(['practice.enrollmentTips', 'provider.providerInfo'])
-                    ->first();
+                                    ->toCall()
+                                    ->where('lang', 'ES')
+                                    ->orderBy('attempt_count')
+                                    ->with(['practice.enrollmentTips', 'provider.providerInfo'])
+                                    ->first();
 
                 //if no spanish, get a EN user.
                 if (null == $enrollee) {
                     $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
-                        ->toCall()
-                        ->orderBy('attempt_count')
-                        ->with(['practice.enrollmentTips', 'provider.providerInfo'])
-                        ->first();
+                                        ->toCall()
+                                        ->orderBy('attempt_count')
+                                        ->with(['practice.enrollmentTips', 'provider.providerInfo'])
+                                        ->first();
                 }
             } else { // auth ambassador doesn't speak ES, get a regular user.
                 $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
-                    ->toCall()
-                    ->orderBy('attempt_count')
-                    ->with(['practice.enrollmentTips', 'provider.providerInfo'])
-                    ->first();
+                                    ->toCall()
+                                    ->orderBy('attempt_count')
+                                    ->with(['practice.enrollmentTips', 'provider.providerInfo'])
+                                    ->first();
             }
 
             $engagedEnrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
-                ->where('status', '=', Enrollee::ENGAGED)
-                ->orderBy('attempt_count')
-                ->with(['practice.enrollmentTips', 'provider.providerInfo'])
-                ->first();
+                                       ->where('status', '=', Enrollee::ENGAGED)
+                                       ->orderBy('attempt_count')
+                                       ->with(['practice.enrollmentTips', 'provider.providerInfo'])
+                                       ->first();
 
             if ($engagedEnrollee) {
                 $enrollee = $engagedEnrollee;
