@@ -185,7 +185,7 @@
                             <button v-if="clickedToViewEvent"
                                     type="button"
                                     class="btn btn-primary"
-                                    style="float: left; margin-left: -20px; background-color: rgba(255, 133, 28, 0.94);"
+                                    style="float: left; background-color: rgba(255, 133, 28, 0.94);"
                                     @click="deleteEvent(false)">Delete this event
                             </button>
 
