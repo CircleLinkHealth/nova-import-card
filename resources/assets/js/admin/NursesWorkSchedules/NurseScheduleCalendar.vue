@@ -50,14 +50,14 @@
             <div class="modal fade" id="addWorkEvent" tabindex="-1" role="dialog"
                  aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
-                    <div class="modal-content">
+                    <div class="modal-content" style="min-width: 660px;">
                         <div class="modal-header">
                             <h3 class="modal-title" id="exampleModalLabel">{{this.modalTitle}}</h3>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body-custom">
                             <!--                            <div v-if="!clickedToViewEvent && !addNewEventMainClicked" class="display-date">-->
                             <!--                                <h4>{{this.dayInHumanLangForView}} {{workEventDate}}</h4>-->
                             <!--                            </div>-->
@@ -71,12 +71,13 @@
                                                 required>
                                     </vue-select>
                                 </div>
-
-                                <div class="choose-event-date">
+                                <div style="display: inline-flex;">
+                                <div class="choose-event-date col-md-6">
                                     <div v-if="addNewEventMainClicked">
-                                        <div style="display: inline-flex">Work on:
+                                        <div style="display: inline-flex;">Work on:
                                             <input type="date"
                                                    class="event-date-field"
+                                                   style="height: 25px; width: 152px;"
                                                    name="event_date"
                                                    :min="calculateMinDate()"
                                                    v-model="selectedDate">
@@ -84,33 +85,45 @@
                                     </div>
                                 </div>
 
-                                <div class="modal-inputs col-md-12">
-                                    <div class="work-hours">
-                                        <h5>For:</h5>
-                                        <input v-model="hoursToWork"
-                                               type="number"
-                                               :class="{disable: addHolidays}"
-                                               :disabled="addHolidays"
-                                               class="work-hours-input"
-                                               placeholder="5"
-                                               min="1" max="12"> <strong>Hours</strong>
-                                    </div>
-                                    <div class="start-end-time">
-                                        <div class="start-time">
-                                            <h5>start (EDT):</h5>
-                                            <input v-model="workRangeStarts"
-                                                   type="time"
-                                                   :class="{disable: addHolidays}"
-                                                   :disabled="addHolidays"
-                                                   class="time-input">
+
+                                    <div class="modal-inputs col-md-12">
+                                        <div class="work-hours">
+                                            <div style="display: inline-flex;">
+                                                <span style="padding-right: 2px;">For:</span>
+                                                <input v-model="hoursToWork"
+                                                       type="number"
+                                                       :class="{disable: addHolidays}"
+                                                       style="width: 35px;"
+                                                       :disabled="addHolidays"
+                                                       class="work-hours-input"
+                                                       placeholder="5"
+                                                       min="1" max="12">
+                                                <span style="padding-left: 3px;">hrs</span>
+                                            </div>
                                         </div>
-                                        <div class="end-time">
-                                            <h5>end (EDT):</h5>
-                                            <input v-model="workRangeEnds"
-                                                   type="time"
-                                                   :class="{disable: addHolidays}"
-                                                   :disabled="addHolidays"
-                                                   class="time-input">
+                                        <div class="start-end-time">
+                                            <div class="start-time">
+                                                <div style="display: inline-flex">
+                                                    <span style="padding-right: 2px;">Starting:</span>
+                                                <input v-model="workRangeStarts"
+                                                       type="time"
+                                                       :class="{disable: addHolidays}"
+                                                       style="height: 23px;width: 105px;"
+                                                       :disabled="addHolidays"
+                                                       class="time-input">
+                                                </div>
+                                            </div>
+                                            <div class="end-time">
+                                                <div style="display: inline-flex">
+                                                    <span style="padding-right: 2px;">Until:</span>
+                                                <input v-model="workRangeEnds"
+                                                       type="time"
+                                                       :class="{disable: addHolidays}"
+                                                       style="height: 23px;width: 105px;"
+                                                       :disabled="addHolidays"
+                                                       class="time-input">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -169,12 +182,14 @@
                             <button v-if="clickedToViewEvent"
                                     type="button"
                                     class="btn btn-primary"
+                                    style="float: left;"
                                     @click="deleteEvent(false)">Delete this event
                             </button>
 
                             <button v-if="clickedToViewEvent && isRecurringEvent"
                                     type="button"
-                                    class="btn btn-primary" style="background-color: crimson; border-color: crimson"
+                                    class="btn btn-primary"
+                                    style="background-color: crimson; border-color: crimson; float: left;"
                                     @click="deleteEvent(true)">Delete all repeating events
                             </button>
 
@@ -870,7 +885,7 @@
     }
 
     .choose-event-date {
-
+        margin-left: -37px;
     }
 
     .modal-inputs {
@@ -887,12 +902,12 @@
     }
 
     .start-time {
-        margin-left: 34%;
+        margin-left: 2%;
 
     }
 
     .end-time {
-        margin-left: 55%;
+        margin-left: 3%;
     }
 
     .time-input {
@@ -992,8 +1007,13 @@
         margin-right: 15%;
     }
 
-    .event-date-field{
+    .event-date-field {
 
+    }
+
+    .modal-body-custom {
+        margin-top: 15px;
+        margin-left: 34px;
     }
 </style>
 
