@@ -363,6 +363,10 @@ trait CerberusSiteUserTrait
                 unset($role[$key]);
             }
         }
+        
+        if (empty($role)) {
+            return;
+        }
 
         if ( ! is_numeric($role)) {
             throw new \Exception("Not a valid role id.");
@@ -387,7 +391,8 @@ trait CerberusSiteUserTrait
         }
 
         if (is_array($permission)) {
-            return $this->attachPermissions($permission);
+            $this->attachPermissions($permission);
+            return;
         }
 
         if ($this->perms()->find($permission)){
