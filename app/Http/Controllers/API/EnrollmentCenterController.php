@@ -14,7 +14,7 @@ class EnrollmentCenterController extends ApiController
     public function getSuggestedFamilyMembers($enrolleeId)
     {
         return $this->json([
-            'suggested_family_members' => EnrolleeFamilyMemberService::get($enrolleeId),
+            'suggested_family_members' => EnrolleeFamilyMemberService::get((int)$enrolleeId),
         ]);
     }
 }

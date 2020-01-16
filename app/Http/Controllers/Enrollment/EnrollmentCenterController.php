@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Enrollment;
 use App\CareAmbassadorLog;
 use App\Http\Controllers\Controller;
 use App\Jobs\ImportConsentedEnrollees;
+use App\Services\Enrollment\EnrolleeFamilyMemberService;
 use App\TrixField;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -22,10 +23,7 @@ class EnrollmentCenterController extends Controller
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
 
-        //todo: decide if check is needed
-        if ($request->has('confirmed_family_members')) {
-            $enrollee->attachFamilyMembers($request->input('confirmed_family_members'));
-        }
+        EnrolleeFamilyMemberService::attach($request);
 
         //update report for care ambassador:
         $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
@@ -110,11 +108,11 @@ class EnrollmentCenterController extends Controller
             ]);
         }
 
+        //add more logic to this
         //if previous enrollee id, try to get call_queue or maybe engaged family enrollees
         $enrollee = Enrollee::whereId($previousEnrolleeId)
                             ->with([
                                 'confirmedFamilyMembers' => function ($e) use ($previousEnrolleeId) {
-                                    //ask ethan, how about utc enrollees? or soft declined?
                                     $e->where('id', '!=', $previousEnrolleeId)
                                       ->whereNotIn('status', ['consented']);
                                 },
@@ -191,10 +189,7 @@ class EnrollmentCenterController extends Controller
         $enrollee       = Enrollee::find($request->input('enrollee_id'));
         $careAmbassador = auth()->user()->careAmbassador;
 
-        //todo: decide if check is needed
-        if ($request->has('confirmed_family_members')) {
-            $enrollee->attachFamilyMembers($request->input('confirmed_family_members'));
-        }
+        EnrolleeFamilyMemberService::attach($request);
 
         //soft_rejected or rejected
         $status = $request->input('status', Enrollee::REJECTED);
@@ -241,10 +236,7 @@ class EnrollmentCenterController extends Controller
         $enrollee       = Enrollee::find($request->input('enrollee_id'));
         $careAmbassador = auth()->user()->careAmbassador;
 
-        //todo: decide if check is needed
-        if ($request->has('confirmed_family_members')) {
-            $enrollee->attachFamilyMembers($request->input('confirmed_family_members'));
-        }
+        EnrolleeFamilyMemberService::attach($request);
 
         //update report for care ambassador:
         $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);

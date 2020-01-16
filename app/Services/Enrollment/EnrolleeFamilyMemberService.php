@@ -8,6 +8,7 @@ namespace App\Services\Enrollment;
 
 
 use App\Http\Requests\Request;
+use App\SafeRequest;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 class EnrolleeFamilyMemberService
@@ -22,12 +23,12 @@ class EnrolleeFamilyMemberService
      */
     protected $enrollee;
 
-    public function __construct(integer $enrolleeId)
+    public function __construct($enrolleeId)
     {
         $this->enrolleeId = $enrolleeId;
     }
 
-    public static function get(integer $enrolleeId)
+    public static function get($enrolleeId)
     {
 
         return (new static($enrolleeId))->generate();
@@ -40,7 +41,7 @@ class EnrolleeFamilyMemberService
         $query = $this->constructQuery();
 
         return $this->formatForView($query->take(20)
-                     ->get());
+                                          ->get());
     }
 
     private function getModel()
@@ -59,7 +60,8 @@ class EnrolleeFamilyMemberService
         return $phonesQuery->union($addressesQuery);
     }
 
-    private function formatForView($family){
+    private function formatForView($family)
+    {
         return $family->map(function (Enrollee $e) {
             return [
                 'id'         => $e->id,
@@ -75,17 +77,37 @@ class EnrolleeFamilyMemberService
         });
     }
 
-    public static function attach($enrolleeId, Request $request)
+    public static function attach(SafeRequest $request)
     {
-        if (! $request->has('confirmed_family_members')) {
+        if ( ! $request->has('confirmed_family_members') || ! $request->has('enrollee_id')) {
             return false;
         }
 
-        return (new static($enrolleeId))->attachFamilyMembers($request);
+
+        return (new static($request->input('enrollee_id')))->attachFamilyMembers($request->input('confirmed_family_members'));
     }
 
-    private function attachFamilyMembers(Request $request){
-        $this->enrollee->attachFamilyMembers($request->input('confirmed_family_members'));
+    private function attachFamilyMembers($ids)
+    {
+        $this->getModel();
+
+        $this->assignToCareAmbassador($ids);
+
+        $this->enrollee->attachFamilyMembers($ids);
+    }
+
+    private function assignToCareAmbassador($ids){
+
+        if (empty($ids)) {
+            return false;
+        }
+        if ( ! is_array($ids)) {
+            $ids = explode(',', $ids);
+        }
+        Enrollee::whereIn('id', $ids)->update([
+            'care_ambassador_user_id' => auth()->user()->id,
+            'status'             => Enrollee::TO_CALL,
+        ]);
     }
 
 }
