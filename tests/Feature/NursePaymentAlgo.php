@@ -365,9 +365,10 @@ class NursePaymentAlgo extends TestCase
     public function test_ccm_plus_alt_algo_under_20_total_under_20()
     {
         $nurseHourlyRate = 10.0;
+        $visitFee        = 12.50;
         $practice        = $this->setupPractice(true);
         $this->provider  = $this->createUser($practice->id);
-        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true);
+        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $visitFee);
         $patient         = $this->setupPatient($practice);
 
         $start = Carbon::now()->startOfMonth();
@@ -1518,25 +1519,24 @@ class NursePaymentAlgo extends TestCase
     }
 
     /**
-     * Two patients, one with default algo (practice does not have ccm plus)
-     * and the other with ccm plus algo.
+     * Two patients, nurse on ccm plus algo, one practice does not have ccm plus enabled (therefore not paid)
      *
      * - Hourly Rate $20
      * - High Rate $30
      * - Low Rate $10
      * - Visit Fee $12.50
      * - Variable Pay = true
-     * - Patient 1 = 25 minutes
-     * - Patient 2 = 25 minutes
+     * - Patient 1 = 45 minutes
+     * - Patient 2 = 45 minutes
      *
      * Result:
-     * Patient 1 -> $10.83 ($30 * 20/60 + $10 * 5/60) vs $10 hourly rate (minimum 30 minutes * 20)
-     * Patient 2 -> $12.50 vs $10 hourly rate (minimum 30 minutes * 20)
-     * Total -> $23.33
+     * Patient 1 -> $12.50 vs $20 hourly rate (round up 60 minutes * 20)
+     * Patient 2 -> $12.50 + $12.00 vs $20 hourly rate (round up 60 minutes * 20)
+     * Total -> $40
      *
      * @throws \Exception
      */
-    public function test_two_patients_default_and_ccm_plus_algo()
+    public function test_two_patients_default_and_ccm_plus_alt_algo()
     {
         $nurseVisitFee   = 12.50;
         $nurseHourlyRate = 20.0;
@@ -1547,10 +1547,12 @@ class NursePaymentAlgo extends TestCase
         $patient1 = $this->setupPatient($practice1);
         $patient2 = $this->setupPatient($practice2);
 
-        $this->addTime($nurse, $patient1, 10, true, true);
-        $this->addTime($nurse, $patient2, 10, true, true);
-        $this->addTime($nurse, $patient1, 15, true, true);
-        $this->addTime($nurse, $patient2, 15, true, true);
+        $this->addTime($nurse, $patient1, 10, true, false);
+        $this->addTime($nurse, $patient2, 10, true, false);
+        $this->addTime($nurse, $patient1, 15, true, false);
+        $this->addTime($nurse, $patient2, 15, true, false);
+        $this->addTime($nurse, $patient1, 20, true, true);
+        $this->addTime($nurse, $patient2, 20, true, true);
 
         $start = Carbon::now()->startOfMonth();
         $end   = Carbon::now()->endOfMonth();
@@ -1568,11 +1570,13 @@ class NursePaymentAlgo extends TestCase
                                    ->orderBy('month_year', 'desc')
                                    ->first()->invoice_data;
 
-        $fixedRatePay = $invoiceData['fixedRatePay'];
-        $pay          = $invoiceData['baseSalary'];
+        $fixedRatePay    = $invoiceData['fixedRatePay'];
+        $variableRatePay = $invoiceData['variableRatePay'];
+        $pay             = $invoiceData['baseSalary'];
 
-        self::assertEquals(20.00, $fixedRatePay);
-        self::assertEquals(23.33, $pay);
+        self::assertEquals(37.00, $variableRatePay);
+        self::assertEquals(40.00, $fixedRatePay);
+        self::assertEquals(40.00, $pay);
     }
 
     /**
