@@ -362,12 +362,16 @@
 
                 frequency: [
                     {
-                        label: 'Repeat Daily',
+                        label: 'Repeat Every Day',
                         value: 'daily'
                     },
                     {
                         label: 'Repeat Weekly',
                         value: 'weekly'
+                    },
+                    {
+                        label: 'Repeat For Weekdays',
+                        value: 'daily'
                     },
                 ],
 
