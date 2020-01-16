@@ -218,7 +218,7 @@ class WorkScheduleController extends Controller
                 $workScheduleData[] = $nurses;
             });
 
-        return $workScheduleData[0];
+        return $workScheduleData[0] ?? [];
     }
 
     /**
