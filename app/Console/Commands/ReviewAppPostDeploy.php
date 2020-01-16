@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Traits\RunsConsoleCommands;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class ReviewAppPostDeploy extends Command
@@ -47,12 +46,12 @@ class ReviewAppPostDeploy extends Command
         $dbName = config('database.connections.mysql.database');
         
         try {
-            $hasUsers = User::exists();
+            $dbTableExists = \Schema::hasTable('practices');
         } catch (\Exception $exception) {
-            $hasUsers = false;
+            $dbTableExists = false;
         }
         
-        if ( ! $hasUsers) {
+        if (false === $dbTableExists) {
             $migrateInstallCommand = $this->runCommand(['php', 'artisan', '-vvv', 'mysql:createdb', $dbName]);
             $migrateCommand = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh']);
             $migrateCommand = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:views']);
