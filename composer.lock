@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.132.5",
+            "version": "3.133.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "276241cf558f883b639ecdefd0e9912f0df20b8e"
+                "reference": "fc59f16e01317c7445204baaeff7224050153a97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/276241cf558f883b639ecdefd0e9912f0df20b8e",
-                "reference": "276241cf558f883b639ecdefd0e9912f0df20b8e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fc59f16e01317c7445204baaeff7224050153a97",
+                "reference": "fc59f16e01317c7445204baaeff7224050153a97",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-01-14T19:16:27+00:00"
+            "time": "2020-01-15T19:18:01+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -744,8 +744,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "dc473b7f2d0c1ca6ad7ce8e7da2bb332ea473aab",
-                "shasum": null
+                "reference": "dc473b7f2d0c1ca6ad7ce8e7da2bb332ea473aab"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -883,7 +882,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4acb8a0de1795a097b2333a9afcd501a440f2288"
+                "reference": "e9547a856cd0e4cef9cb8862ede0fa253e6a7d18"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -908,7 +907,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-15T00:05:44+00:00"
+            "time": "2020-01-15T02:09:17+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -916,8 +915,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "b1dc8efaa5c6eedaca7d9b97b446a5e526b06e29",
-                "shasum": null
+                "reference": "b1dc8efaa5c6eedaca7d9b97b446a5e526b06e29"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -950,8 +948,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5",
-                "shasum": null
+                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5"
             },
             "require": {
                 "php": ">=7.1.0",
@@ -2275,16 +2272,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.11.1",
+            "version": "8.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "f6a367f08e323edc1c27546d8d5818bb016d812e"
+                "reference": "1ec1059b56b40cc1b6b02b438711e4a90ba4bbc7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/f6a367f08e323edc1c27546d8d5818bb016d812e",
-                "reference": "f6a367f08e323edc1c27546d8d5818bb016d812e",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/1ec1059b56b40cc1b6b02b438711e4a90ba4bbc7",
+                "reference": "1ec1059b56b40cc1b6b02b438711e4a90ba4bbc7",
                 "shasum": ""
             },
             "require": {
@@ -2339,7 +2336,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2019-12-11T10:03:19+00:00"
+            "time": "2020-01-15T09:35:09+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -10631,16 +10628,16 @@
         },
         {
             "name": "filp/whoops",
-            "version": "2.7.0",
+            "version": "2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "4c97f814aa2f0dd4d5bedc89181c10ef12c004c5"
+                "reference": "fff6f1e4f36be0e0d0b84d66b413d9dcb0c49130"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/4c97f814aa2f0dd4d5bedc89181c10ef12c004c5",
-                "reference": "4c97f814aa2f0dd4d5bedc89181c10ef12c004c5",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/fff6f1e4f36be0e0d0b84d66b413d9dcb0c49130",
+                "reference": "fff6f1e4f36be0e0d0b84d66b413d9dcb0c49130",
                 "shasum": ""
             },
             "require": {
@@ -10688,7 +10685,7 @@
                 "throwable",
                 "whoops"
             ],
-            "time": "2019-12-29T10:00:00+00:00"
+            "time": "2020-01-15T10:00:00+00:00"
         },
         {
             "name": "friendsofphp/php-cs-fixer",
