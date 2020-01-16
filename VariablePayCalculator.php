@@ -194,7 +194,7 @@ class VariablePayCalculator
             return $elqRange[$nurseInfoId]['duration'] / self::MONTHLY_TIME_TARGET_IN_SECONDS;
         }
 
-        if (! $filtered->has($nurseInfoId)) {
+        if ( ! $filtered->has($nurseInfoId)) {
             return 0;
         }
 
@@ -306,6 +306,10 @@ class VariablePayCalculator
             })->isNotEmpty();
         })->isNotEmpty();
 
+        if ( ! $patientHasAtLeastOneSuccessfulCall) {
+            return $result;
+        }
+
         //if total ccm is greater than the range, then we can pay that range
         foreach ($ranges as $key => $value) {
             if (0 === sizeof($value)) {
@@ -321,15 +325,13 @@ class VariablePayCalculator
                     }
                     break;
                 case 1:
-                    if ($patientHasAtLeastOneSuccessfulCall &&
-                        $practiceHasCcmPlus &&
+                    if ($practiceHasCcmPlus &&
                         $totalCcm >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS) {
                         $rate = $nurseInfo->visit_fee_2;
                     }
                     break;
                 case 2:
-                    if ($patientHasAtLeastOneSuccessfulCall &&
-                        $practiceHasCcmPlus &&
+                    if ($practiceHasCcmPlus &&
                         $totalCcm >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS) {
                         $rate = $nurseInfo->visit_fee_3;
                     }
