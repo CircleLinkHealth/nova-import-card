@@ -12,10 +12,11 @@ use CircleLinkHealth\Revisionable\Entities\Revisionable;
 class StoreRevisions implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    
     /**
      * @var array
      */
-    protected $revision;
+    protected $revisions;
     
     /**
      * Create a new job instance.
@@ -24,7 +25,7 @@ class StoreRevisions implements ShouldQueue
      */
     public function __construct(array $revisions)
     {
-        $this->revision = $revisions;
+        $this->revisions = $revisions;
     }
 
     /**
@@ -34,6 +35,22 @@ class StoreRevisions implements ShouldQueue
      */
     public function handle()
     {
-        \DB::table(Revisionable::newModel()->getTable())->insert($this->revision);
+        \DB::table(Revisionable::newModel()->getTable())->insert($this->revisions);
+    }
+    
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        if (is_array($this->revisions) && is_array($this->revisions[0])) {
+            $revision = $this->revisions[0];
+        } else {
+            $revision = $this->revisions;
+        }
+
+        return ['Store Revision', $revision['revisionable_type'].':'.$revision['revisionable_id']];
     }
 }
