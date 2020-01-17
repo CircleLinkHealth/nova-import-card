@@ -27,7 +27,6 @@ class UpdatesMediaTable extends Migration
     {
         Schema::table('media', function (Blueprint $table) {
             $table->json('responsive_images')
-                ->nullable()
                 ->after('custom_properties');
         });
     }
