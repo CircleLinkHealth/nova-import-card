@@ -20,7 +20,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property string|null                                                                    $type
  * @property \Illuminate\Support\Carbon|null                                                $created_at
  * @property \Illuminate\Support\Carbon|null                                                $updated_at
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRawLog query()

@@ -9,6 +9,7 @@ namespace App\Services;
 use App\Constants;
 use App\Repositories\PatientReadRepository;
 use App\Repositories\PatientWriteRepository;
+use CircleLinkHealth\Core\PdfService;
 
 class PrintPausedPatientLettersService
 {

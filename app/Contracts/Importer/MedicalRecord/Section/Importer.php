@@ -6,7 +6,7 @@
 
 namespace App\Contracts\Importer\MedicalRecord\Section;
 
-use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
 
 /**
  * This is a Section Importer. It allows for each Health Section to be able to be imported for QA.
@@ -15,14 +15,13 @@ use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
  */
 interface Importer
 {
-    public function chooseValidator(ItemLog $item);
+    public function chooseValidator($item);
 
     /**
      * This will import a Section (eg. Problems, Demographics, Meds), and attach it to an ImportedMedicalRecord for QA.
      *
      * @param $medicalRecordId
      * @param $medicalRecordType
-     * @param ImportedMedicalRecord $importedMedicalRecord
      *
      * @return mixed
      */
@@ -32,7 +31,7 @@ interface Importer
         ImportedMedicalRecord $importedMedicalRecord
     );
 
-    public function validate(ItemLog $item);
+    public function validate($item);
 
     /**
      * @return Validator[]

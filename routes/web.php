@@ -1632,22 +1632,6 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
         });
 
-        //these fall under the admin-access permission
-        Route::get('reports/nurse/invoice', [
-            'uses' => 'NurseController@makeInvoice',
-            'as'   => 'admin.reports.nurse.invoice',
-        ])->middleware('permission:nurseInvoice.read');
-
-        Route::post('reports/nurse/invoice/generate', [
-            'uses' => 'NurseController@generateInvoice',
-            'as'   => 'admin.reports.nurse.generate',
-        ])->middleware('permission:nurseInvoice.create');
-
-        Route::post('reports/nurse/invoice/send', [
-            'uses' => 'NurseController@sendInvoice',
-            'as'   => 'admin.reports.nurse.send',
-        ])->middleware('permission:nurseInvoice.view');
-
         Route::get('reports/nurse/daily', [
             'uses' => 'NurseController@makeDailyReport',
             'as'   => 'admin.reports.nurse.daily',

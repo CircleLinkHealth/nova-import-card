@@ -7,10 +7,10 @@
 namespace App\Adapters\EligibilityCheck;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
-use App\EligibilityJob;
-use App\Models\MedicalRecords\Ccda;
-use App\TargetPatient;
 use CircleLinkHealth\Eligibility\Decorators\AddInsuranceFromAthenaToEligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Support\Collection;
 
 class AddInsurancesFromAthena implements EligibilityCheckAdapter
@@ -34,10 +34,6 @@ class AddInsurancesFromAthena implements EligibilityCheckAdapter
 
     /**
      * AddInsurancesFromAthena constructor.
-     *
-     * @param EligibilityCheckAdapter $adapter
-     * @param TargetPatient           $targetPatient
-     * @param Ccda                    $ccda
      */
     public function __construct(EligibilityCheckAdapter $adapter, TargetPatient $targetPatient, Ccda $ccda)
     {
@@ -48,8 +44,6 @@ class AddInsurancesFromAthena implements EligibilityCheckAdapter
 
     /**
      * @throws \Exception
-     *
-     * @return EligibilityJob
      */
     public function adaptToEligibilityJob(): EligibilityJob
     {
@@ -58,17 +52,11 @@ class AddInsurancesFromAthena implements EligibilityCheckAdapter
         return app(AddInsuranceFromAthenaToEligibilityJob::class)->addInsurancesFromAthena($base, $this->targetPatient, $this->ccda);
     }
 
-    /**
-     * @return Collection|null
-     */
     public function getInsuranceCollection(): ?Collection
     {
         return $this->insuranceCollection;
     }
 
-    /**
-     * @return MedicalRecord
-     */
     public function getMedicalRecord(): MedicalRecord
     {
         return $this->adapter->getMedicalRecord();

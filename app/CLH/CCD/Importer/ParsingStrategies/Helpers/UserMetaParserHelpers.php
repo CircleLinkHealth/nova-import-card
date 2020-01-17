@@ -6,7 +6,7 @@
 
 namespace App\CLH\CCD\Importer\ParsingStrategies\Helpers;
 
-use App\CLH\Helpers\StringManipulation;
+use CircleLinkHealth\Core\StringManipulation;
 
 class UserMetaParserHelpers
 {
@@ -33,7 +33,7 @@ class UserMetaParserHelpers
                 ? $phone->type
                 : 'home';
 
-            if ( ! $number = (new StringManipulation())->formatPhoneNumber($phone->number)) {
+            if ( ! $number = (new \CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($phone->number)) {
                 continue;
             }
 

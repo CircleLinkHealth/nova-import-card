@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\CLH\Helpers\StringManipulation;
+use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -23,7 +23,7 @@ use Validator;
 class OnboardingService
 {
     /**
-     * @var StringManipulation
+     * @var \CircleLinkHealth\Core\StringManipulation
      */
     protected $stringManipulation;
 

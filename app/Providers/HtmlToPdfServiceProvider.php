@@ -6,7 +6,7 @@
 
 namespace App\Providers;
 
-use App\Contracts\HtmlToPdfService;
+use CircleLinkHealth\Core\HtmlToPdfService;
 use App\Services\SnappyPdfWrapper;
 use Illuminate\Support\ServiceProvider;
 

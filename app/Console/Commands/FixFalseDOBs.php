@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;

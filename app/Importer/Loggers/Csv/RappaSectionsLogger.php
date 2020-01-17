@@ -7,10 +7,7 @@
 namespace App\Importer\Loggers\Csv;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
-use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\InsuranceLog;
-use App\Importer\Models\ItemLogs\MedicationLog;
-use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Models\PatientData\Rappa\RappaData;
@@ -18,6 +15,9 @@ use App\Models\PatientData\Rappa\RappaInsAllergy;
 use App\Models\PatientData\Rappa\RappaName;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
+use CircleLinkHealth\SharedModels\Entities\AllergyLog;
+use CircleLinkHealth\SharedModels\Entities\MedicationLog;
 
 class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
 {
@@ -75,8 +75,6 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Allergies Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
     {
@@ -99,8 +97,6 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Insurance Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logInsuranceSection(): MedicalRecordLogger
     {
@@ -126,8 +122,6 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Medications Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
     {
@@ -146,8 +140,6 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Problems Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
     {
@@ -164,8 +156,6 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Providers Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logProvidersSection(): MedicalRecordLogger
     {

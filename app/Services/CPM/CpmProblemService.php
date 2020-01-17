@@ -7,9 +7,9 @@
 namespace App\Services\CPM;
 
 use App\Contracts\Services\CpmModel;
-use App\Models\CCD\Problem;
-use App\Models\CPM\CpmProblem;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 
 class CpmProblemService implements CpmModel
 {
@@ -28,8 +28,6 @@ class CpmProblemService implements CpmModel
     }
 
     /**
-     * @param User $patient
-     *
      * @return array|bool
      */
     public function getDetails(User $patient)
@@ -50,12 +48,12 @@ class CpmProblemService implements CpmModel
 
     public function noDiabetesFilter()
     {
-        return CpmProblem::where('name', '!=', 'Diabetes');
+        return \CircleLinkHealth\SharedModels\Entities\CpmProblem::where('name', '!=', 'Diabetes');
     }
 
     public function problem($id)
     {
-        $problem = CpmProblem::withLatestCpmInstruction()->withIcd10Codes()->find($id);
+        $problem = \CircleLinkHealth\SharedModels\Entities\CpmProblem::withLatestCpmInstruction()->withIcd10Codes()->find($id);
         if ($problem) {
             return $this->setupProblem($problem);
         }

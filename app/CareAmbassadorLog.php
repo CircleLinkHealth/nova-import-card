@@ -37,7 +37,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @mixin \Eloquent
  * @property int|null                                                                       $practice_id
  * @property \CircleLinkHealth\Customer\Entities\Practice                                   $practice
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareAmbassadorLog query()

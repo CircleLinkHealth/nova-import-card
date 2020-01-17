@@ -7,9 +7,8 @@
 namespace App\CLH\Repositories;
 
 use App\CareAmbassador;
-use App\CarePlan;
-use App\Services\GoogleDrive;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -19,9 +18,11 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Config;
 use Illuminate\Cache\TaggableStore;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Storage;
@@ -607,9 +608,12 @@ class UserRepository
         } else {
             $store = \Cache::getStore();
         }
+        
+        $user->clearObjectCache();
 
         foreach ($keys as $key) {
             $store->forget($key);
+            Cache::forget($key);
         }
     }
 

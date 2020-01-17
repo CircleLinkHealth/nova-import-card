@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use App\Exceptions\InvalidArgumentException;
+use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
@@ -124,7 +124,7 @@ class PatientWriteRepository
             $record->save();
         }
 
-        if ( ! $successfulLastCall && ! $isCallBack && $patient->no_call_attempts_since_last_success > 5 && $record->no_of_successful_calls < 1) {
+        if ( ! $successfulLastCall && ! $isCallBack && $patient->no_call_attempts_since_last_success >= 5 && $record->no_of_successful_calls < 1) {
             $patient->ccm_status = Patient::UNREACHABLE;
         }
 

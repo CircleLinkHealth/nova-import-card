@@ -1,6 +1,10 @@
 <?php
 
-use App\Models\CPM\CpmProblem;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Database\Seeder;
 
 class CpmRemoveBehavioralSeeder extends Seeder

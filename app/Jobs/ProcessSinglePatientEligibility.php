@@ -6,9 +6,9 @@
 
 namespace App\Jobs;
 
-use App\EligibilityBatch;
-use App\EligibilityJob;
-use App\Services\EligibilityChecker;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\EligibilityChecker;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,7 +28,7 @@ class ProcessSinglePatientEligibility implements ShouldQueue
      */
     private $batch;
     /**
-     * @var EligibilityJob
+     * @var \CircleLinkHealth\Eligibility\Entities\EligibilityJob
      */
     private $eligibilityJob;
 
@@ -55,8 +55,8 @@ class ProcessSinglePatientEligibility implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param EligibilityJob                               $eligibilityJob
-     * @param EligibilityBatch                             $batch
+     * @param \CircleLinkHealth\Eligibility\Entities\EligibilityJob                               $eligibilityJob
+     * @param \CircleLinkHealth\Eligibility\Entities\EligibilityBatch                             $batch
      * @param \CircleLinkHealth\Customer\Entities\Practice $practice
      */
     public function __construct(

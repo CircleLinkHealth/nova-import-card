@@ -71,10 +71,6 @@ return [
             : 'false',
     ],
 
-    'ccd-parser' => [
-        'base-uri' => env('CCD_PARSER_BASE_URI', 'https://circlelink-ccd-parser.medstack.net'),
-    ],
-
     'no-call-mode' => [
         'env' => ! in_array(env('APP_ENV'), ['local', 'staging']),
     ],

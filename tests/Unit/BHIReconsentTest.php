@@ -6,18 +6,18 @@
 
 namespace Tests\Unit;
 
-use App\AppConfig;
 use App\Call;
-use App\Models\CPM\CpmProblem;
 use App\Services\Calls\SchedulerService;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Tests\TestCase;
 
 class BHIReconsentTest extends TestCase
@@ -57,7 +57,7 @@ class BHIReconsentTest extends TestCase
         $this->assertTrue(\Cache::has($cacheKey));
 
         $timeTillShowAgain = \Cache::get($cacheKey);
-        $this->assertTrue(Carbon::now()->addMinutes($timeTillShowAgain)->isTomorrow());
+        $this->assertTrue(Carbon::now()->addMinutes($timeTillShowAgain)->isAfter(Carbon::tomorrow()->startOfDay()));
     }
 
     public function test_it_is_bhi_for_after_cutoff_consent_date()
@@ -221,6 +221,8 @@ class BHIReconsentTest extends TestCase
                     ? Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI)->subWeek()
                     : Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI),
             ]);
+        
+        $patient->patientInfo->fresh();
 
         if ($hasBhiConsentNote) {
             $now = Carbon::now();

@@ -44,7 +44,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        RunScheduler::class,
+        RunScheduler::class
     ];
 
     /**
