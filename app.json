@@ -53,7 +53,7 @@
       ],
       "scripts": {
         "test-setup": "vendor/bin/heroku-php-nginx -C heroku/nginx.conf public/ >/dev/null 2>&1 & sleep 5",
-        "test": "composer test"
+        "test": "composer test && php artisan reviewapp:predestroy"
       },
       "env": {
         "APP_ENV": "testing",
