@@ -22,7 +22,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \CircleLinkHealth\Customer\Entities\User|null $nurse
  * @property-read \CircleLinkHealth\Customer\Entities\User $patient
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @property-read int|null $revision_history_count
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientNurse
  *     newModelQuery()

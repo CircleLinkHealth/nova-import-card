@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\Models\CCD\Problem;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
@@ -58,12 +58,12 @@ use Illuminate\Support\Facades\DB;
  * @property int|null                                                                       $problem_2
  * @property int                                                                            $is_ccm_complex
  * @property int|null                                                                       $needs_qa
- * @property \App\Models\CCD\Problem|null                                                   $billableProblem1
- * @property \App\Models\CCD\Problem|null                                                   $billableProblem2
- * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection             $billableProblems
+ * @property \CircleLinkHealth\SharedModels\Entities\Problem|null                                                   $billableProblem1
+ * @property \CircleLinkHealth\SharedModels\Entities\Problem|null                                                   $billableProblem2
+ * @property \CircleLinkHealth\SharedModels\Entities\Problem[]|\Illuminate\Database\Eloquent\Collection             $billableProblems
  * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection              $chargeableServices
  * @property \CircleLinkHealth\Customer\Entities\User                                       $patient
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary hasServiceCode($code)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary newQuery()

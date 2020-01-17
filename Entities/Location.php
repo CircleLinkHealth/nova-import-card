@@ -68,7 +68,7 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Query\Builder|\App\Location withoutTrashed()
  * @mixin \Eloquent
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                                  $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]                                  $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Location query()

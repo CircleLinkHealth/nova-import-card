@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\TargetPatient;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 
 /**
  * CircleLinkHealth\Customer\Entities\Ehr.
@@ -23,8 +23,8 @@ use App\TargetPatient;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Ehr wherePdfReportHandler($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Ehr whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- * @property \App\TargetPatient[]|\Illuminate\Database\Eloquent\Collection                  $targetPatient
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient[]|\Illuminate\Database\Eloquent\Collection                  $targetPatient
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Ehr newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Ehr newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Ehr query()

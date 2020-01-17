@@ -23,7 +23,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property string|null                                                                             $deleted_at
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection    $media
  * @property \CircleLinkHealth\Customer\Entities\Practice[]|\Illuminate\Database\Eloquent\Collection $practices
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]          $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]          $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection     $users
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\SaasAccount newModelQuery()

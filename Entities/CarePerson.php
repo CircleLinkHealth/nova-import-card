@@ -27,7 +27,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereUserId($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\CarePerson query()

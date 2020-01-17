@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use App\CLH\Helpers\StringManipulation;
+use CircleLinkHealth\Core\StringManipulation;
 
 /**
  * CircleLinkHealth\Customer\Entities\PhoneNumber.
@@ -34,7 +34,7 @@ use App\CLH\Helpers\StringManipulation;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereUserId($value)
  * @mixin \Eloquent
  * @property string                                                                         $number_with_dashes
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PhoneNumber newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PhoneNumber newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PhoneNumber query()

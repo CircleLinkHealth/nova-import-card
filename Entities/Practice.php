@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\CareAmbassadorLog;
-use App\CLH\Helpers\StringManipulation;
+use CircleLinkHealth\Core\StringManipulation;
 use App\EnrolleeCustomFilter;
 use App\Models\CCD\Problem;
 use App\Repositories\PatientSummaryEloquentRepository;
@@ -49,7 +49,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \Carbon\Carbon $updated_at
  * @property string|null $deleted_at
  * @property string|null $sms_marketing_number
- * @property \App\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection $careplan
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection $careplan
  * @property \CircleLinkHealth\Customer\Entities\Ehr|null $ehr
  * @property mixed $formatted_name
  * @property mixed $primary_location_id
@@ -98,7 +98,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection $media
  * @property \Illuminate\Notifications\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection
  *     $notifications
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\SaasAccount|null $saasAccount
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice activeBillable()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
@@ -170,7 +170,7 @@ class Practice extends BaseModel implements HasMedia
 
     public function careplan()
     {
-        return $this->hasMany('App\CarePlanTemplate', 'patient_id');
+        return $this->hasMany('CircleLinkHealth\SharedModels\Entities\CarePlanTemplate', 'patient_id');
     }
 
     public function cpmSettings()
