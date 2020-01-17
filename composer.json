@@ -69,15 +69,15 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-revisionable.git"
+      "url": "git@github.com:CircleLinkHealth/revisionable-module.git"
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-cpm-migrations.git"
+      "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git"
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-sqlviews.git"
+      "url": "git@github.com:CircleLinkHealth/sqlviews-module.git"
     },
     {
       "type": "git",
@@ -93,7 +93,7 @@
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git"
+      "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git"
     },    {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/patient-api-module.git"
@@ -101,6 +101,10 @@
     {
       "type": "git",
       "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
     }
   ],
   "require": {
@@ -119,10 +123,10 @@
     "appstract/laravel-opcache": "~2.0.5",
     "barryvdh/laravel-snappy": "0.4.4",
     "circlelinkhealth/ccda-parser-processor-php-module": "dev-master",
-    "circlelinkhealth/cerberus-gatekeeper": "^v3.0.2",
+    "circlelinkhealth/cerberus-gatekeeper-module": "v3.0.5",
     "circlelinkhealth/core-module": "1.36",
-    "circlelinkhealth/cpm-migrations-module": "1.0",
-    "circlelinkhealth/customer-module": "1.7.1",
+    "circlelinkhealth/cpm-migrations-module": "1.1",
+    "circlelinkhealth/customer-module": "1.7.2",
     "circlelinkhealth/eligibility-module": "dev-master",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/nurseinvoices-module": "dev-master",
@@ -144,7 +148,7 @@
     "hubertnnn/laravel-nova-field-dynamic-select": "^0.2.0",
     "jenssegers/agent": "^2.5",
     "jeremykenedy/slack-laravel": "^2.2",
-    "joshbrw/laravel-module-installer": "^0.1.4",
+    "joshbrw/laravel-module-installer": "^0.1.5",
     "jorijn/laravel-security-checker": "^0.3.0",
     "jubeki/nova-card-linkable": "^1.0",
     "lab404/laravel-impersonate": "^1.2",

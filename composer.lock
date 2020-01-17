@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "86566896417556fc40b9af2e28c5d9f3",
+    "content-hash": "be24f0b3b27ae6f001e963d83d59d474",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.132.5",
+            "version": "3.133.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "276241cf558f883b639ecdefd0e9912f0df20b8e"
+                "reference": "27b4f0fbdf34a88df6788ffdefc3620511894676"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/276241cf558f883b639ecdefd0e9912f0df20b8e",
-                "reference": "276241cf558f883b639ecdefd0e9912f0df20b8e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/27b4f0fbdf34a88df6788ffdefc3620511894676",
+                "reference": "27b4f0fbdf34a88df6788ffdefc3620511894676",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-01-14T19:16:27+00:00"
+            "time": "2020-01-16T21:19:17+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -620,7 +620,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git",
+                "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git",
                 "reference": "b869a76f4dc2990e9d7cb28f44bf4b8aeaffa3e8"
             },
             "type": "laravel-module",
@@ -656,17 +656,17 @@
             "time": "2020-01-15T00:05:43+00:00"
         },
         {
-            "name": "circlelinkhealth/cerberus-gatekeeper",
-            "version": "v3.0.2",
+            "name": "circlelinkhealth/cerberus-gatekeeper-module",
+            "version": "v3.0.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper.git",
-                "reference": "b3b00f072ab2584458fb50339db2ba0dab3e249e"
+                "url": "https://github.com/CircleLinkHealth/cerberus-gatekeeper-module.git",
+                "reference": "342fa463253bbc0777ff164c9c220fa929dc8bcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper/zipball/b3b00f072ab2584458fb50339db2ba0dab3e249e",
-                "reference": "b3b00f072ab2584458fb50339db2ba0dab3e249e",
+                "url": "https://api.github.com/repos/CircleLinkHealth/cerberus-gatekeeper-module/zipball/342fa463253bbc0777ff164c9c220fa929dc8bcc",
+                "reference": "342fa463253bbc0777ff164c9c220fa929dc8bcc",
                 "shasum": ""
             },
             "require": {
@@ -681,7 +681,7 @@
                 "phpunit/phpunit": "~6.0",
                 "sami/sami": "dev-master"
             },
-            "type": "library",
+            "type": "laravel-module",
             "extra": {
                 "laravel": {
                     "providers": [
@@ -736,7 +736,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2019-12-30T15:23:09+00:00"
+            "time": "2020-01-17T02:46:10+00:00"
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
@@ -808,11 +808,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.0",
+            "version": "v1.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-cpm-migrations.git",
-                "reference": "3e94a7d1af19597bcadd3fb8750aa02233991a3d"
+                "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
+                "reference": "34a29d663cf3c31219475c5b38783721528f7f01"
             },
             "type": "laravel-module",
             "extra": {
@@ -834,18 +834,18 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-06T15:45:19+00:00"
+            "time": "2020-01-14T23:44:55+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.7.1",
+            "version": "v1.7.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "65f28eebfd51b8ae906892c43e338599cba2b4eb"
+                "reference": "177e81d7812adbea8895a4ad918f8d66f348d59e"
             },
             "require": {
-                "circlelinkhealth/cerberus-gatekeeper": "*",
+                "circlelinkhealth/cerberus-gatekeeper-module": "*",
                 "circlelinkhealth/core-module": "*",
                 "laravel/passport": "^7.0",
                 "laravel/scout": "^7.1",
@@ -875,7 +875,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-14T23:51:13+00:00"
+            "time": "2020-01-17T03:57:12+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -883,7 +883,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4acb8a0de1795a097b2333a9afcd501a440f2288"
+                "reference": "e9547a856cd0e4cef9cb8862ede0fa253e6a7d18"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -908,7 +908,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-15T00:05:44+00:00"
+            "time": "2020-01-15T02:09:17+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -985,7 +985,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "6e2fe5d1c9caff554ff268a2da4b05fb8bed94d8"
+                "reference": "e1d362ed0bbf3c06d694b89c20aab72b487c4021"
             },
             "type": "laravel-module",
             "extra": {
@@ -1008,7 +1008,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-15T00:37:08+00:00"
+            "time": "2020-01-15T01:38:54+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1080,7 +1080,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-revisionable.git",
+                "url": "git@github.com:CircleLinkHealth/revisionable-module.git",
                 "reference": "a469a2d0eb8a68e3707783a152233db0ad2d0c42"
             },
             "require": {
@@ -1158,7 +1158,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-sqlviews.git",
+                "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
                 "reference": "6e8a2ddace3ba0337846827af55b50b550f30c9c"
             },
             "type": "laravel-module",
@@ -2275,16 +2275,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.11.1",
+            "version": "8.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "f6a367f08e323edc1c27546d8d5818bb016d812e"
+                "reference": "1ec1059b56b40cc1b6b02b438711e4a90ba4bbc7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/f6a367f08e323edc1c27546d8d5818bb016d812e",
-                "reference": "f6a367f08e323edc1c27546d8d5818bb016d812e",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/1ec1059b56b40cc1b6b02b438711e4a90ba4bbc7",
+                "reference": "1ec1059b56b40cc1b6b02b438711e4a90ba4bbc7",
                 "shasum": ""
             },
             "require": {
@@ -2339,7 +2339,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2019-12-11T10:03:19+00:00"
+            "time": "2020-01-15T09:35:09+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -2453,23 +2453,23 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.121",
+            "version": "v0.122",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "a33fd9ed19fe4e27f2ccebbf45646f38e7cb95af"
+                "reference": "77bdb3cb12dd53bf5a0f23c86c0a57c439de77ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/a33fd9ed19fe4e27f2ccebbf45646f38e7cb95af",
-                "reference": "a33fd9ed19fe4e27f2ccebbf45646f38e7cb95af",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/77bdb3cb12dd53bf5a0f23c86c0a57c439de77ad",
+                "reference": "77bdb3cb12dd53bf5a0f23c86c0a57c439de77ad",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.8"
+                "phpunit/phpunit": "^4.8|^5"
             },
             "type": "library",
             "autoload": {
@@ -2486,7 +2486,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2019-11-03T00:23:34+00:00"
+            "time": "2020-01-16T00:24:04+00:00"
         },
         {
             "name": "google/auth",
@@ -3267,16 +3267,16 @@
         },
         {
             "name": "joshbrw/laravel-module-installer",
-            "version": "v0.1.4",
+            "version": "v0.1.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/joshbrw/laravel-module-installer.git",
-                "reference": "06bf72e947c313ba7d84c498fb6947a00ba313ef"
+                "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git",
+                "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/joshbrw/laravel-module-installer/zipball/06bf72e947c313ba7d84c498fb6947a00ba313ef",
-                "reference": "06bf72e947c313ba7d84c498fb6947a00ba313ef",
+                "url": "https://api.github.com/repos/CircleLinkHealth/laravel-module-installer/zipball/5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
+                "reference": "5c8f3ba4b2c3d4ae32371edf7097dcb3f72a6dd0",
                 "shasum": ""
             },
             "require": {
@@ -3297,11 +3297,13 @@
                     "Joshbrw\\LaravelModuleInstaller\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
-            "time": "2017-11-08T10:06:42+00:00"
+            "support": {
+                "source": "https://github.com/CircleLinkHealth/laravel-module-installer/tree/master"
+            },
+            "time": "2020-01-16T16:56:46+00:00"
         },
         {
             "name": "jubeki/nova-card-linkable",
@@ -10631,16 +10633,16 @@
         },
         {
             "name": "filp/whoops",
-            "version": "2.7.0",
+            "version": "2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "4c97f814aa2f0dd4d5bedc89181c10ef12c004c5"
+                "reference": "fff6f1e4f36be0e0d0b84d66b413d9dcb0c49130"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/4c97f814aa2f0dd4d5bedc89181c10ef12c004c5",
-                "reference": "4c97f814aa2f0dd4d5bedc89181c10ef12c004c5",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/fff6f1e4f36be0e0d0b84d66b413d9dcb0c49130",
+                "reference": "fff6f1e4f36be0e0d0b84d66b413d9dcb0c49130",
                 "shasum": ""
             },
             "require": {
@@ -10688,7 +10690,7 @@
                 "throwable",
                 "whoops"
             ],
-            "time": "2019-12-29T10:00:00+00:00"
+            "time": "2020-01-15T10:00:00+00:00"
         },
         {
             "name": "friendsofphp/php-cs-fixer",
