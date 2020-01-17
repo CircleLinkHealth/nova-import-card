@@ -68,7 +68,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property mixed $zip
  * @property \CircleLinkHealth\Customer\Entities\PatientContactWindow[]|\Illuminate\Database\Eloquent\Collection
  *     $contactWindows
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient enrolled()
  * @method static bool|null forceDelete()

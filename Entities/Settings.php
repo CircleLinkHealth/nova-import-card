@@ -53,7 +53,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @property int|null                                                                       $default_chargeable_service_id
  * @property int                                                                            $twilio_enabled
  * @property int                                                                            $twilio_recordings_enabled
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Settings query()

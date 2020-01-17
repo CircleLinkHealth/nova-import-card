@@ -37,7 +37,7 @@ namespace CircleLinkHealth\Customer\Entities;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Appointment whereWasCompleted($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Appointment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Appointment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Appointment query()

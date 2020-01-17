@@ -52,7 +52,7 @@ use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereUserId($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse
  *     filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse newModelQuery()
