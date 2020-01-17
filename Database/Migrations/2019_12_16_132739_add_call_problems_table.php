@@ -13,7 +13,6 @@ class AddCallProblemsTable extends Migration
      */
     public function up()
     {
-
         Schema::create('call_problems', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('call_id');
