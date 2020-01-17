@@ -203,7 +203,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Customer\Entities\Practice[]|\Illuminate\Database\Eloquent\Collection    $practices
  * @property \CircleLinkHealth\Customer\Entities\Practice                                               $primaryPractice
  * @property \CircleLinkHealth\Customer\Entities\ProviderInfo                                           $providerInfo
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]             $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]             $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\Role[]|\Illuminate\Database\Eloquent\Collection        $roles
  * @property mixed                                                                                      $email_address
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                                 $ucp
@@ -1633,7 +1633,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             throw new \Exception('User ID not found.');
         }
 
-        return 'hide_legacy_bhi_banner:'.$this->id.":${patientId}";
+        return "hide_legacy_bhi_banner:$this->id:$patientId";
     }
 
     public function getMobilePhoneNumber()

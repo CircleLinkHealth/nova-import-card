@@ -208,13 +208,7 @@ trait HasCpmRoles
                 $cacheDriver = config('cache.default');
         
                 if ('redis' !== $cacheDriver) {
-                    $this->rolesCacheOnObj[$roleName] = Cache::remember(
-                        "user_id:$this->id:$roleName",
-                        2,
-                        function () use ($roleName) {
-                            return $this->cerberusHasRole($roleName);
-                        }
-                    );
+                    $this->rolesCacheOnObj[$roleName] = $this->cerberusHasRole($roleName);
                 } else {
                     $hget = \RedisManager::hget($this->getCpmRolesCacheKey(), $roleName);
                     if (! $hget) {
@@ -236,5 +230,9 @@ trait HasCpmRoles
         }
         
         return false;
+    }
+    
+    public function clearObjectCache() {
+        $this->rolesCacheOnObj = $this->permsCacheOnObj = [];
     }
 }

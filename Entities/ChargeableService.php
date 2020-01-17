@@ -20,7 +20,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property PatientMonthlySummary[]|\Illuminate\Database\Eloquent\Collection $patientSummaries
  * @property Practice[]|\Illuminate\Database\Eloquent\Collection $practices
  * @property User[]|\Illuminate\Database\Eloquent\Collection $providers
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|ChargeableService newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ChargeableService newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ChargeableService query()

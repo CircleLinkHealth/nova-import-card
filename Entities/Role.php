@@ -49,7 +49,7 @@ class Role extends CerberusRole
      *
      * @var int
      */
-    private const CACHE_ROLES_MINUTES = 1440;
+    private const CACHE_ROLES_MINUTES = 3;
 
     /**
      * The database table used by the model.
