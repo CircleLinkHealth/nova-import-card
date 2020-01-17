@@ -17,19 +17,32 @@ trait CreatesTestSuiteDB
         if ('cpm_production' === $dbName) {
             abort('It is not recommended to run this command on the production database');
         }
-
-        if (getenv('CI')) {
+   
+        if ($isCi = getenv('CI')) {
             $dbName = getenv('HEROKU_TEST_RUN_ID');
         }
-
-        $this->createDatabase($dbName ?? 'cpm_tests');
+        
+        $this->createDatabase($dbName ?? 'cpm_tests', ! $isCi);
     }
-
-    private function createDatabase(string $dbName)
+    
+    private function createDatabase(string $dbName, $isLocal = true)
     {
-        $migrateInstallCommand  = $this->runCommand(['php', 'artisan', '-vvv', 'mysql:createdb', $dbName, '--env=testing']);
-        $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh', '--env=testing']);
-        $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:views', '--env=testing']);
-        $testSuiteSeederCommand = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed', '--class=TestSuiteSeeder', '--env=testing']);
+        collect(
+            [
+                ['mysql:createdb', $dbName],
+                ['migrate:fresh'],
+                ['migrate:views'],
+                ['db:seed', '--class=TestSuiteSeeder'],
+            ]
+        )->each(
+            function ($command) use ($isLocal) {
+                $base = ['php', 'artisan', '-vvv'];
+                if ($isLocal) {
+                    array_push($command, '--env=testing');
+                }
+                
+                $this->runCommand(array_merge($base, $command));
+            }
+        );
     }
 }
