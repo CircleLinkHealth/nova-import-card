@@ -44,7 +44,7 @@ class HerokuOnRelease extends Command
     
         $base = ['php', 'artisan', '-vvv'];
         
-        if (app()->environment('review')) {
+        if (app()->environment('review', 'testing')) {
             $this->runCommand(array_merge($base, ['reviewapp:postdeploy']));
         }
         
