@@ -7,11 +7,12 @@
 namespace Tests\Unit;
 
 use App\Call;
-use App\Models\CPM\CpmProblem;
+
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;
