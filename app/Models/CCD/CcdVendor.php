@@ -47,7 +47,7 @@ use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdVendor whereVendorName($value)
  * @mixin \Eloquent
  *
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdVendor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdVendor newQuery()

@@ -150,7 +150,7 @@ namespace App;
  * @property int|null                                                                                                        $phone_numbers_count
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                                                               $primaryPractice
  * @property \CircleLinkHealth\Customer\Entities\ProviderInfo                                                                $providerInfo
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                                  $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]                                  $revisionHistory
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Customer\Entities\Role[]|\Illuminate\Database\Eloquent\Collection                             $roles
  * @property int|null                                                                                                        $roles_count

@@ -34,7 +34,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\User|null         $patient
  * @property \CircleLinkHealth\SharedModels\Entities\CarePlan|null $carePlan
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareplanAssessment query()

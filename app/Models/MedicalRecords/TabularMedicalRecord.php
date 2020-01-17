@@ -99,7 +99,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @mixin \Eloquent
  *
  * @property string|null                                                                    $deleted_at
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord newModelQuery()

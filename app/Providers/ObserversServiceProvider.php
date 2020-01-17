@@ -47,7 +47,7 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\ServiceProvider;
-use Venturecraft\Revisionable\Revision;
+use CircleLinkHealth\Revisionable\Entities\Revision;
 
 class ObserversServiceProvider extends ServiceProvider
 {

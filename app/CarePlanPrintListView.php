@@ -49,7 +49,7 @@ use CircleLinkHealth\Core\Entities\SqlViewModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereProviderDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanPrintListView whereProviderFullName($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @property int|null                                                                       $revision_history_count
  */
 class CarePlanPrintListView extends SqlViewModel

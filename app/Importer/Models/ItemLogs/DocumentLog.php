@@ -46,7 +46,7 @@ use CircleLinkHealth\Eligibility\BelongsToCcda;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog whereVendorId($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\DocumentLog query()

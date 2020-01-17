@@ -23,7 +23,7 @@ use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereMedicationGroupId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MedicationGroupsMap query()

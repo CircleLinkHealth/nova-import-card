@@ -33,7 +33,7 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest whereVendor($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entities\CcdaRequest query()
