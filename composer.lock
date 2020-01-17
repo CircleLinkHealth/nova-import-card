@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c4c7056d62c23a30265bc9741b09d225",
+    "content-hash": "ab06012df006846062feb4f0a3e10dbf",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -740,7 +740,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-development",
+            "version": "dev-CPM-1910_nurse_invoices_ui",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -808,11 +808,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.3",
+            "version": "dev-CPM-1936_nurse_payment_algo",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "aa2aee7cfc3e99f1892a8aaad1ca4550ffe87061"
+                "reference": "c6077f87690eef25d37c1561b6cd827221248a4f"
             },
             "type": "laravel-module",
             "extra": {
@@ -834,15 +834,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T10:53:36+00:00"
+            "time": "2020-01-17T14:15:13+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.7.5",
+            "version": "dev-CPM-1936_nurse_payment_algo",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "7b1b5fd80e35ab760a91807d6a33915782d16a01"
+                "reference": "d73eeea643fb6d46e2ec7a4b0068be81c05da2c5"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -875,7 +875,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T13:46:03+00:00"
+            "time": "2020-01-17T14:15:19+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -912,7 +912,7 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-development",
+            "version": "dev-CPM-1910_nurse_invoices_ui",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
@@ -946,7 +946,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-development",
+            "version": "dev-CPM-1910_nurse_invoices_ui",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -981,11 +981,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.0",
+            "version": "dev-CPM-1936_nurse_payment_algo",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "e0a0c43ef6072aaf1229ee5d669e232244633921"
+                "reference": "09c43d5294fba49e5d7ab7f1842b4098eeec64a7"
             },
             "type": "laravel-module",
             "extra": {
@@ -1008,7 +1008,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T06:26:18+00:00"
+            "time": "2020-01-17T14:15:27+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -13518,6 +13518,9 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
