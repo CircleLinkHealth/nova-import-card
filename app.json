@@ -48,6 +48,12 @@
       }
     },
     "test": {
+      "formation": {
+        "test": {
+          "quantity": 1,
+          "size": "performance-m"
+        }
+      },
       "addons": [
         "heroku-redis:premium-0"
       ],
