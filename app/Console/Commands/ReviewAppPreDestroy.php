@@ -38,7 +38,7 @@ class ReviewAppPreDestroy extends Command
      */
     public function handle()
     {
-        if ( ! app()->environment(['review', 'local'])) {
+        if ( ! app()->environment(['review', 'local', 'testing'])) {
             throw new \Exception('Only review and local environments can run this');
         }
         
