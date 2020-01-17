@@ -323,6 +323,7 @@ class WorkScheduleController extends Controller
             $inputDate = $workScheduleData['date'];
             $workScheduleData['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
         }
+
         $validator = $this->validatorScheduleData($workScheduleData);
 
         $updateCollisions = null === $workScheduleData['updateCollisions'] ? false : $workScheduleData['updateCollisions'];
@@ -346,7 +347,7 @@ class WorkScheduleController extends Controller
         $holidayExists = Holiday::where('nurse_info_id', $nurseInfoId)->where('date', $workScheduleData['date'])->exists();
 
         if ($windowExists || $holidayExists || $invalidWorkHoursCommitted || ('does_not_repeat' !== $workScheduleData['repeat_freq'] && null === $workScheduleData['until'])) {
-            $validationResponse = $this->returnValidationResponse($windowExists, $validator, $invalidWorkHoursCommitted, $workScheduleData['repeat_freq'], $workScheduleData['until'], $holidayExists);
+            $validationResponse = $this->returnValidationResponse($windowExists, $validator, $invalidWorkHoursCommitted, $workScheduleData, $holidayExists);
 
             return response()->json([
                 'errors' => 'Validation Failed',

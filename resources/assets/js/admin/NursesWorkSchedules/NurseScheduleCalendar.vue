@@ -150,17 +150,27 @@
                                 </div>
 
 
-                                <div v-if="repeatFrequencyHasSelected" class="repeat-until">
-                                    <span class="modal-inputs-labels">Keep repeating until:</span>
-                                    <input type="date"
-                                           :class="{disable: !repeatFrequencyHasSelected || addHolidays}"
-                                           :disabled="!repeatFrequencyHasSelected || addHolidays"
-                                           class="repeat-until-input"
-                                           name="until"
-                                           :min="calculateMinDate()"
-                                           v-model="repeatUntil">
-                                </div>
+                                <div v-if="repeatFrequencyHasSelected">
+                                    <div class="repeat-until">
+                                        <span class="modal-inputs-labels">Keep repeating until:</span>
+                                        <input type="date"
+                                               :class="{disable: !repeatFrequencyHasSelected || addHolidays}"
+                                               :disabled="!repeatFrequencyHasSelected || addHolidays"
+                                               class="repeat-until-input"
+                                               name="until"
+                                               :min="calculateMinDate()"
+                                               :max="calculateMaxDate()"
+                                               v-model="repeatUntil">
+                                    </div>
 
+                                    <div class="exclude-weekends">
+                                        <input id="excludeWeekends"
+                                               type="checkbox"
+                                               class="exclude-weekends"
+                                               v-model="excludeWeekends">
+                                        Exclude Weekends
+                                    </div>
+                                </div>
                             </div>
 
 
@@ -180,7 +190,6 @@
                             </div>
                         </div>
                         <!-- Filters End-->
-
                         <div class="modal-footer">
                             <button v-if="clickedToViewEvent"
                                     type="button"
@@ -257,6 +266,7 @@
 
         data() {
             return {
+                excludeWeekends: true,
                 dataForDropdown: [],
                 workHours: [],
                 holidays: [],
@@ -374,10 +384,6 @@
                         label: 'Repeat Weekly',
                         value: 'weekly'
                     },
-                    {
-                        label: 'Repeat For Weekdays',
-                        value: 'daily'
-                    },
                 ],
 
             }
@@ -453,6 +459,21 @@
             },
 
             formatDate(date) {
+                var d = new Date(date),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
+
+                if (month.length < 2)
+                    month = '0' + month;
+                if (day.length < 2)
+                    day = '0' + day;
+
+                return [month, day, year].join('-');
+            },
+
+
+            formatDate2(date) {
                 var d = new Date(date),
                     month = '' + (d.getMonth() + 1),
                     day = '' + d.getDate(),
@@ -580,7 +601,7 @@
 
                     const recurringDates = recurringDatesToEvent.all();
                     for (var i = 0; i < recurringDates.length; i++) {
-                        const date = this.formatDate(recurringDates[i]);
+                        const date = this.formatDate2(recurringDates[i]);
                         const eventsToAskConfirmation = this.getConflicts(events, date);
                         if (eventsToAskConfirmation.length !== 0) {
                             this.loader = false;
@@ -606,6 +627,7 @@
             updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, updateCollisionWindow = null) {
                 const updateCollidedWindows = updateCollisionWindow === null ? false : updateCollisionWindow;
                 const nurseInfoId = !!nurseId ? nurseId : '';
+                const excludeWeekends = repeatFreq !== 'does_not_repeat' && this.excludeWeekends;
                 axios.post('/care-center/work-schedule', {
                     nurse_info_id: nurseInfoId,
                     date: workDate,
@@ -616,7 +638,8 @@
                     repeat_freq: repeatFreq,
                     until: repeatUntil,
                     validated: validatedDefault,
-                    updateCollisions: updateCollidedWindows
+                    updateCollisions: updateCollidedWindows,
+                    excludeWkds:excludeWeekends
                 }).then((response => {
                         this.refetchEvents();
                         this.loader = false;
@@ -717,6 +740,7 @@
                 this.addHolidays = false;
                 this.selectedDate = '';
                 this.clickedOnDay = false;
+                this.excludeWeekends = true;
             },
 
             nursesForSearchFilter() {
@@ -765,9 +789,12 @@
                 return this.workEventDate !== '' ? this.workEventDate : this.today;
             },
 
-            // calculateMaxDate() {
-            //
-            // },
+            calculateMaxDate() {
+                //Sets limit from starting selected date + 1 month.
+                const date = new Date(this.workEventDate);
+                const maxRepeatDate = date.setMonth(date.getMonth() + 1);
+                return this.formatDate2(maxRepeatDate);
+            },
         }),
 //@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
         computed: {
@@ -1054,6 +1081,17 @@
 
     .day-off {
         padding-left: 14em;
+    }
+
+    #excludeWeekends {
+        display: inline-block;
+        font-size: 20px;
+    }
+
+    .exclude-weekends {
+        font-weight: bolder;
+        font-size: 18px;
+        padding-top: 20px;
     }
 </style>
 
