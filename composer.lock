@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bfac448830dc577ced344d9796ffc94d",
+    "content-hash": "2f1df49bd94e6867e63b325d5da2d3f5",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -838,11 +838,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.7.3",
+            "version": "dev-CPM-1658_method_to_nurse_model_plus_calendarFields",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "08d2abac59f30ba8c27aa0118a41c4f3e0f56367"
+                "reference": "f0b85fb1479b4df4ebf6faf50c7192817de85c39"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -875,7 +875,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T05:27:54+00:00"
+            "time": "2020-01-17T11:02:30+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -13517,6 +13517,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/customer-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
