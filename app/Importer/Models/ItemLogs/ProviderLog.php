@@ -41,6 +41,7 @@ use CircleLinkHealth\Eligibility\BelongsToCcda;
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda  $ccda
  * @property \Eloquent|\Illuminate\Database\Eloquent\Model $providerLoggable
  * @property \App\Models\CCD\CcdVendor|null                $vendor
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog whereBillingProviderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog whereCellPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog whereCity($value)
@@ -69,10 +70,13 @@ use CircleLinkHealth\Eligibility\BelongsToCcda;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog whereWorkPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog whereZip($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\ProviderLog query()
+ *
  * @property int|null $revision_history_count
  */
 class ProviderLog extends \CircleLinkHealth\Core\Entities\BaseModel

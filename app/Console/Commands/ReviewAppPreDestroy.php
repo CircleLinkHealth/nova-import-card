@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -8,18 +12,17 @@ use Illuminate\Support\Facades\Schema;
 class ReviewAppPreDestroy extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'reviewapp:predestroy';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Commands to run on event pr-predestroy of a Heroku review app.';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'reviewapp:predestroy';
 
     /**
      * Create a new command instance.
@@ -38,13 +41,13 @@ class ReviewAppPreDestroy extends Command
      */
     public function handle()
     {
-        if ( ! app()->environment(['review', 'local'])) {
+        if ( ! app()->environment(['review', 'local', 'testing'])) {
             throw new \Exception('Only review and local environments can run this');
         }
-        
+
         $dbName = config('database.connections.mysql.database');
         Schema::getConnection()->getDoctrineSchemaManager()->dropDatabase("`{$dbName}`");
-        
+
         $this->line('reviewapp:predestroy ran');
     }
 }

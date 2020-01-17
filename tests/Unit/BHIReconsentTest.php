@@ -57,7 +57,7 @@ class BHIReconsentTest extends TestCase
         $this->assertTrue(\Cache::has($cacheKey));
 
         $timeTillShowAgain = \Cache::get($cacheKey);
-        $this->assertTrue(Carbon::now()->addMinutes($timeTillShowAgain)->isTomorrow());
+        $this->assertTrue(Carbon::now()->addMinutes($timeTillShowAgain)->isAfter(Carbon::tomorrow()->startOfDay()));
     }
 
     public function test_it_is_bhi_for_after_cutoff_consent_date()
@@ -221,6 +221,8 @@ class BHIReconsentTest extends TestCase
                     ? Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI)->subWeek()
                     : Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI),
             ]);
+
+        $patient->patientInfo->fresh();
 
         if ($hasBhiConsentNote) {
             $now = Carbon::now();

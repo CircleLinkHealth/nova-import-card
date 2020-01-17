@@ -387,6 +387,12 @@ $user_info = [];
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    @if(auth()->user()->isAdmin())
+                                                    <div class="row" style="margin-top: 10px;">
+                                                        <div class="col-lg-4">{!! Form::label('careplan_status', 'Careplan Status:') !!}</div>
+                                                        <div class="col-lg-8">{!! Form::select('careplan_status', [CircleLinkHealth\SharedModels\Entities\CarePlan::DRAFT => 'Draft', CircleLinkHealth\SharedModels\Entities\CarePlan::QA_APPROVED => 'CLH Approved', CircleLinkHealth\SharedModels\Entities\CarePlan::PROVIDER_APPROVED => 'Provider Approved'], $patient->careplan->status, ['class' => 'form-control select-picker', 'style' => 'width:100%;']) !!}</div>
+                                                    </div>
+                                                    @endif
                                                     <div id="withdrawn-reason" class="row hidden"
                                                          style="margin-top: 20px">
                                                         <div class="col-lg-12">{!! Form::label('withdrawn_reason', 'Withdrawn Reason: ') !!}</div>

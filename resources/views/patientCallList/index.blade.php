@@ -101,6 +101,53 @@ function formatTime($time)
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                     <div class="">
+
+                        @if(isset($draftNotes) && $draftNotes->isNotEmpty())
+                            <div class="row text-center">
+                                <div class="col-md-12">
+                                    <h4>
+                                        Please <strong>save</strong> or <strong>delete</strong> the following note
+                                        drafts:
+                                    </h4>
+                                </div>
+                                <div class="col-md-8 col-md-offset-2">
+                                    <table class="display dataTable no-footer">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                Patient ID
+                                            </th>
+                                            <th>
+                                                Date Created
+                                            </th>
+                                            <th>
+
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($draftNotes as $key => $note)
+                                            <tr>
+                                                <td>
+                                                    {{$note->patient_id}}
+                                                </td>
+                                                <td>
+                                                    {{$note->performed_at->toDateString()}}
+                                                </td>
+                                                <td>
+                                                    <a href="{{$note->editLink()}}"
+                                                       style="color: blue; text-transform: uppercase; font-weight: 600">
+                                                        Approve/Delete
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        @endif
+
                         <br/>
                         <br/>
                         <div class="row">
@@ -137,7 +184,7 @@ function formatTime($time)
                                                 </div>
                                             </div>
                                         </div>
-                                        </form>
+                                        {!! Form::close() !!}
                                     </div>
                                 </div>
                                 <div class="">
@@ -179,6 +226,7 @@ function formatTime($time)
                                             <th>Time<br>Zone</th>
                                             <th>Last<br>Date called</th>
                                             <th>CCM<br>Time to date</th>
+                                            <th>BHI<br>Time to date</th>
                                             <th># Calls<br>to date</th>
                                             <th>Provider</th>
                                             <th>Practice</th>
@@ -203,10 +251,16 @@ function formatTime($time)
                                                     $textBlack = 'color:black;';
                                                 }
 
-                                                $route = route('patient.careplan.print', ['patient' => $call->patient_id]);
+                                                $route = route(
+                                                    'patient.careplan.print',
+                                                    ['patient' => $call->patient_id]
+                                                );
 
                                                 if ('addendum_response' === $call->type) {
-                                                    $route = route('redirect.readonly.activity', ['callId' => $call->id]);
+                                                    $route = route(
+                                                        'redirect.readonly.activity',
+                                                        ['callId' => $call->id]
+                                                    );
                                                 }
                                                 ?>
                                                 <tr class="{{$boldRow}}" style="{{ $rowBg . $textBlack }}">
@@ -273,6 +327,7 @@ function formatTime($time)
                                                     <td>
                                                         {{ presentDate($call->last_call) }}
                                                     </td>
+
                                                     <td>
                                                         @if( isset($call->ccm_time))
                                                             {{ formatTime($call->ccm_time) }}
@@ -281,6 +336,13 @@ function formatTime($time)
                                                         @endif
                                                     </td>
 
+                                                    <td>
+                                                        @if( isset($call->bhi_time))
+                                                            {{ formatTime($call->bhi_time) }}
+                                                        @else
+                                                            <em style="color:red;">-</em>
+                                                        @endif
+                                                    </td>
 
                                                     <td>
                                                         {{$call->no_of_calls ?? 0}}
@@ -321,7 +383,6 @@ function formatTime($time)
                                         @endif
                                         </tbody>
                                     </table>
-                                    </form>
                                     <?php //$calls->links()?>
                                 </div>
                             </div>
@@ -334,7 +395,6 @@ function formatTime($time)
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
     <!-- call attempt_note modals -->
