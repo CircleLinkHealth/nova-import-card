@@ -49,15 +49,15 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property string|null                                                                         $deleted_at
  * @property \CircleLinkHealth\SharedModels\Entities\AllergyLog[]|\Illuminate\Database\Eloquent\Collection $allergies
  * @property \App\Entities\CcdaRequest                                                           $ccdaRequest
- * @property \App\Importer\Models\ItemLogs\DemographicsLog[]|\Illuminate\Database\Eloquent\Collection
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog[]|\Illuminate\Database\Eloquent\Collection
  *     $demographics
- * @property \App\Importer\Models\ImportedItems\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection
  *     $demographicsImports
- * @property \App\Importer\Models\ItemLogs\DocumentLog[]|\Illuminate\Database\Eloquent\Collection   $document
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog[]|\Illuminate\Database\Eloquent\Collection   $document
  * @property \CircleLinkHealth\SharedModels\Entities\MedicationLog[]|\Illuminate\Database\Eloquent\Collection $medications
  * @property \CircleLinkHealth\Customer\Entities\User|null                                          $patient
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog[]|\Illuminate\Database\Eloquent\Collection    $problems
- * @property \App\Importer\Models\ItemLogs\ProviderLog[]|\Illuminate\Database\Eloquent\Collection   $providers
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog[]|\Illuminate\Database\Eloquent\Collection   $providers
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord                                       $qaSummary
  *
  * @method static bool|null forceDelete()

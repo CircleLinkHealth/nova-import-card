@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\SharedModels\Entities;
 
 
-use CircleLinkHealth\SharedModels\Entities\AllergyImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\AllergyImport;
 use CircleLinkHealth\Eligibility\BelongsToCcda;
 
 
@@ -29,7 +29,7 @@ use CircleLinkHealth\Eligibility\BelongsToCcda;
  * @property \Carbon\Carbon                                   $created_at
  * @property \Carbon\Carbon                                   $updated_at
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda                  $ccda
- * @property \CircleLinkHealth\SharedModels\Entities\AllergyImport $importedItem
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\AllergyImport $importedItem
  * @property \App\Models\CCD\CcdVendor|null                   $vendor
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog whereAllergenName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ItemLogs\AllergyLog whereCreatedAt($value)
@@ -73,6 +73,6 @@ class AllergyLog extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function importedItem()
     {
-        return $this->hasOne(AllergyImport::class);
+        return $this->hasOne(\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\AllergyImport::class);
     }
 }

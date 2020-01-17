@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SharedModels\Entities;
 
-use App\Importer\Models\ItemLogs\MedicationLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
 use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -29,7 +29,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property string|null                                 $deleted_at
  * @property \Carbon\Carbon                              $created_at
  * @property \Carbon\Carbon                              $updated_at
- * @property \App\Importer\Models\ItemLogs\MedicationLog $ccdLog
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog $ccdLog
  * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup          $cpmMedicationGroup
  * @property \CircleLinkHealth\Customer\Entities\User    $patient
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Medication whereCcdMedicationLogId($value)
