@@ -7,8 +7,8 @@
 namespace CircleLinkHealth\Eligibility\Tests;
 
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use App\Models\MedicalRecords\Ccda;
-use App\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Tests\Fakers\AthenaApiResponses;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Tests\TestCase;

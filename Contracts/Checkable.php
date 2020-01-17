@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Eligibility\Contracts;
 
 use App\Contracts\HasMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use App\TargetPatient;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 
 /**
  * A "Checkable" is an object encapsulating behavior and data necessary to determine whether the patient whose materials are encapsulated by the "Checkable" is eligible to receive service from CLH.

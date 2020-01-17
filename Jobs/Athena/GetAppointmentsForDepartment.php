@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Jobs\Athena;
 
 use App\Constants;
-use App\TargetPatient;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;

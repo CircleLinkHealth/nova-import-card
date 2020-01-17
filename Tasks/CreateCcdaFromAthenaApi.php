@@ -6,10 +6,12 @@
 
 namespace CircleLinkHealth\Eligibility\Tasks;
 
-use App\Exceptions\AthenaApi\CcdaWasNotFetchedFromAthenaApi;
-use App\Models\MedicalRecords\Ccda;
-use App\TargetPatient;
+
+
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\Eligibility\Exceptions\CcdaWasNotFetchedFromAthenaApi;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CreateCcdaFromAthenaApi
 {

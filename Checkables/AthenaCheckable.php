@@ -11,10 +11,10 @@ use App\Adapters\EligibilityCheck\CcdaToEligibilityJobAdapter;
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use App\Models\MedicalRecords\Ccda;
-use App\TargetPatient;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Contracts\Checkable;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 
 class AthenaCheckable implements Checkable
 {
