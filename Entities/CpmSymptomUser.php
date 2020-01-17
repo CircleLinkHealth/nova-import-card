@@ -28,7 +28,7 @@ use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptomUser whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction                                                 $instruction
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptomUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptomUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptomUser query()

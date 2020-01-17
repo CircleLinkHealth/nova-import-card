@@ -53,7 +53,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int                                                                                                  $is_monitored     A monitored problem is a problem we provide Care Management for.
  * @property int|null                                                                                             $billable
  * @property \CircleLinkHealth\Customer\Entities\PatientMonthlySummary[]|\Illuminate\Database\Eloquent\Collection $patientSummaries
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                       $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]                       $revisionHistory
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem newQuery()

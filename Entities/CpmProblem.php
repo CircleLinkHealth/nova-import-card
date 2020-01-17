@@ -53,7 +53,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property int                                                                                         $is_behavioral
  * @property int                                                                                         $weight
  * @property \App\Importer\Models\ImportedItems\ProblemImport[]|\Illuminate\Database\Eloquent\Collection $problemImports
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]              $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]              $revisionHistory
  * @property \App\CLH\CCD\Importer\SnomedToCpmIcdMap[]|\Illuminate\Database\Eloquent\Collection          $snomedMaps
  * @property \CircleLinkHealth\SharedModels\Entities\CpmProblemUser[]|\Illuminate\Database\Eloquent\Collection                   $user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem newModelQuery()

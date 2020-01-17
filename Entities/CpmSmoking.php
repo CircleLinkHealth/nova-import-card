@@ -27,7 +27,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereTarget($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmSmoking query()

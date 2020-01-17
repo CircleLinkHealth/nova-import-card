@@ -37,7 +37,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate query()

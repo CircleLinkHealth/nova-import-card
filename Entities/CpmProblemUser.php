@@ -23,7 +23,7 @@ use CircleLinkHealth\SharedModels\Entities\Instructable;
  * @mixin \Eloquent
  * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection $cpmInstructions
  * @property \CircleLinkHealth\SharedModels\Entities\CpmProblem                                                $problems
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                    $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]                    $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblemUser query()

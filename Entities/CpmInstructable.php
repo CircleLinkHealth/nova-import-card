@@ -25,7 +25,7 @@ use CircleLinkHealth\SharedModels\Entities\CpmProblem;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\CpmMisc whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property string                                                                         $instructable_type
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmInstructable query()

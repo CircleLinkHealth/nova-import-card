@@ -35,7 +35,7 @@ use CircleLinkHealth\SharedModels\Entities\AllergyLog;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport whereVendorId($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport query()

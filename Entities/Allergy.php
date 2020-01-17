@@ -35,7 +35,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy whereVendorId($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Allergy query()

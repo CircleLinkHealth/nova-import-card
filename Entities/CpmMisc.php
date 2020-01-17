@@ -23,7 +23,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate[]|\Illuminate\Database\Eloquent\Collection                    $carePlanTemplates
  * @property \CircleLinkHealth\SharedModels\Entities\CpmInstruction[]|\Illuminate\Database\Eloquent\Collection           $cpmInstructions
  * @property \CircleLinkHealth\Customer\Entities\User[]|\Illuminate\Database\Eloquent\Collection $patient
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]      $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]      $revisionHistory
  * @property \CircleLinkHealth\SharedModels\Entities\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection              $users
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc newQuery()

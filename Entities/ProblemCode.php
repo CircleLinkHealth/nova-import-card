@@ -38,7 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode withoutTrashed()
  * @mixin \Eloquent
  * @property int|null                                                                       $problem_code_system_id
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProblemCode query()
