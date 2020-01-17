@@ -11,9 +11,9 @@ use App\CLH\Repositories\CCDImporterRepository;
 use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord as ImportedMedicalRecordInterface;
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
-use CircleLinkHealth\SharedModels\Entities\AllergyImport;
-use App\Importer\Models\ImportedItems\DemographicsImport;
-use CircleLinkHealth\SharedModels\Entities\MedicationImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\AllergyImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationImport;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
 use CircleLinkHealth\Eligibility\Scopes\MedicalRecordIdAndTypeTrait;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -36,11 +36,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon|null                                                                            $created_at
  * @property \Carbon\Carbon|null                                                                            $updated_at
  * @property string|null                                                                                    $deleted_at
- * @property \CircleLinkHealth\SharedModels\Entities\AllergyImport[]|\Illuminate\Database\Eloquent\Collection    $allergies
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\AllergyImport[]|\Illuminate\Database\Eloquent\Collection    $allergies
  * @property \CircleLinkHealth\Customer\Entities\User|null                                                  $billingProvider
- * @property \App\Importer\Models\ImportedItems\DemographicsImport                                          $demographics
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport                                          $demographics
  * @property \CircleLinkHealth\Customer\Entities\Location|null                                              $location
- * @property \CircleLinkHealth\SharedModels\Entities\MedicationImport[]|\Illuminate\Database\Eloquent\Collection $medications
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationImport[]|\Illuminate\Database\Eloquent\Collection $medications
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                                              $practice
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport[]|\Illuminate\Database\Eloquent\Collection    $problems
  * @method static bool|null forceDelete()

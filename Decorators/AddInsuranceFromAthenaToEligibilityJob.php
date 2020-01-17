@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Eligibility\Decorators;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use App\Importer\Models\ItemLogs\InsuranceLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use App\ValueObjects\Athena\Insurances;

@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Eligibility\Contracts;
 
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
-use App\Importer\Models\ImportedItems\DemographicsImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 
@@ -24,7 +24,7 @@ interface ImportedMedicalRecord
     /**
      * Get the Demographics that were imported for QA.
      *
-     * @return DemographicsImport[]
+     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport[]
      */
     public function demographics();
 
@@ -40,7 +40,7 @@ interface ImportedMedicalRecord
     /**
      * Get the Medications that were imported for QA.
      *
-     * @return \CircleLinkHealth\SharedModels\Entities\MedicationImport[]
+     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationImport[]
      */
     public function medications();
 
