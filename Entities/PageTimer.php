@@ -75,7 +75,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|PageTimer withoutTrashed()
  * @mixin \Eloquent
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity                               $activity
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer
  *     createdInMonth(\Carbon\Carbon $date, $field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\TimeTracking\Entities\PageTimer

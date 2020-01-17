@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\DB;
  * @property \CircleLinkHealth\TimeTracking\Entities\PageTimer                                               $pageTime
  * @property \CircleLinkHealth\Customer\Entities\User                                                        $patient
  * @property \CircleLinkHealth\Customer\Entities\User                                                        $provider
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                  $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]                  $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|Activity
  *     createdBy(\CircleLinkHealth\Customer\Entities\User $user)
  * @method static \Illuminate\Database\Eloquent\Builder|Activity createdThisMonth($field = 'created_at')
