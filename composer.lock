@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "bfac448830dc577ced344d9796ffc94d",
+    "content-hash": "72487cf78171bfe29780df879a70e69f",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -808,11 +808,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.3",
+            "version": "dev-CPM-1839-attest-call-problems",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "aa2aee7cfc3e99f1892a8aaad1ca4550ffe87061"
+                "reference": "d016e8c7f8ecabf40458771a10590aeaad2f7f85"
             },
             "type": "laravel-module",
             "extra": {
@@ -834,15 +834,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T10:53:36+00:00"
+            "time": "2020-01-17T12:17:31+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.7.3",
+            "version": "dev-CPM-1838-attest-patient-conditions",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "08d2abac59f30ba8c27aa0118a41c4f3e0f56367"
+                "reference": "dbfd68f02569691c190691a5015c252ab8609d05"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -875,7 +875,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T05:27:54+00:00"
+            "time": "2020-01-17T10:48:05+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1012,11 +1012,11 @@
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "v1.0",
+            "version": "dev-CPM-1838-ATTEST",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "84878bd11ae955897bcc89373f67a5940eb6e804"
+                "reference": "2458d11b9e15dc6658818ddebcd91dab36b710e4"
             },
             "type": "laravel-module",
             "extra": {
@@ -1038,7 +1038,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T06:34:44+00:00"
+            "time": "2020-01-17T10:48:05+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -13517,6 +13517,9 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/patientapi-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
