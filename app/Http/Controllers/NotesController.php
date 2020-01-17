@@ -607,7 +607,6 @@ class NotesController extends Controller
                             $attestedProblems
                         );
                     }
-
                     // add last contact time regardless of if success
                     $info->last_contact_time = $note->performed_at->format('Y-m-d H:i:s');
                     $info->save();
