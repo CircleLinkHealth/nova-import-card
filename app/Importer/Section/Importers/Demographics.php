@@ -7,8 +7,8 @@
 namespace App\Importer\Section\Importers;
 
 use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
-use App\Importer\Models\ImportedItems\DemographicsImport;
-use App\Importer\Models\ItemLogs\DemographicsLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
 use Carbon\Carbon;
 
 class Demographics extends BaseImporter

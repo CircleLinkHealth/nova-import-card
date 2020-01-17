@@ -6,7 +6,7 @@
 
 namespace App\Importer\Section\Importers;
 
-use App\Importer\Models\ItemLogs\InsuranceLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
 use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 

@@ -139,7 +139,7 @@ namespace App;
  * @property int|null                                                                                                        $patient_a_w_v_summaries_count
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $patientActivities
  * @property int|null                                                                                                        $patient_activities_count
- * @property \App\Importer\Models\ImportedItems\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection                $patientDemographics
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection                $patientDemographics
  * @property int|null                                                                                                        $patient_demographics_count
  * @property \CircleLinkHealth\Customer\Entities\Patient                                                                     $patientInfo
  * @property \CircleLinkHealth\Customer\Entities\PatientMonthlySummary[]|\Illuminate\Database\Eloquent\Collection            $patientSummaries

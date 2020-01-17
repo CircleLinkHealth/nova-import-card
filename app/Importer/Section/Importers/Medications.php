@@ -8,7 +8,7 @@ namespace App\Importer\Section\Importers;
 
 use App\MedicationGroupsMap;
 use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
-use CircleLinkHealth\SharedModels\Entities\MedicationImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationImport;
 use CircleLinkHealth\SharedModels\Entities\MedicationLog;
 
 class Medications extends BaseImporter
