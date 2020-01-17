@@ -31,7 +31,7 @@ use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
  * @property string                                                                         $description
  * @property \CircleLinkHealth\Customer\Entities\Ehr                                        $ehr
  * @property \CircleLinkHealth\Eligibility\Entities\Enrollee|null                                                             $enrollee
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User|null                                  $user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TargetPatient newQuery()

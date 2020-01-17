@@ -133,7 +133,7 @@ use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
  * @property $home_phone_e164
  * @property $other_phone_e164
  * @property mixed                                                                          $primary_phone_e164
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                                             $targetPatient
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee newModelQuery()

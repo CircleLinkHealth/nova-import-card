@@ -28,7 +28,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Eligibility\Entities\EligibilityJob[]|\Illuminate\Database\Eloquent\Collection                 $eligibilityJobs
  * @property \CircleLinkHealth\Customer\Entities\User                                       $initiatorUser
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                              $practice
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EligibilityBatch query()

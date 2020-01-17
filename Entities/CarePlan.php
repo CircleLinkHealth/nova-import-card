@@ -68,7 +68,7 @@ use Validator;
  * @property \Illuminate\Support\Carbon|null                                                                                 $first_printed
  * @property string                                                                                                          $provider_approver_name
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                                  $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]                                  $revisionHistory
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan newQuery()
