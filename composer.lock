@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8f0b2d0e7f9440c90fcfc4ced92a222c",
+    "content-hash": "c95076f6394eb4f355ad5664fc6c449b",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -740,7 +740,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-development",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -838,11 +838,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.7.5",
+            "version": "v1.7.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "7b1b5fd80e35ab760a91807d6a33915782d16a01"
+                "reference": "9c86dbd38d4af7c7edd759112487a1a1acf979a4"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -875,15 +875,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T13:46:03+00:00"
+            "time": "2020-01-17T17:59:20+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v1.1",
+            "version": "v1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "2b114752aa3bf7f2fb9250888f54bdfdab146613"
+                "reference": "902895012238cbcc78238d4477e400887919d335"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -908,11 +908,11 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T13:21:50+00:00"
+            "time": "2020-01-17T17:59:19+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-development",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
@@ -946,7 +946,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-development",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -981,11 +981,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.0",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "e0a0c43ef6072aaf1229ee5d669e232244633921"
+                "reference": "7da284b4ef64df090c3d167150255e616433e3fa"
             },
             "type": "laravel-module",
             "extra": {
@@ -1008,7 +1008,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T06:26:18+00:00"
+            "time": "2020-01-17T17:59:18+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1042,11 +1042,11 @@
         },
         {
             "name": "circlelinkhealth/raygun-module",
-            "version": "v0.7",
+            "version": "v0.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "d006cf3ad0aec4b500cc72c5a06533b9336682c8"
+                "reference": "a5db9bd4eed6ad6ac5961ba0db69b6d20f41c981"
             },
             "require": {
                 "illuminate/contracts": "^5.0",
@@ -1073,7 +1073,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-14T23:51:13+00:00"
+            "time": "2020-01-17T17:59:21+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
@@ -1124,11 +1124,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.0",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "b3893e82c94161972beba4c770e2cec1e84420ef"
+                "reference": "44bee5b1eee559b9c01092a4700ba5a076ceee22"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1142,7 +1142,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T05:27:51+00:00"
+            "time": "2020-01-17T17:59:19+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
