@@ -85,7 +85,6 @@ return [
 
     'model_locations' => [
         'app',
-        'CLHPackages',
         'Modules',
     ],
 

@@ -114,7 +114,7 @@ class CcdProblemService
         $user->loadMissing(['ccdProblems.cpmInstruction', 'ccdProblems.codes']);
 
         //exclude generic diabetes type
-        $diabetes = \Cache::remember('cpm_problem_diabetes', 1440, function () {
+        $diabetes = \Cache::remember('cpm_problem_diabetes', 2, function () {
             return CpmProblem::where('name', 'Diabetes')->first();
         });
 
