@@ -19,6 +19,10 @@ trait CreatesTestSuiteDB
             abort('It is not recommended to run this command on the production database');
         }
         
+        if (true === getenv('CI')) {
+            $dbName = getenv('HEROKU_TEST_RUN_ID');
+        }
+        
         $this->createDatabase($dbName ?? 'cpm_tests');
     }
 
