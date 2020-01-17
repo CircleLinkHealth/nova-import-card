@@ -21,7 +21,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \Illuminate\Support\Carbon|null                                                $created_at
  * @property \Illuminate\Support\Carbon|null                                                $updated_at
  * @property \CircleLinkHealth\Customer\Entities\Nurse                                      $nurse
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User                                       $user
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra newQuery()
