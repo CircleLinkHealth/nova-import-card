@@ -26,14 +26,6 @@ trait ValidatesWorkScheduleCalendar
             );
         }
 
-//        if ($workScheduleData['repeat_freq'] !=='does_not_repeat'
-//            && $this->checkIfIsNotWeekend($workScheduleData['date'])) {
-//            $validator->getMessageBag()->add(
-//                'error',
-//                'You cant start a repeated event in weekend'
-//            );
-//        }
-
         if ($invalidWorkHoursCommitted) {
             $validator->getMessageBag()->add(
                 'error',

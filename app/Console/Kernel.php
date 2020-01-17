@@ -11,7 +11,6 @@ use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
-use App\Console\Commands\CreateCalendarRecurringEventsCommand;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;

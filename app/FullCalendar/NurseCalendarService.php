@@ -32,19 +32,20 @@ class NurseCalendarService
     public function createRecurringEvents($nurseInfoId, $workScheduleData)
     {
         $repeatFrequency = null === $workScheduleData['repeat_freq'] ? 'weekly' : $workScheduleData['repeat_freq'];
-        $defaultRepeatDate = Carbon::parse($workScheduleData['date'])->copy()->addMonths(2)->toDateString();
+        $defaultRepeatDate = Carbon::parse($workScheduleData['date'])->copy()->addMonths(1)->toDateString();
         $repeatEventUntil = null === $workScheduleData['until'] ? $defaultRepeatDate : $workScheduleData['until'];
         $rangeToRepeat = $this->getWeeksOrDaysToRepeat($workScheduleData['date'], $repeatEventUntil, $repeatFrequency);
+        $excludeWeekends = !empty($workScheduleData['excludeWkds']) ? $workScheduleData['excludeWkds'] : false;
         $validatedDefault = 'not_checked';
         $nurse = Nurse::findOrFail($nurseInfoId);
+
         $holidays = $nurse->upcomingHolidaysFrom(Carbon::parse($workScheduleData['date']));
-//        Using $holidayDates to avoid creating work-windows on days-off
+        //        Using $holidayDates to avoid creating work-windows on days-off
         $holidayDates = $holidays->map(function ($holiday) {
             return Carbon::parse($holiday->date)->toDateString();
         })->toArray();
 
-        $recurringDates = $this->createRecurringDates($rangeToRepeat, $workScheduleData['date'], $repeatFrequency, $holidayDates, $workScheduleData['excludeWkds']);
-
+        $recurringDates = $this->createRecurringDates($rangeToRepeat, $workScheduleData['date'], $repeatFrequency, $holidayDates, $excludeWeekends);
         return $this->createWindowData($recurringDates, $nurseInfoId, $workScheduleData, $validatedDefault, $repeatFrequency, $repeatEventUntil);
     }
 
@@ -79,9 +80,15 @@ class NurseCalendarService
             for ($i = 0; $i <= $diffRange; ++$i) {
                 $defaultRecurringDate = Carbon::parse($eventDate)->copy()->addWeek($i)->toDateString();
                 //do NOT create workEvents over days-off.
-                if (!in_array($defaultRecurringDate, $holidayDates) && $this->checkIfIsNotWeekend($defaultRecurringDate)) {
-                    $defaultRecurringDates[] = $defaultRecurringDate;
-                }
+              if ($excludeWeekends){
+                  if (!in_array($defaultRecurringDate, $holidayDates) && $this->checkIfIsNotWeekend($defaultRecurringDate)) {
+                      $defaultRecurringDates[] = $defaultRecurringDate;
+                  }
+              }else{
+                  if (!in_array($defaultRecurringDate, $holidayDates)) {
+                      $defaultRecurringDates[] = $defaultRecurringDate;
+                  }
+              }
             }
         }
 
@@ -89,9 +96,15 @@ class NurseCalendarService
             for ($i = 0; $i <= $diffRange; ++$i) { //@todo:should exclude weekedns option
                 $defaultRecurringDate = Carbon::parse($eventDate)->copy()->addDay($i)->toDateString();
                 //do NOT create workEvents over days-off and weekends
-                if (!in_array($defaultRecurringDate, $holidayDates) && $this->checkIfIsNotWeekend($defaultRecurringDate)) {
-                    $defaultRecurringDates[] = $defaultRecurringDate;
-                }
+             if ($excludeWeekends){
+                 if (!in_array($defaultRecurringDate, $holidayDates) && $this->checkIfIsNotWeekend($defaultRecurringDate)) {
+                     $defaultRecurringDates[] = $defaultRecurringDate;
+                 }
+             }else{
+                 if (!in_array($defaultRecurringDate, $holidayDates)) {
+                     $defaultRecurringDates[] = $defaultRecurringDate;
+                 }
+             }
             }
         }
 

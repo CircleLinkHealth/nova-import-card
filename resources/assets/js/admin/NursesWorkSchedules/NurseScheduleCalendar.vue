@@ -143,7 +143,7 @@
                                     <vue-select :options="frequency"
                                                 :class="{disable: addHolidays}"
                                                 :disabled="addHolidays"
-                                                style="width: 165px;"
+                                                style="width: 188px;"
                                                 v-model="eventFrequency"
                                                 placeholder="Doesn't Repeat">
                                     </vue-select>
@@ -458,7 +458,7 @@
                 });
             },
 
-            formatDate(date) {
+            formatDateForPlaceHolder(date) {
                 var d = new Date(date),
                     month = '' + (d.getMonth() + 1),
                     day = '' + d.getDate(),
@@ -469,11 +469,11 @@
                 if (day.length < 2)
                     day = '0' + day;
 
-                return [month, day, year].join('-');
+                return [month, day, year].join('/');
             },
 
 
-            formatDate2(date) {
+            formatDate(date) {
                 var d = new Date(date),
                     month = '' + (d.getMonth() + 1),
                     day = '' + d.getDate(),
@@ -601,7 +601,7 @@
 
                     const recurringDates = recurringDatesToEvent.all();
                     for (var i = 0; i < recurringDates.length; i++) {
-                        const date = this.formatDate2(recurringDates[i]);
+                        const date = this.formatDate(recurringDates[i]);
                         const eventsToAskConfirmation = this.getConflicts(events, date);
                         if (eventsToAskConfirmation.length !== 0) {
                             this.loader = false;
@@ -639,7 +639,7 @@
                     until: repeatUntil,
                     validated: validatedDefault,
                     updateCollisions: updateCollidedWindows,
-                    excludeWkds:excludeWeekends
+                    excludeWkds: excludeWeekends
                 }).then((response => {
                         this.refetchEvents();
                         this.loader = false;
@@ -741,6 +741,7 @@
                 this.selectedDate = '';
                 this.clickedOnDay = false;
                 this.excludeWeekends = true;
+                this.repeatUntil = '';
             },
 
             nursesForSearchFilter() {
@@ -793,8 +794,9 @@
                 //Sets limit from starting selected date + 1 month.
                 const date = new Date(this.workEventDate);
                 const maxRepeatDate = date.setMonth(date.getMonth() + 1);
-                return this.formatDate2(maxRepeatDate);
+                return this.formatDate(maxRepeatDate);
             },
+
         }),
 //@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
         computed: {
@@ -829,7 +831,6 @@
             if (this.authData.role === 'nurse') {
                 this.authIsNurse = true;
             }
-
         },
 
         mounted() {
