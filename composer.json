@@ -31,7 +31,7 @@
         "circlelinkhealth/core-module": "*",
         "laravel/passport": "^7.0",
         "laravel/scout": "^7.1",
-        "circlelinkhealth/cerberus-gatekeeper": "*",
+        "circlelinkhealth/cerberus-gatekeeper-module": "*",
         "spatie/laravel-medialibrary": "^7.0.0"
     },
     "repositories": [
