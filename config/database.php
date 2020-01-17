@@ -67,6 +67,10 @@ if ('nothing' === $mysqlDBName) {
     $mysqlDBName = snake_case(getenv('HEROKU_BRANCH'));
 }
 
+if (getenv('CI')) {
+    $mysqlDBName = getenv('HEROKU_TEST_RUN_ID');
+}
+
 return [
     /*
     |--------------------------------------------------------------------------
