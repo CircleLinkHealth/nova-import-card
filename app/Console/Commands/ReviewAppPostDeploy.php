@@ -1,28 +1,31 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Traits\RunsConsoleCommands;
-use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class ReviewAppPostDeploy extends Command
 {
     use RunsConsoleCommands;
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'reviewapp:postdeploy';
-    
+
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Commands to run on event postdeploy of a Heroku review app. Only run this for review apps.';
-    
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'reviewapp:postdeploy';
+
     /**
      * Create a new command instance.
      *
@@ -32,7 +35,7 @@ class ReviewAppPostDeploy extends Command
     {
         parent::__construct();
     }
-    
+
     /**
      * Execute the console command.
      *
@@ -40,25 +43,25 @@ class ReviewAppPostDeploy extends Command
      */
     public function handle()
     {
-        if ( ! app()->environment(['review', 'local'])) {
+        if ( ! app()->environment(['review', 'local', 'testing'])) {
             throw new \Exception('Only review and local environments can run this');
         }
-        
+
         $dbName = config('database.connections.mysql.database');
-        
+
         try {
-            $hasUsers = User::exists();
+            $dbTableExists = \Schema::hasTable('practices');
         } catch (\Exception $exception) {
-            $hasUsers = false;
+            $dbTableExists = false;
         }
-        
-        if ( ! $hasUsers) {
-            $migrateInstallCommand = $this->runCommand(['php', 'artisan', '-vvv', 'mysql:createdb', $dbName]);
-            $migrateCommand = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh']);
-            $migrateCommand = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:views']);
+
+        if (false === $dbTableExists) {
+            $migrateInstallCommand  = $this->runCommand(['php', 'artisan', '-vvv', 'mysql:createdb', $dbName]);
+            $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh']);
+            $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:views']);
             $testSuiteSeederCommand = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed', '--class=TestSuiteSeeder']);
         }
-        
+
         $this->warn('reviewapp:postdeploy ran');
     }
 }

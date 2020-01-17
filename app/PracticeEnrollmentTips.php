@@ -11,12 +11,13 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 /**
  * Enrollment Tips per Practice.
  *
- * @property int                                                                            $id
- * @property int                                                                            $practice_id
- * @property string                                                                         $content
- * @property \Illuminate\Support\Carbon|null                                                $created_at
- * @property \Illuminate\Support\Carbon|null                                                $updated_at
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property int                                                                                         $id
+ * @property int                                                                                         $practice_id
+ * @property string                                                                                      $content
+ * @property \Illuminate\Support\Carbon|null                                                             $created_at
+ * @property \Illuminate\Support\Carbon|null                                                             $updated_at
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PracticeEnrollmentTips newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PracticeEnrollmentTips newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PracticeEnrollmentTips query()
@@ -26,6 +27,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PracticeEnrollmentTips wherePracticeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PracticeEnrollmentTips whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property int|null $revision_history_count
  */
 class PracticeEnrollmentTips extends BaseModel

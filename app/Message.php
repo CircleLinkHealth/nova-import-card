@@ -25,6 +25,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property string|null                              $seen_on
  * @property \CircleLinkHealth\Customer\Entities\User $recipient
  * @property \CircleLinkHealth\Customer\Entities\User $sender
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereId($value)
@@ -38,10 +39,13 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message query()
+ *
  * @property int|null $revision_history_count
  */
 class Message extends \CircleLinkHealth\Core\Entities\BaseModel

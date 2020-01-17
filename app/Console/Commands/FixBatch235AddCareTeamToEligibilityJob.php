@@ -6,8 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\EligibilityJob;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 
