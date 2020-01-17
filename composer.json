@@ -181,7 +181,6 @@
     "circlelinkhealth/clh-import-card-extended": "*"
   },
   "require-dev": {
-    "ext-xdebug": "*",
     "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
     "darkaonline/l5-swagger": "^5.5",
