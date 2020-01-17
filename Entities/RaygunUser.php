@@ -9,6 +9,8 @@
 namespace CircleLinkHealth\Raygun\Entities;
 
 
+use CircleLinkHealth\Customer\Entities\User;
+
 class RaygunUser
 {
     /**
@@ -16,6 +18,7 @@ class RaygunUser
      */
     public function __invoke()
     {
+        /** @var User $user */
         $user = auth()->user();
         
         return
