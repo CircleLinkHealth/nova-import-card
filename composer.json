@@ -246,7 +246,7 @@
     ],
     "test": [
       "php artisan --env=testing test:prepare-test_suite-db",
-      "APP_ENV=testing ./vendor/phpunit/phpunit/phpunit --testsuite=Unit --stop-on-failure --colors --testdox"
+      "./vendor/phpunit/phpunit/phpunit --testsuite=Unit --stop-on-failure --colors --testdox"
     ],
     "clear": [
       "php artisan clear-compiled",
