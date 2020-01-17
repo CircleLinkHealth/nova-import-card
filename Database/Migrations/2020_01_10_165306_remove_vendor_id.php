@@ -29,12 +29,15 @@ class RemoveVendorId extends Migration
     public function up()
     {
         if (Schema::hasColumn('demographics_imports', 'vendor_id')) {
-            Schema::table('demographics_imports', function (Blueprint $table) {
-                try {
+            try {
+                Schema::table('demographics_imports', function (Blueprint $table) {
                     $table->dropForeign(['vendor_id']);
-                } catch (\Exception $exception) {
-                
-                }
+                });
+            } catch (\Exception $exception) {
+                //
+            }
+            
+            Schema::table('demographics_imports', function (Blueprint $table) {
                 $table->dropColumn('vendor_id');
             });
         }
