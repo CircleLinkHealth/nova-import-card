@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Traits\RunsConsoleCommands;
@@ -8,21 +12,21 @@ use Illuminate\Console\Command;
 class HerokuOnRelease extends Command
 {
     use RunsConsoleCommands;
-    
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'heroku:onrelease';
-    
+
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Run this command upon releasing a new version of CPM on Heroku';
-    
+
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'heroku:onrelease';
+
     /**
      * Create a new command instance.
      *
@@ -32,7 +36,7 @@ class HerokuOnRelease extends Command
     {
         parent::__construct();
     }
-    
+
     /**
      * Execute the console command.
      *
@@ -41,18 +45,17 @@ class HerokuOnRelease extends Command
     public function handle()
     {
         $this->warn('heroku:onrelease ran');
-    
+
         $base = ['php', 'artisan', '-vvv'];
-        
-        if (app()->environment('review')) {
+
+        if (app()->environment('review', 'testing')) {
             $this->runCommand(array_merge($base, ['reviewapp:postdeploy']));
         }
-        
+
         $this->runCommand(array_merge($base, ['migrate', '--force']));
         $this->runCommand(array_merge($base, ['migrate:views']));
         $this->runCommand(array_merge($base, ['deploy:post']));
-        
-        
+
         $this->warn('heroku:onrelease ran');
     }
 }

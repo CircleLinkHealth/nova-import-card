@@ -6,19 +6,22 @@
 
 namespace Tests\Concerns;
 
-
 use App\Traits\RunsConsoleCommands;
 
 trait CreatesTestSuiteDB
 {
     use RunsConsoleCommands;
-    
+
     public function createDB(?string $dbName = 'cpm_tests')
     {
         if ('cpm_production' === $dbName) {
             abort('It is not recommended to run this command on the production database');
         }
-        
+
+        if (getenv('CI')) {
+            $dbName = getenv('HEROKU_TEST_RUN_ID');
+        }
+
         $this->createDatabase($dbName ?? 'cpm_tests');
     }
 

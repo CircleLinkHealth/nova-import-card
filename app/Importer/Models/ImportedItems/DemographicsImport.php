@@ -47,6 +47,7 @@ use CircleLinkHealth\Eligibility\BelongsToCcda;
  * @property \App\Importer\Models\ItemLogs\DemographicsLog $ccdLog
  * @property \CircleLinkHealth\SharedModels\Entities\Ccda  $ccda
  * @property \CircleLinkHealth\Customer\Entities\User|null $provider
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport whereCellPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport whereCity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport whereConsentDate($value)
@@ -79,10 +80,13 @@ use CircleLinkHealth\Eligibility\BelongsToCcda;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport whereWorkPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport whereZip($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\DemographicsImport query()
+ *
  * @property int|null $revision_history_count
  */
 class DemographicsImport extends \CircleLinkHealth\Core\Entities\BaseModel

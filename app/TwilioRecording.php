@@ -11,17 +11,18 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 /**
  * Represents a twilio voice recording.
  *
- * @property string                                                                         $call_sid
- * @property string                                                                         $account_sid
- * @property string                                                                         $conference_sid  Only present in case of a recording of a conference
- * @property string                                                                         $source          One of 'DialVerb' and 'Conference'
- * @property string                                                                         $status          One of 'in-progress' and 'completed'
- * @property string                                                                         $url
- * @property int                                                                            $duration
- * @property int                                                                            $id
- * @property \Illuminate\Support\Carbon|null                                                $created_at
- * @property \Illuminate\Support\Carbon|null                                                $updated_at
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property string                                                                                      $call_sid
+ * @property string                                                                                      $account_sid
+ * @property string                                                                                      $conference_sid  Only present in case of a recording of a conference
+ * @property string                                                                                      $source          One of 'DialVerb' and 'Conference'
+ * @property string                                                                                      $status          One of 'in-progress' and 'completed'
+ * @property string                                                                                      $url
+ * @property int                                                                                         $duration
+ * @property int                                                                                         $id
+ * @property \Illuminate\Support\Carbon|null                                                             $created_at
+ * @property \Illuminate\Support\Carbon|null                                                             $updated_at
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRecording newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRecording newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRecording query()
@@ -36,6 +37,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRecording whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioRecording whereUrl($value)
  * @mixin \Eloquent
+ *
  * @property int|null $revision_history_count
  */
 class TwilioRecording extends BaseModel

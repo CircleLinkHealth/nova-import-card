@@ -40,6 +40,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceDailyDispute;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoiceExtra;
+use CircleLinkHealth\Revisionable\Entities\Revision;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use CircleLinkHealth\SharedModels\Entities\Medication;
@@ -47,7 +48,6 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Support\ServiceProvider;
-use Venturecraft\Revisionable\Revision;
 
 class ObserversServiceProvider extends ServiceProvider
 {

@@ -97,8 +97,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereWorkPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereZip($value)
  * @mixin \Eloquent
- * @property string|null                                                                    $deleted_at
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ *
+ * @property string|null                                                                                 $deleted_at
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord newQuery()
@@ -108,6 +110,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereDeletedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\TabularMedicalRecord withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\TabularMedicalRecord withoutTrashed()
+ *
  * @property int|null $allergies_count
  * @property int|null $demographics_count
  * @property int|null $demographics_imports_count
