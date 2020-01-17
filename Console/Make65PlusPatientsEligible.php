@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Console;
 
-use App\EligibilityBatch;
-use App\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use App\Enrollee;
 use Carbon\Carbon;
 use Illuminate\Console\Command;

@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Decorators;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecord;
-use App\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Models\MedicalRecords\Ccda;
 use App\TargetPatient;

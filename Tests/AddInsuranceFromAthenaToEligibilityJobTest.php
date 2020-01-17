@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Tests;
 
-use App\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use App\Models\MedicalRecords\Ccda;
 use App\TargetPatient;
 use CircleLinkHealth\Eligibility\Tests\Fakers\AthenaApiResponses;

@@ -6,8 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use App\EligibilityBatch;
-use App\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use App\Jobs\GoogleDrive;
 use App\Jobs\MakePhoenixHeartWelcomeCallList;
 use App\Jobs\ProcessSinglePatientEligibility;

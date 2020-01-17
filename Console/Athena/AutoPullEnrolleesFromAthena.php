@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Console\Athena;
 
-use App\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use App\Services\CCD\ProcessEligibilityService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
