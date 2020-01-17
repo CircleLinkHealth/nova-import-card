@@ -54,21 +54,12 @@
       "env": {
         "APP_ENV": "testing",
         "APP_DEBUG": "true",
-        "APP_URL": "https://${HEROKU_APP_NAME}.herokuapp.com",
         "APP_KEY": "base64:OzIBYjmtAr92KbwC5SO03s5CciXElEJ20KpSlfTxEoA=",
-        "APP_LOG_LEVEL": "debug",
         "BCRYPT_ROUNDS": "4",
         "BROADCAST_DRIVER": "log",
         "CACHE_DRIVER": "array",
         "SESSION_DRIVER": "array",
         "QUEUE_DRIVER": "sync",
-        "WS_ROOT": "wss:\/\/clh-time-tracker.herokuapp.com\/",
-        "WS_URL": "wss:\/\/clh-time-tracker.herokuapp.com\/time",
-        "WS_SERVER_URL": "https:\/\/clh-time-tracker.herokuapp.com\/time",
-        "TWILIO_SID": "test",
-        "TWILIO_TOKEN": "test",
-        "TWILIO_FROM": "test",
-        "TWIML_APP_SID": "test",
         "SCOUT_DRIVER": "null"
       }
     }
