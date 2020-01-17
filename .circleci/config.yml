@@ -82,7 +82,7 @@ jobs:
     - run: npm run dev
 
       # run tests
-    - run: composer unit-tests
+    - run: composer test
 #    - store_test_results:
 #        path: tests/_output
 #    - store_artifacts:
