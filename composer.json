@@ -11,11 +11,6 @@
             "email": "mantoniou@circlelinkhealth.com"
         }
     ],
-    "abandoned": false,
-    "support": {
-        "issues": "https://github.com/CircleLinkHealth/revisionable-module/issues",
-        "source": "https://github.com/CircleLinkHealth/revisionable-module"
-    },
     "require": {
         "php": ">=7.2.0",
         "laravel/framework": "~5.7"
@@ -37,5 +32,5 @@
 
             }
         }
-    },
+    }
 }
