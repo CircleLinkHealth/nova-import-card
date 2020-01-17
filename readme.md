@@ -44,14 +44,14 @@ Open config/app.php and register the required service provider  (Laravel 5.x)
 
 ```
 'providers' => [
-	Venturecraft\Revisionable\RevisionableServiceProvider::class,
+	CircleLinkHealth\Revisionable\RevisionableServiceProvider::class,
 ]
 ```
 
 Publish the configuration and migrations (Laravel 5.x)
 
 ```
-php artisan vendor:publish --provider="Venturecraft\Revisionable\RevisionableServiceProvider"
+php artisan vendor:publish --provider="CircleLinkHealth\Revisionable\RevisionableServiceProvider"
 ```
 
 Finally, you'll also need to run migration on the package (Laravel 5.x)
@@ -67,7 +67,7 @@ php artisan migrate --package=venturecraft/revisionable
 
 > If you're going to be migrating up and down completely a lot (using `migrate:refresh`), one thing you can do instead is to copy the migration file from the package to your `app/database` folder, and change the classname from `CreateRevisionsTable` to something like `CreateRevisionTable` (without the 's', otherwise you'll get an error saying there's a duplicate class)
 
-> `cp vendor/venturecraft/revisionable/src/migrations/2013_04_09_062329_create_revisions_table.php app/database/migrations/`
+> `cp vendor/circlelinkhealth/revisionable/Database/Migrations/2013_04_09_062329_create_revisions_table.php app/database/migrations/`
 
 ## Docs
 
@@ -85,12 +85,12 @@ php artisan migrate --package=venturecraft/revisionable
 ### The new, Trait based implementation (recommended)
 > Traits require PHP >= 5.4
 
-For any model that you want to keep a revision history for, include the `VentureCraft\Revisionable` namespace and use the `RevisionableTrait` in your model, e.g.,
+For any model that you want to keep a revision history for, include the `CircleLinkHealth\Revisionable` namespace and use the `RevisionableTrait` in your model, e.g.,
 
 ```php
 namespace App;
 
-use \Venturecraft\Revisionable\RevisionableTrait;
+use \CircleLinkHealth\Revisionable\RevisionableTrait;
 
 class Article extends \Illuminate\Database\Eloquent\Model {
     use RevisionableTrait;
@@ -103,10 +103,10 @@ class Article extends \Illuminate\Database\Eloquent\Model {
 
 > The new trait based approach is backwards compatible with existing installations of Revisionable. You can still use the below installation instructions, which essentially is extending a wrapper for the trait.
 
-For any model that you want to keep a revision history for, include the `VentureCraft\Revisionable` namespace and use the `RevisionableTrait` in your model, e.g.,
+For any model that you want to keep a revision history for, include the `CircleLinkHealth\Revisionable` namespace and use the `RevisionableTrait` in your model, e.g.,
 
 ```php
-use Venturecraft\Revisionable\Revisionable;
+use CircleLinkHealth\Revisionable\Entities\Revisionable;
 
 namespace App;
 
@@ -122,7 +122,7 @@ If needed, you can disable the revisioning by setting `$revisionEnabled` to fals
 ```php
 namespace App;
 
-use \Venturecraft\Revisionable\RevisionableTrait;
+use \CircleLinkHealth\Revisionable\RevisionableTrait;
 
 class Article extends \Illuminate\Database\Eloquent\Model {
     protected $revisionEnabled = false;
@@ -134,7 +134,7 @@ You can also disable revisioning after X many revisions have been made by settin
 ```php
 namespace App;
 
-use \Venturecraft\Revisionable\RevisionableTrait;
+use \CircleLinkHealth\Revisionable\RevisionableTrait;
 
 class Article extends \Illuminate\Database\Eloquent\Model {
     protected $revisionEnabled = true;
@@ -146,7 +146,7 @@ In order to maintain a limit on history, but instead of stopping tracking revisi
 ```php
 namespace App;
 
-use \Venturecraft\Revisionable\RevisionableTrait;
+use \CircleLinkHealth\Revisionable\RevisionableTrait;
 
 class Article extends \Illuminate\Database\Eloquent\Model {
     protected $revisionEnabled = true;
@@ -188,26 +188,6 @@ protected $dontKeepRevisionOf = ['category_id'];
 ```
 
 > The `$keepRevisionOf` setting takes precedence over `$dontKeepRevisionOf`
-
-### Events
-
-Every time a model revision is created an event is fired. You can listen for `revisionable.created`,  
-`revisionable.saved` or `revisionable.deleted`.
-
-```php
-// app/Providers/EventServiceProvider.php
-
-public function boot()
-{
-    parent::boot();
-
-    $events->listen('revisionable.*', function($model, $revisions) {
-        // Do something with the revisions or the changed model. 
-        dd($model, $revisions);
-    });
-}
-
-```
 
 <a name="formatoutput"></a>
 ## Format output
@@ -328,7 +308,7 @@ This is used when the value (old or new) is the id of a foreign key relationship
 By default, it simply returns the ID of the model that was updated. It is up to you to override this method in your own models to return something meaningful. e.g.,
 
 ```php
-use Venturecraft\Revisionable\Revisionable;
+use CircleLinkHealth\Revisionable\Entities\Revisionable;
 
 class Article extends Revisionable
 {

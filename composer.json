@@ -4,37 +4,38 @@
     "license": "MIT",
     "description": "Keep a revision history for your models without thinking, created as a package for use with Laravel",
     "keywords": ["model", "laravel", "ardent", "revision", "audit", "history"],
-    "homepage": "http://github.com/venturecraft/revisionable",
+    "homepage": "http://github.com/CircleLinkHealth/revisionable-module",
     "authors": [
         {
-            "name": "Chris Duell",
-            "email": "me@chrisduell.com"
+            "name": "Michalis Antoniou",
+            "email": "mantoniou@circlelinkhealth.com"
         }
     ],
-    "abandoned": true,
+    "abandoned": false,
     "support": {
-        "issues": "https://github.com/VentureCraft/revisionable/issues",
-        "source": "https://github.com/VentureCraft/revisionable"
+        "issues": "https://github.com/CircleLinkHealth/revisionable-module/issues",
+        "source": "https://github.com/CircleLinkHealth/revisionable-module"
     },
     "require": {
-        "php": ">=5.4.0",
-        "illuminate/support": "~4.0|~5.0|~5.1",
-        "laravel/framework": "~5.4"
+        "php": ">=7.2.0",
+        "laravel/framework": "~5.7"
     },
     "autoload": {
-        "classmap": [
-            "src/migrations"
-        ],
-        "psr-0": {
-            "Venturecraft\\Revisionable": "src/"
-        }
-    },
-    "autoload-dev": {
         "psr-4": {
-            "Venturecraft\\Revisionable\\Tests\\": "tests/"
+            "CircleLinkHealth\\Revisionable\\": ""
         }
     },
     "require-dev": {
         "orchestra/testbench": "~3.0"
-    }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CircleLinkHealth\\Revisionable\\Providers\\RevisionableServiceProvider"
+            ],
+            "aliases": {
+
+            }
+        }
+    },
 }

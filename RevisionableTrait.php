@@ -4,9 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Venturecraft\Revisionable;
-
-use Illuminate\Database\Eloquent\Model as Eloquent;
+namespace CircleLinkHealth\Revisionable;
 
 /*
  * This file is part of the Revisionable package by Venture Craft
@@ -15,17 +13,12 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
  *
  */
 
+use CircleLinkHealth\Revisionable\Jobs\StoreRevisions;
+
 /**
- * Class Revisionable.
- *
- * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- * @method static \Illuminate\Database\Eloquent\Builder|\Venturecraft\Revisionable\Revisionable newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\Venturecraft\Revisionable\Revisionable newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\Venturecraft\Revisionable\Revisionable query()
- * @mixin \Eloquent
- * @property-read int|null $revision_history_count
+ * Class RevisionableTrait.
  */
-class Revisionable extends Eloquent
+trait RevisionableTrait
 {
     /**
      * Keeps the list of values that have been updated.
@@ -44,29 +37,41 @@ class Revisionable extends Eloquent
      */
     private $dontKeep = [];
     /**
-     * @var
+     * @var array
      */
-    private $originalData;
+    private $originalData = [];
 
     /**
-     * @var
+     * @var array
      */
-    private $updatedData;
+    private $updatedData = [];
 
     /**
-     * @var
+     * @var bool
      */
-    private $updating;
+    private $updating = false;
+
+    /**
+     * Ensure that the bootRevisionableTrait is called only
+     * if the current installation is a laravel 4 installation
+     * Laravel 5 will call bootRevisionableTrait() automatically.
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        if ( ! method_exists(get_called_class(), 'bootTraits')) {
+            static::bootRevisionableTrait();
+        }
+    }
 
     /**
      * Create the event listeners for the saving and saved events
      * This lets us save revisions whenever a save is made, no matter the
      * http method.
      */
-    public static function boot()
+    public static function bootRevisionableTrait()
     {
-        parent::boot();
-
         static::saving(function ($model) {
             $model->preSave();
         });
@@ -83,6 +88,22 @@ class Revisionable extends Eloquent
             $model->preSave();
             $model->postDelete();
         });
+    }
+
+    /**
+     * Generates a list of the last $limit revisions made to any objects of the class it is being called from.
+     *
+     * @param int    $limit
+     * @param string $order
+     *
+     * @return mixed
+     */
+    public static function classRevisionHistory($limit = 100, $order = 'desc')
+    {
+        $model = Revisionable::newModel();
+
+        return $model->where('revisionable_type', get_called_class())
+            ->orderBy('updated_at', $order)->limit($limit)->get();
     }
 
     /**
@@ -153,6 +174,33 @@ class Revisionable extends Eloquent
     }
 
     /**
+     * Attempt to find the user id of the currently logged in user
+     * Supports Cartalyst Sentry/Sentinel based authentication, as well as stock Auth.
+     */
+    public function getSystemUserId()
+    {
+        try {
+            if (\Auth::check()) {
+                return \Auth::id();
+            }
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the IP of the User who initiated the revision.
+     *
+     * @return string|null
+     */
+    public function getUserIpAddress()
+    {
+        return \Request::getClientIp();
+    }
+
+    /**
      * Identifiable Name
      * When displaying revision history, when a foreign key is updated
      * instead of displaying the ID, you can choose to display a string
@@ -164,18 +212,6 @@ class Revisionable extends Eloquent
     public function identifiableName()
     {
         return $this->getKey();
-    }
-
-    /**
-     * Instance the revision model.
-     *
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public static function newModel()
-    {
-        $model = \Config::get('revisionable.model', 'Venturecraft\Revisionable\Revision');
-
-        return new $model();
     }
 
     /**
@@ -191,19 +227,19 @@ class Revisionable extends Eloquent
         }
 
         if (( ! isset($this->revisionEnabled) || $this->revisionEnabled)) {
-            $revisions[] = [
+            $revision[] = [
                 'revisionable_type' => $this->getMorphClass(),
                 'revisionable_id'   => $this->getKey(),
                 'key'               => self::CREATED_AT,
                 'old_value'         => null,
                 'new_value'         => $this->{self::CREATED_AT},
                 'user_id'           => $this->getSystemUserId(),
+                'ip'                => $this->getUserIpAddress(),
                 'created_at'        => new \DateTime(),
                 'updated_at'        => new \DateTime(),
             ];
-
-            $revision = static::newModel();
-            \DB::table($revision->getTable())->insert($revisions);
+            
+            StoreRevisions::dispatch($revision);
         }
     }
 
@@ -214,19 +250,21 @@ class Revisionable extends Eloquent
     {
         if (( ! isset($this->revisionEnabled) || $this->revisionEnabled)
             && $this->isSoftDelete()
-            && $this->isRevisionable($this->getDeletedAtColumn())) {
-            $revisions[] = [
+            && $this->isRevisionable($this->getDeletedAtColumn())
+        ) {
+            $revision[] = [
                 'revisionable_type' => $this->getMorphClass(),
                 'revisionable_id'   => $this->getKey(),
                 'key'               => $this->getDeletedAtColumn(),
                 'old_value'         => null,
                 'new_value'         => $this->{$this->getDeletedAtColumn()},
                 'user_id'           => $this->getSystemUserId(),
+                'ip'                => $this->getUserIpAddress(),
                 'created_at'        => new \DateTime(),
                 'updated_at'        => new \DateTime(),
             ];
-            $revision = static::newModel();
-            \DB::table($revision->getTable())->insert($revisions);
+            
+            StoreRevisions::dispatch($revision);
         }
     }
 
@@ -235,8 +273,19 @@ class Revisionable extends Eloquent
      */
     public function postSave()
     {
+        if (isset($this->historyLimit) && $this->revisionHistory()->count() >= $this->historyLimit) {
+            $LimitReached = true;
+        } else {
+            $LimitReached = false;
+        }
+        if (isset($this->revisionCleanup)) {
+            $RevisionCleanup = $this->revisionCleanup;
+        } else {
+            $RevisionCleanup = false;
+        }
+
         // check if the model already exists
-        if (( ! isset($this->revisionEnabled) || $this->revisionEnabled) && $this->updating) {
+        if ((( ! isset($this->revisionEnabled) || $this->revisionEnabled) && $this->updating) && ( ! $LimitReached || $RevisionCleanup)) {
             // if it does, it means we're updating
 
             $changes_to_record = $this->changedRevisionableFields();
@@ -251,14 +300,20 @@ class Revisionable extends Eloquent
                     'old_value'         => array_get($this->originalData, $key),
                     'new_value'         => $this->updatedData[$key],
                     'user_id'           => $this->getSystemUserId(),
+                    'ip'                => $this->getUserIpAddress(),
                     'created_at'        => new \DateTime(),
                     'updated_at'        => new \DateTime(),
                 ];
             }
 
             if (count($revisions) > 0) {
-                $revision = static::newModel();
-                \DB::table($revision->getTable())->insert($revisions);
+                if ($LimitReached && $RevisionCleanup) {
+                    $toDelete = $this->revisionHistory()->orderBy('id', 'asc')->limit(count($revisions))->get();
+                    foreach ($toDelete as $delete) {
+                        $delete->delete();
+                    }
+                }
+                StoreRevisions::dispatch($revisions);
             }
         }
     }
@@ -281,6 +336,8 @@ class Revisionable extends Eloquent
             foreach ($this->updatedData as $key => $val) {
                 if ('object' == gettype($val) && ! method_exists($val, '__toString')) {
                     unset($this->originalData[$key], $this->updatedData[$key]);
+
+                    array_push($this->dontKeep, $key);
                 }
             }
 
@@ -306,7 +363,7 @@ class Revisionable extends Eloquent
      */
     public function revisionHistory()
     {
-        return $this->morphMany(get_class(static::newModel()), 'revisionable');
+        return $this->morphMany(get_class(Revisionable::newModel()), 'revisionable');
     }
 
     /**
@@ -322,7 +379,7 @@ class Revisionable extends Eloquent
             // check that the field is revisionable, and double check
             // that it's actually new data in case dirty is, well, clean
             if ($this->isRevisionable($key) && ! is_array($value)) {
-                if ( ! isset($this->originalData[$key]) || $this->originalData[$key] != $this->updatedData[$key]) {
+                if ( ! array_key_exists($key, $this->originalData) || $this->originalData[$key] != $this->updatedData[$key]) {
                     $changes_to_record[$key] = $value;
                 }
             } else {
@@ -333,27 +390,6 @@ class Revisionable extends Eloquent
         }
 
         return $changes_to_record;
-    }
-
-    /**
-     * Attempt to find the user id of the currently logged in user
-     * Supports Cartalyst Sentry/Sentinel based authentication, as well as stock Auth.
-     */
-    private function getSystemUserId()
-    {
-        try {
-            if (class_exists($class = '\Cartalyst\Sentry\Facades\Laravel\Sentry')
-                    || class_exists($class = '\Cartalyst\Sentinel\Laravel\Facades\Sentinel')) {
-                return ($class::check()) ? $class::getUser()->id : null;
-            }
-            if (\Auth::check()) {
-                return \Auth::user()->getAuthIdentifier();
-            }
-        } catch (\Exception $e) {
-            return null;
-        }
-
-        return null;
     }
 
     /**

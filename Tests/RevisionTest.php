@@ -4,9 +4,9 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Venturecraft\Revisionable\Tests;
+namespace CircleLinkHealth\Revisionable\Tests;
 
-use Venturecraft\Revisionable\Tests\Models\User;
+use CircleLinkHealth\Revisionable\Tests\Models\User;
 
 class RevisionTest extends \Orchestra\Testbench\TestCase
 {
@@ -22,7 +22,7 @@ class RevisionTest extends \Orchestra\Testbench\TestCase
         // the path option should be an absolute path.
         $this->loadMigrationsFrom([
             '--database' => 'testing',
-            '--path'     => realpath(__DIR__.'/../src/migrations'),
+            '--path'     => realpath(__DIR__.'/../Database/Migrations'),
         ]);
     }
 

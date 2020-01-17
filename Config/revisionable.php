@@ -10,5 +10,5 @@ return [
     | Revision Model
     |--------------------------------------------------------------------------
     */
-    'model' => Venturecraft\Revisionable\Revision::class,
+    'model' => \CircleLinkHealth\Revisionable\Entities\Revision::class,
 ];
