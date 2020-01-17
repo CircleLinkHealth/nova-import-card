@@ -49,7 +49,6 @@
     },
     "test": {
       "scripts": {
-        "test-setup": "vendor/bin/heroku-php-nginx -C heroku/nginx.conf public/",
         "test": "composer test"
       },
       "env": {
