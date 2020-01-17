@@ -1633,7 +1633,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             throw new \Exception('User ID not found.');
         }
 
-        return 'hide_legacy_bhi_banner:'.$this->id.":${patientId}";
+        return "hide_legacy_bhi_banner:$this->id:$patientId";
     }
 
     public function getMobilePhoneNumber()
