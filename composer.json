@@ -125,7 +125,7 @@
     "circlelinkhealth/ccda-parser-processor-php-module": "1.0",
     "circlelinkhealth/cerberus-gatekeeper-module": "3.0.6",
     "circlelinkhealth/core-module": "1.4.0",
-    "circlelinkhealth/cpm-migrations-module": "1.1",
+    "circlelinkhealth/cpm-migrations-module": "1.2",
     "circlelinkhealth/customer-module": "1.7.3",
     "circlelinkhealth/eligibility-module": "1.0",
     "circlelinkhealth/import-practice-staff-csv": "*",
