@@ -19,7 +19,7 @@ trait CreatesTestSuiteDB
             abort('It is not recommended to run this command on the production database');
         }
         
-        if (true === getenv('CI')) {
+        if (getenv('CI')) {
             $dbName = getenv('HEROKU_TEST_RUN_ID');
         }
         
