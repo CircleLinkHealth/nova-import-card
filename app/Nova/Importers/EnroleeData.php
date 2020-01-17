@@ -6,7 +6,7 @@
 
 namespace App\Nova\Importers;
 
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Search\PracticeByName;
 use App\Search\ProviderByName;
 use Maatwebsite\Excel\Concerns\Importable;

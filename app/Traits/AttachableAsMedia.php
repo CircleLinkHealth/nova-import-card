@@ -6,7 +6,7 @@
 
 namespace App\Traits;
 
-use App\Exceptions\FileNotFoundException;
+use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 
@@ -17,7 +17,7 @@ trait AttachableAsMedia
      * @param $filePath
      * @param $mediaCollection
      *
-     * @throws FileNotFoundException
+     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
      * @throws \Exception
      *
      * @return \Spatie\MediaLibrary\Models\Media

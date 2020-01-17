@@ -7,7 +7,7 @@
 namespace App\Adapters\EligibilityCheck;
 
 use App\Contracts\HasMedicalRecord;
-use App\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 
 interface EligibilityCheckAdapter extends HasMedicalRecord
 {

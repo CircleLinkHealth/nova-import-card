@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\CLH\Helpers\StringManipulation;
+use CircleLinkHealth\Core\StringManipulation;
 use App\Contracts\DirectMail;
 use App\Contracts\Efax;
 use App\Reports\PatientDailyAuditReport;

@@ -6,22 +6,22 @@
 
 namespace App\Http\Controllers\Billing;
 
-use App\AppConfig;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovableBillablePatient;
-use App\Models\CCD\Problem;
-use App\Models\CPM\CpmProblem;
-use App\Models\ProblemCode;
 use App\Notifications\PracticeInvoice;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\PracticeReportsService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 

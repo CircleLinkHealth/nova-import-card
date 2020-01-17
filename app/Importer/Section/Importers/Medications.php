@@ -6,10 +6,10 @@
 
 namespace App\Importer\Section\Importers;
 
-use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
-use App\Importer\Models\ImportedItems\MedicationImport;
-use App\Importer\Models\ItemLogs\MedicationLog;
 use App\MedicationGroupsMap;
+use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\MedicationImport;
+use CircleLinkHealth\SharedModels\Entities\MedicationLog;
 
 class Medications extends BaseImporter
 {
@@ -52,7 +52,6 @@ class Medications extends BaseImporter
     /**
      * Import a single Medication from an Item Log.
      *
-     * @param MedicationLog $itemLog
      * @param $consolidatedMed
      */
     public function importMedication(
@@ -70,7 +69,7 @@ class Medications extends BaseImporter
         ], [
             'ccd_medication_log_id' => $itemLog->id,
             'medication_group_id'   => $medicationGroupId,
-            'sig'                   => ucfirst((new \App\CLH\Helpers\StringManipulation())->stringDiff(
+            'sig'                   => ucfirst((new \CircleLinkHealth\Core\StringManipulation())->stringDiff(
                 $consolidatedMed->cons_name,
                 $consolidatedMed->cons_text
             )),

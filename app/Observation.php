@@ -38,7 +38,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property mixed                                                                          $timezone
  * @property \App\ObservationMeta[]|\Illuminate\Database\Eloquent\Collection                $meta
  * @property \App\CPRulesQuestions                                                          $question
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @property \CircleLinkHealth\Customer\Entities\User                                       $user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newQuery()

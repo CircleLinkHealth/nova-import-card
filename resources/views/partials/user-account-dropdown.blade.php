@@ -16,7 +16,7 @@
         </li>
         @endImpersonating
 
-        @if(auth()->user()->hasRole(['care-center']) && auth()->user()->isNotSaas())
+        @if(auth()->user()->isCareCoach() && auth()->user()->isNotSaas())
             <li class="hidden-xs">
                 <a href="{{ route('offline-activity-time-requests.index') }}"
                    id="offline-activity-time-requests-index-link">
@@ -39,7 +39,7 @@
         @endif
         @if ( ! auth()->guest() && $user->hasRole(['administrator', 'administrator-view-only']) && $user->isNotSaas())
             <li><a style="color: #47beab"
-                   href="{{ empty($patient->id) ? route('admin.dashboard') : route('admin.users.edit', array('patient' => $patient->id)) }}">
+                   href="{{ route('admin.dashboard') }}">
                     Admin Panel
                 </a>
             </li>

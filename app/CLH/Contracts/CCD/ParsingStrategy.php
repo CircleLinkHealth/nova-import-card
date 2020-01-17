@@ -9,7 +9,7 @@ namespace App\CLH\Contracts\CCD;
 interface ParsingStrategy
 {
     public function parse(
-        \App\Models\MedicalRecords\Ccda $ccda,
+        \CircleLinkHealth\SharedModels\Entities\Ccda $ccda,
         ValidationStrategy $validator = null
     );
 }

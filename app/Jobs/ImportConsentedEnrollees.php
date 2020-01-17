@@ -6,13 +6,13 @@
 
 namespace App\Jobs;
 
-use App\EligibilityBatch;
-use App\EligibilityJob;
-use App\Enrollee;
-use App\Models\MedicalRecords\Ccda;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\MedicalRecords\ImportService;
 use App\ValueObjects\BlueButtonMedicalRecord\MedicalRecord;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -33,7 +33,7 @@ class ImportConsentedEnrollees implements ShouldQueue
      */
     public $tries = 2;
     /**
-     * @var EligibilityBatch
+     * @var \CircleLinkHealth\Eligibility\Entities\EligibilityBatch
      */
     private $batch;
     /**

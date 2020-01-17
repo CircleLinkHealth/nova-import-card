@@ -5,21 +5,18 @@
                 <script>
 
                     function onStatusChange(e) {
-
                         let ccmStatus = document.getElementById("ccm_status");
 
-                        if (ccmStatus.value === "withdrawn" || ccmStatus.value === "withdrawn_1st_call") {
+                        if (ccmStatus && (ccmStatus.value === "withdrawn" || ccmStatus.value === "withdrawn_1st_call")) {
                             $('#header-withdrawn-reason').removeClass('hidden');
                             onReasonChange();
                         } else {
                             $('#header-withdrawn-reason').addClass('hidden');
                             $('#header-withdrawn-reason-other').addClass('hidden');
                         }
-
                     }
 
                     function onReasonChange(e) {
-
                         let reason = document.getElementById("withdrawn_reason");
                         let reasonOther = document.getElementById('withdrawn_reason_other');
 
@@ -30,7 +27,6 @@
                             $('#header-withdrawn-reason-other').addClass('hidden');
                             reasonOther.removeAttribute('required');
                         }
-
                     }
 
                     $('document').ready(function () {
@@ -129,10 +125,10 @@
                         style="margin-top: -8px; margin-bottom: 20px !important; margin-left: -20px !important;">
                         @foreach($ccdMonitoredProblems as $problem)
                             @if($problem['name'] != 'Diabetes')
-                                <li class="inline-block"><input type="checkbox" id="item27" name="condition27"
+                                <li class="inline-block"><input type="checkbox" id="item-{{$problem['id']}}" name="item-{{$problem['id']}}"
                                                                 value="Active"
                                                                 checked="checked" disabled="disabled">
-                                    <label for="condition27"><span> </span>{{$problem['name']}}</label>
+                                    <label for="item-{{$problem['id']}}"><span> </span>{{$problem['name']}}</label>
                                 </li>
                             @endif
                         @endforeach

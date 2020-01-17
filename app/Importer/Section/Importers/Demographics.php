@@ -6,7 +6,7 @@
 
 namespace App\Importer\Section\Importers;
 
-use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use Carbon\Carbon;

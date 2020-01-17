@@ -6,7 +6,7 @@
 
 namespace App\Repositories;
 
-use App\Exceptions\InvalidArgumentException;
+use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
@@ -82,11 +82,6 @@ class PatientWriteRepository
     /**
      * Updates the patient's call info based on the status of the last call.
      *
-     * @param Patient     $patient
-     * @param bool        $successfulLastCall
-     * @param bool        $isCallBack
-     * @param Carbon|null $forDate
-     *
      * @return \Illuminate\Database\Eloquent\Model|PatientMonthlySummary|static|null
      */
     public function updateCallLogs(
@@ -112,14 +107,6 @@ class PatientWriteRepository
             $patient->no_call_attempts_since_last_success = 0;
         } elseif ( ! $isCallBack) {
             $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
-
-            if (0 === $patient->no_call_attempts_since_last_success % 5 && optional($record)->no_of_successful_calls < 1) {
-                $patient->ccm_status = Patient::UNREACHABLE;
-            }
-        }
-
-        if ($patient->isDirty()) {
-            $patient->save();
         }
 
         // Determine whether to add to record or not
@@ -137,13 +124,18 @@ class PatientWriteRepository
             $record->save();
         }
 
+        if ( ! $successfulLastCall && ! $isCallBack && $patient->no_call_attempts_since_last_success >= 5 && $record->no_of_successful_calls < 1) {
+            $patient->ccm_status = Patient::UNREACHABLE;
+        }
+
+        if ($patient->isDirty()) {
+            $patient->save();
+        }
+
         return $record;
     }
 
     /**
-     * @param array       $userIdsToPrint
-     * @param Carbon|null $dateTime
-     *
      * @return bool
      */
     public function updatePausedLetterPrintedDate(array $userIdsToPrint, Carbon $dateTime = null)

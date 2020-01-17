@@ -35,8 +35,9 @@ class UserTableSeeder extends Seeder
             //create nurse
             factory(User::class, 1)->create(['saas_account_id' => $practice->saas_account_id])->each(function ($nurse) use ($practice) {
                 $nurse->username = 'nurse';
+                $nurse->auto_attach_programs = true;
                 $nurse->email = 'nurse@example.org';
-                $nurse->attachPractice($practice->id, [Role::whereName('care-coach')->value('id')]);
+                $nurse->attachPractice($practice->id, [Role::whereName('care-center')->value('id')]);
                 $nurse->program_id = $practice->id;
                 $nurse->password = Hash::make('hello');
                 $nurse->save();
@@ -47,12 +48,14 @@ class UserTableSeeder extends Seeder
 
             $provider                  = $this->createUser($practice, 'provider');
             $provider->username        = 'provider';
+            $provider->auto_attach_programs = true;
             $provider->password        = Hash::make('hello');
             $provider->saas_account_id = $practice->saas_account_id;
             $provider->save();
 
-            $careCenter                  = $this->createUser($practice, 'care-center');
-            $careCenter->username        = 'care-coach';
+            $careCenter                  = $this->createUser($practice, 'care-center-external');
+            $careCenter->username        = 'care-center-external';
+            $careCenter->auto_attach_programs = true;
             $careCenter->password        = Hash::make('hello');
             $careCenter->saas_account_id = $practice->saas_account_id;
             $careCenter->save();

@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\InvalidArgumentException;
+use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use App\Http\Requests\CreateLegacyBhiConsentDecision;
 use App\Note;
 use App\Services\Calls\SchedulerService;

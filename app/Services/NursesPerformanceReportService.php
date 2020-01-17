@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\Exceptions\FileNotFoundException;
+use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CompanyHoliday;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -689,7 +689,7 @@ AND patient_info.ccm_status = 'enrolled'"
      * @param $day
      *
      * @throws \Exception
-     * @throws FileNotFoundException
+     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
      *
      * @return mixed
      */

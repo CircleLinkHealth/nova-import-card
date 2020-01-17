@@ -1,6 +1,10 @@
 <?php
 
-use App\Models\CPM\CpmBiometric;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
 use Illuminate\Database\Seeder;
 
 class CpmBiometricSeeder extends Seeder

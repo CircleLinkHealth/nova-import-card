@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
