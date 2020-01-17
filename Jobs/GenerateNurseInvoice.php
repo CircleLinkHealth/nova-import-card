@@ -37,11 +37,13 @@ class GenerateNurseInvoice implements ShouldQueue
      * @var Carbon
      */
     protected $startDate;
-
+    
     /**
      * Create a new job instance.
      *
-     * @param bool $storeInvoice
+     * @param User $nurseUser
+     * @param Carbon $startDate
+     * @param Carbon $endDate
      */
     public function __construct(User $nurseUser, Carbon $startDate, Carbon $endDate)
     {
@@ -94,8 +96,12 @@ class GenerateNurseInvoice implements ShouldQueue
             }
         );
     }
-
+    
     /**
+     * @param User $nurse
+     * @param Collection $aggregatedTotalTime
+     * @param VariablePayCalculator $variablePayCalculator
+     *
      * @return Invoice
      */
     private function createViewModel(
@@ -111,10 +117,12 @@ class GenerateNurseInvoice implements ShouldQueue
             $variablePayCalculator
         );
     }
-
+    
     /**
      * @param $nurseInfoId
      * @param $viewModel
+     *
+     * @param Carbon $startDate
      *
      * @return mixed
      */
