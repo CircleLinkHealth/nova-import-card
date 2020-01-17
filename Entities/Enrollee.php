@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Eligibility\Entities;
 
+use App\Contracts\Services\TwilioClientable;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
-use App\Twilio;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -500,11 +500,7 @@ class Enrollee extends BaseModel
     {
         $emjo = 'u"\U0001F31F"';
 
-        $twilio = new Twilio(
-            config('services.twilio.sid'),
-            config('services.twilio.token'),
-            config('services.twilio.from')
-        );
+        $twilio = app(TwilioClientable::class);
 
         $link = url("join/{$this->invite_code}");
 
@@ -518,12 +514,8 @@ class Enrollee extends BaseModel
 
     public function sendEnrollmentConsentSMS()
     {
-        $twilio = new Twilio(
-            config('services.twilio.sid'),
-            config('services.twilio.token'),
-            config('services.twilio.from')
-        );
-
+        $twilio = app(TwilioClientable::class);
+    
         $link          = url("join/{$this->invite_code}");
         $provider_name = User::find($this->provider_id)->getFullName();
 
