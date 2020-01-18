@@ -102,7 +102,6 @@ class Demographics extends BaseImporter
             'consent_date'               => $itemLog->consent_date > 0
                 ? Carbon::parse($itemLog->consent_date)->format('Y-m-d')
                 : date('Y-m-d'),
-            'vendor_id'                  => 1,
             'medical_record_type'        => $medicalRecordType,
             'medical_record_id'          => $medicalRecordId,
             'imported_medical_record_id' => $importedMedicalRecord->id,
