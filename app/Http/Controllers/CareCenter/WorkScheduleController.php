@@ -97,6 +97,9 @@ class WorkScheduleController extends Controller
         ], 200);
     }
 
+    /**
+     * @return Collection|mixed
+     */
     public function getActiveNurses()
     {
         $workScheduleData = [];
@@ -109,7 +112,7 @@ class WorkScheduleController extends Controller
                 $workScheduleData[] = $nurses;
             });
 
-        return $workScheduleData[0] ?? new Collection();
+        return $workScheduleData[0]/* ?? new Collection()*/;
     }
 
     /**

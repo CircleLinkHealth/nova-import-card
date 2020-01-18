@@ -294,12 +294,13 @@ class NurseCalendarService
     }
 
     /**
+     * @param Collection $nurses
      * @param mixed $startDate
      * @param mixed $endDate
      *
-     * @return Collection|\Illuminate\Support\Collection
+     * @return \Illuminate\Support\Collection
      */
-    public function prepareCalendarDataForAllActiveNurses(Collection $nurses, $startDate, $endDate)
+    public function prepareCalendarDataForAllActiveNurses($nurses, $startDate, $endDate)
     {
         return $nurses->map(function ($nurse) use ($startDate, $endDate) {
             $windows = $this->getWindows($nurse, $startDate, $endDate);
