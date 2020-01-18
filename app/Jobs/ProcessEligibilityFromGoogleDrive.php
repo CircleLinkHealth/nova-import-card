@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use App\Services\CCD\ProcessEligibilityService;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -48,7 +48,7 @@ class ProcessEligibilityFromGoogleDrive implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param ProcessEligibilityService $processEligibilityService
+     * @param \CircleLinkHealth\Eligibility\ProcessEligibilityService $processEligibilityService
      */
     public function handle(ProcessEligibilityService $processEligibilityService)
     {

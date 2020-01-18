@@ -9,7 +9,7 @@ namespace App\Jobs;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
-use App\Services\CCD\ProcessEligibilityService;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use App\Services\MedicalRecords\ImportService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
