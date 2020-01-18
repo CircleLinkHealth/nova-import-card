@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "63db2e95a8f471dcd2f5b689677a0490",
+    "content-hash": "d2adabf496a435510d4727f6e47b55d5",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -808,11 +808,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.3",
+            "version": "dev-CPM-1936_nurse_payment_algo",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "aa2aee7cfc3e99f1892a8aaad1ca4550ffe87061"
+                "reference": "c6077f87690eef25d37c1561b6cd827221248a4f"
             },
             "type": "laravel-module",
             "extra": {
@@ -834,15 +834,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T10:53:36+00:00"
+            "time": "2020-01-17T14:15:13+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.7.6",
+            "version": "dev-CPM-1936_nurse_payment_algo",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "9c86dbd38d4af7c7edd759112487a1a1acf979a4"
+                "reference": "d73eeea643fb6d46e2ec7a4b0068be81c05da2c5"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -875,7 +875,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T17:59:20+00:00"
+            "time": "2020-01-17T14:15:19+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -981,11 +981,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.1",
+            "version": "dev-CPM-1910_nurse_invoices_continued",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "7da284b4ef64df090c3d167150255e616433e3fa"
+                "reference": "62d89e5fcd960309c244c0862f71437001da57a4"
             },
             "type": "laravel-module",
             "extra": {
@@ -1008,7 +1008,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T17:59:18+00:00"
+            "time": "2020-01-18T10:20:59+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -13557,6 +13557,9 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
