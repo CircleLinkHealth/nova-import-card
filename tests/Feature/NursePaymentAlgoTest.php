@@ -56,9 +56,9 @@ use Tests\TestCase;
  *  5. Total payable is the sum.
  *  6. Guarantee: if total time X $20/hr > sum, then pay total time X $20/hr.
  *
- * Class NursePaymentAlgo.
+ * Class NursePaymentAlgoTest.
  */
-class NursePaymentAlgo extends TestCase
+class NursePaymentAlgoTest extends TestCase
 {
     use UserHelpers;
 
