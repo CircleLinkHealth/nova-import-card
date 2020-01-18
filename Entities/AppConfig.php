@@ -22,7 +22,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig query()
