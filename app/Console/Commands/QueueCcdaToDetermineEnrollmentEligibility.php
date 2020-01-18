@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\CheckCcdaEnrollmentEligibility;
+use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 

@@ -6,7 +6,7 @@
 
 namespace App\Importer\Section\Importers;
 
-use CircleLinkHealth\SharedModels\Entities\MedicationLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
 
 trait ConsolidatesMedicationInfo
 {

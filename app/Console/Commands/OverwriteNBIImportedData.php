@@ -98,7 +98,7 @@ class OverwriteNBIImportedData extends Command
             $dem->save();
 
             if ( ! empty($datas->primary_insurance)) {
-                $insurance = \App\Importer\Models\ItemLogs\InsuranceLog::create(
+                $insurance = \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog::create(
                     [
                         'medical_record_id'   => $mr->id,
                         'medical_record_type' => get_class($mr),
@@ -110,7 +110,7 @@ class OverwriteNBIImportedData extends Command
             }
 
             if ( ! empty($datas->secondary_insurance)) {
-                $insurance = \App\Importer\Models\ItemLogs\InsuranceLog::create(
+                $insurance = \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog::create(
                     [
                         'medical_record_id'   => $mr->id,
                         'medical_record_type' => get_class($mr),

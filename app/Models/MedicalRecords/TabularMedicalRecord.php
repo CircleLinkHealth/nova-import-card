@@ -55,12 +55,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null                                                                                                        $preferred_call_times
  * @property string|null                                                                                                        $preferred_call_days
  * @property \CircleLinkHealth\SharedModels\Entities\AllergyLog[]|\Illuminate\Database\Eloquent\Collection                      $allergies
- * @property \App\Importer\Models\ItemLogs\DemographicsLog[]|\Illuminate\Database\Eloquent\Collection                           $demographics
- * @property \App\Importer\Models\ImportedItems\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection                   $demographicsImports
- * @property \App\Importer\Models\ItemLogs\DocumentLog[]|\Illuminate\Database\Eloquent\Collection                               $document
- * @property \CircleLinkHealth\SharedModels\Entities\MedicationLog[]|\Illuminate\Database\Eloquent\Collection                   $medications
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog[]|\Illuminate\Database\Eloquent\Collection                           $demographics
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection                   $demographicsImports
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog[]|\Illuminate\Database\Eloquent\Collection                               $document
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog[]|\Illuminate\Database\Eloquent\Collection                   $medications
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog[]|\Illuminate\Database\Eloquent\Collection $problems
- * @property \App\Importer\Models\ItemLogs\ProviderLog[]|\Illuminate\Database\Eloquent\Collection                               $providers
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog[]|\Illuminate\Database\Eloquent\Collection                               $providers
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\TabularMedicalRecord whereAddress2($value)

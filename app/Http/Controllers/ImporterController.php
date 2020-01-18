@@ -7,8 +7,8 @@
 namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Importer\Models\ItemLogs\DocumentLog;
-use App\Importer\Models\ItemLogs\ProviderLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use App\Jobs\ImportCcda;
 use App\Jobs\ImportCsvPatientList;
 use Carbon\Carbon;
@@ -79,6 +79,7 @@ class ImporterController extends Controller
                 });
 
                 $summary['flag'] = false;
+                
                 if ($providers->count() > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
                     $summary['flag'] = true;
                 }
