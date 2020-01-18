@@ -11,11 +11,13 @@ use App\Http\Controllers\Controller;
 use App\Jobs\CreateCalendarRecurringEventsJob;
 use App\Traits\ValidatesWorkScheduleCalendar;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -107,7 +109,7 @@ class WorkScheduleController extends Controller
                 $workScheduleData[] = $nurses;
             });
 
-        return $workScheduleData[0] ?? collect();
+        return $workScheduleData[0] ?? new Collection();
     }
 
     /**
