@@ -54,7 +54,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection
  *     $demographicsImports
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog[]|\Illuminate\Database\Eloquent\Collection   $document
- * @property \CircleLinkHealth\SharedModels\Entities\MedicationLog[]|\Illuminate\Database\Eloquent\Collection $medications
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog[]|\Illuminate\Database\Eloquent\Collection $medications
  * @property \CircleLinkHealth\Customer\Entities\User|null                                          $patient
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog[]|\Illuminate\Database\Eloquent\Collection    $problems
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog[]|\Illuminate\Database\Eloquent\Collection   $providers
