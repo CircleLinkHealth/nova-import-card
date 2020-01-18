@@ -575,7 +575,9 @@ class ProcessEligibilityService
 
                 $validator = $this->validateRow($patient);
 
-                $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$patient['mrn'];
+                $mrn = $patient['mrn'] ?? $patient['mrn_number'] ?? $patient['patient_id'] ?? '';
+                
+                $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$mrn;
 
                 $job = EligibilityJob::create([
                     'batch_id' => $batch->id,
