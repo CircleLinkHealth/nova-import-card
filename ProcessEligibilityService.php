@@ -6,13 +6,13 @@
 
 namespace CircleLinkHealth\Eligibility;
 
-use App\Importer\Loggers\Allergy\NumberedAllergyFields;
-use App\Importer\Loggers\Medication\NumberedMedicationFields;
-use App\Importer\Loggers\Problem\NumberedProblemFields;
-use App\Jobs\CheckCcdaEnrollmentEligibility;
-use App\Jobs\ProcessCcda;
-use App\Jobs\ProcessCcdaFromGoogleDrive;
-use App\Jobs\ProcessEligibilityFromGoogleDrive;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedAllergyFields;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedMedicationFields;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedProblemFields;
+use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
+use CircleLinkHealth\Eligibility\Jobs\ProcessCcda;
+use CircleLinkHealth\Eligibility\Jobs\ProcessCcdaFromGoogleDrive;
+use CircleLinkHealth\Eligibility\Jobs\ProcessEligibilityFromGoogleDrive;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use CircleLinkHealth\Core\GoogleDrive;
@@ -117,8 +117,10 @@ class ProcessEligibilityService
         $patient = $this->transformCsvRow($patient);
 
         $validator = $this->validateRow($patient);
+        
+        $mrn = $patient['mrn'] ?? $patient['mrn_number'] ?? $patient['patient_id'] ?? '';
 
-        $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$patient['mrn'];
+        $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$mrn;
 
         return EligibilityJob::create([
             'batch_id' => $batch->id,
