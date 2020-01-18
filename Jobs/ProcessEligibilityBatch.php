@@ -13,7 +13,7 @@ use App\Jobs\MakePhoenixHeartWelcomeCallList;
 use App\Jobs\ProcessSinglePatientEligibility;
 use App\Jobs\Storage;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
-use App\Services\CCD\ProcessEligibilityService;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Illuminate\Bus\Queueable;
@@ -34,7 +34,7 @@ class ProcessEligibilityBatch implements ShouldQueue
     protected $batch;
 
     /**
-     * @var ProcessEligibilityService
+     * @var \CircleLinkHealth\Eligibility\ProcessEligibilityService
      */
     private $processEligibilityService;
 
