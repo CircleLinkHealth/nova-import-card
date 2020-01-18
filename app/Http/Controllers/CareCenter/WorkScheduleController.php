@@ -12,7 +12,6 @@ use App\Http\Requests\CalendarRange;
 use App\Jobs\CreateCalendarRecurringEventsJob;
 use App\Traits\ValidatesWorkScheduleCalendar;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Holiday;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
@@ -72,10 +71,10 @@ class WorkScheduleController extends Controller
         if ($auth->isAdmin()) {
             $nurses = $this->getActiveNurses();
 
-            if (empty($nurses)){
+            if (empty($nurses)) {
                 return response()->json([
                     'errors' => 'Validation Failed',
-                    'validator' => 'There are currently working Care Coaches in the databaseThere are currently working Care Coaches in the database',
+                    'validator' => 'There are currently no working Care Coaches in the database',
                 ], 422);
             }
 
