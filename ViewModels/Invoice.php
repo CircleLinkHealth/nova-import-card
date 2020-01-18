@@ -16,6 +16,20 @@ use Spatie\ViewModels\ViewModel;
 class Invoice extends ViewModel
 {
     const DATE_FORMAT = 'jS M, Y';
+
+    /** @var bool New CCM Plus Algo from Jan 2020 */
+    public $ccmPlusAlgoEnabled;
+
+    /**
+     * @var bool Whether Option 1 (Alt Algo - Visit Fee based) algo is enabled or not
+     */
+    public $altAlgoEnabled;
+
+    /**
+     * @var int the total number of visits when option 1 algo is enabled
+     */
+    public $visitsCount;
+
     /**
      * @var Collection
      */
@@ -190,10 +204,19 @@ class Invoice extends ViewModel
         if ( ! $this->variablePay && ! $this->changedToFixedRateBecauseItYieldedMore) {
             return $fixedRateMessage;
         }
-        $high_rate = $this->user->nurseInfo->high_rate;
-        $low_rate  = $this->user->nurseInfo->low_rate;
+        $high_rate   = $this->user->nurseInfo->high_rate;
+        $high_rate_3 = $this->user->nurseInfo->high_rate_3;
+        $low_rate    = $this->user->nurseInfo->low_rate;
 
-        $variableRateMessage = "\${$this->variableRatePay} (Variable Rate: \$$high_rate/hr or \$$low_rate/hr).";
+        if ($this->ccmPlusAlgoEnabled) {
+            if ($this->altAlgoEnabled) {
+                $variableRateMessage = "\${$this->variableRatePay} (Visit-based: $this->visitsCount visits).";
+            } else {
+                $variableRateMessage = "\${$this->variableRatePay} (Variable Rate: \$[$high_rate_3 - $high_rate]/hr or \$$low_rate/hr).";
+            }
+        } else {
+            $variableRateMessage = "\${$this->variableRatePay} (Variable Rate: \$$high_rate/hr or \$$low_rate/hr).";
+        }
 
         if ($this->variableRatePay > $this->fixedRatePay) {
             $result = [
@@ -468,11 +491,15 @@ class Invoice extends ViewModel
      * 4.3 get successful call in each range
      * 4.4 pay percentage of time in range * VF.
      *
-     * @return float|int
+     * @return float
      */
     private function getVariableRatePay()
     {
-        return $this->variablePayCalculator->calculate($this->user);
+        $calculationResult    = $this->variablePayCalculator->calculate($this->user);
+        $this->visitsCount    = $calculationResult->visitsCount;
+        $this->altAlgoEnabled = $calculationResult->altAlgoEnabled;
+
+        return round($calculationResult->totalPay, 2);
     }
 
     /**

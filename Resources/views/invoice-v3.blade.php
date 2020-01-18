@@ -148,7 +148,7 @@ such as <style>, as they will not be parsed.--}}
                 <th style="width: 25%">Total Time (hh:mm)</th>
 
                 @if($variablePay)
-                    <th style="width: 25%">CCM Hours (${{$nurseHighRate}}/Hour)</th>
+                    <th style="width: 25%">CCM Hours (High Rates)</th>
                     <th style="width: 25%">CCM Hours (${{$nurseLowRate}}/Hour)</th>
                 @endif
             </tr>
@@ -158,7 +158,7 @@ such as <style>, as they will not be parsed.--}}
 
                 <td>{{$formattedSystemTime}}</td>
 
-                @if($variablePay)
+                @if(!$altAlgoEnabled && $variablePay)
                     <td>{{$totalTimeAfterCcmInHours ?? $totalTimeAfterCcm}}</td>
                     <td>{{$totalTimeTowardsCcmInHours ?? $totalTimeTowardsCcm}}</td>
                 @endif
@@ -177,7 +177,7 @@ such as <style>, as they will not be parsed.--}}
                         </nurse-invoice-daily-dispute>
                     </td>
 
-                    @if($variablePay)
+                    @if(!$altAlgoEnabled && $variablePay)
                         <td>{{$row['towards']}}</td>
                         <td>{{$row['after']}}</td>
                     @endif
