@@ -112,7 +112,7 @@ class CcdToLogTranformer
     }
 
     /**
-     * @see @see CircleLinkHealth\SharedModels\Entities\MedicationLog
+     * @see @see CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog
      *
      * @param $medication
      *
