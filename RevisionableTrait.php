@@ -13,6 +13,7 @@ namespace CircleLinkHealth\Revisionable;
  *
  */
 
+use CircleLinkHealth\Revisionable\Entities\Revisionable;
 use CircleLinkHealth\Revisionable\Jobs\StoreRevisions;
 
 /**
