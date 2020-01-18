@@ -302,7 +302,7 @@ class NurseCalendarService
      */
     public function prepareCalendarDataForAllActiveNurses($nurses, $startDate, $endDate)
     {
-        return $nurses->map(function ($nurse) use ($startDate, $endDate) {
+        return collect($nurses)->map(function ($nurse) use ($startDate, $endDate) {
             $windows = $this->getWindows($nurse, $startDate, $endDate);
 
             return $this->prepareWorkDataForEachNurse($windows, $nurse);
