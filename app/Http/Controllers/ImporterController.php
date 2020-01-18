@@ -79,6 +79,7 @@ class ImporterController extends Controller
                 });
 
                 $summary['flag'] = false;
+                
                 if ($providers->count() > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
                     $summary['flag'] = true;
                 }
