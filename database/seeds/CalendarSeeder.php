@@ -37,7 +37,7 @@ class CalendarSeeder extends Seeder
 
         if ($practice) {
             //create ACTIVE nurse
-            $users = factory(User::class, 1)->create(['saas_account_id' => $practice->saas_account_id])->each(function ($nurse) use ($practice) {
+            $users = factory(User::class, 15)->create(['saas_account_id' => $practice->saas_account_id])->each(function ($nurse) use ($practice) {
                 $nurse->username = 'nurse';
                 $nurse->auto_attach_programs = true;
                 $nurse->email = 'nurse@example.org';
