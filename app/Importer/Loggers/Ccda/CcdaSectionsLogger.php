@@ -7,16 +7,16 @@
 namespace App\Importer\Loggers\Ccda;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
-use App\Importer\Models\ItemLogs\DemographicsLog;
-use App\Importer\Models\ItemLogs\DocumentLog;
-use App\Importer\Models\ItemLogs\InsuranceLog;
-use App\Importer\Models\ItemLogs\ProviderLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use App\Search\ProviderByName;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemCodeLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
 use CircleLinkHealth\SharedModels\Entities\AllergyLog;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
-use CircleLinkHealth\SharedModels\Entities\MedicationLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
 
 class CcdaSectionsLogger implements MedicalRecordLogger
 {

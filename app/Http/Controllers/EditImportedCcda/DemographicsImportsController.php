@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\EditImportedCcda;
 
 use App\Http\Controllers\Controller;
-use App\Importer\Models\ImportedItems\DemographicsImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\User;

@@ -7,8 +7,11 @@
 namespace App\Importer\Loggers\Ccda;
 
 use App\CLH\CCD\Importer\ParsingStrategies\Helpers\UserMetaParserHelpers;
-use App\Importer\Models\ItemLogs\DemographicsLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use CircleLinkHealth\SharedModels\Entities\AllergyLog;
 
 /**
@@ -109,7 +112,7 @@ class CcdToLogTranformer
     }
 
     /**
-     * @see @see CircleLinkHealth\SharedModels\Entities\MedicationLog
+     * @see @see CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog
      *
      * @param $medication
      *

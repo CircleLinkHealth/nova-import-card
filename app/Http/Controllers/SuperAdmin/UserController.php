@@ -406,10 +406,11 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        ini_set('memory_limit', '200M');
+        
         $messages = \Session::get('messages');
         
         $missingProgramId = [];
-        $users            = User::all();
         
         // display view
         $wpUsers = User::orderBy('id', 'desc');

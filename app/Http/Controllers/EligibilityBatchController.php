@@ -7,8 +7,8 @@
 namespace App\Http\Controllers;
 
 use App\Exports\FromArray;
-use App\Importer\Models\ItemLogs\InsuranceLog;
-use App\Services\CCD\ProcessEligibilityService;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordEligibilityJobToCsvAdapter;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
