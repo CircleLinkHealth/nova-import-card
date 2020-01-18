@@ -8,6 +8,7 @@ namespace App\Http\Controllers\CareCenter;
 
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CalendarRange;
 use App\Jobs\CreateCalendarRecurringEventsJob;
 use App\Traits\ValidatesWorkScheduleCalendar;
 use Carbon\Carbon;
@@ -61,7 +62,7 @@ class WorkScheduleController extends Controller
         $this->fullCalendarService = $fullCalendarService;
     }
 
-    public function calendarEvents(Request $request)
+    public function calendarEvents(CalendarRange $request)
     {
         $startDate = Carbon::parse($request->input('start'))->toDateString();
         $endDate = Carbon::parse($request->input('end'))->toDateString();
@@ -70,6 +71,14 @@ class WorkScheduleController extends Controller
 
         if ($auth->isAdmin()) {
             $nurses = $this->getActiveNurses();
+
+            if (empty($nurses)){
+                return response()->json([
+                    'errors' => 'Validation Failed',
+                    'validator' => 'There are currently working Care Coaches in the databaseThere are currently working Care Coaches in the database',
+                ], 422);
+            }
+
             $windowData = $this->fullCalendarService->prepareCalendarDataForAllActiveNurses($nurses, $startDate, $endDate);
             $holidays = $this->fullCalendarService->getHolidays($nurses, $startDate, $endDate)->toArray();
             $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
@@ -112,7 +121,7 @@ class WorkScheduleController extends Controller
                 $workScheduleData[] = $nurses;
             });
 
-        return $workScheduleData[0] ?? new Collection();
+        return $workScheduleData[0] ?? [];
     }
 
     /**

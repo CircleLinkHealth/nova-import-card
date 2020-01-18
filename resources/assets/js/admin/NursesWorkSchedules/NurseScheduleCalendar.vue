@@ -318,8 +318,16 @@
                                     self.loader = false;
                                     callback(eventsFiltered);
                                 })).catch((error) => {
-                                this.errors = error;
-                                console.log(this.errors);
+                                if (error.response.status === 422) {
+                                    const e = error.response.data;
+                                    if (e.hasOwnProperty('message')) {
+                                        alert(e.message);
+                                    } else {
+                                        alert(e.validator);
+                                    }
+                                    self.loader = false;
+                                }
+                                console.log(error);
                             });
                         },
                     },
