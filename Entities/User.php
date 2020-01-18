@@ -13,7 +13,7 @@ use App\CareplanAssessment;
 use App\Constants;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use App\ForeignId;
-use App\Importer\Models\ImportedItems\DemographicsImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
 use App\Message;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
 use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
@@ -196,7 +196,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \App\Message[]|\Illuminate\Database\Eloquent\Collection     $outboundMessages
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection
  *     $patientActivities
- * @property \App\Importer\Models\ImportedItems\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection
  *     $patientDemographics
  * @property \CircleLinkHealth\Customer\Entities\Patient                                                $patientInfo
  * @property \CircleLinkHealth\Customer\Entities\PhoneNumber[]|\Illuminate\Database\Eloquent\Collection $phoneNumbers
@@ -2278,7 +2278,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function patientDemographics()
     {
-        return $this->hasMany(DemographicsImport::class, 'provider_id');
+        return $this->hasMany(\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport::class, 'provider_id');
     }
 
     public function patientInfo()
