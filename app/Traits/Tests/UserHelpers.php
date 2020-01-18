@@ -67,7 +67,7 @@ trait UserHelpers
         $ccmStatus = 'enrolled'
     ): User {
         $practiceId = parseIds($practiceId)[0];
-        $roles      = (array) Role::whereName($roleName)->firstOrFail()->id;
+        $roles      = [Role::whereName($roleName)->firstOrFail()->id];
 
         //creates the User
         $user = $this->setupUser($practiceId, $roles, $ccmStatus);

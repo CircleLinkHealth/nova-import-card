@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\ProcessCcda;
+use CircleLinkHealth\Eligibility\Jobs\ProcessCcda;
 use Carbon\Carbon;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;

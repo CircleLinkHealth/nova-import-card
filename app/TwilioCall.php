@@ -42,7 +42,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property string|null                                                                    $account_sid
  * @property \Illuminate\Support\Carbon|null                                                $created_at
  * @property \Illuminate\Support\Carbon|null                                                $updated_at
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioCall newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioCall newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioCall query()

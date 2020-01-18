@@ -15,7 +15,7 @@ namespace App;
  * @property \App\CarePlanItem[]|\Illuminate\Database\Eloquent\Collection $children
  * @property \App\CarePlanItem                                            $parents
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanItem query()

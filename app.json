@@ -9,17 +9,23 @@
   "scripts": {
   },
   "env": {
-
   },
   "formation": {
     "web": {
+      "quantity": 1,
+      "size": "hobby"
+    },
+    "worker": {
+      "quantity": 1,
+      "size": "hobby"
+    },
+    "scheduler": {
       "quantity": 1,
       "size": "hobby"
     }
   },
   "image": "heroku/php",
   "addons": [
-    "heroku-redis:hobby-dev"
   ],
   "buildpacks": [
     {
@@ -34,9 +40,37 @@
   ],
   "environments": {
     "review": {
-      "addons": ["heroku-redis:hobby-dev"],
+      "addons": [
+        "heroku-redis:premium-0"
+      ],
       "scripts": {
         "pr-predestroy": "php artisan reviewapp:predestroy"
+      }
+    },
+    "test": {
+      "formation": {
+        "test": {
+          "quantity": 1,
+          "size": "standard-2x"
+        }
+      },
+      "addons": [
+        "heroku-redis:premium-0"
+      ],
+      "scripts": {
+        "test-setup": "vendor/bin/heroku-php-nginx -C heroku/nginx.conf public/ >/dev/null 2>&1 & sleep 5",
+        "test": "composer test && php artisan reviewapp:predestroy"
+      },
+      "env": {
+        "APP_ENV": "testing",
+        "APP_DEBUG": "true",
+        "APP_KEY": "base64:OzIBYjmtAr92KbwC5SO03s5CciXElEJ20KpSlfTxEoA=",
+        "BCRYPT_ROUNDS": "4",
+        "BROADCAST_DRIVER": "log",
+        "CACHE_DRIVER": "array",
+        "SESSION_DRIVER": "array",
+        "QUEUE_DRIVER": "sync",
+        "SCOUT_DRIVER": "null"
       }
     }
   }

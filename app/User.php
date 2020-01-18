@@ -139,7 +139,7 @@ namespace App;
  * @property int|null                                                                                                        $patient_a_w_v_summaries_count
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection                     $patientActivities
  * @property int|null                                                                                                        $patient_activities_count
- * @property \App\Importer\Models\ImportedItems\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection                $patientDemographics
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection                $patientDemographics
  * @property int|null                                                                                                        $patient_demographics_count
  * @property \CircleLinkHealth\Customer\Entities\Patient                                                                     $patientInfo
  * @property \CircleLinkHealth\Customer\Entities\PatientMonthlySummary[]|\Illuminate\Database\Eloquent\Collection            $patientSummaries
@@ -150,7 +150,7 @@ namespace App;
  * @property int|null                                                                                                        $phone_numbers_count
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                                                               $primaryPractice
  * @property \CircleLinkHealth\Customer\Entities\ProviderInfo                                                                $providerInfo
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[]                                  $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]                                  $revisionHistory
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Customer\Entities\Role[]|\Illuminate\Database\Eloquent\Collection                             $roles
  * @property int|null                                                                                                        $roles_count

@@ -43,7 +43,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \CircleLinkHealth\Customer\Entities\User                                       $inboundUser
  * @property \App\Note|null                                                                 $note
  * @property \CircleLinkHealth\Customer\Entities\User|null                                  $outboundUser
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAttemptNote($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCallTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCalledDate($value)

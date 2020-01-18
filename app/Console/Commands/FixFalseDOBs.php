@@ -7,8 +7,8 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use App\Importer\Models\ImportedItems\DemographicsImport;
-use App\Importer\Models\ItemLogs\DemographicsLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use Carbon\Carbon;
 use Illuminate\Console\Command;

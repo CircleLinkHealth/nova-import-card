@@ -8,7 +8,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UploadEligibilityCsv;
-use App\Services\CCD\ProcessEligibilityService;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use Illuminate\Http\Request;
 
 class WelcomeCallListController extends Controller

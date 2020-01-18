@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\CCD\ProcessEligibilityService;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
 

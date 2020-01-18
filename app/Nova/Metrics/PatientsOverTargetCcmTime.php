@@ -13,7 +13,7 @@ use CircleLinkHealth\Customer\Entities\PracticeRoleUser;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Laravel\Nova\Metrics\Value;
-use Venturecraft\Revisionable\Revision;
+use CircleLinkHealth\Revisionable\Entities\Revision;
 
 class PatientsOverTargetCcmTime extends Value
 {

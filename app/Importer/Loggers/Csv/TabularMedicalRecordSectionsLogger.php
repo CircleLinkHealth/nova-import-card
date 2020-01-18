@@ -7,9 +7,9 @@
 namespace App\Importer\Loggers\Csv;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
-use App\Importer\Models\ItemLogs\DemographicsLog;
-use App\Importer\Models\ItemLogs\InsuranceLog;
-use App\Importer\Models\ItemLogs\ProviderLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Search\ProviderByName;
 use App\Services\Eligibility\Entities\Problem as ProblemEntity;
@@ -18,7 +18,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemCodeLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
 use CircleLinkHealth\SharedModels\Entities\AllergyLog;
-use CircleLinkHealth\SharedModels\Entities\MedicationLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {

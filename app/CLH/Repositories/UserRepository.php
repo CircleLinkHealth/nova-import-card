@@ -22,6 +22,7 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Config;
 use Illuminate\Cache\TaggableStore;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Storage;
@@ -607,9 +608,12 @@ class UserRepository
         } else {
             $store = \Cache::getStore();
         }
+        
+        $user->clearObjectCache();
 
         foreach ($keys as $key) {
             $store->forget($key);
+            Cache::forget($key);
         }
     }
 

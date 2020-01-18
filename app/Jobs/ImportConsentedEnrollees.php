@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Services\CCD\ProcessEligibilityService;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use App\Services\MedicalRecords\ImportService;
 use App\ValueObjects\BlueButtonMedicalRecord\MedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
@@ -53,7 +53,7 @@ class ImportConsentedEnrollees implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param ProcessEligibilityService $importService
+     * @param \CircleLinkHealth\Eligibility\ProcessEligibilityService $importService
      */
     public function handle(ImportService $importService)
     {

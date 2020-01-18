@@ -24,7 +24,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup query()
