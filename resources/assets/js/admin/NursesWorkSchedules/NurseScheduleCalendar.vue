@@ -79,7 +79,7 @@
 
                             <div class="row">
                                 <div class="day-off">
-                                    <div v-if="! authIsAdmin && clickedOnDay">
+                                    <div v-if="! authIsAdmin && (clickedOnDay || addNewEventMainClicked)">
                                         <input id="addHolidays"
                                                type="checkbox"
                                                class="add-holidays-button"
@@ -94,7 +94,7 @@
                                 <div class="row">
                                     <div class="choose-event-date">
                                         <div v-if="addNewEventMainClicked">
-                                            <span class="modal-inputs-labels">Working on:</span>
+                                            <span class="modal-inputs-labels">{{this.addFromMainButtonDateLabel}}</span>
                                             <input type="date"
                                                    id="eventDate"
                                                    class="event-date-field"
@@ -554,6 +554,9 @@
                     : null;
 
                 if (this.addHolidays) {
+                    if (workDate === undefined || workDate === ''){
+                        this.throwWarningNotification("Day-off date is required");
+                    }
                     this.addHolidayEvents(workDate);
                 } else {
                     if (this.authIsAdmin) {
@@ -827,6 +830,10 @@
                     return `Add Event for ${this.dayInHumanLangForView} (${this.workEventDate})`
                 }
             },
+
+            addFromMainButtonDateLabel(){
+                return this.addNewEventMainClicked && this.addHolidays ? 'Day-off on:' : 'Working on:';
+            }
 
         },
 
