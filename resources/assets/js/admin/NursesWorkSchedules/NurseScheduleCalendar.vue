@@ -35,7 +35,7 @@
         <div class="calendar">
             <!-- Add new event - main button-->
             <div class="add-event-main col-md-3">
-                <button class="btn btn-primary" @click="openMainEventModal">Add Workday/Holiday</button>
+                <button class="btn btn-primary" @click="openMainEventModal">{{this.addMainEventButtonName}}</button>
             </div>
             <full-calendar ref="calendar"
                            :event-sources="eventSources"
@@ -815,6 +815,16 @@
         computed: {
             repeatFrequencyHasSelected() {
                 return this.eventFrequency !== null && this.eventFrequency.length !== 0;
+            },
+
+            addMainEventButtonName() {
+                if (this.authIsAdmin) {
+                    return 'Add Workday';
+                }
+                if (this.authIsNurse) {
+                    return 'Add Workday/Holiday';
+                }
+                return 'Add Workday';
             },
 
             modalTitle() {
