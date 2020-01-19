@@ -955,22 +955,10 @@
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
     }
 
-    .choose-event-date {
-        /*margin-left: -37px;*/
-    }
-
-    .modal-inputs {
-        /*display: inline-flex;*/
-        /*margin-left: -70px;*/
-    }
 
     .modal-footer {
         margin-top: 10%;
-    }
-
-    .start-end-time {
-        /*padding-top: 4%;*/
-        /*display: inline-block;*/
+        border-top: unset;
     }
 
     .start-time {
@@ -1081,17 +1069,7 @@
         border-radius: 5px;
     }
 
-    .modal-content {
-        /*min-width: 710px;*/
-    }
-
-    .modal-body-custom {
-        /*margin-top: 15px;*/
-        /*margin-left: 34px;*/
-    }
-
     .modal-inputs-labels {
-        /*display: inline-flex;*/
         color: #5b5858;
         font-weight: bolder;
     }
@@ -1124,6 +1102,10 @@
 
     .modal-backdrop.fade {
         opacity: 0.1;
+    }
+
+    #addWorkEvent > div.modal-dialog > div > div.modal-header{
+        border-bottom: unset;
     }
 </style>
 
