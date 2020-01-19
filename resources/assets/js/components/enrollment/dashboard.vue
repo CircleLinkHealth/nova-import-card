@@ -126,7 +126,8 @@
                                                     <label>
                                                         <input type="checkbox" :value="member.id"
                                                                style="position: relative"
-                                                               v-model="confirmed_family_members">
+                                                               v-model="confirmed_family_members"
+                                                        >
                                                         <span>{{member.first_name}} {{member.last_name}}</span>
                                                         <div style="padding-left: 10px">
                                                             <div><strong>Addresses:</strong>{{member.addresses.value}}
@@ -1015,6 +1016,9 @@
                     .then(response => {
                         this.family_loading = false;
                         this.suggested_family_members = response.data.suggested_family_members;
+                        this.confirmed_family_members = response.data.suggested_family_members.map(function (member){
+                            return member.is_confirmed ? member.id : null;
+                        }).filter(x => !!x);
                     })
                     .catch(err => {
                         this.family_loading = false;

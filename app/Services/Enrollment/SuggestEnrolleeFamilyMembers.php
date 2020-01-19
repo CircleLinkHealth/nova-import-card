@@ -28,10 +28,10 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
 
     private function constructQuery()
     {
-        $phonesQuery = Enrollee::where('id', '!=', $this->enrolleeId)
+        $phonesQuery = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
                                ->searchPhones($this->enrollee->getPhonesE164AsString());
 
-        $addressesQuery = Enrollee::where('id', '!=', $this->enrolleeId)
+        $addressesQuery = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
                                   ->searchAddresses($this->enrollee->getAddressesAsString());
 
         return $phonesQuery->union($addressesQuery);
@@ -44,6 +44,7 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
                 'id'         => $e->id,
                 'first_name' => $e->first_name,
                 'last_name'  => $e->last_name,
+                'is_confirmed' => $this->enrollee->confirmedFamilyMembers->contains('id', $e->id),
                 'phones'     => [
                     'value' => $e->getPhonesAsString(),
                 ],

@@ -31,11 +31,12 @@ class AttachEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         //make sure to check if duplicate entry exists,
         //also attach the inverse for each on
         $this->enrollee->attachFamilyMembers($ids);
+
+        $this->attachInverseRelationship($ids);
     }
 
     private function assignToCareAmbassador($ids)
     {
-
         if (empty($ids)) {
             return false;
         }
@@ -46,5 +47,23 @@ class AttachEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
             'care_ambassador_user_id' => auth()->user()->id,
             'status'                  => Enrollee::TO_CALL,
         ]);
+    }
+
+    private function attachInverseRelationship($ids)
+    {
+        if (empty($ids)) {
+            return false;
+        }
+        if ( ! is_array($ids)) {
+            $ids = explode(',', $ids);
+        }
+
+        Enrollee::whereIn('id', $ids)
+                ->get()
+                ->each(function (Enrollee $e) {
+                    if (! $e->confirmedFamilyMembers()->where('id', $this->enrollee->id)->exists()) {
+                        $e->attachFamilyMembers($this->enrollee->id);
+                    }
+                });
     }
 }

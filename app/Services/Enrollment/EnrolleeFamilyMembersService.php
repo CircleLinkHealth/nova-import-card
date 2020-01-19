@@ -29,6 +29,6 @@ abstract class EnrolleeFamilyMembersService
 
     protected function getModel()
     {
-        $this->enrollee = Enrollee::findOrFail($this->enrolleeId);
+        $this->enrollee = Enrollee::with(['confirmedFamilyMembers'])->findOrFail($this->enrolleeId);
     }
 }
