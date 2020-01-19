@@ -6,14 +6,13 @@
 
 namespace Tests\Unit;
 
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Customer\Entities\Practice;
-use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class EnrolleeFamilyTest extends TestCase
 {
-    use UserHelpers;
+    use \App\Traits\Tests\UserHelpers;
 
     protected $practice;
     protected $provider;
