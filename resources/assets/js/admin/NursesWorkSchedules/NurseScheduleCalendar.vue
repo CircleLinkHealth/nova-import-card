@@ -554,7 +554,7 @@
                     : null;
 
                 if (this.addHolidays) {
-                    if (workDate.length === 0){
+                    if (workDate.length === 0) {
                         this.loader = false;
                         this.throwWarningNotification("Day-off date is required");
                         return;
@@ -833,7 +833,7 @@
                 }
             },
 
-            addFromMainButtonDateLabel(){
+            addFromMainButtonDateLabel() {
                 return this.addNewEventMainClicked && this.addHolidays ? 'Day-off on:' : 'Working on:';
             }
 
@@ -1110,6 +1110,10 @@
         font-weight: bolder;
         font-size: 18px;
         padding-top: 20px;
+    }
+
+    .modal-backdrop.fade {
+        opacity: 0.1;
     }
 </style>
 
