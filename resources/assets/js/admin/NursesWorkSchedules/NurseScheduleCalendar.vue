@@ -554,8 +554,10 @@
                     : null;
 
                 if (this.addHolidays) {
-                    if (workDate === undefined || workDate === ''){
+                    if (workDate.length === 0){
+                        this.loader = false;
                         this.throwWarningNotification("Day-off date is required");
+                        return;
                     }
                     this.addHolidayEvents(workDate);
                 } else {
