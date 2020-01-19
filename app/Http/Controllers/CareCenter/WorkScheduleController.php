@@ -71,7 +71,7 @@ class WorkScheduleController extends Controller
         if ($auth->isAdmin()) {
             $nurses = $this->getActiveNurses();
 
-            if (empty($nurses)) {
+            if (empty($nurses)) { //@todo:take care of this tanji-like code block
                 return response()->json([
                     'errors' => 'Validation Failed',
                     'validator' => 'There are currently no working Care Coaches in the database',
@@ -113,14 +113,15 @@ class WorkScheduleController extends Controller
         $workScheduleData = [];
         User::ofType('care-center')
             ->with('nurseInfo.windows', 'nurseInfo.holidays')
+            ->whereHas('nurseInfo.windows')
             ->whereHas('nurseInfo', function ($q) {
                 $q->where('status', 'active');
             })
-            ->chunk(100, function ($nurses) use (&$workScheduleData) {
+            ->chunk(50, function ($nurses) use (&$workScheduleData) {
                 $workScheduleData[] = $nurses;
             });
 
-        return $workScheduleData[0] ?? [];
+        return collect($workScheduleData)->flatten() ?? [];
     }
 
     /**
@@ -537,6 +538,13 @@ class WorkScheduleController extends Controller
                 strtolower(clhDayOfWeekToDayName($workScheduleData['day_of_week'])) => $workScheduleData['work_hours'],
             ]
         );
+    }
+
+    public function runSeeder()
+    { //@todo:delete this after testing
+        $seeder = app(\CalendarSeeder::class);
+        $seeder->run();
+        return 'Seeded Was Successful';
     }
 
     public function storeHoliday(Request $request)

@@ -37,7 +37,7 @@ class CalendarSeeder extends Seeder
 
         if ($practice) {
             //create ACTIVE nurse
-            $users = factory(User::class, 15)->create(['saas_account_id' => $practice->saas_account_id])->each(function ($nurse) use ($practice) {
+            $users = factory(User::class, 8)->create(['saas_account_id' => $practice->saas_account_id])->each(function ($nurse) use ($practice) {
                 $nurse->username = 'nurse';
                 $nurse->auto_attach_programs = true;
                 $nurse->email = 'nurse@example.org';
@@ -46,15 +46,15 @@ class CalendarSeeder extends Seeder
                 $nurse->password = Hash::make('hello');
                 $nurse->save();
                 $nurse->nurseInfo()->create();
-                $nurse->nurseInfo()->update(['status' => 'active']);
-                $this->command->info("nurse user $nurse->display_name seeded");
+//                $this->command->info("nurse user $nurse->display_name seeded");
             });
 
-            $this->command->info("Users Created");
-
+//            $this->command->info("Users Created");
             foreach ($users as $user) {
                 $date = \Carbon\Carbon::parse(now())->copy()->subDays(random_int(1, 6))->toDateString();
                 $dayOfWeek = \Carbon\Carbon::parse($date)->dayOfWeek;
+                $user->nurseInfo()->update(['status' => 'active']);
+
                 $window = $user->nurseInfo->windows()->create([
                     'nurse_info_id' => $user->id,
                     'date' => $date,
@@ -92,9 +92,9 @@ class CalendarSeeder extends Seeder
 
                 $recurringEventsToSave = $this->calendarService->createRecurringEvents($nurseInfoId, $window);
                 CreateCalendarRecurringEventsJob::dispatch($recurringEventsToSave, $window, null, $windowData['work_hours'])->onQueue('low');
-                $this->command->info("nurse id $nurseInfoId seeded");
+//                $this->command->info("nurse id $nurseInfoId seeded");
             }
-            $this->command->info("Calendar Seeder DONE!!");
+//            $this->command->info("Calendar Seeder DONE!!");
         }
     }
 }
