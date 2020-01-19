@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "63db2e95a8f471dcd2f5b689677a0490",
+    "content-hash": "ad304a7df1e1b54e18284df7b26637db",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.1",
+            "version": "3.133.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "27b4f0fbdf34a88df6788ffdefc3620511894676"
+                "reference": "49ee9aad9b7918feb5a0eab79e0f7c08a9696fe0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/27b4f0fbdf34a88df6788ffdefc3620511894676",
-                "reference": "27b4f0fbdf34a88df6788ffdefc3620511894676",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/49ee9aad9b7918feb5a0eab79e0f7c08a9696fe0",
+                "reference": "49ee9aad9b7918feb5a0eab79e0f7c08a9696fe0",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-01-16T21:19:17+00:00"
+            "time": "2020-01-17T19:15:02+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -774,11 +774,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.4.1",
+            "version": "dev-CPM-1793-ca-family-members",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "395b7bae045fd9363a3dd6065cef5efe6f9a9e3b"
+                "reference": "984db65a55ded5cc6e88c9ec5766dc4b814dd8dc"
             },
             "type": "laravel-module",
             "extra": {
@@ -804,15 +804,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T17:27:36+00:00"
+            "time": "2020-01-18T10:50:53+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.3",
+            "version": "dev-CPM-1793-CA-family-members",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "aa2aee7cfc3e99f1892a8aaad1ca4550ffe87061"
+                "reference": "98fe3d1ed2f004cd58ee1a493110d867cc6cabdf"
             },
             "type": "laravel-module",
             "extra": {
@@ -834,7 +834,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T10:53:36+00:00"
+            "time": "2020-01-19T21:33:51+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -879,11 +879,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v1.2.2",
+            "version": "dev-CPM-1793-ca-family-members",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "7dc84e0db127d4ccdf5cab57269749e68f946e98"
+                "reference": "263ea6112392e6d2e2398bfe10c15885f442e160"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -908,7 +908,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-18T04:36:44+00:00"
+            "time": "2020-01-19T22:14:13+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -11194,16 +11194,16 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.9.4",
+            "version": "1.9.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "579bb7356d91f9456ccd505f24ca8b667966a0a7"
+                "reference": "b2c28789e80a97badd14145fda39b545d83ca3ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/579bb7356d91f9456ccd505f24ca8b667966a0a7",
-                "reference": "579bb7356d91f9456ccd505f24ca8b667966a0a7",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/b2c28789e80a97badd14145fda39b545d83ca3ef",
+                "reference": "b2c28789e80a97badd14145fda39b545d83ca3ef",
                 "shasum": ""
             },
             "require": {
@@ -11238,7 +11238,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2019-12-15T19:12:40+00:00"
+            "time": "2020-01-17T21:11:47+00:00"
         },
         {
             "name": "nwidart/laravel-modules",
@@ -12921,16 +12921,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.24.3",
+            "version": "v3.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "94e101924b84435585896f4ea7c4092182a91f23"
+                "reference": "e8a451a4cb1d774c62492ef44211f7589649e529"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/94e101924b84435585896f4ea7c4092182a91f23",
-                "reference": "94e101924b84435585896f4ea7c4092182a91f23",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/e8a451a4cb1d774c62492ef44211f7589649e529",
+                "reference": "e8a451a4cb1d774c62492ef44211f7589649e529",
                 "shasum": ""
             },
             "type": "library",
@@ -12974,7 +12974,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2019-11-18T00:04:23+00:00"
+            "time": "2020-01-17T21:39:28+00:00"
         },
         {
             "name": "symfony/dom-crawler",
@@ -13557,6 +13557,9 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/core-module": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
