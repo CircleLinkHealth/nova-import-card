@@ -291,7 +291,8 @@ Route::group(['middleware' => 'auth'], function () {
             });
 
             Route::group(['prefix' => 'instructions'], function () {
-                Route::get('{instructionId}', 'ProblemInstructionController@instruction')->middleware('permission:instruction.read');
+                Route::get('{instructionId}',
+                    'ProblemInstructionController@instruction')->middleware('permission:instruction.read');
                 Route::put('{id}', 'ProblemInstructionController@edit')->middleware('permission:instruction.update');
                 Route::get('', 'ProblemInstructionController@index')->middleware('permission:instruction.read');
                 Route::post('', 'ProblemInstructionController@store')->middleware('permission:instruction.create');
@@ -395,7 +396,7 @@ Route::group(['middleware' => 'auth'], function () {
             'middleware' => [
                 'permission:ccd-import',
             ],
-            'prefix' => 'ccd-importer',
+            'prefix'     => 'ccd-importer',
         ], function () {
             Route::get('imported-medical-records', [
                 'uses' => 'ImporterController@records',
@@ -415,7 +416,8 @@ Route::group(['middleware' => 'auth'], function () {
         });
     });
 
-    Route::get('user/{patientId}/care-plan', 'API\PatientCarePlanController@index')->middleware(['permission:careplan.read', 'cacheResponse']);
+    Route::get('user/{patientId}/care-plan',
+        'API\PatientCarePlanController@index')->middleware(['permission:careplan.read', 'cacheResponse']);
 
     Route::get('user/{user}/care-team', [
         'uses' => 'API\CareTeamController@index',
@@ -634,7 +636,7 @@ Route::group(['middleware' => 'auth'], function () {
         'middleware' => [
             'permission:ccd-import',
         ],
-        'prefix' => 'ccd-importer',
+        'prefix'     => 'ccd-importer',
     ], function () {
         Route::get('create', [
             'uses' => 'ImporterController@create',
@@ -791,7 +793,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('summary', [
             'uses' => 'Patient\PatientController@showPatientSummary',
             'as'   => 'patient.summary',
-        ])->middleware(['permission:patient.read,patientProblem.read,misc.read,observation.read,patientSummary.read', 'cacheResponse']);
+        ])->middleware([
+            'permission:patient.read,patientProblem.read,misc.read,observation.read,patientSummary.read',
+            'cacheResponse',
+        ]);
         Route::get('summary-biochart', [
             'uses' => 'ReportsController@biometricsCharts',
             'as'   => 'patient.charts',
@@ -907,7 +912,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{showAll?}', [
                 'uses' => 'NotesController@index',
                 'as'   => 'patient.note.index',
-            ])->middleware(['permission:patient.read,provider.read,note.read,appointment.read,activity.read', 'cacheResponse']);
+            ])->middleware([
+                'permission:patient.read,provider.read,note.read,appointment.read,activity.read',
+                'cacheResponse',
+            ]);
             Route::get('view/{noteId}', [
                 'uses' => 'NotesController@show',
                 'as'   => 'patient.note.view',
@@ -978,7 +986,7 @@ Route::group(['middleware' => 'auth'], function () {
             'auth',
             'permission:admin-access,practice-admin',
         ],
-        'prefix' => 'admin',
+        'prefix'     => 'admin',
     ], function () {
         Route::get('opcache', 'Admin\OPCacheGUIController@index');
 
@@ -1035,7 +1043,7 @@ Route::group(['middleware' => 'auth'], function () {
             'auth',
             'permission:admin-access',
         ],
-        'prefix' => 'admin',
+        'prefix'     => 'admin',
     ], function () {
         Route::group(['prefix' => 'offline-activity-time-requests'], function () {
             Route::get('', [
@@ -1244,7 +1252,8 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:ccd-import');
         });
 
-        Route::get('saas-accounts/create', 'Admin\CRUD\SaasAccountController@create')->middleware('permission:saas.create');
+        Route::get('saas-accounts/create',
+            'Admin\CRUD\SaasAccountController@create')->middleware('permission:saas.create');
         Route::post('saas-accounts', 'Admin\CRUD\SaasAccountController@store')->middleware('permission:saas.create');
 
         Route::get(
@@ -1840,7 +1849,7 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'care-center',
     ], function () {
         Route::resource('work-schedule', 'CareCenter\WorkScheduleController', [
-            'only' => [
+            'only'  => [
                 'index',
                 'store',
             ],
@@ -2047,8 +2056,14 @@ Route::group([
         'as'   => 'enrollment.sms.reply',
     ]);
 
-    Route::group(['middleware' => 'auth'], function () {
-        Route::get('/{previousEnrolleeId?}', [
+    Route::group([
+        'middleware' =>
+            [
+                'auth',
+                'enrollmentCenter',
+            ],
+    ], function () {
+        Route::get('/', [
             'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
             'as'   => 'enrollment-center.dashboard',
         ])->middleware('permission:enrollee.read,enrollee.update');
