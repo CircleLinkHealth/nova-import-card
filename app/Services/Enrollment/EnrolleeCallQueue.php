@@ -7,15 +7,15 @@
 namespace App\Services\Enrollment;
 
 
+use App\CareAmbassador;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 class EnrolleeCallQueue
 {
-    static function getNext(){
+    static function getNext(CareAmbassador $careAmbassador)
+    {
 
-        $careAmbassador = auth()->user()->careAmbassador;
-
-        $queue          = \Cache::has("care_ambassador_{$careAmbassador->id}_queue")
+        $queue = \Cache::has("care_ambassador_{$careAmbassador->id}_queue")
             ? \Cache::get("care_ambassador_{$careAmbassador->id}_queue")
             : [];
 
@@ -63,10 +63,28 @@ class EnrolleeCallQueue
             }
         }
 
+        if ($enrollee) {
+            //mark as engaged to prevent double dipping
+            $enrollee->status = Enrollee::ENGAGED;
+            $enrollee->save();
+        }
+
         return $enrollee;
     }
 
-    static function updateQueue(){
+    static function update(CareAmbassador $careAmbassador, Enrollee $enrollee, $confirmedFamilyMembers)
+    {
+        $queue = \Cache::has("care_ambassador_{$careAmbassador->id}_queue")
+            ? \Cache::get("care_ambassador_{$careAmbassador->id}_queue")
+            : [];
 
+        $queue = collect(array_merge($queue,
+            explode(',', $confirmedFamilyMembers)))->filter()->unique()->toArray();
+
+        if ( ! empty($queue) && in_array($enrollee->id, $queue)) {
+            unset($queue[array_search($enrollee->id, $queue)]);
+        }
+
+        \Cache::put("care_ambassador_{$careAmbassador->id}_queue", $queue, 10);
     }
 }

@@ -102,6 +102,8 @@ class EnrollmentCenterController extends Controller
 
         ImportConsentedEnrollees::dispatch([$enrollee->id], $enrollee->batch);
 
+        EnrolleeCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
+
         return redirect()->route('enrollment-center.dashboard');
     }
 
@@ -109,23 +111,12 @@ class EnrollmentCenterController extends Controller
     {
         $careAmbassador = auth()->user()->careAmbassador;
 
-        if ( ! $careAmbassador) {
-            return view('errors.403', [
-                'message'   => 'You need to be a Care Ambassador to acccess this page.',
-                'hideLinks' => true,
-            ]);
-        }
-
-        $enrollee = EnrolleeCallQueue::getNext();
+        $enrollee = EnrolleeCallQueue::getNext($careAmbassador);
 
         if (null == $enrollee) {
             //no calls available
             return view('enrollment-ui.no-available-calls');
         }
-
-        //mark as engaged to prevent double dipping
-        $enrollee->status = Enrollee::ENGAGED;
-        $enrollee->save();
 
         return view(
             'enrollment-ui.dashboard',
@@ -134,7 +125,6 @@ class EnrollmentCenterController extends Controller
                 'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
                 'script'   => TrixField::careAmbassador($enrollee->lang)->first(),
                 'provider' => $enrollee->provider,
-                //                'queue'    => $queue
             ]
         );
     }
@@ -188,6 +178,8 @@ class EnrollmentCenterController extends Controller
             unset($queue[array_search($enrollee->id, $queue)]);
         }
 
+        EnrolleeCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
+
         return redirect()->route('enrollment-center.dashboard');
     }
 
@@ -233,17 +225,7 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
-
-        $queue = \Cache::has("care_ambassador_{$careAmbassador->id}_queue")
-            ? \Cache::get("care_ambassador_{$careAmbassador->id}_queue")
-            : [];
-        $queue = collect(array_merge($queue,
-            explode(',', $request->input('confirmed_family_members'))))->filter()->unique()->toArray();
-        if ( ! empty($queue) && in_array($enrollee->id, $queue)) {
-            unset($queue[array_search($enrollee->id, $queue)]);
-        }
-
-        \Cache::put("care_ambassador_{$careAmbassador->id}_queue", $queue, 10);
+        EnrolleeCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
 
         return redirect()->route('enrollment-center.dashboard');
     }
