@@ -661,9 +661,6 @@
     import CoPayEs from './call-scripts/copay-es';
     import NoCoPayEs from './call-scripts/no-copay-es';
     import Loader from '../loader.vue';
-
-    import SuggestedFamilyList from './components/suggested-family';
-
     //Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
     //for some reason i could not pass these as props from blade.php
@@ -684,7 +681,6 @@
             'copay-es': CoPayEs,
             'no-copay-es': NoCoPayEs,
             'loader': Loader,
-            SuggestedFamilyList
         },
         computed: {
             enrolleeId: function () {
@@ -1183,14 +1179,13 @@
     }
 
     .sidebar-demo-list {
-        height: 24px;
+        min-height: 24px;
         width: 278px;
         font-size: 16px;
         padding-left: 15px;
         line-height: 20px !important;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
+        text-overflow: initial;
+        overflow: auto;
     }
 
     .valid {

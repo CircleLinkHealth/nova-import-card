@@ -22,11 +22,8 @@ Vue.use(VueAxios, axios);
 Vue.config.debug = true;
 
 const EnrollmentDashboard = () => import(/* webpackChunkName: "chunk-enrollment" */ './components/enrollment/dashboard');
-const SuggestedFamily = () => import(/* webpackChunkName: "chunk-enrollment" */ './components/enrollment/components/suggested-family');
 
 Vue.component('enrollment-dashboard', EnrollmentDashboard);
-Vue.component('suggested-family', SuggestedFamily);
-
 
 const App = new Vue({
     el: '#app'
