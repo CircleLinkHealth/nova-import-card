@@ -343,10 +343,6 @@ class WorkScheduleController extends Controller
         $isAdmin = auth()->user()->isAdmin();
         $nurseInfoId = $isAdmin ? $nurseInfoId : auth()->user()->nurseInfo->id;
 
-//        if ( ! $nurseInfoId) {
-//            $nurseInfoId = auth()->user()->nurseInfo->id;
-//        }
-
         if ($validator->fails()) {
             return response()->json([
                 'errors' => 'Validation Failed',
