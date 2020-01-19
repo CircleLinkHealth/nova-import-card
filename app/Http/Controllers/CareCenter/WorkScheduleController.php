@@ -540,13 +540,6 @@ class WorkScheduleController extends Controller
         );
     }
 
-    public function runSeeder()
-    { //@todo:delete this after testing
-        $seeder = app(\CalendarSeeder::class);
-        $seeder->run();
-        return 'Seeded Was Successful';
-    }
-
     public function storeHoliday(Request $request)
     {
         $user = auth()->user();
