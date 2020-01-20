@@ -6,9 +6,9 @@
 
 namespace App\Adapters\EligibilityCheck;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
-use App\Services\Eligibility\Entities\Problem;
+use CircleLinkHealth\Eligibility\Entities\Problem;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;

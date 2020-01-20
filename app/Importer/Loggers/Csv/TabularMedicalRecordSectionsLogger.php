@@ -12,7 +12,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Search\ProviderByName;
-use App\Services\Eligibility\Entities\Problem as ProblemEntity;
+use CircleLinkHealth\Eligibility\Entities\Problem as ProblemEntity;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemCodeLog;

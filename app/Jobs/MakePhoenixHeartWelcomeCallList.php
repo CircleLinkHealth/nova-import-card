@@ -12,7 +12,7 @@ use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use App\Repositories\Cache\UserNotificationList;
-use App\Services\Eligibility\Entities\Problem;
+use CircleLinkHealth\Eligibility\Entities\Problem;
 use CircleLinkHealth\Eligibility\EligibilityChecker;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;

@@ -6,6 +6,7 @@
 
 namespace App\Services\Eligibility\Adapters;
 
+use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 
 class JsonMedicalRecordEligibilityJobToCsvAdapter

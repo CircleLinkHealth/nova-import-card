@@ -6,12 +6,12 @@
 
 namespace App\Contracts;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 
 interface HasMedicalRecord
 {
     /**
-     * @return MedicalRecord
+     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\\CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord
      */
     public function getMedicalRecord(): MedicalRecord;
 }

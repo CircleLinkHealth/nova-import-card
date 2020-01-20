@@ -19,7 +19,7 @@ class Problems
 
         foreach ($this->getProblems() as $problem) {
             if ( ! array_key_exists('events', $problem)) {
-                $problems[] = \App\Services\Eligibility\Entities\Problem::create(['code' => $problem['code'], 'code_system_name' => $problem['codeset'], 'name' => $problem['name']]);
+                $problems[] = \CircleLinkHealth\Eligibility\Entities\Problem::create(['code' => $problem['code'], 'code_system_name' => $problem['codeset'], 'name' => $problem['name']]);
 
                 continue;
             }
@@ -34,7 +34,7 @@ class Problems
                         continue;
                     }
 
-                    $problems[] = \App\Services\Eligibility\Entities\Problem::create(['code' => $diagnosis['code'], 'code_system_name' => $diagnosis['codeset'], 'name' => $diagnosis['name']]);
+                    $problems[] = \CircleLinkHealth\Eligibility\Entities\Problem::create(['code' => $diagnosis['code'], 'code_system_name' => $diagnosis['codeset'], 'name' => $diagnosis['name']]);
 
                     continue 3;
                 }
