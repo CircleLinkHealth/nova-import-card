@@ -43,19 +43,19 @@ class CheckForYesterdaysActivitiesAndUpdateContactWindows extends Command
     {
         $date = $this->argument('forDate') ?? null;
 
-        $dateToCheck = ! empty($date)
+        $dateToCheck = !empty($date)
             ? Carbon::parse($date)
             : Carbon::parse(now())->startOfDay()->copy()->subDay(1)->toDateString();
 
         NurseContactWindow::with('nurse')
             ->where('date', $dateToCheck)
             ->whereHas('nurse', function ($q) {
-                $q->where('status', 'active'); //@todo: case of nurse becoming active from inactivity
+                $q->where('status', 'active');
             })->chunk(100, function ($windows) use ($dateToCheck) {
                 collect($windows)->map(function ($window) use ($dateToCheck) {
                     $userId = $window->nurse->user_id;
                     $date = Carbon::parse($dateToCheck)->toDateTimeString();
-
+//@todo: We need to check if all hrs commited are worked and not just if nurse worked.
                     $activitiesExist = PageTimer::where('provider_id', $userId)
                         ->where([
                             ['start_time', '!=', '0000-00-00 00:00:00'],
@@ -69,7 +69,7 @@ class CheckForYesterdaysActivitiesAndUpdateContactWindows extends Command
                     }
 
                     $window->update([
-                        'validated'  => $validated,
+                        'validated' => $validated,
                         'updated_at' => Carbon::parse(now())->toDateTimeString(),
                     ]);
                 });

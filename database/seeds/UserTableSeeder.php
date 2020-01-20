@@ -46,6 +46,21 @@ class UserTableSeeder extends Seeder
                 $this->command->info("nurse user $nurse->display_name seeded");
             });
 
+            //create ACTIVE nurse
+            factory(User::class, 1)->create(['saas_account_id' => $practice->saas_account_id])->each(function ($nurse) use ($practice) {
+                $nurse->username = 'nurse';
+                $nurse->auto_attach_programs = true;
+                $nurse->email = 'nurse@example.org';
+                $nurse->attachPractice($practice->id, [Role::whereName('care-center')->value('id')]);
+                $nurse->program_id = $practice->id;
+                $nurse->password = Hash::make('hello');
+                $nurse->save();
+                $nurse->nurseInfo()->create();
+                $nurse->nurseInfo()->update(['status'=>'active']);
+
+                $this->command->info("nurse user $nurse->display_name seeded");
+            });
+
             $provider                  = $this->createUser($practice, 'provider');
             $provider->username        = 'provider';
             $provider->auto_attach_programs = true;

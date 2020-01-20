@@ -8,6 +8,7 @@ namespace App\Http\Controllers\CareCenter;
 
 use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CalendarRange;
 use App\Jobs\CreateCalendarRecurringEventsJob;
 use App\Traits\ValidatesWorkScheduleCalendar;
 use Carbon\Carbon;
@@ -16,8 +17,10 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\WorkHours;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\Rule;
 use Validator;
 
@@ -59,7 +62,7 @@ class WorkScheduleController extends Controller
         $this->fullCalendarService = $fullCalendarService;
     }
 
-    public function calendarEvents(Request $request)
+    public function calendarEvents(CalendarRange $request)
     {
         $startDate = Carbon::parse($request->input('start'))->toDateString();
         $endDate = Carbon::parse($request->input('end'))->toDateString();
@@ -68,6 +71,14 @@ class WorkScheduleController extends Controller
 
         if ($auth->isAdmin()) {
             $nurses = $this->getActiveNurses();
+
+            if (empty($nurses)) { //@todo:take care of this tanji-like code block
+                return response()->json([
+                    'errors' => 'Validation Failed',
+                    'validator' => 'There are currently no working Care Coaches in the database',
+                ], 422);
+            }
+
             $windowData = $this->fullCalendarService->prepareCalendarDataForAllActiveNurses($nurses, $startDate, $endDate);
             $holidays = $this->fullCalendarService->getHolidays($nurses, $startDate, $endDate)->toArray();
             $dataForDropdown = $this->fullCalendarService->getDataForDropdown($nurses);
@@ -95,19 +106,23 @@ class WorkScheduleController extends Controller
         ], 200);
     }
 
+    /**
+     * @return Collection|mixed
+     */
     public function getActiveNurses()
     {
         $workScheduleData = [];
         User::ofType('care-center')
             ->with('nurseInfo.windows', 'nurseInfo.holidays')
+            ->whereHas('nurseInfo.windows')
             ->whereHas('nurseInfo', function ($q) {
                 $q->where('status', 'active');
             })
-            ->chunk(100, function ($nurses) use (&$workScheduleData) {
+            ->chunk(50, function ($nurses) use (&$workScheduleData) {
                 $workScheduleData[] = $nurses;
             });
 
-        return $workScheduleData[0] ?? collect();
+        return collect($workScheduleData)->flatten() ?? [];
     }
 
     /**
@@ -323,15 +338,12 @@ class WorkScheduleController extends Controller
             $inputDate = $workScheduleData['date'];
             $workScheduleData['day_of_week'] = carbonToClhDayOfWeek(Carbon::parse($inputDate)->dayOfWeek);
         }
+
         $validator = $this->validatorScheduleData($workScheduleData);
 
         $updateCollisions = null === $workScheduleData['updateCollisions'] ? false : $workScheduleData['updateCollisions'];
         $isAdmin = auth()->user()->isAdmin();
         $nurseInfoId = $isAdmin ? $nurseInfoId : auth()->user()->nurseInfo->id;
-
-//        if ( ! $nurseInfoId) {
-//            $nurseInfoId = auth()->user()->nurseInfo->id;
-//        }
 
         if ($validator->fails()) {
             return response()->json([
@@ -346,7 +358,7 @@ class WorkScheduleController extends Controller
         $holidayExists = Holiday::where('nurse_info_id', $nurseInfoId)->where('date', $workScheduleData['date'])->exists();
 
         if ($windowExists || $holidayExists || $invalidWorkHoursCommitted || ('does_not_repeat' !== $workScheduleData['repeat_freq'] && null === $workScheduleData['until'])) {
-            $validationResponse = $this->returnValidationResponse($windowExists, $validator, $invalidWorkHoursCommitted, $workScheduleData['repeat_freq'], $workScheduleData['until'], $holidayExists);
+            $validationResponse = $this->returnValidationResponse($windowExists, $validator, $invalidWorkHoursCommitted, $workScheduleData, $holidayExists);
 
             return response()->json([
                 'errors' => 'Validation Failed',

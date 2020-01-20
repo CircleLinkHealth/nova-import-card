@@ -35,7 +35,7 @@
         <div class="calendar">
             <!-- Add new event - main button-->
             <div class="add-event-main col-md-3">
-                <button class="btn btn-primary" @click="openMainEventModal">Add Workday/Holiday</button>
+                <button class="btn btn-primary" @click="openMainEventModal">{{this.addMainEventButtonName}}</button>
             </div>
             <full-calendar ref="calendar"
                            :event-sources="eventSources"
@@ -79,7 +79,7 @@
 
                             <div class="row">
                                 <div class="day-off">
-                                    <div v-if="! authIsAdmin && clickedOnDay">
+                                    <div v-if="! authIsAdmin && (clickedOnDay || addNewEventMainClicked)">
                                         <input id="addHolidays"
                                                type="checkbox"
                                                class="add-holidays-button"
@@ -94,7 +94,7 @@
                                 <div class="row">
                                     <div class="choose-event-date">
                                         <div v-if="addNewEventMainClicked">
-                                            <span class="modal-inputs-labels">Working on:</span>
+                                            <span class="modal-inputs-labels">{{this.addFromMainButtonDateLabel}}</span>
                                             <input type="date"
                                                    id="eventDate"
                                                    class="event-date-field"
@@ -143,24 +143,34 @@
                                     <vue-select :options="frequency"
                                                 :class="{disable: addHolidays}"
                                                 :disabled="addHolidays"
-                                                style="width: 165px;"
+                                                style="width: 188px;"
                                                 v-model="eventFrequency"
                                                 placeholder="Doesn't Repeat">
                                     </vue-select>
                                 </div>
 
 
-                                <div v-if="repeatFrequencyHasSelected" class="repeat-until">
-                                    <span class="modal-inputs-labels">Keep repeating until:</span>
-                                    <input type="date"
-                                           :class="{disable: !repeatFrequencyHasSelected || addHolidays}"
-                                           :disabled="!repeatFrequencyHasSelected || addHolidays"
-                                           class="repeat-until-input"
-                                           name="until"
-                                           :min="calculateMinDate()"
-                                           v-model="repeatUntil">
-                                </div>
+                                <div v-if="repeatFrequencyHasSelected">
+                                    <div class="repeat-until">
+                                        <span class="modal-inputs-labels">Keep repeating until:</span>
+                                        <input type="date"
+                                               :class="{disable: !repeatFrequencyHasSelected || addHolidays}"
+                                               :disabled="!repeatFrequencyHasSelected || addHolidays"
+                                               class="repeat-until-input"
+                                               name="until"
+                                               :min="calculateMinDate()"
+                                               :max="calculateMaxDate()"
+                                               v-model="repeatUntil">
+                                    </div>
 
+                                    <div class="exclude-weekends">
+                                        <input id="excludeWeekends"
+                                               type="checkbox"
+                                               class="exclude-weekends"
+                                               v-model="excludeWeekends">
+                                        Exclude Weekends
+                                    </div>
+                                </div>
                             </div>
 
 
@@ -180,7 +190,6 @@
                             </div>
                         </div>
                         <!-- Filters End-->
-
                         <div class="modal-footer">
                             <button v-if="clickedToViewEvent"
                                     type="button"
@@ -257,6 +266,7 @@
 
         data() {
             return {
+                excludeWeekends: true,
                 dataForDropdown: [],
                 workHours: [],
                 holidays: [],
@@ -308,8 +318,16 @@
                                     self.loader = false;
                                     callback(eventsFiltered);
                                 })).catch((error) => {
-                                this.errors = error;
-                                console.log(this.errors);
+                                if (error.response.status === 422) {
+                                    const e = error.response.data;
+                                    if (e.hasOwnProperty('message')) {
+                                        alert(e.message);
+                                    } else {
+                                        alert(e.validator);
+                                    }
+                                    self.loader = false;
+                                }
+                                console.log(error);
                             });
                         },
                     },
@@ -373,10 +391,6 @@
                     {
                         label: 'Repeat Weekly',
                         value: 'weekly'
-                    },
-                    {
-                        label: 'Repeat For Weekdays',
-                        value: 'daily'
                     },
                 ],
 
@@ -452,6 +466,21 @@
                 });
             },
 
+            formatDateForPlaceHolder(date) {
+                var d = new Date(date),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
+
+                if (month.length < 2)
+                    month = '0' + month;
+                if (day.length < 2)
+                    day = '0' + day;
+
+                return [month, day, year].join('/');
+            },
+
+
             formatDate(date) {
                 var d = new Date(date),
                     month = '' + (d.getMonth() + 1),
@@ -525,6 +554,11 @@
                     : null;
 
                 if (this.addHolidays) {
+                    if (workDate.length === 0) {
+                        this.loader = false;
+                        this.throwWarningNotification("Day-off date is required");
+                        return;
+                    }
                     this.addHolidayEvents(workDate);
                 } else {
                     if (this.authIsAdmin) {
@@ -606,6 +640,7 @@
             updateOrSaveEventsInDb(nurseId, workDate, repeatFreq, repeatUntil, validatedDefault, updateCollisionWindow = null) {
                 const updateCollidedWindows = updateCollisionWindow === null ? false : updateCollisionWindow;
                 const nurseInfoId = !!nurseId ? nurseId : '';
+                const excludeWeekends = repeatFreq !== 'does_not_repeat' && this.excludeWeekends;
                 axios.post('/care-center/work-schedule', {
                     nurse_info_id: nurseInfoId,
                     date: workDate,
@@ -616,7 +651,8 @@
                     repeat_freq: repeatFreq,
                     until: repeatUntil,
                     validated: validatedDefault,
-                    updateCollisions: updateCollidedWindows
+                    updateCollisions: updateCollidedWindows,
+                    excludeWkds: excludeWeekends
                 }).then((response => {
                         this.refetchEvents();
                         this.loader = false;
@@ -717,6 +753,8 @@
                 this.addHolidays = false;
                 this.selectedDate = '';
                 this.clickedOnDay = false;
+                this.excludeWeekends = true;
+                this.repeatUntil = '';
             },
 
             nursesForSearchFilter() {
@@ -765,14 +803,28 @@
                 return this.workEventDate !== '' ? this.workEventDate : this.today;
             },
 
-            // calculateMaxDate() {
-            //
-            // },
+            calculateMaxDate() {
+                //Sets limit from starting selected date + 1 month.
+                const date = new Date(this.workEventDate);
+                const maxRepeatDate = date.setMonth(date.getMonth() + 1);
+                return this.formatDate(maxRepeatDate);
+            },
+
         }),
 //@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
         computed: {
             repeatFrequencyHasSelected() {
                 return this.eventFrequency !== null && this.eventFrequency.length !== 0;
+            },
+
+            addMainEventButtonName() {
+                if (this.authIsAdmin) {
+                    return 'Add Workday';
+                }
+                if (this.authIsNurse) {
+                    return 'Add Workday/Holiday';
+                }
+                return 'Add Workday';
             },
 
             modalTitle() {
@@ -791,6 +843,10 @@
                 }
             },
 
+            addFromMainButtonDateLabel() {
+                return this.addNewEventMainClicked && this.addHolidays ? 'Day-off on:' : 'Working on:';
+            }
+
         },
 
         created() {
@@ -802,7 +858,6 @@
             if (this.authData.role === 'nurse') {
                 this.authIsNurse = true;
             }
-
         },
 
         mounted() {
@@ -900,22 +955,10 @@
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
     }
 
-    .choose-event-date {
-        /*margin-left: -37px;*/
-    }
-
-    .modal-inputs {
-        /*display: inline-flex;*/
-        /*margin-left: -70px;*/
-    }
 
     .modal-footer {
         margin-top: 10%;
-    }
-
-    .start-end-time {
-        /*padding-top: 4%;*/
-        /*display: inline-block;*/
+        border-top: unset;
     }
 
     .start-time {
@@ -1026,17 +1069,7 @@
         border-radius: 5px;
     }
 
-    .modal-content {
-        /*min-width: 710px;*/
-    }
-
-    .modal-body-custom {
-        /*margin-top: 15px;*/
-        /*margin-left: 34px;*/
-    }
-
     .modal-inputs-labels {
-        /*display: inline-flex;*/
         color: #5b5858;
         font-weight: bolder;
     }
@@ -1054,6 +1087,25 @@
 
     .day-off {
         padding-left: 14em;
+    }
+
+    #excludeWeekends {
+        display: inline-block;
+        font-size: 20px;
+    }
+
+    .exclude-weekends {
+        font-weight: bolder;
+        font-size: 18px;
+        padding-top: 20px;
+    }
+
+    .modal-backdrop.fade {
+        opacity: 0.1;
+    }
+
+    #addWorkEvent > div.modal-dialog > div > div.modal-header{
+        border-bottom: unset;
     }
 </style>
 
