@@ -13,7 +13,7 @@ use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartAllergy;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartMedication;
-use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
+use CircleLinkHealth\Eligibility\Entities\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;

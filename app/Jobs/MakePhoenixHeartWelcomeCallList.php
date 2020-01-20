@@ -9,7 +9,7 @@ namespace App\Jobs;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
-use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
+use CircleLinkHealth\Eligibility\Entities\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use App\Repositories\Cache\UserNotificationList;
 use CircleLinkHealth\Eligibility\Entities\Problem;
