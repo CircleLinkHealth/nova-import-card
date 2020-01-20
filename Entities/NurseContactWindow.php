@@ -44,8 +44,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow query()
  * @property-read int|null $revision_history_count
+ * @property string $repeat_start
  * @property string|null $repeat_frequency
- * @property string|null $repeat_start
  * @property string|null $until
  * @property string $validated
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseContactWindow whereRepeatFrequency($value)

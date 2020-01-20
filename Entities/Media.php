@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\Models\Media as SpatieMedia;
 use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
 
 /**
@@ -33,7 +34,7 @@ use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
  * @property \CircleLinkHealth\Customer\Entities\Media[]|\Illuminate\Database\Eloquent\Collection $model
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Media newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Media newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\MediaLibrary\Models\Media ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|SpatieMedia ordered()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Media query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereCollectionName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereCreatedAt($value)
@@ -52,7 +53,7 @@ use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Media whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Media extends \Spatie\MediaLibrary\Models\Media
+class Media extends SpatieMedia
 {
     /**
      * Get the file.

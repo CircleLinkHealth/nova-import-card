@@ -11,7 +11,7 @@ use App\CareAmbassador;
 use App\CareplanAssessment;
 use App\Constants;
 use App\ForeignId;
-use App\Importer\Models\ImportedItems\DemographicsImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
 use App\Message;
 use App\Models\EmailSettings;
 use App\Notifications\CarePlanApprovalReminder;
@@ -201,7 +201,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property \App\Message[]|\Illuminate\Database\Eloquent\Collection $outboundMessages
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity[]|\Illuminate\Database\Eloquent\Collection
  *     $patientActivities
- * @property \App\Importer\Models\ImportedItems\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection
+ * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection
  *     $patientDemographics
  * @property \CircleLinkHealth\Customer\Entities\Patient $patientInfo
  * @property \CircleLinkHealth\Customer\Entities\PhoneNumber[]|\Illuminate\Database\Eloquent\Collection $phoneNumbers
@@ -389,6 +389,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use Searchable;
     use SoftDeletes;
     use TimezoneTrait;
+    
+    /**
+     * Package Clockwork is hardcoded to look for $user->name. Adding this so that it will work.
+     *
+     * @var string|null
+     */
+    public $name;
 
     const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER = 'forward_alerts_instead_of_provider';
@@ -2295,7 +2302,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function patientDemographics()
     {
-        return $this->hasMany(DemographicsImport::class, 'provider_id');
+        return $this->hasMany(\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport::class, 'provider_id');
     }
 
     public function patientInfo()
