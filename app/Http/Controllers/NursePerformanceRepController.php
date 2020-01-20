@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\FromArray;
+use CircleLinkHealth\Core\Exports\FromArray;
 use App\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;

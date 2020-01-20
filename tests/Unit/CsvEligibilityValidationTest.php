@@ -7,8 +7,8 @@
 namespace Tests\Unit;
 
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
-use App\Jobs\ProcessSinglePatientEligibility;
-use App\Services\CCD\ProcessEligibilityService;
+use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use App\Traits\Tests\UserHelpers;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
@@ -20,7 +20,7 @@ class CsvEligibilityValidationTest extends TestCase
     private $practice;
 
     /**
-     * @var ProcessEligibilityService
+     * @var \CircleLinkHealth\Eligibility\ProcessEligibilityService
      */
     private $service;
 

@@ -8,7 +8,7 @@ namespace App\Http\Controllers\Admin\Reports;
 
 use App\Call;
 use App\CallView;
-use App\Exports\FromArray;
+use CircleLinkHealth\Core\Exports\FromArray;
 use App\Filters\CallFilters;
 use App\Filters\CallViewFilters;
 use App\Http\Controllers\Controller;

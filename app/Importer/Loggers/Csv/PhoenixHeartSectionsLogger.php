@@ -6,21 +6,21 @@
 
 namespace App\Importer\Loggers\Csv;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
-use App\Importer\Models\ItemLogs\InsuranceLog;
-use App\Importer\Models\ItemLogs\ProviderLog;
-use App\Models\MedicalRecords\TabularMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
+use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartAllergy;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartMedication;
-use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
+use CircleLinkHealth\Eligibility\Entities\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
 use CircleLinkHealth\SharedModels\Entities\AllergyLog;
-use CircleLinkHealth\SharedModels\Entities\MedicationLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
 
 class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 {

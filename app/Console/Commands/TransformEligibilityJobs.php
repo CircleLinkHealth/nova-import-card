@@ -7,9 +7,9 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use App\Importer\Loggers\Allergy\NumberedAllergyFields;
-use App\Importer\Loggers\Medication\NumberedMedicationFields;
-use App\Importer\Loggers\Problem\NumberedProblemFields;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedAllergyFields;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedMedicationFields;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedProblemFields;
 use Illuminate\Console\Command;
 
 class TransformEligibilityJobs extends Command

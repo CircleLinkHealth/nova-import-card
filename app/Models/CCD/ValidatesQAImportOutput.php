@@ -6,7 +6,7 @@
 
 namespace App\Models\CCD;
 
-use App\Importer\Models\ItemLogs\DemographicsLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
