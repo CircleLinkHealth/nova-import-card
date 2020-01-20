@@ -7,16 +7,22 @@
 namespace App\Services\AthenaAPI;
 
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CcdService
 {
     /**
-     * @var Calls
+     * @var AthenaApiImplementation
      */
     private $athenaApi;
-
-    public function __construct(Calls $athenaApi)
+    
+    /**
+     * CcdService constructor.
+     *
+     * @param AthenaApiImplementation $athenaApi
+     */
+    public function __construct(AthenaApiImplementation $athenaApi)
     {
         $this->athenaApi = $athenaApi;
     }

@@ -6,8 +6,8 @@
 
 namespace App\Importer\Predictors;
 
-use App\Importer\Models\ItemLogs\DocumentLog;
-use App\Importer\Models\ItemLogs\ProviderLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 

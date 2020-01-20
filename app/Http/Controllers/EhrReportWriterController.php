@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
 
 use App\CLH\Repositories\UserRepository;
 use App\Notifications\EhrReportWriterNotification;
-use App\Services\CCD\ProcessEligibilityService;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\User;
