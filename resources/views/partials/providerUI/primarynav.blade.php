@@ -199,14 +199,15 @@ $user = auth()->user();
                                  aria-expanded="false"><i class="glyphicon glyphicon-bell"></i> Notifications
                                 <a class="inline-block">
 
-                                <pusher-notifications
-                                        :user-id="{{json_encode(\Illuminate\Support\Facades\Auth::id())}}"></pusher-notifications>
-                            </a>
-                        </div>
-                    </li>
+                                    <pusher-notifications
+                                            :user-id="{{json_encode(\Illuminate\Support\Facades\Auth::id())}}"></pusher-notifications>
+                                </a>
+                            </div>
+                        </li>
 
-                    @include('partials.user-account-dropdown')
-                </ul>
+                        @include('partials.user-account-dropdown')
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
