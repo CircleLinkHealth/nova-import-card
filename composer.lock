@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "94932d7e9570ecb1deda3e588d4f7f01",
+    "content-hash": "3fb4e4d608ff96f05a8fb2adbe4c77f2",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -838,11 +838,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.7.6",
+            "version": "v1.7.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "9c86dbd38d4af7c7edd759112487a1a1acf979a4"
+                "reference": "a78f16e9eabcf699917aac95986562df1ed7b3a6"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -875,15 +875,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T17:59:20+00:00"
+            "time": "2020-01-20T04:12:57+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v1.2.3",
+            "version": "v1.2.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "7dc84e0db127d4ccdf5cab57269749e68f946e98"
+                "reference": "c3a4121723df539bdd8015968efbd59607a90dbf"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -908,7 +908,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-18T04:36:44+00:00"
+            "time": "2020-01-20T04:12:56+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1124,11 +1124,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "6f0eedb15ed15db89ae96340ffe5c220bd16f6fb"
+                "reference": "6bb8801f38900ffa74445dcac617d70a181cfffc"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1142,7 +1142,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-18T02:55:33+00:00"
+            "time": "2020-01-20T04:12:56+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
