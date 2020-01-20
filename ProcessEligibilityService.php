@@ -538,7 +538,6 @@ class ProcessEligibilityService
             $iterator = read_file_using_generator($pathToFile);
 
             $headers = [];
-            $data    = [];
 
             $i = 1;
             foreach ($iterator as $iteration) {
@@ -574,11 +573,9 @@ class ProcessEligibilityService
                 if ( ! is_array($row) || empty($row)) {
                     continue;
                 }
-    
-                $patient = collect($row);
-    
-                $patient = $this->transformCsvRow($patient);
-    
+                
+                $patient = $this->transformCsvRow($row);
+                
                 $validator = $this->validateRow($patient);
     
                 $mrn = $patient['mrn'] ?? $patient['mrn_number'] ?? $patient['patient_id'] ?? $patient['dob'];
