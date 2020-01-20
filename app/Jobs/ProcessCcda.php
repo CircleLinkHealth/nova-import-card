@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Importer\Loggers\Ccda\CcdToLogTranformer;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Exceptions\InvalidCcdaException;
 use CircleLinkHealth\SharedModels\Entities\Ccda;

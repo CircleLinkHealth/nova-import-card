@@ -14,6 +14,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use App\Search\ProviderByName;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemCodeLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
 use CircleLinkHealth\SharedModels\Entities\AllergyLog;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
