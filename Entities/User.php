@@ -382,6 +382,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use Searchable;
     use SoftDeletes;
     use TimezoneTrait;
+    
+    /**
+     * Package Clockwork is hardcoded to look for $user->name. Adding this so that it will work.
+     *
+     * @var string|null
+     */
+    public $name;
 
     const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER     = 'forward_alerts_instead_of_provider';
