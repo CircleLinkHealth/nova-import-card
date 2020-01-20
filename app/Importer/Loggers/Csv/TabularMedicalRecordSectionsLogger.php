@@ -6,7 +6,7 @@
 
 namespace App\Importer\Loggers\Csv;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;

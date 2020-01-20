@@ -6,7 +6,7 @@
 
 namespace App\Importer\Loggers\Ccda;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;

@@ -6,7 +6,7 @@
 
 namespace App\Models\MedicalRecords;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
 use App\Importer\Loggers\Csv\PhoenixHeartSectionsLogger;
 use App\Importer\Loggers\Csv\RappaSectionsLogger;
 use App\Importer\Loggers\Csv\TabularMedicalRecordSectionsLogger;
