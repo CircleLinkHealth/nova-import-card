@@ -14,7 +14,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Row;
 
-class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, WithHeadingRow
+class NBIPatientData extends ReportsErrorsToSlack implements OnEachRow, WithChunkReading, WithValidation, WithHeadingRow
 {
     use Importable;
 
@@ -40,6 +40,19 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
         return 200;
     }
 
+    protected function getImportingRules(): array
+    {
+        return [
+            'dob'                 => 'nullable|date',
+            'first_name'          => 'required',
+            'last_name'           => 'required',
+            'mrn'                 => 'required',
+            'primary_insurance'   => 'nullable',
+            'provider'            => 'nullable',
+            'secondary_insurance' => 'nullable',
+        ];
+    }
+
     /**
      * Returns null if value means N/A or equivalent. Otherwise returns the value passed to it.
      *
@@ -50,7 +63,8 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
     public function nullOrValue($value)
     {
         return empty($value) || in_array($value, $this->nullValues())
-            ? null : $value;
+            ? null
+            : $value;
     }
 
     /**
@@ -64,6 +78,16 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
             'NA: In CPM',
             'N/A',
         ];
+    }
+
+    /**
+     * The message that is displayed before each row error is listed.
+     *
+     * @return string
+     */
+    protected function getErrorMessageIntro(): string
+    {
+        return "The following rows from Importing NBI Patient Data sheet failed to import. See reasons below:";
     }
 
     /**
@@ -91,15 +115,29 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
             'secondary_insurance' => $this->nullOrValue($row['secondary_insurance']),
         ];
 
-        //validate args + add error handling
+        if ( ! $this->validateRow($args)) {
+            ++$this->rowNumber;
 
-        if ( ! empty($args['mrn']) && ! empty($args['first_name']) && ! empty($args['last_name'])) {
-            return PatientData::updateOrCreate(
-                [
-                    'mrn' => $row['mrn'],
-                ],
-                $args
-            );
+            return;
         }
+
+        PatientData::updateOrCreate(
+            [
+                'mrn' => $row['mrn'],
+            ],
+            $args
+        );
+
+        ++$this->rowNumber;
+    }
+
+    public function message(): string
+    {
+        if (empty($this->importingErrors)){
+            return 'Importing Success';
+        }
+
+        return "There were some errors during importing. Please check report at {$this->reportToChannel()}";
+
     }
 }
