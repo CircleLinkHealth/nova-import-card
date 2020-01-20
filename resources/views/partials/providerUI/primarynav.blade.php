@@ -158,12 +158,12 @@ $user = auth()->user();
                                         class="top-nav-item-icon glyphicon glyphicon-user"></i>Patient List</a>
                         </li>
 
-                        @role('care-center')
+                        @if($user->isCareCoach())
                         <li>
                             <a href="{{ route('patientCallList.index') }}" class="text-white"><i
                                         class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
                         </li>
-                        @endrole
+                        @endif
 
                         <li class="dropdown">
                             <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
@@ -171,18 +171,18 @@ $user = auth()->user();
                                         class="caret text-white"></span></div>
 
                             <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                                @role('administrator')
+                                @if($user->isAdmin())
                                 <li>
                                     <a href="{{ route('patients.careplan.printlist') }}">Care Plan Print List</a>
                                 </li>
-                                @endrole
+                                @endif
                                 <li>
                                     <a href="{{ route('patient.note.listing') }}">Notes Report</a>
                                 </li>
                                 <li>
                                     <a href="{{route('patient.reports.u20')}}">Under 20 Minutes Report</a>
                                 </li>
-                                @role('developer')
+                                @if($user->hasRole('developer'))
                                 <li>
                                     <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
                                 </li>
@@ -190,7 +190,7 @@ $user = auth()->user();
                                     <a href="{{ route('admin.reports.nurse.metrics') }}">
                                         Nurse Performance Report</a>
                                 </li>
-                                @endrole
+                                @endif
                             </ul>
                         </li>
                         {{--Live Notifications--}}
