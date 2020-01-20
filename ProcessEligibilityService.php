@@ -448,10 +448,12 @@ class ProcessEligibilityService
     /**
      * @throws \Exception
      *
-     * @return array|bool
+     * @return bool
      */
     public function processCsvForEligibility(EligibilityBatch $batch)
     {
+        ini_set('memory_limit', '-1');
+        
         if (EligibilityBatch::TYPE_ONE_CSV != $batch->type) {
             throw new \Exception('$batch is not of type `'.EligibilityBatch::TYPE_ONE_CSV.'`.`');
         }
@@ -462,20 +464,29 @@ class ProcessEligibilityService
             return false;
         }
 
-        $patientList = [];
+        $processedAtLeast1File = false;
 
-        for ($i = 1; $i <= 1000; ++$i) {
-            $patient = $collection->shift();
-
-            if ( ! is_array($patient)) {
-                continue;
+        try {
+            while ($collection->isNotEmpty()) {
+                $patient = $collection->shift();
+        
+                if ( ! is_array($patient)) {
+                    continue;
+                }
+        
+                $job = $this->createEligibilityJobFromCsvRow($patient, $batch);
+        
+                $patient['eligibility_job_id'] = $job->id;
+        
+                $processedAtLeast1File = true;
             }
-
-            $patientList[] = $patient;
-
-            $job = $this->createEligibilityJobFromCsvRow($patient, $batch);
-
-            $patient['eligibility_job_id'] = $job->id;
+        } catch (\Exception $exception) {
+            $options                = $batch->options;
+            $options['patientList'] = $collection->toArray();
+            $batch->options         = $options;
+            $batch->save();
+            
+            throw $exception;
         }
 
         $options                = $batch->options;
@@ -483,7 +494,7 @@ class ProcessEligibilityService
         $batch->options         = $options;
         $batch->save();
 
-        return $patientList;
+        return $processedAtLeast1File;
     }
 
     /**
