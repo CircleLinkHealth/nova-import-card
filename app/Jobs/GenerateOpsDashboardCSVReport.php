@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Exports\FromArray;
+use CircleLinkHealth\Core\Exports\FromArray;
 use App\Repositories\Cache\UserNotificationList;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\Services\OpsDashboardService;
