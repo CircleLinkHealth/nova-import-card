@@ -9,7 +9,7 @@ namespace App\Importer\Loggers\Csv;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
-use App\Models\MedicalRecords\TabularMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartAllergy;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartMedication;

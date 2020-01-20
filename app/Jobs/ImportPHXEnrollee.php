@@ -7,7 +7,7 @@
 namespace App\Jobs;
 
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use App\Services\MedicalRecords\ImportService;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

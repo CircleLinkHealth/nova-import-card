@@ -10,7 +10,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLo
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
-use App\Models\MedicalRecords\TabularMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
 use App\Search\ProviderByName;
 use CircleLinkHealth\Eligibility\Entities\Problem as ProblemEntity;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -25,7 +25,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     /**
      * The Medical Record.
      *
-     * @var TabularMedicalRecord
+     * @var \CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord
      */
     protected $medicalRecord;
 
