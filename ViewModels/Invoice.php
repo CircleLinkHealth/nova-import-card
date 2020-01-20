@@ -199,7 +199,8 @@ class Invoice extends ViewModel
      */
     public function formattedBaseSalary()
     {
-        $fixedRateMessage = "\${$this->fixedRatePay} (Fixed Rate: \${$this->user->nurseInfo->hourly_rate}/hr).";
+        $fixedRatePay = number_format($this->fixedRatePay, 2);
+        $fixedRateMessage = "\${$fixedRatePay} (Fixed Rate: \${$this->user->nurseInfo->hourly_rate}/hr).";
 
         if ( ! $this->variablePay && ! $this->changedToFixedRateBecauseItYieldedMore) {
             return $fixedRateMessage;
@@ -208,14 +209,16 @@ class Invoice extends ViewModel
         $high_rate_3 = $this->user->nurseInfo->high_rate_3;
         $low_rate    = $this->user->nurseInfo->low_rate;
 
+        $variableRatePay = number_format($this->variableRatePay, 2);
+
         if ($this->ccmPlusAlgoEnabled) {
             if ($this->altAlgoEnabled) {
-                $variableRateMessage = "\${$this->variableRatePay} (Visit-based: $this->visitsCount visits).";
+                $variableRateMessage = "\${$variableRatePay} (Visit-based: $this->visitsCount visits).";
             } else {
-                $variableRateMessage = "\${$this->variableRatePay} (Variable Rate: \$[$high_rate_3 - $high_rate]/hr or \$$low_rate/hr).";
+                $variableRateMessage = "\${$variableRatePay} (Variable Rate: \$[$high_rate_3 - $high_rate]/hr or \$$low_rate/hr).";
             }
         } else {
-            $variableRateMessage = "\${$this->variableRatePay} (Variable Rate: \$$high_rate/hr or \$$low_rate/hr).";
+            $variableRateMessage = "\${$variableRatePay} (Variable Rate: \$$high_rate/hr or \$$low_rate/hr).";
         }
 
         if ($this->variableRatePay > $this->fixedRatePay) {
@@ -240,7 +243,7 @@ class Invoice extends ViewModel
      */
     public function formattedInvoiceTotalAmount()
     {
-        return '$' . round($this->invoiceTotalAmount(), 2);
+        return '$' . number_format(round($this->invoiceTotalAmount(), 2), 2);
     }
 
     /**
@@ -495,9 +498,10 @@ class Invoice extends ViewModel
      */
     private function getVariableRatePay()
     {
-        $calculationResult    = $this->variablePayCalculator->calculate($this->user);
-        $this->visitsCount    = $calculationResult->visitsCount;
-        $this->altAlgoEnabled = $calculationResult->altAlgoEnabled;
+        $calculationResult        = $this->variablePayCalculator->calculate($this->user);
+        $this->visitsCount        = $calculationResult->visitsCount;
+        $this->ccmPlusAlgoEnabled = $calculationResult->ccmPlusAlgoEnabled;
+        $this->altAlgoEnabled     = $calculationResult->altAlgoEnabled;
 
         return round($calculationResult->totalPay, 2);
     }

@@ -125,7 +125,7 @@ class VariablePayCalculator
             $visitsCount += sizeof($patientPayCalculation->visits ?? []);
         });
 
-        return new CalculationResult($ccmPlusAlgoEnabled, $totalPay, $visitFeeBased, $visitsCount);
+        return new CalculationResult($ccmPlusAlgoEnabled, $visitFeeBased, $visitsCount, $totalPay);
     }
 
     public function getForNurses()
