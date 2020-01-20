@@ -51,7 +51,7 @@ class AthenaCheckable implements Checkable
     /**
      * @throws \Exception
      *
-     * @return \App\EligibilityJob
+     * @return EligibilityJob
      */
     public function createAndProcessEligibilityJobFromMedicalRecord(): EligibilityJob
     {

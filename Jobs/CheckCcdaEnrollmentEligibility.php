@@ -6,10 +6,10 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use App\Jobs\EligibilityChecker;
-use App\Jobs\EligibilityJob;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\EligibilityChecker;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

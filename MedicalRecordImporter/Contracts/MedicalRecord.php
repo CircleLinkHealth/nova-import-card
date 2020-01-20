@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
 use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
 
 use CircleLinkHealth\Customer\Entities\User;

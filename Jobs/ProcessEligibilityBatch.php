@@ -10,7 +10,7 @@ use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use App\Jobs\GoogleDrive;
 use App\Jobs\MakePhoenixHeartWelcomeCallList;
-use App\Jobs\ProcessSinglePatientEligibility;
+use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use App\Jobs\Storage;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
