@@ -9,7 +9,7 @@ namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use App\CLH\Repositories\CCDImporterRepository;
 use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord as ImportedMedicalRecordInterface;
-use App\Contracts\Importer\MedicalRecord\MedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\AllergyImport;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
@@ -202,7 +202,7 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
     }
 
     /**
-     * @return MedicalRecord|null
+     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord|null
      */
     public function medicalRecord()
     {

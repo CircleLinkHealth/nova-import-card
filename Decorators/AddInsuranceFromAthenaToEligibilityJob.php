@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Decorators;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
 use CircleLinkHealth\SharedModels\Entities\Ccda;

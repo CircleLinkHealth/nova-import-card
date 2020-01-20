@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities;
 
-use App\Importer\Section\Importers\BaseImporter;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\BaseImporter;
 use App\Importer\Section\Importers\ConsolidatesProblemInfo;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use App\Constants;

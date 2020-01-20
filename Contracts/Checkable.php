@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Contracts;
 
-use App\Contracts\HasMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\HasMedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 

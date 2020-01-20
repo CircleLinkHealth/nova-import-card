@@ -14,14 +14,14 @@ namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities;
  */
 
 use App\Console\Commands\OverwriteNBIImportedData;
-use App\Contracts\Importer\MedicalRecord\MedicalRecord;
-use App\Importer\Predictors\HistoricBillingProviderPredictor;
-use App\Importer\Predictors\HistoricLocationPredictor;
-use App\Importer\Predictors\HistoricPracticePredictor;
-use App\Importer\Section\Importers\Allergies;
-use App\Importer\Section\Importers\Demographics;
-use App\Importer\Section\Importers\Insurance;
-use App\Importer\Section\Importers\Medications;
+use Circlelinkhealth\Eligibility\MedicalRecordImporter\Predictors\HistoricBillingProviderPredictor;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Predictors\HistoricLocationPredictor;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Predictors\HistoricPracticePredictor;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Allergies;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Demographics;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Insurance;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Medications;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\Problems;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use App\Search\ProviderByName;

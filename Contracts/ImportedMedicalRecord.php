@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Contracts;
 
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
-use App\Contracts\Importer\MedicalRecord\MedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -33,7 +33,7 @@ interface ImportedMedicalRecord
     public function getPractice(): Practice;
 
     /**
-     * @return MedicalRecord|null
+     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\\CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord|null
      */
     public function medicalRecord();
 

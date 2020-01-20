@@ -6,9 +6,9 @@
 
 namespace CircleLinkHealth\Eligibility\Checkables;
 
-use App\Adapters\EligibilityCheck\AddInsurancesFromAthena;
-use App\Adapters\EligibilityCheck\CcdaToEligibilityJobAdapter;
-use App\Contracts\Importer\MedicalRecord\MedicalRecord;
+use CircleLinkHealth\Eligibility\Adapters\AddInsurancesFromAthena;
+use CircleLinkHealth\Eligibility\Adapters\CcdaToEligibilityJobAdapter;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -81,7 +81,7 @@ class AthenaCheckable implements Checkable
     }
 
     /**
-     * @return MedicalRecord
+     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\\CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord
      */
     public function getMedicalRecord(): MedicalRecord
     {
