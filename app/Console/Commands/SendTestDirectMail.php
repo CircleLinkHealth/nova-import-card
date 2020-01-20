@@ -45,7 +45,7 @@ class SendTestDirectMail extends Command
     /**
      * Execute the console command.
      *
-     * @throws \App\Exceptions\FileNotFoundException
+     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
      *
      * @return mixed
      */

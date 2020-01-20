@@ -6,7 +6,7 @@
 
 namespace App\Filters;
 
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 
 class EnrolleeFilters extends QueryFilters

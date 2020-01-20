@@ -145,8 +145,8 @@
                 const newRecord = {
                     id: record.id,
                     selected: false,
-                    Name: record.demographics.display_name,
-                    DOB: record.demographics.dob,
+                    Name: (record.demographics || {}).display_name,
+                    DOB: (record.demographics || {}).dob,
                     Practice: ((record.practice || {}).id || null),
                     practice_name: ((record.practice || {}).display_name || null),
                     Location: ((record.location || {}).id || null),

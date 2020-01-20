@@ -38,6 +38,7 @@
                     to_enroll: 'To Enroll',
                     patient_rejected: 'Patient Declined',
                     withdrawn: 'Withdrawn',
+                    withdrawn_1st_call: 'Withdrawn 1st Call',
                     paused: 'Paused',
                     unreachable: 'Unreachable',
                     })[props.row.ccmStatus] || props.row.ccmStatus)
@@ -183,6 +184,7 @@
                             {id: 'enrolled', text: 'Enrolled'},
                             {id: 'paused', text: 'Paused'},
                             {id: 'withdrawn', text: 'Withdrawn'},
+                            {id: 'withdrawn_1st_call', text: 'Wthdrn 1st Call'},
                             {id: 'to_enroll', text: 'To Enroll'},
                             {id: 'unreachable', text: 'Unreachable'},
                             {id: 'patient_rejected', text: 'Patient Rejected'}

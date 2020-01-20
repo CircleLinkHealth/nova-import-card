@@ -321,8 +321,8 @@
                 this.tableData = []
                 this.url = null;
                 this.$refs.tblBillingReport.setPage(1)
-                this.retrieve()
                 this.getCounts()
+                this.retrieve()
             },
             detachChargeableService(e) {
                 if (e) e.preventDefault()
@@ -407,7 +407,7 @@
                     const ids = this.tableData.map(i => i.id)
                     this.url = pagination.next_page_url
                     this.isClosed = !!Number(response.headers['is-closed'])
-                    this.tableData = this.tableData.concat(pagination.data.filter(patient => !ids.includes(patient.id)).map((patient, index) => {
+                    this.tableData = this.tableData.concat((pagination.data || []).filter(patient => !ids.includes(patient.id)).map((patient, index) => {
                         const item = {
                             id: patient.id,
                             MRN: patient.mrn,
@@ -696,18 +696,19 @@
             this.selectedMonth = (this.months[0] || {}).label;
             this.selectedPractice = this.practices[0].id;
 
-            this.retrieve();
+            // this.retrieve();
 
             //todo
             //this.getChargeableServices();
 
-            this.getCounts();
+            // this.getCounts();
 
             Event.$on('vue-tables.pagination', (page) => {
                 const $table = this.$refs.tblBillingReport;
                 if (page === $table.totalPages) {
                     console.log('next page clicked');
                     this.retrieve();
+                    this.getCounts()
                 }
             })
         }

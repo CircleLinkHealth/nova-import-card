@@ -23,6 +23,7 @@ class BillablePatientsEloquentRepository
             'patientSummaries' => function ($query) use ($month) {
                 $query->where('month_year', $month)
                     ->where('total_time', '>=', 1200)
+                    ->where('no_of_successful_calls', '>=', 1)
                     ->with('chargeableServices');
             },
             'cpmProblems',
@@ -35,7 +36,8 @@ class BillablePatientsEloquentRepository
             ->has('patientInfo')
             ->whereHas('patientSummaries', function ($query) use ($month) {
                 $query->where('month_year', $month)
-                    ->where('total_time', '>=', 1200);
+                    ->where('total_time', '>=', 1200)
+                    ->where('no_of_successful_calls', '>=', 1);
             })
             ->ofType('participant')
             ->where('program_id', '=', $practiceId);
@@ -43,7 +45,7 @@ class BillablePatientsEloquentRepository
         return $result;
     }
 
-    public function billablePatientSummaries($practiceId, Carbon $date)
+    public function billablePatientSummaries($practiceId, Carbon $date, $ignoreWith = false)
     {
         $month = $date->startOfMonth();
 
@@ -53,24 +55,28 @@ class BillablePatientsEloquentRepository
                 $q->where('ccm_time', '>=', 1200)
                     ->orWhere('bhi_time', '>=', 1200);
             })
-            ->with([
-                'patient' => function ($q) use ($month, $practiceId) {
-                    $q->with([
-                        'ccdProblems' => function ($query) {
-                            $query->with(['icd10Codes', 'cpmProblem']);
-                        },
-                        'cpmProblems',
-                        'patientInfo',
-                        'primaryPractice',
-                        'careTeamMembers' => function ($q) {
-                            $q->where('type', '=', 'billing_provider');
-                        },
-                    ]);
-                },
-                'chargeableServices',
-            ])
+            ->when(false === $ignoreWith, function ($q) use ($month, $practiceId) {
+                return $q->with([
+                    'patient' => function ($q) use ($month, $practiceId) {
+                        $q->with([
+                            'ccdProblems' => function ($query) {
+                                $query->with(['icd10Codes', 'cpmProblem']);
+                            },
+                            'cpmProblems',
+                            'patientInfo',
+                            'primaryPractice',
+                            'careTeamMembers' => function ($q) {
+                                $q->where('type', '=', 'billing_provider');
+                            },
+                        ]);
+                    },
+                    'chargeableServices',
+                ]);
+            })
             ->whereHas('patient', function ($q) use ($practiceId) {
                 $q->whereHas('practices', function ($q) use ($practiceId) {
+                    $q->where('id', '=', $practiceId);
+                })->orWhereHas('primaryPractice', function ($q) use ($practiceId) {
                     $q->where('id', '=', $practiceId);
                 });
             });

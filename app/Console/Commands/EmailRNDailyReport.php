@@ -26,7 +26,7 @@ class EmailRNDailyReport extends Command
      *
      * @var string
      */
-    protected $signature = 'nurses:emailDailyReport {nurseUserIds? : Comma separated user IDs of nurses to email report to.} {date? : Date to generate report for in YYYY-MM-DD.}';
+    protected $signature = 'nurses:emailDailyReport {date? : Date to generate report for in YYYY-MM-DD.} {nurseUserIds? : Comma separated user IDs of nurses to email report to.} ';
 
     private $report;
     private $service;
@@ -44,7 +44,7 @@ class EmailRNDailyReport extends Command
     /**
      * Execute the console command.
      *
-     * @throws \App\Exceptions\FileNotFoundException
+     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
      * @throws \Exception
      *
      * @return mixed
@@ -59,7 +59,18 @@ class EmailRNDailyReport extends Command
             $date = Carbon::parse($date);
         }
 
-        $this->report = $this->service->showDataFromS3($date);
+        $report = $this->service->showDataFromS3($date);
+
+        if ($report->isEmpty()) {
+            \Artisan::call(NursesPerformanceDailyReport::class);
+            $report = $this->service->showDataFromS3($date);
+        }
+
+        if ($report->isEmpty()) {
+            $this->error('No data found for '.$date->toDateString());
+
+            return;
+        }
 
         $counter    = 0;
         $emailsSent = [];
@@ -79,10 +90,11 @@ class EmailRNDailyReport extends Command
                 }
             )
             ->chunk(
-                20,
-                function ($nurses) use (&$counter, &$emailsSent, $date) {
+                10,
+                function ($nurses) use (&$counter, &$emailsSent, $date, $report) {
                     foreach ($nurses as $nurse) {
-                        $reportDataForNurse = $this->report->where('nurse_id', $nurse->id)->first();
+                        $this->warn("Processing $nurse->id");
+                        $reportDataForNurse = $report->where('nurse_id', $nurse->id)->first();
 
                         //In case something goes wrong with nurses and states report, or transitioning to new metrics issues
                         if ( ! $reportDataForNurse || ! $this->validateReportData($reportDataForNurse)) {
@@ -157,6 +169,8 @@ class EmailRNDailyReport extends Command
                         ];
 
                         $nurse->notify(new NurseDailyReport($data, $date));
+
+                        $this->warn("Notified $nurse->id");
 
                         $emailsSent[] = [
                             'nurse' => $nurse->getFullName(),

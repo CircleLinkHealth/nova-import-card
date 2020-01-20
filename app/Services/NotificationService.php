@@ -6,6 +6,7 @@
 
 namespace App\Services;
 
+use App\Contracts\RelatesToActivity;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\User;
@@ -80,37 +81,42 @@ class NotificationService
     }
 
     /**
-     * @param $receiverId
-     * @param $attachmentId
+     * @param $notificationId
+     *
+     * @return void
      */
-    public function markAsRead($receiverId, $attachmentId)
+    public function markAsRead($notificationId)
     {
-        $user = User::find($receiverId);
-
-        $user->unreadNotifications()
-            ->where('attachment_id', '=', $attachmentId)
-            ->get()
-            ->markAsRead();
+        $notification = DatabaseNotification::findOrFail($notificationId);
+        if (empty($notification->read_at)) {
+            if ($notification->attachment instanceof RelatesToActivity) {
+                $notification->attachment->markActivitiesAsDone();
+                $notification->attachment->markAllAttachmentNotificationsAsRead();
+            } else {
+                $notification->markAsRead();
+            }
+        }
     }
 
+    /**
+     * @param $notification
+     *
+     * @return Carbon
+     */
     public function notificationCreatedAt($notification)
     {
         return Carbon::parse($notification->created_at);
     }
 
     /**
-     * @param Carbon $createdDateTime
-     *
      * @return string
      */
     public function notificationElapsedTime(Carbon $createdDateTime)
     {
-        return $createdDateTime->diffForHumans(Carbon::parse(now()));
+        return $createdDateTime->diffForHumans();
     }
 
     /**
-     * @param Collection $notifications
-     *
      * @return Collection
      */
     public function prepareNotifications(Collection $notifications)

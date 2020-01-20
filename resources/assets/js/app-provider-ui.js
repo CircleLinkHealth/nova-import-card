@@ -77,8 +77,8 @@ const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2
 const CcdUploader = () => import(/* webpackChunkName: "chunk-ccd-uploader" */ './components/importer/ccd-upload');
 const CcdViewer = () => import(/* webpackChunkName: "chunk-ccd-viewer" */ './components/importer/ccd-viewer');
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
-const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../Modules/NurseInvoices/Resources/assets/js/components/dispute-invoice')
-const NurseInvoiceDailyDispute = () => import(/* webpackChunkName: "chunk-nurse" */ '../../../Modules/NurseInvoices/Resources/assets/js/components/nurseInvoiceDailyDispute');
+const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ './../../../Modules/Nurseinvoices/Resources/assets/js/components/dispute-invoice')
+const NurseInvoiceDailyDispute = () => import(/* webpackChunkName: "chunk-nurse" */ './../../../Modules/Nurseinvoices/Resources/assets/js/components/nurseInvoiceDailyDispute');
 const PusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-notifications')
 const PusherSeeAllNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-see-all-notifications')
 const SendEmailToPatientComponent = () => import('./components/send-email-to-patient')
@@ -161,3 +161,6 @@ if (window) {
 
 BindWindowFocusChange(window)
 BindWindowVisibilityChange(window, document)
+
+
+console.log(process.env['MIX_LOG_DNA_CLIENT_INGESTION_KEY']);

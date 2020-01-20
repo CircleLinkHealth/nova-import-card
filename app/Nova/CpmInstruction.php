@@ -17,7 +17,7 @@ class CpmInstruction extends Resource
      *
      * @var string
      */
-    public static $model = \App\Models\CPM\CpmInstruction::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\CpmInstruction::class;
 
     /**
      * The columns that should be searched.
@@ -39,8 +39,6 @@ class CpmInstruction extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function actions(Request $request)
@@ -51,8 +49,6 @@ class CpmInstruction extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function cards(Request $request)
@@ -62,8 +58,6 @@ class CpmInstruction extends Resource
 
     /**
      * Get the fields displayed by the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -77,8 +71,6 @@ class CpmInstruction extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function filters(Request $request)
@@ -88,8 +80,6 @@ class CpmInstruction extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

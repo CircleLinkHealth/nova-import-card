@@ -7,18 +7,15 @@
 namespace App\Search;
 
 use CircleLinkHealth\Customer\Entities\User;
+use Laravel\Scout\Builder;
 
 class ProviderByName extends BaseScoutSearch
 {
     /**
      * The eloquent query for performing the search.
-     *
-     * @param string $term
-     *
-     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function query(string $term)
+    public function query(string $term): Builder
     {
-        return User::search($term)->first();
+        return User::search($term);
     }
 }

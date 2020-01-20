@@ -7,8 +7,8 @@
 namespace App;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\SqlViewModel;
 use CircleLinkHealth\Core\Filters\Filterable;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\CallView.
@@ -80,10 +80,16 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView whereAsap($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePatientNurse($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CallView wherePatientNurseId($value)
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
+ * @property int|null                                                                       $revision_history_count
  */
-class CallView extends Model
+class CallView extends SqlViewModel
 {
     use Filterable;
+
+    public $phi = [
+        'patient',
+    ];
 
     protected $table = 'calls_view';
 

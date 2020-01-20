@@ -136,7 +136,7 @@ allPublicFiles.forEach((fullPath) => {
     }
 
 
-    if ([".css", ".img", ".jpg", "jpeg", ".js", ".png", ".ico", ".svg"].includes(path.extname(fullPath))) {
+    if ([".css", ".img", ".jpg", "jpeg", ".js", ".png", ".ico", ".svg", ".json"].includes(path.extname(fullPath))) {
         toVersion.push(fullPath);
     }
 

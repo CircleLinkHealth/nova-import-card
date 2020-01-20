@@ -6,21 +6,21 @@
 
 namespace App\Http\Controllers\Billing;
 
-use App\AppConfig;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovableBillablePatient;
-use App\Models\CCD\Problem;
-use App\Models\CPM\CpmProblem;
-use App\Models\ProblemCode;
 use App\Notifications\PracticeInvoice;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
 use App\Services\PracticeReportsService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 
@@ -32,10 +32,6 @@ class PracticeInvoiceController extends Controller
 
     /**
      * PracticeInvoiceController constructor.
-     *
-     * @param ApproveBillablePatientsService   $service
-     * @param PatientSummaryEloquentRepository $patientSummaryDBRepository
-     * @param PracticeReportsService           $practiceReportsService
      */
     public function __construct(
         ApproveBillablePatientsService $service,
@@ -63,7 +59,7 @@ class PracticeInvoiceController extends Controller
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         }
-    
+
         $savedSummaries = collect();
 
         $this->getCurrentMonthSummariesQuery($practice_id, $date)
@@ -77,7 +73,7 @@ class PracticeInvoiceController extends Controller
                         }
                     }
                     $summary->save();
-    
+
                     $savedSummaries->push($summary);
                 }
             });
@@ -137,8 +133,6 @@ class PracticeInvoiceController extends Controller
 
     /**
      * Get approvable patients for a practice for a month.
-     *
-     * @param Request $request
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
@@ -253,8 +247,6 @@ class PracticeInvoiceController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
      * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
      *
@@ -316,8 +308,6 @@ class PracticeInvoiceController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return string
      */
     public function send(Request $request)
@@ -489,8 +479,6 @@ class PracticeInvoiceController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updatePracticeChargeableServices(Request $request)
@@ -599,7 +587,6 @@ class PracticeInvoiceController extends Controller
 
     /**
      * @param $practice_id
-     * @param Carbon $date
      *
      * @return \CircleLinkHealth\Customer\Entities\PatientMonthlySummary|\Illuminate\Database\Eloquent\Builder
      */

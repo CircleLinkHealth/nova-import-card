@@ -58,7 +58,7 @@ return [
     */
 
     'trim' => [
-        'recent' => 1440,
+        'recent' => 60,
         'failed' => 10080,
     ],
 
@@ -84,22 +84,21 @@ return [
                 'timeout'    => 300,
             ],
         ],
-        'production' => [
-        ],
-        'staging' => [
+        'review' => [
             'supervisor-1' => [
                 'connection' => 'redis',
                 'queue'      => ['high', 'default', 'low'],
                 'balance'    => 'auto',
-                'processes'  => 8,
-                'tries'      => 1,
-                'timeout'    => 300,
+                'min-processes' => 1,
+                'max-processes' => 3,
+                'tries'         => 2,
+                'timeout'       => 30,
             ],
         ],
-        'worker' => [
+        'staging' => [
             'supervisor-1' => [
                 'connection'    => 'redis',
-                'queue'         => ['default', 'low', 'demanding'],
+                'queue'         => ['default', 'low'],
                 'balance'       => 'auto',
                 'min-processes' => 1,
                 'max-processes' => 2,
@@ -111,9 +110,29 @@ return [
                 'queue'         => ['high'],
                 'balance'       => 'simple',
                 'min-processes' => 2,
-                'max-processes' => 7,
+                'max-processes' => 3,
                 'tries'         => 1,
                 'timeout'       => 30,
+            ],
+        ],
+        'production_v3' => [
+            'supervisor-1' => [
+                'connection'    => 'redis',
+                'queue'         => ['default', 'low'],
+                'balance'       => 'auto',
+                'min-processes' => 1,
+                'max-processes' => 10,
+                'tries'         => 1,
+                'timeout'       => 90,
+            ],
+            'supervisor-2' => [
+                'connection'    => 'redis',
+                'queue'         => ['high'],
+                'balance'       => 'simple',
+                'min-processes' => 3,
+                'max-processes' => 10,
+                'tries'         => 2,
+                'timeout'       => 40,
             ],
         ],
     ],

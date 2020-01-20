@@ -41,7 +41,7 @@
                     <h5>Reprocessing Method</h5>
 
                     <input class="" type="radio" name="reprocessingMethod" id="reprocessingMethod"
-                           value="{{App\EligibilityBatch::REPROCESS_SAFE}}" checked>
+                           value="{{CircleLinkHealth\Eligibility\Entities\EligibilityBatch::REPROCESS_SAFE}}" checked>
                     <label for="reprocessingMethod">Safe: This will replace patient data in CPM with data from list,
                         without deleting any records. Choose this if the already processed list has been passed to the
                         callers.</label>
@@ -49,7 +49,7 @@
                     <br>
 
                     <input class="" type="radio" name="reprocessingMethod" id="reprocessingMethod"
-                           value="{{App\EligibilityBatch::REPROCESS_FROM_SCRATCH}}">
+                           value="{{CircleLinkHealth\Eligibility\Entities\EligibilityBatch::REPROCESS_FROM_SCRATCH}}">
                     <label for="reprocessingMethod">Start from scratch: This will delete all patient data in CPM related
                         to this batch, and start processing the list from scratch. Do NOT choose this if the already
                         processed list has been passed to the callers, because you will NOT be able to import patients

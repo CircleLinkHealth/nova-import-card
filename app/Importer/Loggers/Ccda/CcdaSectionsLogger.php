@@ -6,16 +6,18 @@
 
 namespace App\Importer\Loggers\Ccda;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
-use App\Importer\Models\ItemLogs\AllergyLog;
-use App\Importer\Models\ItemLogs\DemographicsLog;
-use App\Importer\Models\ItemLogs\DocumentLog;
-use App\Importer\Models\ItemLogs\InsuranceLog;
-use App\Importer\Models\ItemLogs\MedicationLog;
-use App\Importer\Models\ItemLogs\ProblemCodeLog;
-use App\Importer\Models\ItemLogs\ProblemLog;
-use App\Importer\Models\ItemLogs\ProviderLog;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
+use App\Search\ProviderByName;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemCodeLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
+use CircleLinkHealth\SharedModels\Entities\AllergyLog;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
 
 class CcdaSectionsLogger implements MedicalRecordLogger
 {
@@ -46,8 +48,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Allergies Section into Log models..
-     *
-     * @return MedicalRecordLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
     {
@@ -78,8 +78,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Demographics Section into Log models..
-     *
-     * @return MedicalRecordLogger
      */
     public function logDemographicsSection(): MedicalRecordLogger
     {
@@ -94,8 +92,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Document Section into Log models..
-     *
-     * @return MedicalRecordLogger
      */
     public function logDocumentSection(): MedicalRecordLogger
     {
@@ -120,8 +116,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Log Insurance Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logInsuranceSection(): MedicalRecordLogger
     {
@@ -150,8 +144,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Medications Section into Log models..
-     *
-     * @return MedicalRecordLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
     {
@@ -168,8 +160,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Problems Section into Log models..
-     *
-     * @return MedicalRecordLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
     {
@@ -199,8 +189,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Providers Section into Log models..
-     *
-     * @return MedicalRecordLogger
      */
     public function logProvidersSection(): MedicalRecordLogger
     {
@@ -219,13 +207,25 @@ class CcdaSectionsLogger implements MedicalRecordLogger
                 ->where('cell_phone', $data['cell_phone'])
                 ->where('home_phone', $data['home_phone'])
                 ->where('work_phone', $data['work_phone'])
-                ->first();
+                ->exists();
 
             if ($shouldBeIgnored || empty(array_filter($data))) {
                 continue;
             }
 
-            $saved = ProviderLog::create(
+            $searchProvider = ProviderByName::first("{$data['first_name']} {$data['last_name']}");
+
+            if ($searchProvider) {
+                $data['provider_id'] = $data['billing_provider_id'] = $searchProvider->id;
+                $data['practice_id'] = $searchProvider->program_id;
+                $data['location_id'] = optional($searchProvider->loadMissing('locations')->locations->first())->id;
+            }
+
+            $saved = ProviderLog::updateOrCreate(
+                array_merge([
+                    'first_name' => $data['first_name'],
+                    'last_name'  => $data['last_name'],
+                ], $this->foreignKeys),
                 array_merge($data, $this->foreignKeys)
             );
         }

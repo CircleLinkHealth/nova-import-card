@@ -18,7 +18,7 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereAltAnswers($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereValue($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers query()

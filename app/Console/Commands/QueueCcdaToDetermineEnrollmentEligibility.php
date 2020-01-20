@@ -6,11 +6,8 @@
 
 namespace App\Console\Commands;
 
-use App\EligibilityBatch;
-use App\Jobs\CheckCcdaEnrollmentEligibility;
-use App\Models\MedicalRecords\Ccda;
-use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 
 class QueueCcdaToDetermineEnrollmentEligibility extends Command
@@ -29,53 +26,34 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
     protected $signature = 'ccda:determineEligibility';
 
     /**
-     * Create a new command instance.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
      */
     public function handle()
     {
-        $practices = Practice::active()->get()->keyBy('id');
+        Ccda::with(['batch', 'practice'])->where(
+            [
+                ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
+            ]
+        )->whereNotNull('practice_id')->whereNotNull('batch_id')->chunkById(
+            50,
+            function ($ccdas) {
+                foreach ($ccdas as $ccda) {
+                    if ( ! $ccda->json) {
+                        try {
+                            $ccda->bluebuttonJson();
+                        } catch (\Exception $exception) {
+                            \Log::error($exception->getMessage());
 
-        $jobs = Ccda::where([
-            ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
-        ])->whereNotNull('mrn')
-            ->inRandomOrder()
-            ->take(2000)
-            ->get(['id', 'practice_id'])
-            ->map(function ($ccda) use ($practices) {
-                if ($ccda->practice_id) {
-                    $practice = $practices[$ccda->practice_id] ?? null;
-
-                    if ( ! $practice) {
-                        return false;
+                            continue;
+                        }
                     }
 
-                    $batch = EligibilityBatch::findOrFail($ccda->batch_id);
-
-                    dispatch(
-                        (new CheckCcdaEnrollmentEligibility($ccda, $practice, $batch))
-                            ->delay(Carbon::now()->addSeconds(5))
-                            ->onQueue('low')
-                            );
-
-                    return true;
+                    CheckCcdaEnrollmentEligibility::dispatch($ccda, $ccda->practice, $ccda->batch)
+                        ->onQueue('low');
                 }
-
-                return false;
-            })
-            ->filter()
-            ->values()
-            ->count();
-
-        $this->output->success("${jobs} jobs scheduled.");
+            }
+        );
     }
 }

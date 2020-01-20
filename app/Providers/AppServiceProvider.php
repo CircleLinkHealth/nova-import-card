@@ -20,6 +20,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\SQLiteBuilder;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
@@ -34,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Schema::defaultStringLength(255);
+        
         /*
          * If the current date is the 31st of the month, Carbon::now()->subMonth() will go back to the 31st of the previous month.
          * If the previous month does not have 31 days, `$startDate = Carbon::now()->subMonth()->startOfMonth();` jumps to the first day of the current month(!?!).

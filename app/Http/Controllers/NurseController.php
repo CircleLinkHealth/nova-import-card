@@ -22,32 +22,6 @@ class NurseController extends Controller
         return datatables()->collection(NurseDailyReport::data())->make(true);
     }
 
-    public function generateInvoice(Request $request)
-    {
-        $input = $request->input();
-
-        $nurseUserIds = $request->input('nurses');
-
-        $startDate = Carbon::parse($request->input('start_date'));
-        $endDate   = Carbon::parse($request->input('end_date'));
-
-        if (isset($input['all_selected_nurses'])) {
-            $nurseUserIds = [];
-        }
-
-        CreateNurseInvoices::dispatch(
-            $startDate,
-            $endDate,
-            $nurseUserIds,
-            false,
-            auth()->user()->id
-        );
-
-        return 'We will send you an email when everything is done. You can always see previous jobs completed at '.link_to(
-            '/jobs/completed'
-            );
-    }
-
     public function makeDailyReport()
     {
         return view('admin.reports.nursedaily');
@@ -61,18 +35,6 @@ class NurseController extends Controller
 //            ->nurseCallsPerHour();
 
         return view('statistics.nurses.info');
-    }
-
-    public function makeInvoice()
-    {
-        $nurses = activeNurseNames();
-
-        return view(
-            'billing.nurse.create',
-            [
-                'nurses' => $nurses->sort(),
-            ]
-        );
     }
 
     public function monthlyOverview(Request $request)
@@ -156,21 +118,5 @@ class NurseController extends Controller
         $rows = $rows->withPath('admin/reports/nurse/monthly');
 
         return view('admin.nurse.monthly-report', compact(['date', 'rows']));
-    }
-
-    public function sendInvoice(Request $request)
-    {
-        $invoices = (array) json_decode($request->input('links'));
-        $month    = $request->input('month');
-
-        foreach ($invoices as $key => $value) {
-            $value = (array) $value;
-
-            $user = User::find($key);
-
-            $user->notify(new NurseInvoiceCreated($value['link'], $month));
-        }
-
-        return redirect()->route('admin.reports.nurse.invoice')->with(['success' => 'yes']);
     }
 }

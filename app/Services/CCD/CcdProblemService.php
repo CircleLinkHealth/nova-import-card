@@ -6,12 +6,13 @@
 
 namespace App\Services\CCD;
 
-use App\Models\CCD\Problem as CcdProblem;
-use App\Models\CPM\CpmProblem;
-use App\Models\ProblemCode;
 use App\Repositories\CcdProblemRepository;
 use App\Services\CPM\CpmInstructionService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\Problem as CcdProblem;
+use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 
 class CcdProblemService
 {
@@ -113,7 +114,7 @@ class CcdProblemService
         $user->loadMissing(['ccdProblems.cpmInstruction', 'ccdProblems.codes']);
 
         //exclude generic diabetes type
-        $diabetes = \Cache::remember('cpm_problem_diabetes', 1440, function () {
+        $diabetes = \Cache::remember('cpm_problem_diabetes', 2, function () {
             return CpmProblem::where('name', 'Diabetes')->first();
         });
 

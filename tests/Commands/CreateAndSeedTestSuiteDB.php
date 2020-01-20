@@ -24,14 +24,15 @@ class CreateAndSeedTestSuiteDB extends Command
      *
      * @var string
      */
-    protected $signature = 'test:prepare-test_suite-db';
+    protected $signature = 'test:prepare-test_suite-db {dbName?}';
 
     public function handle()
     {
         $this->warn('Creating and seeding test DB.'.PHP_EOL);
         $start = microtime(true);
 
-        $this->createDB();
+        $dbName = $this->hasArgument('dbName') ? $this->argument('dbName') : null;
+        $this->createDB($dbName);
 
         $duration = round((microtime(true) - $start) * 1000);
 
