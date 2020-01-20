@@ -83,7 +83,7 @@ class NursePaymentAlgoTest extends TestCase
      * - Total CPM time = 45 minutes
      * - CCM Plus (G2058).
      *
-     * Result: $20.83. ($30/hr in 0-20 ccm range) + ($28 + 20-40 ccm range) + ($10 * 5 minutes in 40-60 ccm range).
+     * Result: $20.17. ($30/hr in 0-20 ccm range) + ($28 + 20-40 ccm range) + ($10 * 5 minutes in 40-60 ccm range).
      * Hourly rate yields $10.
      *
      * @throws \Exception
@@ -1531,7 +1531,7 @@ class NursePaymentAlgoTest extends TestCase
      *
      * Result:
      * Patient 1 -> $12.50 vs $20 hourly rate (round up 60 minutes * 20)
-     * Patient 2 -> $12.50 + $12.00 vs $20 hourly rate (round up 60 minutes * 20)
+     * Patient 2 -> ($12.50 + $12.00) vs $20 hourly rate (round up 60 minutes * 20)
      * Total -> $40
      *
      * @throws \Exception
