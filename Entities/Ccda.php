@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\SharedModels\Entities;
 
 use CircleLinkHealth\Eligibility\Adapters\CcdaToEligibilityJobAdapter;
-use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
 use App\DirectMailMessage;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
