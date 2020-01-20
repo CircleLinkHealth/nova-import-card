@@ -114,6 +114,33 @@ Route::prefix('eligibility')->group(function () {
                 ])->middleware('permission:batch.read');
             });
         });
+    
+        Route::group(['prefix' => 'enrollees'], function () {
+            Route::get('', [
+                'uses' => 'EnrolleesController@index',
+                'as'   => 'admin.enrollees.index',
+            ])->middleware('permission:enrollee.read,practice.read');
+            Route::get('batch/{batch}', [
+                'uses' => 'EnrolleesController@showBatch',
+                'as'   => 'admin.enrollees.show.batch',
+            ])->middleware('permission:enrollee.read,practice.read,batch.read');
+            Route::post('{batch}/import', [
+                'uses' => 'EnrolleesController@import',
+                'as'   => 'admin.enrollees.import',
+            ])->middleware('permission:enrollee.read,enrollee.update');
+            Route::post('import', [
+                'uses' => 'EnrolleesController@import',
+                'as'   => 'admin.enrollees.import.from.all.practices',
+            ])->middleware('permission:enrollee.read,enrollee.update');
+            Route::post('/import-array-of-ids', [
+                'uses' => 'EnrolleesController@importArray',
+                'as'   => 'admin.enrollees.import.array',
+            ])->middleware('permission:enrollee.read,enrollee.update');
+            Route::post('/import-using-medical-record-id', [
+                'uses' => 'EnrolleesController@importMedicalRecords',
+                'as'   => 'admin.enrollees.import.medical.records',
+            ])->middleware('permission:ccd-import');
+        });
     });
     
 });
