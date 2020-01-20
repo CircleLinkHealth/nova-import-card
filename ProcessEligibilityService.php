@@ -458,17 +458,17 @@ class ProcessEligibilityService
             throw new \Exception('$batch is not of type `'.EligibilityBatch::TYPE_ONE_CSV.'`.`');
         }
 
-        $collection = collect($batch->options['patientList']);
+        $csvPatientList = $batch->options['patientList'];
 
-        if ($collection->isEmpty()) {
+        if (empty($csvPatientList)) {
             return false;
         }
 
         $processedAtLeast1File = false;
 
         try {
-            while ($collection->isNotEmpty()) {
-                $patient = $collection->shift();
+            while (!empty($csvPatientList)) {
+                $patient = array_shift($csvPatientList);
         
                 if ( ! is_array($patient)) {
                     continue;
@@ -482,7 +482,7 @@ class ProcessEligibilityService
             }
         } catch (\Exception $exception) {
             $options                = $batch->options;
-            $options['patientList'] = $collection->toArray();
+            $options['patientList'] = $csvPatientList;
             $batch->options         = $options;
             $batch->save();
             
@@ -490,7 +490,7 @@ class ProcessEligibilityService
         }
 
         $options                = $batch->options;
-        $options['patientList'] = $collection->toArray();
+        $options['patientList'] = $csvPatientList;
         $batch->options         = $options;
         $batch->save();
 
