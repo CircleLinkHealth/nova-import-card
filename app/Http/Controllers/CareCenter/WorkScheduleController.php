@@ -150,11 +150,6 @@ class WorkScheduleController extends Controller
         return $this->fullCalendarService->prepareWorkDataForEachNurse($windows, $nurse);
     }
 
-    public function runSeeder()
-    {
-        Artisan::call('command:checkForYesterdaysActivitiesForCalendarEvents');
-    }
-
     /**
      * @param Request $request
      * @param $windowId
