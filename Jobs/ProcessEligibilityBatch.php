@@ -295,9 +295,7 @@ class ProcessEligibilityBatch implements ShouldQueue
     {
         $result = null;
 
-        if (array_key_exists('patientList', $batch->options)) {
-            $result = $this->processEligibilityService->processCsvForEligibility($batch);
-        } elseif (array_keys_exist(['folder', 'fileName'], $batch->options)) {
+        if (array_keys_exist(['folder', 'fileName'], $batch->options)) {
             $result = $this->processEligibilityService->processGoogleDriveCsvForEligibility($batch);
         }
 

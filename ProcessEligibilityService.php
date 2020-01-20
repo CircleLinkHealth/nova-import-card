@@ -515,7 +515,7 @@ class ProcessEligibilityService
             $stream = $driveHandler
                 ->getFileStream($driveFileName, $driveFolder);
         } catch (\Exception $e) {
-            \Log::info("EXCEPTION `{$e->getMessage()}`");
+            \Log::channel('logdna')->info("EXCEPTION `{$e->getMessage()}`");
             $batch->status = EligibilityBatch::STATUSES['error'];
             $batch->save();
 
@@ -533,7 +533,7 @@ class ProcessEligibilityService
         }
 
         try {
-            \Log::info("BEGIN creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
+            \Log::channel('logdna')->info("BEGIN creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
 
             $iterator = read_file_using_generator($pathToFile);
 
@@ -561,7 +561,7 @@ class ProcessEligibilityService
                             $row[$headerName] = $field;
                         }
                     } catch (\Exception $exception) {
-                        \Log::channel('logdna')->error($exception->getMessage(), [
+                        \Log::channel('logdna')->channel('logdna')->error($exception->getMessage(), [
                             'trace'        => $exception->getTrace(),
                             'batch_id_tag' => "batch_id:$batch->id",
                         ]);
@@ -570,49 +570,41 @@ class ProcessEligibilityService
                     }
                 }
                 $row    = array_filter($row);
-                $data[] = $row;
-            }
-
-            $patientList = [];
-            $data        = collect($data);
-            for ($i = 1; $i <= 1000; ++$i) {
-                $patient = $data->shift();
-
-                if ( ! is_array($patient)) {
+    
+                if ( ! is_array($row) || empty($row)) {
                     continue;
                 }
-
-                $patientList[] = $patient;
-
+    
+                $patient = collect($row);
+    
                 $patient = $this->transformCsvRow($patient);
-
+    
                 $validator = $this->validateRow($patient);
-
-                $mrn = $patient['mrn'] ?? $patient['mrn_number'] ?? $patient['patient_id'] ?? '';
-                
+    
+                $mrn = $patient['mrn'] ?? $patient['mrn_number'] ?? $patient['patient_id'] ?? $patient['dob'];
+    
                 $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$mrn;
-
+    
                 $job = EligibilityJob::create([
-                    'batch_id' => $batch->id,
-                    'hash'     => $hash,
-                    'data'     => $patient,
-                    'errors'   => $validator->fails()
-                        ? $validator->errors()
-                        : null,
-                ]);
-
-                $patient['eligibility_job_id'] = $job->id;
+                                                  'batch_id' => $batch->id,
+                                                  'hash'     => $hash,
+                                                  'data'     => $patient,
+                                                  'errors'   => $validator->fails()
+                                                      ? $validator->errors()
+                                                      : null,
+                                              ]);
+                
             }
 
-            \Log::info("FINISH creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
+            \Log::channel('logdna')->info("FINISH creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
 
             $mem = format_bytes(memory_get_peak_usage());
 
-            \Log::info("BEGIN deleting `${fileName}`");
+            \Log::channel('logdna')->info("BEGIN deleting `${fileName}`");
             $deleted = $localDisk->delete($fileName);
-            \Log::info("FINISH deleting `${fileName}`");
+            \Log::channel('logdna')->info("FINISH deleting `${fileName}`");
 
-            \Log::info("memory_get_peak_usage: ${mem}");
+            \Log::channel('logdna')->info("memory_get_peak_usage: ${mem}");
 
             $options                        = $batch->options;
             $options['finishedReadingFile'] = true;
@@ -623,14 +615,12 @@ class ProcessEligibilityService
             if ($initiator->hasRole('ehr-report-writer') && $initiator->ehrReportWriterInfo) {
                 Storage::drive('google')->move($driveFilePath, "{$driveFolder}/processed_{$driveFileName}");
             }
-
-            return $patientList;
         } catch (\Exception $e) {
-            \Log::info("EXCEPTION `{$e->getMessage()}`");
+            \Log::channel('logdna')->info("EXCEPTION `{$e->getMessage()}`");
 
-            \Log::info("BEGIN deleting `${fileName}`");
+            \Log::channel('logdna')->info("BEGIN deleting `${fileName}`");
             $deleted = $localDisk->delete($fileName);
-            \Log::info("FINISH deleting `${fileName}`");
+            \Log::channel('logdna')->info("FINISH deleting `${fileName}`");
 
             throw $e;
         }
