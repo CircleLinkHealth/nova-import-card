@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8e00df7521a352ac34b473df5fc695cd",
+    "content-hash": "62ff2950bdc1045d0e5f1edbad3fcbef",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -811,11 +811,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.3",
+            "version": "dev-nurse-calendar",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "aa2aee7cfc3e99f1892a8aaad1ca4550ffe87061"
+                "reference": "a19788b5ed6a6393e3173e9f553aa53bdcebb29c"
             },
             "type": "laravel-module",
             "extra": {
@@ -837,15 +837,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T10:53:36+00:00"
+            "time": "2020-01-17T13:47:29+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.7.8",
+            "version": "dev-CPM-1658_method_to_nurse_model_plus_calendarFields",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "56eeb9a025901b2ebbe5ee8729cd65b92a6a5cbf"
+                "reference": "c4cca8f0105da08f8511b4812faa950e7d1bda69"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -878,7 +878,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-20T19:39:38+00:00"
+            "time": "2020-01-17T13:53:03+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -13618,6 +13618,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/customer-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
