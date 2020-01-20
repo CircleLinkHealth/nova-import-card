@@ -118,7 +118,7 @@ class ProcessEligibilityService
 
         $validator = $this->validateRow($patient);
         
-        $mrn = $patient['mrn'] ?? $patient['mrn_number'] ?? $patient['patient_id'] ?? '';
+        $mrn = $patient['mrn'] ?? $patient['mrn_number'] ?? $patient['patient_id'];
 
         $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$mrn;
 
@@ -615,7 +615,6 @@ class ProcessEligibilityService
             \Log::info("memory_get_peak_usage: ${mem}");
 
             $options                        = $batch->options;
-            $options['patientList']         = $data->toArray();
             $options['finishedReadingFile'] = true;
             $batch->options                 = $options;
             $batch->save();
