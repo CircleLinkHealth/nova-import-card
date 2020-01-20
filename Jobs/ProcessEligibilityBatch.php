@@ -12,7 +12,7 @@ use App\Jobs\GoogleDrive;
 use App\Jobs\MakePhoenixHeartWelcomeCallList;
 use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use App\Jobs\Storage;
-use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
+use CircleLinkHealth\Eligibility\Entities\PhoenixHeartName;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;

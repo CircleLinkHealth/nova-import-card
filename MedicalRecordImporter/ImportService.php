@@ -7,7 +7,7 @@
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter;
 
 use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
-use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
+use CircleLinkHealth\Eligibility\Entities\PhoenixHeartName;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;

@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use App\Jobs\ImportPHXEnrollee;
+use CircleLinkHealth\Eligibility\Jobs\ImportPHXEnrollee;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\Eligibility\ValueObjects\BlueButtonMedicalRecord;
