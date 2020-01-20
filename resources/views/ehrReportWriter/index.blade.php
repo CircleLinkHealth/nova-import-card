@@ -34,7 +34,7 @@
                         </ul>
                     </div>
                     <div class="col-md-12 form-group">
-                        <select class="select2" name="practice_id">
+                        <select class="select2" name="practice_id" required>
                             <option value="{{null}}">Select Practice</option>
                             @foreach($practices as $practice)
                                 <option value="{{$practice->id}}">{{$practice->display_name}}</option>
@@ -48,7 +48,7 @@
                         <input type="checkbox" name="filterLastEncounter"> Filter Last Encounter <br>
                     </div>
 
-                    <input type="submit" class="btn btn-primary form-group" value="Review Batch">
+                    <input type="submit" class="btn btn-primary form-group" value="Process File">
                 </form>
             </div>
         @endempty
