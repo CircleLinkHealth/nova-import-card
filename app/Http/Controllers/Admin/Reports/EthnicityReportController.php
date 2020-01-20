@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\Admin\Reports;
 
-use App\Exports\FromArray;
+use CircleLinkHealth\Core\Exports\FromArray;
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
 use App\Models\CCD\CcdVendor;
