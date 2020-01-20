@@ -128,7 +128,7 @@
     "circlelinkhealth/core-module": "1.4.2",
     "circlelinkhealth/cpm-migrations-module": "dev-nurse-calendar",
     "circlelinkhealth/customer-module": "dev-CPM-1658_method_to_nurse_model_plus_calendarFields",
-    "circlelinkhealth/eligibility-module": "1.2.7",
+    "circlelinkhealth/eligibility-module": "1.2.8",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/nurseinvoices-module": "1.1",
