@@ -1510,3 +1510,34 @@ if ( ! function_exists('getModelFromTable')) {
         return false;
     }
 }
+
+if ( ! function_exists('stripNonTrixTags')) {
+    /**
+     * @param string
+     *
+     * @return string
+     */
+    function stripNonTrixTags(string $trixString)
+    {
+        return strip_tags($trixString, Constants::TRIX_ALLOWABLE_TAGS_STRING);
+    }
+}
+
+if ( ! function_exists('convertValidatorMessagesToString')) {
+    /**
+     * Formats Validator messages to return string.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     *
+     * @return string
+     */
+    function convertValidatorMessagesToString(Illuminate\Validation\Validator $validator): string
+    {
+        return implode('\n', collect($validator->getMessageBag()->toArray())->transform(function ($item, $key) {
+            $errors = implode(', ', $item);
+            $key = ucfirst($key);
+
+            return "{$key}: $errors";
+        })->toArray());
+    }
+}
