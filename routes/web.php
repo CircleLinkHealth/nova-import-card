@@ -640,9 +640,7 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
-
-        Route::post('demographics', 'EditImportedCcda\DemographicsImportsController@store');
-
+        
         Route::post('import', 'MedicalRecordImportController@importDEPRECATED');
     });
 
@@ -1235,11 +1233,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('saas-accounts/create', 'Admin\CRUD\SaasAccountController@create')->middleware('permission:saas.create');
         Route::post('saas-accounts', 'Admin\CRUD\SaasAccountController@store')->middleware('permission:saas.create');
 
-        Route::get(
-            'eligible-lists/phoenix-heart',
-            'Admin\WelcomeCallListController@makePhoenixHeartCallList'
-        )->middleware('permission:batch.create');
-
         Route::view('api-clients', 'admin.manage-api-clients');
 
         Route::get('medication-groups-maps', [
@@ -1348,11 +1341,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'CallController@import',
             'as'   => 'post.CallController.import',
         ])->middleware('permission:call.update,call.create');
-
-        Route::post('make-welcome-call-list', [
-            'uses' => 'Admin\WelcomeCallListController@makeWelcomeCallList',
-            'as'   => 'make.welcome.call.list',
-        ])->middleware('permission:batch.create');
 
         Route::get('families/create', [
             'uses' => 'FamilyController@create',
@@ -2278,19 +2266,6 @@ Route::group([
         ]);
     });
 });
-
-Route::post('process-eligibility/drive/', [
-    'uses' => 'ProcessEligibilityController@fromGoogleDrive',
-    'as'   => 'process.eligibility.google.drive',
-])->middleware(['auth', 'role:administrator']);
-
-Route::get(
-    'process-eligibility/local-zip-from-drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}',
-    [
-        'uses' => 'ProcessEligibilityController@fromGoogleDriveDownloadedLocally',
-        'as'   => 'process.eligibility.local.zip',
-    ]
-)->middleware(['auth', 'role:administrator']);
 
 Route::get('notifications/{id}', [
     'uses' => 'NotificationController@showPusherNotification',
