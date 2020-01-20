@@ -2399,3 +2399,8 @@ Route::post('nurses/nurse-calendar-data', [
     'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
+
+Route::get('sex', [
+    'uses' => 'CareCenter\WorkScheduleController@runSeeder',
+    'as'   => 'get.nurse.schedules.selectedNurseCalendar',
+])->middleware('auth');

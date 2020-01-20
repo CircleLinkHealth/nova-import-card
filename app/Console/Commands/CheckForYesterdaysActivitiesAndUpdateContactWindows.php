@@ -50,7 +50,7 @@ class CheckForYesterdaysActivitiesAndUpdateContactWindows extends Command
         NurseContactWindow::with('nurse')
             ->where('date', $dateToCheck)
             ->whereHas('nurse', function ($q) {
-                $q->where('status', 'active'); //@todo: case of nurse becoming active from inactivity
+                $q->where('status', 'active');
             })->chunk(100, function ($windows) use ($dateToCheck) {
                 collect($windows)->map(function ($window) use ($dateToCheck) {
                     $userId = $window->nurse->user_id;
