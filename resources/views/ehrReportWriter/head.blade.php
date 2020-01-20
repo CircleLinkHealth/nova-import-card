@@ -97,8 +97,7 @@
                                 <a href="{{route('report-writer.google-drive')}}" target="_blank"><i class="top-nav-item-icon glyphicon glyphicon glyphicon glyphicon-cloud"></i> My Google Drive Folder</a>
                             </li>
                             <li class="dropdown">
-                                <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
-                                     aria-expanded="false">
+                                <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button" aria-expanded="false" id="csv-templates-dropdown">
                                     <i class="top-nav-item-icon glyphicon glyphicon glyphicon-list-alt"></i>
 
                                     Templates
