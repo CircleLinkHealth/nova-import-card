@@ -31,7 +31,7 @@ trait HasCpmRoles
      */
     public function isCareCoach(): bool
     {
-        return $this->getCachedRole('care-center', 'care-center-external');
+        return $this->cerberusHasRole(['care-center', 'care-center-external']);
     }
     
     /**
@@ -41,7 +41,7 @@ trait HasCpmRoles
      */
     public function isSoftwareOnly(): bool
     {
-        return $this->getCachedRole('software-only');
+        return $this->cerberusHasRole('software-only');
     }
     
     /**
@@ -51,7 +51,7 @@ trait HasCpmRoles
      */
     public function isAdmin(): bool
     {
-        return $this->getCachedRole('administrator');
+        return $this->cerberusHasRole('administrator');
     }
     
     /**
@@ -61,7 +61,7 @@ trait HasCpmRoles
      */
     public function isParticipant(): bool
     {
-        return $this->getCachedRole('participant');
+        return $this->cerberusHasRole('participant');
     }
     
     /**
@@ -71,7 +71,7 @@ trait HasCpmRoles
      */
     public function isProvider(): bool
     {
-        return $this->getCachedRole('provider');
+        return $this->cerberusHasRole('provider');
     }
     
     /**
@@ -81,7 +81,11 @@ trait HasCpmRoles
      */
     public function isCareAmbassador($includeViewOnly = true): bool
     {
-        return $this->getCachedRole(['care-ambassador', 'care-ambassador-view-only']);
+        $arr = ['care-ambassador'];
+        if ($includeViewOnly) {
+            $arr[] = 'care-ambassador-view-only';
+        }
+        return $this->cerberusHasRole($arr);
     }
     
     /**
@@ -91,7 +95,7 @@ trait HasCpmRoles
      */
     public function isSaasAdmin(): bool
     {
-        return $this->getCachedRole('saas-admin');
+        return $this->cerberusHasRole('saas-admin');
     }
     
     /**
@@ -101,12 +105,12 @@ trait HasCpmRoles
      */
     public function isEhrReportWriter(): bool
     {
-        return $this->getCachedRole('ehr-report-writer');
+        return $this->cerberusHasRole('ehr-report-writer');
     }
     
     public function isPracticeStaff(): bool
     {
-        return $this->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
+        return $this->cerberusHasRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
     }
     
     public function hasRole($name, $operator = 'OR') {
