@@ -7,7 +7,7 @@
 namespace App\Exports;
 
 use App\Reports\NurseDailyReport as NurseStatsService;
-use App\Traits\AttachableAsMedia;
+use CircleLinkHealth\Core\Traits\AttachableAsMedia;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
@@ -20,7 +20,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class NurseDailyReport implements FromCollection, Responsable, WithHeadings
 {
-    use AttachableAsMedia;
+    use CircleLinkHealth\Core\Traits\AttachableAsMedia;
     use Exportable;
     /**
      * @var Carbon

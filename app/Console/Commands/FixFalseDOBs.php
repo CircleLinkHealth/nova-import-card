@@ -9,7 +9,7 @@ namespace App\Console\Commands;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
-use App\Models\MedicalRecords\TabularMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 

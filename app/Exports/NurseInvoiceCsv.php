@@ -6,7 +6,7 @@
 
 namespace App\Exports;
 
-use App\Traits\AttachableAsMedia;
+use CircleLinkHealth\Core\Traits\AttachableAsMedia;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Illuminate\Contracts\Support\Responsable;
@@ -16,7 +16,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
 {
-    use AttachableAsMedia;
+    use CircleLinkHealth\Core\Traits\AttachableAsMedia;
     use Exportable;
     /**
      * @var Carbon

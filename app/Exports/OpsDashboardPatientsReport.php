@@ -8,7 +8,7 @@ namespace App\Exports;
 
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\Services\OpsDashboardService;
-use App\Traits\AttachableAsMedia;
+use CircleLinkHealth\Core\Traits\AttachableAsMedia;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Support\Responsable;
@@ -19,7 +19,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class OpsDashboardPatientsReport implements FromCollection, Responsable, WithHeadings
 {
-    use AttachableAsMedia;
+    use CircleLinkHealth\Core\Traits\AttachableAsMedia;
     use Exportable;
     /**
      * @var Carbon
