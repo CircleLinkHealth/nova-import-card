@@ -577,7 +577,7 @@ class ProcessEligibilityService
                     continue;
                 }
                 
-                $patient = $this->transformCsvRow($row);
+                $patient = sanitize_array_keys($this->transformCsvRow($row));
                 
                 $validator = $this->validateRow($patient);
     
