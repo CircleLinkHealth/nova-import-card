@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Traits\RunsConsoleCommands;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
 class ReviewAppPostDeploy extends Command
@@ -46,7 +47,7 @@ class ReviewAppPostDeploy extends Command
         $dbName = config('database.connections.mysql.database');
         
         try {
-            $dbTableExists = \Schema::hasTable('practices');
+            $dbTableExists = User::where('username', 'admin')->exists() && User::where('username', 'nurse')->exists();
         } catch (\Exception $exception) {
             $dbTableExists = false;
         }
