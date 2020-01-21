@@ -516,8 +516,8 @@ if (isset($patient) && ! empty($patient)) {
             <script>
 
                 let patientProblemNames = Object.keys(@json($problems));
-                const diabetes1 = "{{\App\Models\CPM\CpmProblem::DIABETES_TYPE_1}}";
-                const diabetes2 = "{{\App\Models\CPM\CpmProblem::DIABETES_TYPE_2}}";
+                const diabetes1 = "{{\CircleLinkHealth\SharedModels\Entities\CpmProblem::DIABETES_TYPE_1}}";
+                const diabetes2 = "{{\CircleLinkHealth\SharedModels\Entities\CpmProblem::DIABETES_TYPE_2}}";
 
                 //update problems if they have changed in care-areas modal
                 App.$on('patient-problems-updated', (problems) => {

@@ -6,7 +6,7 @@
 
 namespace App\Rules;
 
-use App\Models\CPM\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Contracts\Validation\Rule;
 
 class DoesNotHaveBothTypesOfDiabetes implements Rule

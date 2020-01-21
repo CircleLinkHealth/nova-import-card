@@ -27,8 +27,6 @@ class OnCarePlanProviderApprovalTest extends TestCase
 
     use CarePlanHelpers;
 
-    use UserHelpers;
-
     /**
      * @var CarePlan
      */
@@ -90,7 +88,7 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
         ]))
-            ->assertSee('Approve');
+                         ->assertSee('Approve');
     }
 
     public function test_care_center_cannot_approve()
@@ -106,7 +104,7 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
         ]))
-            ->assertDontSee('Approve');
+                         ->assertDontSee('Approve');
     }
 
     public function test_careplan_validation()
@@ -124,9 +122,9 @@ class OnCarePlanProviderApprovalTest extends TestCase
 
         $cpmProblems = CpmProblem::get();
         $ccdProblems = $this->patient->ccdProblems()->createMany([
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
+            ['name' => 'test' . str_random(5)],
+            ['name' => 'test' . str_random(5)],
+            ['name' => 'test' . str_random(5)],
         ]);
 
         foreach ($ccdProblems as $problem) {
@@ -173,7 +171,8 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $this->carePlan->status = CarePlan::QA_APPROVED;
         $this->carePlan->save();
 
-        $response = $this->actingAs($this->provider)->call('POST', route('patient.careplan.approve', ['patientId' => $this->patient->id]));
+        $response = $this->actingAs($this->provider)->call('POST',
+            route('patient.careplan.approve', ['patientId' => $this->patient->id]));
 
         $response->assertStatus(302);
         $response->assertRedirect(route('patient.careplan.print', [
@@ -201,7 +200,7 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
         ]))
-            ->assertSee('Approve');
+                         ->assertSee('Approve');
     }
 
     public function test_provider_can_approve()
@@ -212,7 +211,7 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
         ]))
-            ->assertSee('Approve');
+                         ->assertSee('Approve');
     }
 
     public function test_provider_cannot_qa_approve()
@@ -220,7 +219,7 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
         ]))
-            ->assertDontSee('Approve');
+                         ->assertDontSee('Approve');
     }
 
     public function test_qa_approval_is_blocked_for_patients_with_both_types_of_diabetes_unless_approver_confirms()
@@ -263,15 +262,15 @@ class OnCarePlanProviderApprovalTest extends TestCase
             'patientId' => $this->patient->id,
         ]));
         $this->call('POST', route('patient.careplan.approve', ['patientId' => $this->patient->id]))
-            ->assertStatus(302)
-            ->assertRedirect(route('patient.careplan.print', [
-                'patientId' => $this->patient->id,
-            ]))
-            ->assertSessionHas('errors', new MessageBag([
-                'conditions' => [
-                    (new DoesNotHaveBothTypesOfDiabetes())->message(),
-                ],
-            ]));
+             ->assertStatus(302)
+             ->assertRedirect(route('patient.careplan.print', [
+                 'patientId' => $this->patient->id,
+             ]))
+             ->assertSessionHas('errors', new MessageBag([
+                 'conditions' => [
+                     (new DoesNotHaveBothTypesOfDiabetes())->message(),
+                 ],
+             ]));
 
         //assert careplan has not been approved
         $this->assertEquals($carePlan->fresh()->status, CarePlan::DRAFT);
@@ -305,6 +304,6 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
         ]))
-            ->assertSee('Approve');
+                         ->assertSee('Approve');
     }
 }
