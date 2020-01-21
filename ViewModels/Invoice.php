@@ -199,13 +199,14 @@ class Invoice extends ViewModel
      */
     public function formattedBaseSalary()
     {
-        $fixedRatePay = number_format($this->fixedRatePay, 2);
+        $fixedRatePay     = number_format($this->fixedRatePay, 2);
         $fixedRateMessage = "\${$fixedRatePay} (Fixed Rate: \${$this->user->nurseInfo->hourly_rate}/hr).";
 
         if ( ! $this->variablePay && ! $this->changedToFixedRateBecauseItYieldedMore) {
             return $fixedRateMessage;
         }
         $high_rate   = $this->user->nurseInfo->high_rate;
+        $high_rate_2 = $this->user->nurseInfo->high_rate_2;
         $high_rate_3 = $this->user->nurseInfo->high_rate_3;
         $low_rate    = $this->user->nurseInfo->low_rate;
 
@@ -215,7 +216,7 @@ class Invoice extends ViewModel
             if ($this->altAlgoEnabled) {
                 $variableRateMessage = "\${$variableRatePay} (Visit-based: $this->visitsCount visits).";
             } else {
-                $variableRateMessage = "\${$variableRatePay} (Variable Rate: \$[$high_rate_3 - $high_rate]/hr or \$$low_rate/hr).";
+                $variableRateMessage = "\${$variableRatePay} (Variable Rate: \$$high_rate/hr, \$$high_rate_2/hr, \$$high_rate_3/hr or \$$low_rate/hr).";
             }
         } else {
             $variableRateMessage = "\${$variableRatePay} (Variable Rate: \$$high_rate/hr or \$$low_rate/hr).";
