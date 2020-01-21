@@ -7,7 +7,7 @@
 namespace App\Nova;
 
 use App\Nova\Importers\PracticeStaff as PracticeStaffImporter;
-use Circlelinkhealth\ClhImportCardExtended\ClhImportCardExtended;
+use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
