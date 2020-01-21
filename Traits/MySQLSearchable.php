@@ -6,8 +6,18 @@
 namespace CircleLinkHealth\Core\Traits;
 
 
+/**
+ * Trait MySQLSearchable
+ * @package CircleLinkHealth\Core\Traits
+ */
 trait MySQLSearchable
 {
+
+    /**
+     * Available full-text modes for MySQL
+     *
+     * @var array
+     */
     protected $validModes = [
         'BOOLEAN',
         'NATURAL LANGUAGE',
