@@ -497,12 +497,12 @@ class ProcessEligibilityService
 
         return $processedAtLeast1File;
     }
-
+    
     /**
-     * @throws \Exception
-     * @throws \League\Flysystem\FileNotFoundException
+     * @param EligibilityBatch $batch
      *
      * @return array
+     * @throws \Exception
      */
     public function processGoogleDriveCsvForEligibility(EligibilityBatch $batch)
     {
