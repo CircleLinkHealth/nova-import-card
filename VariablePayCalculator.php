@@ -61,6 +61,8 @@ class VariablePayCalculator
      * @param User $nurse
      *
      * @return CalculationResult
+     *
+     * @throws \Exception when patient not found
      */
     public function calculate(User $nurse)
     {
@@ -94,7 +96,10 @@ class VariablePayCalculator
                 );
             } else {
                 if ($ccmPlusAlgoEnabled) {
-                    $patient            = User::with('primaryPractice.chargeableServices')->find($patientUserId);
+                    $patient       = User::with('primaryPractice.chargeableServices')->find($patientUserId);
+                    if (!$patient) {
+                        throw new \Exception("Could not find user with id $patientUserId");
+                    }
                     $practiceHasCcmPlus = $this->practiceHasCcmPlusCode($patient->primaryPractice);
                     $totalCcm           = $patient->patientSummaryForMonth($this->startDate)->ccm_time;
                     $ranges             = $this->separateTimeAccruedInRanges($patientCareRateLogs);
