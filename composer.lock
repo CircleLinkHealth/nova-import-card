@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "fb0155d990e164c7a2dd74ceec5c9d74",
+    "content-hash": "b9c8778e8734e4eac656ff706c269861",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -882,11 +882,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v1.3.1",
+            "version": "dev-CPM-1793-ca-family-members-2nd-branch",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "e621684fb7f4ccb836592b2d8634cbab99482ddc"
+                "reference": "eb84e51c41f65951ca8f3862c16966bba7365e6b"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -911,7 +911,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-20T23:41:18+00:00"
+            "time": "2020-01-21T11:46:52+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -13621,6 +13621,7 @@
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/core-module": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/eligibility-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
