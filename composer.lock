@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "485baa7cfd6e1c88c1e1d3c495ec7427",
+    "content-hash": "def85329106c7713fd7d5bf4c408805e",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -841,11 +841,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.7.9",
+            "version": "dev-CPM-1658_method_to_nurse_model_plus_calendarFields",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "56eeb9a025901b2ebbe5ee8729cd65b92a6a5cbf"
+                "reference": "c4cca8f0105da08f8511b4812faa950e7d1bda69"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -878,15 +878,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-20T19:39:38+00:00"
+            "time": "2020-01-17T13:53:03+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-master",
+            "version": "v1.2.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "4064befb37b11cbffb4cc2c7caf1f8a2fd3d0283"
+                "reference": "5dcc411a9b8a36d144090b7c987c6de9de862745"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -911,7 +911,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-21T18:23:08+00:00"
+            "time": "2020-01-20T21:05:39+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
