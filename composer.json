@@ -28,6 +28,6 @@
         ]
     },
     "require": {
-       
+        "maatwebsite/excel": "^3.1"
     }
 }
