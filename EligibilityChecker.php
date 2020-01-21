@@ -189,7 +189,9 @@ class EligibilityChecker
     {
         if (isset($this->eligibilityJob->data['insurance_plans']) || isset($this->eligibilityJob->data['insurance_plan'])) {
             //adapt record so that we can use validateInsuranceWithPrimarySecondaryTertiary()
-            $this->eligibilityJob->data = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($this->eligibilityJob->data);
+            $this->eligibilityJob->data = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary(
+                $this->eligibilityJob->data
+            );
         }
         
         if (isset($this->eligibilityJob->data['insurances'])) {
@@ -538,9 +540,10 @@ class EligibilityChecker
         if ($ccmProbCount < 2 && 0 == $bhiProbCount) {
             $this->setEligibilityJobStatus(
                 3,
-                ['problems'                 => 'Patient has less than 2 ccm conditions',
-                 'qualifyingCcmProblems' => $qualifyingCcmProblems,
-                 'qualifyingBhiProblems' => $qualifyingBhiProblems,
+                [
+                    'problems'              => 'Patient has less than 2 ccm conditions',
+                    'qualifyingCcmProblems' => $qualifyingCcmProblems,
+                    'qualifyingBhiProblems' => $qualifyingBhiProblems,
                 ],
                 EligibilityJob::INELIGIBLE,
                 'problems'
@@ -632,14 +635,16 @@ class EligibilityChecker
      */
     private function createEnrollee(): bool
     {
-        $args = $this->eligibilityJob->data;
+        $args = $this->getSanitizedEligibilityDataField();
         
-        if (is_a($args, Collection::class)) {
+        if ($args instanceof Collection) {
             $args = $args->all();
         }
         
         if ( ! is_array($args)) {
-            throw new \Exception('$args is expected to be an array. '.EligibilityJob::class.':'.$this->eligibilityJob->id);
+            throw new \Exception(
+                '$args is expected to be an array. '.EligibilityJob::class.':'.$this->eligibilityJob->id
+            );
         }
         
         $args['primary_insurance']   = $this->eligibilityJob->primary_insurance;
@@ -664,16 +669,16 @@ class EligibilityChecker
 //                $args['status'] = Enrollee::TO_SMS;
 //            }
         
-        $args['home_phone'] = isset($args['home_phone'])
+        $args['home_phone']    = isset($args['home_phone'])
             ? (new StringManipulation())->formatPhoneNumberE164($args['home_phone'])
             : null;
         $args['primary_phone'] = isset($args['primary_phone'])
             ? (new StringManipulation())->formatPhoneNumberE164($args['primary_phone'])
             : null;
-        $args['cell_phone'] = isset($args['cell_phone'])
+        $args['cell_phone']    = isset($args['cell_phone'])
             ? (new StringManipulation())->formatPhoneNumberE164($args['cell_phone'])
             : null;
-        $args['other_phone'] = isset($args['other_phone'])
+        $args['other_phone']   = isset($args['other_phone'])
             ? (new StringManipulation())->formatPhoneNumberE164($args['other_phone'])
             : null;
         
@@ -750,9 +755,12 @@ class EligibilityChecker
         }
         
         $args['batch_id'] = $this->batch->id;
-        $args['mrn']      = $args['mrn'] ?? $args['mrn_number'] ?? $args['patient_id'];
         
-        $args['dob'] = $args['dob'] ?? $args['date_of_birth'] ?? $args['birth_date'];
+        if (empty($args['mrn']) && array_key_exists('mrn_number', $args) && ! empty($args['mrn_number'])) {
+            $args['mrn'] = $args['mrn_number'];
+        } elseif (empty($args['mrn']) && array_key_exists('patient_id', $args) && ! empty($args['patient_id'])) {
+            $args['dob'] = $args['dob'] ?? $args['date_of_birth'] ?? $args['birth_date'];
+        }
         
         $enrolleeExists = Enrollee::where(
             [
@@ -926,8 +934,8 @@ class EligibilityChecker
     
     /**
      * @param array $messages
-     * @param null  $outcome
-     * @param null  $reason
+     * @param null $outcome
+     * @param null $reason
      */
     private function setEligibilityJobStatus(int $status, $messages = [], $outcome = null, $reason = null)
     {
@@ -1097,5 +1105,29 @@ class EligibilityChecker
         }
         
         return true;
+    }
+    
+    private function getSanitizedEligibilityDataField()
+    {
+        return array_combine(
+            array_map(
+                function ($i) {
+                    //Removes \ufeff randomly prefixed to some keys.
+                    //https://stackoverflow.com/questions/23463758/removing-the-ufeff-from-the-end-of-object-content-in-google-api-json-resu/25913845#25913845
+                    return preg_replace(
+                        '/
+    ^
+    [\pZ\p{Cc}\x{feff}]+
+    |
+    [\pZ\p{Cc}\x{feff}]+$
+   /ux',
+                        '',
+                        $i
+                    );
+                },
+                array_keys($this->eligibilityJob->data)
+            ),
+            $this->eligibilityJob->data
+        );
     }
 }
