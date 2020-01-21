@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility;
 
+use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedAllergyFields;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedMedicationFields;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\NumberedProblemFields;
@@ -505,6 +506,8 @@ class ProcessEligibilityService
      */
     public function processGoogleDriveCsvForEligibility(EligibilityBatch $batch)
     {
+        $batch->loadMissing('practice');
+        
         $driveFolder   = $batch->options['folder'];
         $driveFileName = $batch->options['fileName'];
         $driveFilePath = $batch->options['filePath'] ?? null;
@@ -582,15 +585,17 @@ class ProcessEligibilityService
     
                 $hash = $batch->practice->name.$patient['first_name'].$patient['last_name'].$mrn;
     
-                $job = EligibilityJob::create([
-                                                  'batch_id' => $batch->id,
-                                                  'hash'     => $hash,
+                $job = EligibilityJob::updateOrCreate([
+                                                          'batch_id' => $batch->id,
+                                                          'hash'     => $hash,
+                                                      ], [
                                                   'data'     => $patient,
                                                   'errors'   => $validator->fails()
                                                       ? $validator->errors()
                                                       : null,
                                               ]);
                 
+                ProcessSinglePatientEligibility::dispatch($job, $batch, $batch->practice);
             }
 
             \Log::channel('logdna')->info("FINISH creating eligibility jobs from csv file in google drive: [`folder => ${driveFolder}`, `filename => ${driveFileName}`]");
