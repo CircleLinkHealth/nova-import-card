@@ -107,7 +107,8 @@ class PostRefactoringRenaming extends Migration
                         'new' => 'CircleLinkHealth\Eligibility\Entities\Enrollee',
                     ],
                 ])->each(function ($change) {
-                    echo "\nChanging {$change['old']} tp {$change['new']}.\n";
+                    echo "\nChanging {$change['old']} to {$change['new']}.\n";
+                    
             \DB::table('revisions')
                ->where('revisionable_type', $change['old'])
                ->update(
