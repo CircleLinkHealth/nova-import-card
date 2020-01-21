@@ -126,7 +126,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     }
 
     /**
-     * Handles importing a MedicalRecord for QA.
+     * Handles importing a MedicalRecordForEligibilityCheck for QA.
      *
      * @return ImportedMedicalRecord
      */
@@ -224,7 +224,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     }
 
     /**
-     * Predict which BillingProvider should be attached to this MedicalRecord.
+     * Predict which BillingProvider should be attached to this MedicalRecordForEligibilityCheck.
      */
     public function predictBillingProvider(): MedicalRecord
     {
@@ -244,7 +244,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     }
 
     /**
-     * Predict which Location should be attached to this MedicalRecord.
+     * Predict which Location should be attached to this MedicalRecordForEligibilityCheck.
      */
     public function predictLocation(): MedicalRecord
     {
@@ -277,7 +277,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     }
 
     /**
-     * Predict which Practice should be attached to this MedicalRecord.
+     * Predict which Practice should be attached to this MedicalRecordForEligibilityCheck.
      */
     public function predictPractice(): MedicalRecord
     {

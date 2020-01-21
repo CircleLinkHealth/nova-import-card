@@ -15,7 +15,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * This is any Health Record that can be Imported.
  * Examples include a Ccda, a CsvList and so on.
  *
- * Interface MedicalRecord
+ * Interface MedicalRecordForEligibilityCheck
  */
 interface MedicalRecord
 {
@@ -105,7 +105,7 @@ interface MedicalRecord
     public function guessPracticeLocationProvider(): MedicalRecord;
 
     /**
-     * Handles importing a MedicalRecord for QA.
+     * Handles importing a MedicalRecordForEligibilityCheck for QA.
      *
      * @return ImportedMedicalRecord
      */

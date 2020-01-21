@@ -33,7 +33,7 @@ interface ImportedMedicalRecord
     public function getPractice(): Practice;
 
     /**
-     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\\CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord|null
+     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\\CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordForEligibilityCheck|null
      */
     public function medicalRecord();
 

@@ -18,7 +18,7 @@ use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 interface Checkable extends HasMedicalRecord
 {
     /**
-     * Creates an EligibilityJob using the MedicalRecord provided to the Checkable, and stores it on the instance.
+     * Creates an EligibilityJob using the MedicalRecordForEligibilityCheck provided to the Checkable, and stores it on the instance.
      *
      * @return EligibilityJob
      */

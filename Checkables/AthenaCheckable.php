@@ -81,7 +81,7 @@ class AthenaCheckable implements Checkable
     }
 
     /**
-     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\\CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord
+     * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\\CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordForEligibilityCheck
      */
     public function getMedicalRecord(): MedicalRecord
     {

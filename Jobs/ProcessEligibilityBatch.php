@@ -6,21 +6,21 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
+use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
-use App\Jobs\GoogleDrive;
-use App\Jobs\MakePhoenixHeartWelcomeCallList;
+use CircleLinkHealth\Eligibility\Jobs\MakePhoenixHeartWelcomeCallList;
 use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
-use App\Jobs\Storage;
 use CircleLinkHealth\Eligibility\Entities\PhoenixHeartName;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
-use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
+use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 
 class ProcessEligibilityBatch implements ShouldQueue
 {
