@@ -7,7 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\ReportFormatter;
-use App\Exports\FromArray;
+use CircleLinkHealth\Core\Exports\FromArray;
 use App\Http\Requests\GetUnder20MinutesReport;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanAssessmentService;

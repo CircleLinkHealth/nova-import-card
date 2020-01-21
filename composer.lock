@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ad304a7df1e1b54e18284df7b26637db",
+    "content-hash": "091e5fdc499a4d030f8bacf648af39e6",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -774,11 +774,14 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-CPM-1793-ca-family-members",
+            "version": "v1.4.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "984db65a55ded5cc6e88c9ec5766dc4b814dd8dc"
+                "reference": "3f2ddef77a73c84ff441a96743b95273210eac9a"
+            },
+            "require": {
+                "maatwebsite/excel": "^3.1"
             },
             "type": "laravel-module",
             "extra": {
@@ -804,15 +807,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-18T10:50:53+00:00"
+            "time": "2020-01-20T19:46:22+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-CPM-1793-CA-family-members",
+            "version": "v1.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "98fe3d1ed2f004cd58ee1a493110d867cc6cabdf"
+                "reference": "aa2aee7cfc3e99f1892a8aaad1ca4550ffe87061"
             },
             "type": "laravel-module",
             "extra": {
@@ -834,15 +837,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-19T21:33:51+00:00"
+            "time": "2020-01-17T10:53:36+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.7.6",
+            "version": "v1.7.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "9c86dbd38d4af7c7edd759112487a1a1acf979a4"
+                "reference": "56eeb9a025901b2ebbe5ee8729cd65b92a6a5cbf"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -875,15 +878,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T17:59:20+00:00"
+            "time": "2020-01-20T19:39:38+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-CPM-1793-ca-family-members",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "263ea6112392e6d2e2398bfe10c15885f442e160"
+                "reference": "71e5e1ec069b05566f28d2fe29ab22d8e332a37f"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -908,7 +911,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-19T22:14:13+00:00"
+            "time": "2020-01-21T00:21:30+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1124,11 +1127,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.1.1",
+            "version": "v1.1.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "6f0eedb15ed15db89ae96340ffe5c220bd16f6fb"
+                "reference": "63eac32b8a425fe19b8867063f80fc0320983232"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1142,7 +1145,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-18T02:55:33+00:00"
+            "time": "2020-01-20T19:55:25+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -2444,16 +2447,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.122",
+            "version": "v0.123",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "77bdb3cb12dd53bf5a0f23c86c0a57c439de77ad"
+                "reference": "a8c3c7563729ecb98a9ed66f675366527bcbad4d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/77bdb3cb12dd53bf5a0f23c86c0a57c439de77ad",
-                "reference": "77bdb3cb12dd53bf5a0f23c86c0a57c439de77ad",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/a8c3c7563729ecb98a9ed66f675366527bcbad4d",
+                "reference": "a8c3c7563729ecb98a9ed66f675366527bcbad4d",
                 "shasum": ""
             },
             "require": {
@@ -2477,7 +2480,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-01-16T00:24:04+00:00"
+            "time": "2020-01-19T00:24:13+00:00"
         },
         {
             "name": "google/auth",
@@ -10822,6 +10825,64 @@
             "time": "2016-01-20T08:20:44+00:00"
         },
         {
+            "name": "itsgoingd/clockwork",
+            "version": "v4.0.15",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/itsgoingd/clockwork.git",
+                "reference": "981a9640e9081e5dc1c2698abe35f984ed7f6b92"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/itsgoingd/clockwork/zipball/981a9640e9081e5dc1c2698abe35f984ed7f6b92",
+                "reference": "981a9640e9081e5dc1c2698abe35f984ed7f6b92",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5",
+                "psr/log": "1.*"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Clockwork\\Support\\Laravel\\ClockworkServiceProvider"
+                    ],
+                    "aliases": {
+                        "Clockwork": "Clockwork\\Support\\Laravel\\Facade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Clockwork\\": "Clockwork/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "itsgoingd",
+                    "email": "itsgoingd@luzer.sk",
+                    "homepage": "https://twitter.com/itsgoingd"
+                }
+            ],
+            "description": "php dev tools integrated to your browser",
+            "homepage": "https://underground.works/clockwork",
+            "keywords": [
+                "Devtools",
+                "debugging",
+                "laravel",
+                "logging",
+                "lumen",
+                "profiling",
+                "slim"
+            ],
+            "time": "2020-01-09T11:14:09+00:00"
+        },
+        {
             "name": "jkocik/laravel-profiler",
             "version": "1.3.0",
             "source": {
@@ -13557,8 +13618,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/core-module": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/eligibility-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
