@@ -171,13 +171,6 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
-        $queue = explode(',', $request->input('queue'));
-        $queue = collect(array_merge($queue,
-            explode(',', $request->input('confirmed_family_members'))))->unique()->toArray();
-        if ( ! empty($queue) && in_array($enrollee->id, $queue)) {
-            unset($queue[array_search($enrollee->id, $queue)]);
-        }
-
         EnrolleeCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
 
         return redirect()->route('enrollment-center.dashboard');
