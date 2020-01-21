@@ -104,6 +104,7 @@ class EligibilityChecker
         
         if ($this->eligibilityJob) {
             $this->eligibilityJob->status = 1;
+            $this->eligibilityJob->sanitizeDataKeys();
             $this->eligibilityJob->save();
         }
         
@@ -635,7 +636,7 @@ class EligibilityChecker
      */
     private function createEnrollee(): bool
     {
-        $args = $this->getSanitizedEligibilityDataField();
+        $args = $this->eligibilityJob->data;
         
         if ($args instanceof Collection) {
             $args = $args->all();
@@ -1105,29 +1106,5 @@ class EligibilityChecker
         }
         
         return true;
-    }
-    
-    private function getSanitizedEligibilityDataField()
-    {
-        return array_combine(
-            array_map(
-                function ($i) {
-                    //Removes \ufeff randomly prefixed to some keys.
-                    //https://stackoverflow.com/questions/23463758/removing-the-ufeff-from-the-end-of-object-content-in-google-api-json-resu/25913845#25913845
-                    return preg_replace(
-                        '/
-    ^
-    [\pZ\p{Cc}\x{feff}]+
-    |
-    [\pZ\p{Cc}\x{feff}]+$
-   /ux',
-                        '',
-                        $i
-                    );
-                },
-                array_keys($this->eligibilityJob->data)
-            ),
-            $this->eligibilityJob->data
-        );
     }
 }
