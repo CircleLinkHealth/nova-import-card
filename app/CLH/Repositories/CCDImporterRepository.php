@@ -6,7 +6,7 @@
 
 namespace App\CLH\Repositories;
 
-use App\Importer\Models\ImportedItems\DemographicsImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;

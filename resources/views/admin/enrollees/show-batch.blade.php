@@ -36,8 +36,8 @@
                                             <div class="col-xs-12" style="padding-bottom: 3px;">
                                                 <span>import? </span>
                                                 <input id="enrollee_ids" name="enrollee_id[]" type="checkbox"
-                                                       value="{{$enrollee->id}}" {{empty($enrollee->user_id) ?'':'disabled'}} {{app(\App\Services\MedicalRecords\ImportService::class)->isCcda($enrollee->medical_record_type) ?'':'disabled'}} {{old('enrollee_id') == $enrollee->id ?'selected':''}} >
-                                                {!! empty($enrollee->user_id) ?'': '<u>Patient already has a careplan.</u>  ' !!} {{app(\App\Services\MedicalRecords\ImportService::class)->isCcda($enrollee->medical_record_type) ?'':'Cannot import'}}
+                                                       value="{{$enrollee->id}}" {{empty($enrollee->user_id) ?'':'disabled'}} {{app(\CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService::class)->isCcda($enrollee->medical_record_type) ?'':'disabled'}} {{old('enrollee_id') == $enrollee->id ?'selected':''}} >
+                                                {!! empty($enrollee->user_id) ?'': '<u>Patient already has a careplan.</u>  ' !!} {{app(\CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService::class)->isCcda($enrollee->medical_record_type) ?'':'Cannot import'}}
                                                 <b>{{ $enrollee->first_name }} {{ $enrollee->last_name }}</b>
                                                 , {{ $enrollee->dob->toDateString() }}, {{ $enrollee->mrn }}
                                                 </input>

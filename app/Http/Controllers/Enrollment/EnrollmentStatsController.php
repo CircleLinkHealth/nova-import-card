@@ -9,7 +9,7 @@ namespace App\Http\Controllers\Enrollment;
 use App\CareAmbassador;
 use App\CareAmbassadorLog;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use App\Exports\FromArray;
+use CircleLinkHealth\Core\Exports\FromArray;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;

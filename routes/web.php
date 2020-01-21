@@ -645,9 +645,7 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
-
-        Route::post('demographics', 'EditImportedCcda\DemographicsImportsController@store');
-
+        
         Route::post('import', 'MedicalRecordImportController@importDEPRECATED');
     });
 
@@ -1084,85 +1082,6 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:note.send');
         });
 
-        Route::group(['prefix' => 'eligibility-batches'], function () {
-            Route::get('pending-jobs/count', [
-                'uses' => 'EligibilityBatchController@allJobsCount',
-                'as'   => 'all.eligibility.jobs.count',
-            ])->middleware('permission:batch.read');
-
-            Route::get('', [
-                'uses' => 'EligibilityBatchController@index',
-                'as'   => 'eligibility.batches.index',
-            ])->middleware('permission:batch.read');
-
-            Route::get('google-drive/create', [
-                'uses' => 'EligibilityBatchController@googleDriveCreate',
-                'as'   => 'eligibility.batches.google.drive.create',
-            ]);
-
-            Route::get('csv/create', [
-                'uses' => 'EligibilityBatchController@csvCreate',
-                'as'   => 'eligibility.batches.csv.create',
-            ]);
-
-            Route::group(['prefix' => '{batch}'], function () {
-                Route::get('', [
-                    'uses' => 'EligibilityBatchController@show',
-                    'as'   => 'eligibility.batch.show',
-                ])->middleware('permission:batch.read,practice.read,ccda.read');
-
-                Route::get('/counts', [
-                    'uses' => 'EligibilityBatchController@getCounts',
-                    'as'   => 'eligibility.batch.getCounts',
-                ])->middleware('permission:enrollee.read,ccda.read');
-
-                Route::get('/eligible-csv', [
-                    'uses' => 'EligibilityBatchController@downloadEligibleCsv',
-                    'as'   => 'eligibility.download.csv.eligible',
-                ])->middleware('permission:enrollee.read');
-
-                Route::get('/entire-patient-list-csv', [
-                    'uses' => 'EligibilityBatchController@downloadAllPatientsCsv',
-                    'as'   => 'eligibility.download.all',
-                ])->middleware('permission:enrollee.read');
-
-                Route::get('supplemental-insurance-info-csv', [
-                    'uses' => 'EligibilityBatchController@downloadAthenaApiInsuranceInfoCsv',
-                    'as'   => 'eligibility.download.supplemental_insurance_info',
-                ])->middleware('permission:enrollee.read');
-
-                Route::get('insurance-copays-csv', [
-                    'uses' => 'EligibilityBatchController@downloadAthenaApiInsuranceCopaysCsv',
-                    'as'   => 'eligibility.download.copays',
-                ])->middleware('permission:enrollee.read');
-
-                Route::get('/reprocess', [
-                    'uses' => 'EligibilityBatchController@getReprocess',
-                    'as'   => 'get.eligibility.reprocess',
-                ])->middleware('permission:enrollee.read');
-
-                Route::post('/reprocess', [
-                    'uses' => 'EligibilityBatchController@postReprocess',
-                    'as'   => 'post.eligibility.reprocess',
-                ])->middleware('permission:enrollee.read');
-
-                Route::get('/last-import-session-logs', [
-                    'uses' => 'EligibilityBatchController@getLastImportLog',
-                    'as'   => 'eligibility.download.last.import.logs',
-                ])->middleware('permission:batch.read');
-
-                Route::get('/download-patient-list-csv', [
-                    'uses' => 'EligibilityBatchController@downloadCsvPatientList',
-                    'as'   => 'eligibility.download.csv.patient.list',
-                ])->middleware('permission:batch.read');
-
-                Route::get('/batch-logs-csv', [
-                    'uses' => 'EligibilityBatchController@downloadBatchLogCsv',
-                    'as'   => 'eligibility.download.logs.csv',
-                ])->middleware('permission:batch.read');
-            });
-        });
-
         Route::group(['prefix' => 'ca-director'], function () {
             Route::get('', [
                 'uses' => 'EnrollmentDirectorController@index',
@@ -1210,40 +1129,8 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
         });
 
-        Route::group(['prefix' => 'enrollees'], function () {
-            Route::get('', [
-                'uses' => 'EnrolleesController@index',
-                'as'   => 'admin.enrollees.index',
-            ])->middleware('permission:enrollee.read,practice.read');
-            Route::get('batch/{batch}', [
-                'uses' => 'EnrolleesController@showBatch',
-                'as'   => 'admin.enrollees.show.batch',
-            ])->middleware('permission:enrollee.read,practice.read,batch.read');
-            Route::post('{batch}/import', [
-                'uses' => 'EnrolleesController@import',
-                'as'   => 'admin.enrollees.import',
-            ])->middleware('permission:enrollee.read,enrollee.update');
-            Route::post('import', [
-                'uses' => 'EnrolleesController@import',
-                'as'   => 'admin.enrollees.import.from.all.practices',
-            ])->middleware('permission:enrollee.read,enrollee.update');
-            Route::post('/import-array-of-ids', [
-                'uses' => 'EnrolleesController@importArray',
-                'as'   => 'admin.enrollees.import.array',
-            ])->middleware('permission:enrollee.read,enrollee.update');
-            Route::post('/import-using-medical-record-id', [
-                'uses' => 'EnrolleesController@importMedicalRecords',
-                'as'   => 'admin.enrollees.import.medical.records',
-            ])->middleware('permission:ccd-import');
-        });
-
         Route::get('saas-accounts/create', 'Admin\CRUD\SaasAccountController@create')->middleware('permission:saas.create');
         Route::post('saas-accounts', 'Admin\CRUD\SaasAccountController@store')->middleware('permission:saas.create');
-
-        Route::get(
-            'eligible-lists/phoenix-heart',
-            'Admin\WelcomeCallListController@makePhoenixHeartCallList'
-        )->middleware('permission:batch.create');
 
         Route::view('api-clients', 'admin.manage-api-clients');
 
@@ -1353,11 +1240,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'CallController@import',
             'as'   => 'post.CallController.import',
         ])->middleware('permission:call.update,call.create');
-
-        Route::post('make-welcome-call-list', [
-            'uses' => 'Admin\WelcomeCallListController@makeWelcomeCallList',
-            'as'   => 'make.welcome.call.list',
-        ])->middleware('permission:batch.create');
 
         Route::get('families/create', [
             'uses' => 'FamilyController@create',
@@ -2293,19 +2175,6 @@ Route::group([
         ]);
     });
 });
-
-Route::post('process-eligibility/drive/', [
-    'uses' => 'ProcessEligibilityController@fromGoogleDrive',
-    'as'   => 'process.eligibility.google.drive',
-])->middleware(['auth', 'role:administrator']);
-
-Route::get(
-    'process-eligibility/local-zip-from-drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}',
-    [
-        'uses' => 'ProcessEligibilityController@fromGoogleDriveDownloadedLocally',
-        'as'   => 'process.eligibility.local.zip',
-    ]
-)->middleware(['auth', 'role:administrator']);
 
 Route::get('notifications/{id}', [
     'uses' => 'NotificationController@showPusherNotification',

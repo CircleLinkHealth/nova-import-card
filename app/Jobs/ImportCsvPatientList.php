@@ -6,11 +6,11 @@
 
 namespace App\Jobs;
 
-use App\Importer\Models\ItemLogs\DocumentLog;
-use App\Importer\Models\ItemLogs\ProviderLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
-use App\Services\CCD\ProcessEligibilityService;
-use App\Services\MedicalRecords\ImportService;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;

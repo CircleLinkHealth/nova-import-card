@@ -6,7 +6,7 @@
 
 namespace App\Importer\Section\Validators;
 
-use App\Contracts\Importer\MedicalRecord\Section\Validator as SectionValidator;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\Validator as SectionValidator;
 
 class ValidStatus implements SectionValidator
 {

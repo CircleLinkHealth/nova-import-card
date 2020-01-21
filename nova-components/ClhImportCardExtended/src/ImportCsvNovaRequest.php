@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Circlelinkhealth\ClhImportCardExtended;
+namespace CircleLinkHealth\ClhImportCardExtended;
 
 use Illuminate\Support\Facades\Auth;
 use Laravel\Nova\Http\Requests\NovaRequest;

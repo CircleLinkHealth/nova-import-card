@@ -18,6 +18,32 @@ use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
 
+if ( ! function_exists('sanitize_array_keys')) {
+    function sanitize_array_keys(array $array)
+    {
+        return array_combine(
+            array_map(
+                function ($i) {
+                    //Removes \ufeff randomly prefixed to some keys.
+                    //https://stackoverflow.com/questions/23463758/removing-the-ufeff-from-the-end-of-object-content-in-google-api-json-resu/25913845#25913845
+                    return preg_replace(
+                        '/
+    ^
+    [\pZ\p{Cc}\x{feff}]+
+    |
+    [\pZ\p{Cc}\x{feff}]+$
+   /ux',
+                        '',
+                        $i
+                    );
+                },
+                array_keys($array)
+            ),
+            $array
+        );
+    }
+}
+
 if ( ! function_exists('abort_if_str_contains_unsafe_characters')) {
     function abort_if_str_contains_unsafe_characters(string $string)
     {

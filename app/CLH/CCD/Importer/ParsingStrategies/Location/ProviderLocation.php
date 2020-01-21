@@ -8,7 +8,7 @@ namespace App\CLH\CCD\Importer\ParsingStrategies\Location;
 
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
-use App\Importer\Models\ItemLogs\ProviderLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 

@@ -8,10 +8,10 @@ namespace App\Http\Controllers;
 
 use App\CLH\Repositories\UserRepository;
 use App\Notifications\EhrReportWriterNotification;
-use App\Services\CCD\ProcessEligibilityService;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use Illuminate\Http\Request;
 use Storage;
@@ -198,7 +198,11 @@ class EhrReportWriterController extends Controller
             }
         }
         if (empty($messages)) {
-            $messages['success'][] = 'Thanks! CLH will review the file and get back to you. This may take a few business days.';
+            if (auth()->user()->isAdmin()) {
+                $messages['success'][] = link_to_route('eligibility.batch.show', 'Click here to view Batch',[$batch->id]);
+            } else {
+                $messages['success'][] = 'Thanks! CLH will review the file and get back to you. This may take a few business days.';
+            }
         }
 
         return redirect()->back()->withErrors($messages);

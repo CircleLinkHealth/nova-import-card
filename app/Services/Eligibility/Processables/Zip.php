@@ -6,8 +6,8 @@
 
 namespace App\Services\Eligibility\Processables;
 
-use App\Jobs\CheckCcdaEnrollmentEligibility;
-use App\Jobs\ProcessCcda;
+use CircleLinkHealth\Eligibility\Jobs\CheckCcdaEnrollmentEligibility;
+use CircleLinkHealth\Eligibility\Jobs\ProcessCcda;
 use Carbon\Carbon;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\File;
