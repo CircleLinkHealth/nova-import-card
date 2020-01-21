@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Venturecraft\Revisionable\Revision;
+use CircleLinkHealth\Revisionable\Entities\Revision;
 
 class ShowRevisionsController extends Controller
 {

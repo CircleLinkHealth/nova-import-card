@@ -28,6 +28,30 @@ if (getenv('DATABASE_URL')) {
     ];
 }
 
+if (getenv('CLEARDB_DATABASE_URL')) {
+    $clearDBBUrl = parse_url(getenv('CLEARDB_DATABASE_URL'));
+
+    $clearDBBhost     = $clearDBBUrl['host'];
+    $clearDBBusername = $clearDBBUrl['user'];
+    $clearDBBpassword = $clearDBBUrl['pass'];
+    $clearDBBdatabase = substr($clearDBBUrl['path'], 1);
+
+    $clearDBConfig = [
+        'driver'         => 'mysql',
+        'charset'        => 'utf8mb4',
+        'collation'      => 'utf8mb4_unicode_ci',
+        'prefix'         => '',
+        'prefix_indexes' => true,
+        'strict'         => false,
+        'engine'         => null,
+    ];
+
+    $clearDBConfig['host']     = $clearDBBhost;
+    $clearDBConfig['database'] = $clearDBBdatabase;
+    $clearDBConfig['username'] = $clearDBBusername;
+    $clearDBConfig['password'] = $clearDBBpassword;
+}
+
 // for heroku
 if (getenv('REDIS_URL')) {
     $redisUrl = parse_url(getenv('REDIS_URL'));
@@ -35,6 +59,16 @@ if (getenv('REDIS_URL')) {
     putenv('REDIS_HOST='.$redisUrl['host']);
     putenv('REDIS_PORT='.$redisUrl['port']);
     putenv('REDIS_PASSWORD='.$redisUrl['pass']);
+}
+
+$mysqlDBName = env('DB_DATABASE', 'nothing');
+
+if ('nothing' === $mysqlDBName) {
+    $mysqlDBName = snake_case(getenv('HEROKU_BRANCH'));
+}
+
+if (getenv('CI')) {
+    $mysqlDBName = getenv('HEROKU_TEST_RUN_ID');
 }
 
 return [
@@ -75,11 +109,13 @@ return [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
+        'cleardb' => $clearDBConfig ?? [],
+
         'mysql' => [
             'driver'         => 'mysql',
             'host'           => env('DB_HOST', '127.0.0.1'),
             'port'           => env('DB_PORT', '3306'),
-            'database'       => env('DB_DATABASE', 'forge'),
+            'database'       => $mysqlDBName,
             'username'       => env('DB_USERNAME', 'forge'),
             'password'       => env('DB_PASSWORD', ''),
             'unix_socket'    => env('DB_SOCKET', ''),

@@ -57,7 +57,7 @@
                         template: "<a href='<?php echo route(
     'patient.summary',
     ['patient' => '#key#']
-                        ); ?>'>#first_name# #last_name#</a>",
+); ?>'>#first_name# #last_name#</a>",
                         width: 200,
                         sort: 'string'
                     },
@@ -74,6 +74,12 @@
                     {
                         id: "provider",
                         header: ["Provider", {content: "selectFilter"}],
+                        width: 200,
+                        sort: 'string'
+                    },
+                    {
+                        id: "location",
+                        header: ["Location", {content: "selectFilter"}],
                         width: 200,
                         sort: 'string'
                     },
@@ -187,6 +193,7 @@
                                         columns:{
                                 'first_name':       { header:'Patient Name', width: 200, template: webix.template('#first_name# #last_name#') },
                                 'provider':         { header:'Provider',    width:200, sort:'string', template: webix.template('#provider#') },
+                                'location':         { header:'Location',    width:200, sort:'string', template: webix.template('#location#') },
                                 'site':             { header:'Program',    width:150, sort:'string', template: webix.template('#site#')},
                                 'ccm_status':       { header:'CCM Status',    width:105, sort:'string', template: webix.template('#ccm_status#')},
                                 'careplan_status':  { header:'CarePlan Status', tooltip:'#tooltip#' , width:125, template: webix.template('#careplan_status#')},
@@ -208,6 +215,7 @@
                                         columns:{
                                 'first_name':       { header:'Patient Name', width: 200, template: webix.template('#first_name# #last_name#') },
                                 'provider':         { header:'Provider',    width:200, sort:'string', template: webix.template('#provider#') },
+                                'location':         { header:'Location',    width:200, sort:'string', template: webix.template('#location#') },
                                 'site':             { header:'Program',    width:150, sort:'string', template: webix.template('#site#')},
                                 'ccm_status':       { header:'CCM Status',    width:105, sort:'string', template: webix.template('#ccm_status#')},
                                 'careplan_status':  { header:'CarePlan Status', tooltip:'#tooltip#' , width:125, template: webix.template('#careplan_status#')},

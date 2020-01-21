@@ -37,6 +37,11 @@ class CallObserver
      */
     public function createNotificationAndSendToPusher($call)
     {
+        //could be called from a job, or from command line
+        if ( ! auth()->check()) {
+            return;
+        }
+
         $notify = $call->outboundUser;
         Notification::send($notify, new CallCreated($call, auth()->user()));
     }

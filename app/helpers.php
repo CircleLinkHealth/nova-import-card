@@ -4,14 +4,14 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\AppConfig;
-use App\CarePlanTemplate;
 use App\Constants;
-use App\Exceptions\CsvFieldNotFoundException;
 use App\Jobs\SendSlackMessage;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
@@ -783,7 +783,7 @@ if ( ! function_exists('setAppConfig')) {
      *
      * @param mixed $value
      *
-     * @return CarePlanTemplate
+     * @return \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate
      */
     function setAppConfig(string $key, $value)
     {
@@ -961,7 +961,7 @@ if ( ! function_exists('getProblemCodeSystemName')) {
 
 if ( ! function_exists('getProblemCodeSystemCPMId')) {
     /**
-     * Get the id of an App\ProblemCodeSystem from an array of clues.
+     * Get the id of an CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem from an array of clues.
      *
      * @return int|null
      */
@@ -1294,7 +1294,7 @@ if ( ! function_exists('getSampleNotePdfPath')) {
         $path = public_path('assets/pdf/sample-note.pdf');
 
         if ( ! file_exists($path)) {
-            throw new \App\Exceptions\FileNotFoundException();
+            throw new \CircleLinkHealth\Core\Exceptions\FileNotFoundException();
         }
 
         return $path;
@@ -1307,7 +1307,7 @@ if ( ! function_exists('getSampleCcdaPath')) {
         $path = storage_path('ccdas/Samples/demo.xml');
 
         if ( ! file_exists($path)) {
-            throw new \App\Exceptions\FileNotFoundException();
+            throw new \CircleLinkHealth\Core\Exceptions\FileNotFoundException();
         }
 
         return $path;
@@ -1432,8 +1432,7 @@ if ( ! function_exists('incrementInvoiceNo')) {
      */
     function incrementInvoiceNo()
     {
-        $num = AppConfig::where('config_key', 'billing_invoice_count')
-            ->firstOrFail();
+        $num = AppConfig::firstOrCreate(['config_key' => 'billing_invoice_count'], ['config_value' => 0]);
 
         $current = $num->config_value;
 
@@ -1493,5 +1492,21 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
             \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
         }
+    }
+}
+
+if ( ! function_exists('getModelFromTable')) {
+    function getModelFromTable($table)
+    {
+        foreach (get_declared_classes() as $class) {
+            if (is_subclass_of($class, 'Illuminate\Database\Eloquent\Model')) {
+                $model = new $class();
+                if ($model->getTable() === $table) {
+                    return $class;
+                }
+            }
+        }
+
+        return false;
     }
 }

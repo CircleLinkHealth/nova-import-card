@@ -64,24 +64,47 @@
       "url": "./nova-components/ImportPracticeStaffCsv"
     },
     {
-      "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-revisionable.git"
+      "type": "path",
+      "url": "./nova-components/GeneratePatientCallDataCsv"
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-cpm-migrations.git"
+      "url": "git@github.com:CircleLinkHealth/revisionable-module.git"
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/module-sqlviews.git"
+      "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git"
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git"
+      "url": "git@github.com:CircleLinkHealth/sqlviews-module.git"
     },
     {
       "type": "git",
-      "url": "git@github.com:CircleLinkHealth/ccda-parser-processor-php.git"
+      "url": "git@github.com:CircleLinkHealth/eligibility-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/shared-models-module.git"
+    },
+    {
+      "type": "path",
+      "url": "./nova-components/ClhImportCardExtended"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/ccda-parser-module.git"
+    },    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/patient-api-module.git"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/CircleLinkHealth/laravel-module-installer.git"
     }
   ],
   "require": {
@@ -97,18 +120,25 @@
     "algolia/algoliasearch-client-php": "^2.2",
     "algolia/scout-extended": "^1.8",
     "amnuts/opcache-gui": "dev-master",
-    "appstract/laravel-opcache": "^2.0",
+    "appstract/laravel-opcache": "~2.0.5",
     "barryvdh/laravel-snappy": "0.4.4",
-    "circlelinkhealth/ccda-parser-processor-php": "dev-master",
-    "circlelinkhealth/core": "1.31",
-    "circlelinkhealth/cpmmigrations": "dev-master",
-    "circlelinkhealth/customer": "1.5.4",
+    "circlelinkhealth/ccda-parser-processor-php-module": "1.0",
+    "circlelinkhealth/cerberus-gatekeeper-module": "3.0.6",
+    "circlelinkhealth/clh-import-card-extended": "*",
+    "circlelinkhealth/core-module": "1.4.2",
+    "circlelinkhealth/cpm-migrations-module": "1.3",
+    "circlelinkhealth/customer-module": "1.7.9",
+    "circlelinkhealth/eligibility-module": "1.3.1",
+    "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
-    "circlelinkhealth/raygun": "dev-master",
-    "circlelinkhealth/revisionable": "*",
-    "circlelinkhealth/sqlviews": "dev-master",
-    "circlelinkhealth/timetracking": "1.1.2",
-    "circlelinkhealth/twofa": "1.1.2",
+    "circlelinkhealth/nurseinvoices-module": "1.1",
+    "circlelinkhealth/patientapi-module": "1.0",
+    "circlelinkhealth/raygun-module": "0.8",
+    "circlelinkhealth/revisionable-module": "1.4.1",
+    "circlelinkhealth/shared-models-module": "1.1.4",
+    "circlelinkhealth/sqlviews-module": "1.0",
+    "circlelinkhealth/timetracking-module": "1.1.6",
+    "circlelinkhealth/twofa-module": "1.1.6",
     "daltcore/lara-pdf-merger": "dev-master",
     "dillingham/nova-button": "^1.0",
     "doctrine/dbal": "2.9.2",
@@ -121,6 +151,7 @@
     "jenssegers/agent": "^2.5",
     "jeremykenedy/slack-laravel": "^2.2",
     "jorijn/laravel-security-checker": "^0.3.0",
+    "joshbrw/laravel-module-installer": "^0.1.5",
     "jubeki/nova-card-linkable": "^1.0",
     "lab404/laravel-impersonate": "^1.2",
     "laracasts/utilities": "~2.0",
@@ -135,7 +166,7 @@
     "maatwebsite/excel": "^3.1",
     "nao-pon/flysystem-google-drive": "~1.1",
     "nvanheuverzwijn/monolog-logdna": "^2.1",
-    "phaxio/phaxio": "^1.0",
+    "phaxio/phaxio": "^2.0",
     "pragmarx/version": "^0.2.8",
     "propaganistas/laravel-phone": "^3.0",
     "pusher/pusher-php-server": "^4.0",
@@ -147,23 +178,22 @@
     "twilio/sdk": "5.7",
     "waavi/url-shortener": "dev-master",
     "waynestate/nova-ckeditor4-field": "^0.4.0",
-    "wikimedia/composer-merge-plugin": "^1.4",
     "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
-    "ext-xdebug": "*",
     "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-ide-helper": "^2.4",
-    "brianium/paratest": "*",
     "darkaonline/l5-swagger": "^5.5",
     "filp/whoops": "~2.0",
     "friendsofphp/php-cs-fixer": "^2.13",
+    "itsgoingd/clockwork": "^4.0",
     "jkocik/laravel-profiler": "^1.2",
     "laravel/dusk": "^3.0",
     "mockery/mockery": "^1.0",
     "nwidart/laravel-modules": "^6.0",
     "orangehill/iseed": "dev-master",
-    "phpunit/phpunit": "^7.0",
+    "phpstan/phpstan": "^0.12.5",
+    "phpunit/phpunit": "^7.5.8",
     "spatie/phpunit-watcher": "^1.8",
     "squizlabs/php_codesniffer": "*",
     "symfony/css-selector": "^4.0",
@@ -188,7 +218,7 @@
       "Tests\\": "tests/"
     },
     "files": [
-      "vendor/circlelinkhealth/core/Helpers/helpers.php"
+      "Modules/Core/Helpers/helpers.php"
     ]
   },
   "scripts": {
@@ -212,20 +242,13 @@
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
       "@php artisan nova:publish"
     ],
-    "paratest": [
-      "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p8"
-    ],
-    "coverage": [
-      "php artisan --env=testing test:prepare-test_suite-db",
-      "APP_ENV=testing COMPOSER_PROCESS_TIMEOUT=700 ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --coverage-text"
-    ],
     "unit-tests": [
       "php artisan --env=testing test:prepare-test_suite-db",
-      "APP_ENV=testing ./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3"
+      "APP_ENV=testing ./vendor/phpunit/phpunit/phpunit --testsuite=Unit --stop-on-failure --colors"
     ],
-    "profile-unit-tests": [
+    "test": [
       "php artisan --env=testing test:prepare-test_suite-db",
-      "./vendor/bin/paratest --testsuite=Unit --stop-on-failure --colors --runner WrapperRunner -p3 --log-junit tests_profiles.xml"
+      "./vendor/phpunit/phpunit/phpunit --testsuite=Unit --stop-on-failure --colors --testdox"
     ],
     "clear": [
       "php artisan clear-compiled",
@@ -253,20 +276,6 @@
         "laravel/dusk",
         "barryvdh/laravel-snappy"
       ]
-    },
-    "merge-plugin": {
-      "include": [
-        "CLHPackages/*/composer.json",
-        "Modules/*/composer.json"
-      ],
-      "require": [],
-      "recurse": true,
-      "replace": true,
-      "ignore-duplicates": false,
-      "merge-dev": true,
-      "merge-extra": false,
-      "merge-extra-deep": false,
-      "merge-scripts": false
     }
   },
   "prefer-stable": true,

@@ -6,13 +6,13 @@
 
 namespace App\Filters;
 
-use App\CarePlan;
 use App\Repositories\PatientReadRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Http\Request;
 
 class PatientFilters extends QueryFilters
@@ -69,7 +69,7 @@ class PatientFilters extends QueryFilters
                         $subQuery->where('ccm_status', Patient::WITHDRAWN)
                             ->where('date_withdrawn', 'LIKE', "%${date}%");
                     }
-                  );
+                );
         });
     }
 

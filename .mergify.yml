@@ -1,19 +1,21 @@
 pull_request_rules:
 - name: automatic merge on CI success and 2 reviews
   conditions:
-  - status-success=ci/circleci
+  - status-success=continuous-integration/heroku
   - "#approved-reviews-by>=2"
   - "#changes-requested-reviews-by=0"
   - label!=wip
-  - base=development
   - base!=master
+  - base=development
   - head!=master
   actions:
     merge:
       method: merge
       strict: smart
 - name: delete head branch after merge
-  conditions: []
+  conditions:
+  - head!=master
+  - head!=development
   actions:
     delete_head_branch: {}
 - name: remove outdated reviews

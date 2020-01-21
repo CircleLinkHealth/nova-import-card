@@ -8,8 +8,8 @@ namespace App\Services\PhiMail;
 
 use App\DirectMailMessage;
 use App\Jobs\ImportCcda;
-use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 /**
  * Handle an incoming message from EMR Direct Mail API.

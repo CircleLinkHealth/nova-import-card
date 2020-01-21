@@ -7,9 +7,8 @@
 namespace App\CLH\Repositories;
 
 use App\CareAmbassador;
-use App\CarePlan;
-use App\Services\GoogleDrive;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -19,9 +18,11 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Config;
 use Illuminate\Cache\TaggableStore;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Storage;
@@ -98,13 +99,13 @@ class UserRepository
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
         // participant info
-        if ($user->hasRole('participant')) {
+        if ($user->isParticipant()) {
             $this->saveOrUpdatePatientInfo($user, $params);
             $this->saveOrUpdatePatientMonthlySummary($user);
         }
 
         // provider info
-        if ($user->hasRole('provider')) {
+        if ($user->isProvider()) {
             $this->saveOrUpdateProviderInfo($user, $params);
         }
 
@@ -151,7 +152,7 @@ class UserRepository
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
         // participant info
-        if ($user->hasRole('participant')) {
+        if ($user->isParticipant()) {
             $this->saveOrUpdatePatientInfo($user, $params);
         }
 
@@ -161,7 +162,7 @@ class UserRepository
         }
 
         // provider info
-        if ($user->hasRole('provider')) {
+        if ($user->isProvider()) {
             $this->saveOrUpdateProviderInfo($user, $params);
         }
 
@@ -395,6 +396,16 @@ class UserRepository
             ) {
                 continue 1;
             }
+
+            if ('ccm_status' == $key) {
+                $ccmStatus = $params->get($key);
+                if (Patient::WITHDRAWN == $ccmStatus && $user->onFirstCall()) {
+                    $ccmStatus = Patient::WITHDRAWN_1ST_CALL;
+                }
+                $user->patientInfo->ccm_status = $ccmStatus;
+                continue;
+            }
+
             if ($params->get($key)) {
                 $user->patientInfo->$key = $params->get($key);
             }
@@ -505,7 +516,7 @@ class UserRepository
         $this->clearRolesCache($user);
 
         // add patient info
-        if ($user->hasRole('participant') && ! $user->patientInfo) {
+        if ($user->isParticipant() && ! $user->patientInfo) {
             $patientInfo          = new Patient();
             $patientInfo->user_id = $user->id;
             $patientInfo->save();
@@ -513,7 +524,7 @@ class UserRepository
         }
 
         // add provider info
-        if ($user->hasRole('provider') && ! $user->providerInfo) {
+        if ($user->isProvider() && ! $user->providerInfo) {
             $providerInfo          = new ProviderInfo();
             $providerInfo->user_id = $user->id;
             $providerInfo->save();
@@ -587,9 +598,22 @@ class UserRepository
      */
     private function clearRolesCache(User $user)
     {
-        $cacheKey = 'cerberus_roles_for_user_'.$user->id;
+        $keys = [
+            'cerberus_roles_for_user_'.$user->id,
+            'cerberus_permissions_for_user_'.$user->id,
+            $user->getCpmRolesCacheKey(),
+        ];
         if (\Cache::getStore() instanceof TaggableStore) {
-            $forgotten = \Cache::tags(Config::get('cerberus.role_user_site_table'))->forget($cacheKey);
+            $store = \Cache::tags(Config::get('cerberus.role_user_site_table'));
+        } else {
+            $store = \Cache::getStore();
+        }
+        
+        $user->clearObjectCache();
+
+        foreach ($keys as $key) {
+            $store->forget($key);
+            Cache::forget($key);
         }
     }
 

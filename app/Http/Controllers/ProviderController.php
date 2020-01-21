@@ -6,10 +6,10 @@
 
 namespace App\Http\Controllers;
 
-use App\CarePlan;
 use App\Events\CarePlanWasApproved;
 use App\Services\ProviderInfoService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Http\Request;
 
 class ProviderController extends Controller

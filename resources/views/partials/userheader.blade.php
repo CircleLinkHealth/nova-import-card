@@ -5,22 +5,18 @@
                 <script>
 
                     function onStatusChange(e) {
-
                         let ccmStatus = document.getElementById("ccm_status");
 
-                        if (ccmStatus.value === "withdrawn") {
+                        if (ccmStatus && (ccmStatus.value === "withdrawn" || ccmStatus.value === "withdrawn_1st_call")) {
                             $('#header-withdrawn-reason').removeClass('hidden');
                             onReasonChange();
-                            console.log('test');
                         } else {
                             $('#header-withdrawn-reason').addClass('hidden');
                             $('#header-withdrawn-reason-other').addClass('hidden');
                         }
-
                     }
 
                     function onReasonChange(e) {
-
                         let reason = document.getElementById("withdrawn_reason");
                         let reasonOther = document.getElementById('withdrawn_reason_other');
 
@@ -31,7 +27,6 @@
                             $('#header-withdrawn-reason-other').addClass('hidden');
                             reasonOther.removeAttribute('required');
                         }
-
                     }
 
                     $('document').ready(function () {
@@ -54,7 +49,8 @@
                     {{$patient->getFullName()}}
                     </a> </span>
 
-                <a href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}" style="padding-right: 2%;"><span
+                <a href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}"
+                   style="padding-right: 2%;"><span
                             class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a>
                 {{-- red flag.indication patient is BHI eligible--}}
                 @if(isset($patient) && auth()->check()
@@ -111,6 +107,7 @@
                     </li>
                 </ul>
                 <?php
+
                 $ccdProblemService = app(App\Services\CCD\CcdProblemService::class);
 
                 $ccdProblems = $ccdProblemService->getPatientProblems($patient);
@@ -127,10 +124,10 @@
                         style="margin-top: -8px; margin-bottom: 20px !important; margin-left: -20px !important;">
                         @foreach($ccdMonitoredProblems as $problem)
                             @if($problem['name'] != 'Diabetes')
-                                <li class="inline-block"><input type="checkbox" id="item27" name="condition27"
+                                <li class="inline-block"><input type="checkbox" id="item-{{$problem['id']}}" name="item-{{$problem['id']}}"
                                                                 value="Active"
                                                                 checked="checked" disabled="disabled">
-                                    <label for="condition27"><span> </span>{{$problem['name']}}</label>
+                                    <label for="item-{{$problem['id']}}"><span> </span>{{$problem['name']}}</label>
                                 </li>
                             @endif
                         @endforeach
@@ -221,25 +218,34 @@
                             <select id="ccm_status" name="ccm_status" class="selectpickerX dropdownValid form-control"
                                     data-size="2"
                                     style="width: 135px">
-                                <option style="color: #47beab"
-                                        value="enrolled" {{$patient->getCcmStatus() == 'enrolled' ? 'selected' : ''}}>
+                                <option value="{{CircleLinkHealth\Customer\Entities\Patient::ENROLLED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::ENROLLED ? 'selected' : ''}}>
                                     Enrolled
                                 </option>
-                                <option class="withdrawn"
-                                        value="withdrawn" {{$patient->getCcmStatus() == 'withdrawn' ? 'selected' : ''}}>
+                                @if($patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL)
+                                    <option class="withdrawn_1st_call"
+                                            value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL ? 'selected' : ''}}>
+                                        Wthdrn 1st Call
+                                    </option>
+                                @else
+                                <option
+                                        class="withdrawn"
+                                        value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN ? 'selected' : ''}}>
                                     Withdrawn
                                 </option>
+                                @endif
                                 <option class="paused"
-                                        value="paused" {{$patient->getCcmStatus() == 'paused' ? 'selected' : ''}}>
+                                        value="{{CircleLinkHealth\Customer\Entities\Patient::PAUSED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::PAUSED ? 'selected' : ''}}>
                                     Paused
                                 </option>
                             </select>
                         </li>
                     @else
-                        <li style="font-size: 18px" id="ccm_status"
+                        <li style="font-size: 18px"
                             class="inline-block col-xs-pull-1 {{$patient->getCcmStatus()}}"><?= (empty($patient->getCcmStatus()))
                                 ? 'N/A'
-                                : ucwords($patient->getCcmStatus()); ?></li>
+                                : (CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL === $patient->getCcmStatus()
+                                    ? 'Withdrawn 1st Call'
+                                    : ucwords($patient->getCcmStatus())); ?></li>
                     @endif
                     <br/>
                 </div>

@@ -150,7 +150,7 @@ if (isset($patient) && ! empty($patient)) {
                                     @else
                                         <pdf-careplans v-cloak>
                                             <template slot="careplanViewOptions">
-                                                @if(auth()->user()->providerInfo && auth()->user()->hasRole('provider'))
+                                                @if(auth()->user()->providerInfo && auth()->user()->isProvider())
                                                     <form class="inline-block" style="text-align: left"
                                                           action="{{route('provider.update-approve-own')}}"
                                                           method="POST">
@@ -195,7 +195,7 @@ if (isset($patient) && ! empty($patient)) {
                                                     </button>
                                                 </form>
 
-                                                @if(auth()->user()->hasRole('provider'))
+                                                @if(auth()->user()->isProvider())
                                                     <form id="form-approve-next" action="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
                                                           method="POST" style="display: inline">
                                                         {{ csrf_field() }}
@@ -214,6 +214,14 @@ if (isset($patient) && ! empty($patient)) {
                                                                 onclick="notEligibleClick()"
                                                                 class="btn btn-danger btn-sm text-right">Not Eligible
                                                         </button>
+
+                                                        <script>
+                                                            function notEligibleClick() {
+                                                                if (confirm('CAUTION: Clicking "confirm" will delete this patient’s entire record from Care Plan Manager. This action cannot be undone. Do you want to delete this patients entire record?')) {
+                                                                    document.getElementById('not-eligible-form').submit();
+                                                                }
+                                                            }
+                                                        </script>
                                                     </form>
                                                 @endif
                                             @endif
@@ -429,7 +437,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /ALLERGIES -->
 
                 <!-- SOCIALSERVICES -->
-                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}">
+                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}" misc-id="{{$socialServicesMiscId}}">
                     @if($social)
                         <p><?= nl2br($social); ?></p>
                     @else
@@ -483,7 +491,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /Appointments -->
 
                 <!-- OTHER NOTES -->
-                <others ref="othersComponent" patient-id="{{$patient->id}}">
+                <others ref="othersComponent" patient-id="{{$patient->id}}" misc-id="{{$othersMiscId}}">
                     @if($other)
                         <p><?= nl2br($other); ?></p>
                     @else

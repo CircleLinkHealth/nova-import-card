@@ -139,7 +139,7 @@ $user_info = [];
                                                                    class="form-control" name="home_phone_number"
                                                                    id="home_phone_number" placeholder="Telephone *"
                                                                    title="Please write a phone number in the format 123-345-7890"
-                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}">
+                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}">
                                                             <span class="help-block">{{ $errors->first('home_phone_number') }}</span>
                                                         </div>
                                                     </div>
@@ -152,7 +152,7 @@ $user_info = [];
                                                                    id="mobile_phone_number"
                                                                    placeholder="Mobile Telephone *"
                                                                    title="Please write a phone number in the format 123-345-7890"
-                                                                   value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}">
+                                                                   value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new CircleLinkHealth\Core\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}">
                                                             <span class="help-block">{{ $errors->first('mobile_phone_number') }}</span>
                                                         </div>
                                                     </div>
@@ -358,8 +358,41 @@ $user_info = [];
                                                     <div class="row">
                                                         <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
                                                         <div id="perform-status-select"
-                                                             class="col-lg-8">{!! Form::select('ccm_status', [ CircleLinkHealth\Customer\Entities\Patient::PAUSED => 'Paused', CircleLinkHealth\Customer\Entities\Patient::ENROLLED => 'Enrolled', CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN => 'Withdrawn', CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE => 'Unreachable' ], $patient->getCcmStatus(), ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                             class="col-lg-8">
+                                                            <select id="ccm_status" name="ccm_status" class="selectpicker form-control"
+                                                                    style="width: 100%">
+                                                                <option value="{{CircleLinkHealth\Customer\Entities\Patient::ENROLLED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::ENROLLED ? 'selected' : ''}}>
+                                                                    Enrolled
+                                                                </option>
+                                                                @if($patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL)
+                                                                    <option class="withdrawn_1st_call"
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL}}" selected>
+                                                                        Wthdrn 1st Call
+                                                                    </option>
+                                                                @else
+                                                                    <option
+                                                                            class="withdrawn"
+                                                                            value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN ? 'selected' : ''}}>
+                                                                        Withdrawn
+                                                                    </option>
+                                                                @endif
+                                                                <option class="paused"
+                                                                        value="{{CircleLinkHealth\Customer\Entities\Patient::PAUSED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::PAUSED ? 'selected' : ''}}>
+                                                                    Paused
+                                                                </option>
+                                                                <option class="unreachable"
+                                                                        value="{{CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE ? 'selected' : ''}}>
+                                                                    Unreachable
+                                                                </option>
+                                                            </select>
+                                                        </div>
                                                     </div>
+                                                    @if(auth()->user()->isAdmin())
+                                                    <div class="row" style="margin-top: 10px;">
+                                                        <div class="col-lg-4">{!! Form::label('careplan_status', 'Careplan Status:') !!}</div>
+                                                        <div class="col-lg-8">{!! Form::select('careplan_status', [CircleLinkHealth\SharedModels\Entities\CarePlan::DRAFT => 'Draft', CircleLinkHealth\SharedModels\Entities\CarePlan::QA_APPROVED => 'CLH Approved', CircleLinkHealth\SharedModels\Entities\CarePlan::PROVIDER_APPROVED => 'Provider Approved'], $patient->careplan->status, ['class' => 'form-control select-picker', 'style' => 'width:100%;']) !!}</div>
+                                                    </div>
+                                                    @endif
                                                     <div id="withdrawn-reason" class="row hidden"
                                                          style="margin-top: 20px">
                                                         <div class="col-lg-12">{!! Form::label('withdrawn_reason', 'Withdrawn Reason: ') !!}</div>
@@ -382,7 +415,6 @@ $user_info = [];
                                                                    value="{{ $patient->getCcmStatus() == '' ? 'enrolled' : $patient->getCcmStatus() }}"
                                                                    name="ccm_status">
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             @endif
@@ -393,7 +425,8 @@ $user_info = [];
 
                                                         let ccmStatus = document.getElementById("ccm_status");
 
-                                                        if (ccmStatus.value === "withdrawn") {
+                                                        console.log(ccmStatus);
+                                                        if (ccmStatus.value === "withdrawn" || ccmStatus.value === "withdrawn_1st_call") {
                                                             $('#withdrawn-reason').removeClass('hidden');
                                                             onReasonChange();
                                                         } else {

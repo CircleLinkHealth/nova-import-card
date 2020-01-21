@@ -7,18 +7,15 @@
 namespace App\Search;
 
 use CircleLinkHealth\Customer\Entities\Role;
+use Laravel\Scout\Builder;
 
 class RoleByName extends BaseScoutSearch
 {
     /**
      * The eloquent query for performing the search.
-     *
-     * @param string $term
-     *
-     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function query(string $term)
+    public function query(string $term): Builder
     {
-        return Role::search($term)->first();
+        return Role::search($term);
     }
 }

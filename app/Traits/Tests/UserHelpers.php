@@ -7,7 +7,7 @@
 namespace App\Traits\Tests;
 
 use App\Call;
-use App\CLH\Helpers\StringManipulation;
+use CircleLinkHealth\Core\StringManipulation;
 use App\CLH\Repositories\UserRepository;
 use App\Repositories\PatientWriteRepository;
 use Carbon\Carbon;
@@ -59,16 +59,18 @@ trait UserHelpers
     /**
      * @param int    $practiceId
      * @param string $roleName
+     * @param mixed  $ccmStatus
      */
     public function createUser(
         $practiceId = 8,
-        $roleName = 'provider'
+        $roleName = 'provider',
+        $ccmStatus = 'enrolled'
     ): User {
         $practiceId = parseIds($practiceId)[0];
-        $roles      = (array) Role::whereName($roleName)->firstOrFail()->id;
+        $roles      = [Role::whereName($roleName)->firstOrFail()->id];
 
         //creates the User
-        $user = $this->setupUser($practiceId, $roles);
+        $user = $this->setupUser($practiceId, $roles, $ccmStatus);
 
         $email     = $user->email;
         $locations = $user->locations->pluck('id')->all();
@@ -111,7 +113,7 @@ trait UserHelpers
         if ('participant' == $roleName) {
             $user->carePlan()->updateOrCreate(
                 [
-                    'care_plan_template_id' => \App\AppConfig::pull('default_care_plan_template_id'),
+                    'care_plan_template_id' => \CircleLinkHealth\Core\Entities\AppConfig::pull('default_care_plan_template_id'),
                 ],
                 [
                     'status' => 'draft',
@@ -171,7 +173,7 @@ trait UserHelpers
         return (app(PatientWriteRepository::class))->updateCallLogs($patient, true);
     }
 
-    public function setupUser($practiceId, $roles)
+    public function setupUser($practiceId, $roles, $ccmStatus = 'enrolled')
     {
         $faker = Factory::create();
 
@@ -209,14 +211,14 @@ trait UserHelpers
                 //phones
                 'home_phone_number' => $workPhone,
 
-                'ccm_status' => 'enrolled',
+                'ccm_status' => $ccmStatus,
             ]
         );
 
         //create a user
         $user = (new UserRepository())->createNewUser(new User(), $bag);
 
-        $practice = Practice::with('locations')->find($practiceId);
+        $practice = Practice::with('locations')->findOrFail($practiceId);
 
         $locations = $practice->locations
             ->pluck('id')

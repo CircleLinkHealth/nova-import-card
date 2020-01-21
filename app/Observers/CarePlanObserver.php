@@ -6,11 +6,12 @@
 
 namespace App\Observers;
 
-use App\CarePlan;
-use App\Models\CPM\CpmInstruction;
-use App\Models\CPM\CpmMisc;
+use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 
 class CarePlanObserver
 {
@@ -42,6 +43,9 @@ class CarePlanObserver
     {
         if (CarePlan::QA_APPROVED == $carePlan->status) {
             $carePlan->provider_approver_id = null;
+            /** @var SchedulerService $schedulerService */
+            $schedulerService = app()->make(SchedulerService::class);
+            $schedulerService->ensurePatientHasScheduledCall($carePlan->patient);
         }
 
         if ( ! array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {

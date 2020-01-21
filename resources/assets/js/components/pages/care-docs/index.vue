@@ -16,7 +16,7 @@
                    class="col-md-2 btn btn-info btn-xs pointer"
                    style="margin-left: 10px"
                    target="_blank"
-                   :href="getAwvUrl(`manage-patients/${this.patient.id}/enroll`)">
+                   :href="getAwvUrl(`manage-patients/${this.patientId}/enroll`)">
                     Enroll into AWV
                 </a>
             </div>
@@ -147,27 +147,27 @@
             <!--</div>-->
             <div v-if="careDocs['PPP']">
                 <div v-for="doc in careDocs['PPP']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'PPP'" :patient="patient"></care-document-box>
+                    <care-document-box :doc="doc" :type="'PPP'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'PPP'"  :patient="patient"></care-document-box>
+                    <care-document-box :type="'PPP'"  :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Provider Report']">
                 <div v-for="doc in careDocs['Provider Report']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'Provider Report'" :patient="patient"></care-document-box>
+                    <care-document-box :doc="doc" :type="'Provider Report'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'Provider Report'"  :patient="patient"></care-document-box>
+                    <care-document-box :type="'Provider Report'"  :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Lab Results']">
                 <div v-for="doc in careDocs['Lab Results']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'Lab Results'" :patient="patient"></care-document-box>
+                    <care-document-box :doc="doc" :type="'Lab Results'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
         </div>
@@ -259,14 +259,12 @@
                 showBanner: false,
                 bannerText: '',
                 bannerType: 'info',
-
-
             }
 
         },
         props: {
-            patient: {
-                type: Object,
+            patientId: {
+                type: String,
                 required: true,
             },
             awvUrl: {
@@ -288,7 +286,7 @@
         },
         computed: {
             uploadUrl() {
-                return rootUrl('/care-docs/' + this.patient.id);
+                return rootUrl('/care-docs/' + this.patientId);
             },
             bannerClass() {
                 return 'alert alert-' + this.bannerType;
@@ -333,19 +331,19 @@
             },
 
             getViewHraSurveyUrl() {
-                return this.getAwvUrl(`survey/hra/${this.patient.id}`);
+                return this.getAwvUrl(`survey/hra/${this.patientId}`);
             },
 
             getViewVitalsSurveyUrl() {
-                return this.getAwvUrl(`survey/vitals/${this.patient.id}`);
+                return this.getAwvUrl(`survey/vitals/${this.patientId}`);
             },
 
             getAwvSendSmsForm(survey){
-                return this.getAwvUrl(`manage-patients/${this.patient.id}/` + survey + `/sms/send-assessment-link`);
+                return this.getAwvUrl(`manage-patients/${this.patientId}/` + survey + `/sms/send-assessment-link`);
             },
 
             getAwvSendEmailForm(survey){
-                return this.getAwvUrl(`manage-patients/${this.patient.id}/` + survey + `/email/send-assessment-link`);
+                return this.getAwvUrl(`manage-patients/${this.patientId}/` + survey + `/email/send-assessment-link`);
             },
 
             getButtonTextFromStatus(status) {
@@ -384,7 +382,7 @@
 
             getCareDocuments() {
                 return this.axios
-                    .get(rootUrl('/care-docs/' + this.patient.id + '/' + this.showPast))
+                    .get(rootUrl('/care-docs/' + this.patientId + '/' + this.showPast))
                     .then(response => {
                         this.loading = false;
                         this.careDocs = response.data.files;

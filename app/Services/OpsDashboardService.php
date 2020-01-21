@@ -237,7 +237,7 @@ class OpsDashboardService
                     if (Patient::PAUSED == $revisionHistory->first()->new_value) {
                         $paused[] = $patient;
                     }
-                    if (Patient::WITHDRAWN == $revisionHistory->first()->new_value) {
+                    if (in_array($revisionHistory->first()->new_value, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
                         $withdrawn[] = $patient;
                     }
                 }

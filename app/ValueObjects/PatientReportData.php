@@ -25,6 +25,8 @@ class PatientReportData
 
     protected $dob;
 
+    protected $locationName;
+
     protected $name;
 
     protected $practice;
@@ -93,6 +95,14 @@ class PatientReportData
     public function getDob()
     {
         return $this->dob;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLocationName()
+    {
+        return $this->locationName;
     }
 
     /**
@@ -205,6 +215,14 @@ class PatientReportData
     public function setDob($dob): void
     {
         $this->dob = $dob;
+    }
+
+    /**
+     * @param mixed $locationName
+     */
+    public function setLocationName($locationName): void
+    {
+        $this->locationName = $locationName;
     }
 
     /**

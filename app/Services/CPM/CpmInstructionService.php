@@ -6,9 +6,9 @@
 
 namespace App\Services\CPM;
 
-use App\Models\CPM\CpmInstruction;
 use App\Repositories\CpmInstructionRepository;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 
 class CpmInstructionService
 {
