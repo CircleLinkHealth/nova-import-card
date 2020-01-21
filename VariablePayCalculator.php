@@ -300,7 +300,6 @@ class VariablePayCalculator
                     }
                     break;
                 default:
-                    $rate = 0;
                     break;
             }
 
