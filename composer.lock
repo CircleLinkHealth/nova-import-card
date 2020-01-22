@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "07a9abb98f6c1bfecf26c4d9bf405ebc",
+    "content-hash": "3c5f09d06be31f61658171d932d409d8",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1182,11 +1182,11 @@
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "v1.1.6",
+            "version": "dev-CPM-1910_nurse_invoices_continued",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "34451362549c037495d42c3d6971ac1aa370f7f2"
+                "reference": "bc7cd04ef1cb3f2db9397d5bce2a3d39c8260232"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1211,7 +1211,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T05:27:50+00:00"
+            "time": "2020-01-22T01:53:08+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -13621,6 +13621,7 @@
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/customer-module": 20,
         "circlelinkhealth/nurseinvoices-module": 20,
+        "circlelinkhealth/timetracking-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
