@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6dac4be2dfe4eee42d25ab63e3ebcc94",
+    "content-hash": "3d2542a028d6e2dd36ff49b0795d8e8b",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -811,7 +811,7 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-master",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
@@ -1127,11 +1127,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.1.4",
+            "version": "v1.1.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "63eac32b8a425fe19b8867063f80fc0320983232"
+                "reference": "a72ab17b2b57cfbb73444921ddb3f7bd4d795986"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1145,7 +1145,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-20T19:55:25+00:00"
+            "time": "2020-01-22T00:58:18+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -13619,7 +13619,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
