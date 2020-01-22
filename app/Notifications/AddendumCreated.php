@@ -122,6 +122,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
 
     /**
      * @param $notifiable
+     * @return array
      */
     public function mailData($notifiable): array
     {
@@ -160,6 +161,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      * Get the array representation of the notification.
      *
      * @param mixed $notifiable
+     * @return array
      */
     public function toArray($notifiable): array
     {

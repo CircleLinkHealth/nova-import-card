@@ -67,7 +67,7 @@ class TestEmail extends Notification
 
         $unsubscribeLink = $this->createUnsubscribeUrl($emailData['activityType']);
 
-        return (new MailMessage())
+        return (new CircleLinkMailChannel($emailData, $unsubscribeLink))
             ->line($lineStyled)
             ->action('View Comment', url('/'));
     }
