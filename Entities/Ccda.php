@@ -313,7 +313,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
     {
         $xmlMedia = $this->getMedia('ccd')->first();
         $xml      = $xmlMedia->getFile();
-        if ( ! is_string($xml) || strlen($xml) < 1 || false == stripos($xml, '<ClinicalDocument')) {
+        if ( (! is_string($xml)) || (strlen($xml) < 1) || (false === stripos($xml, '<ClinicalDocument'))) {
             $this->json   = null;
             $this->status = 'invalid';
             $this->save();
