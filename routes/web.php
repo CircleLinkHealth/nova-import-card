@@ -4,6 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+//use App\Notifications\TestEmail;
+
+use App\Notifications\TestEmail;
+
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
     'as'   => 'webhook.on-fax-sent',
@@ -640,7 +644,7 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
-        
+
         Route::post('import', 'MedicalRecordImportController@importDEPRECATED');
     });
 
@@ -2243,3 +2247,24 @@ Route::prefix('admin')->group(
         );
     }
 );
+
+Route::get('/test-mail', function () {
+    Notification::route('mail', 'kountouris7@gmail.com')->notify(new TestEmail());
+
+    return 'Sent';
+});
+// TEMPORARY SIGNED ROUTE
+Route::get('/notification-unsubscribe', [
+    'uses' => 'NotificationsMailSubscriptionController@unsubscribe',
+    'as'   => 'unsubscribe.notifications.mail',
+])->middleware('signed', 'auth');
+
+Route::post('/update-subscriptions', [
+    'uses' => 'SubscriptionsDashboardController@updateSubscriptions',
+    'as'   => 'update.subscriptions',
+])->middleware('auth');
+
+Route::get('/notification-subscriptions-dashboard', [
+    'uses' => 'SubscriptionsDashboardController@subscriptionsIndex',
+    'as'   => 'subscriptions.notification.mail',
+])->middleware('auth');

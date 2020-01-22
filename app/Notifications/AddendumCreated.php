@@ -10,8 +10,11 @@ use App\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
 use App\Models\Addendum;
 use App\Note;
+use App\Notifications\Channels\CircleLinkMailChannel;
 use App\Services\NotificationService;
 use App\Traits\ArrayableNotification;
+use App\Traits\NotificationSubscribable;
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -21,10 +24,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\URL;
 
 class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQueue, LiveNotification, HasAttachment
 {
     use ArrayableNotification;
+    use NotificationSubscribable;
     use Queueable;
     /**
      * @var
@@ -53,9 +58,30 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
         return Addendum::class;
     }
 
+    public function dateForMail(): string
+    {
+        return Carbon::parse(now())->toDayDateTimeString();
+    }
+
     public function description(): string
     {
         return 'Addendum';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function descriptionForMail(): string
+    {
+        return 'note';
+    }
+
+    public function emailLineStyled(): string
+    { // @todo: maybe move this to a different interface
+        $senderName         = $this->senderName();
+        $descriptionForMail = $this->descriptionForMail();
+
+        return "<a style='color: #376a9c'> $senderName </a> has commented on a <a style='color: #376a9c'> $descriptionForMail </a>";
     }
 
     /**
@@ -92,6 +118,14 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
         $patientName = $this->getPatientName();
 
         return "<strong>$senderName</strong> responded to a note on $patientName";
+    }
+
+    /**
+     * @param $notifiable
+     */
+    public function mailData($notifiable): array
+    {
+        return $this->dataForClhEmail($notifiable->email);
     }
 
     /**
@@ -152,14 +186,16 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      *
      * @param mixed $notifiable
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
-        $senderName = $this->senderName();
+        $subjectLineStyled = $this->emailLineStyled();
+        $emailData         = $this->mailData($notifiable);
+        $unsubscribeLink   = $this->createUnsubscribeUrl($emailData['activityType']);
 
-        return (new MailMessage())
-            ->line("$senderName has commented on a note")
+        return (new CircleLinkMailChannel($emailData, $unsubscribeLink))
+            ->line($subjectLineStyled)
             ->action('View Comment', url($this->redirectLink()));
     }
 
