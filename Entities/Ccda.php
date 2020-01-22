@@ -320,10 +320,6 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
             throw new InvalidCcdaException($this->id);
         }
 
-        if ( ! is_string($xml) || strlen($xml) < 1 || false == stripos($xml, '<ClinicalDocument')) {
-            throw new \Exception("CCD with ID {$this->id} appears to be invalid.");
-        }
-
         $xmlPath = storage_path("ccdas/import/media_{$xmlMedia->id}.xml");
         file_put_contents($xmlPath, $xml);
 
