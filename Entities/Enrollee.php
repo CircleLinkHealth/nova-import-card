@@ -222,12 +222,23 @@ class Enrollee extends BaseModel
      */
     const UNREACHABLE = 'utc';
 
+    /**
+     * For mySql full-text search
+     *
+     * @var array
+     */
     public $phoneAttributes = [
         'cell_phone',
         'home_phone',
         'other_phone',
     ];
 
+    /**
+     *
+     * For mySql full-text search
+     *
+     * @var array
+     */
     public $addressAttributes = [
         'address',
         'address_2',
