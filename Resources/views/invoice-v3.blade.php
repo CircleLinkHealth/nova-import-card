@@ -98,7 +98,7 @@ such as <style>, as they will not be parsed.--}}
             <tbody>
             <tr class="borderless-table-invoices">
                 <td class="text-bold-invoice">Base Pay:</td>
-                <td>${{$baseSalary}}</td>
+                <td>${{number_format($baseSalary, 2)}}</td>
                 <td>
                     @if($changedToFixedRateBecauseItYieldedMore)
                         <span>Highest Total Pay Used:</span>
@@ -114,7 +114,7 @@ such as <style>, as they will not be parsed.--}}
             </tr>
             <tr class="borderless-table-invoices">
                 <td class="text-bold-invoice">Extra Time:</td>
-                <td>${{$addedTimeAmount}}</td>
+                <td>${{number_format($addedTimeAmount, 2)}}</td>
                 <td>
                     @if($hasAddedTime)
                         <span>{{$addedTime}} hours @ {{$nurseHourlyRate}}/hr</span>
@@ -123,7 +123,7 @@ such as <style>, as they will not be parsed.--}}
             </tr>
             <tr class="borderless-table-invoices">
                 <td class="text-bold-invoice">Bonuses:</td>
-                <td>${{$bonus}}</td>
+                <td>${{number_format($bonus, 2)}}</td>
                 <td></td>
             </tr>
             <tr class="borderless-table-invoices">
@@ -148,8 +148,13 @@ such as <style>, as they will not be parsed.--}}
                 <th style="width: 25%">Total Time (hh:mm)</th>
 
                 @if($variablePay)
-                    <th style="width: 25%">CCM Hours (${{$nurseHighRate}}/Hour)</th>
-                    <th style="width: 25%">CCM Hours (${{$nurseLowRate}}/Hour)</th>
+                    @if(isset($altAlgoEnabled) && !$altAlgoEnabled)
+                        <th style="width: 25%">CCM Hours (High Rates)</th>
+                        <th style="width: 25%">CCM Hours (${{$nurseLowRate}}/Hour)</th>
+                    @elseif (!isset($altAlgoEnabled))
+                        <th style="width: 25%">CCM Hours (High Rate)</th>
+                        <th style="width: 25%">CCM Hours (${{$nurseLowRate}}/Hour)</th>
+                    @endif
                 @endif
             </tr>
 
@@ -159,8 +164,13 @@ such as <style>, as they will not be parsed.--}}
                 <td>{{$formattedSystemTime}}</td>
 
                 @if($variablePay)
-                    <td>{{$totalTimeAfterCcmInHours ?? $totalTimeAfterCcm}}</td>
-                    <td>{{$totalTimeTowardsCcmInHours ?? $totalTimeTowardsCcm}}</td>
+                    @if(isset($altAlgoEnabled) && !$altAlgoEnabled)
+                        <td>{{$totalTimeAfterCcmInHours}}</td>
+                        <td>{{$totalTimeTowardsCcmInHours}}</td>
+                    @elseif (!isset($altAlgoEnabled))
+                        <td>{{$totalTimeAfterCcmInHours ?? $totalTimeAfterCcm}}</td>
+                        <td>{{$totalTimeTowardsCcmInHours ?? $totalTimeTowardsCcm}}</td>
+                    @endif
                 @endif
             </tr>
 
@@ -178,8 +188,13 @@ such as <style>, as they will not be parsed.--}}
                     </td>
 
                     @if($variablePay)
-                        <td>{{$row['towards']}}</td>
-                        <td>{{$row['after']}}</td>
+                        @if(isset($altAlgoEnabled) && !$altAlgoEnabled)
+                            <td>{{$row['towards']}}</td>
+                            <td>{{$row['after']}}</td>
+                        @elseif (!isset($altAlgoEnabled))
+                            <td>{{$row['towards']}}</td>
+                            <td>{{$row['after']}}</td>
+                        @endif
                     @endif
                 </tr>
             @endforeach
