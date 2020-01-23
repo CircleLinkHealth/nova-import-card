@@ -7,10 +7,10 @@
 namespace App\Traits\Tests;
 
 use App\Call;
-use CircleLinkHealth\Core\StringManipulation;
 use App\CLH\Repositories\UserRepository;
 use App\Repositories\PatientWriteRepository;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\Patient;
