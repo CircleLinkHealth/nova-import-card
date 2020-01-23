@@ -576,7 +576,7 @@
             },
             attestedProblemCodes(patient) {
                 return patient.problems.filter(function (p) {
-                    return patient.attested_problems.includes(p.id);
+                    return patient.attested_problems.includes(p.id) && !!p.code;
                 })
                     .map(function (p) {
                         return p.code;
