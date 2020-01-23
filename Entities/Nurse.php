@@ -22,9 +22,13 @@ use Illuminate\Support\Collection;
  * @property string              $license
  * @property int                 $hourly_rate
  * @property string              $billing_type
- * @property int                 $low_rate
- * @property int                 $high_rate
- * @property float               $visit_fee //for the new ccm plus algo
+ * @property float               $low_rate
+ * @property float               $high_rate
+ * @property float               $high_rate_2
+ * @property float               $high_rate_3
+ * @property float               $visit_fee
+ * @property float               $visit_fee_2
+ * @property float               $visit_fee_3
  * @property int                 $spanish
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
@@ -78,6 +82,10 @@ use Illuminate\Support\Collection;
  * @property int|null $case_load_capacity
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereCaseLoadCapacity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereHighRate2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereHighRate3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Nurse whereVisitFee3($value)
  */
 class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 {
