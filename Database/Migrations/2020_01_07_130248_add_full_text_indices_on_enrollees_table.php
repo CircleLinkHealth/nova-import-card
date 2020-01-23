@@ -14,6 +14,7 @@ class AddFullTextIndicesOnEnrolleesTable extends Migration
     public function up()
     {
         DB::statement('CREATE FULLTEXT INDEX address ON enrollees (address, address_2)');
+        //ommitting primary phone, different format
         DB::statement('CREATE FULLTEXT INDEX phone ON enrollees (other_phone, home_phone, cell_phone)');
     }
 
