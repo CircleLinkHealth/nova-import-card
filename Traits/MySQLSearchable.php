@@ -74,6 +74,7 @@ trait MySQLSearchable
 
     /**
      * Scope a query that matches a full text search of term.
+     * Can be built upon
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param array $columns
