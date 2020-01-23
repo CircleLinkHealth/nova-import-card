@@ -16,6 +16,20 @@ use Spatie\ViewModels\ViewModel;
 class Invoice extends ViewModel
 {
     const DATE_FORMAT = 'jS M, Y';
+
+    /** @var bool New CCM Plus Algo from Jan 2020 */
+    public $ccmPlusAlgoEnabled;
+
+    /**
+     * @var bool Whether Option 1 (Alt Algo - Visit Fee based) algo is enabled or not
+     */
+    public $altAlgoEnabled;
+
+    /**
+     * @var int the total number of visits when option 1 algo is enabled
+     */
+    public $visitsCount;
+
     /**
      * @var Collection
      */
@@ -116,7 +130,7 @@ class Invoice extends ViewModel
         $this->startDate             = $startDate;
         $this->endDate               = $endDate;
         $this->aggregatedTotalTime   = $aggregatedTotalTime->flatten();
-        $this->variablePay           = (bool) $user->nurseInfo->is_variable_rate;
+        $this->variablePay           = (bool)$user->nurseInfo->is_variable_rate;
         $this->totalSystemTime       = $this->totalSystemTimeInSeconds();
         $this->bonus                 = $this->getBonus($user->nurseBonuses);
         $this->extraTime             = $this->getAddedDuration($user->nurseBonuses);
@@ -185,15 +199,28 @@ class Invoice extends ViewModel
      */
     public function formattedBaseSalary()
     {
-        $fixedRateMessage = "\${$this->fixedRatePay} (Fixed Rate: \${$this->user->nurseInfo->hourly_rate}/hr).";
+        $fixedRatePay     = number_format($this->fixedRatePay, 2);
+        $fixedRateMessage = "\${$fixedRatePay} (Fixed Rate: \${$this->user->nurseInfo->hourly_rate}/hr).";
 
         if ( ! $this->variablePay && ! $this->changedToFixedRateBecauseItYieldedMore) {
             return $fixedRateMessage;
         }
-        $high_rate = $this->user->nurseInfo->high_rate;
-        $low_rate  = $this->user->nurseInfo->low_rate;
+        $high_rate   = $this->user->nurseInfo->high_rate;
+        $high_rate_2 = $this->user->nurseInfo->high_rate_2;
+        $high_rate_3 = $this->user->nurseInfo->high_rate_3;
+        $low_rate    = $this->user->nurseInfo->low_rate;
 
-        $variableRateMessage = "\${$this->variableRatePay} (Variable Rate: \$$high_rate/hr or \$$low_rate/hr).";
+        $variableRatePay = number_format($this->variableRatePay, 2);
+
+        if ($this->ccmPlusAlgoEnabled) {
+            if ($this->altAlgoEnabled) {
+                $variableRateMessage = "\${$variableRatePay} (Visit-based: $this->visitsCount visits).";
+            } else {
+                $variableRateMessage = "\${$variableRatePay} (Variable Rate: \$$high_rate/hr, \$$high_rate_2/hr, \$$high_rate_3/hr or \$$low_rate/hr).";
+            }
+        } else {
+            $variableRateMessage = "\${$variableRatePay} (Variable Rate: \$$high_rate/hr or \$$low_rate/hr).";
+        }
 
         if ($this->variableRatePay > $this->fixedRatePay) {
             $result = [
@@ -217,7 +244,7 @@ class Invoice extends ViewModel
      */
     public function formattedInvoiceTotalAmount()
     {
-        return '$'.round($this->invoiceTotalAmount(), 2);
+        return '$' . number_format(round($this->invoiceTotalAmount(), 2), 2);
     }
 
     /**
@@ -320,7 +347,7 @@ class Invoice extends ViewModel
             if ($this->variablePay) {
                 $towards = $this->variablePayForNurse->sum(
                     function ($careLog) use ($dateStr) {
-                        if ('accrued_towards_ccm' == $careLog->ccm_type && $careLog->created_at->startOfMonth()->toDateString() === $dateStr) {
+                        if ('accrued_towards_ccm' == $careLog->ccm_type && $careLog->created_at->toDateString() === $dateStr) {
                             return $careLog->increment;
                         }
 
@@ -329,12 +356,12 @@ class Invoice extends ViewModel
                 );
 
                 $row['towards'] = $towards
-                    ? $towards / 3600
+                    ? round($towards / 3600, 2)
                     : 0;
 
                 $after = $this->variablePayForNurse->sum(
                     function ($careLog) use ($dateStr) {
-                        if ('accrued_after_ccm' == $careLog->ccm_type && $careLog->created_at->startOfMonth()->toDateString() === $dateStr) {
+                        if ('accrued_after_ccm' == $careLog->ccm_type && $careLog->created_at->toDateString() === $dateStr) {
                             return $careLog->increment;
                         }
 
@@ -343,7 +370,7 @@ class Invoice extends ViewModel
                 );
 
                 $row['after'] = $after
-                    ? $after / 3600
+                    ? round($after / 3600, 2)
                     : 0;
             }
 
@@ -468,11 +495,16 @@ class Invoice extends ViewModel
      * 4.3 get successful call in each range
      * 4.4 pay percentage of time in range * VF.
      *
-     * @return float|int
+     * @return float
      */
     private function getVariableRatePay()
     {
-        return $this->variablePayCalculator->calculate($this->user);
+        $calculationResult        = $this->variablePayCalculator->calculate($this->user);
+        $this->visitsCount        = $calculationResult->visitsCount;
+        $this->ccmPlusAlgoEnabled = $calculationResult->ccmPlusAlgoEnabled;
+        $this->altAlgoEnabled     = $calculationResult->altAlgoEnabled;
+
+        return round($calculationResult->totalPay, 2);
     }
 
     /**
@@ -482,7 +514,7 @@ class Invoice extends ViewModel
      */
     private function totalSystemTimeInSeconds()
     {
-        return (int) $this->aggregatedTotalTime
+        return (int)$this->aggregatedTotalTime
             ->where('is_billable', false)
             ->sum('total_time');
     }
