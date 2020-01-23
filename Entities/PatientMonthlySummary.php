@@ -123,7 +123,7 @@ class PatientMonthlySummary extends BaseModel
     public function getAttestedProblemsForReport(){
         return $this->attestedProblems->transform(function (Problem $problem){
             return $problem->icd10Code();
-        })->filter()->implode(',');
+        })->filter()->implode(', ');
     }
 
     public function attachBillableProblem($problemId, $name, $icd10Code, $type = 'ccm')
