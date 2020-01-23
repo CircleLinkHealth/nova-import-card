@@ -147,9 +147,14 @@ such as <style>, as they will not be parsed.--}}
                 <th style="width: 25%">Date</th>
                 <th style="width: 25%">Total Time (hh:mm)</th>
 
-                @if(!$altAlgoEnabled && $variablePay)
-                    <th style="width: 25%">CCM Hours (High Rates)</th>
-                    <th style="width: 25%">CCM Hours (${{$nurseLowRate}}/Hour)</th>
+                @if($variablePay)
+                    @if(isset($altAlgoEnabled) && !$altAlgoEnabled)
+                        <th style="width: 25%">CCM Hours (High Rates)</th>
+                        <th style="width: 25%">CCM Hours (${{$nurseLowRate}}/Hour)</th>
+                    @elseif (!isset($altAlgoEnabled))
+                        <th style="width: 25%">CCM Hours (High Rate)</th>
+                        <th style="width: 25%">CCM Hours (${{$nurseLowRate}}/Hour)</th>
+                    @endif
                 @endif
             </tr>
 
@@ -158,9 +163,14 @@ such as <style>, as they will not be parsed.--}}
 
                 <td>{{$formattedSystemTime}}</td>
 
-                @if(!$altAlgoEnabled && $variablePay)
-                    <td>{{$totalTimeAfterCcmInHours ?? $totalTimeAfterCcm}}</td>
-                    <td>{{$totalTimeTowardsCcmInHours ?? $totalTimeTowardsCcm}}</td>
+                @if($variablePay)
+                    @if(isset($altAlgoEnabled) && !$altAlgoEnabled)
+                        <td>{{$totalTimeAfterCcmInHours}}</td>
+                        <td>{{$totalTimeTowardsCcmInHours}}</td>
+                    @elseif (!isset($altAlgoEnabled))
+                        <td>{{$totalTimeAfterCcmInHours ?? $totalTimeAfterCcm}}</td>
+                        <td>{{$totalTimeTowardsCcmInHours ?? $totalTimeTowardsCcm}}</td>
+                    @endif
                 @endif
             </tr>
 
@@ -177,9 +187,14 @@ such as <style>, as they will not be parsed.--}}
                         </nurse-invoice-daily-dispute>
                     </td>
 
-                    @if(!$altAlgoEnabled && $variablePay)
-                        <td>{{$row['towards']}}</td>
-                        <td>{{$row['after']}}</td>
+                    @if($variablePay)
+                        @if(isset($altAlgoEnabled) && !$altAlgoEnabled)
+                            <td>{{$row['towards']}}</td>
+                            <td>{{$row['after']}}</td>
+                        @elseif (!isset($altAlgoEnabled))
+                            <td>{{$row['towards']}}</td>
+                            <td>{{$row['after']}}</td>
+                        @endif
                     @endif
                 </tr>
             @endforeach
