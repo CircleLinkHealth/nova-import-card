@@ -145,7 +145,7 @@
                 <template slot="Patient" slot-scope="props">
                     <a :href="props.row.patientUrl" target="_blank" class="blue">{{props.row.Patient}}</a>
                 </template>
-                <template slot="CCM Problem Codes" slot-scope="props">
+                <template slot="CCM Problem Code(s)" slot-scope="props">
                     <div class="ccm-problem-codes">
                         <span class="blue pointer" style="overflow-wrap: break-word"
                               @click="showCcmModal(props.row)">{{attestedProblemCodes(props.row) || '&lt;Edit&gt;'}}</span>
@@ -247,7 +247,7 @@
                     'Status',
                     'CCM Mins',
                     'BHI Mins',
-                    'CCM Problem Codes',
+                    'CCM Problem Code(s)',
                     'BHI Problem Code',
                     '#Successful Calls',
                     'approved',
@@ -581,7 +581,7 @@
                     .map(function (p) {
                         return p.code;
                     })
-                    .join();
+                    .join(", ");
             },
             closeMonth() {
                 this.loaders.closeMonth = true

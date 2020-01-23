@@ -15,7 +15,7 @@
                 <div class="col-sm-12" v-bind:class="sectionSpaceClass">
                     <div v-for="problem in problems">
                         <input type="checkbox" :id="problem.id" :value="problem.id" style="display: none !important" v-model="attestedProblems">
-                        <label :for="problem.id"><span> </span>{{problem.name}} ({{problem.code}})</label>
+                        <label :for="problem.id"><span> </span>{{problem.name}}</label><span v-if="problem.code">&nbsp;({{problem.code}})</span>
                     </div>
                     <div class="col-sm-12 add-condition">
                         <button v-on:click="toggleAddCondition()" type="button" class="btn btn-info">
@@ -64,7 +64,10 @@
             }
 
             Event.$on('full-conditions:add', (ccdProblem) => {
-                if (ccdProblem) this.problems.push(ccdProblem)
+                if (ccdProblem) {
+                    this.problems.push(ccdProblem)
+                    this.attestedProblems.push(ccdProblem.id)
+                }
                 this.addCondition = false;
             })
 

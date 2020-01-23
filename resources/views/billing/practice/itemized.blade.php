@@ -17,7 +17,7 @@
             <th>Billing Code</th>
             <th>CCM Mins</th>
             <th>BHI Mins</th>
-            <th>CCM Problem Codes</th>
+            <th>CCM Problem Code(s)</th>
             <th>BHI Code</th>
 
         </tr>
