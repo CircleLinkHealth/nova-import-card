@@ -164,26 +164,7 @@ class EligibilityJob extends BaseModel
     
     public function sanitizeDataKeys()
     {
-        $this->data = array_combine(
-            array_map(
-                function ($i) {
-                    //Removes \ufeff randomly prefixed to some keys.
-                    //https://stackoverflow.com/questions/23463758/removing-the-ufeff-from-the-end-of-object-content-in-google-api-json-resu/25913845#25913845
-                    return preg_replace(
-                        '/
-    ^
-    [\pZ\p{Cc}\x{feff}]+
-    |
-    [\pZ\p{Cc}\x{feff}]+$
-   /ux',
-                        '',
-                        $i
-                    );
-                },
-                array_keys($this->data)
-            ),
-            $this->data
-        );
+        $this->data = sanitize_array_keys($this->data);
     }
     
     public function batch()

@@ -14,7 +14,7 @@ namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities;
  */
 
 use App\Console\Commands\OverwriteNBIImportedData;
-use Circlelinkhealth\Eligibility\MedicalRecordImporter\Predictors\HistoricBillingProviderPredictor;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Predictors\HistoricBillingProviderPredictor;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Predictors\HistoricLocationPredictor;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Predictors\HistoricPracticePredictor;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Allergies;

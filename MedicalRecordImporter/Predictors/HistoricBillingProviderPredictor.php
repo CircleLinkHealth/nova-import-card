@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Circlelinkhealth\Eligibility\MedicalRecordImporter\Predictors;
+namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Predictors;
 
 use App\Contracts\Importer\Predictor;
 use App\Importer\Predictors\BaseHistoricPredictor;

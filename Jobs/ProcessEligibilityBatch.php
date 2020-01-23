@@ -45,13 +45,14 @@ class ProcessEligibilityBatch implements ShouldQueue
     {
         $this->batch = $batch;
     }
-
+    
     /**
      * Execute the job.
      *
-     * @throws \League\Flysystem\FileNotFoundException
+     * @param ProcessEligibilityService $processEligibilityService
      *
      * @return void
+     * @throws \League\Flysystem\FileNotFoundException
      */
     public function handle(ProcessEligibilityService $processEligibilityService)
     {
@@ -90,9 +91,12 @@ class ProcessEligibilityBatch implements ShouldQueue
                 ->notifySlack($batch);
         }
     }
-
+    
     /**
-     * @throws \League\Flysystem\FileNotFoundException
+     * @param EligibilityBatch $batch
+     *
+     * @return EligibilityBatch
+     * @throws \Exception
      */
     private function createEligibilityJobsFromJsonFile(EligibilityBatch $batch): EligibilityBatch
     {
@@ -105,7 +109,7 @@ class ProcessEligibilityBatch implements ShouldQueue
             $stream = $driveHandler
                 ->getFileStream($driveFileName, $driveFolder);
         } catch (\Exception $e) {
-            \Log::debug("EXCEPTION `{$e->getMessage()}`");
+            \Log::channel('logdna')->debug("EXCEPTION `{$e->getMessage()}`");
             $batch->status = EligibilityBatch::STATUSES['error'];
             $batch->save();
 
@@ -293,18 +297,19 @@ class ProcessEligibilityBatch implements ShouldQueue
 
     private function queueSingleCsvJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        $result = null;
 
-        if (array_keys_exist(['folder', 'fileName'], $batch->options)) {
+        if (array_keys_exist(['folder', 'fileName'], $batch->options) && !! $batch->options['finishedReadingFile'] !== true) {
             $result = $this->processEligibilityService->processGoogleDriveCsvForEligibility($batch);
+            
+            if ($result) {
+                $batch->status = EligibilityBatch::STATUSES['processing'];
+                $batch->save();
+        
+                return $batch;
+            }
         }
 
-        if ($result) {
-            $batch->status = EligibilityBatch::STATUSES['processing'];
-            $batch->save();
-
-            return $batch;
-        }
+        
 
         $unprocessedQuery = EligibilityJob::whereBatchId($batch->id)
             ->where('status', '<', 2);

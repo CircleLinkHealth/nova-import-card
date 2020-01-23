@@ -497,12 +497,12 @@ class ProcessEligibilityService
 
         return $processedAtLeast1File;
     }
-
+    
     /**
-     * @throws \Exception
-     * @throws \League\Flysystem\FileNotFoundException
+     * @param EligibilityBatch $batch
      *
      * @return array
+     * @throws \Exception
      */
     public function processGoogleDriveCsvForEligibility(EligibilityBatch $batch)
     {
@@ -577,7 +577,7 @@ class ProcessEligibilityService
                     continue;
                 }
                 
-                $patient = $this->transformCsvRow($row);
+                $patient = sanitize_array_keys($this->transformCsvRow($row));
                 
                 $validator = $this->validateRow($patient);
     
