@@ -40,6 +40,8 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog whereIsSuccessfulCall($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog wherePatientUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog whereTimeBefore($value)
+ * @property int|null $chargeable_service_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\NurseCareRateLog whereChargeableServiceId($value)
  */
 class NurseCareRateLog extends \CircleLinkHealth\Core\Entities\BaseModel
 {

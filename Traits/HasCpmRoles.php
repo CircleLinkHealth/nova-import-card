@@ -31,7 +31,7 @@ trait HasCpmRoles
      */
     public function isCareCoach(): bool
     {
-        return $this->getCachedRole('care-center', 'care-center-external');
+        return $this->getCachedRole(['care-center', 'care-center-external']);
     }
     
     /**
@@ -77,11 +77,17 @@ trait HasCpmRoles
     /**
      * Returns whether the user is an administrator.
      *
+     * @param bool $includeViewOnly
+     *
      * @return bool
      */
     public function isCareAmbassador($includeViewOnly = true): bool
     {
-        return $this->getCachedRole(['care-ambassador', 'care-ambassador-view-only']);
+        $arr = ['care-ambassador'];
+        if ($includeViewOnly) {
+            $arr[] = 'care-ambassador-view-only';
+        }
+        return $this->getCachedRole($arr);
     }
     
     /**
@@ -106,7 +112,7 @@ trait HasCpmRoles
     
     public function isPracticeStaff(): bool
     {
-        return $this->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
+        return $this->getCachedRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
     }
     
     public function hasRole($name, $operator = 'OR') {
