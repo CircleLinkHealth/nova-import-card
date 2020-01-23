@@ -15,7 +15,6 @@ class RenameFamilyMemberColumnFromEnrolleeFamilyMembersTable extends Migration
     {
         Schema::table('enrollee_family_members', function (Blueprint $table) {
             $table->renameColumn('family_member_id', 'family_member_enrollee_id');
-
             $table->unique(['enrollee_id', 'family_member_enrollee_id'], 'enrollee_family_unique');
         });
     }
