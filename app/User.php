@@ -80,7 +80,7 @@ namespace App;
  * @property int|null                                                                                                        $cpm_lifestyles_count
  * @property \CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection           $cpmMedicationGroups
  * @property int|null                                                                                                        $cpm_medication_groups_count
- * @property \CircleLinkHealth\SharedModels\Entities\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection                                          $cpmMiscUserPivot
+ * @property \CircleLinkHealth\SharedModels\Entities\CpmMiscUser[]|\Illuminate\Database\Eloquent\Collection                  $cpmMiscUserPivot
  * @property int|null                                                                                                        $cpm_misc_user_pivot_count
  * @property \CircleLinkHealth\SharedModels\Entities\CpmMisc[]|\Illuminate\Database\Eloquent\Collection                      $cpmMiscs
  * @property int|null                                                                                                        $cpm_miscs_count
@@ -150,7 +150,7 @@ namespace App;
  * @property int|null                                                                                                        $phone_numbers_count
  * @property \CircleLinkHealth\Customer\Entities\Practice|null                                                               $primaryPractice
  * @property \CircleLinkHealth\Customer\Entities\ProviderInfo                                                                $providerInfo
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]                                  $revisionHistory
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection                     $revisionHistory
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Customer\Entities\Role[]|\Illuminate\Database\Eloquent\Collection                             $roles
  * @property int|null                                                                                                        $roles_count
@@ -159,6 +159,7 @@ namespace App;
  * @property int|null                                                                                                        $tokens_count
  * @property \App\CPRulesUCP[]|\Illuminate\Database\Eloquent\Collection                                                      $ucp
  * @property int|null                                                                                                        $ucp_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User careCoaches()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User exceptType($type)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User filter(\App\Filters\QueryFilters $filters)
@@ -208,10 +209,13 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereZip($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User withCareTeamOfType($type)
  * @mixin \Eloquent
+ *
  * @property mixed $full_name_with_id
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User notOfPracticeRequiringSpecialBhiConsent()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User ofPracticeRequiringSpecialBhiConsent()
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\User isNotDemo()
+ *
  * @property string $name
  */
 class User extends \CircleLinkHealth\Customer\Entities\User
