@@ -57,8 +57,8 @@ class ChargeableService extends BaseModel
      * 99484'.
      */
     const DEFAULT_CHARGEABLE_SERVICE_CODES = [
-        'CPT 99484',
-        'CPT 99490',
+        self::BHI,
+        self::CCM,
         'CPT 99487',
         'CPT 99489',
         'G0511',
