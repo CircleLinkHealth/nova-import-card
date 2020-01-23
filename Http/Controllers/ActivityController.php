@@ -16,7 +16,6 @@ use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use CircleLinkHealth\TimeTracking\Entities\ActivityMeta;
-use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -334,25 +333,10 @@ class ActivityController extends Controller
             }
         }
 
-        $startTime = Carbon::createFromFormat('Y-m-d H:i', str_replace('T', ' ', $input['performed_at']));
+        $activity = Activity::create($input);
 
-        $pageTimer = PageTimer::create([
-            'billable_duration' => $input['duration'],
-            'duration'          => $input['duration'],
-            'duration_unit'     => $input['duration_unit'],
-            'patient_id'        => $input['patient_id'],
-            'provider_id'       => $input['provider_id'],
-            'start_time'        => $startTime,
-            'end_time'          => $startTime->copy()->addSeconds($input['duration']),
-            'program_id'        => optional($patient)->program_id,
-        ]);
-
-        $activity = Activity::create(array_merge($input, [
-            'page_timer_id' => $pageTimer->id,
-        ]));
-
+        /** @var Nurse $nurse */
         $nurse = null;
-
         if ($activity->provider_id) {
             $nurse = Nurse::whereUserId($activity->provider_id)->first();
         }
