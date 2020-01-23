@@ -8,7 +8,7 @@ use App\Providers\CpmArtisanServiceProvider;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
 use CircleLinkHealth\Eligibility\Providers\RouteServiceProvider as EligibilityRouteServiceProvider;
-use Circlelinkhealth\ImportPracticeStaffCsv\CardServiceProvider;
+use CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
 

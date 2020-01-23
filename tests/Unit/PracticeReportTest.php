@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use App\Console\Commands\CreateCallsReportForPractice;
@@ -17,28 +21,9 @@ class PracticeReportTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
     use SetupTestCustomerTrait;
-
-    protected $reportClass;
     protected $commandClass;
 
-    public function test_practice_calls_report_class(){
-        $this->makeAssertionsForReportClass(PracticeCallsReport::class, CreateCallsReportForPractice::class);
-    }
-
-    public function test_patient_problems_report_class(){
-        $this->makeAssertionsForReportClass(PatientProblemsReport::class, CreatePatientProblemsReportForPractice::class);
-    }
-
-    public function makeAssertionsForReportClass($reportClass, $commandClass)
-    {
-        $this->reportClass  = $reportClass;
-        $this->commandClass = $commandClass;
-
-        $this->consoleCommandSendsNotification();
-        $this->modelNotFoundExceptionThrownIfUserPassedDoesNotHaveAccessToPractice();
-        $this->notificationIsSent();
-        $this->otherUsersFromTheSamePracticeDoNotHaveAccessToTheReport();
-    }
+    protected $reportClass;
 
     /**
      * We want to test that given the correct input, the command will produce the report.
@@ -53,15 +38,15 @@ class PracticeReportTest extends TestCase
         $mock       = \Mockery::mock($this->reportClass);
 
         $mock->shouldReceive('forPractice')
-             ->with($practiceId)
-             ->andReturnSelf()
-             ->shouldReceive('forUser')
-             ->with($userId)
-             ->andReturnSelf()
-             ->shouldReceive('createMedia')
-             ->andReturnSelf()
-             ->shouldReceive('notifyUser')
-             ->andReturnSelf();
+            ->with($practiceId)
+            ->andReturnSelf()
+            ->shouldReceive('forUser')
+            ->with($userId)
+            ->andReturnSelf()
+            ->shouldReceive('createMedia')
+            ->andReturnSelf()
+            ->shouldReceive('notifyUser')
+            ->andReturnSelf();
 
         $this->instance($this->reportClass, $mock);
 
@@ -70,8 +55,19 @@ class PracticeReportTest extends TestCase
             'practice_id' => $practiceId,
             'user_id'     => $userId,
         ])
-             ->assertExitCode(0)
-             ->expectsOutput('Command ran.');
+            ->assertExitCode(0)
+            ->expectsOutput('Command ran.');
+    }
+
+    public function makeAssertionsForReportClass($reportClass, $commandClass)
+    {
+        $this->reportClass  = $reportClass;
+        $this->commandClass = $commandClass;
+
+        $this->consoleCommandSendsNotification();
+        $this->modelNotFoundExceptionThrownIfUserPassedDoesNotHaveAccessToPractice();
+        $this->notificationIsSent();
+        $this->otherUsersFromTheSamePracticeDoNotHaveAccessToTheReport();
     }
 
     /**
@@ -87,7 +83,7 @@ class PracticeReportTest extends TestCase
         try {
             //test
             $report->forPractice($customer1['practice']->id)
-                   ->forUser($customer2['admin']->id);
+                ->forUser($customer2['admin']->id);
         } catch (\Exception $e) {
             //assert
             $this->assertEquals(ModelNotFoundException::class, get_class($e));
@@ -105,9 +101,9 @@ class PracticeReportTest extends TestCase
 
         //test
         $report->forPractice($practice->id)
-               ->forUser($user->id)
-               ->createMedia()
-               ->notifyUser();
+            ->forUser($user->id)
+            ->createMedia()
+            ->notifyUser();
 
         //assert
         $this->assertDatabaseHas('media', [
@@ -127,7 +123,7 @@ class PracticeReportTest extends TestCase
             function ($notification, $channels, $notifiable) use ($user) {
                 $this->assertEquals(['database', 'mail'], $channels);
 
-                return (int)$notifiable->id === (int)$user->id;
+                return (int) $notifiable->id === (int) $user->id;
             }
         );
     }
@@ -143,12 +139,22 @@ class PracticeReportTest extends TestCase
 
         //test
         $report->forPractice($customer['practice']->id)
-               ->forUser($user->id)
-               ->createMedia()
-               ->notifyUser();
+            ->forUser($user->id)
+            ->createMedia()
+            ->notifyUser();
 
 //        $this->actingAs($user2)->call('get', $report->getSignedLink())
 //            //assert
 //             ->assertStatus(403);
+    }
+
+    public function test_patient_problems_report_class()
+    {
+        $this->makeAssertionsForReportClass(PatientProblemsReport::class, CreatePatientProblemsReportForPractice::class);
+    }
+
+    public function test_practice_calls_report_class()
+    {
+        $this->makeAssertionsForReportClass(PracticeCallsReport::class, CreateCallsReportForPractice::class);
     }
 }
