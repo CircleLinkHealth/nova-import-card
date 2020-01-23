@@ -15,7 +15,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class FromArray implements FromCollection, Responsable, WithHeadings
 {
-    use CircleLinkHealth\Core\Traits\AttachableAsMedia;
+    use AttachableAsMedia;
     use Exportable;
     /**
      * @var array
