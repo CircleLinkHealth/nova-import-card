@@ -22,6 +22,14 @@ class PostRefactoringRenaming extends Migration
                    'instructable_type' => 'CircleLinkHealth\SharedModels\Entities\CpmProblem',
                ]
            );
+    
+        \DB::table('pdfs')
+           ->where('pdfable_type', 'App\CarePlan')
+           ->update(
+               [
+                   'pdfable_type' => 'CircleLinkHealth\SharedModels\Entities\CarePlan',
+               ]
+           );
         
         collect([
                     [
