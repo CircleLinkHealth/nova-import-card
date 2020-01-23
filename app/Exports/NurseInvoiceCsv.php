@@ -16,7 +16,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class NurseInvoiceCsv implements FromArray, Responsable, WithHeadings
 {
-    use CircleLinkHealth\Core\Traits\AttachableAsMedia;
+    use AttachableAsMedia;
     use Exportable;
     /**
      * @var Carbon

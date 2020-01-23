@@ -32,7 +32,6 @@ use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog[]|\Illuminate\Database\Eloquent\Collection $problems
  * @property \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog[]|\Illuminate\Database\Eloquent\Collection                               $providers
  * @property \App\CLH\CCD\ImportRoutine\CcdImportRoutine                                                                        $routine
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdVendor whereCcdImportRoutineId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdVendor whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdVendor whereCustodianName($value)
@@ -46,13 +45,10 @@ use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdVendor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdVendor whereVendorName($value)
  * @mixin \Eloquent
- *
- * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdVendor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdVendor newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\CcdVendor query()
- *
  * @property int|null $allergies_count
  * @property int|null $demographics_count
  * @property int|null $demographics_imports_count

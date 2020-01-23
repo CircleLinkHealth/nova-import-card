@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use Circlelinkhealth\GeneratePatientCallDataCsv\GeneratePatientCallDataCsvController;
+use CircleLinkHealth\GeneratePatientCallDataCsv\GeneratePatientCallDataCsvController;
 use Illuminate\Support\Facades\Route;
 
 /*
