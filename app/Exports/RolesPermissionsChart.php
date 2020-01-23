@@ -17,7 +17,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 
 class RolesPermissionsChart implements FromCollection, Responsable
 {
-    use CircleLinkHealth\Core\Traits\AttachableAsMedia;
+    use AttachableAsMedia;
     use Exportable;
     /**
      * @var Carbon
