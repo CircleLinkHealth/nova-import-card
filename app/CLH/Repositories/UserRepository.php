@@ -621,7 +621,6 @@ class UserRepository
         }
     
         $user->clearObjectCache();
-
         $user->unsetRelation('roles');
     }
 
