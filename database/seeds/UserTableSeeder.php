@@ -41,6 +41,7 @@ class UserTableSeeder extends Seeder
                 $nurse->program_id = $practice->id;
                 $nurse->password = Hash::make('hello');
                 $nurse->save();
+
                 $info = $nurse->nurseInfo()->create();
                 $info->status = 'active';
                 $info->save();
