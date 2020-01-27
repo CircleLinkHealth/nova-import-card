@@ -41,7 +41,8 @@ trait ValidatesWorkScheduleCalendar
         if ($windowExists) {
             $validator->getMessageBag()->add(
                 'error',
-                'This window is overlapping with an already existing window.'
+                'This day already has a scheduled event. 
+                If you wish to change your schedule, please remove the existing event first.'
             );
         }
 
