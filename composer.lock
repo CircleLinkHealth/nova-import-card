@@ -740,7 +740,7 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-development",
+            "version": "dev-CPM-1971-fix-custom-nova-cards",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
@@ -915,11 +915,11 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-development",
+            "version": "dev-CPM-1971-fix-custom-nova-cards",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "b1dc8efaa5c6eedaca7d9b97b446a5e526b06e29",
+                "reference": "8b21629514943da628f3f5acb602c7610c2d9167",
                 "shasum": null
             },
             "require": {
@@ -929,13 +929,13 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Circlelinkhealth\\GeneratePatientCallDataCsv\\CardServiceProvider"
+                        "CircleLinkHealth\\GeneratePatientCallDataCsv\\CardServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Circlelinkhealth\\GeneratePatientCallDataCsv\\": "src/"
+                    "CircleLinkHealth\\GeneratePatientCallDataCsv\\": "src/"
                 }
             },
             "license": [
@@ -949,7 +949,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-development",
+            "version": "dev-CPM-1971-fix-custom-nova-cards",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
