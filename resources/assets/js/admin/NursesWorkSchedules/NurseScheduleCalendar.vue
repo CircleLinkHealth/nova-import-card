@@ -402,7 +402,6 @@
                 const todayDate = new Date(this.today);
                 const eventDate = new Date(this.workEventDate);
                 const tomorrowDate = new Date(todayDate.setDate(todayDate.getDate() + 1));
-                console.log(eventDate === tomorrowDate);
                 return eventDate.getDate() === tomorrowDate.getDate();
 
             },
@@ -527,7 +526,7 @@
                 axios.post('care-center/work-schedule/holidays', {
                     holiday: workDate
                 }).then((response => {
-                        console.log(response);
+
                         this.refetchEvents();
                         this.loader = false;
                         this.toggleModal();

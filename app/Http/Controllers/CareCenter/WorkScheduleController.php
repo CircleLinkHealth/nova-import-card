@@ -20,7 +20,6 @@ use CircleLinkHealth\Customer\Entities\WorkHours;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\Rule;
 use Validator;
 
@@ -211,6 +210,21 @@ class WorkScheduleController extends Controller
             ->where('nurse_info_id', $window->nurse_info_id)
             ->where('repeat_start', $window->repeat_start)
             ->forceDelete();
+
+        $this->informSlackNurseSide($window);
+    }
+
+    /**
+     * @param $window
+     */
+    public function informSlackNurseSide($window)
+    {
+        $auth = auth()->user();
+        $sentence = "Nurse {$auth->getFullName()} has just deleted the Window for";
+        $sentence .= "{$window->dayName}, {$window->date->format('m-d-Y')} from {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}. View Schedule at ";
+        $sentence .= route('get.admin.nurse.schedules');
+
+        \sendSlackMessage('#carecoachscheduling', $sentence);
     }
 
     /**
@@ -371,7 +385,7 @@ class WorkScheduleController extends Controller
                 return $this->saveRecurringEvents($nurseInfoId, $updateCollisions, $validator, $workScheduleData);
             }
             $window = $this->saveAdminSingleWindow($nurseInfoId, $workScheduleData);
-            $this->sendSlackMessage($nurseInfoId, $window, $workScheduleData);
+            $this->informSlackAdminSide($nurseInfoId, $window, $workScheduleData);
         } else {
             if ('does_not_repeat' !== $workScheduleData['repeat_freq']) {
                 return $this->saveRecurringEvents($nurseInfoId, $updateCollisions, $validator, $workScheduleData);
@@ -486,7 +500,7 @@ class WorkScheduleController extends Controller
      * @param $nurseInfoId
      * @param $workScheduleData
      */
-    public function sendSlackMessage($nurseInfoId, NurseContactWindow $window, $workScheduleData)
+    public function informSlackAdminSide($nurseInfoId, NurseContactWindow $window, $workScheduleData)
     {
         //@todo: These messages needs to be adapted.
         $user = auth()->user();
