@@ -7,6 +7,7 @@
 namespace App\Nova;
 
 use App\Constants;
+use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Nova\Importers\EnroleeData as EnroleeDataImporter;
 use Illuminate\Http\Request;
@@ -14,7 +15,9 @@ use Jubeki\Nova\Cards\Linkable\LinkableAway;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Sparclex\NovaImportCard\NovaImportCard;
 
 class EnroleeData extends Resource
@@ -80,7 +83,16 @@ class EnroleeData extends Resource
      */
     public function cards(Request $request)
     {
-        $cards = [new NovaImportCard(self::class)];
+        $practices = Practice::whereIn('id', auth()->user()->viewableProgramIds())
+                             ->activeBillable()
+                             ->pluck('display_name', 'id')
+                             ->toArray();
+
+        $cards =  [
+            new ClhImportCardExtended(self::class, [
+                Select::make('practice')->options($practices)->withModel(Practice::class),
+            ]),
+        ];
 
         if ( ! isProductionEnv()) {
             $cards[] = (new LinkableAway())
