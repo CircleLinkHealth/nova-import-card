@@ -398,6 +398,15 @@
         },
 
         methods: Object.assign(mapActions(['addNotification']), {
+            eventIsTomorrow() {
+                const todayDate = new Date(this.today);
+                const eventDate = new Date(this.workEventDate);
+                const tomorrowDate = new Date(todayDate.setDate(todayDate.getDate() + 1));
+                console.log(eventDate === tomorrowDate);
+                return eventDate.getDate() === tomorrowDate.getDate();
+
+            },
+
             refetchEvents() {
                 return this.$refs.calendar.$emit('refetch-events');
             },
@@ -411,9 +420,18 @@
                 $("#addWorkEvent").modal('toggle');
             },
 
+            userIsNurseAndDeletesTomorrowEvent(eventType){
+                return this.eventIsTomorrow() && this.authIsNurse && eventType === 'workDay';
+            },
+
             deleteEvent(shouldDeleteAll) {
                 const event = this.eventToViewData[0];
                 const eventType = event.eventType;
+
+                if (this.userIsNurseAndDeletesTomorrowEvent(eventType)) {
+                    this.throwWarningNotification('Workdays cannot be removed the day before. Please reach out to your manager for assistance.');
+                    return;
+                }
                 // This should never happen
                 if (eventType === 'companyHoliday') {
                     alert('You cant delete company holiday');
@@ -1028,7 +1046,7 @@
     }
 
     #calendar > div.fc-toolbar.fc-header-toolbar > div.fc-left {
-        margin-left: 10%;
+        margin-left: 6%;
     }
 
     #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-day-grid.fc-unselectable > div > div.fc-content-skeleton > table > tbody > tr > td > a > div.fc-content > span {
@@ -1104,7 +1122,7 @@
         opacity: 0.1;
     }
 
-    #addWorkEvent > div.modal-dialog > div > div.modal-header{
+    #addWorkEvent > div.modal-dialog > div > div.modal-header {
         border-bottom: unset;
     }
 </style>

@@ -54,7 +54,6 @@ class CreateCalendarRecurringEventsCommand extends Command
         NurseContactWindow::with('nurse.user', 'nurse.workhourables')
             ->whereHas('nurse', function ($q) {
                 $q->where('status', 'active');
-                //@todo: case of nurse having windows - but are inactive during launch - and then becoming active again
             })->chunk(200, function ($nurseContactWindows) use ($currentWeekMap) {
                 collect($nurseContactWindows)
                     ->transform(function ($window) use ($currentWeekMap) {
@@ -70,7 +69,7 @@ class CreateCalendarRecurringEventsCommand extends Command
                         $windowData = [
                             'repeat_freq'       => $window->repeat_frequency,
                             'date'              => $projectionEventDate,
-                            'until'             => $window->until,
+                            'until'             => Carbon::parse($projectionEventDate)->copy()->addWeek(2)->toDateString(),
                             'window_time_start' => $window->window_time_start,
                             'window_time_end'   => $window->window_time_end,
                             'work_hours'        => $workHours,

@@ -558,14 +558,14 @@ class WorkScheduleController extends Controller
                 }),
                 'required',
                 'date',
-                'after:tomorrow',
             ],
         ]);
         $workEventExistsOnSameDate = $user->nurseInfo->windows()->where('date', $date)->exists();
         if ($workEventExistsOnSameDate) {
             $validator->getMessageBag()->add(
                 'error',
-                'This day has already been taken.'
+                'This day already has a scheduled event. 
+                If you wish to change your schedule, please remove the existing event first.'
             );
 
             return response()->json([
