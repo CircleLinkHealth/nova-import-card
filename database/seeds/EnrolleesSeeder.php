@@ -14,13 +14,17 @@ class EnrolleesSeeder extends Seeder
      */
     public function run()
     {
+        $this->command->info('Seeding Enrollees.');
         $enrollees = factory(Enrollee::class, 100)->create();
 
+
+        $this->command->info('Enrollees created.');
 
         //take some enrollees to fake "suggested" family members for testing purposes. Randomly make their data look like the would be family members
         list($enrollees, $fakeSuggestedFamilyMembers) = $enrollees->partition(function ($e) use ($enrollees) {
             return $enrollees->search($e) < 20;
         });
+
 
         if ( ! empty($enrollees)) {
             $fakeSuggestedFamilyMembers->each(function ($e) use ($enrollees) {
@@ -46,6 +50,6 @@ class EnrolleesSeeder extends Seeder
                 $e->save();
             });
         }
-
+        $this->command->info('Enrollee Family Members seeded.');
     }
 }
