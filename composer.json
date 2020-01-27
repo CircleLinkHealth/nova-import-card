@@ -131,7 +131,7 @@
     "circlelinkhealth/eligibility-module": "dev-CPM-1793-ca-family-members-2nd-branch",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
-    "circlelinkhealth/nurseinvoices-module": "1.2.1",
+    "circlelinkhealth/nurseinvoices-module": "1.2.2",
     "circlelinkhealth/patientapi-module": "1.0",
     "circlelinkhealth/raygun-module": "0.8",
     "circlelinkhealth/revisionable-module": "1.4.1",
