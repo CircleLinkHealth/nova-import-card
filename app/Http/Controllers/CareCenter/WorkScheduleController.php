@@ -452,7 +452,7 @@ class WorkScheduleController extends Controller
     ): JsonResponse
     {
         $recurringEventsToSave = $this->fullCalendarService->createRecurringEvents($nurseInfoId, $workScheduleData);
-//        It should never happen. Same validation exist in client...We can also use it in the future to give the option to choose what to do with each event.
+//        It should never happen. Same validation exist in client.We can also use it in the future to give the option to choose what to do with each event.
         $confirmationNeededEvents = $this->fullCalendarService->getEventsToAskConfirmation($recurringEventsToSave, $updateCollisions);
         if (!empty($confirmationNeededEvents) && !$updateCollisions) {
             $collidingDates = $this->fullCalendarService->getCollidingDates($confirmationNeededEvents);
@@ -502,7 +502,6 @@ class WorkScheduleController extends Controller
      */
     public function informSlackAdminSide($nurseInfoId, NurseContactWindow $window, $workScheduleData)
     {
-        //@todo: These messages needs to be adapted.
         $user = auth()->user();
         $nurseUser = Nurse::find($nurseInfoId)->user;
         $dayName = clhDayOfWeekToDayName($window->day_of_week);
@@ -602,18 +601,18 @@ class WorkScheduleController extends Controller
         return redirect()->back();
     }
 
-    public function updateDailyHours(Request $request, $id)
-    {
-        $workHours = WorkHours::find($id);
-        $workHours->{$request->input('day')} = $request->input('workHours');
-        $workHours->save();
-
-        return response()->json();
-    }
-
-    protected function canAddNewWindow(Carbon $date)
-    {
-        return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
-            || $date->gt($this->nextWeekEnd);
-    }
+//    public function updateDailyHours(Request $request, $id)
+//    {
+//        $workHours = WorkHours::find($id);
+//        $workHours->{$request->input('day')} = $request->input('workHours');
+//        $workHours->save();
+//
+//        return response()->json();
+//    }
+//
+//    protected function canAddNewWindow(Carbon $date)
+//    {
+//        return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
+//            || $date->gt($this->nextWeekEnd);
+//    }
 }
