@@ -62,7 +62,7 @@
 <body>
 <div id="app">
 
-    @if ( true)
+    @if ( ! Auth::guest() && auth()->user()->cerberusHasPermission('admin-access'))
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
