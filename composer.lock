@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2387468cb88411f499c347ea30231039",
+    "content-hash": "03d3d78eab3010ec22cac26518030e59",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.5",
+            "version": "3.133.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "99ea2386f68ba29acd8e91c515e0fc19b2845378"
+                "reference": "cd7bd2fdd159146ef6c7eeb90b73fae4fd11da57"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/99ea2386f68ba29acd8e91c515e0fc19b2845378",
-                "reference": "99ea2386f68ba29acd8e91c515e0fc19b2845378",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cd7bd2fdd159146ef6c7eeb90b73fae4fd11da57",
+                "reference": "cd7bd2fdd159146ef6c7eeb90b73fae4fd11da57",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-01-23T19:15:25+00:00"
+            "time": "2020-01-24T19:11:35+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -740,11 +740,11 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-master",
+            "version": "dev-CPM-1971-fix-custom-nova-cards",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "dc473b7f2d0c1ca6ad7ce8e7da2bb332ea473aab",
+                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8",
                 "shasum": null
             },
             "require": {
@@ -754,13 +754,13 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Circlelinkhealth\\ClhImportCardExtended\\CardServiceProvider"
+                        "CircleLinkHealth\\ClhImportCardExtended\\CardServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Circlelinkhealth\\ClhImportCardExtended\\": "src/"
+                    "CircleLinkHealth\\ClhImportCardExtended\\": "src/"
                 }
             },
             "license": [
@@ -915,11 +915,11 @@
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-master",
+            "version": "dev-CPM-1971-fix-custom-nova-cards",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "b1dc8efaa5c6eedaca7d9b97b446a5e526b06e29",
+                "reference": "8b21629514943da628f3f5acb602c7610c2d9167",
                 "shasum": null
             },
             "require": {
@@ -929,13 +929,13 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Circlelinkhealth\\GeneratePatientCallDataCsv\\CardServiceProvider"
+                        "CircleLinkHealth\\GeneratePatientCallDataCsv\\CardServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Circlelinkhealth\\GeneratePatientCallDataCsv\\": "src/"
+                    "CircleLinkHealth\\GeneratePatientCallDataCsv\\": "src/"
                 }
             },
             "license": [
@@ -949,7 +949,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-master",
+            "version": "dev-CPM-1971-fix-custom-nova-cards",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -984,11 +984,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.2.2",
+            "version": "dev-nurse_invoices_optimize",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "2367c27e5c9004471759013925176ce466490f53"
+                "reference": "f87de2b7d9d8a283e55c598f3523bc6b276d10ae"
             },
             "type": "laravel-module",
             "extra": {
@@ -1011,7 +1011,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-23T22:24:33+00:00"
+            "time": "2020-01-28T14:01:52+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1127,11 +1127,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-CPM-1846-block-diabetus",
+            "version": "v1.1.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "e3c8920e2ae9e96c30dd9110321aa6abf878e580"
+                "reference": "a72ab17b2b57cfbb73444921ddb3f7bd4d795986"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1145,7 +1145,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-23T23:20:43+00:00"
+            "time": "2020-01-22T00:58:18+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -2448,16 +2448,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.123",
+            "version": "v0.124",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "a8c3c7563729ecb98a9ed66f675366527bcbad4d"
+                "reference": "7bdd526abda4d802e973816cd7b4f3f3bc75fa03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/a8c3c7563729ecb98a9ed66f675366527bcbad4d",
-                "reference": "a8c3c7563729ecb98a9ed66f675366527bcbad4d",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/7bdd526abda4d802e973816cd7b4f3f3bc75fa03",
+                "reference": "7bdd526abda4d802e973816cd7b4f3f3bc75fa03",
                 "shasum": ""
             },
             "require": {
@@ -2481,7 +2481,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-01-19T00:24:13+00:00"
+            "time": "2020-01-25T00:24:16+00:00"
         },
         {
             "name": "google/auth",
@@ -7365,20 +7365,21 @@
         },
         {
             "name": "spatie/image",
-            "version": "1.7.5",
+            "version": "1.7.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/image.git",
-                "reference": "9e36dcc1c5da4e8756a4fd00228342a9c9953f4b"
+                "reference": "74535b5fd67ace75840c00c408666660843e755e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/image/zipball/9e36dcc1c5da4e8756a4fd00228342a9c9953f4b",
-                "reference": "9e36dcc1c5da4e8756a4fd00228342a9c9953f4b",
+                "url": "https://api.github.com/repos/spatie/image/zipball/74535b5fd67ace75840c00c408666660843e755e",
+                "reference": "74535b5fd67ace75840c00c408666660843e755e",
                 "shasum": ""
             },
             "require": {
                 "ext-exif": "*",
+                "ext-mbstring": "*",
                 "league/glide": "^1.4",
                 "php": "^7.0",
                 "spatie/image-optimizer": "^1.0",
@@ -7414,7 +7415,7 @@
                 "image",
                 "spatie"
             ],
-            "time": "2019-11-23T17:56:34+00:00"
+            "time": "2020-01-26T18:56:44+00:00"
         },
         {
             "name": "spatie/image-optimizer",
@@ -10948,25 +10949,26 @@
         },
         {
             "name": "jolicode/jolinotif",
-            "version": "v2.0.2",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jolicode/JoliNotif.git",
-                "reference": "0b5f786c5f181b3916df616ca191892713257662"
+                "reference": "b1a7ccfeb13f1daa12a5188531863b739e388e13"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jolicode/JoliNotif/zipball/0b5f786c5f181b3916df616ca191892713257662",
-                "reference": "0b5f786c5f181b3916df616ca191892713257662",
+                "url": "https://api.github.com/repos/jolicode/JoliNotif/zipball/b1a7ccfeb13f1daa12a5188531863b739e388e13",
+                "reference": "b1a7ccfeb13f1daa12a5188531863b739e388e13",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.0",
-                "symfony/process": "~3.3|~4.0"
+                "symfony/process": "^3.3|^4.0|^5.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "~2.0",
-                "symfony/phpunit-bridge": "^3.3"
+                "friendsofphp/php-cs-fixer": "^2.0",
+                "symfony/finder": "^3.3|^4.0|^5.0",
+                "symfony/phpunit-bridge": "^3.4.26|^4.0|^5.0"
             },
             "bin": [
                 "jolinotif"
@@ -10974,7 +10976,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "2.1.x-dev"
                 }
             },
             "autoload": {
@@ -11000,7 +11002,7 @@
                 "notification",
                 "windows"
             ],
-            "time": "2019-02-26T18:10:50+00:00"
+            "time": "2020-01-10T15:37:00+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -11802,16 +11804,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.7",
+            "version": "0.12.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "07fa7958027fd98c567099bbcda5d6a0f2ec5197"
+                "reference": "62a552602b7586d82826231f2fd4cbfe39fe0b1d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/07fa7958027fd98c567099bbcda5d6a0f2ec5197",
-                "reference": "07fa7958027fd98c567099bbcda5d6a0f2ec5197",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/62a552602b7586d82826231f2fd4cbfe39fe0b1d",
+                "reference": "62a552602b7586d82826231f2fd4cbfe39fe0b1d",
                 "shasum": ""
             },
             "require": {
@@ -11837,7 +11839,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-01-20T21:59:06+00:00"
+            "time": "2020-01-26T23:36:48+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -13620,7 +13622,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/shared-models-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
