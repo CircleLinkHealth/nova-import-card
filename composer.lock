@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "03d3d78eab3010ec22cac26518030e59",
+    "content-hash": "2cd04b852a42e519814b8b3cd3589824",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -984,11 +984,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "dev-nurse_invoices_optimize",
+            "version": "v1.2.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "f87de2b7d9d8a283e55c598f3523bc6b276d10ae"
+                "reference": "94931ea8cc29768e6c4a097f703affaa9a6d0f3d"
             },
             "type": "laravel-module",
             "extra": {
@@ -1011,7 +1011,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-28T14:01:52+00:00"
+            "time": "2020-01-28T15:03:18+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -13622,7 +13622,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/nurseinvoices-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
