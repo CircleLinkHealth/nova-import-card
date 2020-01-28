@@ -538,25 +538,28 @@ if (isset($patient) && ! empty($patient)) {
                     return patientProblemNames.includes(diabetes1) && patientProblemNames.includes(diabetes2);
                 }
 
+
                 $(document).ready(function () {
-                    $('#form-approve').submit(function (e) {
-                        e.preventDefault();
-                        const form = this;
+                    setTimeout(function () {
+                        $('#form-approve').submit(function (e) {
+                            e.preventDefault();
+                            const form = this;
 
-                        if (patientHasBothTypesOfDiabetes()) {
-                            $(":input").each(function() {
-                                if ($(this).attr('name') === "confirm_diabetes_conditions") {
-                                    form.submit();
-                                }
-                            });
+                            if (patientHasBothTypesOfDiabetes()) {
+                                $(":input").each(function() {
+                                    if ($(this).attr('name') === "confirm_diabetes_conditions") {
+                                        form.submit();
+                                    }
+                                });
 
-                            App.$emit('show-diabetes-check-modal');
+                                App.$emit('show-diabetes-check-modal');
 
-                            return;
-                        } else {
-                            form.submit();
-                        }
-                    })
+                                return;
+                            } else {
+                                form.submit();
+                            }
+                        })
+                    }, 500);
                 })
 
                 function notEligibleClick() {
