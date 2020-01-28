@@ -538,7 +538,7 @@ if (isset($patient) && ! empty($patient)) {
                     return patientProblemNames.includes(diabetes1) && patientProblemNames.includes(diabetes2);
                 }
 
-                $(function () {
+                $(document).ready(function () {
                     $('#form-approve').submit(function (e) {
                         e.preventDefault();
                         const form = this;
