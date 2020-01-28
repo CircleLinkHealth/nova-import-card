@@ -7,7 +7,7 @@
 namespace App\Importer\Loggers\Problem;
 
 use App\Contracts\Importer\MedicalRecord\Section\Logger;
-use App\Services\Eligibility\Entities\Problem;
+use CircleLinkHealth\Eligibility\Entities\Problem;
 
 class JsonListProblemLogger implements Logger
 {

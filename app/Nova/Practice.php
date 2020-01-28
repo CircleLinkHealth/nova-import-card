@@ -7,7 +7,7 @@
 namespace App\Nova;
 
 use App\Nova\Importers\PatientConsentLetters;
-use Circlelinkhealth\ClhImportCardExtended\ClhImportCardExtended;
+use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;

@@ -609,12 +609,19 @@ class UserRepository
             $store = \Cache::getStore();
         }
         
-        $user->clearObjectCache();
-
         foreach ($keys as $key) {
             $store->forget($key);
             Cache::forget($key);
         }
+    
+        $cacheDriver = config('cache.default');
+    
+        if ('redis' === $cacheDriver) {
+            \RedisManager::del($user->getCpmRolesCacheKey());
+        }
+    
+        $user->clearObjectCache();
+        $user->unsetRelation('roles');
     }
 
     private function forceEnable2fa(AuthyUser $authyUser)

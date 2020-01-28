@@ -36,7 +36,7 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
         $this->attributes = $attributes;
         $this->rules      = $rules;
         $this->modelClass = $modelClass;
-        $this->practice   = $this->getPractice();
+        $this->practice   = $resource->fields->getFieldValue('practice');
     }
 
     /**
@@ -70,24 +70,5 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
     public function rules(): array
     {
         return $this->rules;
-    }
-
-    protected function getPractice()
-    {
-        $fileName = request()->file->getClientOriginalName();
-
-        if ($fileName) {
-            $array = explode('.', $fileName);
-
-            $practice = PracticeByName::first($array[0]);
-
-            if ( ! $practice) {
-                throw new \Exception('Practice not found. Please make sure that the file name is a valid Practice name.', 500);
-            }
-
-            return $practice;
-        }
-
-        throw new \Exception('Something went wrong. File not found.', 500);
     }
 }
