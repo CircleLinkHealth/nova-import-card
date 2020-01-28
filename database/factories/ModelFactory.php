@@ -211,6 +211,10 @@ $factory->define(Nurse::class, function (Faker\Generator $faker) {
 $factory->define(Practice::class, function (Faker\Generator $faker) {
     $name = $faker->company;
 
+    while (Practice::whereName($name)->exists()){
+        $name = $faker->company;
+    }
+
     return [
         'name'           => $name,
         'display_name'   => $name,
