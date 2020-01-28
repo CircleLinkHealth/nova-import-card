@@ -36,7 +36,7 @@
             },
             hideAndSubmitForm() {
                 App.$emit('confirm-diabetes-conditions');
-                this.hideModal();
+                this.$refs['diabetes-check-modal'].visible = false;
             }
         },
         mounted() {
