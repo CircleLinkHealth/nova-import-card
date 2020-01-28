@@ -8,6 +8,7 @@ namespace CircleLinkHealth\NurseInvoices\ViewModels;
 
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\VariablePayCalculator;
 use Illuminate\Support\Collection;
@@ -42,6 +43,15 @@ class Invoice extends ViewModel
      * @var bool
      */
     public $changedToFixedRateBecauseItYieldedMore = false;
+
+    /**
+     * An array showing the total time per day.
+     *
+     * @return Collection
+     */
+    public $timePerDay;
+    public $totalTimeAfterCcmInHours;
+    public $totalTimeTowardsCcmInHours;
 
     /**
      * @var float the total pay with fixed rate algorithm
@@ -101,14 +111,6 @@ class Invoice extends ViewModel
      */
     private $systemTimeInHours;
     /**
-     * @var int|null
-     */
-    private $totalTimeAfterCcm;
-    /**
-     * @var int|null
-     */
-    private $totalTimeTowardsCcm;
-    /**
      * @var User
      */
     private $user;
@@ -141,7 +143,8 @@ class Invoice extends ViewModel
         $this->nurseFullName         = $user->getFullName();
         $this->variablePayCalculator = $variablePayCalculator;
 
-        $variablePayMap     = $this->variablePayCalculator->getForNurses();
+        $variablePayMap = $this->variablePayCalculator->getForNurses();
+
         $variablePaySummary = $variablePayMap->filter(function ($f) use ($user) {
             return $f->nurse_id === $user->nurseInfo->id;
         });
@@ -149,6 +152,8 @@ class Invoice extends ViewModel
         $this->variablePayForNurse = $variablePaySummary;
 
         $this->determineBaseSalary();
+
+        $this->setViewModelVariables();
     }
 
     /**
@@ -318,106 +323,6 @@ class Invoice extends ViewModel
     }
 
     /**
-     * An array showing the total time per day.
-     *
-     * @return Collection
-     */
-    public function timePerDay()
-    {
-        $table  = collect();
-        $period = CarbonPeriod::between($this->startDate, $this->endDate);
-
-        foreach ($period as $date) {
-            $dateStr = $date->toDateString();
-
-            $dataForDay = $this->aggregatedTotalTime->first(
-                function ($value) use ($dateStr) {
-                    return 0 == $value->is_billable && $value->date == $dateStr;
-                }
-            );
-
-            $minutes = $dataForDay
-                ? round($dataForDay->total_time / 60, 2)
-                : 0;
-
-            $row = [
-                'formatted_time' => minutesToHhMm($minutes),
-            ];
-
-            if ($this->variablePay) {
-                $towards = $this->variablePayForNurse->sum(
-                    function ($careLog) use ($dateStr) {
-                        if ('accrued_towards_ccm' == $careLog->ccm_type && $careLog->created_at->toDateString() === $dateStr) {
-                            return $careLog->increment;
-                        }
-
-                        return 0;
-                    }
-                );
-
-                $row['towards'] = $towards
-                    ? round($towards / 3600, 2)
-                    : 0;
-
-                $after = $this->variablePayForNurse->sum(
-                    function ($careLog) use ($dateStr) {
-                        if ('accrued_after_ccm' == $careLog->ccm_type && $careLog->created_at->toDateString() === $dateStr) {
-                            return $careLog->increment;
-                        }
-
-                        return 0;
-                    }
-                );
-
-                $row['after'] = $after
-                    ? round($after / 3600, 2)
-                    : 0;
-            }
-
-            $table->put(
-                $dateStr,
-                $row
-            );
-        }
-
-        return $table;
-    }
-
-    /**
-     * @return float|int|null
-     */
-    public function totalTimeAfterCcmInHours()
-    {
-        if (is_null($this->totalTimeAfterCcm)) {
-            $this->totalTimeAfterCcm = round(
-                $this->variablePayForNurse
-                    ->where('ccm_type', 'accrued_after_ccm')
-                    ->sum('total_time') / 3600,
-                1
-            );
-        }
-
-        return $this->totalTimeAfterCcm;
-    }
-
-    /**
-     * @return float|int|null
-     */
-    public function totalTimeTowardsCcmInHours()
-    {
-        if (is_null($this->totalTimeTowardsCcm)) {
-            $this->totalTimeTowardsCcm = round(
-                $this->variablePayForNurse
-                    ->where('ccm_type', 'accrued_towards_ccm')
-                    ->sum('total_time') / 3600,
-                1
-            );
-        }
-
-        return $this->totalTimeTowardsCcm;
-    }
-
-    /**
      * The nurse's user model.
      *
      * @return User
@@ -435,9 +340,11 @@ class Invoice extends ViewModel
     private function determineBaseSalary()
     {
         $this->fixedRatePay = $this->getFixedRatePay();
+
         if ( ! $this->variablePay) {
             $this->baseSalary = $this->fixedRatePay;
         } else {
+
             $this->variableRatePay = $this->getVariableRatePay();
 
             if ($this->fixedRatePay > $this->variableRatePay) {
@@ -517,5 +424,80 @@ class Invoice extends ViewModel
         return (int)$this->aggregatedTotalTime
             ->where('is_billable', false)
             ->sum('total_time');
+    }
+
+    private function setViewModelVariables()
+    {
+        $table  = collect();
+        $period = CarbonPeriod::between($this->startDate, $this->endDate);
+
+        $totalTimeTowardsCcm = 0;
+        $totalTimeAfterCcm   = 0;
+
+        $variablePayPerDay = collect();
+        if ($this->variablePay) {
+            $this->variablePayForNurse->each(function (NurseCareRateLog $log) use (
+                $variablePayPerDay,
+                &$totalTimeTowardsCcm,
+                &$totalTimeAfterCcm
+            ) {
+                $dateStr = $log->created_at->toDateString();
+                $current = $variablePayPerDay->get($dateStr, [
+                    'towards' => 0,
+                    'after'   => 0,
+                ]);
+
+                if ('accrued_towards_ccm' === $log->ccm_type) {
+                    $totalTimeTowardsCcm += $log->increment;
+                    $current['towards']  = $current['towards'] + $log->increment;
+
+                } elseif ('accrued_after_ccm' === $log->ccm_type) {
+                    $totalTimeAfterCcm += $log->increment;
+                    $current['after']  = $current['after'] + $log->increment;
+                }
+
+                $variablePayPerDay->put($dateStr, $current);
+            });
+        }
+
+
+        foreach ($period as $date) {
+            $dateStr = $date->toDateString();
+
+            $dataForDay = $this->aggregatedTotalTime->first(
+                function ($value) use ($dateStr) {
+                    return 0 == $value->is_billable && $value->date == $dateStr;
+                }
+            );
+
+            $minutes = $dataForDay
+                ? round($dataForDay->total_time / 60, 2)
+                : 0;
+
+
+            $row = [
+                'formatted_time' => minutesToHhMm($minutes),
+            ];
+
+            if ($this->variablePay) {
+
+                $variablePayForDay = $variablePayPerDay->get($dateStr, [
+                    'towards' => 0,
+                    'after'   => 0,
+                ]);
+
+                $row['towards'] = round($variablePayForDay['towards'] / 3600, 2);
+                $row['after']   = round($variablePayForDay['after'] / 3600, 2);
+            }
+
+            $table->put(
+                $dateStr,
+                $row
+            );
+        }
+
+        $this->timePerDay                 = $table;
+        $this->totalTimeTowardsCcmInHours = round($totalTimeTowardsCcm / 3600, 1);
+        $this->totalTimeAfterCcmInHours   = round($totalTimeAfterCcm / 3600, 1);
     }
 }
