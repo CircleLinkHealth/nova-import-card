@@ -9,7 +9,6 @@ use App\Jobs\SendSlackMessage;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
-use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -159,17 +158,17 @@ if ( ! function_exists('activeNurseNames')) {
     {
         return User::ofType('care-center')
             ->with(
-                [
-                    'nurseInfo' => function ($q) {
-                        $q->where('is_demo', '!=', true);
-                    },
-                ]
-            )->whereHas(
-                'nurseInfo',
-                function ($q) {
-                    $q->where('is_demo', '!=', true);
-                }
-            )->where('user_status', 1)
+                       [
+                           'nurseInfo' => function ($q) {
+                               $q->where('is_demo', '!=', true);
+                           },
+                       ]
+                   )->whereHas(
+                       'nurseInfo',
+                       function ($q) {
+                           $q->where('is_demo', '!=', true);
+                       }
+                   )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -1045,11 +1044,11 @@ if ( ! function_exists('validProblemName')) {
                 'check',
             ]
         ) && ! in_array(
-            strtolower($name),
-            [
-                'fu',
-            ]
-        );
+                strtolower($name),
+                [
+                    'fu',
+                ]
+            );
     }
 }
 
@@ -1534,5 +1533,22 @@ if ( ! function_exists('getModelFromTable')) {
         }
 
         return false;
+    }
+}
+
+if ( ! function_exists('measureTime')) {
+    function measureTime($desc, $func)
+    {
+        $startTime = Carbon::now()->toTimeString();
+        $start     = microtime(true);
+
+        $result = $func();
+
+        $endTime = Carbon::now()->toTimeString();
+        $sec     = microtime(true) - $start;
+        $secInt  = intval($sec);
+        echo "$desc: $secInt seconds | Start: $startTime | End: $endTime\n";
+
+        return $result;
     }
 }

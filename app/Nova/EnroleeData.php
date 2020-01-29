@@ -7,15 +7,17 @@
 namespace App\Nova;
 
 use App\Constants;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Nova\Importers\EnroleeData as EnroleeDataImporter;
+use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Jubeki\Nova\Cards\Linkable\LinkableAway;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
-use Sparclex\NovaImportCard\NovaImportCard;
 
 class EnroleeData extends Resource
 {
@@ -62,8 +64,6 @@ class EnroleeData extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function actions(Request $request)
@@ -74,13 +74,20 @@ class EnroleeData extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function cards(Request $request)
     {
-        $cards = [new NovaImportCard(self::class)];
+        $practices = Practice::whereIn('id', auth()->user()->viewableProgramIds())
+            ->activeBillable()
+            ->pluck('display_name', 'id')
+            ->toArray();
+
+        $cards = [
+            new ClhImportCardExtended(self::class, [
+                Select::make('practice')->options($practices)->withModel(Practice::class),
+            ], 'Patients from CSV'),
+        ];
 
         if ( ! isProductionEnv()) {
             $cards[] = (new LinkableAway())
@@ -95,8 +102,6 @@ class EnroleeData extends Resource
 
     /**
      * Get the fields displayed by the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -146,8 +151,6 @@ class EnroleeData extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function filters(Request $request)
@@ -165,8 +168,6 @@ class EnroleeData extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

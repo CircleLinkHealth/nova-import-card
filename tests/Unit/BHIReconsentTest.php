@@ -221,7 +221,7 @@ class BHIReconsentTest extends TestCase
                     ? Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI)->subWeek()
                     : Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI),
             ]);
-        
+
         $patient->patientInfo->fresh();
 
         if ($hasBhiConsentNote) {

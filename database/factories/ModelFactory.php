@@ -163,9 +163,15 @@ $factory->define(Invite::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factory) {
+    $practice = Practice::first();
+
+    if ( ! $practice) {
+        $practice = factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create();
+    }
+
     return [
         'provider_id' => factory(\CircleLinkHealth\Customer\Entities\User::class)->create()->id,
-        'practice_id' => factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create()->id,
+        'practice_id' => $practice->id,
         'mrn'         => $faker->randomNumber(6),
         'dob'         => $faker->date('Y-m-d'),
 
@@ -203,6 +209,10 @@ $factory->define(Nurse::class, function (Faker\Generator $faker) {
 
 $factory->define(Practice::class, function (Faker\Generator $faker) {
     $name = $faker->company;
+
+    while (Practice::whereName($name)->exists()) {
+        $name = $faker->company;
+    }
 
     return [
         'name'           => $name,

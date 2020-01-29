@@ -11,13 +11,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Circlelinkhealth\\ClhImportCardExtended\\": "src/"
+            "CircleLinkHealth\\ClhImportCardExtended\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Circlelinkhealth\\ClhImportCardExtended\\CardServiceProvider"
+                "CircleLinkHealth\\ClhImportCardExtended\\CardServiceProvider"
             ]
         }
     },
