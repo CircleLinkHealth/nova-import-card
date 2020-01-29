@@ -37,7 +37,7 @@ class GenerateNurseInvoice implements ShouldQueue
      * @var Carbon
      */
     protected $startDate;
-    
+
     /**
      * Create a new job instance.
      *
@@ -96,7 +96,7 @@ class GenerateNurseInvoice implements ShouldQueue
             }
         );
     }
-    
+
     /**
      * @param User $nurse
      * @param Collection $aggregatedTotalTime
@@ -117,7 +117,7 @@ class GenerateNurseInvoice implements ShouldQueue
             $variablePayCalculator
         );
     }
-    
+
     /**
      * @param $nurseInfoId
      * @param $viewModel
@@ -126,7 +126,7 @@ class GenerateNurseInvoice implements ShouldQueue
      *
      * @return mixed
      */
-    private function saveInvoiceData($nurseInfoId, $viewModel, Carbon $startDate)
+    private function saveInvoiceData($nurseInfoId, Invoice $viewModel, Carbon $startDate)
     {
         return NurseInvoice::updateOrCreate(
             [
