@@ -514,53 +514,8 @@ if (isset($patient) && ! empty($patient)) {
         @endif
         @push('scripts')
             <script>
-
                 let patientProblemNames = Object.keys(@json($problems));
-                const diabetes1 = "{{\CircleLinkHealth\SharedModels\Entities\CpmProblem::DIABETES_TYPE_1}}";
-                const diabetes2 = "{{\CircleLinkHealth\SharedModels\Entities\CpmProblem::DIABETES_TYPE_2}}";
-
-                //update problems if they have changed in care-areas modal
-                App.$on('patient-problems-updated', (problems) => {
-                    let problemNames = problems.map(function(problem){
-                        return problem.name;
-                    });
-                    patientProblemNames = problemNames;
-                });
-
-                //Once approver has confirmed that Diabetes Conditions are Correct, add the field needed to bypass validation in the back-end and submit form
-                App.$on('confirm-diabetes-conditions', () => {
-                    let form = $('#form-approve');
-                    $("<input>").attr("type", "hidden").attr("name", "confirm_diabetes_conditions").appendTo(form);
-                    form.submit();
-                });
-
-                function patientHasBothTypesOfDiabetes() {
-                    return patientProblemNames.includes(diabetes1) && patientProblemNames.includes(diabetes2);
-                }
-
-
-                $(document).ready(function () {
-                    setTimeout(function () {
-                        $('#form-approve').submit(function (e) {
-                            e.preventDefault();
-                            const form = this;
-
-                            if (patientHasBothTypesOfDiabetes()) {
-                                $(":input").each(function() {
-                                    if ($(this).attr('name') === "confirm_diabetes_conditions") {
-                                        form.submit();
-                                    }
-                                });
-
-                                App.$emit('show-diabetes-check-modal');
-
-                                return;
-                            } else {
-                                form.submit();
-                            }
-                        })
-                    }, 500);
-                })
+                App.$emit('set-patient-problems', patientProblemNames)
 
                 function notEligibleClick() {
                     if (confirm('CAUTION: Clicking "confirm" will delete this patient’s entire record from Care Plan Manager. This action cannot be undone. Do you want to delete this patients entire record?')) {
