@@ -165,11 +165,11 @@ such as <style>, as they will not be parsed.--}}
 
                 @if($variablePay)
                     @if(isset($altAlgoEnabled) && !$altAlgoEnabled)
-                        <td>{{$totalTimeAfterCcmInHours}}</td>
                         <td>{{$totalTimeTowardsCcmInHours}}</td>
+                        <td>{{$totalTimeAfterCcmInHours}}</td>
                     @elseif (!isset($altAlgoEnabled))
-                        <td>{{$totalTimeAfterCcmInHours ?? $totalTimeAfterCcm}}</td>
                         <td>{{$totalTimeTowardsCcmInHours ?? $totalTimeTowardsCcm}}</td>
+                        <td>{{$totalTimeAfterCcmInHours ?? $totalTimeAfterCcm}}</td>
                     @endif
                 @endif
             </tr>
