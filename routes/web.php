@@ -2247,12 +2247,6 @@ Route::prefix('admin')->group(
         );
     }
 );
-
-Route::get('/test-mail', function () {
-    Notification::route('mail', 'kountouris7@gmail.com')->notify(new TestEmail());
-
-    return 'Sent';
-});
 // TEMPORARY SIGNED ROUTE
 Route::get('/notification-unsubscribe', [
     'uses' => 'NotificationsMailSubscriptionController@unsubscribe',
