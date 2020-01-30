@@ -6,8 +6,10 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\Resource;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 
 class ApprovableBillablePatient extends Resource
 {
@@ -57,6 +59,14 @@ class ApprovableBillablePatient extends Resource
             $status = $this->patient->patientInfo->ccm_status;
         }
 
+        if (Carbon::parse($this->month_year)->lt(Carbon::parse(PatientMonthlySummary::DATE_ATTESTED_CONDITIONS_ENABLED))){
+            $attestedProblems = collect([optional($this->billableProblem1)->id, optional($this->billableProblem2)->id])->filter()->toArray();
+        }else{
+            $attestedProblems = $this->attestedProblems()->get()->pluck('id');
+        }
+
+
+
         return [
             'id'       => $this->patient->id,
             'mrn'      => $this->patient->getMRN(),
@@ -80,7 +90,7 @@ class ApprovableBillablePatient extends Resource
             'report_id'              => $this->id,
             'actor_id'               => $this->actor_id,
             'qa'                     => $this->needs_qa || ( ! $this->approved && ! $this->rejected),
-            'attested_problems'      => $this->attestedProblems()->get()->pluck('id'),
+            'attested_problems'      => $attestedProblems,
             'chargeable_services'    => ChargeableService::collection($this->whenLoaded('chargeableServices')),
             'bhi_problem_code'       => $bhiProblemCode,
         ];
