@@ -151,36 +151,44 @@ class SurveyInstance extends BaseModel
                 if (isset($condition['operator'])) {
                     if ($condition['operator'] === 'greater_or_equal_than') {
                         //Again we use only the first Question of the related Questions, which is OK for now.
-                        $isDisabled = $firstQuestionAnswer->value['value'] >= $condition['related_question_expected_answer'];
+                        $isDisabled = ! ($firstQuestionAnswer->value['value'] >= $condition['related_question_expected_answer']);
                         break;
                     }
 
                     if ($condition['operator'] === 'less_or_equal_than') {
-                        $isDisabled = $firstQuestionAnswer->value['value'] >= $condition['related_question_expected_answer'];
+                        $isDisabled = ! ($firstQuestionAnswer->value['value'] <= $condition['related_question_expected_answer']);
                         break;
                     }
                 }
 
-                $expectedAnswersEqualsValue = collect($nextQuestion->conditions)
-                    ->filter(function ($c) use ($firstQuestionAnswer) {
-                        return $c['related_question_expected_answer'] === $firstQuestionAnswer->value['value'];
-                    });
+                if (isset($condition['related_question_expected_answer'])) {
+                    $filtered = collect($nextQuestion->conditions)
+                        ->filter(function ($q) use ($firstQuestion, $firstQuestionAnswer) {
+                            return $q['related_question_order_number'] === $firstQuestion->pivot->order && $q['related_question_expected_answer'] === $firstQuestionAnswer->value['value'];
+                        });
 
-                if ($expectedAnswersEqualsValue->isEmpty()) {
-                    $isDisabled = true;
-                    break;
-                } //we are looking for any answer
-                else if ( ! isset($condition['related_question_expected_answer'])) {
-                    if (is_array($firstQuestionAnswer->value['value']) && empty($firstQuestionAnswer->value['value'])) {
+                    if ($filtered->isEmpty()) {
                         $isDisabled = true;
-                    } else if (is_string($firstQuestionAnswer->value['value']) && empty($firstQuestionAnswer->value['value'])) {
-                        $isDisabled = true;
-                    } else if (isset($firstQuestionAnswer->value['value']['value']) && empty($firstQuestionAnswer->value['value']['value'])) {
-                        $isDisabled = true;
-                    }
-
-                    if ( ! $isDisabled) {
                         break;
+                    }
+                } else {
+                    //we are looking for any answer
+                    if ( ! isset($firstQuestionAnswer->value['value'])) {
+                        if (is_array($firstQuestionAnswer->value) && empty($firstQuestionAnswer->value)) {
+                            $isDisabled = true;
+                        }
+                    } else {
+                        if (isset($firstQuestionAnswer->value['value']['value'])) {
+                            if (empty($firstQuestionAnswer->value['value']['value'])) {
+                                $isDisabled = true;
+                            }
+                        } else {
+                            if (is_array($firstQuestionAnswer->value['value']) && empty($firstQuestionAnswer->value['value'])) {
+                                $isDisabled = true;
+                            } else if (is_string($firstQuestionAnswer->value['value']) && empty($firstQuestionAnswer->value['value'])) {
+                                $isDisabled = true;
+                            }
+                        }
                     }
                 }
             }
