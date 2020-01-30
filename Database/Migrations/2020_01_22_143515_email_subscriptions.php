@@ -31,6 +31,6 @@ class EmailSubscriptions extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('unsubscriptions_notification_mail');
     }
 }
