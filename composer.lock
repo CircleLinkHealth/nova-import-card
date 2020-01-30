@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "81fd0471fddcbcb323f773748efe1e6f",
+    "content-hash": "8357a6a90c0e02d5d1a5ca221453b149",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -740,11 +740,11 @@
         },
         {
             "name": "circlelinkhealth/clh-import-card-extended",
-            "version": "dev-master",
+            "version": "dev-CPM-1971-fix-custom-nova-cards",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "dc473b7f2d0c1ca6ad7ce8e7da2bb332ea473aab",
+                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8",
                 "shasum": null
             },
             "require": {
@@ -754,13 +754,13 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Circlelinkhealth\\ClhImportCardExtended\\CardServiceProvider"
+                        "CircleLinkHealth\\ClhImportCardExtended\\CardServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Circlelinkhealth\\ClhImportCardExtended\\": "src/"
+                    "CircleLinkHealth\\ClhImportCardExtended\\": "src/"
                 }
             },
             "license": [
@@ -811,11 +811,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-CPM-1839-attest-call-problems",
+            "version": "v1.3.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "fab825ee6e9d37184c65071e58231b5a8cf7bfd0"
+                "reference": "0932c9ffb6efbb0429430a36e3c8bf603edeff03"
             },
             "type": "laravel-module",
             "extra": {
@@ -837,15 +837,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-23T21:56:02+00:00"
+            "time": "2020-01-23T16:40:27+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-CPM-1838-attest-patient-conditions",
+            "version": "v1.8.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "1646fd12b75c3d55709bc6f9e6f6d1c7554abe25"
+                "reference": "44e3cd46bfa62101313a28f4961569ef159b7a74"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -878,15 +878,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-23T21:56:07+00:00"
+            "time": "2020-01-23T16:38:31+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v1.3.2",
+            "version": "v1.3.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "05517e14b2e17a3d922a4ce4759da0c123cf2fb0"
+                "reference": "ef63573f35cd02a0cf741b3d3f8338e58e8a8c3d"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -911,15 +911,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-21T21:53:56+00:00"
+            "time": "2020-01-30T02:58:56+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
-            "version": "dev-master",
+            "version": "dev-CPM-1971-fix-custom-nova-cards",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "b1dc8efaa5c6eedaca7d9b97b446a5e526b06e29",
+                "reference": "8b21629514943da628f3f5acb602c7610c2d9167",
                 "shasum": null
             },
             "require": {
@@ -929,13 +929,13 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Circlelinkhealth\\GeneratePatientCallDataCsv\\CardServiceProvider"
+                        "CircleLinkHealth\\GeneratePatientCallDataCsv\\CardServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Circlelinkhealth\\GeneratePatientCallDataCsv\\": "src/"
+                    "CircleLinkHealth\\GeneratePatientCallDataCsv\\": "src/"
                 }
             },
             "license": [
@@ -949,7 +949,7 @@
         },
         {
             "name": "circlelinkhealth/import-practice-staff-csv",
-            "version": "dev-master",
+            "version": "dev-CPM-1971-fix-custom-nova-cards",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
@@ -984,11 +984,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.2.2",
+            "version": "v1.2.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "2367c27e5c9004471759013925176ce466490f53"
+                "reference": "9b98a0415606f51a921245fed73bd419ed66a6ca"
             },
             "type": "laravel-module",
             "extra": {
@@ -1011,15 +1011,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-23T22:24:33+00:00"
+            "time": "2020-01-29T17:15:57+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
-            "version": "dev-CPM-1838-ATTEST",
+            "version": "v1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/patient-api-module.git",
-                "reference": "2458d11b9e15dc6658818ddebcd91dab36b710e4"
+                "reference": "84878bd11ae955897bcc89373f67a5940eb6e804"
             },
             "type": "laravel-module",
             "extra": {
@@ -1041,7 +1041,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-17T10:48:05+00:00"
+            "time": "2020-01-17T06:34:44+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -2448,16 +2448,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.123",
+            "version": "v0.124",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "a8c3c7563729ecb98a9ed66f675366527bcbad4d"
+                "reference": "7bdd526abda4d802e973816cd7b4f3f3bc75fa03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/a8c3c7563729ecb98a9ed66f675366527bcbad4d",
-                "reference": "a8c3c7563729ecb98a9ed66f675366527bcbad4d",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/7bdd526abda4d802e973816cd7b4f3f3bc75fa03",
+                "reference": "7bdd526abda4d802e973816cd7b4f3f3bc75fa03",
                 "shasum": ""
             },
             "require": {
@@ -2481,7 +2481,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-01-19T00:24:13+00:00"
+            "time": "2020-01-25T00:24:16+00:00"
         },
         {
             "name": "google/auth",
@@ -7365,20 +7365,21 @@
         },
         {
             "name": "spatie/image",
-            "version": "1.7.5",
+            "version": "1.7.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/image.git",
-                "reference": "9e36dcc1c5da4e8756a4fd00228342a9c9953f4b"
+                "reference": "74535b5fd67ace75840c00c408666660843e755e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/image/zipball/9e36dcc1c5da4e8756a4fd00228342a9c9953f4b",
-                "reference": "9e36dcc1c5da4e8756a4fd00228342a9c9953f4b",
+                "url": "https://api.github.com/repos/spatie/image/zipball/74535b5fd67ace75840c00c408666660843e755e",
+                "reference": "74535b5fd67ace75840c00c408666660843e755e",
                 "shasum": ""
             },
             "require": {
                 "ext-exif": "*",
+                "ext-mbstring": "*",
                 "league/glide": "^1.4",
                 "php": "^7.0",
                 "spatie/image-optimizer": "^1.0",
@@ -7414,7 +7415,7 @@
                 "image",
                 "spatie"
             ],
-            "time": "2019-11-23T17:56:34+00:00"
+            "time": "2020-01-26T18:56:44+00:00"
         },
         {
             "name": "spatie/image-optimizer",
@@ -11803,16 +11804,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.7",
+            "version": "0.12.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "07fa7958027fd98c567099bbcda5d6a0f2ec5197"
+                "reference": "62a552602b7586d82826231f2fd4cbfe39fe0b1d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/07fa7958027fd98c567099bbcda5d6a0f2ec5197",
-                "reference": "07fa7958027fd98c567099bbcda5d6a0f2ec5197",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/62a552602b7586d82826231f2fd4cbfe39fe0b1d",
+                "reference": "62a552602b7586d82826231f2fd4cbfe39fe0b1d",
                 "shasum": ""
             },
             "require": {
@@ -11838,7 +11839,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-01-20T21:59:06+00:00"
+            "time": "2020-01-26T23:36:48+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -13621,9 +13622,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
-        "circlelinkhealth/customer-module": 20,
-        "circlelinkhealth/patientapi-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,

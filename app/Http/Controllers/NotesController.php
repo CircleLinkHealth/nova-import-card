@@ -546,7 +546,7 @@ class NotesController extends Controller
                         //Updates when the patient was successfully contacted last
                         //use $note->created_at, in case we are editing a note
                         $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
-                        $this->patientRepo->updateCallLogs($patient->patientInfo, true, true, $note->performed_at);
+                        $this->patientRepo->updateCallLogs($patient->patientInfo, Call::REACHED === $call->status, true, $note->performed_at);
                         if ($attestedProblems) {
                             $call->attachAttestedProblems($attestedProblems);
                         }
