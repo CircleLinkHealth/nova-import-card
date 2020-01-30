@@ -9,6 +9,8 @@ use Illuminate\Support\Collection;
  * Class Survey
  *
  * @property int id
+ * @property string name
+ * @property string description
  * @property-read SurveyInstance[]|Collection instances
  *
  * @package App

@@ -7,18 +7,22 @@ use App\QuestionGroup;
 use App\QuestionType;
 use App\Survey;
 use App\SurveyInstance;
-use CircleLinkHealth\Customer\Entities\User;
+use App\User;
 use Carbon\Carbon;
 use Faker\Factory;
+use Illuminate\Support\Collection;
 
 trait SetupTestSurveyData
 {
     protected $faker;
 
+    /** @var Carbon $date */
     protected $date;
 
+    /** @var \App\User $user */
     protected $user;
 
+    /** @var Collection $surveys */
     protected $surveys;
 
 
@@ -28,9 +32,9 @@ trait SetupTestSurveyData
     public function createUser()
     {
         $this->user = User::create([
-            'first_name'              => $this->faker->name,
-            'last_name'              => $this->faker->lastname,
-            'display_name'              => $this->faker->name,
+            'first_name'        => $this->faker->name,
+            'last_name'         => $this->faker->lastname,
+            'display_name'      => $this->faker->name,
             'email'             => $this->faker->unique()->safeEmail,
             'email_verified_at' => $this->date,
             'password'          => bcrypt('secret'),
@@ -67,16 +71,16 @@ trait SetupTestSurveyData
         foreach ($this->surveys as $survey) {
             $instances = $survey->instances()->createMany([
                 [
-                    'survey_id'  => $survey->id,
-                    'year'       => $this->date->copy()->subYear(2)->year,
+                    'survey_id' => $survey->id,
+                    'year'      => $this->date->copy()->subYear(2)->year,
                 ],
                 [
-                    'survey_id'  => $survey->id,
-                    'year'       => $this->date->copy()->subYear(1)->year,
+                    'survey_id' => $survey->id,
+                    'year'      => $this->date->copy()->subYear(1)->year,
                 ],
                 [
-                    'survey_id'  => $survey->id,
-                    'year'       => $this->date->year,
+                    'survey_id' => $survey->id,
+                    'year'      => $this->date->year,
                 ],
             ]);
             $this->assertEquals(3, $instances->count());
@@ -112,29 +116,32 @@ trait SetupTestSurveyData
                 $this->assertNotNull($group);
 
                 //attach group for some questions
-                if ($i >= 5 && $i <= 8){
+                if ($i >= 5 && $i <= 8) {
                     $belongsToGroup = true;
-                }else{
+                } else {
                     $belongsToGroup = false;
                 }
 
-                $question     = Question::create([
-                    'survey_id' => $survey->id,
-                    'body'      => $this->faker->text,
-                    'question_group_id' =>  $belongsToGroup ? $group->id : null
+                $question = Question::create([
+                    'survey_id'         => $survey->id,
+                    'body'              => $this->faker->text,
+                    'question_group_id' => $belongsToGroup
+                        ? $group->id
+                        : null,
+                    'optional'          => rand(0, 1),
                 ]);
 
                 $this->assertNotNull($question);
-                if ($belongsToGroup){
+                if ($belongsToGroup) {
                     $this->assertNotNull($question->questionGroup);
                     $this->assertEquals($question->questionGroup->id, $group->id);
-                }else{
+                } else {
                     $this->assertNull($question->questionGroup);
                 }
 
                 $type         = $questionTypes->random();
                 $questionType = $question->type()->create([
-                    'answer_type' => $type,
+                    'type' => $type,
                 ]);
 
                 if ($type = QuestionType::CHECKBOX) {
@@ -151,22 +158,22 @@ trait SetupTestSurveyData
             }
             $this->assertEquals(10, count($questions));
             foreach ($survey->instances as $instance) {
-                $order = 1;
+                $order    = 1;
                 $subOrder = 1;
                 foreach ($questions as $question) {
-                    if (! is_null($question->questionGroup)){
+                    if ( ! is_null($question->questionGroup)) {
                         $instance->questions()->attach(
                             $question->id,
                             [
-                                'order' => $order,
-                                'sub_order' =>$subOrder
+                                'order'     => $order,
+                                'sub_order' => $subOrder,
                             ]
                         );
                         $subOrder += 1;
-                        if ($subOrder = 4){
-                            $order +=1;
+                        if ($subOrder = 4) {
+                            $order += 1;
                         }
-                    }else{
+                    } else {
                         $instance->questions()->attach(
                             $question->id,
                             [
@@ -182,7 +189,6 @@ trait SetupTestSurveyData
         }
     }
 
-
     public function createTestSurveyData()
     {
         $this->faker = $faker = Factory::create();
@@ -190,12 +196,38 @@ trait SetupTestSurveyData
 
         $this->createUser();
 
+        $this->createAndAttachSurveysNew();
+
+        /*
         $this->createSurveys();
 
         $this->createAndAttachSurveyInstances();
 
         $this->createQuestionsForEachSurveyInstance();
+        */
+    }
 
+    public function createAndAttachSurveysNew() {
+        (new \SurveySeeder())->run();
+
+        $this->surveys = Survey::get();
+        $this->assertEquals(2, $this->surveys->count());
+
+        foreach ($this->surveys as $survey) {
+            $instances = $survey->instances;
+            $this->assertEquals(1, $instances->count());
+            foreach ($instances as $instance) {
+                //return true? test
+                $this->user->surveys()->attach(
+                    $survey->id,
+                    [
+                        'survey_instance_id' => $instance->id,
+                        'status'             => SurveyInstance::PENDING,
+                    ]
+                );
+
+            }
+        }
 
     }
 }

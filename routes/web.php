@@ -132,7 +132,6 @@ Route::group([
             'as'   => 'survey.hra',
         ]);
 
-        //why are we passing practice id here?
         Route::post('{patientId}/save-answer', [
             'uses' => 'SurveyController@storeAnswer',
             'as'   => 'survey.hra.store.answer',

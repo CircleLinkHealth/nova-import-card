@@ -4,6 +4,15 @@ namespace App;
 
 use CircleLinkHealth\Core\Entities\BaseModel;
 
+/**
+ * @property int $id
+ * @property int $question_type_id
+ * @property string $value
+ * @property array $options
+ *
+ * Class QuestionTypesAnswer
+ * @package App
+ */
 class QuestionTypesAnswer extends BaseModel
 {
     /*

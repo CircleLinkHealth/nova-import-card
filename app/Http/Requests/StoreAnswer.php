@@ -26,7 +26,7 @@ class StoreAnswer extends FormRequest
     public function rules()
     {
         return [
-            'practice_id'             => 'required|integer|exists:practices,id',
+            //'practice_id'             => 'required|integer|exists:practices,id',
             'patient_id'              => 'required|integer|exists:users,id',
             'survey_instance_id'      => 'required|integer|exists:survey_instances,id',
             'question_id'             => 'required|integer|exists:questions,id',

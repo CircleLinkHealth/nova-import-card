@@ -47,7 +47,7 @@ class SurveyService
             ])
             ->whereHas('surveys', function ($survey) use ($surveyId) {
                 $survey->where('survey_id', $surveyId);
-                       //->where('status', '!=', SurveyInstance::COMPLETED);
+                //->where('status', '!=', SurveyInstance::COMPLETED);
             })
             ->whereHas('surveyInstances', function ($instance) use ($surveyId) {
                 $instance->where('users_surveys.survey_id', $surveyId);
@@ -85,9 +85,7 @@ class SurveyService
             return false;
         }
 
-        $isComplete = isset($input['survey_complete']) && $input['survey_complete'];
-
-        return SurveyService::updateSurveyInstanceStatus($input, $isComplete);
+        return SurveyService::updateSurveyInstanceStatus($input);
 
     }
 
@@ -100,40 +98,49 @@ class SurveyService
      *
      * @return string Status of survey
      */
-    public static function updateSurveyInstanceStatus($input, $isComplete)
+    public static function updateSurveyInstanceStatus($input)
     {
         $user = User
             ::with([
                 'surveyInstances' => function ($instance) use ($input) {
-                    $instance->where('survey_instances.id', $input['survey_instance_id']);
+                    $instance->where('survey_instances.id', $input['survey_instance_id'])
+                             ->with([
+                                 'questions' => function ($question) {
+                                     $question->with(['questionGroup', 'type.questionTypeAnswers']);
+                                 },
+                             ]);
+                },
+                'answers'         => function ($answer) use ($input) {
+                    $answer->whereHas('surveyInstance', function ($instance) use ($input) {
+                        $instance->where('id', $input['survey_instance_id']);
+                    });
                 },
             ])
             ->findOrFail($input['user_id']);
 
+        /** @var SurveyInstance $instance */
         $instance = $user->surveyInstances->first();
 
         if ( ! $instance->pivot->start_date) {
             $instance->pivot->start_date = Carbon::now();
         }
 
+        $surveyStatus = $instance->calculateCurrentStatusForUser($user);
+
         //change status only if not completed
-        if ($instance->pivot->status !== SurveyInstance::COMPLETED) {
-            $instance->pivot->status = $isComplete
-                ? SurveyInstance::COMPLETED
-                : SurveyInstance::IN_PROGRESS;
+        if ($instance->pivot->status !== $surveyStatus) {
+            $instance->pivot->status = $surveyStatus;
+            if ($surveyStatus === SurveyInstance::COMPLETED) {
+                $instance->pivot->completed_at = Carbon::now();
+            }
         }
 
         $instance->pivot->last_question_answered_id = $input['question_id'];
 
-
-        if ($isComplete) {
-            $instance->pivot->completed_at = Carbon::now();
-        }
-
         //save and then dispatch the event
         $instance->pivot->save();
 
-        if ($isComplete || $instance->pivot->status === SurveyInstance::COMPLETED) {
+        if ($surveyStatus === SurveyInstance::COMPLETED) {
             event(new SurveyInstancePivotSaved($instance));
         }
 
