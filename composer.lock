@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2cd04b852a42e519814b8b3cd3589824",
+    "content-hash": "8357a6a90c0e02d5d1a5ca221453b149",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -882,11 +882,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v1.3.2",
+            "version": "v1.3.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "05517e14b2e17a3d922a4ce4759da0c123cf2fb0"
+                "reference": "ef63573f35cd02a0cf741b3d3f8338e58e8a8c3d"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -911,7 +911,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-21T21:53:56+00:00"
+            "time": "2020-01-30T02:58:56+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -984,11 +984,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.2.3",
+            "version": "v1.2.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "94931ea8cc29768e6c4a097f703affaa9a6d0f3d"
+                "reference": "9b98a0415606f51a921245fed73bd419ed66a6ca"
             },
             "type": "laravel-module",
             "extra": {
@@ -1011,7 +1011,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-28T15:03:18+00:00"
+            "time": "2020-01-29T17:15:57+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
