@@ -20,6 +20,7 @@ class EmailSubscriptions extends Migration
             $table->date('unsubscribed_at');
             $table->string('channel');
             $table->softDeletes();
+
             $table->timestamps();
         });
     }
