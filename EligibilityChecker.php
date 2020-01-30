@@ -648,9 +648,9 @@ class EligibilityChecker
             );
         }
         
-        $args['primary_insurance']   = $this->eligibilityJob->primary_insurance;
-        $args['secondary_insurance'] = $this->eligibilityJob->secondary_insurance;
-        $args['tertiary_insurance']  = $this->eligibilityJob->tertiary_insurance;
+        $args['primary_insurance']   = $this->eligibilityJob->data['primary_insurance'] ?? null;
+        $args['secondary_insurance'] = $this->eligibilityJob->data['secondary_insurance'] ?? null;
+        $args['tertiary_insurance']  = $this->eligibilityJob->data['tertiary_insurance'] ?? null;
         
         if (isset($args['insurance_plans']) || isset($args['insurance_plan'])) {
             $args = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($args);
