@@ -474,15 +474,28 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download.pdf.careplan',
     ])->middleware('permission:careplan-pdf.read')->middleware('doNotCacheResponse');
 
-    Route::post(
-        'patient-email-attachment/{patient_id}/upload',
-        'API\PatientEmailController@uploadAttachment'
-    );
+    Route::group([
+        'middleware' => [],
+        'prefix'     => 'patient-email/{patient_id}',
+    ], function () {
+        Route::post(
+            '/upload-attachment',
+            'API\PatientEmailController@uploadAttachment'
+        );
 
-    Route::post(
-        'patient-email-attachment/{patient_id}/delete',
-        'API\PatientEmailController@deleteAttachment'
-    );
+        Route::post(
+            '/validate-body',
+            [
+                'uses' => 'API\PatientEmailController@validateEmailBody',
+                'as'   => 'patient-email.validate',
+            ]
+        );
+
+        Route::post(
+            '/delete-attachment',
+            'API\PatientEmailController@deleteAttachment'
+        );
+    });
 
     Route::post(
         'care-docs/{patient_id}',
@@ -650,7 +663,7 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
-        
+
         Route::post('import', 'MedicalRecordImportController@importDEPRECATED');
     });
 

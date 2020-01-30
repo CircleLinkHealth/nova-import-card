@@ -16,7 +16,10 @@
 
         </div>
         <div class="form-group">
-            <VueTrix id="patient-email-body" inputId="patient-email-body-input"
+            <div v-if="this.errors.length > 0" class="alert alert-danger" >
+                <span>{{this.errors}}</span>
+            </div>
+            <VueTrix ref="patientEmail" id="patient-email-body" inputId="patient-email-body-input"
                      inputName="patient-email-body"
                      v-model="editorContent"
                      placeholder="Enter your content... (please do not enter patient PHI)"
@@ -40,12 +43,13 @@
             patient: {
                 type: Object,
                 required: true
-            }
+            },
         },
         data() {
             return {
                 editorContent: '',
                 attachments: [],
+                errors: '',
             }
 
         },
@@ -54,10 +58,10 @@
         },
         computed: {
             uploadUrl() {
-                return rootUrl('/patient-email-attachment/' + this.patient.id + '/upload');
+                return rootUrl('/patient-email/' + this.patient.id + '/upload-attachment');
             },
             deleteUrl() {
-                return rootUrl('/patient-email-attachment/' + this.patient.id + '/delete');
+                return rootUrl('/patient-email/' + this.patient.id + '/delete-attachment');
             },
         },
         methods: {
@@ -129,6 +133,13 @@
             handleEditorBlur(event) {
             }
         },
+        mounted(){
+
+            App.$on('patient-email-body-errors', (errors) => {
+               this.errors = errors;
+            });
+
+        }
     }
 </script>
 

@@ -517,7 +517,9 @@
                                 <div class="new-note-item">
                                     <div class="form-group">
                                         <div id="email-patient-div" class="col-md-12" style="display: none;">
-                                                <send-email-to-patient  :patient="{{$patient}}"></send-email-to-patient>
+                                                <send-email-to-patient
+                                                        :patient="{{$patient}}"
+                                                ></send-email-to-patient>
                                         </div>
                                     </div>
                                 </div>
@@ -651,6 +653,9 @@
             //CPM-91 and CPM-437 double submitting notes
             let submitted = false;
             let form;
+            let shouldValidateEmailBody = true;
+
+            console.log(@json(old()))
 
             const waitForEl = function (selector, callback) {
                 if (!$(selector).length) {
@@ -860,6 +865,8 @@
                 tcmEl.prop('checked', @json(!empty($note) && $note->isTCM));
                 tcmEl.trigger('change');
 
+                const validateEmailBodyUrl = '{{route('patient-email.validate', ['patient_id' => $patient->id])}}';
+
                 $('#newNote').submit(function (e) {
                     e.preventDefault();
                     form = this;
@@ -870,10 +877,17 @@
                         return;
                     }
 
+
                     //prevent sent if send patient email is check and email body is empty
-                    if($("[id='email-patient']").prop("checked") == true && $("[id='patient-email-body-input']").val() == 0){
-                        alert("Please fill out the patient email!");
-                        return;
+                    if($("[id='email-patient']").prop("checked") == true && shouldValidateEmailBody){
+
+
+                        if ($("[id='patient-email-body-input']").val() == 0){
+                            alert("Please fill out the patient email!");
+                            return;
+                        }else{
+                           return validateEmailBody()
+                        }
                     }
                     //append patient email attachments on form if the exist
                     if (formAttachments){
@@ -999,7 +1013,31 @@
                 function showTaskCompletedModal() {
                     $('#confirm-task-completed').modal('show');
                 }
+
+                const validateEmailBody = async () => {
+                    return await window.axios
+                        .post(validateEmailBodyUrl, {
+                            patient_email_body : $("[id='patient-email-body-input']").val()
+                        })
+                        .then((response) => {
+                            if (response.data.status == 400){
+                                emailBodyIsValid = false;
+                                console.log({"email body bool in then": emailBodyIsValid})
+                                App.$emit('patient-email-body-errors', response.data.messages);
+                                return false;
+                            }
+                            shouldValidateEmailBody = false;
+                            return $('#newNote').submit();
+                        })
+                        .catch(err => {
+                            emailBodyIsValid = false;
+                            App.$emit('patient-email-body-errors', err);
+                            return false
+                        });
+                };
+
             });
+
 
             /*
             //no need since we have auto save now
@@ -1046,6 +1084,7 @@
                     @endif
 
             const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
+
             const saveDraft = () => {
 
                 const fullBody = $('#note').val();

@@ -10,6 +10,7 @@ use App\Constants;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class PatientEmailBodyDoesNotContainPhi implements Rule
 {
@@ -28,8 +29,6 @@ class PatientEmailBodyDoesNotContainPhi implements Rule
 
     /**
      * Create a new rule instance.
-     *
-     * @param User $patientUser
      */
     public function __construct(User $patientUser)
     {
@@ -43,7 +42,9 @@ class PatientEmailBodyDoesNotContainPhi implements Rule
      */
     public function message()
     {
-        $phiFieldsString = implode(', ', $this->phiFound);
+        $phiFieldsString = collect($this->phiFound)->transform(function ($field) {
+            return Str::title(str_replace('_', ' ', $field));
+        })->implode(', ');
 
         return 'Email body contains patient PHI: '.$phiFieldsString;
     }
@@ -96,7 +97,7 @@ class PatientEmailBodyDoesNotContainPhi implements Rule
         $string = trim(strtolower($model->getAttribute($phi)));
 
         if (array_key_exists($phi, $this->transformable)) {
-            if (! empty($string) && isset($this->transformable[$phi][$string])){
+            if ( ! empty($string) && isset($this->transformable[$phi][$string])) {
                 $string = $this->transformable[$phi][$string];
             }
         }

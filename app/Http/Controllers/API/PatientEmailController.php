@@ -7,6 +7,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Rules\PatientEmailBodyDoesNotContainPhi;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
@@ -14,7 +15,6 @@ use Illuminate\Http\Request;
 class PatientEmailController extends Controller
 {
     /**
-     * @param Request $request
      * @param $patientId
      *
      * @throws \Spatie\MediaLibrary\Exceptions\MediaCannotBeDeleted
@@ -50,6 +50,7 @@ class PatientEmailController extends Controller
         $file = $request->file()['file'];
 
         if ($file) {
+            //check if media exists, if yes return it
             $media = $patient->addMedia($file)
                 ->withCustomProperties(['doc_type' => 'patient-mail-attachment'])
                 ->toMediaCollection('patient-email-attachments');
@@ -70,5 +71,17 @@ class PatientEmailController extends Controller
             ],
             400
         );
+    }
+
+    public function validateEmailBody(Request $request, $patientId)
+    {
+        $validator = \Validator::make($request->input(), [
+            'patient_email_body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi(User::findOrFail($patientId))],
+        ]);
+
+        return response()->json([
+            'status'   => $validator->passes() ? 200 : 400,
+            'messages' => collect($validator->getMessageBag()->toArray())->first()[0] ?: '',
+        ]);
     }
 }
