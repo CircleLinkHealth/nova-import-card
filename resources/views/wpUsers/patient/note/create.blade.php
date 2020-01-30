@@ -655,8 +655,6 @@
             let form;
             let shouldValidateEmailBody = true;
 
-            console.log(@json(old()))
-
             const waitForEl = function (selector, callback) {
                 if (!$(selector).length) {
                     setTimeout(function () {
@@ -1021,8 +1019,6 @@
                         })
                         .then((response) => {
                             if (response.data.status == 400){
-                                emailBodyIsValid = false;
-                                console.log({"email body bool in then": emailBodyIsValid})
                                 App.$emit('patient-email-body-errors', response.data.messages);
                                 return false;
                             }
@@ -1030,7 +1026,6 @@
                             return $('#newNote').submit();
                         })
                         .catch(err => {
-                            emailBodyIsValid = false;
                             App.$emit('patient-email-body-errors', err);
                             return false
                         });

@@ -212,8 +212,10 @@
                                             $('[data-toggle="tooltip"]').tooltip()
                                         });
 
+                                        let shouldValidateEmailBody = true;
                                         let form;
                                         let formAttachments = null;
+                                        const validateEmailBodyUrl = '{{route('patient-email.validate', ['patient_id' => $patient->id])}}';
 
                                         $(document).ready(function () {
                                             App.$on('file-upload', (attachments) => {
@@ -224,9 +226,15 @@
                                                 e.preventDefault();
                                                 form = this;
                                                 //prevent sent if send patient email is check and email body is empty
-                                                if($("[id='email-patient']").prop("checked") == true && $("[id='patient-email-body-input']").val() == 0){
-                                                    alert("Please fill out the patient email!");
-                                                    return;
+                                                if($("[id='email-patient']").prop("checked") == true && shouldValidateEmailBody){
+
+
+                                                    if ($("[id='patient-email-body-input']").val() == 0){
+                                                        alert("Please fill out the patient email!");
+                                                        return;
+                                                    }else{
+                                                        return validateEmailBody()
+                                                    }
                                                 }
                                                 //append patient email attachments on form if the exist
                                                 if (formAttachments){
@@ -244,6 +252,25 @@
                                                 form.submit();
                                             });
                                         });
+
+                                        const validateEmailBody = async () => {
+                                            return await window.axios
+                                                .post(validateEmailBodyUrl, {
+                                                    patient_email_body : $("[id='patient-email-body-input']").val()
+                                                })
+                                                .then((response) => {
+                                                    if (response.data.status == 400){
+                                                        App.$emit('patient-email-body-errors', response.data.messages);
+                                                        return false;
+                                                    }
+                                                    shouldValidateEmailBody = false;
+                                                    return $('#viewNote').submit();
+                                                })
+                                                .catch(err => {
+                                                    App.$emit('patient-email-body-errors', err);
+                                                    return false
+                                                });
+                                        };
 
                                         $('.collapse').collapse();
 

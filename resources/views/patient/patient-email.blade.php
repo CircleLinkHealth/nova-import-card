@@ -78,7 +78,7 @@ $style = [
                                 </td>
                             </tr>
                         </table>
-                        @if(! empty($attachments))
+                        @if(! $attachments->isEmpty())
                         <hr>
                         <table style="{{ $style['email-body_inner'] }}" cellpadding="0"
                                cellspacing="0">
