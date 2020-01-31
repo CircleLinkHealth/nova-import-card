@@ -6,6 +6,7 @@
 
 namespace App\Nova;
 
+use App\Rules\NBIPatientDobRule;
 use CircleLinkHealth\Eligibility\Entities\PatientData;
 use App\Nova\Importers\NBIPatientData as NBIPatientDataImporter;
 use Illuminate\Http\Request;
@@ -99,8 +100,8 @@ class NBIPatientData extends Resource
                 ->updateRules('required', 'integer'),
             Date::make('dob')
                 ->sortable()
-                ->format('MM/DD/YYYY')->creationRules('required', 'date')
-                ->updateRules('required', 'date'),
+                ->format('MM/DD/YYYY')
+                ->rules('required', new NBIPatientDobRule),
             Text::make('provider')
                 ->sortable(),
             Text::make('primary_insurance')
