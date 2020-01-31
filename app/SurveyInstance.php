@@ -110,7 +110,7 @@ class SurveyInstance extends BaseModel
             : SurveyInstance::COMPLETED;
     }
 
-    public function getNextUnansweredQuestion(User $user, $currentIndex = -1)
+    public function getNextUnansweredQuestion(User $user, $currentIndex = -1, $skipOptionals = true)
     {
         $newIndex = $currentIndex + 1;
 
@@ -120,20 +120,29 @@ class SurveyInstance extends BaseModel
             return null;
         }
 
+        // 1. first check if the question is optional
+        // 2. then check if we have an answer for this question
+        // 2.1 if we do, no need to make further checks
+        // 2.2 if we don't, let's check if we should have an answer
 
-        // first check if we have an answer for this question
-        // if we do, no need to make further checks
-        // if we don't, let's check if we should have an answer
+        if ($skipOptionals && $nextQuestion->optional) {
+            return $this->getNextUnansweredQuestion($user, $newIndex);
+        }
 
         $answer     = $this->getAnswerForQuestion($user, $nextQuestion->id);
         $isAnswered = $answer !== null;
         if ($isAnswered) {
-            return $this->getNextUnansweredQuestion($user, $currentIndex + 1);
+            return $this->getNextUnansweredQuestion($user, $newIndex);
         }
 
         $isDisabled = false;
         if ( ! empty($nextQuestion->conditions)) {
             foreach ($nextQuestion->conditions as $condition) {
+
+                if ( ! isset($condition['related_question_order_number'])) {
+                    continue;
+                }
+
                 $questionsOfOrder = $this->getQuestionsOfOrder($condition['related_question_order_number']);
                 //we are evaluating only the first condition.related_question_order_number
                 //For now is OK since we are depending only on ONE related Question
@@ -195,7 +204,7 @@ class SurveyInstance extends BaseModel
         }
 
         return $isDisabled
-            ? $this->getNextUnansweredQuestion($user, $currentIndex + 1)
+            ? $this->getNextUnansweredQuestion($user, $newIndex)
             : $nextQuestion;
     }
 
@@ -208,7 +217,10 @@ class SurveyInstance extends BaseModel
 
     private function getAnswerForQuestion(User $user, $questionId)
     {
-        return $user->answers->firstWhere('question_id', '=', $questionId);
+        return $user->answers()
+                    ->where('survey_instance_id', $this->id)
+                    ->where('question_id', $questionId)
+                    ->first();
     }
 
 
