@@ -210,7 +210,7 @@ trait SetupTestSurveyData
     public function createAndAttachSurveysNew() {
         (new \SurveySeeder())->run();
 
-        $this->surveys = Survey::get();
+        $this->surveys = Survey::whereIn('name', [Survey::HRA, Survey::VITALS])->get();
         $this->assertEquals(2, $this->surveys->count());
 
         foreach ($this->surveys as $survey) {
