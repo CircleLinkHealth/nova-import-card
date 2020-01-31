@@ -28,9 +28,9 @@ class GeneratePatientReportsJob implements ShouldQueue
     protected $patientId;
 
     /**
-     * Date to specify for which survey instances to generate Provider Report for.
+     * Year to specify for which survey instances to generate Provider Report for.
      *
-     * @var Carbon
+     * @var int
      */
     protected $instanceYear;
 
@@ -49,9 +49,9 @@ class GeneratePatientReportsJob implements ShouldQueue
      * @param $instanceYear
      * @param bool $debug
      */
-    public function __construct($patientId, $instanceYear, $debug = false)
+    public function __construct($patientId, int $instanceYear, $debug = false)
     {
-        $this->instanceYear = Carbon::parse($instanceYear);
+        $this->instanceYear = $instanceYear;
         $this->patientId = $patientId;
         $this->currentDate = Carbon::now();
         $this->debug = $debug;

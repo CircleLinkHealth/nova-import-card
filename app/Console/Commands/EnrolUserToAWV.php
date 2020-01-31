@@ -47,7 +47,7 @@ class EnrolUserToAWV extends Command
         $user = User
             ::with([
                 'surveyInstances' => function ($query) {
-                    $query->current();
+                    $query->mostRecent();
                 },
             ])
             ->where('id', '=', $userId)

@@ -219,7 +219,7 @@ class HraQuestionsTest extends TestCase
             return $q->id === $question->id;
         });
 
-        $nextQuestion = $this->hraSurvey->getNextUnansweredQuestion($this->user, $qIndex);
+        $nextQuestion = $this->hraSurvey->getNextUnansweredQuestion($this->user, $qIndex, false);
         $this->assertNotNull($nextQuestion);
         $this->assertEquals('12', $nextQuestion->pivot->order);
         $this->assertEquals('a', $nextQuestion->pivot->sub_order);
@@ -293,7 +293,7 @@ class HraQuestionsTest extends TestCase
             return $q->id === $question->id;
         });
 
-        $nextQuestion = $this->hraSurvey->getNextUnansweredQuestion($this->user, $qIndex);
+        $nextQuestion = $this->hraSurvey->getNextUnansweredQuestion($this->user, $qIndex, false);
         $this->assertNotNull($nextQuestion);
         $this->assertEquals('19', $nextQuestion->pivot->order);
         $this->assertNull($nextQuestion->pivot->sub_order);

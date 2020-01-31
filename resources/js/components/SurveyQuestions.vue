@@ -32,7 +32,8 @@
         </div>
 
         <!--Survey welcome note-->
-        <div class="survey-container" :class="{ max: stage === 'complete', 'read-only': readOnlyMode, 'with-top-buttons': stage !== 'welcome' }">
+        <div class="survey-container"
+             :class="{ max: stage === 'complete', 'read-only': readOnlyMode, 'with-top-buttons': stage !== 'welcome' }">
             <template v-if="stage === 'welcome'">
                 <div class="practice-title">
                     <label id="title">
@@ -767,7 +768,7 @@
                         if (nextQuestConditions.hasOwnProperty('operator')) {
                             if (nextQuestConditions.operator === 'greater_or_equal_than') {
                                 //Again we use only the first Question of the related Questions, which is OK for now.
-                                if (firstQuestion.answer.value.value >= nextQuestConditions.related_question_expected_answer) {
+                                if (!(firstQuestion.answer.value.value >= nextQuestConditions.related_question_expected_answer)) {
                                     shouldDisable = true;
                                     break;
                                 }
@@ -776,7 +777,7 @@
                             }
 
                             if (nextQuestConditions.operator === 'less_or_equal_than') {
-                                if (firstQuestion.answer.value.value <= nextQuestConditions.related_question_expected_answer) {
+                                if (!(firstQuestion.answer.value.value <= nextQuestConditions.related_question_expected_answer)) {
                                     shouldDisable = true;
                                     break;
                                 }

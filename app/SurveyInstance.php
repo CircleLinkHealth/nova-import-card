@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -61,6 +62,12 @@ class SurveyInstance extends BaseModel
                     ])
                     ->orderBy('pivot_order')
                     ->orderBy('pivot_sub_order');
+    }
+
+    public function scopeMostRecent(Builder $query)
+    {
+        $query->orderByDesc('year')
+              ->limit(1);
     }
 
     public function scopeCurrent($query)
@@ -126,13 +133,13 @@ class SurveyInstance extends BaseModel
         // 2.2 if we don't, let's check if we should have an answer
 
         if ($skipOptionals && $nextQuestion->optional) {
-            return $this->getNextUnansweredQuestion($user, $newIndex);
+            return $this->getNextUnansweredQuestion($user, $newIndex, $skipOptionals);
         }
 
         $answer     = $this->getAnswerForQuestion($user, $nextQuestion->id);
         $isAnswered = $answer !== null;
         if ($isAnswered) {
-            return $this->getNextUnansweredQuestion($user, $newIndex);
+            return $this->getNextUnansweredQuestion($user, $newIndex, $skipOptionals);
         }
 
         $isDisabled = false;
@@ -158,14 +165,20 @@ class SurveyInstance extends BaseModel
 
                 //If conditions needs to be compared against to "gte" or "lte"
                 if (isset($condition['operator'])) {
+
+                    $valueToCheck = $firstQuestionAnswer->value['value'];
+                    if (is_array($valueToCheck)) {
+                        $valueToCheck = $valueToCheck[0];
+                    }
+
                     if ($condition['operator'] === 'greater_or_equal_than') {
                         //Again we use only the first Question of the related Questions, which is OK for now.
-                        $isDisabled = ! ($firstQuestionAnswer->value['value'] >= $condition['related_question_expected_answer']);
+                        $isDisabled = ! ($valueToCheck >= $condition['related_question_expected_answer']);
                         break;
                     }
 
                     if ($condition['operator'] === 'less_or_equal_than') {
-                        $isDisabled = ! ($firstQuestionAnswer->value['value'] <= $condition['related_question_expected_answer']);
+                        $isDisabled = ! ($valueToCheck <= $condition['related_question_expected_answer']);
                         break;
                     }
                 }
@@ -204,7 +217,7 @@ class SurveyInstance extends BaseModel
         }
 
         return $isDisabled
-            ? $this->getNextUnansweredQuestion($user, $newIndex)
+            ? $this->getNextUnansweredQuestion($user, $newIndex, $skipOptionals)
             : $nextQuestion;
     }
 

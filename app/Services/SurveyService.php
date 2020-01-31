@@ -27,7 +27,7 @@ class SurveyService
                 'billingProvider.user',
                 'primaryPractice',
                 'surveyInstances' => function ($instance) use ($surveyId) {
-                    $instance->current()
+                    $instance->mostRecent()
                              ->wherePivot('survey_id', $surveyId)
                              ->with([
                                  'survey',
@@ -40,7 +40,7 @@ class SurveyService
                 'answers'         => function ($answer) use ($surveyId) {
                     $answer->whereHas('surveyInstance', function ($instance) use ($surveyId) {
                         $instance->where('survey_id', $surveyId)
-                                 ->current();
+                                 ->mostRecent();
                     });
                 },
                 'patientAWVSummaries',
@@ -51,7 +51,7 @@ class SurveyService
             })
             ->whereHas('surveyInstances', function ($instance) use ($surveyId) {
                 $instance->where('users_surveys.survey_id', $surveyId);
-                $instance->current();
+                $instance->mostRecent();
             })
             ->findOrFail($patientId);
 

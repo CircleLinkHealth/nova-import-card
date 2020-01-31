@@ -486,6 +486,10 @@ class ProviderReportService
             ? $answer
             : self::getStringValue($answer);
 
+        return $value;
+
+        /*
+         * I think we should not be doing this here
         if ($value === '') { // check if it should be empty
             $allowExceptions = [ //contains all answers(the keys of this arr) that should be empty and each key has extra checks
                 'HPV' => [
@@ -519,6 +523,7 @@ class ProviderReportService
         } else {
             return self::throwExceptionEmptyAnswer($errorDescription);
         }
+        */
     }
 
     /**
