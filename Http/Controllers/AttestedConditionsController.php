@@ -31,7 +31,7 @@ class AttestedConditionsController extends Controller
     public function update($userId, SafeRequest $request)
     {
         try {
-            $date = Carbon::parse($request->input('date'))->startOfMonth();
+            $date = Carbon::createFromFormat('F, Y', $request->input('date'))->startOfMonth();
         } catch (\Exception $exception) {
             throw $exception;
         }
