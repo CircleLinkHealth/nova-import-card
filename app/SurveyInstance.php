@@ -4,7 +4,20 @@ namespace App;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
+/**
+ * @property int id
+ * @property int survey_id
+ * @property string year
+ * @property Survey survey
+ * @property Collection users
+ * @property Collection questions
+ *
+ * Class SurveyInstance
+ * @package App
+ */
 class SurveyInstance extends BaseModel
 {
     const PENDING = 'pending';
@@ -51,6 +64,12 @@ class SurveyInstance extends BaseModel
                     ->orderBy('pivot_sub_order');
     }
 
+    public function scopeMostRecent(Builder $query)
+    {
+        $query->orderByDesc('year')
+              ->limit(1);
+    }
+
     public function scopeCurrent($query)
     {
         $query->where('year', Carbon::now()->year);
@@ -78,6 +97,143 @@ class SurveyInstance extends BaseModel
     public function scopeIsCompletedForPatient($query)
     {
         $query->where('users_surveys.status', SurveyInstance::COMPLETED);
+    }
+
+    public function calculateCurrentStatusForUser(User $user)
+    {
+        $this->loadMissing('questions');
+        $user->loadMissing([
+            'answers' => function ($answer) {
+                $answer->whereHas('surveyInstance', function ($instance) {
+                    $instance->where('id', $this->id);
+                });
+            },
+        ]);
+
+        $next = $this->getNextUnansweredQuestion($user);
+
+        return $next
+            ? SurveyInstance::IN_PROGRESS
+            : SurveyInstance::COMPLETED;
+    }
+
+    public function getNextUnansweredQuestion(User $user, $currentIndex = -1, $skipOptionals = true)
+    {
+        $newIndex = $currentIndex + 1;
+
+        /** @var Question $nextQuestion */
+        $nextQuestion = $this->questions->get($newIndex);
+        if ( ! $nextQuestion) {
+            return null;
+        }
+
+        // 1. first check if the question is optional
+        // 2. then check if we have an answer for this question
+        // 2.1 if we do, no need to make further checks
+        // 2.2 if we don't, let's check if we should have an answer
+
+        if ($skipOptionals && $nextQuestion->optional) {
+            return $this->getNextUnansweredQuestion($user, $newIndex, $skipOptionals);
+        }
+
+        $answer     = $this->getAnswerForQuestion($user, $nextQuestion->id);
+        $isAnswered = $answer !== null;
+        if ($isAnswered) {
+            return $this->getNextUnansweredQuestion($user, $newIndex, $skipOptionals);
+        }
+
+        $isDisabled = false;
+        if ( ! empty($nextQuestion->conditions)) {
+            foreach ($nextQuestion->conditions as $condition) {
+
+                if ( ! isset($condition['related_question_order_number'])) {
+                    continue;
+                }
+
+                $questionsOfOrder = $this->getQuestionsOfOrder($condition['related_question_order_number']);
+                //we are evaluating only the first condition.related_question_order_number
+                //For now is OK since we are depending only on ONE related Question
+                /** @var Question $firstQuestion */
+                $firstQuestion = $questionsOfOrder->first();
+
+                /** @var Answer $firstQuestionAnswer */
+                $firstQuestionAnswer = $this->getAnswerForQuestion($user, $firstQuestion->id);
+                if ( ! $firstQuestionAnswer) {
+                    $isDisabled = true;
+                    break;
+                }
+
+                //If conditions needs to be compared against to "gte" or "lte"
+                if (isset($condition['operator'])) {
+
+                    $valueToCheck = $firstQuestionAnswer->value['value'];
+                    if (is_array($valueToCheck)) {
+                        $valueToCheck = $valueToCheck[0];
+                    }
+
+                    if ($condition['operator'] === 'greater_or_equal_than') {
+                        //Again we use only the first Question of the related Questions, which is OK for now.
+                        $isDisabled = ! ($valueToCheck >= $condition['related_question_expected_answer']);
+                        break;
+                    }
+
+                    if ($condition['operator'] === 'less_or_equal_than') {
+                        $isDisabled = ! ($valueToCheck <= $condition['related_question_expected_answer']);
+                        break;
+                    }
+                }
+
+                if (isset($condition['related_question_expected_answer'])) {
+                    $filtered = collect($nextQuestion->conditions)
+                        ->filter(function ($q) use ($firstQuestion, $firstQuestionAnswer) {
+                            return $q['related_question_order_number'] === $firstQuestion->pivot->order && $q['related_question_expected_answer'] === $firstQuestionAnswer->value['value'];
+                        });
+
+                    if ($filtered->isEmpty()) {
+                        $isDisabled = true;
+                        break;
+                    }
+                } else {
+                    //we are looking for any answer
+                    if ( ! isset($firstQuestionAnswer->value['value'])) {
+                        if (is_array($firstQuestionAnswer->value) && empty($firstQuestionAnswer->value)) {
+                            $isDisabled = true;
+                        }
+                    } else {
+                        if (isset($firstQuestionAnswer->value['value']['value'])) {
+                            if (empty($firstQuestionAnswer->value['value']['value'])) {
+                                $isDisabled = true;
+                            }
+                        } else {
+                            if (is_array($firstQuestionAnswer->value['value']) && empty($firstQuestionAnswer->value['value'])) {
+                                $isDisabled = true;
+                            } else if (is_string($firstQuestionAnswer->value['value']) && empty($firstQuestionAnswer->value['value'])) {
+                                $isDisabled = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $isDisabled
+            ? $this->getNextUnansweredQuestion($user, $newIndex, $skipOptionals)
+            : $nextQuestion;
+    }
+
+    private function getQuestionsOfOrder($order): Collection
+    {
+        return $this->questions->filter(function (Question $f) use ($order) {
+            return $f->pivot->order === $order;
+        });
+    }
+
+    private function getAnswerForQuestion(User $user, $questionId)
+    {
+        return $user->answers()
+                    ->where('survey_instance_id', $this->id)
+                    ->where('question_id', $questionId)
+                    ->first();
     }
 
 

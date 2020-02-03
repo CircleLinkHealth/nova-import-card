@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.7.28 on 2019-12-06 14:20:46.
+ * Generated for Laravel 5.7.28 on 2020-01-31 08:09:26.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -1797,7 +1797,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the currently authenticated user.
          *
-         * @return \CircleLinkHealth\Customer\Entities\User|null 
+         * @return \App\User|null 
          * @static 
          */ 
         public static function user()
@@ -1838,7 +1838,7 @@ namespace Illuminate\Support\Facades {
          * Log the given user ID into the application without sessions or cookies.
          *
          * @param mixed $id
-         * @return \CircleLinkHealth\Customer\Entities\User|false 
+         * @return \App\User|false 
          * @static 
          */ 
         public static function onceUsingId($id)
@@ -1912,7 +1912,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param mixed $id
          * @param bool $remember
-         * @return \CircleLinkHealth\Customer\Entities\User|false 
+         * @return \App\User|false 
          * @static 
          */ 
         public static function loginUsingId($id, $remember = false)
@@ -1984,7 +1984,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the last user we attempted to authenticate.
          *
-         * @return \CircleLinkHealth\Customer\Entities\User 
+         * @return \App\User 
          * @static 
          */ 
         public static function getLastAttempted()
@@ -2104,7 +2104,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Return the currently cached user.
          *
-         * @return \CircleLinkHealth\Customer\Entities\User|null 
+         * @return \App\User|null 
          * @static 
          */ 
         public static function getUser()
@@ -2158,7 +2158,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Determine if current user is authenticated. If not, throw an exception.
          *
-         * @return \CircleLinkHealth\Customer\Entities\User 
+         * @return \App\User 
          * @throws \Illuminate\Auth\AuthenticationException
          * @static 
          */ 
@@ -15260,6 +15260,18 @@ namespace Intervention\Image\Facades {
  
 }
 
+namespace Laravel\Horizon { 
+
+    /**
+     * 
+     *
+     */ 
+    class Horizon {
+         
+    }
+ 
+}
+
 namespace Michalisantoniou6\Cerberus { 
 
     /**
@@ -18005,6 +18017,8 @@ namespace  {
     class PdfMerger extends \LynX39\LaraPdfMerger\Facades\PdfMerger {}
 
     class Image extends \Intervention\Image\Facades\Image {}
+
+    class Horizon extends \Laravel\Horizon\Horizon {}
 
     class Cerberus extends \Michalisantoniou6\Cerberus\CerberusFacade {}
  

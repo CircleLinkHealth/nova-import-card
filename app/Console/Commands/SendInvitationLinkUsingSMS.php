@@ -68,7 +68,7 @@ class SendInvitationLinkUsingSMS extends Command
                 'primaryPractice',
                 'billingProvider',
                 'surveyInstances' => function ($query) use ($surveyName) {
-                    $query->ofSurvey($surveyName)->current();
+                    $query->ofSurvey($surveyName)->mostRecent();
                 },
             ])
             ->where('id', '=', $userId)
