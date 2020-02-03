@@ -549,7 +549,7 @@
                         }, {}),
                         data: this.tableData.map(row => (Object.assign({}, row, {
                             chargeable_services: row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code),
-                            'CCM Problem Code(s)': row.attested_problems.map(id => (row.problems.find(problem => problem.id == id) || {}).code)
+                            'CCM Problem Code(s)': this.attestedProblemCodes(row)
                         })))
                     }
                 ])
