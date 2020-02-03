@@ -32,11 +32,17 @@ class NBIPatientDobRule implements Rule
             return false;
         }
 
+        $now = Carbon::now();
+
+        if ($date->gt($now->copy()->subYear(10))){
+            return false;
+        }
+
+        if ($date->lt($now->copy()->subYear(100))){
+            return false;
+        }
         //strip value and $date->toDateString. All value integers should exist in the to date string
 
-        //check for future dates or dates more than 100 years from now? or dates less than 10 years ago?
-
-        //other
         return true;
     }
 

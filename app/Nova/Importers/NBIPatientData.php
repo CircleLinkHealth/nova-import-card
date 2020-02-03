@@ -7,8 +7,10 @@
 namespace App\Nova\Importers;
 
 use CircleLinkHealth\Eligibility\Entities\PatientData;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
@@ -39,7 +41,6 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
     {
         return 200;
     }
-
 
     /**
      * Returns null if value means N/A or equivalent. Otherwise returns the value passed to it.
