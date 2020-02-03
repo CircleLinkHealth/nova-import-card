@@ -20,6 +20,7 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
+import Navigation from "./components/Navigation";
 import VitalsSurvey from './components/VitalsSurvey';
 import VitalsSurveyNotAuthorized from './components/VitalsSurveyNotAuthorized';
 import VitalsSurveyWelcome from './components/VitalsSurveyWelcome';
@@ -37,6 +38,7 @@ import $ from 'jquery';
 import 'lodash';
 import 'popper.js';
 
+Vue.component('navigation', Navigation);
 Vue.component('survey-questions', SurveyQuestions);
 Vue.component('vitals-survey', VitalsSurvey);
 Vue.component('vitals-survey-not-authorized', VitalsSurveyNotAuthorized);
