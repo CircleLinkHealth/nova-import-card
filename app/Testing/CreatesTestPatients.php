@@ -120,8 +120,9 @@ abstract class CreatesTestPatients
         $problem2Id = $user->ccdProblems->where('id', '!=', $problem1Id)->random()->id;
 
         for ($i = 9; $i > 0; $i--) {
+            $date = $now->copy()->firstOfMonth()->subMonth($i);
             $user->patientSummaries()->updateOrCreate([
-                'month_year' => $now->copy()->firstOfMonth()->subMonth($i),
+                'month_year' => $date,
             ], [
                 'total_time'             => 1400,
                 'ccm_time'               => 1400,
@@ -132,6 +133,7 @@ abstract class CreatesTestPatients
                 'problem_2'              => $problem2Id,
                 'approved'               => 1,
                 'actor_id'               => User::ofType('administrator')->first()->id,
+                'created_at'             => $date->toDateTimeString()
             ]);
         }
     }
