@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b6decd630327a720d6ad9d768f29ec8a",
+    "content-hash": "d0265628a865f4c7354063b568441b20",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -811,11 +811,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.3.4",
+            "version": "v1.3.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "89283f9b7e7f293f9d205fd7a3a145ba7af545ca"
+                "reference": "04f7c78c3d9789adcf706f048b6b3e8e3c497dc9"
             },
             "type": "laravel-module",
             "extra": {
@@ -837,7 +837,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-04T16:39:33+00:00"
+            "time": "2020-02-04T20:10:14+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -882,11 +882,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v1.3.3",
+            "version": "v1.3.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "ef63573f35cd02a0cf741b3d3f8338e58e8a8c3d"
+                "reference": "ce309da8d8303e367ef9ba6174720d43b36f7454"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -911,7 +911,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-30T02:58:56+00:00"
+            "time": "2020-02-04T21:21:14+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
