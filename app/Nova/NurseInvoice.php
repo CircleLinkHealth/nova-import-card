@@ -12,9 +12,12 @@ use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use NovaButton\Button;
+use Titasgailius\SearchRelations\SearchesRelations;
 
 class NurseInvoice extends Resource
 {
+    use SearchesRelations;
+
     /**
      * The logical group associated with the resource.
      *
@@ -43,7 +46,7 @@ class NurseInvoice extends Resource
      * @var array
      */
     public static $searchRelations = [
-        'user' => ['display_name', 'first_name', 'last_name'],
+        'nurse.user' => ['display_name', 'first_name', 'last_name'],
     ];
 
     /**
