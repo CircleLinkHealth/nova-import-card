@@ -27,6 +27,7 @@ class ProcessLastMonthBillablePatients implements ShouldQueue
      * Create a new job instance.
      *
      * @param int $practiceId
+     * @param Carbon $date
      */
     public function __construct(int $practiceId, Carbon $date)
     {
