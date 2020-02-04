@@ -163,10 +163,9 @@ $factory->define(Invite::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(Enrollee::class, function (Faker\Generator $faker) use ($factory) {
-
     $practice = Practice::first();
 
-    if (! $practice){
+    if ( ! $practice) {
         $practice = factory(\CircleLinkHealth\Customer\Entities\Practice::class)->create();
     }
 
@@ -211,7 +210,7 @@ $factory->define(Nurse::class, function (Faker\Generator $faker) {
 $factory->define(Practice::class, function (Faker\Generator $faker) {
     $name = $faker->company;
 
-    while (Practice::whereName($name)->exists()){
+    while (Practice::whereName($name)->exists()) {
         $name = $faker->company;
     }
 
