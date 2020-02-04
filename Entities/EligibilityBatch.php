@@ -63,6 +63,8 @@ class EligibilityBatch extends BaseModel
     const TYPE_GOOGLE_DRIVE_CCDS = 'google_drive_ccds';
     const TYPE_ONE_CSV           = 'one_csv';
     const TYPE_PHX_DB_TABLES     = 'phoenix_heart_db_tables';
+    
+    const OUTCOME_NOT_PROCESSED_YET = 'Not processed yet.';
 
     protected $attributes = [
         'status' => 0,
@@ -101,7 +103,7 @@ class EligibilityBatch extends BaseModel
             ->get()
             ->mapWithKeys(function ($result) {
                 if (is_null($result['outcome'])) {
-                    $outcome = ['Not processed yet.' => $result['total'] ?? null];
+                    $outcome = [self::OUTCOME_NOT_PROCESSED_YET => $result['total'] ?? null];
                 } elseif (EligibilityJob::ELIGIBLE === $result['outcome']) {
                     $outcome = ['eligible_and_not_in_cpm' => $result['total']];
                 } else {
