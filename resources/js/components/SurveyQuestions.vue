@@ -35,7 +35,7 @@
         <div class="survey-container"
              :class="{ max: stage === 'complete', 'read-only': readOnlyMode, 'with-top-buttons': stage !== 'welcome' }">
             <template v-if="stage === 'welcome'">
-                <div v-show="name === 'hra'" class="practice-title">
+                <div v-show="isHra" class="practice-title">
                     <label id="title">
                         <strong>{{practiceName}}</strong>
                         <br/>
@@ -302,6 +302,8 @@
 
 
 <script>
+    import hraWelcomeIcon from '../../images/notepad.png';
+    import vitalsWelcomeIcon from '../../images/notepad.png';
     import {mdbBtn, mdbCol, mdbIcon, mdbProgress, mdbRow} from 'mdbvue';
     import questionTypeText from "./questionTypeText";
     import questionTypeCheckbox from "./questionTypeCheckbox";
@@ -335,8 +337,8 @@
         data() {
 
             const patientName = this.surveyData.display_name;
-            const welcomeIcon = this.isHra ? '../../images/notepad.png' : '../../images/notepad-2.png';
-            const welcomeTitle = this.isHra ? 'Annual Wellness Visit (AWV) Questionnaire' : `${patientName} Vitals`;
+            const welcomeIcon = this.surveyName === 'hra' ? hraWelcomeIcon : vitalsWelcomeIcon;
+            const welcomeTitle = this.surveyName === 'hra' ? 'Annual Wellness Visit (AWV) Questionnaire' : `${patientName} Vitals`;
 
             return {
                 welcomeIcon,

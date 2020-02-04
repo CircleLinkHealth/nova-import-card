@@ -58,16 +58,23 @@ class LoginController extends Controller
 
     protected function redirectTo()
     {
-        Log::debug("LoginController -> redirectoTo");
-        $request    = request();
-        $referer    = $request->header('referer', null);
+        Log::debug("LoginController -> redirectTo");
         $redirectTo = null;
-        if ($referer) {
-            $mixed = parse_url($referer);
-            if (isset($mixed['query']) && str_contains($mixed['query'], 'redirectTo')) {
-                $redirectTo = str_replace('redirectTo=', '', $mixed['query']);
-                if ($redirectTo) {
-                    $redirectTo = urldecode($redirectTo);
+
+        $request = request();
+
+        $queryParam = $request->query('redirectTo', null);
+        if ($queryParam) {
+            $redirectTo = urldecode($queryParam);
+        } else {
+            $referer = $request->header('referer', null);
+            if ($referer) {
+                $mixed = parse_url($referer);
+                if (isset($mixed['query']) && str_contains($mixed['query'], 'redirectTo')) {
+                    $redirectTo = str_replace('redirectTo=', '', $mixed['query']);
+                    if ($redirectTo) {
+                        $redirectTo = urldecode($redirectTo);
+                    }
                 }
             }
         }
@@ -79,6 +86,7 @@ class LoginController extends Controller
         Session::put('url.intended', $route);
 
         Log::debug("Route => $route");
+
         return $route;
     }
 }
