@@ -6,9 +6,9 @@
 
 namespace App\Nova\Importers;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Search\PracticeByName;
 use App\Search\ProviderByName;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -39,17 +39,11 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
         $this->practice   = $resource->fields->getFieldValue('practice');
     }
 
-    /**
-     * @return int
-     */
     public function chunkSize(): int
     {
         return 200;
     }
 
-    /**
-     * @param Row $row
-     */
     public function onRow(Row $row)
     {
         $row = $row->toArray();
