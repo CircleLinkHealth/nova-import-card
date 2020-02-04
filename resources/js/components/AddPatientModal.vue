@@ -45,7 +45,7 @@
                             </mdb-row>
 
                             <mdb-row>
-                                <mdb-col>
+                                <mdb-col md="6">
                                     <mdb-input label="Phone number *" v-model="patient.phoneNumber"
                                                type="tel"
                                                :customValidation="validation.phoneNumber.validated"
@@ -53,7 +53,7 @@
                                                @change="validate('phoneNumber', $event)"
                                                invalidFeedback="Please set a valid phone number."/>
                                 </mdb-col>
-                                <mdb-col>
+                                <mdb-col md="6">
                                     <mdb-input label="DOB *"
                                                v-model="patient.dob"
                                                :customValidation="validation.dob.validated"
