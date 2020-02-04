@@ -11,6 +11,7 @@ use App\Events\NoteFinalSaved;
 use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
+use App\Listeners\CheckBeforeSendMessageListener;
 use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\ForwardNote;
 use App\Listeners\LogFailedNotification;
@@ -49,6 +50,7 @@ class CpmEventServiceProvider extends ServiceProvider
             UserLoggedOut::class,
         ],
         MessageSending::class => [
+            CheckBeforeSendMessageListener::class,
         ],
         NoteFinalSaved::class => [
             ForwardNote::class,
