@@ -1008,7 +1008,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'has-schedule',
                     'change-patient-enrollment-status',
                     'vitals-survey-complete',
-                    'phi.read'
+                    'phi.read',
+                    'attestedProblems.create',
+                    'attestedProblems.read',
+                    'attestedProblems.update',
                 ],
             ],
             [

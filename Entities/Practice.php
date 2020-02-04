@@ -9,6 +9,7 @@ namespace CircleLinkHealth\Customer\Entities;
 use App\CareAmbassadorLog;
 use CircleLinkHealth\Core\StringManipulation;
 use App\EnrolleeCustomFilter;
+use App\Models\CCD\Problem;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\ValueObjects\PatientReportData;
 use Carbon\Carbon;
@@ -18,6 +19,7 @@ use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Nova\Actions\Actionable;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
@@ -126,9 +128,12 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice
  *     whereIsDemo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\Practice opsDashboardQuery(\Carbon\Carbon $startOfMonth, \Carbon\Carbon $revisionsFromDate)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Nova\Actions\ActionEvent[] $actions
+ * @property-read int|null $actions_count
  */
 class Practice extends BaseModel implements HasMedia
 {
+    use Actionable;
     use HasChargeableServices;
     use HasMediaTrait;
     use HasSettings;
@@ -400,7 +405,9 @@ class Practice extends BaseModel implements HasMedia
                             [
                                 'patientSummaries' => function ($q) use ($month) {
                                     $q
-                                        ->with(['billableBhiProblems'])
+                                        ->with(['billableBhiProblems', 'attestedProblems' => function($problem){
+                                            $problem->with(['cpmProblem', 'codes']);
+                                        }])
                                         ->where('month_year', $month->toDateString())
                                         ->where('approved', '=', true);
                                 },
@@ -437,17 +444,10 @@ class Practice extends BaseModel implements HasMedia
                                     $patientData->setProvider($u->getBillingProviderName());
                                     $patientData->setBillingCodes($u->billingCodes($month));
 
-                                    $patientData->setProblem1Code($summary->billable_problem1_code);
-                                    $patientData->setProblem1($summary->billable_problem1);
-
-                                    $patientData->setProblem2Code($summary->billable_problem2_code);
-                                    $patientData->setProblem2($summary->billable_problem2);
+                                    $patientData->setCcmProblemCodes($summary->getAttestedProblemsForReport());
 
                                     $patientData->setBhiCode(
                                         optional(optional($summary->billableProblems->first())->pivot)->icd_10_code
-                                    );
-                                    $patientData->setBhiProblem(
-                                        optional(optional($summary->billableProblems->first())->pivot)->name
                                     );
                                     $patientData->setLocationName($u->getPreferredLocationName());
 

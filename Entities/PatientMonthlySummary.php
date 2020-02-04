@@ -6,82 +6,119 @@
 
 namespace CircleLinkHealth\Customer\Entities;
 
-use CircleLinkHealth\SharedModels\Entities\Problem;
-use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Customer\Traits\HasChargeableServices;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
+use Illuminate\Support\Facades\DB;
 
 /**
  * CircleLinkHealth\Customer\Entities\PatientMonthlySummary.
  *
- * @property int                                         $id
- * @property int                                         $patient_id
- * @property int                                         $ccm_time
- * @property int                                         $bhi_time
- * @property \Carbon\Carbon                              $month_year
- * @property int                                         $no_of_calls
- * @property int                                         $no_of_successful_calls
- * @property string                                      $billable_problem1
- * @property string                                      $billable_problem1_code
- * @property string                                      $billable_problem2
- * @property string                                      $billable_problem2_code
- * @property int                                         $approved
- * @property int                                         $rejected
- * @property int|null                                    $actor_id
- * @property \Carbon\Carbon|null                         $created_at
- * @property \Carbon\Carbon|null                         $updated_at
- * @property int                                         $total_time
- * @property \CircleLinkHealth\Customer\Entities\User    $actor
+ * @property int $id
+ * @property int $patient_id
+ * @property int $ccm_time
+ * @property int $bhi_time
+ * @property \Carbon\Carbon $month_year
+ * @property int $no_of_calls
+ * @property int $no_of_successful_calls
+ * @property string $billable_problem1
+ * @property string $billable_problem1_code
+ * @property string $billable_problem2
+ * @property string $billable_problem2_code
+ * @property int $approved
+ * @property int $rejected
+ * @property int|null $actor_id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property int $total_time
+ * @property \CircleLinkHealth\Customer\Entities\User $actor
  * @property \CircleLinkHealth\Customer\Entities\Patient $patient_info
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary getCurrent()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary getForMonth(\Carbon\Carbon $month)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereActorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereApproved($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereBillableProblem1($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereBillableProblem1Code($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereBillableProblem2($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereBillableProblem2Code($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereCcmTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereMonthYear($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereNoOfCalls($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereNoOfSuccessfulCalls($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary wherePatientInfoId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereRejected($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     getCurrent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     getForMonth(\Carbon\Carbon $month)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereActorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereApproved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereBillableProblem1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereBillableProblem1Code($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereBillableProblem2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereBillableProblem2Code($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereCcmTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereMonthYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereNoOfCalls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereNoOfSuccessfulCalls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     wherePatientInfoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereRejected($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property string|null                                                                    $closed_ccm_status
- * @property int|null                                                                       $problem_1
- * @property int|null                                                                       $problem_2
- * @property int                                                                            $is_ccm_complex
- * @property int|null                                                                       $needs_qa
- * @property \CircleLinkHealth\SharedModels\Entities\Problem|null                                                   $billableProblem1
- * @property \CircleLinkHealth\SharedModels\Entities\Problem|null                                                   $billableProblem2
- * @property \CircleLinkHealth\SharedModels\Entities\Problem[]|\Illuminate\Database\Eloquent\Collection             $billableProblems
- * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection              $chargeableServices
- * @property \CircleLinkHealth\Customer\Entities\User                                       $patient
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[] $revisionHistory
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary hasServiceCode($code)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary query()
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereBhiTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereClosedCcmStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereIsCcmComplex($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereNeedsQa($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary wherePatientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereProblem1($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereProblem2($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary whereTotalTime($value)
+ * @property string|null $closed_ccm_status
+ * @property int|null $problem_1
+ * @property int|null $problem_2
+ * @property int $is_ccm_complex
+ * @property int|null $needs_qa
+ * @property \CircleLinkHealth\SharedModels\Entities\Problem|null $billableProblem1
+ * @property \CircleLinkHealth\SharedModels\Entities\Problem|null $billableProblem2
+ * @property \CircleLinkHealth\SharedModels\Entities\Problem[]|\Illuminate\Database\Eloquent\Collection
+ *     $billableProblems
+ * @property \CircleLinkHealth\Customer\Entities\ChargeableService[]|\Illuminate\Database\Eloquent\Collection
+ *     $chargeableServices
+ * @property \CircleLinkHealth\Customer\Entities\User $patient
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]
+ *     $revisionHistory
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     hasServiceCode($code)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereBhiTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereClosedCcmStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereIsCcmComplex($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereNeedsQa($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereProblem1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereProblem2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Customer\Entities\PatientMonthlySummary
+ *     whereTotalTime($value)
  * @property-read int|null $billable_problems_count
  * @property-read int|null $chargeable_services_count
  * @property-read int|null $revision_history_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CCD\Problem[] $attestedProblems
+ * @property-read int|null $attested_problems_count
  */
 class PatientMonthlySummary extends BaseModel
 {
     use HasChargeableServices;
+
+    const DATE_ATTESTED_CONDITIONS_ENABLED = '2020-02-01';
 
     protected $dates = [
         'month_year',
@@ -112,10 +149,30 @@ class PatientMonthlySummary extends BaseModel
         return $this->hasOne(User::class, 'actor_id');
     }
 
+    public function attestedProblems()
+    {
+        return $this->belongsToMany(Problem::class, 'call_problems', 'patient_monthly_summary_id', 'ccd_problem_id');
+    }
+
+    public function getAttestedProblemsForReport()
+    {
+        if (Carbon::parse($this->month_year)->lt(Carbon::parse(PatientMonthlySummary::DATE_ATTESTED_CONDITIONS_ENABLED))) {
+            $problems = collect([$this->billableProblem1, $this->billableProblem2])->filter();
+        } else {
+            $problems = $this->attestedProblems;
+        }
+
+        return ! $problems->isEmpty()
+            ? $problems->transform(function (Problem $problem) {
+                return $problem->icd10Code();
+            })->filter()->implode(', ')
+            : 'N/A';
+    }
+
     public function attachBillableProblem($problemId, $name, $icd10Code, $type = 'ccm')
     {
         return $this->billableProblems()
-            ->attach(
+                    ->attach(
                         $problemId,
                         [
                             'type'        => $type,
@@ -153,8 +210,8 @@ class PatientMonthlySummary extends BaseModel
     public function billableProblems()
     {
         return $this->belongsToMany(Problem::class, 'patient_summary_problems', 'patient_summary_id')
-            ->withPivot('name', 'icd_10_code', 'type')
-            ->withTimestamps();
+                    ->withPivot('name', 'icd_10_code', 'type')
+                    ->withTimestamps();
     }
 
     public function createCallReportsForCurrentMonth()
@@ -162,8 +219,8 @@ class PatientMonthlySummary extends BaseModel
         $monthYear = Carbon::now()->startOfMonth()->toDateString();
 
         $patients = User::select('id')->ofType('participant')
-            ->get()
-            ->map(
+                        ->get()
+                        ->map(
                             function ($patient) use ($monthYear) {
                                 PatientMonthlySummary::create(
                                     [
@@ -183,7 +240,7 @@ class PatientMonthlySummary extends BaseModel
         Carbon $month
     ) {
         $patients = User::where('program_id', $practice->id)
-            ->whereHas(
+                        ->whereHas(
                             'roles',
                             function ($q) {
                                 $q->where('name', '=', 'participant');
@@ -202,7 +259,7 @@ class PatientMonthlySummary extends BaseModel
             }
 
             $report = PatientMonthlySummary::where('month_year', $month->firstOfMonth()->toDateString())
-                ->where('patient_id', $p->id)->first();
+                                           ->where('patient_id', $p->id)->first();
 
             if ( ! $report) {
                 continue;
@@ -232,7 +289,7 @@ class PatientMonthlySummary extends BaseModel
         Carbon $month
     ) {
         $patients = User::where('program_id', $practice->id)
-            ->whereHas(
+                        ->whereHas(
                             'roles',
                             function ($q) {
                                 $q->where('name', '=', 'participant');
@@ -253,15 +310,15 @@ class PatientMonthlySummary extends BaseModel
     public function hasAtLeastOneBhiProblem()
     {
         return $this->billableProblems()
-            ->where('type', '=', 'bhi')
-            ->exists();
+                    ->where('type', '=', 'bhi')
+                    ->exists();
     }
 
     public function hasAtLeastTwoCcmProblems()
     {
         return $this->billableProblems()
-            ->where('type', '=', 'ccm')
-            ->count() >= 2;
+                    ->where('type', '=', 'ccm')
+                    ->count() >= 2;
     }
 
     public function patient()
@@ -303,11 +360,11 @@ class PatientMonthlySummary extends BaseModel
      */
     public function timeFromClhCareCoaches(): int
     {
-        return (int) Activity::createdInMonth($this->month_year, 'performed_at')
-            ->where('patient_id', $this->patient_id)
-            ->whereHas('provider', function ($q) {
-                           $q->ofType('care-center');
-                       })->sum('duration');
+        return (int)Activity::createdInMonth($this->month_year, 'performed_at')
+                            ->where('patient_id', $this->patient_id)
+                            ->whereHas('provider', function ($q) {
+                                $q->ofType('care-center');
+                            })->sum('duration');
     }
 
     public static function updateCCMInfoForPatient(
@@ -326,4 +383,18 @@ class PatientMonthlySummary extends BaseModel
             ]
         );
     }
+
+    public function syncAttestedProblems(Array $attestedProblems)
+    {
+        //remove summary id without detaching. We may still need the association of the problem with the call
+        $this->attestedProblems()->update(['call_problems.patient_monthly_summary_id' => null]);
+
+        DB::table('call_problems')
+          ->whereNull('call_id')
+          ->whereNull('patient_monthly_summary_id')
+          ->delete();
+
+        $this->attestedProblems()->attach($attestedProblems);
+    }
 }
+
