@@ -114,7 +114,12 @@
                 }).then(response => {
                     this.loaders.addProblem = false
                     Event.$emit('problems:updated', {})
+
+                    //If another condition is created and is attested for the patient from admin/billing/index.vue,
+                    //we need patient id to add it to the patient's existing problems in the client table
+                    response.data.patient_id = this.pId;
                     Event.$emit('full-conditions:add', response.data)
+
                     this.reset()
                     this.selectedProblem = response.data
                     setImmediate(() => this.checkPatientBehavioralStatus())

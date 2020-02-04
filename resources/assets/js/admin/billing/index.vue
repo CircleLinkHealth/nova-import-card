@@ -652,6 +652,18 @@
                 })
             });
 
+            Event.$on('full-conditions:add', (ccdProblem) => {
+                //if another condition is created and is attested for the patient, add it to the patient's existing problems
+                this.tableData.filter(function (p) {
+                    return String(p.id) === String(ccdProblem.patient_id);
+                })[0].problems.push({
+                    id: ccdProblem.id,
+                    name: ccdProblem.name,
+                    is_behavioral: false,
+                    code: ccdProblem.codes[0].code
+                });
+            })
+
             Event.$on('vue-tables.pagination', (page) => {
                 const $table = this.$refs.tblBillingReport;
                 if (page === $table.totalPages) {
