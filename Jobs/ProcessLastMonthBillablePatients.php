@@ -22,17 +22,29 @@ class ProcessLastMonthBillablePatients implements ShouldQueue
      * @var Carbon
      */
     protected $date;
+    /**
+     * @var bool
+     */
+    protected $fromScratch;
+    /**
+     * @var bool
+     */
+    protected $resetActor;
     
     /**
      * Create a new job instance.
      *
      * @param int $practiceId
      * @param Carbon $date
+     * @param bool $fromScratch
+     * @param bool $resetActor
      */
-    public function __construct(int $practiceId, Carbon $date)
+    public function __construct(int $practiceId, Carbon $date, bool $fromScratch, bool $resetActor)
     {
         $this->practiceId = $practiceId;
         $this->date       = $date;
+        $this->fromScratch = $fromScratch;
+        $this->resetActor = $resetActor;
     }
     
     /**
@@ -51,12 +63,12 @@ class ProcessLastMonthBillablePatients implements ShouldQueue
                                      foreach ($users as $user) {
                                          $pms = $user->patientSummaries->first();
                     
-                                         if ((bool) $this->option('from-scratch')) {
+                                         if ($this->fromScratch) {
                                              $pms->reset();
                                              $pms->save();
                                          }
                     
-                                         if ((bool) $this->option('reset-actor')) {
+                                         if ($this->resetActor) {
                                              $pms->actor_id = null;
                                              $pms->save();
                                          }
