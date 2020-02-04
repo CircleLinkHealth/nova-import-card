@@ -6,7 +6,7 @@
 
 namespace App\Console;
 
-use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
+use App\Console\Commands\CreateLastMonthBillablePatientsReport;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
@@ -121,10 +121,10 @@ class Kernel extends ConsoleKernel
             ->cron('1 0 1 * *')->onOneServer();
 
         //Run at 12:45am every 1st of month
-        $schedule->command(AttachBillableProblemsToLastMonthSummary::class, ['--reset-actor' => true])
+        $schedule->command(CreateLastMonthBillablePatientsReport::class, ['--reset-actor' => true])
             ->cron('45 0 1 * *')->onOneServer();
 
-        $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
+        $schedule->command(CreateLastMonthBillablePatientsReport::class)
             ->dailyAt('00:25')->onOneServer();
 
 //        $schedule->command(

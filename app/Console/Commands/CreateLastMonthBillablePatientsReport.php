@@ -6,16 +6,13 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\AttachBillableProblemsToSummary;
-use App\Repositories\BillablePatientsEloquentRepository;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Jobs\ProcessLastMonthBillablePatients;
 use Illuminate\Console\Command;
 
-class AttachBillableProblemsToLastMonthSummary extends Command
+class CreateLastMonthBillablePatientsReport extends Command
 {
-    protected $billablePatientsRepo;
-
     /**
      * The console command description.
      *
@@ -36,23 +33,12 @@ class AttachBillableProblemsToLastMonthSummary extends Command
                                 ';
 
     /**
-     * Create a new command instance.
-     */
-    public function __construct(BillablePatientsEloquentRepository $billablePatientsRepo)
-    {
-        parent::__construct();
-        $this->billablePatientsRepo = $billablePatientsRepo;
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
      */
     public function handle()
     {
-        ini_set('max_execution_time', 600);
-
         $practiceIds = array_filter(explode(',', $this->argument('practiceIds')));
 
         $datePassed = $this->argument('date');
@@ -71,34 +57,12 @@ class AttachBillableProblemsToLastMonthSummary extends Command
                 1,
                 function ($practices) use ($month) {
                     foreach ($practices as $practice) {
-                        $this->comment("BEGIN processing $practice->display_name for {$month->toDateString()}");
+                        $this->comment("BEGIN CreateLastMonthBillablePatientsReport for $practice->display_name for {$month->toDateString()}");
 
-                        $this->billablePatientsRepo->billablePatients($practice->id, $month)
-                            ->chunk(
-                                30,
-                                function ($users) {
-                                    foreach ($users as $user) {
-                                        $pms = $user->patientSummaries->first();
-
-                                        if ((bool) $this->option('from-scratch')) {
-                                            $pms->reset();
-                                            $pms->save();
-                                        }
-
-                                        if ((bool) $this->option('reset-actor')) {
-                                            $pms->actor_id = null;
-                                            $pms->save();
-                                        }
-
-                                        AttachBillableProblemsToSummary::dispatch(
-                                            $pms
-                                        );
-                                    }
-                                }
-                            );
+                        ProcessLastMonthBillablePatients::dispatch($practice->id, $month);
 
                         $this->output->success(
-                            "END processing $practice->display_name for {$month->toDateString()}"
+                            "END CreateLastMonthBillablePatientsReport for $practice->display_name for {$month->toDateString()}"
                         );
                     }
                 }
