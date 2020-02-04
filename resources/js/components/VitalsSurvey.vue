@@ -1,4 +1,11 @@
 <template>
+
+    <!--
+    DEPRECATED - DO NOT USE
+    (only left here for future reference)
+    -->
+
+
     <div class="container main-container vitals">
 
         <div class="top-buttons" v-if="adminMode">

@@ -35,7 +35,7 @@
         <div class="survey-container"
              :class="{ max: stage === 'complete', 'read-only': readOnlyMode, 'with-top-buttons': stage !== 'welcome' }">
             <template v-if="stage === 'welcome'">
-                <div class="practice-title">
+                <div v-show="name === 'hra'" class="practice-title">
                     <label id="title">
                         <strong>{{practiceName}}</strong>
                         <br/>
@@ -43,12 +43,12 @@
                     </label>
                 </div>
                 <div class="card-body">
-                    <img src="../../images/notepad.png"
+                    <img :src="welcomeIcon"
                          class="welcome-icon" alt="welcome icon">
                     <div class="survey-main-title">
-                        <label id="sub-title">Annual Wellness Visit (AWV) Questionnaire</label>
+                        <label id="sub-title">{{welcomeTitle}}</label>
                     </div>
-                    <div class="survey-sub-welcome-text">Welcome to your
+                    <div v-if="isHra" class="survey-sub-welcome-text">Welcome to your
                         Annual Wellness Visit (AWV) Questionnaire! Understanding your health is of upmost importance to
                         us,
                         so thank you for taking time to fill this out.
@@ -60,25 +60,19 @@
                         reps
                         will also reach out shortly. Thanks!
                     </div>
-
+                    <div v-else class="survey-sub-welcome-text">
+                        Here is the form to fill out {{patientName}}'s Vitals. Once completed, a PPP will be
+                        generated
+                        for both the patient and practice, as well as a Provider Report for the doctor to evaluate.
+                    </div>
 
                     <div class="btn-start-container">
                         <!-- @todo: this is not working exactly as expected so im keepin one element true and i ll get back-->
-                        <mdb-btn v-show="true"
-                                 color="primary" class="btn-start" @click="showQuestions">
+                        <mdb-btn
+                            color="primary" class="btn-start" @click="showQuestions">
                             <span v-if="progress === 0">Start</span>
                             <span v-else>Continue</span>
                         </mdb-btn>
-
-                        <!-- <mdb-btn v-show="lastQuestionAnswered === null"
-                                  color="primary" class="btn-start" @click="showQuestions">
-                             <span>Start</span>
-                         </mdb-btn>
-
-                         <mdb-btn v-if="lastQuestionAnswered !== null"
-                                  color="primary" class="btn-start" @click="scrollToLastQuestion">
-                             <span>Continue</span>
-                         </mdb-btn>-->
                     </div>
                     <div class="by-circlelink">
                         ⚡️ by CircleLink Health
@@ -87,7 +81,7 @@
             </template>
 
             <!--Questions-->
-            <template v-if="stage === 'survey'">
+            <template v-else-if="stage === 'survey'">
                 <div class="questions-box question"
                      :id="question.id"
                      :class="!readOnlyMode && currentQuestionIndex !== index ? (question.conditions && question.conditions.length > 0 ? 'non-visible' : 'watermark') : 'active'"
@@ -97,7 +91,7 @@
 
                         <div v-if="isSubQuestion(question) && shouldShowQuestionGroupTitle(question)"
                              class="questions-title">
-                            {{getQuestionGroupTitle(question)}}
+                            <span v-html="getQuestionGroupTitle(question)"></span>
                         </div>
 
                         <br v-if="shouldShowQuestionGroupTitle(question)">
@@ -195,6 +189,46 @@
                 <!-- add an empty div, so we can animate scroll up even if we are on last question -->
                 <div v-if="!readOnlyMode" style="height: 600px"></div>
             </template>
+
+            <!-- Survey Completed - should only be shown in Vitals Survey -->
+            <template v-else>
+                <div class="card-body">
+                    <div class="welcome-icon-container">
+                        <img src="../../images/doctors.png"
+                             class="welcome-icon" alt="welcome icon">
+                    </div>
+
+                    <div class="survey-main-title">
+                        <label>Thank You!</label>
+                    </div>
+                    <div class="survey-sub-welcome-text">
+                        Thank you for completing {{patientName}}'s Vitals. You can access their Vitals at any time
+                        in
+                        <a href="https://careplanmanager.com">CarePlanManager™</a>. A generated PDF of the PPP and
+                        Provider Report is also now available in
+                        that patient’s profile, and/or has been sent to your practice based on your preferences
+                        (e.g., DIRECT message or e-mail).
+                    </div>
+                    <br/>
+                    <div class="survey-sub-welcome-text">
+                        If you are using the patient's phone, please <strong>logout</strong> and hand it back now.
+                    </div>
+
+                    <div class="btn-start-container">
+                        <mdb-btn color="primary" class="btn-start" @click="logout">
+                            Logout
+                        </mdb-btn>
+
+                        <form id="logout-form" action="/logout" method="POST" style="display: none;">
+                        </form>
+                    </div>
+
+                    <div class="by-circlelink">
+                        ⚡️ by CircleLink Health
+                    </div>
+                </div>
+            </template>
+
         </div>
         <div class="call-assistance">
             <call-assistance v-if="/*practiceOutgoingPhoneNumber && */callAssistance"
@@ -280,7 +314,7 @@
     import $ from "jquery";
 
     export default {
-        props: ['surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'debug'],
+        props: ['surveyName', 'surveyData', 'adminMode', 'cpmCallerUrl', 'cpmCallerToken', 'debug'],
 
         components: {
             mdbIcon,
@@ -299,7 +333,14 @@
         },
 
         data() {
+
+            const patientName = this.surveyData.display_name;
+            const welcomeIcon = this.isHra ? '../../images/notepad.png' : '../../images/notepad-2.png';
+            const welcomeTitle = this.isHra ? 'Annual Wellness Visit (AWV) Questionnaire' : `${patientName} Vitals`;
+
             return {
+                welcomeIcon,
+                welcomeTitle,
                 stage: "welcome",
                 actionsDisabled: false, //to prevent double-clicking
                 questionsStage: false,
@@ -312,7 +353,7 @@
                 questionIndex: 0,
                 progressCount: 0,
                 userId: this.surveyData.id,
-                surveyInstanceId: null,
+                surveyInstanceId: this.surveyData.survey_instances[0].id,
                 questionIndexAnswers: [],
                 conditionsLength: 0,
                 latestQuestionAnsweredIndex: -1,
@@ -320,10 +361,11 @@
                 error: null,
                 progress: 0,
                 waiting: false,
-                practiceId: null,
-                practiceName: null,
-                practiceOutgoingPhoneNumber: null,
-                doctorsLastName: null,
+                practiceId: this.surveyData.primary_practice.id,
+                practiceName: this.surveyData.primary_practice.display_name,
+                patientName,
+                practiceOutgoingPhoneNumber: this.surveyData.primary_practice.outgoing_phone_number,
+                doctorsLastName: this.surveyData.billing_provider && this.surveyData.billing_provider.length ? this.surveyData.billing_provider[0].user.last_name : '???',
                 totalQuestions: 0,
                 totalQuestionWithSubQuestions: 0,
                 readOnlyMode: false,
@@ -331,6 +373,11 @@
         },
 
         computed: {
+
+            isHra() {
+                return this.surveyName === 'hra';
+            },
+
             subQuestionsConditions() {
                 return this.subQuestions.flatMap(function (subQuestion) {
                     return subQuestion.conditions;
@@ -531,7 +578,7 @@
                 this.error = null;
                 this.waiting = true;
 
-                axios.post(`/survey/hra/${this.userId}/save-answer`, {
+                axios.post(`/survey/${this.surveyName}/${this.userId}/save-answer`, {
                     patient_id: this.userId,
                     practice_id: this.practiceId,
                     survey_instance_id: this.surveyInstanceId,
@@ -549,7 +596,7 @@
                         const incrementProgress = typeof q.answer === "undefined" || (typeof q.answer.value === "undefined" || q.answer.value === null);
                         q.answer = {value: answer};
 
-                        if (isLastQuestion) {
+                        if (this.isHra && isLastQuestion) {
                             window.location.href = this.getVitalsWelcomeUrl();
                             return;
                         }
@@ -853,7 +900,7 @@
                     if (incrementProgress) {
                         this.progress = this.progress + 1;
                     }
-                    return;
+                    return Promise.resolve();
                 }
 
                 const nextQuestion = next.question;
@@ -957,6 +1004,19 @@
                 }
             },
 
+            logout() {
+                const token = document.head.querySelector('meta[name="csrf-token"]');
+                $('<input>')
+                    .attr({
+                        type: 'hidden',
+                        name: '_token',
+                        value: token.content
+                    })
+                    .appendTo('#logout-form');
+
+                $('#logout-form').submit();
+            },
+
             goBack() {
                 window.location.pathname = this.getPatientsListUrl();
             }
@@ -964,14 +1024,6 @@
         mounted() {
         },
         created() {
-
-            this.practiceId = this.surveyData.primary_practice.id;
-            this.practiceName = this.surveyData.primary_practice.display_name;
-            this.practiceOutgoingPhoneNumber = this.surveyData.primary_practice.outgoing_phone_number;
-
-            this.doctorsLastName = this.surveyData.billing_provider && this.surveyData.billing_provider.length ? this.surveyData.billing_provider[0].user.last_name : '???';
-
-            this.surveyInstanceId = this.surveyData.survey_instances[0].id
 
             const questionsData = this.surveyData.survey_instances[0].questions.map(function (q) {
                 const result = Object.assign(q, {answer_types: [q.answer_type]});
