@@ -540,6 +540,7 @@ class UserRepository
             $user->load('nurseInfo');
         }
 
+        // add ehr-report writer info
         if ($user->hasRole('ehr-report-writer') && ! $user->ehrReportWriterInfo) {
             $ehrReportWriterInfo          = new EhrReportWriterInfo();
             $ehrReportWriterInfo->user_id = $user->id;
