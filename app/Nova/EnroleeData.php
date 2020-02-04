@@ -7,15 +7,17 @@
 namespace App\Nova;
 
 use App\Constants;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Nova\Importers\EnroleeData as EnroleeDataImporter;
+use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 use Jubeki\Nova\Cards\Linkable\LinkableAway;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
-use Sparclex\NovaImportCard\NovaImportCard;
 
 class EnroleeData extends Resource
 {
@@ -80,7 +82,16 @@ class EnroleeData extends Resource
      */
     public function cards(Request $request)
     {
-        $cards = [new NovaImportCard(self::class)];
+        $practices = Practice::whereIn('id', auth()->user()->viewableProgramIds())
+                             ->activeBillable()
+                             ->pluck('display_name', 'id')
+                             ->toArray();
+
+        $cards = [
+            new ClhImportCardExtended(self::class, [
+                Select::make('practice')->options($practices)->withModel(Practice::class),
+            ], 'Patients from CSV'),
+        ];
 
         if ( ! isProductionEnv()) {
             $cards[] = (new LinkableAway())
@@ -104,7 +115,7 @@ class EnroleeData extends Resource
     {
         return [
             BelongsTo::make('Provider', 'provider', User::class)
-                ->sortable(),
+                     ->sortable(),
 
             Text::make('First Name')
                 ->sortable()
@@ -122,9 +133,9 @@ class EnroleeData extends Resource
                 ->updateRules('string'),
 
             Number::make('MRN')
-                ->sortable()
-                ->creationRules('required', 'integer')
-                ->updateRules('integer'),
+                  ->sortable()
+                  ->creationRules('required', 'integer')
+                  ->updateRules('integer'),
 
             Date::make('DOB')
                 ->sortable()
