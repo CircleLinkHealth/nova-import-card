@@ -20,8 +20,8 @@ use Tests\TestCase;
 
 class AutomateCallSchedulingTest extends TestCase
 {
+    use \App\Traits\Tests\UserHelpers;
     use CarePlanHelpers;
-    use UserHelpers;
 
     /** @var SchedulerService $schedulerService */
     protected $schedulerService;

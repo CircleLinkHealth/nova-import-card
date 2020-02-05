@@ -87,7 +87,7 @@
                             return confirm('Are you sure you want to delete this observation?')
                         }
 
-                        function myFunction() {
+                        function checked() {
                             let input, filter, table, tr, td, i;
                             input = document.getElementById("myInput");
                             filter = input.value.toUpperCase();

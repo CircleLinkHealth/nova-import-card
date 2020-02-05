@@ -61,6 +61,9 @@ class CpmEventServiceProvider extends ServiceProvider
         PatientContactWindowUpdatedEvent::class => [
             PatientContactWindowUpdated::class,
         ],
+        'App\Events\CallIsReadyForAttestedProblemsAttachment' => [
+            'App\Listeners\AttachAttestedProblemsToCall',
+        ],
     ];
 
     /**
