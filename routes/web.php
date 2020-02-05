@@ -2268,7 +2268,23 @@ Route::prefix('admin')->group(
     }
 );
 
+Route::get('/notification-unsubscribe', [
+    'uses' => 'NotificationsMailSubscriptionController@unsubscribe',
+    'as'   => 'unsubscribe.notifications.mail',
+])->middleware('signed', 'auth');
+
+Route::post('/update-subscriptions', [
+    'uses' => 'SubscriptionsDashboardController@updateSubscriptions',
+    'as'   => 'update.subscriptions',
+])->middleware('auth');
+
+Route::get('/notification-subscriptions-dashboard', [
+    'uses' => 'SubscriptionsDashboardController@subscriptionsIndex',
+    'as'   => 'subscriptions.notification.mail',
+])->middleware('auth');
+
 Route::post('nurses/nurse-calendar-data', [
     'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
+
