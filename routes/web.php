@@ -2247,6 +2247,8 @@ Route::prefix('admin')->group(
         );
     }
 );
+
+
 // TEMPORARY SIGNED ROUTE
 Route::get('/notification-unsubscribe', [
     'uses' => 'NotificationsMailSubscriptionController@unsubscribe',
