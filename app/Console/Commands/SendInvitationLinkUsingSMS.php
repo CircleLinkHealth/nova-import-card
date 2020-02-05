@@ -21,7 +21,7 @@ class SendInvitationLinkUsingSMS extends Command
      *
      * @var string
      */
-    protected $signature = 'invite:sms {userId} {surveyName} {phoneNumber?} {forYear?} {{--dry-run}}';
+    protected $signature = 'invite:sms {userId} {surveyName} {phoneNumber?} {{--dry-run}}';
 
     /**
      * The console command description.
@@ -80,13 +80,8 @@ class SendInvitationLinkUsingSMS extends Command
             return;
         }
 
-        $forYear = $this->argument('forYear');
-        if ( ! $forYear) {
-            $forYear = Carbon::now()->year;
-        }
-
         try {
-            $url = $service->createAndSaveUrl($user, $surveyName, $forYear, true);
+            $url = $service->createAndSaveUrl($user, $surveyName, true);
         } catch (\Exception $e) {
             $this->error($e->getMessage());
 

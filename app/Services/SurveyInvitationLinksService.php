@@ -26,7 +26,6 @@ class SurveyInvitationLinksService
     public function createAndSaveUrl(
         User $user,
         string $surveyName,
-        string $forYear,
         bool $addUserToSurveyInstance = false
     ) {
         if ( ! $user->patientInfo) {
@@ -39,7 +38,7 @@ class SurveyInvitationLinksService
                 throw new \Exception("user does not belong to a survey instance");
             }
 
-            $ids      = $this->enrolUser($user, $forYear);
+            $ids      = $this->enrolUser($user);
             $surveyId = $ids[$surveyName];
 
         } else {
@@ -127,29 +126,24 @@ class SurveyInvitationLinksService
      * @return array
      * @throws \Exception
      */
-    public function enrolUser(User $user, string $forYear = null)
+    public function enrolUser(User $user)
     {
-
-        if ( ! $forYear) {
-            $forYear = Carbon::now()->year;
-        }
-
         $surveys = Survey
             ::with([
-                'instances' => function ($instance) use ($forYear) {
-                    $instance->forYear($forYear);
+                'instances' => function ($instance) {
+                    $instance->mostRecent();
                 },
             ])
             ->get();
 
         $hraSurvey = $surveys->firstWhere('name', Survey::HRA);
         if ( ! $hraSurvey || $hraSurvey->instances->isEmpty()) {
-            throw new \Exception("There is no HRA survey instance for year $forYear");
+            throw new \Exception("There is no HRA survey instance.");
         }
 
         $vitalsSurvey = $surveys->firstWhere('name', Survey::VITALS);
         if ( ! $vitalsSurvey || $vitalsSurvey->instances->isEmpty()) {
-            throw new \Exception("There is no VITALS survey instance for year $forYear");
+            throw new \Exception("There is no VITALS survey instance.");
         }
 
         if ($user->surveyInstances->where('survey_id', '=', $vitalsSurvey->id)->isEmpty()) {
