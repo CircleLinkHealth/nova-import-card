@@ -43,7 +43,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @property \Illuminate\Support\Carbon|null                                                             $created_at
  * @property \Illuminate\Support\Carbon|null                                                             $updated_at
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioCall newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioCall newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioCall query()
@@ -71,7 +70,6 @@ use CircleLinkHealth\Core\Entities\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioCall whereTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioCall whereUpdatedAt($value)
  * @mixin \Eloquent
- *
  * @property int|null $revision_history_count
  */
 class TwilioCall extends BaseModel
