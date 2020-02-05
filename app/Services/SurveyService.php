@@ -39,7 +39,7 @@ class SurveyService
                 },
                 'answers'         => function ($answer) use ($surveyId) {
                     $answer->whereHas('surveyInstance', function ($instance) use ($surveyId) {
-                        $instance->where('survey_id', $surveyId)
+                        $instance->where('survey_instances.survey_id', $surveyId)
                                  ->mostRecent();
                     });
                 },

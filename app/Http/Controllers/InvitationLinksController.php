@@ -87,22 +87,18 @@ class InvitationLinksController extends Controller
 
     public function enrollUser(Request $request, $userId)
     {
-
         try {
-
-            $forYear = Carbon::now()->year;
-
             $user = User
                 ::with([
                     'patientInfo',
-                    'surveyInstances' => function ($query) use ($forYear) {
-                        $query->forYear($forYear);
+                    'surveyInstances' => function ($query) {
+                        $query->mostRecent();
                     },
                 ])
                 ->where('id', '=', $userId)
                 ->firstOrFail();
 
-            $this->service->enrolUser($user, $forYear);
+            $this->service->enrolUser($user);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
@@ -137,22 +133,20 @@ class InvitationLinksController extends Controller
         $channel        = $request->get('channel');
         $channelValue   = $request->get('channel_value');
 
-        $forYear = Carbon::now()->year;
-
         $user = User
             ::with([
                 'phoneNumbers',
                 'patientInfo',
                 'primaryPractice',
                 'billingProvider',
-                'surveyInstances' => function ($query) use ($surveyName, $forYear) {
-                    $query->ofSurvey($surveyName)->forYear($forYear);
+                'surveyInstances' => function ($query) use ($surveyName) {
+                    $query->ofSurvey($surveyName)->mostRecent();
                 },
             ])
             ->where('id', '=', $target_user_id)
             ->firstOrFail();
 
-        $url = $this->service->createAndSaveUrl($user, $surveyName, $forYear, true);
+        $url = $this->service->createAndSaveUrl($user, $surveyName, true);
 
         /** @var User $targetNotifiable */
         $targetNotifiable = null;
@@ -173,11 +167,19 @@ class InvitationLinksController extends Controller
 
         //in case notifiable user is not the patient
         if ( ! $targetNotifiable->is($user)) {
-            $practiceName     = $user->primaryPractice->display_name;
-            $providerFullName = $user->billingProviderUser()->getFullName();
+            $practiceName     = optional($user->primaryPractice)->display_name;
+            $providerFullName = optional($user->billingProviderUser())->getFullName();
         } else {
-            $practiceName     = $targetNotifiable->primaryPractice->display_name;
-            $providerFullName = $targetNotifiable->billingProviderUser()->getFullName();
+            $practiceName     = optional($targetNotifiable->primaryPractice)->display_name;
+            $providerFullName = optional($targetNotifiable->billingProviderUser())->getFullName();
+        }
+
+        if (!$practiceName) {
+            $practiceName = "your physician's office";
+        }
+
+        if (!$providerFullName) {
+            $providerFullName = "provider";
         }
 
         (new NotifiableUser($targetNotifiable, $channel === 'mail'
