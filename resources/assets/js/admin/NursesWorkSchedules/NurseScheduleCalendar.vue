@@ -1017,9 +1017,9 @@
     }
 
     #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-unselectable > div > div.fc-content-skeleton {
-        min-height: 100px;
-        overflow-y: scroll;
-        max-height: 670px;
+        /*min-height: 100px;*/
+        /*overflow-y: scroll;*/
+        /*max-height: 670px;*/
     }
 
     #calendar > div.fc-view-container {
