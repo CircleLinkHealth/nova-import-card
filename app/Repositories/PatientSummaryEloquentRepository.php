@@ -157,7 +157,7 @@ class PatientSummaryEloquentRepository
 
         if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
             $class = PatientMonthlySummary::class;
-            Cache::forget("${class}:{$summary->id}:chargeableServices");
+            Cache::tags(['practice.chargeable.services'])->forget("${class}:{$summary->id}:chargeableServices");
             $summary->load('chargeableServices');
         }
 
@@ -168,13 +168,13 @@ class PatientSummaryEloquentRepository
     {
         $patient = $summary->patient;
 
-        if ($this->shouldNotTouch($summary)) {
+        if ($this->shouldNotTouch($summary) && $summary->chargeableServices->isNotEmpty()) {
             return $summary;
         }
 
         $class = Practice::class;
 
-        $chargeableServices = Cache::remember(
+        $chargeableServices = Cache::tags(['practice.chargeable.services'])->remember(
             "${class}:{$patient->primaryPractice->id}:chargeableServices",
             2,
             function () use ($patient) {
