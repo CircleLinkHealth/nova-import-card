@@ -45,6 +45,10 @@ class ImportService
 
         if (array_key_exists('problems', $row) & ! array_key_exists('problems_string', $row)) {
             $row['problems_string'] = $row['problems'];
+            unset($row['problems']);
+            if (is_array($row['problems_string'])) {
+                $row['problems_string'] = json_encode($row['problems_string']);
+            }
         }
 
         if (array_key_exists('referring_provider_name', $row) & ! array_key_exists('provider_name', $row)) {
