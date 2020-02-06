@@ -119,6 +119,9 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
 
         $this->ccda->referring_provider_name = $providerFullName;
         $this->ccda->practice_id             = $this->practice->id;
+        
+        $patient['medical_record_type'] = Ccda::class;
+        $patient['medical_record_id'] = $this->ccda->id;
 
         return $this->createEligibilityJob($patient);
     }
