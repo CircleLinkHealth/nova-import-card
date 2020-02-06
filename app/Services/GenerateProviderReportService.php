@@ -5,42 +5,19 @@ namespace App\Services;
 
 
 use App\Answer;
+use App\HraQuestionIdentifier;
 use App\Survey;
 use App\User;
+use App\VitalsQuestionIdentifier;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class GenerateProviderReportService
+class GenerateProviderReportService extends GenerateReportService
 {
-    protected $patient;
-
-    protected $hraInstance;
-
-    protected $vitalsInstance;
-
-    protected $hraAnswers;
-
-    protected $vitalsAnswers;
-
-    protected $hraQuestions;
-
-    protected $vitalsQuestions;
-
 
     public function __construct(User $patient)
     {
-        //patient contains survey data and existing provider reports
-        $this->patient = $patient;
-
-        $this->hraInstance    = $this->patient->surveyInstances->where('survey.name', Survey::HRA)->first();
-        $this->vitalsInstance = $this->patient->surveyInstances->where('survey.name', Survey::VITALS)->first();
-
-        $this->hraQuestions    = $this->hraInstance->questions;
-        $this->vitalsQuestions = $this->vitalsInstance->questions;
-
-        $this->hraAnswers    = $patient->answers->where('survey_instance_id', $this->hraInstance->id);
-        $this->vitalsAnswers = $patient->answers->where('survey_instance_id', $this->vitalsInstance->id);
-
+        parent::__construct($patient);
     }
 
     /**
@@ -94,37 +71,27 @@ class GenerateProviderReportService
 
     }
 
-
     private function getDemographicData()
     {
         $demographicData = [];
 
-        $demographicData['age'] = $this->answerForHraQuestionWithOrder(2);
+        $demographicData['age'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::AGE);
 
-        $demographicData['gender'] = $this->answerForHraQuestionWithOrder(4);
+        $demographicData['gender'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SEX);
 
-        $demographicData['race'] = $this->answerForHraQuestionWithOrder(1, 'a');
+        $demographicData['race'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::RACE);
 
-        $demographicData['ethnicity'] = $this->answerForHraQuestionWithOrder(1, 'b');
+        $demographicData['ethnicity'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::ETHNICITY);
 
-        $demographicData['health'] = $this->answerForHraQuestionWithOrder(5);
+        $demographicData['health'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::RATE_HEALTH);
 
         return $demographicData;
 
     }
 
-    private function answerForHraQuestionWithOrder($order, $subOrder = null, $default = [])
-    {
-        $question = $this->hraQuestions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
-
-        $answer = $this->hraAnswers->where('question_id', $question->id)->first();
-
-        return $this->sanitizedValue($answer, $default);
-    }
-
     private function getAllergyHistory()
     {
-        return $this->answerForHraQuestionWithOrder(21);
+        return $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::ALLERGIES);
     }
 
     private function getMedicalHistory()
@@ -132,36 +99,36 @@ class GenerateProviderReportService
 
         $medicalHistory = [];
 
-        $medicalHistory['conditions'] = $this->answerForHraQuestionWithOrder(16);
+        $medicalHistory['conditions'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::CONDITIONS);
 
-        $medicalHistory['other_conditions'] = $this->answerForHraQuestionWithOrder(17);
+        $medicalHistory['other_conditions'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::CONDITIONS_EXTRA);
 
         return $medicalHistory;
     }
 
     private function getMedicationHistory()
     {
-        return $this->answerForHraQuestionWithOrder(20);
+        return $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::MEDICATION);
     }
 
     private function getFamilyMedicalHistory()
     {
-        return $this->answerForHraQuestionWithOrder(18, 'a');
+        return $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::CONDITIONS_FAMILY_WHO);
     }
 
     private function getImmunizationHistory()
     {
         $immunizationHistory = [];
 
-        $immunizationHistory['Influenza']                = $this->answerForHraQuestionWithOrder(26);
-        $immunizationHistory['Diphtheria/Tetanus']       = $this->answerForHraQuestionWithOrder(27);
-        $immunizationHistory['TDaP Booster']             = $this->answerForHraQuestionWithOrder(28);
-        $immunizationHistory['Varicella']                = $this->answerForHraQuestionWithOrder(29);
-        $immunizationHistory['Hepatitis B']              = $this->answerForHraQuestionWithOrder(30);
-        $immunizationHistory['MMR']                      = $this->answerForHraQuestionWithOrder(31);
-        $immunizationHistory['HPV']                      = $this->answerForHraQuestionWithOrder(32);
-        $immunizationHistory['Shingles (herpes zoster)'] = $this->answerForHraQuestionWithOrder(33);
-        $immunizationHistory['Pneumococcal']             = $this->answerForHraQuestionWithOrder(34);
+        $immunizationHistory['Influenza']                = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FLU_SHOT);
+        $immunizationHistory['Diphtheria/Tetanus']       = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::TETANUS_VACCINATION);
+        $immunizationHistory['TDaP Booster']             = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::TDAP_VACCINATION);
+        $immunizationHistory['Varicella']                = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::VARICELLA_VACCINATION);
+        $immunizationHistory['Hepatitis B']              = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::HEPATITIS_B_VACCINATION);
+        $immunizationHistory['MMR']                      = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::MEASLES_VACCINATION);
+        $immunizationHistory['HPV']                      = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::PAPILLOMAVIRUS_VACCINATION);
+        $immunizationHistory['Shingles (herpes zoster)'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::RZV_ZVL);
+        $immunizationHistory['Pneumococcal']             = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::PCV13_PPSV23);
 
         return $immunizationHistory;
     }
@@ -170,14 +137,14 @@ class GenerateProviderReportService
     {
         $screenings = [];
 
-        $screenings['breast_cancer']     = $this->answerForHraQuestionWithOrder(35);
-        $screenings['cervical_cancer']   = $this->answerForHraQuestionWithOrder(36);
-        $screenings['colorectal_cancer'] = $this->answerForHraQuestionWithOrder(37);
-        $screenings['skin_cancer']       = $this->answerForHraQuestionWithOrder(38);
-        $screenings['prostate_cancer']   = $this->answerForHraQuestionWithOrder(39);
-        $screenings['glaucoma']          = $this->answerForHraQuestionWithOrder(40);
-        $screenings['osteoporosis']      = $this->answerForHraQuestionWithOrder(41);
-        $screenings['violence']          = $this->answerForHraQuestionWithOrder(42);
+        $screenings['breast_cancer']     = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::MAMMOGRAM);
+        $screenings['cervical_cancer']   = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::PAP_SMEAR);
+        $screenings['colorectal_cancer'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::COLORECTAR_CANCER);
+        $screenings['skin_cancer']       = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SKIN_CANCER);
+        $screenings['prostate_cancer']   = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::PROSTATE_CANCER);
+        $screenings['glaucoma']          = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::GLAUCOMA);
+        $screenings['osteoporosis']      = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::OSTEOPOROSIS);
+        $screenings['violence']          = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::INTIMATE_PARTNER_VIOLENCE);
 
         return $screenings;
     }
@@ -188,8 +155,8 @@ class GenerateProviderReportService
      */
     private function getMentalState()
     {
-        $answer1 = $this->answerForHraQuestionWithOrder(22, '1');
-        $answer2 = $this->answerForHraQuestionWithOrder(22, '2');
+        $answer1 = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::INTEREST_DOING_THINGS);
+        $answer2 = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::DEPRESSED);
 
         $depressionScoresArray = ProviderReportService::depressionScoreArray();
 
@@ -206,50 +173,16 @@ class GenerateProviderReportService
 
         $vitals = [];
 
-        $vitals['blood_pressure'] = $this->answerForVitalsQuestionWithOrder(1);
+        $vitals['blood_pressure'] = $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::BLOOD_PRESSURE);
 
-        $vitals['weight'] = $this->answerForVitalsQuestionWithOrder(2);
+        $vitals['weight'] = $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::WEIGHT);
 
-        $vitals['height'] = $this->answerForVitalsQuestionWithOrder(3);
+        $vitals['height'] = $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::HEIGHT);
 
-        $vitals['bmi'] = $this->answerForVitalsQuestionWithOrder(4);
+        $vitals['bmi'] = $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::BMI);
 
         return $vitals;
 
-    }
-
-    private function answerForVitalsQuestionWithOrder($order, $subOrder = null)
-    {
-        $question = $this->vitalsQuestions->where('pivot.order', $order)->where('pivot.sub_order', $subOrder)->first();
-
-        $answer = $this->vitalsAnswers->where('question_id', $question->id)->first();
-
-        return $this->sanitizedValue($answer);
-    }
-
-    /**
-     * @param Answer $answer
-     *
-     * @param array $default
-     *
-     * @return array|mixed
-     */
-    public static function sanitizedValue(Answer $answer = null, $default = [])
-    {
-        if ( ! $answer) {
-            return $default;
-        }
-
-        $value = array_key_exists('value', $answer->value)
-            ? $answer->value['value']
-            : $answer->value;
-
-        //sometimes we have arrays of 1 element which has [name=>null]
-        if (is_array($value)) {
-            return ProviderReportService::getArrayValue($value);
-        }
-
-        return $value;
     }
 
     private function getDiet()
@@ -257,15 +190,15 @@ class GenerateProviderReportService
 
         $diet = [];
 
-        $diet['fruits_vegetables'] = $this->answerForHraQuestionWithOrder(6);
+        $diet['fruits_vegetables'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FRUIT);
 
-        $diet['grain_fiber'] = $this->answerForHraQuestionWithOrder(7);
+        $diet['grain_fiber'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FIBER);
 
-        $diet['fried_fatty'] = $this->answerForHraQuestionWithOrder(8);
+        $diet['fried_fatty'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FATTY_FOOD);
 
-        $diet['sugary_beverages'] = $this->answerForHraQuestionWithOrder(9);
+        $diet['sugary_beverages'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SUGAR);
 
-        $diet['change_in_diet'] = $this->answerForHraQuestionWithOrder(10);
+        $diet['change_in_diet'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::APPETITE);
 
         return $diet;
     }
@@ -274,16 +207,16 @@ class GenerateProviderReportService
     {
         $socialFactors = [];
 
-        $socialFactors['tobacco']['has_used']             = $this->answerForHraQuestionWithOrder(11);
-        $socialFactors['tobacco']['last_smoked']          = strtolower($this->answerForHraQuestionWithOrder(11, 'b', ''));
-        $socialFactors['tobacco']['amount']               = $this->answerForHraQuestionWithOrder(11, 'c');
-        $socialFactors['tobacco']['interest_in_quitting'] = $this->answerForHraQuestionWithOrder(11, 'd');
+        $socialFactors['tobacco']['has_used']             = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::TOBACCO);
+        $socialFactors['tobacco']['last_smoked']          = strtolower($this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::TOBACCO_LAST_TIME, ''));
+        $socialFactors['tobacco']['amount']               = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::TOBACCO_PACKS);
+        $socialFactors['tobacco']['interest_in_quitting'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::TOBACCO_QUIT);
 
-        $socialFactors['alcohol']['drinks'] = $this->answerForHraQuestionWithOrder(12);
-        $socialFactors['alcohol']['amount'] = $this->answerForHraQuestionWithOrder(12, 'a');
+        $socialFactors['alcohol']['drinks'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::ALCOHOL);
+        $socialFactors['alcohol']['amount'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::ALCOHOL_CONSUMPTION);
 
-        $socialFactors['recreational_drugs']['has_used']     = $this->answerForHraQuestionWithOrder(13);
-        $socialFactors['recreational_drugs']['type_of_drug'] = $this->answerForHraQuestionWithOrder(13, 'a');
+        $socialFactors['recreational_drugs']['has_used']     = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::RECREATIONAL_DRUGS);
+        $socialFactors['recreational_drugs']['type_of_drug'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::RECREATIONAL_DRUGS_WHICH);
 
         return $socialFactors;
 
@@ -293,9 +226,9 @@ class GenerateProviderReportService
     {
         $sexualActivity = [];
 
-        $sexualActivity['active']            = $this->answerForHraQuestionWithOrder(15);
-        $sexualActivity['multiple_partners'] = $this->answerForHraQuestionWithOrder(15, 'a');
-        $sexualActivity['safe_sex']          = $this->answerForHraQuestionWithOrder(15, 'b');
+        $sexualActivity['active']            = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SEXUALLY_ACTIVE);
+        $sexualActivity['multiple_partners'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SEXUALLY_ACTIVE_PARTNERS);
+        $sexualActivity['safe_sex']          = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SEXUALLY_ACTIVE_SAFE);
 
         return $sexualActivity;
     }
@@ -303,7 +236,7 @@ class GenerateProviderReportService
     private function getExerciseActivityLevels()
     {
         $exerciseActivityLevels          = [];
-        $val                             = $this->answerForHraQuestionWithOrder(14);
+        $val                             = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::EXERCISE);
         $exerciseActivityLevels['value'] = lcfirst($val);
 
         return $exerciseActivityLevels;
@@ -313,22 +246,22 @@ class GenerateProviderReportService
     {
         $functionalCapacity = [];
 
-        $functionalCapacity['needs_help_for_tasks'] = $this->answerForHraQuestionWithOrder(23);
-        $functionalCapacity['have_assistance']      = $this->answerForHraQuestionWithOrder(23, 'a');
+        $functionalCapacity['needs_help_for_tasks'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::DIFFICULTIES);
+        $functionalCapacity['have_assistance']      = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::DIFFICULTIES_ASSISTANCE);
 
-        $functionalCapacity['mci_cognitive']['word_recall'] = $this->answerForVitalsQuestionWithOrder(5, 'a');
-        $functionalCapacity['mci_cognitive']['clock']       = $this->answerForVitalsQuestionWithOrder(5, 'b');
-        $functionalCapacity['mci_cognitive']['total']       = $this->answerForVitalsQuestionWithOrder(5, 'c');
+        $functionalCapacity['mci_cognitive']['word_recall'] = $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::WORD_RECALL);
+        $functionalCapacity['mci_cognitive']['clock']       = $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::CLOCK_DRAW);
+        $functionalCapacity['mci_cognitive']['total']       = $this->answerForVitalsQuestionWithIdentifier(VitalsQuestionIdentifier::TOTAL_SCORE);
 
-        $functionalCapacity['has_fallen']         = $this->answerForHraQuestionWithOrder(24);
-        $functionalCapacity['hearing_difficulty'] = $this->answerForHraQuestionWithOrder(25);
+        $functionalCapacity['has_fallen']         = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::FALL_INCIDENT);
+        $functionalCapacity['hearing_difficulty'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::HEARING);
 
         return $functionalCapacity;
     }
 
     private function getCurrentProviders()
     {
-        return $this->answerForHraQuestionWithOrder(43);
+        return $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::PHYSICIANS);
     }
 
     private function getAdvancedCarePlanning()
@@ -336,15 +269,15 @@ class GenerateProviderReportService
 
         $advancedCarePlanning = [];
 
-        $advancedCarePlanning['has_attorney']  = $this->answerForHraQuestionWithOrder(44);
-        $advancedCarePlanning['living_will']   = $this->answerForHraQuestionWithOrder(45);
-        $advancedCarePlanning['existing_copy'] = $this->answerForHraQuestionWithOrder(45, 'a');
+        $advancedCarePlanning['has_attorney']  = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::MEDICAL_ATTORNEY);
+        $advancedCarePlanning['living_will']   = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::LIVING_WILL);
+        $advancedCarePlanning['existing_copy'] = $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::LIVING_WILL_AT_DOCTOR);
 
         return $advancedCarePlanning;
     }
 
     private function getSpecificPatientRequests()
     {
-        return $this->answerForHraQuestionWithOrder(46);
+        return $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::COMMENTS);
     }
 }

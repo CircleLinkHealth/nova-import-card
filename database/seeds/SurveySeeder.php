@@ -2,9 +2,11 @@
 
 use App\Question;
 use App\QuestionGroup;
+use App\HraQuestionIdentifier;
 use App\QuestionType;
 use App\Survey;
 use App\SurveyInstance;
+use App\VitalsQuestionIdentifier;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
@@ -122,6 +124,7 @@ class SurveySeeder extends Seeder
     {
         return collect([
             [
+                'identifier'            => VitalsQuestionIdentifier::BLOOD_PRESSURE,
                 'order'                 => 1,
                 'question_body'         => "What is the patient's blood pressure?",
                 'question_type'         => QuestionType::NUMBER,
@@ -142,6 +145,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => VitalsQuestionIdentifier::WEIGHT,
                 'order'                 => 2,
                 'question_body'         => "What is the patient's weight?",
                 'question_type'         => QuestionType::NUMBER,
@@ -154,6 +158,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => VitalsQuestionIdentifier::HEIGHT,
                 'order'                 => 3,
                 'question_body'         => "What is the patient's height?",
                 'question_type'         => QuestionType::NUMBER,
@@ -177,6 +182,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => VitalsQuestionIdentifier::BMI,
                 'order'         => 4,
                 'question_body' => "What is the patient's body mass index (BMI)?",
                 'question_type' => QuestionType::NUMBER,
@@ -196,6 +202,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => VitalsQuestionIdentifier::WORD_RECALL,
                 'order'                 => 5,
                 'sub_order'             => 'a',
                 'question_body'         => 'Word Recall (1 point for each word spontaneously recalled without cueing)',
@@ -217,6 +224,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => VitalsQuestionIdentifier::CLOCK_DRAW,
                 'order'                 => 5,
                 'sub_order'             => 'b',
                 'question_body'         => 'Clock Draw (Normal clock = 2 points. A normal clock has all numbers placed in the cor-rect sequence and approximately correct position (e.g., 12, 3, 6 and 9 are in anchor positions) with no missing or duplicate numbers. Hands are point-ing to the 11 and 2 (11:10). Hand length is not scored.Inability or refusal to draw a clock (abnormal) = 0 points.)',
@@ -232,6 +240,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => VitalsQuestionIdentifier::TOTAL_SCORE,
                 'order'                 => 5,
                 'sub_order'             => 'c',
                 'question_body'         => 'Total Score (Total score = Word Recall score + Clock Draw score)',
@@ -279,6 +288,7 @@ class SurveySeeder extends Seeder
         return collect([
 
             [
+                'identifier'            => HraQuestionIdentifier::RACE,
                 'order'                 => 1,
                 'sub_order'             => 'a',
                 'question_group'        => 'What is your race and ethnicity?',
@@ -295,6 +305,7 @@ class SurveySeeder extends Seeder
             ],
 
             [
+                'identifier'            => HraQuestionIdentifier::ETHNICITY,
                 'order'                 => 1,
                 'sub_order'             => 'b',
                 'question_group'        => 'What is your race and ethnicity?',
@@ -317,11 +328,13 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::AGE,
                 'order'         => 2,
                 'question_body' => 'What is your age?',
                 'question_type' => QuestionType::NUMBER,
             ],
             [
+                'identifier'            => HraQuestionIdentifier::HEIGHT,
                 'order'                 => 3,
                 'question_body'         => 'What is your height?',
                 'question_type'         => QuestionType::NUMBER,
@@ -345,6 +358,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::SEX,
                 'order'                 => 4,
                 'question_body'         => 'What is your sex?',
                 'question_type'         => QuestionType::RADIO,
@@ -364,6 +378,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::RATE_HEALTH,
                 'order'                 => 5,
                 'question_body'         => 'In general, how would you rate your health?',
                 'question_type'         => QuestionType::RADIO,
@@ -386,6 +401,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::FRUIT,
                 'order'                 => 6,
                 'question_body'         => 'In the past 7 days, how many servings of fruits and vegetables did you typically eat each day? (1 serving = 1 cup of fresh vegetables, 1/2 cup of cooked vegetables, or 1 medium piece of fruit. 1 cup = size of a baseball).',
                 'question_type'         => QuestionType::RADIO,
@@ -405,6 +421,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::FIBER,
                 'order'                 => 7,
                 'question_body'         => 'In the past 7 days, how many servings of high fiber or whole grain foods did you typically eat each day? (1 serving = 1 slice of 100% of whole wheat bread, 1 cup of whole-grain or high fiber ready to eat cereal, 1/2 cup of cooked cereal such as oatmeal, or 1/2 cup of cooked brown rice or whole wheat pasta).',
                 'question_type'         => QuestionType::RADIO,
@@ -424,6 +441,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::FATTY_FOOD,
                 'order'                 => 8,
                 'question_body'         => 'In the past 7 days, how many servings of fried or high-fat foods did you typically eat each day? (Examples include fried chicken, fried fish, bacon, French fries, potato chips, corn chips, doughnuts, creamy salad dressings, and foods made with whole milk, cream, cheese, or mayonnaise).',
                 'question_type'         => QuestionType::RADIO,
@@ -443,6 +461,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::SUGAR,
                 'order'                 => 9,
                 'question_body'         => 'In the past 7 days, how many sugar-sweetened (not diet) beverages and candy servings did you typically consume each day?',
                 'question_type'         => QuestionType::RADIO,
@@ -462,6 +481,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::APPETITE,
                 'order'                 => 10,
                 'question_body'         => 'In the past 2 weeks, have you experienced a change in the amount you normally eat, either poor appetite or overeating?',
                 'question_type'         => QuestionType::RADIO,
@@ -482,6 +502,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::TOBACCO,
                 'order'                 => 11,
                 'question_body'         => 'Do or did you ever smoke or use any tobacco products (cigarettes, chew, snuff, pipes, cigars, vapor/e-cigarettes)?',
                 'question_type'         => QuestionType::RADIO,
@@ -501,6 +522,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::TOBACCO_YEARS,
                 'order'                 => 11,
                 'sub_order'             => 'a',
                 'question_body'         => 'How many years ago did you start smoking?',
@@ -526,6 +548,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::TOBACCO_LAST_TIME,
                 'order'                 => 11,
                 'sub_order'             => 'b',
                 'question_body'         => 'When was the last time you smoked or used any tobacco products?',
@@ -551,6 +574,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::TOBACCO_PACKS,
                 'order'                 => 11,
                 'sub_order'             => 'c',
                 'question_body'         => 'On average, how many packs/day do or did you smoke?',
@@ -582,6 +606,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::TOBACCO_QUIT,
                 'order'                 => 11,
                 'sub_order'             => 'd',
                 'question_body'         => 'Are you interested in quitting?',
@@ -609,6 +634,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::ALCOHOL,
                 'order'                 => 12,
                 'question_body'         => 'Do you drink alcohol?',
                 'question_type'         => QuestionType::RADIO,
@@ -625,6 +651,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::ALCOHOL_CONSUMPTION,
                 'order'                 => 12,
                 'sub_order'             => 'a',
                 'question_body'         => 'On average, how many alcoholic beverages do you consume per week? (One standard drink is defined as 12.0 oz of beer, 5.0 oz of wine, or 1.5 oz of liquor)',
@@ -655,6 +682,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::RECREATIONAL_DRUGS,
                 'order'                 => 13,
                 'question_body'         => 'Have you used recreational drugs in the past year?',
                 'question_type'         => QuestionType::RADIO,
@@ -674,6 +702,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::RECREATIONAL_DRUGS_WHICH,
                 'order'                 => 13,
                 'sub_order'             => 'a',
                 'question_body'         => 'Which recreational drugs, and how often?',
@@ -708,6 +737,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::EXERCISE,
                 'order'                 => 14,
                 'question_body'         => 'How often do you exercise?',
                 'question_type'         => QuestionType::RADIO,
@@ -727,6 +757,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::SEXUALLY_ACTIVE,
                 'order'                 => 15,
                 'question_body'         => 'Are you sexually active?',
                 'question_type'         => QuestionType::RADIO,
@@ -746,6 +777,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::SEXUALLY_ACTIVE_PARTNERS,
                 'order'                 => 15,
                 'sub_order'             => 'a',
                 'question_body'         => 'Do you have multiple sexual partners',
@@ -773,6 +805,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::SEXUALLY_ACTIVE_SAFE,
                 'order'                 => 15,
                 'sub_order'             => 'b',
                 'question_body'         => 'Do you practice safe sex by using condoms or dental dams?',
@@ -797,6 +830,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::CONDITIONS,
                 'order'                 => 16,
                 'question_body'         => 'Please check/uncheck if you have ever had the following conditions:',
                 'question_type'         => QuestionType::CHECKBOX,
@@ -916,6 +950,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::CONDITIONS_EXTRA,
                 'order'                 => 17,
                 'question_body'         => 'If you have any medical problems or serious injuries that were not listed above, please describe them here',
                 'question_type'         => QuestionType::TEXT,
@@ -932,6 +967,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::CONDITIONS_FAMILY,
                 'order'                 => 18,
                 'question_body'         => 'Please check to indicate if you have ever had any of the following conditions in your family?',
                 'question_type'         => QuestionType::CHECKBOX,
@@ -985,6 +1021,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::CONDITIONS_FAMILY_WHO,
                 'order'                 => 18,
                 'sub_order'             => 'a',
                 'question_body'         => 'Who in your family has had:',
@@ -1021,6 +1058,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::SURGERIES,
                 'order'                 => 19,
                 'optional'              => true,
                 'question_body'         => 'Please list any surgeries/hospital stays you have had and their approximate date/year:',
@@ -1053,6 +1091,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::MEDICATION,
                 'order'                 => 20,
                 'optional'              => true,
                 'question_body'         => 'If you are taking any medications regularly, please list them here, including over-the-counter pharmaceuticals:',
@@ -1085,6 +1124,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::ALLERGIES,
                 'order'                 => 21,
                 'optional'              => true,
                 'question_body'         => 'Please list any allergies or reactions:',
@@ -1103,6 +1143,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::INTEREST_DOING_THINGS,
                 'order'                 => 22,
                 'sub_order'             => '1',
                 'question_body'         => 'Little interest or pleasure in doing things',
@@ -1124,6 +1165,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::DEPRESSED,
                 'order'                 => 22,
                 'sub_order'             => '2',
                 'question_body'         => 'Feeling down, depressed or hopeless',
@@ -1145,6 +1187,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::DIFFICULTIES,
                 'order'                 => 23,
                 'question_body'         => 'Please check to indicate if you have ever had difficulty/needed help performing any of the following tasks:',
                 'question_type'         => QuestionType::CHECKBOX,
@@ -1183,6 +1226,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::DIFFICULTIES_ASSISTANCE,
                 'order'                 => 23,
                 'sub_order'             => 'a',
                 'question_body'         => 'If you answered yes to any of the above, do you have someone who can assist you?',
@@ -1210,6 +1254,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::FALL_INCIDENT,
                 'order'                 => 24,
                 'question_body'         => 'Have you fallen in the past 6 months? (a fall is when the body goes to the ground without being pushed)',
                 'question_type'         => QuestionType::RADIO,
@@ -1229,6 +1274,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::HEARING,
                 'order'                 => 25,
                 'question_body'         => 'Do you have difficulty with your hearing?',
                 'question_type'         => QuestionType::RADIO,
@@ -1245,6 +1291,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::FLU_SHOT,
                 'order'                 => 26,
                 'question_body'         => 'Have you had a flu shot this year or do you have serious plans to get one this year?',
                 'question_type'         => QuestionType::RADIO,
@@ -1264,6 +1311,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::TDAP_VACCINATION,
                 'order'                 => 27,
                 'question_body'         => 'Have you received a Tdap Vaccination (for Tetanus, Diphtheria, and Pertussis)?',
                 'question_type'         => QuestionType::RADIO,
@@ -1280,6 +1328,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::TETANUS_VACCINATION,
                 'order'                 => 28,
                 'question_body'         => 'Have you received a Tetanus Diphtheria/Td BOOSTER (separate from Tdap vaccine) in the past 10 years?',
                 'question_type'         => QuestionType::RADIO,
@@ -1296,6 +1345,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::VARICELLA_VACCINATION,
                 'order'                 => 29,
                 'question_body'         => 'Have you received a Varicella vaccination (for Chickenpox)?',
                 'question_type'         => QuestionType::RADIO,
@@ -1312,6 +1362,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::HEPATITIS_B_VACCINATION,
                 'order'                 => 30,
                 'question_body'         => 'Have you received a Hepatitis B Vaccination?',
                 'question_type'         => QuestionType::RADIO,
@@ -1328,6 +1379,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::MEASLES_VACCINATION,
                 'order'                 => 31,
                 'question_body'         => 'Have you received 2 doses of Measles Mumps Rubella (MMR) Vaccination?',
                 'question_type'         => QuestionType::RADIO,
@@ -1344,14 +1396,15 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'order' => 32,
-                'question_body' => 'Have you received 2 doses of Human Papillomavirus (HPV) Vaccination before age 15 OR 3 doses between ages 15 and 26?',
-                'question_type' => QuestionType::RADIO,
-                'conditions' => [
+                'identifier'            => HraQuestionIdentifier::PAPILLOMAVIRUS_VACCINATION,
+                'order'                 => 32,
+                'question_body'         => 'Have you received 2 doses of Human Papillomavirus (HPV) Vaccination before age 15 OR 3 doses between ages 15 and 26?',
+                'question_type'         => QuestionType::RADIO,
+                'conditions'            => [
                     [
-                        'operator' => 'greater_or_equal_than',
-                        'related_question_order_number' => 2,
-                        'related_question_expected_answer' => 26
+                        'operator'                         => 'greater_or_equal_than',
+                        'related_question_order_number'    => 2,
+                        'related_question_expected_answer' => 26,
                     ],
                 ],
                 'question_type_answers' => [
@@ -1367,6 +1420,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::RZV_ZVL,
                 'order'                 => 33,
                 'question_body'         => 'Have you received 2 doses of RZV OR 1 dose of ZVL (for Shingles/Herpes zoster)?',
                 'question_type'         => QuestionType::RADIO,
@@ -1383,6 +1437,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::PCV13_PPSV23,
                 'order'                 => 34,
                 'question_body'         => 'Have you received 1 dose of PCV13 and at least 1 dose of PPSV23 (for Pneumococccal Infection (Pneumonia, blood infection, sinus, meningitis))?',
                 'question_type'         => QuestionType::RADIO,
@@ -1399,6 +1454,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::MAMMOGRAM,
                 'order'                 => 35,
                 'question_body'         => 'When was the last time you had a Breast Cancer Screening (Mammogram)?',
                 'question_type'         => QuestionType::RADIO,
@@ -1435,6 +1491,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::PAP_SMEAR,
                 'order'                 => 36,
                 'question_body'         => 'When was the last time you had a Cervical cancer Screening (Pap Smear)?',
                 'question_type'         => QuestionType::RADIO,
@@ -1471,6 +1528,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::COLORECTAR_CANCER,
                 'order'                 => 37,
                 'question_body'         => 'When was the last time you had a Colorectal Cancer Screening (e.g. Fecal Occult Blood Test (FOBT), Fecal Immunochemistry Testing (FIT), Sigmoidoscopy, Colonoscopy)?',
                 'question_type'         => QuestionType::RADIO,
@@ -1493,6 +1551,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::SKIN_CANCER,
                 'order'                 => 38,
                 'question_body'         => 'When was the last time you had a Skin Cancer Screening?',
                 'question_type'         => QuestionType::RADIO,
@@ -1515,6 +1574,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::PROSTATE_CANCER,
                 'order'                 => 39,
                 'question_body'         => 'When was the last time you had a Prostate Cancer Screening (Prostate specific antigen (PSA))?',
                 'question_type'         => QuestionType::RADIO,
@@ -1551,6 +1611,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::GLAUCOMA,
                 'order'                 => 40,
                 'question_body'         => 'When was the last time you had a Glaucoma Screening?',
                 'question_type'         => QuestionType::RADIO,
@@ -1573,6 +1634,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::OSTEOPOROSIS,
                 'order'                 => 41,
                 'question_body'         => 'When was the last time you had a Osteoporosis Screening (Bone Density Test)?',
                 'question_type'         => QuestionType::RADIO,
@@ -1595,14 +1657,15 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'order' => 42,
-                'question_body' => 'When was the last time you had an Intimate Partner Violence/Domestic Violence Screening?',
-                'question_type' => QuestionType::RADIO,
-                'conditions' => [
+                'identifier'            => HraQuestionIdentifier::INTIMATE_PARTNER_VIOLENCE,
+                'order'                 => 42,
+                'question_body'         => 'When was the last time you had an Intimate Partner Violence/Domestic Violence Screening?',
+                'question_type'         => QuestionType::RADIO,
+                'conditions'            => [
                     [
-                        'operator' => 'greater_or_equal_than',
-                        'related_question_order_number' => 2,
-                        'related_question_expected_answer' => 44
+                        'operator'                         => 'greater_or_equal_than',
+                        'related_question_order_number'    => 2,
+                        'related_question_expected_answer' => 44,
                     ],
                 ],
                 'question_type_answers' => [
@@ -1624,6 +1687,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::PHYSICIANS,
                 'order'                 => 43,
                 'question_body'         => 'List the Physicians and Specialists you currently see. Please list the names, locations and phone numbers as best as you can.',
                 'question_type'         => QuestionType::TEXT,
@@ -1660,6 +1724,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::MEDICAL_ATTORNEY,
                 'order'                 => 44,
                 'question_body'         => 'Do you have a Medical Power of Attorney? (Someone to make medical decisions for you in the event you are unable to)',
                 'question_type'         => QuestionType::RADIO,
@@ -1677,6 +1742,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::LIVING_WILL,
                 'order'                 => 45,
                 'question_body'         => 'Do you have a living will/advance directive? (Documents that make your health care wishes known)',
                 'question_type'         => QuestionType::RADIO,
@@ -1693,6 +1759,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
+                'identifier'            => HraQuestionIdentifier::LIVING_WILL_AT_DOCTOR,
                 'order'                 => 45,
                 'sub_order'             => 'a',
                 'question_body'         => "Is a copy of your advance directive on file at your doctor's office?",
@@ -1718,10 +1785,11 @@ class SurveySeeder extends Seeder
             ],
 
             [
-                'order' => 46,
-                'question_body' => 'Do you have any other questions or concerns that you would like to speak to your provider about at your next Annual Wellness Visit?',
-                'question_type' => QuestionType::TEXT,
-                'optional' => true,
+                'identifier'            => HraQuestionIdentifier::COMMENTS,
+                'order'                 => 46,
+                'question_body'         => 'Do you have any other questions or concerns that you would like to speak to your provider about at your next Annual Wellness Visit?',
+                'question_type'         => QuestionType::TEXT,
+                'optional'              => true,
                 'question_type_answers' => [
                     [
                         'options' => [
