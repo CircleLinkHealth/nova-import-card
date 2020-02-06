@@ -170,20 +170,11 @@ class AddIdentifierFieldInQuestionsTable extends Migration
             $variable = 'vitalsQuestions';
         }
 
-        if ($subOrder) {
-            return $this->$variable->where('order', '=', $order)
-                                   ->where('sub_order', '=', $subOrder)
-                                   ->first();
-        } else {
-            return $this->$variable->where('order', '=', $order)
-                                   ->first();
-        }
-
-        /*return $this->$variable->where('order', '=', $order)
+        return $this->$variable->where('order', '=', $order)
                                ->when($subOrder, function ($q) use ($subOrder) {
-                                   $q->where('sub_order', '=', $subOrder);
+                                   return $q->where('sub_order', '=', $subOrder);
                                })
-                               ->first();*/
+                               ->first();
     }
 
     private function setIdentifierForQuestion($surveyName, $identifier, $order, $subOrder = null)
