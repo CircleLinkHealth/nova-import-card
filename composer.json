@@ -69,7 +69,7 @@
         "barryvdh/laravel-cors": "^0.11.3",
         "barryvdh/laravel-snappy": "^0.4.5",
         "circlelinkhealth/core-module": "1.4.3",
-        "circlelinkhealth/cpm-migrations-module": "dev-CPM-1508_question_identifiers",
+        "circlelinkhealth/cpm-migrations-module": "1.3.6",
         "circlelinkhealth/customer-module": "1.8.0",
         "circlelinkhealth/raygun-module": "0.8",
         "circlelinkhealth/revisionable-module": "^1.4",
