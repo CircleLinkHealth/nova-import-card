@@ -143,6 +143,7 @@ class VariablePayCalculator
             $query->select('patient_user_id')
                   ->from((new NurseCareRateLog())->getTable())
                   ->whereIn('nurse_id', $this->nurseInfoIds)
+                  ->whereBetween('created_at', [$this->startDate, $this->endDate])
                   ->distinct();
         })
                                                    ->whereBetween('created_at', [$this->startDate, $this->endDate])
