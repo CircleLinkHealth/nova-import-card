@@ -27,6 +27,11 @@ class Invoice extends ViewModel
     public $altAlgoEnabled;
 
     /**
+     * @var array $visits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
+     */
+    public $visits;
+
+    /**
      * @var int the total number of visits when option 1 algo is enabled
      */
     public $visitsCount;
@@ -407,6 +412,7 @@ class Invoice extends ViewModel
     private function getVariableRatePay()
     {
         $calculationResult        = $this->variablePayCalculator->calculate($this->user);
+        $this->visits             = $calculationResult->visits;
         $this->visitsCount        = $calculationResult->visitsCount;
         $this->ccmPlusAlgoEnabled = $calculationResult->ccmPlusAlgoEnabled;
         $this->altAlgoEnabled     = $calculationResult->altAlgoEnabled;
