@@ -6,6 +6,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 
 /**
  * @property int id
+ * @property string identifier
  * @property int survey_id
  * @property string body
  * @property boolean optional
@@ -25,6 +26,7 @@ class Question extends BaseModel
      * @var array
      */
     protected $fillable = [
+        'identifier',
         'survey_id',
         'body',
         'optional',

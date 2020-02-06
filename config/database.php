@@ -4,7 +4,7 @@
 // for heroku
 if (getenv('REDIS_URL')) {
     $redisUrl = parse_url(getenv('REDIS_URL'));
-    
+
     putenv('REDIS_HOST='.$redisUrl['host']);
     putenv('REDIS_PORT='.$redisUrl['port']);
     putenv('REDIS_PASSWORD='.$redisUrl['pass']);
@@ -120,7 +120,7 @@ return [
 
     'redis' => [
 
-        'client' => 'predis',
+        'client' => 'phpredis',
 
         'default' => [
             'host' => env('REDIS_HOST', '127.0.0.1'),
