@@ -509,8 +509,7 @@ class PatientSummaryEloquentRepository
 
     private function attachBhiProblem($summary)
     {
-        $bhiProblems = $summary->patient
-            ->ccdProblems
+        $bhiProblems = $summary->attestedProblems
             ->where('cpmProblem.is_behavioral', '=', true)
             ->reject(
                 function ($problem) {
