@@ -704,7 +704,7 @@
 
                 if (clickedDate >= today) {
                     this.toggleModal();
-                    const clickedDayOfWeek = new Date(clickedDate.format()).getDay();
+                    const clickedDayOfWeek = new Date(clickedDate).getUTCDay();
                     const weekMapDay = this.weekMap.filter(q => q.weekMapClhDayOfWeek === clickedDayOfWeek);
                     this.dayInHumanLangForView = weekMapDay[0].label;
 
