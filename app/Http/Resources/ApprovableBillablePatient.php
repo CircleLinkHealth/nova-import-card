@@ -7,9 +7,9 @@
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\Resource;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 
 class ApprovableBillablePatient extends Resource
 {
@@ -59,20 +59,22 @@ class ApprovableBillablePatient extends Resource
             $status = $this->patient->patientInfo->ccm_status;
         }
 
-        if (Carbon::parse($this->month_year)->lt(Carbon::parse(PatientMonthlySummary::DATE_ATTESTED_CONDITIONS_ENABLED)) && $this->attestedProblems()->count() == 0){
-            $attestedProblems = collect([optional($this->billableProblem1)->id, optional($this->billableProblem2)->id])->filter()->toArray();
-        }else{
-            $attestedProblems = $this->attestedProblems()->get()->pluck('id');
+        if (Carbon::parse($this->month_year)->lt(Carbon::parse(PatientMonthlySummary::DATE_ATTESTED_CONDITIONS_ENABLED)) && $this->attestedProblems()->count() == 0) {
+            $attestedProblems = collect([
+                optional($this->billableProblem1)->id,
+                optional($this->billableProblem2)->id,
+            ])->filter()->toArray();
+        } else {
+            $attestedProblems = $this->attestedProblems->where('cpmProblem.is_behavioral', '=', false)->pluck('id');
         }
 
 
-
         return [
-            'id'       => $this->patient->id,
-            'mrn'      => $this->patient->getMRN(),
-            'name'     => $name,
-            'url'      => $url,
-            'provider' => $bP
+            'id'                     => $this->patient->id,
+            'mrn'                    => $this->patient->getMRN(),
+            'name'                   => $name,
+            'url'                    => $url,
+            'provider'               => $bP
                 ? optional($bP->user)->getFullName()
                 : '',
             'practice'               => $this->patient->primaryPractice->display_name,

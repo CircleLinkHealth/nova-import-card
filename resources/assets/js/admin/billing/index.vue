@@ -455,7 +455,6 @@
                         return item
                     }).sort((pA, pB) => pB.qa - pA.qa))
                     this.loaders.billables = false
-                    console.log('bills-report', this.tableData.slice(0))
                 }).catch(err => {
                     console.error(err)
                     this.loaders.billables = false
