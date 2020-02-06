@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Jobs\ImportPHXEnrollee;
 use CircleLinkHealth\Eligibility\ProcessEligibilityService;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\ImportService;
@@ -66,7 +67,7 @@ class ImportConsentedEnrollees implements ShouldQueue
                         $enrollees->each(
                             function ($enrollee) use ($importService) {
                                 //verify it wasn't already imported
-                                if ($enrollee->user_id) {
+                                if ($enrollee->user_id && User::whereId($enrollee->user_id)->exists()) {
                                     $this->enrolleeAlreadyImported($enrollee);
                             
                                     return null;
