@@ -28,9 +28,5 @@ class AppServiceProvider extends ServiceProvider
         Auth::provider('awv', function ($app, array $config) {
             return new AwvUserProvider($app['hash'], $config['model']);
         });
-
-//        $this->app->extend('make:migration', function () {
-//            return new MakeMigrationInModulesFolder;
-//        });
     }
 }
