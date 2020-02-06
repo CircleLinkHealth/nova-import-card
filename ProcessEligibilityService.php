@@ -243,7 +243,7 @@ class ProcessEligibilityService
 
     public function fromGoogleDrive(EligibilityBatch $batch)
     {
-        ini_set('max_execution_time', 300);
+        ini_set('max_execution_time', 600);
         ini_set('memory_limit', '512M');
 
         $cloudDisk = Storage::disk('google');

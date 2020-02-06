@@ -98,10 +98,10 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
         $this->ccda->save();
 
-        if ($check->getEnrollee()) {
-            $check->getEnrollee()->medical_record_type = Ccda::class;
-            $check->getEnrollee()->medical_record_id   = $this->ccda->id;
-            $check->getEnrollee()->save();
+        if ($enrollee = $check->getEnrollee()) {
+            $enrollee->medical_record_type = Ccda::class;
+            $enrollee->medical_record_id   = $this->ccda->id;
+            $enrollee->save();
         }
 
         //to update updated_at
