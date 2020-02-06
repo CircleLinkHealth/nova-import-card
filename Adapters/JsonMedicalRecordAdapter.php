@@ -75,7 +75,7 @@ class JsonMedicalRecordAdapter
                 'status'   => 0, //reset since we are re-processing
             ]);
         } else {
-            $job = EligibilityJob::create([
+            $job = EligibilityJob::updateOrCreate([
                 'batch_id' => $eligibilityBatch->id,
                 'hash'     => $hash,
                 'data'     => $this->validatedData->all(),
