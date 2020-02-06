@@ -578,7 +578,7 @@ class PatientSummaryEloquentRepository
      */
     private function shouldNotTouch(PatientMonthlySummary $summary): bool
     {
-        return (bool) $summary->actor_id || $summary->approved;
+        return (bool) $summary->actor_id;
     }
 
     /**
