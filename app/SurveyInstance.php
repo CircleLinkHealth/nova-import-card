@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int id
@@ -64,10 +65,39 @@ class SurveyInstance extends BaseModel
                     ->orderBy('pivot_sub_order');
     }
 
+    /**
+     * Scope most recent per survey id
+     *
+     * @param Builder $query
+     */
     public function scopeMostRecent(Builder $query)
     {
-        $query->orderByDesc('year')
-              ->limit(1);
+        /**
+         * The raw query:
+        SELECT survey_instances.*
+        FROM survey_instances INNER JOIN (
+            # this inner join creates a table with a field of the survey id and another field of the list of years
+            # the list of years is ordered by most recent year (i.e. 2019, 2018, 2017)
+            SELECT survey_id, GROUP_CONCAT(year order by year desc) grouped_year
+            FROM survey_instances
+            GROUP BY survey_id) group_max
+        ON survey_instances.survey_id = group_max.survey_id
+        # FIND_IN_SET is called to find the year in first of position of the list of years (which means the most recent)
+        AND FIND_IN_SET(year, grouped_year) = 1
+        ORDER BY survey_instances.year DESC;
+         */
+
+        $table = $this->getTable();
+        $query->join(DB::raw("
+                    (SELECT
+                      survey_id,
+                      GROUP_CONCAT(year order by year desc) grouped_year
+                    FROM
+                      $table
+                    GROUP BY survey_id) group_max"),
+            "$table.survey_id", '=', 'group_max.survey_id')
+              ->whereRaw("FIND_IN_SET(year, grouped_year) = 1")
+              ->orderByDesc("$table.year");
     }
 
     public function scopeCurrent($query)
