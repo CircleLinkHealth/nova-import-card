@@ -75,13 +75,13 @@ class VariablePayCalculator
         });
 
         $totalPay           = 0.0;
-        $visitsCount        = 0;
+        $visits             = [];
         $ccmPlusAlgoEnabled = $this->isNewNursePayAlgoEnabled();
         $visitFeeBased      = $ccmPlusAlgoEnabled && $this->isNewNursePayAltAlgoEnabledForUser($nurseUserId);
 
         $perPatient->each(function (Collection $patientCareRateLogs) use (
             &$totalPay,
-            &$visitsCount,
+            &$visits,
             $nurseUserId,
             $nurseInfo,
             $ccmPlusAlgoEnabled,
@@ -96,8 +96,8 @@ class VariablePayCalculator
                 );
             } else {
                 if ($ccmPlusAlgoEnabled) {
-                    $patient       = User::with('primaryPractice.chargeableServices')->find($patientUserId);
-                    if (!$patient) {
+                    $patient = User::with('primaryPractice.chargeableServices')->find($patientUserId);
+                    if ( ! $patient) {
                         throw new \Exception("Could not find user with id $patientUserId");
                     }
                     $practiceHasCcmPlus = $this->practiceHasCcmPlusCode($patient->primaryPractice);
@@ -126,11 +126,11 @@ class VariablePayCalculator
                 }
             }
 
-            $totalPay    += $patientPayCalculation->pay;
-            $visitsCount += sizeof($patientPayCalculation->visits ?? []);
+            $totalPay               += $patientPayCalculation->pay;
+            $visits[$patientUserId] = $patientPayCalculation->visits;
         });
 
-        return new CalculationResult($ccmPlusAlgoEnabled, $visitFeeBased, $visitsCount, $totalPay);
+        return new CalculationResult($ccmPlusAlgoEnabled, $visitFeeBased, $visits, $totalPay);
     }
 
     public function getForNurses()
@@ -143,6 +143,7 @@ class VariablePayCalculator
             $query->select('patient_user_id')
                   ->from((new NurseCareRateLog())->getTable())
                   ->whereIn('nurse_id', $this->nurseInfoIds)
+                  ->whereBetween('created_at', [$this->startDate, $this->endDate])
                   ->distinct();
         })
                                                    ->whereBetween('created_at', [$this->startDate, $this->endDate])
@@ -554,17 +555,21 @@ class CalculationResult
     /** @var bool Option 1 (alt algo - visit fee based if true, Option 2 otherwise */
     public $altAlgoEnabled;
 
+    /** @var array $visits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay] */
+    public $visits;
+
     /** @var int Indicates number of visits in case {@link $altAlgoEnabled} is true */
     public $visitsCount;
 
     /** @var float Total pay */
     public $totalPay;
 
-    public function __construct(bool $ccmPlusAlgoEnabled, bool $altAlgoEnabled, int $visitsCount, float $totalPay)
+    public function __construct(bool $ccmPlusAlgoEnabled, bool $altAlgoEnabled, array $visits, float $totalPay)
     {
         $this->ccmPlusAlgoEnabled = $ccmPlusAlgoEnabled;
         $this->altAlgoEnabled     = $altAlgoEnabled;
-        $this->visitsCount        = $visitsCount;
+        $this->visits             = $visits;
+        $this->visitsCount        = collect($visits)->flatten()->count();
         $this->totalPay           = $totalPay;
     }
 }
