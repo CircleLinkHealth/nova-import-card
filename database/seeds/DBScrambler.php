@@ -7,13 +7,13 @@
 use App\Call;
 use App\CareplanAssessment;
 use App\Models\Addendum;
-use App\Models\CCD\CcdInsurancePolicy;
 use App\Note;
 use CircleLinkHealth\Customer\Entities\Appointment;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
 
@@ -66,7 +66,7 @@ class DBScrambler extends Seeder
                         $saved = $practice->save();
                     }
                 }
-                );
+            );
         $this->command->info('Finished scrambling Practices');
 
         $this->command->warn('Scrambling Locations');
@@ -89,7 +89,7 @@ class DBScrambler extends Seeder
                         $saved = $location->save();
                     }
                 }
-                );
+            );
         $this->command->info('Finished scrambling Locations');
 
         $this->command->warn('Scrambling Phones');
@@ -103,7 +103,7 @@ class DBScrambler extends Seeder
                         $saved = $phone->save();
                     }
                 }
-                   );
+            );
         $this->command->info('Finished scrambling Phones');
 
         $this->command->warn('Scrambling Calls');
@@ -127,7 +127,7 @@ class DBScrambler extends Seeder
                     'relation'   => 'scrambled data',
                     'subscriber' => 'scrambled data',
                 ]
-                          );
+            );
         $this->command->info('Finished scrambling CcdInsurancePolicy');
 
         $this->command->warn('Scrambling Addendum');
@@ -136,7 +136,7 @@ class DBScrambler extends Seeder
                 [
                     'body' => $this->faker->text(),
                 ]
-                );
+            );
         $this->command->info('Finished scrambling Addendum');
 
         $this->command->warn('Scrambling Appointment');
@@ -145,7 +145,7 @@ class DBScrambler extends Seeder
                 [
                     'comment' => $this->faker->text(),
                 ]
-                   );
+            );
         $this->command->info('Finished scrambling Appointment');
 
         $this->command->warn('Scrambling CareplanAssessment');
@@ -162,7 +162,7 @@ class DBScrambler extends Seeder
                     'risk_factors'                        => $this->faker->text(),
                     'tobacco_misuse_counseling'           => $this->faker->text(),
                 ]
-                          );
+            );
         $this->command->info('Finished scrambling CareplanAssessment');
 
         $this->command->warn('Scrambling Note');
@@ -180,7 +180,7 @@ class DBScrambler extends Seeder
                 [
                     'data' => '{}',
                 ]
-          );
+            );
         $this->command->info('Finished scrambling Notifications');
 
         $this->command->warn('Scrambling Users');

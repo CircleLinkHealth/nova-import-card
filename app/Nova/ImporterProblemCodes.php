@@ -23,7 +23,7 @@ class ImporterProblemCodes extends Resource
      *
      * @var string
      */
-    public static $model = \App\CLH\CCD\Importer\SnomedToCpmIcdMap::class;
+    public static $model = \CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap::class;
 
     /**
      * The columns that should be searched.

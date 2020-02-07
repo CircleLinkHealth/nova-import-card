@@ -7,7 +7,7 @@
 namespace App\Services;
 
 use App\Billing\Practices\PracticeInvoiceGenerator;
-use App\Exports\FromArray;
+use CircleLinkHealth\Core\Exports\FromArray;
 use App\ValueObjects\QuickBooksRow;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
@@ -19,9 +19,6 @@ use Spatie\MediaLibrary\Exceptions\InvalidConversion;
 class PracticeReportsService
 {
     /**
-     * @param array  $practices
-     * @param Carbon $date
-     *
      * @throws InvalidConversion
      * @throws FileCannotBeAdded
      *
@@ -51,7 +48,6 @@ class PracticeReportsService
     /**
      * @param $practices
      * @param $format
-     * @param Carbon $date
      *
      * @return mixed
      */
@@ -115,7 +111,6 @@ class PracticeReportsService
     /**
      * @param $rows
      * @param $format
-     * @param Carbon $date
      *
      * @return mixed
      */
@@ -129,10 +124,6 @@ class PracticeReportsService
     }
 
     /**
-     * @param Practice          $practice
-     * @param Carbon            $date
-     * @param ChargeableService $chargeableService
-     *
      * @throws \Exception
      * @throws \Waavi\UrlShortener\InvalidResponseException
      *
@@ -197,10 +188,10 @@ class PracticeReportsService
                 : $chargeableService->description,
             'LineUnitPrice' => (string) '$'.' '.$lineUnitPrice,
             'Msg'           => 'Send Check Payments to:
-CircleLink Health Inc. 
-C/O I2BF Ventures
-304 Park Avenue South, 9th FLoor
-New York, NY 10010
+CircleLink Health Inc.
+1178 Broadway
+3rd floor #1265
+New York, NY 10001
 
 ACH Payments: JPMorgan Chase Bank 
 Routing Number (ABA): 02110361 

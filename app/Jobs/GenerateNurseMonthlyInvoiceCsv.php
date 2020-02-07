@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\AppConfig;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use App\Exports\NurseInvoiceCsv;
 use App\Notifications\SendMonthlyInvoicesToAccountant;
 use Carbon\Carbon;

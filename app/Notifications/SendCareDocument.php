@@ -23,6 +23,7 @@ class SendCareDocument extends Notification
     private $channels = [
         'database',
     ];
+
     private $filePath;
     private $media;
     private $patient;

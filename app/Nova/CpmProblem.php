@@ -18,7 +18,7 @@ class CpmProblem extends Resource
      *
      * @var string
      */
-    public static $model = \App\Models\CPM\CpmProblem::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\CpmProblem::class;
 
     /**
      * The columns that should be searched.
@@ -39,8 +39,6 @@ class CpmProblem extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function actions(Request $request)
@@ -50,8 +48,6 @@ class CpmProblem extends Resource
 
     /**
      * Get the cards available for the request.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -63,8 +59,6 @@ class CpmProblem extends Resource
     /**
      * Get the fields displayed by the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function fields(Request $request)
@@ -72,16 +66,16 @@ class CpmProblem extends Resource
         return [
             ID::make()->sortable(),
             Text::make('Name')->sortable(),
-            Text::make('default_icd_10_code')->sortable(),
-            Text::make('Contains')->sortable(),
-            Number::make('Weight')->sortable(),
+            Text::make('Default ICD-10 Code', 'default_icd_10_code')->sortable()->help(
+                'The default code will be shown on the billing report in case we did not receive an ICD-10 code in the CCD.'
+            ),
+            Text::make('Unique Keywords', 'contains')->sortable()->help('In case conditions in the CCD do not contain any ICD-9, ICD-10, or SNOMED Codes, the importer will use these keywords to see if any of them appear in the problems section of the CCD. The same applies for cases where the CCD contains codes, but CPM could not recognize them. These need to be UNIQUE.'),
+            Number::make('Priority', 'weight')->sortable()->help('This helps CPM decide which conditions to include on the billing report in case the patient has multiple conditions. Higher value means higher priority.'),
         ];
     }
 
     /**
      * Get the filters available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -92,8 +86,6 @@ class CpmProblem extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

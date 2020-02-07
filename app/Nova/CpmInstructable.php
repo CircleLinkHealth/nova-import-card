@@ -18,7 +18,7 @@ class CpmInstructable extends Resource
      *
      * @var string
      */
-    public static $model = \App\Models\CPM\CpmInstructable::class;
+    public static $model = \CircleLinkHealth\SharedModels\Entities\CpmInstructable::class;
     /**
      * The single value that should be used to represent the resource when being displayed.
      *

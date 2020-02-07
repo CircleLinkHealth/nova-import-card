@@ -7,8 +7,8 @@
 namespace App\Providers;
 
 use App\Contracts\ReportFormatter;
-use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Formatters\WebixFormatter;
+use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Services\AWV\DirectPatientDocument;
 use App\Services\AWV\EmailPatientDocument;
 use App\Services\AWV\FaxPatientDocument;
@@ -20,12 +20,13 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\SQLiteBuilder;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Queue;
-use Tests\Commands\CreateAndSeedSqliteDB;
+use Tests\Commands\CreateAndSeedTestSuiteDB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Schema::defaultStringLength(255);
+        
         /*
          * If the current date is the 31st of the month, Carbon::now()->subMonth() will go back to the 31st of the previous month.
          * If the previous month does not have 31 days, `$startDate = Carbon::now()->subMonth()->startOfMonth();` jumps to the first day of the current month(!?!).
@@ -149,7 +152,7 @@ class AppServiceProvider extends ServiceProvider
 
         if ($this->app->environment('testing')) {
             $this->commands([
-                CreateAndSeedSqliteDB::class,
+                CreateAndSeedTestSuiteDB::class,
             ]);
         }
 

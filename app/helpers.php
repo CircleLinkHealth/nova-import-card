@@ -4,19 +4,44 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\AppConfig;
-use App\CarePlanTemplate;
 use App\Constants;
-use App\Exceptions\CsvFieldNotFoundException;
 use App\Jobs\SendSlackMessage;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Core\Exceptions\CsvFieldNotFoundException;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
+
+if ( ! function_exists('sanitize_array_keys')) {
+    function sanitize_array_keys(array $array)
+    {
+        return array_combine(
+            array_map(
+                function ($i) {
+                    //Removes \ufeff randomly prefixed to some keys.
+                    //https://stackoverflow.com/questions/23463758/removing-the-ufeff-from-the-end-of-object-content-in-google-api-json-resu/25913845#25913845
+                    return preg_replace(
+                        '/
+    ^
+    [\pZ\p{Cc}\x{feff}]+
+    |
+    [\pZ\p{Cc}\x{feff}]+$
+   /ux',
+                        '',
+                        $i
+                    );
+                },
+                array_keys($array)
+            ),
+            $array
+        );
+    }
+}
 
 if ( ! function_exists('abort_if_str_contains_unsafe_characters')) {
     function abort_if_str_contains_unsafe_characters(string $string)
@@ -133,17 +158,17 @@ if ( ! function_exists('activeNurseNames')) {
     {
         return User::ofType('care-center')
             ->with(
-                [
-                    'nurseInfo' => function ($q) {
-                        $q->where('is_demo', '!=', true);
-                    },
-                ]
-            )->whereHas(
-                'nurseInfo',
-                function ($q) {
-                    $q->where('is_demo', '!=', true);
-                }
-            )->where('user_status', 1)
+                       [
+                           'nurseInfo' => function ($q) {
+                               $q->where('is_demo', '!=', true);
+                           },
+                       ]
+                   )->whereHas(
+                       'nurseInfo',
+                       function ($q) {
+                           $q->where('is_demo', '!=', true);
+                       }
+                   )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -303,9 +328,7 @@ if ( ! function_exists('parseCsvToArray')) {
             }
             foreach ($row as $k => $value) {
                 if ( ! array_key_exists($k, $fields)) {
-                    throw new CsvFieldNotFoundException(
-                        "Could not find CSV Field with index $k. Check row number $i for bad data."
-                    );
+                    throw new CsvFieldNotFoundException("Could not find CSV Field with index $k. Check row number $i for bad data.");
                 }
                 $csvArray[$i][$fields[$k]] = trim($value);
             }
@@ -483,8 +506,7 @@ if ( ! function_exists('carbonGetNext')) {
     /**
      * Get carbon instance of the next $day.
      *
-     * @param string      $day
-     * @param Carbon|null $fromDate
+     * @param string $day
      *
      * @return Carbon|false
      */
@@ -773,8 +795,6 @@ if ( ! function_exists('timezones')) {
 if ( ! function_exists('defaultCarePlanTemplate')) {
     /**
      * Returns CircleLink's default CarePlanTemplate.
-     *
-     * @return CarePlanTemplate|null
      */
     function getDefaultCarePlanTemplate(): ?CarePlanTemplate
     {
@@ -786,10 +806,9 @@ if ( ! function_exists('setAppConfig')) {
     /**
      * Save an AppConfig key, value and then return it.
      *
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
-     * @return CarePlanTemplate
+     * @return \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate
      */
     function setAppConfig(string $key, $value)
     {
@@ -940,8 +959,6 @@ if ( ! function_exists('getProblemCodeSystemName')) {
     /**
      * Get a problem code system name from an array of clues.
      *
-     * @param array $clues
-     *
      * @return string|null
      */
     function getProblemCodeSystemName(array $clues)
@@ -969,9 +986,7 @@ if ( ! function_exists('getProblemCodeSystemName')) {
 
 if ( ! function_exists('getProblemCodeSystemCPMId')) {
     /**
-     * Get the id of an App\ProblemCodeSystem from an array of clues.
-     *
-     * @param array $clues
+     * Get the id of an CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem from an array of clues.
      *
      * @return int|null
      */
@@ -1204,23 +1219,22 @@ if ( ! function_exists('read_file_using_generator')) {
 if ( ! function_exists('getEhrReportWritersFolderUrl')) {
     function getEhrReportWritersFolderUrl()
     {
-        if (isProductionEnv()) {
-            return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
-        }
-
         //this is to make local environments faster for devs
         //comment out this if section to use the feature
         if (app()->environment('local')) {
             return null;
         }
 
-        $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
-
-        if ( ! $dir) {
-            return null;
-        }
-
-        return "https://drive.google.com/drive/folders/{$dir['path']}";
+        return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
+//        Commenting out due to Heroku migration
+//        @todo:heroku change this to a nova variable
+//        $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
+//
+//        if ( ! $dir) {
+//            return null;
+//        }
+//
+//        return "https://drive.google.com/drive/folders/{$dir['path']}";
     }
 }
 
@@ -1305,7 +1319,7 @@ if ( ! function_exists('getSampleNotePdfPath')) {
         $path = public_path('assets/pdf/sample-note.pdf');
 
         if ( ! file_exists($path)) {
-            throw new \App\Exceptions\FileNotFoundException();
+            throw new \CircleLinkHealth\Core\Exceptions\FileNotFoundException();
         }
 
         return $path;
@@ -1318,7 +1332,7 @@ if ( ! function_exists('getSampleCcdaPath')) {
         $path = storage_path('ccdas/Samples/demo.xml');
 
         if ( ! file_exists($path)) {
-            throw new \App\Exceptions\FileNotFoundException();
+            throw new \CircleLinkHealth\Core\Exceptions\FileNotFoundException();
         }
 
         return $path;
@@ -1331,6 +1345,8 @@ if ( ! function_exists('tryDropForeignKey')) {
         try {
             $table->dropForeign($key);
         } catch (QueryException $e) {
+            //                    @todo:heroku review error code below
+
             $errorCode = $e->errorInfo[1];
             if (1091 == $errorCode) {
                 Log::debug("Key `${key}` does not exist. Nothing to delete.".__FILE__);
@@ -1350,9 +1366,6 @@ if ( ! function_exists('presentDate')) {
      * Due to the fact that we don't have a way to sort dates m-d-Y dates in tables yet, we are using $forceHumanForm so that developers can choose when to "force" m-d-Y format.
      *
      * @param $date
-     * @param bool $withTime
-     * @param bool $withTimezone
-     * @param bool $forceHumanForm
      *
      * @return string
      */
@@ -1444,8 +1457,7 @@ if ( ! function_exists('incrementInvoiceNo')) {
      */
     function incrementInvoiceNo()
     {
-        $num = AppConfig::where('config_key', 'billing_invoice_count')
-            ->firstOrFail();
+        $num = AppConfig::firstOrCreate(['config_key' => 'billing_invoice_count'], ['config_value' => 0]);
 
         $current = $num->config_value;
 
@@ -1465,23 +1477,21 @@ if ( ! function_exists('minutesToHhMm')) {
      */
     function minutesToHhMm($minutes)
     {
-        $H = $inHours = 0;
+        $h = 0;
 
         if ($minutes >= 60) {
-            $inHours = $minutes / 60;
-            $minutes = $minutes - ($inHours * 60);
-            $H       = floor($inHours);
+            $h = floor($minutes / 60);
         }
 
-        $i = round($minutes);
+        $i = round($minutes - ($h * 60));
 
-        //If 59 minutes rounds up to 60 we wnat to add an hour
+        //If 59 minutes rounds up to 60 we want to add an hour
         if (60 == $i) {
             $i = 0;
-            ++$H;
+            ++$h;
         }
 
-        return sprintf('%02d:%02d', $H, $i);
+        return sprintf('%02d:%02d', $h, $i);
     }
 }
 
@@ -1507,6 +1517,61 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
 
             \Cache::put($key, Carbon::now()->toDateTimeString(), 60 * 12);
         }
+    }
+}
+
+if ( ! function_exists('createWeekMap')) {
+    /**
+     * Date parameter is the date the user saved the event for. Take that to startOfWeek and create the dates of that week?
+     *
+     * @param mixed $date
+     *
+     * @return array
+     */
+    function createWeekMap($date)
+    {
+        return [
+            1 => Carbon::parse($date)->startOfWeek()->toDateString(),
+            2 => Carbon::parse($date)->startOfWeek()->addDay(1)->toDateString(),
+            3 => Carbon::parse($date)->startOfWeek()->addDay(2)->toDateString(),
+            4 => Carbon::parse($date)->startOfWeek()->addDay(3)->toDateString(),
+            5 => Carbon::parse($date)->startOfWeek()->addDay(4)->toDateString(),
+            6 => Carbon::parse($date)->startOfWeek()->addDay(5)->toDateString(),
+            7 => Carbon::parse($date)->startOfWeek()->addDay(6)->toDateString(),
+        ];
+    }
+}
+
+if ( ! function_exists('getModelFromTable')) {
+    function getModelFromTable($table)
+    {
+        foreach (get_declared_classes() as $class) {
+            if (is_subclass_of($class, 'Illuminate\Database\Eloquent\Model')) {
+                $model = new $class();
+                if ($model->getTable() === $table) {
+                    return $class;
+                }
+            }
+        }
+        
+        return false;
+    }
+}
+
+if ( ! function_exists('measureTime')) {
+    function measureTime($desc, $func)
+    {
+        $startTime = Carbon::now()->toTimeString();
+        $start     = microtime(true);
+
+        $result = $func();
+
+        $endTime = Carbon::now()->toTimeString();
+        $sec     = microtime(true) - $start;
+        $secInt  = intval($sec);
+        echo "$desc: $secInt seconds | Start: $startTime | End: $endTime\n";
+
+        return $result;
     }
 }
 

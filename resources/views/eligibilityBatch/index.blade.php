@@ -52,8 +52,7 @@
                                             <li><a href="{{route('eligibility.batches.google.drive.create')}}">From
                                                     Google Drive</a></li>
                                             <li role="separator" class="divider"></li>
-                                            <li><a href="{{route('eligibility.batches.csv.create')}}">Upload a single
-                                                    CSV</a></li>
+                                            <li><a href="{{route('report-writer.dashboard')}}">CSV, other format</a></li>
                                         </ul>
                                     </div>
                                 </div>

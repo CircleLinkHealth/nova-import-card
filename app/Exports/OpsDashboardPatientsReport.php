@@ -8,7 +8,7 @@ namespace App\Exports;
 
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\Services\OpsDashboardService;
-use App\Traits\AttachableAsMedia;
+use CircleLinkHealth\Core\Traits\AttachableAsMedia;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Support\Responsable;

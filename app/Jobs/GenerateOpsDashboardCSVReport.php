@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Exports\FromArray;
+use CircleLinkHealth\Core\Exports\FromArray;
 use App\Repositories\Cache\UserNotificationList;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\Services\OpsDashboardService;
@@ -25,8 +25,19 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    /**
+     * @var Carbon
+     */
+    protected $date;
 
+    /**
+     * @var OpsDashboardService
+     */
     protected $service;
+
+    /**
+     * @var User
+     */
     protected $user;
 
     /**
@@ -36,6 +47,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
     {
         $this->user    = $user;
         $this->service = new OpsDashboardService(new OpsDashboardPatientEloquentRepository());
+        $this->date    = Carbon::now();
     }
 
     public function calculateDailyTotalRow($rows)
@@ -61,41 +73,18 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
      */
     public function handle()
     {
-        $date = Carbon::now();
-
         ini_set('memory_limit', '512M');
 
         $practices = Practice::select(['id', 'display_name'])
             ->activeBillable()
-            ->with(
-                [
-                    'patients' => function ($p) use ($date) {
-                        $p->with(
-                            [
-                                'patientSummaries' => function ($s) use ($date) {
-                                    $s->where('month_year', $date->copy()->startOfMonth());
-                                },
-                                'patientInfo.revisionHistory' => function ($r) use ($date) {
-                                    $r->where('key', 'ccm_status')
-                                        ->where(
-                                            'created_at',
-                                            '>=',
-                                            $date->copy()->subDay()->setTimeFromTimeString('23:30')
-                                      );
-                                },
-                            ]
-                        );
-                    },
-                ]
-                             )
-            ->whereHas('patients.patientInfo')
+            ->opsDashboardQuery($this->date->copy()->startOfMonth(), $this->date->copy()->subDay()->setTimeFromTimeString('23:30'))
             ->get()
             ->sortBy('display_name');
 
-        $hoursBehind = $this->service->calculateHoursBehind($date, $practices);
+        $hoursBehind = $this->service->calculateHoursBehind($this->date, $practices);
 
         foreach ($practices as $practice) {
-            $row = $this->service->dailyReportRow($practice->patients->unique('id'), $date);
+            $row = $this->service->dailyReportRow($practice->patients->unique('id'), $this->date);
             if (null != $row) {
                 $practiceStatsMap[$practice->display_name] = $row;
             }
@@ -103,11 +92,11 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
         $practiceStatsMap['CircleLink Total'] = $this->calculateDailyTotalRow($practiceStatsMap);
         $practiceStatsMap                     = collect($practiceStatsMap);
 
-        $fileName = "CLH-Ops-CSV-Report-{$date->format('Y-m-d-H:i:s')}.xls";
+        $fileName = "CLH-Ops-CSV-Report-{$this->date->format('Y-m-d-H:i:s')}.xls";
 
         $reportRows = collect();
 
-        $reportRows->push(["Ops Report from: {$date->copy()->subDay()->setTimeFromTimeString('23:30')->toDateTimeString()} to: {$date->toDateTimeString()}"]);
+        $reportRows->push(["Ops Report from: {$this->date->copy()->subDay()->setTimeFromTimeString('23:30')->toDateTimeString()} to: {$this->date->toDateTimeString()}"]);
         $reportRows->push(["HoursBehind: {$hoursBehind}"]);
 
         //empty row
@@ -156,14 +145,14 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
         }
 
         $report          = (new FromArray($fileName, $reportRows->all(), []));
-        $mediaCollection = "CLH-Ops-CSV-Reports-{$date->toDateString()}";
+        $mediaCollection = "CLH-Ops-CSV-Reports-{$this->date->toDateString()}";
         $media           = $report->storeAndAttachMediaTo($this->user->saasAccount, $mediaCollection);
 
         $userNotification = new UserNotificationList($this->user);
 
         $userNotification->push(
             'Ops Dashboard CSV report',
-            "Ops Dashboard CSV report for {$date->toDateTimeString()}",
+            "Ops Dashboard CSV report for {$this->date->toDateTimeString()}",
             $media->getUrl(),
             'Go to page'
         );

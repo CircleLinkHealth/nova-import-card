@@ -6,7 +6,7 @@
 
 namespace App\Nova\Importers;
 
-use App\Models\PatientData\NBI\PatientData;
+use CircleLinkHealth\Eligibility\Entities\PatientData;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;

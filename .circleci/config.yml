@@ -18,11 +18,35 @@ jobs:
     #
     - image: redis:2.8.19
 
+    - image: circleci/mysql:5.7
+      environment:
+        MYSQL_ROOT_PASSWORD: rootpw
+        MYSQL_DATABASE: cpm_tests
+        MYSQL_USER: mysqluser
+        MYSQL_PASSWORD: secret
+
     steps:
     - checkout
 
+    - run:
+        # Our primary container isn't MYSQL so run a sleep command until it's ready.
+        name: Waiting for MySQL to be ready
+        command: |
+          for i in `seq 1 10`;
+          do
+            nc -z 127.0.0.1 3306 && echo Success && exit 0
+            echo -n .
+            sleep 1
+          done
+          echo Failed waiting for MySQL && exit 1
+
     - run: sudo apt update && sudo apt install zlib1g-dev libsqlite3-dev libpng-dev
-    - run: sudo docker-php-ext-install zip pcntl exif bcmath gd
+    - run: sudo docker-php-ext-install zip pcntl exif bcmath gd pdo_mysql
+    - run: sudo pecl install -o -f redis && sudo docker-php-ext-enable redis
+
+
+    - run: cp .env.testing .env
+    - run: php artisan key:generate
 
     # Download and cache dependencies
 
@@ -57,11 +81,8 @@ jobs:
     - run: npm run bower_install
     - run: npm run dev
 
-    # prepare the database
-    - run: cp .env.testing .env
-
       # run tests
-    - run: composer unit-test
+    - run: composer test
 #    - store_test_results:
 #        path: tests/_output
 #    - store_artifacts:

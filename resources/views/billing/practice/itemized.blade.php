@@ -11,16 +11,13 @@
     <table class="table table-bordered">
         <tr>
             <th>Provider Name</th>
+            <th>Location</th>
             <th>Patient Name</th>
             <th>DOB</th>
             <th>Billing Code</th>
             <th>CCM Mins</th>
             <th>BHI Mins</th>
-            <th>Condition I</th>
-            <th>Condition I Code</th>
-            <th>Condition II</th>
-            <th>Condition II Code</th>
-            <th>BHI Problem</th>
+            <th>CCM Problem Code(s)</th>
             <th>BHI Code</th>
 
         </tr>
@@ -30,16 +27,13 @@
 
                 <tr>
                     <td>{{$data->getProvider()}}</td>
+                    <td>{{$data->getLocationName()}}</td>
                     <td>{{$data->getName()}}</td>
                     <td>{{$data->getDob()}}</td>
                     <td>{{$data->getBillingCodes()}}</td>
                     <td>{{$data->getCcmTime()}}</td>
                     <td>{{$data->getBhiTime()}}</td>
-                    <td>{{$data->getProblem1()}}</td>
-                    <td>{{$data->getProblem1Code()}}</td>
-                    <td>{{$data->getProblem2()}}</td>
-                    <td>{{$data->getProblem2Code()}}</td>
-                    <td>{{$data->getBhiProblem()}}</td>
+                    <td>{{$data->getCcmProblemCodes()}}</td>
                     <td>{{$data->getBhiCode()}}</td>
                 </tr>
             @endforeach

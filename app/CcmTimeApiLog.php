@@ -21,7 +21,7 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CcmTimeApiLog query()

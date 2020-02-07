@@ -7,8 +7,6 @@
 namespace App\Formatters;
 
 use App\Contracts\ReportFormatter;
-use App\Models\CPM\CpmBiometric;
-use App\Models\CPM\CpmMisc;
 use App\Note;
 use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
@@ -16,6 +14,8 @@ use App\Services\ReportsService;
 use App\ValueObjects\PatientCareplanRelations;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -333,10 +333,10 @@ class WebixFormatter implements ReportFormatter
 
             $careplanReport[$user->id]['bio_data'][$metric]['target'] = $biometric_values['target'].ReportsService::biometricsUnitMapping(
                 $metric
-                );
+            );
             $careplanReport[$user->id]['bio_data'][$metric]['starting'] = $biometric_values['starting'].ReportsService::biometricsUnitMapping(
                 $metric
-                );
+            );
             $careplanReport[$user->id]['bio_data'][$metric]['verb'] = $biometric_values['verb'];
         }
 
@@ -369,7 +369,7 @@ class WebixFormatter implements ReportFormatter
         $miscService = app(CpmMiscService::class);
 
         //Social Services
-        if ($user->cpmMiscUserPivot->where('cpmMisc.name', CpmMisc::SOCIAL_SERVICES)->first()) {
+        if ($user->cpmMiscUserPivot->contains('cpmMisc.name', CpmMisc::SOCIAL_SERVICES)) {
             $careplanReport[$user->id]['social'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::SOCIAL_SERVICES
@@ -379,7 +379,7 @@ class WebixFormatter implements ReportFormatter
         }
 
         //Other
-        if ($user->cpmMiscUserPivot->where('cpmMisc.name', CpmMisc::OTHER)->first()) {
+        if ($user->cpmMiscUserPivot->contains('cpmMisc.name', CpmMisc::OTHER)) {
             $careplanReport[$user->id]['other'] = $miscService->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::OTHER
@@ -414,7 +414,7 @@ class WebixFormatter implements ReportFormatter
                         '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
                         '$1-$2-$3',
                         $provider->getPrimaryPhone()
-                        );
+                    );
                 }
             }
 
@@ -425,7 +425,7 @@ class WebixFormatter implements ReportFormatter
                 'type'      => $appt->type,
                 'time'      => Carbon::parse($appt->time)->format('H:i A').' '.Carbon::parse($user->timezone)->format(
                     'T'
-                    ),
+                ),
                 'address' => optional($provider)->address
                     ? "A: {$provider->address}. "
                     : '',
@@ -459,7 +459,7 @@ class WebixFormatter implements ReportFormatter
                     '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
                     '$1-$2-$3',
                     $provider->getPrimaryPhone()
-                    );
+                );
             } else {
                 $phone = null;
             }
@@ -473,7 +473,7 @@ class WebixFormatter implements ReportFormatter
                     : '',
                 'time' => Carbon::parse($appt->time)->format('H:i A').' '.Carbon::parse($user->timezone)->format(
                     'T'
-                    ),
+                ),
                 'address' => $provider->address
                     ? "A: {$provider->address}. "
                     : '',
@@ -495,7 +495,7 @@ class WebixFormatter implements ReportFormatter
         $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
         $isCareCenter          = $auth->isCareCoach();
         $isAdmin               = $auth->isAdmin();
-        $isProvider            = $auth->hasRole('provider');
+        $isProvider            = $auth->isProvider();
         $isPracticeStaff       = $auth->hasRole(['office_admin', 'med_assistant']);
 
         return compact(
@@ -526,7 +526,7 @@ class WebixFormatter implements ReportFormatter
         $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
         $isCareCenter          = $auth->isCareCoach();
         $isAdmin               = $auth->isAdmin();
-        $isProvider            = $auth->hasRole('provider');
+        $isProvider            = $auth->isProvider();
         $isPracticeStaff       = $auth->hasRole(['office_admin', 'med_assistant']);
 
         foreach ($patients as $patient) {
@@ -559,7 +559,7 @@ class WebixFormatter implements ReportFormatter
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
                             'patient.careplan.print',
                             ['patient' => $patient->id]
-                            ).'"><strong>Approve Now</strong></a>';
+                        ).'"><strong>Approve Now</strong></a>';
                     }
                 } else {
                     if ('draft' == $careplanStatus) {
@@ -570,7 +570,7 @@ class WebixFormatter implements ReportFormatter
                             $careplanStatusLink = '<a style="text-decoration:underline;" href="'.route(
                                 'patient.demographics.show',
                                 ['patient' => $patient->id]
-                                ).'"><strong>CLH Approve</strong></a>';
+                            ).'"><strong>CLH Approve</strong></a>';
                         }
                     }
                 }
@@ -606,6 +606,8 @@ class WebixFormatter implements ReportFormatter
             if ($lastObservation->count() > 0) {
                 $lastObservationDate = date('m/d/Y', strtotime($lastObservation[0]->obs_date));
             }
+
+            $locationName = $patient->getPreferredLocationName();
 
             try {
                 $patientData[] = [
@@ -646,6 +648,7 @@ class WebixFormatter implements ReportFormatter
                     //$meta[$part->id]['cur_month_activity_time'][0]
                     'provider' => $bpName,
                     'site'     => $programName,
+                    'location' => $locationName,
                 ];
             } catch (\Exception $e) {
                 \Log::critical("{$patient->id} has no patient info");

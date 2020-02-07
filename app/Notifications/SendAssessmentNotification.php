@@ -7,21 +7,27 @@
 namespace App\Notifications;
 
 use App\CareplanAssessment;
+use App\Contracts\FaxableNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SendAssessmentNotification extends Notification
+class SendAssessmentNotification extends Notification implements FaxableNotification
 {
+    //todo: REMOVE PHI FROM NOTIFICATION
     use Queueable;
-    public $pathToPdf;
+    
+    public  $pathToPdf;
     private $approver;
-
+    
     private $attachment;
-    private $channels = ['mail', 'database'];
+    
+    //Letting this go to just database so we can see if this actually is being used by anyone.
+    //If we need this we can retrieve for database
+    private $channels = ['database'];
     private $patient;
     private $practice;
-
+    
     /**
      * Create a new notification instance.
      */
@@ -34,12 +40,12 @@ class SendAssessmentNotification extends Notification
             $this->practice = $this->approver->practices()->first();
         }
     }
-
+    
     public function getAttachment()
     {
         return $this->attachment;
     }
-
+    
     /**
      * Get the array representation of the notification.
      *
@@ -50,29 +56,29 @@ class SendAssessmentNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'channels'     => $this->channels,
-            'sender_id'    => auth()->user()->id,
-            'sender_type'  => SendAssessmentNotification::class,
-            'sender_email' => auth()->user()->email,
-
+            'channels' => $this->channels,
+            
             'receiver_type'  => $notifiable->id,
             'receiver_id'    => get_class($notifiable),
             'receiver_email' => $notifiable->email ?? $notifiable->routeNotificationForMail(),
-
+            
             'pathToPdf'  => $this->toPdf($notifiable),
             'assessment' => $this->attachment,
         ];
     }
-
-    public function toFax($notifiable)
+    
+    /**
+     * @param $notifiable
+     *
+     * @return array
+     */
+    public function toFax($notifiable = null) : array
     {
-        if ( ! $notifiable || ! $notifiable->fax) {
-            return false;
-        }
-
-        return $this->toPdf($notifiable);
+        return [
+            'file' => $this->toPdf($notifiable),
+        ];
     }
-
+    
     /**
      * Get the mail representation of the notification.
      *
@@ -85,21 +91,24 @@ class SendAssessmentNotification extends Notification
         return (new MailMessage())
             ->from('notifications@careplanmanager.com', 'CircleLink Health')
             ->subject('New Patient Assessment')
-            ->view('emails.assessment-created', [
-                'assessment' => $this->attachment,
-                'notifiable' => $notifiable,
-            ]);
+            ->view(
+                'emails.assessment-created',
+                [
+                    'assessment' => $this->attachment,
+                    'notifiable' => $notifiable,
+                ]
+            );
     }
-
+    
     public function toPdf($notifiable = null)
     {
         if ( ! file_exists($this->pathToPdf)) {
             $this->pathToPdf = $this->attachment->toPdf($notifiable);
         }
-
+        
         return $this->pathToPdf;
     }
-
+    
     /**
      * Get the notification's delivery channels.
      *

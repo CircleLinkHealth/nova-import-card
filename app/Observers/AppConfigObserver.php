@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\AppConfig;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 
@@ -17,6 +17,10 @@ class AppConfigObserver
         //Invalidate NurseInvoiceDisputeDeadline Cache if it has been edited.
         if (NurseInvoiceDisputeDeadline::NURSE_INVOICE_DISPUTE_SUBMISSION_DEADLINE_KEY == $appConfig->config_key) {
             \Cache::forget((new NurseInvoiceDisputeDeadline(Carbon::now()->subMonth()))->getCacheKey());
+
+            return;
         }
+
+        \Cache::forget($appConfig->config_key);
     }
 }

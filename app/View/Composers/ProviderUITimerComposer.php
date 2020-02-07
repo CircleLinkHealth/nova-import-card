@@ -57,8 +57,6 @@ class ProviderUITimerComposer extends ServiceProvider
             $noBhiSwitch = ! auth()->user()->isCareCoach();
 
             $patient = $view->patient;
-            $patientId = '';
-            $patientProgramId = '';
             if (isset($patient) && ! empty($patient) && is_a($patient, User::class)) {
                 $patientId = $patient->id;
                 $patientProgramId = $patient->program_id;
@@ -82,6 +80,8 @@ class ProviderUITimerComposer extends ServiceProvider
             } else {
                 $monthlyTime = '';
                 $monthlyBhiTime = '';
+                $patientId = '';
+                $patientProgramId = '';
             }
 
             $view->with(compact([

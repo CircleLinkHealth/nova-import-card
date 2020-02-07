@@ -24,7 +24,7 @@ class QueueSendAuditReports extends Command
      *
      * @var string
      */
-    protected $signature = 'send:audit-reports';
+    protected $signature = 'send:audit-reports {practiceId?}';
 
     /**
      * Create a new command instance.
@@ -43,7 +43,7 @@ class QueueSendAuditReports extends Command
     {
         $date = Carbon::now()->subMonth()->firstOfMonth();
 
-        $patients = User::ofType('participant')
+        User::ofType('participant')
             ->with('patientInfo')
             ->with('patientSummaries')
             ->with('primaryPractice')
@@ -53,19 +53,22 @@ class QueueSendAuditReports extends Command
                     ->whereHas('settings', function ($query) {
                         $query->where('dm_audit_reports', '=', true)
                             ->orWhere('efax_audit_reports', '=', true);
+                    })->when($this->hasArgument('practiceId'), function ($q) {
+                        $q->where('id', '=', $this->argument('practiceId'));
                     });
             })
             ->whereHas('patientSummaries', function ($query) use ($date) {
                 $query->where('total_time', '>', 0)
                     ->where('month_year', $date->toDateString());
             })
-            ->get();
+            ->chunkById(20, function ($patients) use ($date) {
+                $delay = 2;
 
-        foreach ($patients as $patient) {
-            $job = (new MakeAndDispatchAuditReports($patient, $date))
-                ->onQueue('high');
-
-            dispatch($job);
-        }
+                foreach ($patients as $patient) {
+                    MakeAndDispatchAuditReports::dispatch($patient, $date)
+                        ->onQueue('high')->delay(now()->addSeconds($delay));
+                    ++$delay;
+                }
+            });
     }
 }

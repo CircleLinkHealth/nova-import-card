@@ -9,6 +9,7 @@ namespace App\Repositories;
 use App\Call;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use Illuminate\Support\Facades\DB;
 
 class CallRepository
 {
