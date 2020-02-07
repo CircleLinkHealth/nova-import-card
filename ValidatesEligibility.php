@@ -45,8 +45,21 @@ trait ValidatesEligibility
         foreach ($this->validJsonKeys() as $name) {
             $rules[$name] = 'required|filled|same:'.$name;
         }
+        
+        if (!$this->filterLastEncounter) {
+            unset($rules['last_visit']);
+        }
+    
+        $this->addAtLeastOnePhoneRule($rules);
 
         return Validator::make($toValidate, $rules);
+    }
+
+    public function addAtLeastOnePhoneRule(&$rules) {
+        $rules['primary_phone'] = 'required_without_all:cell_phone,work_phone,home_phone';
+        $rules['cell_phone'] = 'required_without_all:primary_phone,work_phone,home_phone';
+        $rules['work_phone'] = 'required_without_all:primary_phone,cell_phone,home_phone';
+        $rules['home_phone'] = 'required_without_all:primary_phone,cell_phone,work_phone';
     }
 
     public function validatePatient(array $array)
@@ -91,8 +104,6 @@ trait ValidatesEligibility
             'city',
             'state',
             'postal_code',
-            'primary_phone',
-            'cell_phone',
             'preferred_provider',
             'last_visit',
             'insurance_plans',

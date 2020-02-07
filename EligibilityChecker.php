@@ -292,7 +292,7 @@ class EligibilityChecker
     {
         $cpmProblems = \Cache::remember(
             'all_cpm_problems',
-            60,
+            5,
             function () {
                 return CpmProblem::all()
                                  ->transform(
@@ -319,7 +319,7 @@ class EligibilityChecker
         
         $icd9Map = \Cache::remember(
             'map_icd_9_to_cpm_problems',
-            60,
+            5,
             function () {
                 return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::ICD9);
             }
@@ -327,7 +327,7 @@ class EligibilityChecker
         
         $icd10Map = \Cache::remember(
             'map_icd_10_to_cpm_problems',
-            60,
+            5,
             function () {
                 return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::ICD10);
             }
@@ -335,7 +335,7 @@ class EligibilityChecker
         
         $snomedMap = \Cache::remember(
             'map_snomed_to_cpm_problems',
-            60,
+            5,
             function () {
                 return $this->getSnomedToIcdMap()->pluck('cpm_problem_id', Constants::SNOMED);
             }
@@ -343,7 +343,7 @@ class EligibilityChecker
         
         $cpmProblemsMap = \Cache::remember(
             'map_name_to_cpm_problems',
-            60,
+            5,
             function () use ($cpmProblems) {
                 return $cpmProblems->pluck('name', 'id');
             }
@@ -351,7 +351,7 @@ class EligibilityChecker
         
         $allBhiProblemIds = \Cache::remember(
             'bhi_cpm_problem_ids',
-            60,
+            5,
             function () use ($cpmProblems) {
                 return $cpmProblems->where('is_behavioral', '=', true)->pluck('id');
             }
@@ -910,7 +910,7 @@ class EligibilityChecker
     {
         return \Cache::remember(
             'all_snomed_to_cpm_icd_maps',
-            60,
+            5,
             function () {
                 return SnomedToCpmIcdMap::all();
             }
