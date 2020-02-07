@@ -151,6 +151,12 @@ use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
  * @property int|null $family_enrollee_id
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Enrollee whereFamilyEnrolleeId($value)
  * @property string|null $soft_rejected_callback
+ * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Eligibility\Entities\Enrollee[] $confirmedFamilyMembers
+ * @property-read int|null $confirmed_family_members_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee mySQLSearch($columns, $term, $mode = 'BOOLEAN', $shouldRequireAll = true, $shouldRequireIntegers = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee searchAddresses($term)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee searchPhones($term)
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\Eligibility\Entities\Enrollee shouldSuggestAsFamilyForEnrollee($enrolleeId)
  */
 class Enrollee extends BaseModel
 {
