@@ -7,6 +7,7 @@
 namespace Tests\Unit;
 
 use App\Notifications\CarePlanProviderApproved;
+use App\Rules\DoesNotHaveBothTypesOfDiabetes;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
@@ -15,12 +16,15 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\MessageBag;
 use Tests\Helpers\CarePlanHelpers;
+use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class OnCarePlanProviderApprovalTest extends TestCase
 {
     use \App\Traits\Tests\UserHelpers;
+
     use CarePlanHelpers;
 
     /**
@@ -84,7 +88,7 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
         ]))
-            ->assertSee('Approve');
+                         ->assertSee('Approve');
     }
 
     public function test_care_center_cannot_approve()
@@ -100,7 +104,7 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
         ]))
-            ->assertDontSee('Approve');
+                         ->assertDontSee('Approve');
     }
 
     public function test_careplan_validation()
@@ -118,9 +122,9 @@ class OnCarePlanProviderApprovalTest extends TestCase
 
         $cpmProblems = CpmProblem::get();
         $ccdProblems = $this->patient->ccdProblems()->createMany([
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
-            ['name' => 'test'.str_random(5)],
+            ['name' => 'test' . str_random(5)],
+            ['name' => 'test' . str_random(5)],
+            ['name' => 'test' . str_random(5)],
         ]);
 
         foreach ($ccdProblems as $problem) {
@@ -167,7 +171,8 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $this->carePlan->status = CarePlan::QA_APPROVED;
         $this->carePlan->save();
 
-        $response = $this->actingAs($this->provider)->call('POST', route('patient.careplan.approve', ['patientId' => $this->patient->id]));
+        $response = $this->actingAs($this->provider)->call('POST',
+            route('patient.careplan.approve', ['patientId' => $this->patient->id]));
 
         $response->assertStatus(302);
         $response->assertRedirect(route('patient.careplan.print', [
@@ -195,7 +200,7 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
         ]))
-            ->assertSee('Approve');
+                         ->assertSee('Approve');
     }
 
     public function test_provider_can_approve()
@@ -206,7 +211,7 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
         ]))
-            ->assertSee('Approve');
+                         ->assertSee('Approve');
     }
 
     public function test_provider_cannot_qa_approve()
@@ -214,7 +219,74 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
         ]))
-            ->assertDontSee('Approve');
+                         ->assertDontSee('Approve');
+    }
+
+    public function test_qa_approval_is_blocked_for_patients_with_both_types_of_diabetes_unless_approver_confirms()
+    {
+        //add patient essential info for validation to pass
+        $this->patient->setBirthDate(Carbon::now()->subYear(20));
+        $this->patient->setMRN(rand());
+        $this->patient->careTeamMembers()->create([
+            'member_user_id' => $this->provider->id,
+            'type'           => CarePerson::BILLING_PROVIDER,
+        ]);
+        $this->patient->setPhone('+1-541-754-3010');
+        $this->patient->save();
+
+        //add both diabetes problems
+        $this->patient->ccdProblems()->createMany([
+            [
+                'name'           => 'diabetes1',
+                'cpm_problem_id' => CpmProblem::whereName(CpmProblem::DIABETES_TYPE_1)->first()->id,
+            ],
+            [
+                'name'           => 'diabetes2',
+                'cpm_problem_id' => CpmProblem::whereName(CpmProblem::DIABETES_TYPE_2)->first()->id,
+            ],
+        ]);
+
+        //Patient has both types of diabetes and DRAFT careplan. Test validation fails
+        $this->assertFalse($this->carePlan->validator()->passes());
+        //Test validation passes if approver confirms both types of diabetes are correct
+        $this->assertTrue($this->carePlan->validator(true)->passes());
+
+        //create care center that can QA approve careplans
+        $careCenter = $this->createUser($this->practice->id, 'care-center');
+        auth()->login($careCenter);
+        $carePlan = $this->patient->carePlan;
+        $this->assertEquals($carePlan->status, CarePlan::DRAFT);
+
+        //set previous url to assert redirect, call route and assert session errors
+        session()->setPreviousUrl(route('patient.careplan.print', [
+            'patientId' => $this->patient->id,
+        ]));
+        $this->call('POST', route('patient.careplan.approve', ['patientId' => $this->patient->id]))
+             ->assertStatus(302)
+             ->assertRedirect(route('patient.careplan.print', [
+                 'patientId' => $this->patient->id,
+             ]))
+             ->assertSessionHas('errors', new MessageBag([
+                 'conditions' => [
+                     (new DoesNotHaveBothTypesOfDiabetes())->message(),
+                 ],
+             ]));
+
+        //assert careplan has not been approved
+        $this->assertEquals($carePlan->fresh()->status, CarePlan::DRAFT);
+
+        //call the same route with approver confirmation that patient has indeed both types of diabetes
+        session()->setPreviousUrl(route('patient.careplan.print', [
+            'patientId' => $this->patient->id,
+        ]));
+        $this->call('POST', route('patient.careplan.approve', [
+            'patientId' => $this->patient->id,
+        ]), [
+            'confirm_diabetes_conditions' => 1,
+        ])->assertSessionHasNoErrors();
+
+        //assert careplan has been QA approved
+        $this->assertEquals($carePlan->fresh()->status, CarePlan::QA_APPROVED);
     }
 
     public function test_r_n_can_approve()
@@ -232,6 +304,6 @@ class OnCarePlanProviderApprovalTest extends TestCase
         $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
         ]))
-            ->assertSee('Approve');
+                         ->assertSee('Approve');
     }
 }

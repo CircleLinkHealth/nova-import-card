@@ -172,7 +172,6 @@ class NoteService
      *
      * Force forwards to CareTeam if the patient's in the hospital, ie `if(true === note->isTCM)`
      *
-     * @param Note $note
      * @param bool $notifyCareTeam
      * @param bool $notifyCLH
      * @param bool $forceNotify
@@ -367,7 +366,7 @@ class NoteService
             ->get()
             ->markAsRead();
     }
-    
+
     public function patientNotes($userId, NoteFilters $filters)
     {
         return $this->noteRepo->patientNotes($userId, $filters);
@@ -396,7 +395,7 @@ class NoteService
             $isCpmOutbound = true;
         }
 
-        Call::create([
+        return Call::create([
             'note_id' => $note->id,
             'service' => 'phone',
             'status'  => $status,
