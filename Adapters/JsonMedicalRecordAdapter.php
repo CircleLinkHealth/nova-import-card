@@ -78,6 +78,7 @@ class JsonMedicalRecordAdapter
             $job = EligibilityJob::updateOrCreate([
                 'batch_id' => $eligibilityBatch->id,
                 'hash'     => $hash,
+            ], [
                 'data'     => $this->validatedData->all(),
             ]);
         }
@@ -157,8 +158,9 @@ class JsonMedicalRecordAdapter
         } catch (\Exception $e) {
             \Log::debug("Could not parse `date_of_birth`. Value {$this->validatedData->get('date_of_birth')}. Key: `${key}`. {$e->getMessage()}, {$e->getCode()}. Source json string: `{$this->source}`");
         }
+        
+        $mrn = $this->validatedData->get('patient_id') ?? $this->validatedData->get('mrn') ?? $this->validatedData->get('mrn_number');
 
-        return $key
-               .$dob ?? $this->validatedData->get('date_of_birth');
+        return $key.'-'.$dob ?? $this->validatedData->get('date_of_birth').'-'.$mrn;
     }
 }
