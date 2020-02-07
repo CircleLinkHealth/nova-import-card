@@ -13,6 +13,7 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 
 /**
  * App\Call.
@@ -44,7 +45,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @property \App\Note|null                                                                              $note
  * @property \CircleLinkHealth\Customer\Entities\User|null                                               $outboundUser
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAttemptNote($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCallTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCalledDate($value)
@@ -64,7 +64,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowEnd($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowStart($value)
  * @mixin \Eloquent
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call filter(\App\Filters\QueryFilters $filters)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call newQuery()
@@ -75,16 +74,14 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereIsManual($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereSubType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereType($value)
- *
  * @property int $asap
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAsap($value)
- *
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call calledLastThreeMonths()
+ * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection $attestedProblems
+ * @property int|null                                                           $attested_problems_count
  */
 class Call extends BaseModel implements AttachableToNotification
 {
@@ -146,6 +143,29 @@ class Call extends BaseModel implements AttachableToNotification
         'is_cpm_outbound',
     ];
 
+    public function attachAttestedProblems(array $attestedProblems)
+    {
+        $summary = PatientMonthlySummary::where('patient_id', $this->inbound_cpm_id)
+            ->getCurrent()
+            ->first();
+
+        if ( ! $summary) {
+            \Log::channel('logdna')->info('Patient monthly summary not found.', [
+                'patient_id' => $this->inbound_cpm_id,
+                'month'      => Carbon::now()->startOfMonth()->toDateString(),
+            ]);
+        }
+
+        $this->attestedProblems()->attach($attestedProblems, [
+            'patient_monthly_summary_id' => $summary ? $summary->id : null,
+        ]);
+    }
+
+    public function attestedProblems()
+    {
+        return $this->belongsToMany(Problem::class, 'call_problems', 'call_id', 'ccd_problem_id');
+    }
+
     public function getIsFromCareCenterAttribute()
     {
         if ( ! is_a($this->schedulerUser, User::class)) {
@@ -159,6 +179,16 @@ class Call extends BaseModel implements AttachableToNotification
     public function inboundUser()
     {
         return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
+    }
+
+    /**
+     * Mark the Notification this Model is attached to as read.
+     *
+     * @param $notifiable
+     */
+    public function markAttachmentNotificationAsRead($notifiable)
+    {
+        // TODO: Implement markAttachmentNotificationAsRead() method.
     }
 
     public function note()

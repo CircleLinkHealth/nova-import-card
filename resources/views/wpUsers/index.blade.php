@@ -272,7 +272,7 @@
                                         <td>
                                             {{$wpUser->roles->unique('display_name')->implode('display_name', ', ')}}
 
-                                            @if($wpUser->isParticipant())
+                                            @if($wpUser->isParticipant() && $wpUser->patientInfo)
                                                 ({{ucfirst($wpUser->patientInfo->ccm_status)}})
                                             @endif
                                         </td>

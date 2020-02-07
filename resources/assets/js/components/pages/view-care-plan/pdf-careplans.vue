@@ -16,13 +16,56 @@
             UpdateCarePerson
         },
 
-        props: ['mode'],
+        props: [
+            'mode'
+        ],
 
         created() {
             this.getPatientCarePlan(this.patientId)
             this.apiUrl = this.axios.defaults.baseURL + '/care-plans/' + this.patientCareplanId + '/pdfs'
         },
+        mounted(){
+            self = this;
 
+            App.$on('set-patient-problems', (problems) => {
+                this.patientProblemNames = problems;
+            });
+
+            //Once approver has confirmed that Diabetes Conditions are Correct, add the field needed to bypass validation in the back-end and submit form
+            App.$on('confirm-diabetes-conditions', () => {
+                let form = $('#form-approve');
+                $("<input>").attr("type", "hidden").attr("name", "confirm_diabetes_conditions").appendTo(form);
+                form.submit();
+            });
+
+            //update problems if they have changed in care-areas modal
+            App.$on('patient-problems-updated', (problems) => {
+                let problemNames = problems.map(function(problem){
+                    return problem.name;
+                });
+                this.patientProblemNames = problemNames;
+            });
+
+            $('#form-approve').submit(function (e) {
+                e.preventDefault();
+                const form = this;
+
+                if (self.patientHasBothTypesOfDiabetes) {
+                    $(":input").each(function() {
+                        if ($(this).attr('name') === "confirm_diabetes_conditions") {
+                            form.submit();
+                        }
+                    });
+
+                    App.$emit('show-diabetes-check-modal');
+
+                    return;
+                } else {
+                    form.submit();
+                }
+            })
+
+        },
         data() {
             return {
                 patientId: $('meta[name="patient_id"]').attr('content'),
@@ -35,6 +78,7 @@
                     'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]').content
                 },
                 patientCarePlan: {},
+                patientProblemNames: [],
                 Modes: {
                     Web: 'web',
                     Pdf: 'pdf'
@@ -50,7 +94,10 @@
             },
             assessmentUrl() {
                 return rootUrl('manage-patients/' + this.patientId + '/view-careplan/assessment')
-            }
+            },
+            patientHasBothTypesOfDiabetes() {
+                return this.patientProblemNames.includes('Diabetes Type 1') && this.patientProblemNames.includes('Diabetes Type 2');
+            },
         },
         methods: Object.assign({},
             mapActions(['destroyPdf', 'uploadPdfCarePlan', 'addNotification']),
@@ -84,7 +131,6 @@
                 openModal() {
                     this.showUploadModal = true
                 },
-
                 deletePdf(pdf) {
                     let disassociate = confirm('Are you sure you want to delete this CarePlan?');
 

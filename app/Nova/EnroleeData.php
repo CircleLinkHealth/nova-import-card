@@ -64,8 +64,6 @@ class EnroleeData extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function actions(Request $request)
@@ -76,16 +74,14 @@ class EnroleeData extends Resource
     /**
      * Get the cards available for the request.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function cards(Request $request)
     {
         $practices = Practice::whereIn('id', auth()->user()->viewableProgramIds())
-                             ->activeBillable()
-                             ->pluck('display_name', 'id')
-                             ->toArray();
+            ->activeBillable()
+            ->pluck('display_name', 'id')
+            ->toArray();
 
         $cards = [
             new ClhImportCardExtended(self::class, [
@@ -107,15 +103,13 @@ class EnroleeData extends Resource
     /**
      * Get the fields displayed by the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function fields(Request $request)
     {
         return [
             BelongsTo::make('Provider', 'provider', User::class)
-                     ->sortable(),
+                ->sortable(),
 
             Text::make('First Name')
                 ->sortable()
@@ -133,9 +127,9 @@ class EnroleeData extends Resource
                 ->updateRules('string'),
 
             Number::make('MRN')
-                  ->sortable()
-                  ->creationRules('required', 'integer')
-                  ->updateRules('integer'),
+                ->sortable()
+                ->creationRules('required', 'integer')
+                ->updateRules('integer'),
 
             Date::make('DOB')
                 ->sortable()
@@ -157,8 +151,6 @@ class EnroleeData extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function filters(Request $request)
@@ -176,8 +168,6 @@ class EnroleeData extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

@@ -132,6 +132,9 @@ class ImporterController extends Controller
 
         $records = new Collection();
 
+        //example: http://cpm.clh.test/ccd-importer?source=importer_awv
+        $source = $this->getSource($request);
+
         foreach ($request->file('file') as $file) {
             \Log::info('Begin processing CCD '.Carbon::now()->toDateTimeString());
             $xml = file_get_contents($file);
@@ -140,7 +143,7 @@ class ImporterController extends Controller
                 'user_id'   => auth()->user()->id,
                 'vendor_id' => 1,
                 'xml'       => $xml,
-                'source'    => Ccda::IMPORTER,
+                'source'    => $source ?? Ccda::IMPORTER,
             ]);
 
             $records->push($ccda->import());
@@ -317,5 +320,34 @@ class ImporterController extends Controller
         }
 
         return response()->json($records);
+    }
+
+    /**
+     * The source of the importer can be submitted through
+     * the url. In this case we are checking if available through
+     * HTTP_REFERRER (previous url)
+     * i.e http://cpm.clh.test/ccd-importer?source=importer_awv.
+     *
+     * @return mixed|null
+     */
+    private function getSource(Request $request)
+    {
+        if ($request->has('source')) {
+            return $request->input('source');
+        }
+
+        if (empty($_SERVER['HTTP_REFERER'])) {
+            return null;
+        }
+
+        $url   = $_SERVER['HTTP_REFERER'];
+        $parts = parse_url($url);
+        if (empty($parts['query'])) {
+            return null;
+        }
+
+        parse_str($parts['query'], $query);
+
+        return $query['source'] ?? null;
     }
 }

@@ -6,27 +6,7 @@
   "repository": "https://github.com/CircleLinkHealth/app-cpm-web",
   "logo": "https://www.careplanmanager.com/img/logos/LogoHorizontal_Color.svg?id=e08f4611feae12f4f909",
   "success_url": "/",
-  "scripts": {
-  },
-  "env": {
-  },
-  "formation": {
-    "web": {
-      "quantity": 1,
-      "size": "hobby"
-    },
-    "worker": {
-      "quantity": 1,
-      "size": "hobby"
-    },
-    "scheduler": {
-      "quantity": 1,
-      "size": "hobby"
-    }
-  },
   "image": "heroku/php",
-  "addons": [
-  ],
   "buildpacks": [
     {
       "url": "https://github.com/heroku/heroku-buildpack-php"
@@ -45,6 +25,44 @@
       ],
       "scripts": {
         "pr-predestroy": "php artisan reviewapp:predestroy"
+      }
+    },
+    "production": {
+      "addons": [
+        "heroku-redis:private-7"
+      ],
+      "formation": {
+        "web": {
+          "quantity": 1,
+          "size": "performance-l"
+        },
+        "worker": {
+          "quantity": 1,
+          "size": "performance-m"
+        },
+        "scheduler": {
+          "quantity": 1,
+          "size": "performance-s"
+        }
+      }
+    },
+    "staging": {
+      "addons": [
+        "heroku-redis:premium-0"
+      ],
+      "formation": {
+        "web": {
+          "quantity": 1,
+          "size": "hobby"
+        },
+        "worker": {
+          "quantity": 1,
+          "size": "hobby"
+        },
+        "scheduler": {
+          "quantity": 1,
+          "size": "hobby"
+        }
       }
     },
     "test": {

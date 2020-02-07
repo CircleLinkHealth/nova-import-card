@@ -29,7 +29,7 @@ class SafeRequest extends Request
         if (empty($all)) {
             return $all;
         }
-
+        
         $result = [];
         foreach ($all as $key => $value) {
             //if input is Trix value we need some tags
@@ -49,14 +49,14 @@ class SafeRequest extends Request
                 $result[$key] = htmlspecialchars($value, ENT_NOQUOTES);
             }
         }
-
+        
         return $result;
     }
-
+    
     /**
      * Safely (remove html tags) retrieve an input item from the request.
      *
-     * @param string            $key
+     * @param string $key
      * @param array|string|null $default
      *
      * @return array|string
@@ -64,7 +64,7 @@ class SafeRequest extends Request
     public function inputSafe($key = null, $default = null)
     {
         $res = $this->input($key, $default);
-
+        
         return $res
             ? htmlspecialchars($res, ENT_NOQUOTES)
             : $res;

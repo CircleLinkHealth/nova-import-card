@@ -6,29 +6,34 @@
 
 namespace App\Http\Controllers\Patient;
 
-use App\CLH\Repositories\UserRepository;
 use App\Contracts\ReportFormatter;
+use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
 use App\Services\CarePlanViewService;
 use App\Testing\CBT\TestPatients;
+use App\Testing\TestPatientsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\PdfService;
-use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PatientController extends Controller
 {
     private $formatter;
+    /**
+     * @var NurseCalendarService
+     */
+    private $fullCalendarService;
 
-    public function __construct(ReportFormatter $formatter)
+    /**
+     * PatientController constructor.
+     */
+    public function __construct(ReportFormatter $formatter, NurseCalendarService $fullCalendarService)
     {
-        $this->formatter = $formatter;
+        $this->formatter           = $formatter;
+        $this->fullCalendarService = $fullCalendarService;
     }
 
     public function createCBTTestPatient(Request $request)
@@ -77,21 +82,21 @@ class PatientController extends Controller
         $searchTerms = explode(' ', $input['users']);
 
         $query = User::intersectPracticesWith(auth()->user())
-            ->ofType('participant')
-            ->with(['primaryPractice', 'patientInfo', 'phoneNumbers']);
+                     ->ofType('participant')
+                     ->with(['primaryPractice', 'patientInfo', 'phoneNumbers']);
 
         foreach ($searchTerms as $term) {
             $query->where(function ($q) use ($term) {
                 $q->where('first_name', 'like', "%${term}%")
-                    ->orWhere('last_name', 'like', "%${term}%")
-                    ->orWhere('id', 'like', "%${term}%")
-                    ->orWhereHas('patientInfo', function ($query) use ($term) {
-                        $query->where('mrn_number', 'like', "%${term}%")
+                  ->orWhere('last_name', 'like', "%${term}%")
+                  ->orWhere('id', 'like', "%${term}%")
+                  ->orWhereHas('patientInfo', function ($query) use ($term) {
+                      $query->where('mrn_number', 'like', "%${term}%")
                             ->orWhere('birth_date', 'like', "%${term}%");
-                    })
-                    ->orWhereHas('phoneNumbers', function ($query) use ($term) {
-                        $query->where('number', 'like', "%${term}%");
-                    });
+                  })
+                  ->orWhereHas('phoneNumbers', function ($query) use ($term) {
+                      $query->where('number', 'like', "%${term}%");
+                  });
             });
         }
 
@@ -108,7 +113,7 @@ class PatientController extends Controller
             $programObj = Practice::find($d->program_id);
 
             $patients[$i]['program'] = $programObj->display_name ?? '';
-            $patients[$i]['hint']    = $patients[$i]['name'].' DOB:'.$patients[$i]['dob'].' ['.$patients[$i]['program']."] MRN: {$patients[$i]['mrn']} ID: {$d->id} PRIMARY PHONE: {$d->getPrimaryPhone()}";
+            $patients[$i]['hint']    = $patients[$i]['name'] . ' DOB:' . $patients[$i]['dob'] . ' [' . $patients[$i]['program'] . "] MRN: {$patients[$i]['mrn']} ID: {$d->id} PRIMARY PHONE: {$d->getPrimaryPhone()}";
             ++$i;
         }
 
@@ -118,10 +123,10 @@ class PatientController extends Controller
     public function showCallPatientPage(Request $request, $patientId)
     {
         $user = User::with('phoneNumbers')
-            ->with('patientInfo.location')
-            ->with('primaryPractice.locations')
-            ->where('id', $patientId)
-            ->firstOrFail();
+                    ->with('patientInfo.location')
+                    ->with('primaryPractice.locations')
+                    ->where('id', $patientId)
+                    ->firstOrFail();
 
         $phoneNumbers = $user->phoneNumbers
             ->filter(function ($p) {
@@ -144,7 +149,7 @@ class PatientController extends Controller
         }
 
         //naive authentication for the CPM Caller Service
-        $cpmToken = \Hash::make(config('app.key').Carbon::today()->toDateString());
+        $cpmToken = \Hash::make(config('app.key') . Carbon::today()->toDateString());
 
         return view('wpUsers.patient.calls.index')
             ->with([
@@ -176,12 +181,14 @@ class PatientController extends Controller
         }
 
         if ($user->canApproveCarePlans()) {
+//            I dont understand how these are used (if used)
             $showPatientsPendingApprovalBox = true;
             $patients                       = $user->patientsPendingApproval()->get();
             $patientsPendingApproval        = $this->formatter->patientListing($patients);
             $pendingApprovals               = $patients->count();
         }
         $noLiveCountTimeTracking = true;
+        $authData                = $this->fullCalendarService->getAuthData();
 
         return view(
             'wpUsers.patient.dashboard',
@@ -191,6 +198,7 @@ class PatientController extends Controller
                     'nurse',
                     'showPatientsPendingApprovalBox',
                     'noLiveCountTimeTracking',
+                    'authData',
                 ]),
                 $patientsPendingApproval
             )
@@ -233,7 +241,7 @@ class PatientController extends Controller
     {
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');
-        $fileName         = $storageDirectory.$datetimePrefix.'-patient-list.pdf';
+        $fileName         = $storageDirectory . $datetimePrefix . '-patient-list.pdf';
         $file             = $pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
             'patients' => $this->formatter->patients(),
         ], null, [
@@ -312,7 +320,7 @@ class PatientController extends Controller
     {
         // get number of approvals
         $patients = User::intersectPracticesWith(auth()->user())
-            ->with('phoneNumbers', 'patientInfo', 'careTeamMembers')->whereHas('roles', function ($q) {
+                        ->with('phoneNumbers', 'patientInfo', 'careTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get()->pluck('fullNameWithId', 'id')->all();
 
@@ -335,24 +343,24 @@ class PatientController extends Controller
 
         $wpUser = User::with([
             'primaryPractice',
-            'ccdProblems' => function ($q) {
+            'ccdProblems'  => function ($q) {
                 $q->with('cpmProblem.cpmInstructions')
-                    ->whereNotNull('cpm_problem_id');
+                  ->whereNotNull('cpm_problem_id');
             },
             'observations' => function ($q) {
                 $q->where('obs_unit', '!=', 'invalid')
-                    ->where('obs_unit', '!=', 'scheduled')
-                    ->with([
-                        'meta',
-                        'question.careItems',
-                    ])
-                    ->orderBy('obs_date', 'desc')
-                    ->take(100);
+                  ->where('obs_unit', '!=', 'scheduled')
+                  ->with([
+                      'meta',
+                      'question.careItems',
+                  ])
+                  ->orderBy('obs_date', 'desc')
+                  ->take(100);
             },
             'patientSummaries',
         ])
-            ->where('id', $patientId)
-            ->first();
+                      ->where('id', $patientId)
+                      ->first();
 
         if ( ! $wpUser) {
             return response('User not found', 401);
@@ -495,17 +503,17 @@ class PatientController extends Controller
                     $alertLevel = $observation->alert_level;
                 }
                 // lastly format json
-                $observation_json[$section] .= "{ obs_key:'".$observation->obs_key."', ".
-                                               "description:'".str_replace(
+                $observation_json[$section] .= "{ obs_key:'" . $observation->obs_key . "', " .
+                                               "description:'" . str_replace(
                                                    '_',
                                                    ' ',
                                                    $observation->description
-                                               )."', ".
-                                               "obs_value:'".$observation->obs_value."', ".
-                                               "dm_alert_level:'".$alertLevel."', ".
-                                               "obs_unit:'".$observation->obs_unit."', ".
-                                               "obs_message_id:'".$observation->obs_message_id."', ".
-                                               "comment_date:'".Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A')."', ".'},';
+                                               ) . "', " .
+                                               "obs_value:'" . $observation->obs_value . "', " .
+                                               "dm_alert_level:'" . $alertLevel . "', " .
+                                               "obs_unit:'" . $observation->obs_unit . "', " .
+                                               "obs_message_id:'" . $observation->obs_message_id . "', " .
+                                               "comment_date:'" . Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A') . "', " . '},';
                 ++$o;
             }
             $observation_json[$section] .= '],';
@@ -562,64 +570,7 @@ class PatientController extends Controller
             return back();
         }
 
-        $repo = new UserRepository();
-
-        $practice = Practice::whereName('demo')->firstOrFail();
-        $role     = Role::whereName('participant')->firstOrFail();
-        $problems = CpmProblem::get();
-
-        foreach (TestPatients::CBT_TEST_PATIENTS as $patientData) {
-            //in case something goes wrong and users where not deleted, take all
-            $users = User::whereEmail($patientData['email'])->get();
-
-            //If user exists delete and create again
-            if ($users->count() > 0) {
-                foreach ($users as $user) {
-                    $user->forceDelete();
-                }
-            }
-
-            $bag = new ParameterBag([
-                'email'             => $patientData['email'],
-                'password'          => str_random(),
-                'display_name'      => $patientData['first_name'].' '.$patientData['last_name'],
-                'first_name'        => $patientData['first_name'],
-                'last_name'         => $patientData['last_name'],
-                'username'          => $patientData['email'],
-                'program_id'        => $practice->id,
-                'is_auto_generated' => true,
-                'roles'             => [$role->id],
-
-                //patientInfo
-                'gender'                     => $patientData['gender'],
-                'preferred_contact_language' => $patientData['preferred_contact_language'],
-                'ccm_status'                 => $patientData['ccm_status'],
-                'birth_date'                 => $patientData['birth_date'],
-                'consent_date'               => $patientData['consent_date'],
-                'preferred_contact_timezone' => $patientData['preferred_contact_timezone'],
-                'mrn_number'                 => $patientData['mrn_number'],
-            ]);
-
-            $user = $repo->createNewUser(new User(), $bag);
-
-            $userProblems = in_array('all', $patientData['conditions'])
-                ? $problems
-                : $problems->whereIn('name', $patientData['conditions']);
-            $ccdProblems = [];
-            foreach ($userProblems as $problem) {
-                $ccdProblems[] = [
-                    'is_monitored'   => 1,
-                    'name'           => $problem->name,
-                    'cpm_problem_id' => $problem->id,
-                ];
-            }
-            $user->ccdProblems()->createMany($ccdProblems);
-            $user->ccdMedications()->createMany(TestPatients::testMedications($patientData['medications']));
-            $user->careTeamMembers()->create([
-                'member_user_id' => $patientData['billing_provider_id'],
-                'type'           => CarePerson::BILLING_PROVIDER,
-            ]);
-        }
+        (new TestPatients)->create();
 
         return redirect()->back();
     }

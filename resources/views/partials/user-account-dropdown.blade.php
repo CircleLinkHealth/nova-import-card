@@ -36,6 +36,12 @@
                     </a>
                 </li>
             @endif
+            <li class="hidden-xs">
+                <a href="{{ route('subscriptions.notification.mail') }}"
+                   id="offline-activity-time-requests-index-link">
+                    Email Subscriptions
+                </a>
+            </li>
         @endif
         @if ( ! auth()->guest() && $user->hasRole(['administrator', 'administrator-view-only']) && $user->isNotSaas())
             <li><a style="color: #47beab"

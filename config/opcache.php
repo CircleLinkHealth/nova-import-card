@@ -23,5 +23,6 @@ return [
         base_path('vendor/appstract'),
         base_path('vendor/composer'),
         base_path('vendor/laravel/framework'),
+        base_path('vendor/circlelinkhealth/'),
     ],
 ];
