@@ -79,6 +79,10 @@ class CpmProblem extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use Instructable;
 
+    const DIABETES_TYPE_1 = 'Diabetes Type 1';
+
+    const DIABETES_TYPE_2 = 'Diabetes Type 2';
+
     protected $guarded = [];
 
     protected $table = 'cpm_problems';

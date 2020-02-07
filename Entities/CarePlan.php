@@ -9,6 +9,7 @@ namespace CircleLinkHealth\SharedModels\Entities;
 use App\Constants;
 use App\Contracts\PdfReport;
 use App\Contracts\ReportFormatter;
+use App\Rules\DoesNotHaveBothTypesOfDiabetes;
 use CircleLinkHealth\SharedModels\Entities\Pdf;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
@@ -359,7 +360,7 @@ class CarePlan extends BaseModel implements PdfReport
      *
      * @return \Illuminate\Validation\Validator
      */
-    public function validator()
+    public function validator(bool $confirmDiabetesConditions = false)
     {
         $patient = $this->patient->load(
             [
@@ -389,7 +390,12 @@ class CarePlan extends BaseModel implements PdfReport
         return Validator::make(
             $data,
             [
-                'conditions'      => [new HasAtLeast2CcmOr1BhiProblems()],
+                'conditions'      => [
+                    new HasAtLeast2CcmOr1BhiProblems(),
+                    //If Approver has confirmed that Diabetes Conditions are correct or if Care Plan has already been approved, bypass check
+                    //todo: move rule to this module (currently did not because CarePlan exists both in Shared Models and eligibility)
+                    ! $confirmDiabetesConditions && self::DRAFT === $this->status ? new DoesNotHaveBothTypesOfDiabetes() : null,
+                ],
                 'phoneNumber'     => 'required|phone:AUTO,US',
                 'dob'             => 'required|date',
                 'mrn'             => ['required', new HasValidNbiMrn($patient)],
