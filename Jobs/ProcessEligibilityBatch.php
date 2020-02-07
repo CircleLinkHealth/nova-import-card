@@ -373,9 +373,8 @@ class ProcessEligibilityBatch implements ShouldQueue
             if ( ! $iteration) {
                 continue;
             }
-
-            $mr = new JsonMedicalRecordAdapter($iteration);
-            $mr->createEligibilityJob($batch);
+    
+            CreateEligibilityJobFromJsonMedicalRecord::dispatch($batch, $iteration)->onQueue('low');
         }
     }
 }
