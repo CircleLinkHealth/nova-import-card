@@ -36,5 +36,6 @@ class TestSuiteSeeder extends Seeder
         $this->call(PracticeTableSeeder::class);
         $this->call(UserTableSeeder::class);
         $this->call(PatientSeeder::class);
+        $this->call(EnrolleesSeeder::class);
     }
 }

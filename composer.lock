@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9ecfe5f62ca13e482af46be38473e280",
+    "content-hash": "b2d85b579c3e6a547ef983f2d9905619",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -774,11 +774,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.4.3",
+            "version": "v1.4.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "3a92be08c5c07076678f2aae9d7ef2c4df523260"
+                "reference": "f61ada7eed4e61a4ec55df6de18b1d37bc3a01da"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -807,15 +807,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-21T17:08:15+00:00"
+            "time": "2020-02-07T04:09:19+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.3.5",
+            "version": "v1.3.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "04f7c78c3d9789adcf706f048b6b3e8e3c497dc9"
+                "reference": "412884aca0036dab639ae700ac65768021d2010c"
             },
             "type": "laravel-module",
             "extra": {
@@ -837,7 +837,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-04T20:10:14+00:00"
+            "time": "2020-02-07T04:10:48+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -882,11 +882,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v1.4.2",
+            "version": "v1.4.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "e7f376273cc7b99152e7dbef45d4ec407dcef1bf"
+                "reference": "87d4d73deb24e1af82fa5394ad505954041003fc"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -911,7 +911,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-07T03:55:10+00:00"
+            "time": "2020-02-07T04:11:55+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
