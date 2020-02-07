@@ -22,9 +22,14 @@ class JsonMedicalRecordInsurancePlansAdapter
         collect($record['insurance_plans'] ?? $record['insurance_plan'])
             ->each(function ($plan, $key) use (&$record) {
                 $concatString = null;
+    
+                $planName = $plan['plan'] ?? '';
+                $groupNumber = $plan['group_number'] ?? '';
+                $policyNumber = $plan['policy_number'] ?? '';
+                $insuranceType = $plan['insurance_type'] ?? '';
 
-                if ($plan['plan'] || $plan['group_number'] || $plan['policy_number'] || $plan['insurance_type']) {
-                    $concatString = "{$plan['plan']} - {$plan['group_number']} - {$plan['policy_number']} - {$plan['insurance_type']}";
+                if ($planName || $groupNumber || $policyNumber || $insuranceType) {
+                    $concatString = "{$planName} - {$groupNumber} - {$policyNumber} - {$insuranceType}";
                 }
 
                 if ('primary' == $key) {
