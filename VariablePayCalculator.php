@@ -569,8 +569,12 @@ class CalculationResult
         $this->ccmPlusAlgoEnabled = $ccmPlusAlgoEnabled;
         $this->altAlgoEnabled     = $altAlgoEnabled;
         $this->visits             = $visits;
-        $this->visitsCount        = collect($visits)->flatten()->count();
-        $this->totalPay           = $totalPay;
+
+        // 1. Flatten list of visits -> so list of visit per patient changes to list of visits
+        // 2. Filter out entries with 0 -> visits that resulted in 0 compensation; probably cz of ccm time but no call, but call from other care coach
+        $this->visitsCount = collect($visits)->flatten()->filter()->count();
+
+        $this->totalPay = $totalPay;
     }
 }
 
