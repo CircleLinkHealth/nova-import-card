@@ -6,11 +6,10 @@
 
 namespace App\Console\Commands;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
-use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
+use App\Call;
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Console\Command;
 
 class FixFalseDOBs extends Command
@@ -27,7 +26,7 @@ class FixFalseDOBs extends Command
      * @var string
      */
     protected $signature = 'fix:dob';
-
+    
     /**
      * Create a new command instance.
      *
@@ -37,7 +36,7 @@ class FixFalseDOBs extends Command
     {
         parent::__construct();
     }
-
+    
     /**
      * Execute the console command.
      *
@@ -45,17 +44,18 @@ class FixFalseDOBs extends Command
      */
     public function handle()
     {
-        TabularMedicalRecord::whereNull('dob')->chunkById(
+        User::ofType('participant')->with('patientInfo')->whereDoesntHave(
+            'inboundCalls',
+            function ($q) {
+                $q->where('status', Call::REACHED);
+            }
+        )->ofPractice(219)->chunkById(
             100,
             function ($tmr) {
                 $tmr->each(
-                    function (TabularMedicalRecord $mr) {
-                        $e = Enrollee::where(
-                            function ($q) use ($mr) {
-                                $q->whereMedicalRecordType(get_class($mr))->whereMedicalRecordId($mr->id);
-                            }
-                        )->orWhere('mrn', $mr->mrn)->first();
-
+                    function (User $user) {
+                        $e = Enrollee::where('user_id', $user->id)->first();
+                        
                         if ( ! $e) {
                             return;
                         }
@@ -63,26 +63,12 @@ class FixFalseDOBs extends Command
                             $e->dob = $e->dob->subYears(100)->toDateTimeString();
                             $e->save();
                         }
-
-                        $mr->dob = $e->dob;
-
-                        $mr->save();
-
-                        $imprtsCnt = DemographicsImport::whereMedicalRecordType(get_class($mr))->whereMedicalRecordId(
-                            $mr->id
-                        )->update(
-                            [
-                                'dob' => $e->dob,
-                            ]
-                        );
-
-                        $logCnt = DemographicsLog::whereMedicalRecordType(get_class($mr))->whereMedicalRecordId(
-                            $mr->id
-                        )->update(
-                            [
-                                'dob' => $e->dob,
-                            ]
-                        );
+                        
+                        if ($e->dob->toDateString() != $user->getBirthDate()) {
+                            $user->patientInfo->birth_date = $e->dob;
+                            
+                            $user->patientInfo->save();
+                        }
                     }
                 );
             }
