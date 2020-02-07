@@ -50,7 +50,7 @@ class LogSuccessfulLogoutToDB implements ShouldQueue
                                        ['login_time', '<', now()],
                                        ['login_time', '>', now()->startOfDay()],
                                    ])->get()->last()
-            )->update(['logout_time' => Carbon::parse(now())->toDateTime()]);
+            )->update(['logout_time' => now()]);
         } catch (\Exception $exception) {
             Log::error($exception->getMessage()." authid:$authId");
         }
