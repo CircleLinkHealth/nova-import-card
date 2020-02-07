@@ -13,7 +13,7 @@
                     <span style="color: red"><i class="fas fa-exclamation-circle"></i>&nbsp{{error}}</span>
                 </div>
                 <div class="col-sm-12" v-bind:class="sectionSpaceClass">
-                    <div v-for="problem in problems">
+                    <div v-for="problem in problemsToAttest">
                         <input type="checkbox" :id="problem.id" :value="problem.id" style="display: none !important" v-model="attestedProblems">
                         <label :for="problem.id"><span> </span>{{problem.name}}</label><span v-if="problem.code">&nbsp;({{problem.code}})</span>
                     </div>
@@ -108,8 +108,18 @@
                 return this.patient_id ? this.patient_id : this.patientId;
             },
             title(){
+
+                return this.isNotesPage ? 'Please select all conditions addressed in this call:' : 'Edit CCM Problem Codes';
+            },
+            problemsToAttest(){
+                //do not show BHI problems when on Approve Billable Patients Page
+                return this.isNotesPage ? this.problems : this.problems.filter(function (p) {
+                    return ! p.is_behavioral;
+                }) ;
+            },
+            isNotesPage(){
                 //if patient id prop has been passed in, then this is for the notes pages, else, approve billable patients page
-                return this.patientId ? 'Please select all conditions addressed in this call:' : 'Edit CCM Problem Codes';
+                return !!this.patientId
             }
         },
         methods: {
