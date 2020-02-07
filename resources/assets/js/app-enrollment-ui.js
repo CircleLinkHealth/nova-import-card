@@ -22,6 +22,7 @@ Vue.use(VueAxios, axios);
 Vue.config.debug = true;
 
 const EnrollmentDashboard = () => import(/* webpackChunkName: "chunk-enrollment" */ './components/enrollment/dashboard');
+
 Vue.component('enrollment-dashboard', EnrollmentDashboard);
 
 const App = new Vue({

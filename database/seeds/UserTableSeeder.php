@@ -62,6 +62,13 @@ class UserTableSeeder extends Seeder
             $careCenter->saas_account_id      = $practice->saas_account_id;
             $careCenter->save();
 
+            $careAmbassador                  = $this->createUser($practice, 'care-ambassador');
+            $careAmbassador->username        = 'care-ambassador';
+            $careAmbassador->auto_attach_programs = true;
+            $careAmbassador->password        = Hash::make('hello');
+            $careAmbassador->saas_account_id = $practice->saas_account_id;
+            $careAmbassador->save();
+
             $p                  = $this->createUser($practice, 'participant');
             $p->saas_account_id = $practice->saas_account_id;
             $p->save();
