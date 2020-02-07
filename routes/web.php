@@ -399,7 +399,7 @@ Route::group(['middleware' => 'auth'], function () {
             'middleware' => [
                 'permission:ccd-import',
             ],
-            'prefix' => 'ccd-importer',
+            'prefix'     => 'ccd-importer',
         ], function () {
             Route::get('imported-medical-records', [
                 'uses' => 'ImporterController@records',
@@ -450,6 +450,18 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'API\PracticeLocationsController@update',
         'as'   => 'practice.locations.update',
     ])->middleware('permission:location.create,location.update');
+
+    Route::group(
+        [
+            'prefix' => 'enrollment',
+        ],
+        function () {
+            Route::get('/get-suggested-family-members/{enrolleeId}', [
+                'uses' => 'API\EnrollmentCenterController@getSuggestedFamilyMembers',
+                'as'   => 'enrollment-center.family-members',
+            ])->middleware('permission:enrollee.read');
+        }
+    );
 
     Route::resource(
         'practice.users',
@@ -1936,7 +1948,13 @@ Route::group([
         'as'   => 'enrollment.sms.reply',
     ]);
 
-    Route::group(['middleware' => 'auth'], function () {
+    Route::group([
+        'middleware' =>
+            [
+                'auth',
+                'enrollmentCenter',
+            ],
+    ], function () {
         Route::get('/', [
             'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
             'as'   => 'enrollment-center.dashboard',
