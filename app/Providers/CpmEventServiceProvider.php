@@ -15,6 +15,8 @@ use App\Listeners\CheckBeforeSendMessageListener;
 use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\ForwardNote;
 use App\Listeners\LogFailedNotification;
+use App\Listeners\LogSuccessfulLogin;
+use App\Listeners\LogSuccessfulLogout;
 use App\Listeners\PatientContactWindowUpdated;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UserLoggedOut;
@@ -36,6 +38,7 @@ class CpmEventServiceProvider extends ServiceProvider
     protected $listen = [
         Login::class => [
             UpdateUserLoginInfo::class,
+            LogSuccessfulLogin::class,
         ],
         Authenticated::class => [
             UpdateUserSessionInfo::class,
@@ -48,6 +51,7 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         Logout::class => [
             UserLoggedOut::class,
+            LogSuccessfulLogout::class,
         ],
         MessageSending::class => [
             CheckBeforeSendMessageListener::class,

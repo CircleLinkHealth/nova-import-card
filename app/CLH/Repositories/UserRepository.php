@@ -410,6 +410,11 @@ class UserRepository
                 $user->patientInfo->$key = $params->get($key);
             }
         }
+
+        if ($params->has('is_awv')) {
+            $user->patientInfo->is_awv = $params->get('is_awv');
+        }
+
         $user->patientInfo->save();
     }
 
