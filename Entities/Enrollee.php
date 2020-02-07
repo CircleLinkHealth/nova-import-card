@@ -6,6 +6,8 @@
 
 namespace CircleLinkHealth\Eligibility\Entities;
 
+
+use CircleLinkHealth\Core\Traits\MySQLSearchable;
 use App\Contracts\Services\TwilioClientable;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
@@ -155,6 +157,7 @@ use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 class Enrollee extends BaseModel
 {
     use Filterable;
+    use MySQLSearchable;
 
     // Agent array keys
     const AGENT_EMAIL_KEY        = 'email';
@@ -218,6 +221,28 @@ class Enrollee extends BaseModel
      * status = utc.
      */
     const UNREACHABLE = 'utc';
+
+    /**
+     * For mySql full-text search
+     *
+     * @var array
+     */
+    public $phoneAttributes = [
+        'cell_phone',
+        'home_phone',
+        'other_phone',
+    ];
+
+    /**
+     *
+     * For mySql full-text search
+     *
+     * @var array
+     */
+    public $addressAttributes = [
+        'address',
+        'address_2',
+    ];
 
     public $phi = [
         'first_name',
@@ -483,6 +508,40 @@ class Enrollee extends BaseModel
         return $this->belongsTo(User::class, 'provider_id');
     }
 
+    /**
+     * @param $query
+     * @param $term
+     *
+     * @return mixed
+     */
+    public function scopeSearchPhones($query, string $term)
+    {
+        return $query->mySQLSearch($this->phoneAttributes, $term, 'NATURAL LANGUAGE');
+    }
+
+    public function scopeSearchAddresses($query, string $term)
+    {
+        return $query->mySQLSearch($this->addressAttributes, $term, 'BOOLEAN', false, true);
+    }
+
+    public function scopeShouldSuggestAsFamilyForEnrollee($query, $enrolleeId)
+    {
+        return $query->where('id', '!=', $enrolleeId)
+                     ->whereNotIn('status', [
+                         self::CONSENTED,
+                         self::ENROLLED,
+                         self::INELIGIBLE,
+                         self::LEGACY,
+                     ])
+                     ->where(function ($q){
+                         $q->whereDate('last_attempt_at', '<', Carbon::now()->startOfDay())
+                           ->orWhereNull('last_attempt_at');
+                     })
+
+
+            ;
+    }
+
     public function scopeToCall($query)
     {
         //@todo add check for where phones are not all null
@@ -585,5 +644,56 @@ class Enrollee extends BaseModel
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function getPhonesE164AsString()
+    {
+        $phones = [];
+        foreach ($this->phoneAttributes as $attribute) {
+            $phones[] = $this->{$attribute . '_e164'};
+        }
+
+        return implode(', ', $phones);
+    }
+
+    public function getPhonesAsString()
+    {
+        $phones = [];
+        foreach ($this->phoneAttributes as $attribute) {
+            $phones[] = $this->{$attribute};
+        }
+
+        return implode(', ', $phones);
+    }
+
+    public function getAddressesAsString()
+    {
+        $phones = [];
+        foreach ($this->addressAttributes as $attribute) {
+            $phones[] = $this->$attribute;
+        }
+
+        return implode(', ', $phones);
+    }
+
+    public function confirmedFamilyMembers()
+    {
+        return $this->belongsToMany(Enrollee::class, 'enrollee_family_members', 'enrollee_id', 'family_member_enrollee_id');
+    }
+
+    public function attachFamilyMembers($input)
+    {
+        if (empty($input)) {
+            return false;
+        }
+        if ( ! is_array($input)) {
+            $input = explode(',', $input);
+        }
+        foreach ($input as $id){
+            //todo: try/change to syncWithoutDetaching
+            if (! $this->confirmedFamilyMembers()->where('id', $id)->exists()){
+                $this->confirmedFamilyMembers()->attach($input);
+            }
+        }
     }
 }
