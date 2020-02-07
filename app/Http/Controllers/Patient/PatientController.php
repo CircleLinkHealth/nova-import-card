@@ -7,6 +7,7 @@
 namespace App\Http\Controllers\Patient;
 
 use App\Contracts\ReportFormatter;
+use App\FullCalendar\NurseCalendarService;
 use App\Http\Controllers\Controller;
 use App\Services\CarePlanViewService;
 use App\Testing\CBT\TestPatients;
@@ -21,10 +22,18 @@ use Illuminate\Support\Facades\Auth;
 class PatientController extends Controller
 {
     private $formatter;
+    /**
+     * @var NurseCalendarService
+     */
+    private $fullCalendarService;
 
-    public function __construct(ReportFormatter $formatter)
+    /**
+     * PatientController constructor.
+     */
+    public function __construct(ReportFormatter $formatter, NurseCalendarService $fullCalendarService)
     {
-        $this->formatter = $formatter;
+        $this->formatter           = $formatter;
+        $this->fullCalendarService = $fullCalendarService;
     }
 
     public function createCBTTestPatient(Request $request)
@@ -172,12 +181,14 @@ class PatientController extends Controller
         }
 
         if ($user->canApproveCarePlans()) {
+//            I dont understand how these are used (if used)
             $showPatientsPendingApprovalBox = true;
             $patients                       = $user->patientsPendingApproval()->get();
             $patientsPendingApproval        = $this->formatter->patientListing($patients);
             $pendingApprovals               = $patients->count();
         }
         $noLiveCountTimeTracking = true;
+        $authData                = $this->fullCalendarService->getAuthData();
 
         return view(
             'wpUsers.patient.dashboard',
@@ -187,6 +198,7 @@ class PatientController extends Controller
                     'nurse',
                     'showPatientsPendingApprovalBox',
                     'noLiveCountTimeTracking',
+                    'authData',
                 ]),
                 $patientsPendingApproval
             )

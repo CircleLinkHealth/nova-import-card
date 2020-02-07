@@ -540,7 +540,6 @@ class UserRepository
             $user->load('nurseInfo');
         }
 
-        // add ehr-report writer info
         if ($user->hasRole('ehr-report-writer') && ! $user->ehrReportWriterInfo) {
             $ehrReportWriterInfo          = new EhrReportWriterInfo();
             $ehrReportWriterInfo->user_id = $user->id;
@@ -609,18 +608,18 @@ class UserRepository
         } else {
             $store = \Cache::getStore();
         }
-        
+
         foreach ($keys as $key) {
             $store->forget($key);
             Cache::forget($key);
         }
-    
+
         $cacheDriver = config('cache.default');
-    
+
         if ('redis' === $cacheDriver) {
             \RedisManager::del($user->getCpmRolesCacheKey());
         }
-    
+
         $user->clearObjectCache();
         $user->unsetRelation('roles');
     }
