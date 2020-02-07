@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\AwvPatientReportNotify;
 use Illuminate\Console\Command;
 use Redis;
 
@@ -31,12 +32,8 @@ class SubscribeToRedisAWVChannel extends Command
      */
     public function handle()
     {
-        Redis::subscribe(['test-channel'], function ($message) {
-            echo $message;
-
-            \Log::channel('logdna')->info('Recording test-channel message', [
-                'batch_id' => \Carbon::now()->toDateTimeString(),
-            ]);
+        Redis::subscribe(['awv-patient-report-created'], function ($patientReportdata) {
+            AwvPatientReportNotify::dispatch($patientReportdata);
         });
     }
 }
