@@ -40,8 +40,8 @@ class CalculateAndSaveLoginLogoutActivity implements ShouldQueue
     {
         $yesterdaysEvents = $this->getYesterdaysEvents();
         foreach ($yesterdaysEvents as $event) {
-            $loginTime  = Carbon::parse($event->login_time);
-            $logoutTime = Carbon::parse($event->logout_time);
+            $loginTime  = $event->login_time;
+            $logoutTime = $event->logout_time;
 
             $event->duration_in_sec = $logoutTime->diffInSeconds($loginTime);
             $event->save();
