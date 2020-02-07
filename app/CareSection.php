@@ -9,15 +9,15 @@ namespace App;
 /**
  * App\CareSection.
  *
- * @property int                                                          $id
- * @property string                                                       $name
- * @property string                                                       $display_name
- * @property string                                                       $description
- * @property string                                                       $template
- * @property \Carbon\Carbon                                               $created_at
- * @property \Carbon\Carbon                                               $updated_at
- * @property \App\CarePlanItem[]|\Illuminate\Database\Eloquent\Collection $carePlanItems
- * @property \App\CarePlan[]|\Illuminate\Database\Eloquent\Collection     $carePlans
+ * @property int                                                                                         $id
+ * @property string                                                                                      $name
+ * @property string                                                                                      $display_name
+ * @property string                                                                                      $description
+ * @property string                                                                                      $template
+ * @property \Carbon\Carbon                                                                              $created_at
+ * @property \Carbon\Carbon                                                                              $updated_at
+ * @property \App\CarePlanItem[]|\Illuminate\Database\Eloquent\Collection                                $carePlanItems
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlan[]|\Illuminate\Database\Eloquent\Collection $carePlans
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereDisplayName($value)
@@ -26,7 +26,7 @@ namespace App;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereTemplate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareSection query()
@@ -74,6 +74,6 @@ class CareSection extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function carePlans()
     {
-        return $this->belongsToMany('App\CarePlan', 'care_item_care_plan', 'section_id', 'plan_id');
+        return $this->belongsToMany('CircleLinkHealth\SharedModels\Entities\CarePlan', 'care_item_care_plan', 'section_id', 'plan_id');
     }
 }

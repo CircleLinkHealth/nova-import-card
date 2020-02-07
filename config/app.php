@@ -7,9 +7,14 @@
 use App\Providers\CpmArtisanServiceProvider;
 use CircleLinkHealth\CcdaParserProcessorPhp\Providers\CcdaParserProcessorProvider;
 use CircleLinkHealth\Eligibility\Providers\EligibilityServiceProvider;
-use Circlelinkhealth\ImportPracticeStaffCsv\CardServiceProvider;
+use CircleLinkHealth\Eligibility\Providers\RouteServiceProvider as EligibilityRouteServiceProvider;
+use CircleLinkHealth\ImportPracticeStaffCsv\CardServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesDeferredBindingsServiceProvider;
 use CircleLinkHealth\NurseInvoices\Providers\NurseInvoicesServiceProvider;
+
+$appUrl = env('APP_URL', 'http://cpm.dev');
+
+$appUrl = str_replace('${HEROKU_APP_NAME}', getenv('HEROKU_APP_NAME'), $appUrl);
 
 return [
     /*
@@ -23,7 +28,7 @@ return [
      * atom
      */
     'editor' => env('IDE', 'phpstorm'),
-
+    
     /*
    |--------------------------------------------------------------------------
    | Application Name
@@ -33,9 +38,9 @@ return [
    | framework needs to place the application's name in a notification or
    | any other location as required by the application or its packages.
    */
-
+    
     'name' => 'CarePlan Manager',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -46,9 +51,9 @@ return [
     | services your application utilizes. Set this in your ".env" file.
     |
     */
-
+    
     'env' => env('APP_ENV', 'production'),
-
+    
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
@@ -59,9 +64,9 @@ return [
     | application. If disabled, a simple generic error page is shown.
     |
     */
-
+    
     'debug' => env('APP_DEBUG', false),
-
+    
     /*
     |--------------------------------------------------------------------------
     | Application URL
@@ -72,11 +77,11 @@ return [
     | your application so that it is used when running Artisan tasks.
     |
     */
-
-    'url' => env('APP_URL', 'http://cpm.dev'),
-
+    
+    'url' => $appUrl,
+    
     'asset_url' => env('ASSET_URL', null),
-
+    
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
@@ -87,9 +92,9 @@ return [
     | ahead and set this to a sensible default for you out of the box.
     |
     */
-
+    
     'timezone' => 'America/New_York',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
@@ -100,9 +105,9 @@ return [
     | to any of the locales which will be supported by the application.
     |
     */
-
+    
     'locale' => 'en',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Application Fallback Locale
@@ -113,9 +118,9 @@ return [
     | the language folders that are provided through your application.
     |
     */
-
+    
     'fallback_locale' => 'en',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Faker Locale
@@ -126,9 +131,9 @@ return [
     | localized telephone numbers, street address information and more.
     |
     */
-
+    
     'faker_locale' => 'en_US',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Encryption Key
@@ -139,11 +144,11 @@ return [
     | will not be safe. Please do this before deploying an application!
     |
     */
-
+    
     'key' => env('APP_KEY', 'SomeRandomString'),
-
+    
     'cipher' => 'AES-256-CBC',
-
+    
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
@@ -154,11 +159,11 @@ return [
     | this array to grant expanded functionality to your applications.
     |
     */
-
+    
     'providers' => [
         // Jenssegers User Agent
         Jenssegers\Agent\AgentServiceProvider::class,
-
+        
         // Laravel Framework Service Providers...
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
@@ -182,42 +187,43 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-
+        
         \App\Providers\RouteServiceProvider::class,
         \App\Providers\AuthServiceProvider::class,
         \App\Providers\CpmEventServiceProvider::class,
         \App\Providers\ObserversServiceProvider::class,
-
+        
         \App\Providers\NovaServiceProvider::class,
-
+        
         CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
-
+        
         App\Providers\AppServiceProvider::class,
         App\Providers\AppDeferredServiceProvider::class,
-
+        
         App\Providers\BroadcastServiceProvider::class,
-
+        
         App\Providers\HtmlToPdfServiceProvider::class,
         App\Providers\DirectMailServiceProvider::class,
         App\Providers\FaxServiceProvider::class,
         App\Providers\TwilioClientServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
-
+        
         CircleLinkHealth\ApiPatient\Providers\ApiPatientServiceProvider::class,
-
+        
         App\View\Composers\ProviderUITimerComposer::class,
         App\View\Composers\FabComposer::class,
         App\View\Composers\SAAS\Admin\ManageInternalUser::class,
         App\Providers\EligibilityBatchViewComposerServiceProvider::class,
-
+        
         NurseInvoicesServiceProvider::class,
         NurseInvoicesDeferredBindingsServiceProvider::class,
         EligibilityServiceProvider::class,
+        EligibilityRouteServiceProvider::class,
         CardServiceProvider::class,
         CcdaParserProcessorProvider::class,
         CpmArtisanServiceProvider::class,
     ],
-
+    
     /*
     |--------------------------------------------------------------------------
     | Class Aliases
@@ -228,8 +234,8 @@ return [
     | the aliases are "lazy" loaded so they don't hinder performance.
     |
     */
-
-    'aliases' => [
+    
+    'aliases'         => [
         'App'          => Illuminate\Support\Facades\App::class,
         'Agent'        => Jenssegers\Agent\Facades\Agent::class,
         'Artisan'      => Illuminate\Support\Facades\Artisan::class,
@@ -248,7 +254,7 @@ return [
         'Hash'         => Illuminate\Support\Facades\Hash::class,
         'Lang'         => Illuminate\Support\Facades\Lang::class,
         'Log'          => Illuminate\Support\Facades\Log::class,
-        'Notification' => Illuminate\Support\Facades\Notification::class,
+        'Notification' => CircleLinkHealth\Core\Facades\Notification::class,
         'Mail'         => Illuminate\Support\Facades\Mail::class,
         'Password'     => Illuminate\Support\Facades\Password::class,
         'Queue'        => Illuminate\Support\Facades\Queue::class,
@@ -263,10 +269,10 @@ return [
         'URL'          => Illuminate\Support\Facades\URL::class,
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
-
+        
         'Input'     => Illuminate\Support\Facades\Input::class,
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
-
+        
         'DataTables'   => Yajra\DataTables\Facades\DataTables::class,
         'Form'         => \Collective\Html\FormFacade::class,
         'Html'         => \Collective\Html\HtmlFacade::class,
@@ -276,7 +282,7 @@ return [
         'Swagger'      => L5Swagger\L5SwaggerServiceProvider::class,
         'UrlShortener' => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
-
+    
     /*
     |--------------------------------------------------------------------------
     | App Version Variable in .env
@@ -288,8 +294,8 @@ return [
     | Defaults to ''.
     |
     */
-    'app_version' => env('APP_VERSION', ''),
-
+    'app_version'     => env('APP_VERSION', ''),
+    
     // Hide these variables from debug screens (Whoops, Raygun, etc)
     'debug_blacklist' => [
         '_COOKIE' => array_keys($_COOKIE),

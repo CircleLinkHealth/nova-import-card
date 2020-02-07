@@ -7,6 +7,32 @@
 return [
     /*
     |--------------------------------------------------------------------------
+    | Horizon Domain
+    |--------------------------------------------------------------------------
+    |
+    | This is the subdomain where Horizon will be accessible from. If this
+    | setting is null, Horizon will reside under the same domain as the
+    | application. Otherwise, this value will serve as the subdomain.
+    |
+    */
+    
+    'domain' => null,
+
+    /*
+   |--------------------------------------------------------------------------
+   | Horizon Path
+   |--------------------------------------------------------------------------
+   |
+   | This is the URI path where Horizon will be accessible from. Feel free
+   | to change this path to anything you like. Note that the URI will not
+   | affect the paths of its internal API that aren't exposed to users.
+   |
+   */
+
+    'path' => 'horizon',
+    
+    /*
+    |--------------------------------------------------------------------------
     | Horizon Redis Connection
     |--------------------------------------------------------------------------
     |
@@ -30,6 +56,19 @@ return [
     */
 
     'prefix' => env('HORIZON_PREFIX', 'horizon:'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Horizon Route Middleware
+    |--------------------------------------------------------------------------
+    |
+    | These middleware will get attached onto each Horizon route, giving you
+    | the chance to add your own middleware to this list or change any of
+    | the existing middleware. Or, you can simply stick with this list.
+    |
+    */
+
+    'middleware' => ['web'],
 
     /*
     |--------------------------------------------------------------------------
@@ -84,13 +123,24 @@ return [
                 'timeout'    => 300,
             ],
         ],
+        'review' => [
+            'supervisor-1' => [
+                'connection' => 'redis',
+                'queue'      => ['high', 'default', 'low'],
+                'balance'    => 'auto',
+                'minProcesses' => 1,
+                'maxProcesses' => 3,
+                'tries'         => 2,
+                'timeout'       => 30,
+            ],
+        ],
         'staging' => [
             'supervisor-1' => [
                 'connection'    => 'redis',
-                'queue'         => ['default', 'low', 'demanding'],
+                'queue'         => ['default', 'low'],
                 'balance'       => 'auto',
-                'min-processes' => 1,
-                'max-processes' => 2,
+                'minProcesses' => 1,
+                'maxProcesses' => 2,
                 'tries'         => 1,
                 'timeout'       => 60,
             ],
@@ -98,8 +148,8 @@ return [
                 'connection'    => 'redis',
                 'queue'         => ['high'],
                 'balance'       => 'simple',
-                'min-processes' => 2,
-                'max-processes' => 7,
+                'minProcesses' => 2,
+                'maxProcesses' => 3,
                 'tries'         => 1,
                 'timeout'       => 30,
             ],
@@ -107,30 +157,21 @@ return [
         'production_v3' => [
             'supervisor-1' => [
                 'connection'    => 'redis',
-                'queue'         => ['default'],
+                'queue'         => ['default', 'low'],
                 'balance'       => 'auto',
-                'min-processes' => 3,
-                'max-processes' => 6,
-                'tries'         => 1,
-                'timeout'       => 60,
+                'minProcesses' => 1,
+                'maxProcesses' => 4,
+                'tries'         => 3,
+                'timeout'       => 300,
             ],
             'supervisor-2' => [
                 'connection'    => 'redis',
                 'queue'         => ['high'],
                 'balance'       => 'simple',
-                'min-processes' => 4,
-                'max-processes' => 10,
-                'tries'         => 1,
+                'minProcesses' => 3,
+                'maxProcesses' => 5,
+                'tries'         => 3,
                 'timeout'       => 40,
-            ],
-            'supervisor-3' => [
-                'connection'    => 'redis',
-                'queue'         => ['low', 'demanding'],
-                'balance'       => 'auto',
-                'min-processes' => 1,
-                'max-processes' => 4,
-                'tries'         => 1,
-                'timeout'       => 60,
             ],
         ],
     ],

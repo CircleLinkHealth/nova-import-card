@@ -260,6 +260,28 @@ class Calls implements AthenaApiImplementation
     }
 
     /**
+     * Get care team associated with the patient and chart.
+     *
+     * @see https://developer.athenahealth.com/docs/read/chart/Care_Team#section-1
+     *
+     * @throws \Exception
+     *
+     * @return mixed
+     */
+    public function getCareTeam(int $patientId, int $practiceId, int $departmentId)
+    {
+        $this->api()->setPracticeId($practiceId);
+
+        $response = $this->api()->GET("chart/{$patientId}/careteam", [
+            'patientid'    => $patientId,
+            'practiceid'   => $practiceId,
+            'departmentid' => $departmentId,
+        ]);
+
+        return $this->response($response);
+    }
+
+    /**
      * Get a patient's CCDA record.
      *
      * @param $patientId
@@ -296,7 +318,9 @@ class Calls implements AthenaApiImplementation
      */
     public function getDemographics($patientId, $practiceId)
     {
-        $response = $this->api()->GET("${practiceId}/patients/${patientId}");
+        $this->api()->setPracticeId($practiceId);
+
+        $response = $this->api()->GET("patients/{$patientId}");
 
         return $this->response($response);
     }
@@ -520,6 +544,17 @@ class Calls implements AthenaApiImplementation
         $response = $this->api()->GET('customfields', [
             'practiceid' => $practiceId,
         ]);
+
+        return $this->response($response);
+    }
+
+    public function getProvider(
+        $practiceId,
+        $providerId
+    ) {
+        $this->api()->setPracticeId($practiceId);
+
+        $response = $this->api()->GET("providers/{$providerId}");
 
         return $this->response($response);
     }

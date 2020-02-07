@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CPM\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Http\Request;
 
 class ManageCpmProblemsController extends Controller
@@ -71,8 +71,6 @@ class ManageCpmProblemsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -82,8 +80,7 @@ class ManageCpmProblemsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int                      $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */

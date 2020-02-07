@@ -2,21 +2,21 @@
     <div class="container-fluid">
         <div class="col-md-12" style="margin-top: 15px">
             <div class="col-md-8 text-left" style="height: 30px; padding-top: 5px">
-                <button class="col-md-3 btn btn-secondary btn-xs pointer" v-bind:class="{'btn-info': !this.showPast}"
+                <button class="col-md-1 btn btn-secondary btn-s pointer" v-bind:class="{'btn-info': !this.showPast}"
                         @click="showCurrentDocuments()">Current
                 </button>
-                <button class="col-md-3 btn btn-secondary btn-xs pointer" v-bind:class="{'btn-info': this.showPast}"
+                <button class="col-md-1 btn btn-secondary btn-s pointer" v-bind:class="{'btn-info': this.showPast}"
                         style="margin-right: 40px"
                         @click="showPastDocuments()">Past
                 </button>
-                <button class="col-md-3 btn btn-info btn-xs pointer"
+                <button class="col-md-3 btn btn-info btn-s pointer"
                         @click="uploadCareDocument()">Upload Documents
                 </button>
                 <a v-if="!userEnrolledIntoAwv"
-                   class="col-md-2 btn btn-info btn-xs pointer"
+                   class="col-md-2 btn btn-info btn-s pointer"
                    style="margin-left: 10px"
                    target="_blank"
-                   :href="getAwvUrl(`manage-patients/${this.patient.id}/enroll`)">
+                   :href="getAwvUrl(`manage-patients/${this.patientId}/enroll`)">
                     Enroll into AWV
                 </a>
             </div>
@@ -47,26 +47,19 @@
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
                                 <div>
-                                    <button v-if="awvUrl.length === 0" class="col-md-6 btn btn-m"
-                                            disabled
+                                    <button class="col-md-6 btn btn-m"
                                             :class="getButtonColorFromStatus(status.hra_status)">
                                         {{getButtonTextFromStatus(status.hra_status)}}
                                     </button>
-                                    <a v-else class="col-md-6 btn btn-m"
-                                       :class="getButtonColorFromStatus(status.hra_status)"
-                                       target="_blank"
-                                       :href="getViewHraSurveyUrl()">
-                                        {{getButtonTextFromStatus(status.hra_status)}}
-                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a class="blue-link" style="float: right; padding-top: 7px" :href="getViewHraSurveyUrl()" target="_blank">View</a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
-                                <div class="col-md-6">
-                                    {{status.year}}
+                                <div>
+                                    {{status.hra_display_date}}
                                 </div>
-                                <!--<div class="col-md-6">-->
-                                <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
-                                <!--</div>-->
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
                                 <p><strong>Send Assessment Link to Provider via:</strong></p>
@@ -96,26 +89,19 @@
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
                                 <div>
-                                    <button v-if="awvUrl.length === 0" class="col-md-6 btn btn-m"
-                                            disabled
+                                    <button class="col-md-6 btn btn-m"
                                             :class="getButtonColorFromStatus(status.vitals_status)">
                                         {{getButtonTextFromStatus(status.vitals_status)}}
                                     </button>
-                                    <a v-else class="col-md-6 btn btn-m"
-                                       :class="getButtonColorFromStatus(status.vitals_status)"
-                                       target="_blank"
-                                       :href="getViewVitalsSurveyUrl()">
-                                        {{getButtonTextFromStatus(status.vitals_status)}}
-                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a class="blue-link" style="float: right; padding-top: 7px" :href="getViewVitalsSurveyUrl()" target="_blank">View</a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
-                                <div class="col-md-6">
-                                    {{status.year}}
+                                <div>
+                                    {{status.v_display_date}}
                                 </div>
-                                <!--<div class="col-md-6">-->
-                                <!--<a style="float: right" :href="viewApi()" target="_blank">View</a>-->
-                                <!--</div>-->
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
                                 <p><strong>Send Assessment Link to Provider via:</strong></p>
@@ -147,27 +133,27 @@
             <!--</div>-->
             <div v-if="careDocs['PPP']">
                 <div v-for="doc in careDocs['PPP']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'PPP'" :patient="patient"></care-document-box>
+                    <care-document-box :doc="doc" :type="'PPP'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'PPP'"  :patient="patient"></care-document-box>
+                    <care-document-box :type="'PPP'"  :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Provider Report']">
                 <div v-for="doc in careDocs['Provider Report']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'Provider Report'" :patient="patient"></care-document-box>
+                    <care-document-box :doc="doc" :type="'Provider Report'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'Provider Report'"  :patient="patient"></care-document-box>
+                    <care-document-box :type="'Provider Report'"  :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Lab Results']">
                 <div v-for="doc in careDocs['Lab Results']" class="col-md-3">
-                    <care-document-box :doc="doc" :type="'Lab Results'" :patient="patient"></care-document-box>
+                    <care-document-box :doc="doc" :type="'Lab Results'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
         </div>
@@ -259,14 +245,12 @@
                 showBanner: false,
                 bannerText: '',
                 bannerType: 'info',
-
-
             }
 
         },
         props: {
-            patient: {
-                type: Object,
+            patientId: {
+                type: String,
                 required: true,
             },
             awvUrl: {
@@ -288,7 +272,7 @@
         },
         computed: {
             uploadUrl() {
-                return rootUrl('/care-docs/' + this.patient.id);
+                return rootUrl('/care-docs/' + this.patientId);
             },
             bannerClass() {
                 return 'alert alert-' + this.bannerType;
@@ -333,19 +317,19 @@
             },
 
             getViewHraSurveyUrl() {
-                return this.getAwvUrl(`survey/hra/${this.patient.id}`);
+                return this.getAwvUrl(`survey/hra/${this.patientId}`);
             },
 
             getViewVitalsSurveyUrl() {
-                return this.getAwvUrl(`survey/vitals/${this.patient.id}`);
+                return this.getAwvUrl(`survey/vitals/${this.patientId}`);
             },
 
             getAwvSendSmsForm(survey){
-                return this.getAwvUrl(`manage-patients/${this.patient.id}/` + survey + `/sms/send-assessment-link`);
+                return this.getAwvUrl(`manage-patients/${this.patientId}/` + survey + `/sms/send-assessment-link`);
             },
 
             getAwvSendEmailForm(survey){
-                return this.getAwvUrl(`manage-patients/${this.patient.id}/` + survey + `/email/send-assessment-link`);
+                return this.getAwvUrl(`manage-patients/${this.patientId}/` + survey + `/email/send-assessment-link`);
             },
 
             getButtonTextFromStatus(status) {
@@ -384,7 +368,7 @@
 
             getCareDocuments() {
                 return this.axios
-                    .get(rootUrl('/care-docs/' + this.patient.id + '/' + this.showPast))
+                    .get(rootUrl('/care-docs/' + this.patientId + '/' + this.showPast))
                     .then(response => {
                         this.loading = false;
                         this.careDocs = response.data.files;
@@ -535,6 +519,11 @@
 
     .shadow {
         box-shadow:         1px 1px 1px 1px #ccc;
+    }
+
+    .blue-link {
+        color: #5cc0dd;
+        font-weight: 700;
     }
 
 </style>

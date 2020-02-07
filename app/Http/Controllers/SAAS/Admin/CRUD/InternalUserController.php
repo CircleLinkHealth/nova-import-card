@@ -169,7 +169,7 @@ class InternalUserController extends Controller
                 $q->where('name', '!=', 'administrator');
             });
             // providers can only see their participants
-            if (Auth::user()->hasRole(['provider'])) {
+            if (Auth::user()->isProvider()) {
                 $wpUsers->ofType('participant');
             }
         }
@@ -196,8 +196,6 @@ class InternalUserController extends Controller
 
     /**
      * Store an internal user.
-     *
-     * @param StoreInternalUser $request
      *
      * @throws \Exception
      *

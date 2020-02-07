@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\Models\PatientData\NBI\PatientData;
+use CircleLinkHealth\Eligibility\Entities\PatientData;
 use App\Nova\Importers\NBIPatientData as NBIPatientDataImporter;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Date;

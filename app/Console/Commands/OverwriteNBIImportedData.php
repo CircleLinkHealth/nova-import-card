@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
 use Illuminate\Console\Command;
 
 /**
@@ -44,7 +44,7 @@ class OverwriteNBIImportedData extends Command
      */
     public function handle()
     {
-        $result = \App\Models\MedicalRecords\ImportedMedicalRecord::whereNull('patient_id')->whereNull('billing_provider_id')->get()->map(
+        $result = \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord::whereNull('patient_id')->whereNull('billing_provider_id')->get()->map(
             function ($imr) {
                 $this->info("Checking ImportedMedicalRecord id: $imr->id");
 
@@ -65,7 +65,7 @@ class OverwriteNBIImportedData extends Command
     {
         $mr    = $imr->medicalRecord();
         $dem   = $imr->demographics()->first();
-        $datas = \App\Models\PatientData\NBI\PatientData::where(
+        $datas = \CircleLinkHealth\Eligibility\Entities\PatientData::where(
             'first_name',
             'like',
             "{$dem->first_name}%"
@@ -98,7 +98,7 @@ class OverwriteNBIImportedData extends Command
             $dem->save();
 
             if ( ! empty($datas->primary_insurance)) {
-                $insurance = \App\Importer\Models\ItemLogs\InsuranceLog::create(
+                $insurance = \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog::create(
                     [
                         'medical_record_id'   => $mr->id,
                         'medical_record_type' => get_class($mr),
@@ -110,7 +110,7 @@ class OverwriteNBIImportedData extends Command
             }
 
             if ( ! empty($datas->secondary_insurance)) {
-                $insurance = \App\Importer\Models\ItemLogs\InsuranceLog::create(
+                $insurance = \CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog::create(
                     [
                         'medical_record_id'   => $mr->id,
                         'medical_record_type' => get_class($mr),

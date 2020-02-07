@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\MedicalRecords\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 
 class ImporterController extends ApiController
 {

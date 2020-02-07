@@ -70,7 +70,7 @@
                                            id="asap"
                                            type="checkbox"
                                            name="asap_check"
-                                           style=" float: right;margin-top: -18px;"
+                                           style="float: right; margin-top: -18px; display: block;"
                                            :disabled="action.disabled">
                                 </a>
 

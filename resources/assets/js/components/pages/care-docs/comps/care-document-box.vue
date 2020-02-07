@@ -11,7 +11,7 @@
                 <div class="" v-else>
                     <button class="btn col-md-6 btn-default btn-m">Unavailable</button></div>
                 <div class="col-md-6">
-                    <a  v-bind:class="{'isDisabled': !doc}" style="float: right" :href="viewApi()" target="_blank">View</a>
+                    <a  class="blue-link" v-bind:class="{'isDisabled': !doc}" style="float: right; padding-top: 7px" :href="viewApi()" target="_blank">View</a>
                 </div>
             </div>
             <div>
@@ -34,7 +34,7 @@
                 </button>
             </div>
             <div class="col-md-12 panel-section">
-                <a  v-bind:class="{'isDisabled': !doc}" :href="downloadApi()">Download</a>
+                <a  class="blue-link" v-bind:class="{'isDisabled': !doc}" :href="downloadApi()">Download</a>
             </div>
         </div>
         <modal v-show="showSendModal" name="send-care-doc" class="modal-send-care-doc" :no-title="true"
@@ -109,8 +109,8 @@
                 type: Object,
                 required: false
             },
-            patient: {
-                type: Object,
+            patientId: {
+                type: String,
                 required: true
             }
         },
@@ -139,7 +139,7 @@
                 const query = {
                     file: this.doc
                 };
-                return rootUrl('/view-care-document/' + this.patient.id + '/' + this.doc.id);
+                return rootUrl('/view-care-document/' + this.patientId + '/' + this.doc.id);
             },
             downloadApi() {
                 if (! this.doc){
@@ -148,7 +148,7 @@
                 const query = {
                     file: this.doc
                 };
-                return rootUrl('/download-care-document/' + this.patient.id + '/' + this.doc.id);
+                return rootUrl('/download-care-document/' + this.patientId + '/' + this.doc.id);
             },
             openSendModal(channel) {
                 if (! this.doc){
@@ -178,11 +178,10 @@
                 this.loading = true;
 
                 return this.axios
-                    .post(rootUrl('/send-care-doc/' + this.patient.id + '/' + this.doc.id + '/' + this.channel + '/' + this.addressOrFax))
+                    .post(rootUrl('/send-care-doc/' + this.patientId + '/' + this.doc.id + '/' + this.channel + '/' + this.addressOrFax))
                     .then(response => {
                         this.loading = false;
-                        this.showSendModal = false;
-                        console.log(response);
+                        this.closeSendModal();
                     })
                     .catch(err => {
                         this.loading = false;
@@ -256,7 +255,7 @@
     }
 
     .isDisabled {
-        color: currentColor;
+        color: grey !important;
         cursor: not-allowed;
         opacity: 0.5;
         text-decoration: none;

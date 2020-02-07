@@ -16,26 +16,21 @@ class PatientReportData
 
     protected $bhiCode;
 
-    protected $bhiProblem;
-
     protected $bhiTime;
 
     protected $billingCodes;
+
+    protected $ccmProblemCodes;
+
     protected $ccmTime;
 
     protected $dob;
 
+    protected $locationName;
+
     protected $name;
 
     protected $practice;
-
-    protected $problem1;
-
-    protected $problem1Code;
-
-    protected $problem2;
-
-    protected $problem2Code;
 
     protected $provider;
 
@@ -58,14 +53,6 @@ class PatientReportData
     /**
      * @return mixed
      */
-    public function getBhiProblem()
-    {
-        return $this->bhiProblem;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getBhiTime()
     {
         return $this->bhiTime;
@@ -77,6 +64,14 @@ class PatientReportData
     public function getBillingCodes()
     {
         return $this->billingCodes;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCcmProblemCodes()
+    {
+        return $this->ccmProblemCodes;
     }
 
     /**
@@ -98,6 +93,14 @@ class PatientReportData
     /**
      * @return mixed
      */
+    public function getLocationName()
+    {
+        return $this->locationName;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getName()
     {
         return $this->name;
@@ -109,38 +112,6 @@ class PatientReportData
     public function getPractice()
     {
         return $this->practice;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProblem1()
-    {
-        return $this->problem1;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProblem1Code()
-    {
-        return $this->problem1Code;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProblem2()
-    {
-        return $this->problem2;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProblem2Code()
-    {
-        return $this->problem2Code;
     }
 
     /**
@@ -168,14 +139,6 @@ class PatientReportData
     }
 
     /**
-     * @param mixed $bhiProblem
-     */
-    public function setBhiProblem($bhiProblem): void
-    {
-        $this->bhiProblem = $bhiProblem;
-    }
-
-    /**
      * @param mixed $bhiTime
      */
     public function setBhiTime($bhiTime): void
@@ -192,6 +155,14 @@ class PatientReportData
     }
 
     /**
+     * @param mixed $ccmProblemCodes
+     */
+    public function setCcmProblemCodes($ccmProblemCodes): void
+    {
+        $this->ccmProblemCodes = $ccmProblemCodes;
+    }
+
+    /**
      * @param mixed $ccmTime
      */
     public function setCcmTime($ccmTime): void
@@ -205,6 +176,14 @@ class PatientReportData
     public function setDob($dob): void
     {
         $this->dob = $dob;
+    }
+
+    /**
+     * @param mixed $locationName
+     */
+    public function setLocationName($locationName): void
+    {
+        $this->locationName = $locationName;
     }
 
     /**

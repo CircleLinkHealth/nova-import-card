@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\Twilio;
 
 use App\Contracts\Services\TwilioClientable;
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Http\Controllers\Controller;
 use App\TwilioCall;
 use App\TwilioConferenceCallParticipant;
