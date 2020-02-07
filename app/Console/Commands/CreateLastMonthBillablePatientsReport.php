@@ -19,7 +19,7 @@ class CreateLastMonthBillablePatientsReport extends Command
      * @var string
      */
     protected $description = 'Attach 2 billable problems to each of last month\'s summaries';
-
+    
     /**
      * The name and signature of the console command.
      *
@@ -31,7 +31,7 @@ class CreateLastMonthBillablePatientsReport extends Command
                                 {--reset-actor : delete actor id}
                                 {--from-scratch : unlock the month and delete actor id, and problems}
                                 ';
-
+    
     /**
      * Execute the console command.
      *
@@ -40,32 +40,32 @@ class CreateLastMonthBillablePatientsReport extends Command
     public function handle()
     {
         $practiceIds = array_filter(explode(',', $this->argument('practiceIds')));
-
+        
         $datePassed = $this->argument('date');
         $month      = $datePassed
             ? Carbon::parse($datePassed)->startOfMonth()
             : Carbon::now()->subMonth()->startOfMonth();
-
+        
         Practice::active()
-            ->when(
-                $practiceIds,
-                function ($q) use ($practiceIds) {
-                    $q->whereIn('id', $practiceIds);
-                }
-            )
-            ->chunk(
-                1,
-                function ($practices) use ($month) {
-                    foreach ($practices as $practice) {
-                        $this->comment("BEGIN CreateLastMonthBillablePatientsReport for $practice->display_name for {$month->toDateString()}");
-
-                        ProcessLastMonthBillablePatients::dispatch($practice->id, $month, (bool) $this->option('from-scratch'), (bool) $this->option('reset-actor'));
-                        
-                        $this->output->success(
-                            "END CreateLastMonthBillablePatientsReport for $practice->display_name for {$month->toDateString()}"
-                        );
+                ->when(
+                    $practiceIds,
+                    function ($q) use ($practiceIds) {
+                        $q->whereIn('id', $practiceIds);
                     }
-                }
-            );
+                )
+                ->chunk(
+                    1,
+                    function ($practices) use ($month) {
+                        foreach ($practices as $practice) {
+                            $this->comment("BEGIN CreateLastMonthBillablePatientsReport for $practice->display_name for {$month->toDateString()}");
+                    
+                            ProcessLastMonthBillablePatients::dispatch($practice->id, $month, (bool) $this->option('from-scratch'), (bool) $this->option('reset-actor'));
+                    
+                            $this->output->success(
+                                "END CreateLastMonthBillablePatientsReport for $practice->display_name for {$month->toDateString()}"
+                            );
+                        }
+                    }
+                );
     }
 }
