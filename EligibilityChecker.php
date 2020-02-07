@@ -760,8 +760,12 @@ class EligibilityChecker
         if (empty($args['mrn']) && array_key_exists('mrn_number', $args) && ! empty($args['mrn_number'])) {
             $args['mrn'] = $args['mrn_number'];
         } elseif (empty($args['mrn']) && array_key_exists('patient_id', $args) && ! empty($args['patient_id'])) {
-            $args['dob'] = $args['dob'] ?? $args['date_of_birth'] ?? $args['birth_date'];
+            $args['mrn'] = $args['patient_id'];
+        } elseif (empty($args['mrn']) && array_key_exists('internal_id', $args) && ! empty($args['internal_id'])) {
+            $args['mrn'] = $args['internal_id'];
         }
+    
+        $args['dob'] = $args['dob'] ?? $args['date_of_birth'] ?? $args['birth_date'];
         
         $enrolleeExists = Enrollee::where(
             [
