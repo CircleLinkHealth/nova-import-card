@@ -44,13 +44,19 @@ class LogSuccessfulLogoutToDB implements ShouldQueue
     {
         try {
             $authId = null !== $this->event->user->id ? $this->event->user->id : auth()->id();
-            optional(
-                LoginLogout::where([
-                                       ['user_id', $authId],
-                                       ['login_time', '<', now()],
-                                       ['login_time', '>', now()->startOfDay()],
-                                   ])->get()->last()
-            )->update(['logout_time' => now()]);
+            
+            $openSession = LoginLogout::where([
+                                                  ['user_id', $authId],
+                                                  ['login_time', '<', now()],
+                                                  ['login_time', '>', now()->startOfDay()],
+                                              ])->orderByDesc('id')->first();
+            
+            if ($openSession) {
+                $openSession->logout_time = now();
+                $openSession->duration_in_sec = $openSession->logout_time->diffInSeconds($openSession->login_time);
+                $openSession->save();
+            }
+            
         } catch (\Exception $exception) {
             Log::error($exception->getMessage()." authid:$authId");
         }
