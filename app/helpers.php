@@ -158,17 +158,17 @@ if ( ! function_exists('activeNurseNames')) {
     {
         return User::ofType('care-center')
             ->with(
-                       [
-                           'nurseInfo' => function ($q) {
-                               $q->where('is_demo', '!=', true);
-                           },
-                       ]
-                   )->whereHas(
-                       'nurseInfo',
-                       function ($q) {
-                           $q->where('is_demo', '!=', true);
-                       }
-                   )->where('user_status', 1)
+                [
+                    'nurseInfo' => function ($q) {
+                        $q->where('is_demo', '!=', true);
+                    },
+                ]
+            )->whereHas(
+                'nurseInfo',
+                function ($q) {
+                    $q->where('is_demo', '!=', true);
+                }
+            )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
