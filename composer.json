@@ -135,7 +135,7 @@
     "circlelinkhealth/patientapi-module": "1.1",
     "circlelinkhealth/raygun-module": "0.8",
     "circlelinkhealth/revisionable-module": "1.4.1",
-    "circlelinkhealth/shared-models-module": "dev-CPM-1846-block-diabetus",
+    "circlelinkhealth/shared-models-module": "1.1.6",
     "circlelinkhealth/sqlviews-module": "1.0",
     "circlelinkhealth/timetracking-module": "1.1.7",
     "circlelinkhealth/twofa-module": "1.1.6",
