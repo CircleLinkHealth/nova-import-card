@@ -77,7 +77,7 @@ class PatientSummaryEloquentRepository
             return $summary;
         }
 
-        $summary = $this->removeDeletedConditions($summary);
+        $problemsDeleted = $this->removeDeletedConditions($summary);
 
         $skipValidation = false;
         if ( ! $this->hasBillableProblemsNameAndCode($summary)) {
@@ -88,43 +88,8 @@ class PatientSummaryEloquentRepository
             return $this->determineStatusAndSave($summary);
         }
 
-        if ($this->lacksProblems($summary)) {
-            $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
-                ->orderBy('month_year', 'desc')
-                ->where(
-                    'month_year',
-                    '<=',
-                    $summary->month_year->copy()->subMonth()->startOfMonth()
-                )
-                ->whereApproved(true)
-                ->with(['billableProblem1', 'billableProblem2'])
-                ->first();
-
-            if ($olderSummary) {
-                if ($olderSummary->billableProblem1) {
-                    $summary->problem_1              = $olderSummary->problem_1;
-                    $summary->billable_problem1      = $olderSummary->billable_problem1;
-                    $summary->billable_problem1_code = $olderSummary->billable_problem1_code;
-                } else {
-                    $summary->problem_1              = null;
-                    $summary->billable_problem1      = null;
-                    $summary->billable_problem1_code = null;
-                }
-
-                if ($olderSummary->billableProblem2) {
-                    $summary->problem_2              = $olderSummary->problem_2;
-                    $summary->billable_problem2      = $olderSummary->billable_problem2;
-                    $summary->billable_problem2_code = $olderSummary->billable_problem2_code;
-                } else {
-                    $summary->problem_2              = null;
-                    $summary->billable_problem2      = null;
-                    $summary->billable_problem2_code = null;
-                }
-
-                if ($summary->problem_1 && $summary->problem_2) {
-                    $skipValidation = true;
-                }
-            }
+        if ($this->lacksProblems($summary) && !$problemsDeleted) {
+            $this->fillProblemsUsingOlderSummary($summary);
         }
 
         if ($summary->hasServiceCode('CPT 99484') && ! $summary->hasAtLeastOneBhiProblem()) {
@@ -192,7 +157,7 @@ class PatientSummaryEloquentRepository
 
         if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
             $class = PatientMonthlySummary::class;
-            Cache::forget("${class}:{$summary->id}:chargeableServices");
+            Cache::tags(['practice.chargeable.services'])->forget("${class}:{$summary->id}:chargeableServices");
             $summary->load('chargeableServices');
         }
 
@@ -203,13 +168,13 @@ class PatientSummaryEloquentRepository
     {
         $patient = $summary->patient;
 
-        if ($this->shouldNotTouch($summary)) {
+        if ($this->shouldNotTouch($summary) && $summary->chargeableServices->isNotEmpty()) {
             return $summary;
         }
 
         $class = Practice::class;
 
-        $chargeableServices = Cache::remember(
+        $chargeableServices = Cache::tags(['practice.chargeable.services'])->remember(
             "${class}:{$patient->primaryPractice->id}:chargeableServices",
             2,
             function () use ($patient) {
@@ -244,7 +209,7 @@ class PatientSummaryEloquentRepository
 
     public function determineStatusAndSave(PatientMonthlySummary $summary)
     {
-        $summary = $this->removeDeletedConditions($summary);
+        $problemsDeleted = $this->removeDeletedConditions($summary);
 
         if ( ! $this->hasBillableProblemsNameAndCode($summary)) {
             $summary = $this->fillBillableProblemsNameAndCode($summary);
@@ -544,8 +509,7 @@ class PatientSummaryEloquentRepository
 
     private function attachBhiProblem($summary)
     {
-        $bhiProblems = $summary->patient
-            ->ccdProblems
+        $bhiProblems = $summary->attestedProblems
             ->where('cpmProblem.is_behavioral', '=', true)
             ->reject(
                 function ($problem) {
@@ -570,21 +534,25 @@ class PatientSummaryEloquentRepository
         return $summary;
     }
 
-    private function removeDeletedConditions(PatientMonthlySummary $summary)
+    private function removeDeletedConditions(PatientMonthlySummary &$summary)
     {
+        $deleted = false;
+        
         if ( ! $summary->billableProblem1()->exists()) {
             $summary->problem_1              = null;
             $summary->billable_problem1      = null;
             $summary->billable_problem1_code = null;
+            $deleted = true;
         }
 
         if ( ! $summary->billableProblem2()->exists()) {
             $summary->problem_2              = null;
             $summary->billable_problem2      = null;
             $summary->billable_problem2_code = null;
+            $deleted = true;
         }
 
-        return $summary;
+        return $deleted;
     }
 
     /**
@@ -609,7 +577,7 @@ class PatientSummaryEloquentRepository
      */
     private function shouldNotTouch(PatientMonthlySummary $summary): bool
     {
-        return (bool) $summary->actor_id || $summary->approved;
+        return (bool) $summary->actor_id;
     }
 
     /**
@@ -675,5 +643,45 @@ class PatientSummaryEloquentRepository
         }
 
         return $summary;
+    }
+    
+    private function fillProblemsUsingOlderSummary(PatientMonthlySummary &$summary)
+    {
+        $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
+                                             ->orderBy('month_year', 'desc')
+                                             ->where(
+                                                 'month_year',
+                                                 '<=',
+                                                 $summary->month_year->copy()->subMonth()->startOfMonth()
+                                             )
+                                             ->whereApproved(true)
+                                             ->with(['billableProblem1', 'billableProblem2'])
+                                             ->first();
+    
+        if ($olderSummary) {
+            if ($olderSummary->billableProblem1) {
+                $summary->problem_1              = $olderSummary->problem_1;
+                $summary->billable_problem1      = $olderSummary->billable_problem1;
+                $summary->billable_problem1_code = $olderSummary->billable_problem1_code;
+            } else {
+                $summary->problem_1              = null;
+                $summary->billable_problem1      = null;
+                $summary->billable_problem1_code = null;
+            }
+        
+            if ($olderSummary->billableProblem2) {
+                $summary->problem_2              = $olderSummary->problem_2;
+                $summary->billable_problem2      = $olderSummary->billable_problem2;
+                $summary->billable_problem2_code = $olderSummary->billable_problem2_code;
+            } else {
+                $summary->problem_2              = null;
+                $summary->billable_problem2      = null;
+                $summary->billable_problem2_code = null;
+            }
+        
+            if ($summary->problem_1 && $summary->problem_2) {
+                $skipValidation = true;
+            }
+        }
     }
 }

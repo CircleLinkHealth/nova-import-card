@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\Call;
 use App\Jobs\StoreTimeTracking;
 use App\Note;
@@ -47,15 +51,15 @@ class NurseCareRateLogsSeeder extends Seeder
         $logsTarget = 10000;
         $dayDivider = $logsTarget / 30;
 
-        for ($i = 0; $i < $logsTarget; $i++) {
-            if ($i % 50 === 0) {
+        for ($i = 0; $i < $logsTarget; ++$i) {
+            if (0 === $i % 50) {
                 $percent = round($i * 100 / $logsTarget);
                 $this->command->info("Progress: $percent / 100");
             }
 
-            if ($i % 3 === 0) {
+            if (0 === $i % 3) {
                 $patient = $patient1;
-            } elseif ($i % 3 === 1) {
+            } elseif (1 === $i % 3) {
                 $patient = $patient2;
             } else {
                 $patient = $patient3;
@@ -66,7 +70,7 @@ class NurseCareRateLogsSeeder extends Seeder
             $day        = 0;
             $multiplier = $dayDivider * $day;
             while ($i > $multiplier) {
-                $day++;
+                ++$day;
                 $multiplier = $dayDivider * $day;
             }
 
@@ -74,11 +78,10 @@ class NurseCareRateLogsSeeder extends Seeder
             $withSuccessfulCall = rand(0, 1);
             $when               = $start->copy()->addDay($day);
 
-            $this->addTime($nurse, $patient, $seconds, $billable === 1, $withSuccessfulCall === 1, $when);
+            $this->addTime($nurse, $patient, $seconds, 1 === $billable, 1 === $withSuccessfulCall, $when);
         }
 
-        $this->command->info("Done");
-
+        $this->command->info('Done');
     }
 
     private function addTime(
@@ -120,9 +123,9 @@ class NurseCareRateLogsSeeder extends Seeder
                     'name'          => $withSuccessfulCall
                         ? 'Patient Note Creation'
                         : 'test',
-                    'title'         => 'test',
-                    'url'           => 'test',
-                    'url_short'     => 'test',
+                    'title'     => 'test',
+                    'url'       => 'test',
+                    'url_short' => 'test',
                 ],
             ],
         ]);
@@ -171,14 +174,36 @@ class NurseCareRateLogsSeeder extends Seeder
                     'config_key' => NurseCcmPlusConfig::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS,
                 ],
                 [
-                    'config_value' => $current . (empty($current)
+                    'config_value' => $current.(empty($current)
                             ? ''
-                            : ',') . $nurse->id,
+                            : ',').$nurse->id,
                 ]
             );
         }
 
         return $nurse;
+    }
+
+    private function setupPatient(Practice $practice)
+    {
+        $patient    = $this->createUser($practice->id, 'participant');
+        $locationId = Location::firstOrCreate([
+            'practice_id' => $practice->id,
+        ])->id;
+        $patient->setPreferredContactLocation($locationId);
+        $patient->patientInfo->save();
+        $cpmProblems = CpmProblem::get();
+        $ccdProblems = $patient->ccdProblems()->createMany([
+            ['name' => 'test'.str_random(5)],
+            ['name' => 'test'.str_random(5)],
+            ['name' => 'test'.str_random(5)],
+        ]);
+        foreach ($ccdProblems as $problem) {
+            $problem->cpmProblem()->associate($cpmProblems->random());
+            $problem->save();
+        }
+
+        return $patient;
     }
 
     private function setupPractice(bool $addCcmPlusServices = false)
@@ -197,27 +222,5 @@ class NurseCareRateLogsSeeder extends Seeder
         $practice->chargeableServices()->sync($sync);
 
         return $practice;
-    }
-
-    private function setupPatient(Practice $practice)
-    {
-        $patient    = $this->createUser($practice->id, 'participant');
-        $locationId = Location::firstOrCreate([
-            'practice_id' => $practice->id,
-        ])->id;
-        $patient->setPreferredContactLocation($locationId);
-        $patient->patientInfo->save();
-        $cpmProblems = CpmProblem::get();
-        $ccdProblems = $patient->ccdProblems()->createMany([
-            ['name' => 'test' . str_random(5)],
-            ['name' => 'test' . str_random(5)],
-            ['name' => 'test' . str_random(5)],
-        ]);
-        foreach ($ccdProblems as $problem) {
-            $problem->cpmProblem()->associate($cpmProblems->random());
-            $problem->save();
-        }
-
-        return $patient;
     }
 }
