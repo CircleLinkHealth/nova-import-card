@@ -254,7 +254,7 @@ return [
         'Hash'         => Illuminate\Support\Facades\Hash::class,
         'Lang'         => Illuminate\Support\Facades\Lang::class,
         'Log'          => Illuminate\Support\Facades\Log::class,
-        'Notification' => Illuminate\Support\Facades\Notification::class,
+        'Notification' => CircleLinkHealth\Core\Facades\Notification::class,
         'Mail'         => Illuminate\Support\Facades\Mail::class,
         'Password'     => Illuminate\Support\Facades\Password::class,
         'Queue'        => Illuminate\Support\Facades\Queue::class,

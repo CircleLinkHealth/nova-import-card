@@ -1044,11 +1044,11 @@ if ( ! function_exists('validProblemName')) {
                 'check',
             ]
         ) && ! in_array(
-                strtolower($name),
-                [
-                    'fu',
-                ]
-            );
+            strtolower($name),
+            [
+                'fu',
+            ]
+        );
     }
 }
 
@@ -1572,5 +1572,24 @@ if ( ! function_exists('measureTime')) {
         echo "$desc: $secInt seconds | Start: $startTime | End: $endTime\n";
 
         return $result;
+    }
+}
+
+if ( ! function_exists('convertValidatorMessagesToString')) {
+    /**
+     * Formats Validator messages to return string.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     *
+     * @return string
+     */
+    function convertValidatorMessagesToString(Illuminate\Validation\Validator $validator): string
+    {
+        return implode('\n', collect($validator->getMessageBag()->toArray())->transform(function ($item, $key) {
+            $errors = implode(', ', $item);
+            $key = ucfirst($key);
+
+            return "{$key}: $errors";
+        })->toArray());
     }
 }
