@@ -11,6 +11,7 @@ use App\Http\Resources\ApprovableBillablePatient;
 use App\Notifications\PracticeInvoice;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
+use App\Services\CPM\CpmProblemService;
 use App\Services\PracticeReportsService;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
@@ -208,16 +209,7 @@ class PracticeInvoiceController extends Controller
             ->active()
             ->get();
 
-        $cpmProblems = CpmProblem::where('name', '!=', 'Diabetes')
-            ->get()
-            ->map(function ($p) {
-                return [
-                    'id'            => $p->id,
-                    'name'          => $p->name,
-                    'code'          => $p->default_icd_10_code,
-                    'is_behavioral' => $p->is_behavioral,
-                ];
-            });
+        $cpmProblems = (new CpmProblemService())->all();
 
         $currentMonth = Carbon::now()->startOfMonth();
 

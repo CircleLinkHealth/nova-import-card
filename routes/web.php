@@ -4,6 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+//use App\Notifications\TestEmail;
+
+use App\Notifications\TestEmail;
+
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
     'as'   => 'webhook.on-fax-sent',
@@ -577,6 +581,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('ccd/show/user/{userId}', [
         'uses' => 'CCDViewer\CCDViewerController@showByUserId',
         'as'   => 'get.CCDViewerController.showByUserId',
+    ])->middleware('permission:ccda.read');
+
+    Route::get('ccd/export/user/{userId}', [
+        'uses' => 'CCDViewer\CCDViewerController@exportAllCcds',
+        'as'   => 'get.CCDViewerController.exportAllCCDs',
     ])->middleware('permission:ccda.read');
 
     Route::get('ccd/export/user/{userId}', [
@@ -1177,7 +1186,7 @@ Route::group(['middleware' => 'auth'], function () {
         ])->middleware('permission:careplan-pdf.create,careplan-pdf.read,patient.read');
 
         Route::get('nurses/windows', [
-            'uses' => 'CareCenter\WorkScheduleController@getAllNurseSchedules',
+            'uses' => 'CareCenter\WorkScheduleController@showAllNurseScheduleForAdmin',
             'as'   => 'get.admin.nurse.schedules',
         ])->middleware('permission:nurse.read');
 
@@ -1732,6 +1741,16 @@ Route::group(['middleware' => 'auth'], function () {
             ],
         ])->middleware('permission:nurseContactWindow.read,nurseContactWindow.create');
 
+        Route::get('work-schedule/get-calendar-data', [
+            'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
+            'as'   => 'care.center.work.schedule.getCalendarData',
+        ])->middleware('permission:nurseContactWindow.read');
+
+        Route::get('work-schedule/get-nurse-calendar-data', [
+            'uses' => 'CareCenter\WorkScheduleController@calendarWorkEventsForAuthNurse',
+            'as'   => 'care.center.work.schedule.calendarWorkEventsForAuthNurse',
+        ])->middleware('permission:nurseContactWindow.read');
+
         Route::get('work-schedule/destroy/{id}', [
             'uses' => 'CareCenter\WorkScheduleController@destroy',
             'as'   => 'care.center.work.schedule.destroy',
@@ -2204,6 +2223,11 @@ Route::get('see-all-notifications', [
     'as'   => 'notifications.seeAll',
 ])->middleware('permission:provider.read,note.read');
 
+Route::get('nurses/holidays', [
+    'uses' => 'CareCenter\WorkScheduleController@getHolidays',
+    'as'   => 'get.admin.nurse.schedules.holidays',
+])->middleware('permission:nurse.read');
+
 Route::prefix('admin')->group(
     function () {
         Route::prefix('users')->group(
@@ -2261,3 +2285,24 @@ Route::prefix('admin')->group(
         );
     }
 );
+
+Route::get('/notification-unsubscribe', [
+    'uses' => 'NotificationsMailSubscriptionController@unsubscribe',
+    'as'   => 'unsubscribe.notifications.mail',
+])->middleware('signed', 'auth');
+
+Route::post('/update-subscriptions', [
+    'uses' => 'SubscriptionsDashboardController@updateSubscriptions',
+    'as'   => 'update.subscriptions',
+])->middleware('auth');
+
+Route::get('/notification-subscriptions-dashboard', [
+    'uses' => 'SubscriptionsDashboardController@subscriptionsIndex',
+    'as'   => 'subscriptions.notification.mail',
+])->middleware('auth');
+
+Route::post('nurses/nurse-calendar-data', [
+    'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
+    'as'   => 'get.nurse.schedules.selectedNurseCalendar',
+])->middleware('permission:nurse.read');
+
