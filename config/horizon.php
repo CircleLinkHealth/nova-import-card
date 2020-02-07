@@ -161,7 +161,7 @@ return [
                 'balance'       => 'auto',
                 'minProcesses' => 1,
                 'maxProcesses' => 4,
-                'tries'         => 2,
+                'tries'         => 3,
                 'timeout'       => 300,
             ],
             'supervisor-2' => [
