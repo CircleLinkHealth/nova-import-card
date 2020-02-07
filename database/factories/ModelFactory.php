@@ -308,3 +308,13 @@ $factory->define(Call::class, function (Faker\Generator $faker) {
         'scheduler'       => null, // to be filled in during test
     ];
 });
+
+$factory->define(CcdVendor::class, function (Faker\Generator $faker) {
+    $practice = factory(Practice::class)->create();
+
+    return [
+        'id'          => 1,
+        'program_id'  => $practice->id,
+        'vendor_name' => 'TEST',
+    ];
+});

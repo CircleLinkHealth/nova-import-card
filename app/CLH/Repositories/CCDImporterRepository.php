@@ -46,6 +46,13 @@ class CCDImporterRepository
             ? ''
             : ucwords(strtolower($fullName));
 
+        //decide whether user is awv only
+        $is_awv = false;
+        if (Ccda::class === $imr->medical_record_type) {
+            $ccda   = Ccda::find($imr->medical_record_id);
+            $is_awv = $ccda && Ccda::IMPORTER_AWV === $ccda->source;
+        }
+
         $bag = new ParameterBag([
             'email'             => $email,
             'password'          => str_random(),
@@ -61,6 +68,7 @@ class CCDImporterRepository
             'zip'               => $demographics->zip,
             'is_auto_generated' => true,
             'roles'             => [$role->id],
+            'is_awv'            => $is_awv,
         ]);
 
         return (new UserRepository())->createNewUser(new User(), $bag);
