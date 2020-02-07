@@ -44,11 +44,13 @@ class LogSuccessfulLogoutToDB implements ShouldQueue
     {
         try {
             $authId = null !== $this->event->user->id ? $this->event->user->id : auth()->id();
-            LoginLogout::where([
-                ['user_id', $authId],
-                ['login_time', '<', now()],
-                ['login_time', '>', now()->startOfDay()],
-            ])->get()->last()->update(['logout_time' => Carbon::parse(now())->toDateTime()]);
+            optional(
+                LoginLogout::where([
+                                       ['user_id', $authId],
+                                       ['login_time', '<', now()],
+                                       ['login_time', '>', now()->startOfDay()],
+                                   ])->get()->last()
+            )->update(['logout_time' => Carbon::parse(now())->toDateTime()]);
         } catch (\Exception $exception) {
             Log::error($exception->getMessage()." authid:$authId");
         }
