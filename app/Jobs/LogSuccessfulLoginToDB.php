@@ -49,7 +49,7 @@ class LogSuccessfulLoginToDB implements ShouldQueue
             LoginLogout::create([
                 'user_id'    => $this->event->user->id,
                 'login_time' => $this->loginDateTime(),
-                'ip_address' => $request->ip(),
+                'ip_address' => getIpAddress(),
             ]);
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
