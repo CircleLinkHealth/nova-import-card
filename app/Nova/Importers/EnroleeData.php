@@ -6,9 +6,9 @@
 
 namespace App\Nova\Importers;
 
-use App\Enrollee;
 use App\Search\PracticeByName;
 use App\Search\ProviderByName;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -36,20 +36,14 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
         $this->attributes = $attributes;
         $this->rules      = $rules;
         $this->modelClass = $modelClass;
-        $this->practice   = $this->getPractice();
+        $this->practice   = $resource->fields->getFieldValue('practice');
     }
 
-    /**
-     * @return int
-     */
     public function chunkSize(): int
     {
         return 200;
     }
 
-    /**
-     * @param Row $row
-     */
     public function onRow(Row $row)
     {
         $row = $row->toArray();
@@ -70,24 +64,5 @@ class EnroleeData implements OnEachRow, WithChunkReading, WithValidation, WithHe
     public function rules(): array
     {
         return $this->rules;
-    }
-
-    protected function getPractice()
-    {
-        $fileName = request()->file->getClientOriginalName();
-
-        if ($fileName) {
-            $array = explode('.', $fileName);
-
-            $practice = PracticeByName::first($array[0]);
-
-            if ( ! $practice) {
-                throw new \Exception('Practice not found. Please make sure that the file name is a valid Practice name.', 500);
-            }
-
-            return $practice;
-        }
-
-        throw new \Exception('Something went wrong. File not found.', 500);
     }
 }

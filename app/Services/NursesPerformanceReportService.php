@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\Exceptions\FileNotFoundException;
+use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CompanyHoliday;
 use CircleLinkHealth\Customer\Entities\Nurse;
@@ -73,7 +73,7 @@ class NursesPerformanceReportService
                 }
             )
             ->chunk(
-                50,
+                35,
                 function ($nurses) use (&$data, $date) {
                     $aggregatedTime = new AggregatedTotalTimePerNurse(
                         $nurses->pluck('id')->all(),
@@ -140,8 +140,6 @@ class NursesPerformanceReportService
      * @param $date
      *
      * Sets up data needed by both Nurse and States Dashboard and EmailRNDailyReport
-     *
-     * @return Collection
      */
     public function getDataForNurse(User $nurse, Carbon $date, int $totalSystemTime): Collection
     {
@@ -259,7 +257,6 @@ class NursesPerformanceReportService
     /**
      * @param Collection $nurseWindows
      * @param Collection $upcomingHolidays
-     * @param Carbon     $date
      *
      * @return int
      */
@@ -342,10 +339,6 @@ class NursesPerformanceReportService
     }
 
     /**
-     * @param Collection $nurseWindows
-     * @param Collection $upcomingHolidays
-     * @param Carbon     $date
-     *
      * @return int
      */
     public function getNumberOfDaysCommittedRestOfMonth(
@@ -380,9 +373,6 @@ class NursesPerformanceReportService
     /**
      * = (average hours worked per committed day during last 10 sessions that care coach committed to) * (number of
      * workdays that RN committed to left in month).
-     *
-     * @param User   $nurse
-     * @param Carbon $date
      *
      * @return float|null
      */
@@ -476,11 +466,11 @@ class NursesPerformanceReportService
                           'if (GREATEST(pms.ccm_time, pms.bhi_time) is null, 0, GREATEST(pms.ccm_time, pms.bhi_time)/60) as patient_time'
                       ),
                 \DB::raw(
-                          "if (GREATEST(pms.ccm_time, pms.bhi_time) is null, {$this->timeGoal}, ({$this->timeGoal} - (GREATEST(pms.ccm_time, pms.bhi_time)/60))) as patient_time_left"
-                      ),
+                    "if (GREATEST(pms.ccm_time, pms.bhi_time) is null, {$this->timeGoal}, ({$this->timeGoal} - (GREATEST(pms.ccm_time, pms.bhi_time)/60))) as patient_time_left"
+                ),
                 \DB::raw(
-                          'if (pms.no_of_successful_calls is null, 0, pms.no_of_successful_calls) as successful_calls'
-                      )
+                    'if (pms.no_of_successful_calls is null, 0, pms.no_of_successful_calls) as successful_calls'
+                )
             )
             ->leftJoin('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->leftJoinSub($sub, 'pms', function ($join) {
@@ -592,7 +582,6 @@ AND patient_info.ccm_status = 'enrolled'"
     }
 
     /**
-     * @param Carbon $date
      * @param $nurse
      *
      * Replaced by new metrics: Completion Rate, Efficiency Index, Hours Behind
@@ -700,7 +689,7 @@ AND patient_info.ccm_status = 'enrolled'"
      * @param $day
      *
      * @throws \Exception
-     * @throws FileNotFoundException
+     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
      *
      * @return mixed
      */
@@ -718,15 +707,8 @@ AND patient_info.ccm_status = 'enrolled'"
         )
             ->getFile();
 
-        if ( ! $json) {
-            return response()->json([
-                'message' => "File does not exist for: '{$day->toDateString()}'",
-            ], 400);
-        }
-        if ( ! is_json($json)) {
-            return response()->json([
-                'message' => 'File retrieved is not in json format.',
-            ], 400);
+        if ( ! $json || ! is_json($json)) {
+            return collect();
         }
 
         return collect(json_decode($json, true));

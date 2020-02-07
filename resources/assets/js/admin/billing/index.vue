@@ -145,29 +145,15 @@
                 <template slot="Patient" slot-scope="props">
                     <a :href="props.row.patientUrl" target="_blank" class="blue">{{props.row.Patient}}</a>
                 </template>
-                <template slot="CCM Problem 1" slot-scope="props">
-                    <div>
-                        <span class="blue pointer"
-                              @click="showCcmModal(props.row, 1)">{{props.row['CCM Problem 1'] || '&lt;Edit&gt;'}}</span>
-                        <loader v-if="props.row.promises['problem_1']"></loader>
-                    </div>
-                </template>
-                <template slot="CCM Problem 2" slot-scope="props">
-                    <div>
-                        <span class="blue pointer"
-                              @click="showCcmModal(props.row, 2)">{{props.row['CCM Problem 2'] || '&lt;Edit&gt;'}}</span>
-                        <loader v-if="props.row.promises['problem_2']"></loader>
-                    </div>
-                </template>
-                <template slot="BHI Problem" slot-scope="props">
-                    <div>
-                        <span class="blue pointer"
-                              @click="showBhiModal(props.row, 3)">{{props.row['BHI Problem'] || '&lt;Edit&gt;'}}</span>
-                        <loader v-if="props.row.promises['bhi_problem']"></loader>
+                <template slot="CCM Problem Code(s)" slot-scope="props">
+                    <div class="ccm-problem-codes">
+                        <span class="blue pointer" style="overflow-wrap: break-word"
+                              @click="showCcmModal(props.row)">{{attestedProblemCodes(props.row) || '&lt;Edit&gt;'}}</span>
                     </div>
                 </template>
                 <template slot="chargeable_services" slot-scope="props">
-                    <div class="blue" :class="isSoftwareOnly ? '' : 'pointer'" @click="showChargeableServicesModal(props.row)">
+                    <div class="blue" :class="isSoftwareOnly ? '' : 'pointer'"
+                         @click="showChargeableServicesModal(props.row)">
                         <div v-if="props.row.chargeable_services.length">
                             <label class="label label-info margin-5 inline-block"
                                    v-for="service in props.row.chargeables()" :key="service.id">{{service.code}}</label>
@@ -183,7 +169,8 @@
                 <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
                 <loader v-if="loaders.openMonth"></loader>
             </div>
-            <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
+            <attest-call-conditions-modal ref="attestCallConditionsModal"
+                                          :cpm-problems="cpmProblems"></attest-call-conditions-modal>
             <chargeable-services-modal ref="chargeableServicesModal"
                                        :services="selectedPracticeChargeableServices"></chargeable-services-modal>
             <error-modal ref="errorModal"></error-modal>
@@ -260,11 +247,7 @@
                     'Status',
                     'CCM Mins',
                     'BHI Mins',
-                    'CCM Problem 1',
-                    'CCM Problem 1 Code',
-                    'CCM Problem 2',
-                    'CCM Problem 2 Code',
-                    'BHI Problem',
+                    'CCM Problem Code(s)',
                     'BHI Problem Code',
                     '#Successful Calls',
                     'approved',
@@ -321,8 +304,8 @@
                 this.tableData = []
                 this.url = null;
                 this.$refs.tblBillingReport.setPage(1)
-                this.retrieve()
                 this.getCounts()
+                this.retrieve()
             },
             detachChargeableService(e) {
                 if (e) e.preventDefault()
@@ -407,7 +390,7 @@
                     const ids = this.tableData.map(i => i.id)
                     this.url = pagination.next_page_url
                     this.isClosed = !!Number(response.headers['is-closed'])
-                    this.tableData = this.tableData.concat(pagination.data.filter(patient => !ids.includes(patient.id)).map((patient, index) => {
+                    this.tableData = this.tableData.concat((pagination.data || []).filter(patient => !ids.includes(patient.id)).map((patient, index) => {
                         const item = {
                             id: patient.id,
                             MRN: patient.mrn,
@@ -425,18 +408,11 @@
                             Status: patient.status,
                             'CCM Mins': timeDisplay(patient.ccm_time),
                             'BHI Mins': timeDisplay(patient.bhi_time),
-                            'CCM Problem 1': patient.problem1,
-                            'CCM Problem 2': patient.problem2,
-                            'CCM Problem 1 Code': patient.problem1_code,
-                            'CCM Problem 2 Code': patient.problem2_code,
-                            'BHI Problem': patient.bhi_problem,
+                            attested_problems: patient.attested_problems,
                             'BHI Problem Code': patient.bhi_problem_code,
                             '#Successful Calls': patient.no_of_successful_calls,
                             chargeable_services: (patient.chargeable_services || []).map(item => item.id),
                             promises: {
-                                problem_1: false,
-                                problem_2: false,
-                                bhi_problem: false,
                                 approve_reject: false,
                                 update_chargeables: false
                             },
@@ -479,7 +455,6 @@
                         return item
                     }).sort((pA, pB) => pB.qa - pA.qa))
                     this.loaders.billables = false
-                    console.log('bills-report', this.tableData.slice(0))
                 }).catch(err => {
                     console.error(err)
                     this.loaders.billables = false
@@ -521,7 +496,7 @@
                 this.showProblemsModal(patient, type);
             },
 
-            showCcmModal(patient, type) {
+            showCcmModal(patient) {
                 // if (!patient.isCcmEligible()) {
                 //     Event.$emit('notifications-billing:create', {
                 //         text: `Cannot edit CCM Problem. Check that both Practice and Patient are chargeable for ${SERVICES.CPT_99490}.`,
@@ -533,70 +508,19 @@
 
                 if (!patient.hasOver20MinutesCCMTime()) {
                     Event.$emit('notifications-billing:create', {
-                        text: 'Cannot edit CCM Problem. The Patient has less than 20 minutes CCM time.',
+                        text: 'Cannot edit CCM Problems. The Patient has less than 20 minutes CCM time.',
                         type: 'warning',
                         interval: 5000
                     });
                     return;
                 }
 
-                this.showProblemsModal(patient, type);
+                this.showProblemsModal(patient);
             },
 
-            showProblemsModal(patient, type) {
+            showProblemsModal(patient) {
                 const self = this;
-                Event.$emit('modal-patient-problem:show', patient, type, function (modified) {
-                    /** callback done function */
-                    const tablePatient = self.tableData.find(pt => pt.id === patient.id)
-                    console.log('table-patient', tablePatient, modified)
-                    if (tablePatient) {
-                        if (modified.id == 'Other') {
-                            modified.name = (this.cpmProblems.find(problem => problem.id == modified.cpm_id) || {}).name || modified.name
-                        }
-                        if (type === 1) {
-                            tablePatient['CCM Problem 1 Code'] = modified.code
-                            tablePatient['CCM Problem 1'] = modified.name
-                        }
-                        else if (type == 2) {
-                            tablePatient['CCM Problem 2 Code'] = modified.code
-                            tablePatient['CCM Problem 2'] = modified.name
-                        }
-                        else if (type == 3) {
-                            tablePatient['BHI Problem Code'] = modified.code
-                            tablePatient['BHI Problem'] = modified.name
-                        }
-                        const problemKey = (type === 1) ? 'problem_1' : (type === 2 ? 'problem_2' : 'bhi_problem')
-                        tablePatient.promises[problemKey] = true
-                        return self.axios.post(rootUrl('admin/reports/monthly-billing/v2/storeProblem'), {
-                            code: modified.code,
-                            id: modified.id,
-                            name: modified.name,
-                            problem_no: problemKey,
-                            report_id: tablePatient.reportId,
-                            cpm_problem_id: modified.cpm_id
-                        }).then((response) => {
-                            tablePatient.promises[problemKey] = false
-                            console.log('billing-change-problem', response)
-                            if (problemKey == 'bhi_problem' && !response) {
-                                Event.$emit('notifications-billing:create', {
-                                    text: 'An error occurred when performing this action',
-                                    type: 'error',
-                                    interval: 3000
-                                })
-                            }
-                        }).catch(err => {
-                            tablePatient.promises[problemKey] = false
-                            console.error('billing-change-problem', err)
-                            Event.$emit('notifications-billing:create', {
-                                text: err.message,
-                                type: 'error',
-                                interval: 3000
-                            })
-                        })
-                        console.log('table-patient-promises', tablePatient.promises)
-                    }
-                    else console.error('could not find tablePatient')
-                })
+                Event.$emit('modal-attest-call-conditions:show', patient);
             },
 
             showErrorModal(id, name) {
@@ -623,7 +547,8 @@
                             return a
                         }, {}),
                         data: this.tableData.map(row => (Object.assign({}, row, {
-                            chargeable_services: row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code)
+                            chargeable_services: row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code),
+                            'CCM Problem Code(s)': this.attestedProblemCodes(row)
                         })))
                     }
                 ])
@@ -647,6 +572,15 @@
                     this.loaders.openMonth = false
                     console.error('billable:open-month', err)
                 })
+            },
+            attestedProblemCodes(patient) {
+                return patient.problems.filter(function (p) {
+                    return patient.attested_problems.includes(p.id) && !!p.code;
+                })
+                    .map(function (p) {
+                        return p.code;
+                    })
+                    .join(", ");
             },
             closeMonth() {
                 this.loaders.closeMonth = true
@@ -696,18 +630,45 @@
             this.selectedMonth = (this.months[0] || {}).label;
             this.selectedPractice = this.practices[0].id;
 
-            this.retrieve();
+            // this.retrieve();
 
             //todo
             //this.getChargeableServices();
 
-            this.getCounts();
+            // this.getCounts();
+
+            App.$on('call-conditions-attested', (data) => {
+                this.$http.post(rootUrl(`api/patients/${data.patient_id}/problems/attest-summary-problems`), {
+                    attested_problems: data.attested_problems,
+                    date: this.selectedMonth
+                }).then(response => {
+                    this.tableData.filter(function (p) {
+                        return String(p.id) === String(data.patient_id);
+                    })[0].attested_problems = response.data.attested_problems;
+                    App.$emit('modal-attest-call-conditions:hide');
+                }).catch(err => {
+                    console.error(err)
+                })
+            });
+
+            Event.$on('full-conditions:add', (ccdProblem) => {
+                //if another condition is created and is attested for the patient, add it to the patient's existing problems
+                this.tableData.filter(function (p) {
+                    return String(p.id) === String(ccdProblem.patient_id);
+                })[0].problems.push({
+                    id: ccdProblem.id,
+                    name: ccdProblem.name,
+                    is_behavioral: false,
+                    code: ccdProblem.codes[0].code
+                });
+            })
 
             Event.$on('vue-tables.pagination', (page) => {
                 const $table = this.$refs.tblBillingReport;
                 if (page === $table.totalPages) {
                     console.log('next page clicked');
                     this.retrieve();
+                    this.getCounts()
                 }
             })
         }
@@ -813,5 +774,9 @@
 
     div.notifications-billing div.alert {
         margin-right: 30px;
+    }
+
+    .ccm-problem-codes {
+        max-width: 150px;
     }
 </style>

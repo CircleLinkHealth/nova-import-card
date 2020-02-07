@@ -8,8 +8,8 @@ namespace App\Services\PhiMail;
 
 use App\DirectMailMessage;
 use App\Jobs\ImportCcda;
-use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 /**
  * Handle an incoming message from EMR Direct Mail API.
@@ -20,8 +20,6 @@ class IncomingMessageHandler
 {
     /**
      * Creates a new Direct Message.
-     *
-     * @param CheckResult $message
      *
      * @return DirectMailMessage
      */
@@ -40,9 +38,6 @@ class IncomingMessageHandler
 
     /**
      * Handles the message's attachments.
-     *
-     * @param DirectMailMessage $dm
-     * @param ShowResult        $showRes
      */
     public function handleMessageAttachment(DirectMailMessage &$dm, ShowResult $showRes)
     {
@@ -63,7 +58,6 @@ class IncomingMessageHandler
      * Store the subject of the message.
      *
      * @param $dm
-     * @param ShowResult $showRes
      */
     public function storeMessageSubject(&$dm, ShowResult $showRes)
     {
@@ -81,7 +75,6 @@ class IncomingMessageHandler
      * Stores and imports a CCDA.
      *
      * @param $attachment
-     * @param DirectMailMessage $dm
      */
     private function storeAndImportCcd(
         $attachment,
@@ -91,7 +84,6 @@ class IncomingMessageHandler
             [
                 'direct_mail_message_id' => $dm->id,
                 'user_id'                => null,
-                'vendor_id'              => 1,
                 'xml'                    => $attachment->data,
                 'source'                 => Ccda::EMR_DIRECT,
             ]

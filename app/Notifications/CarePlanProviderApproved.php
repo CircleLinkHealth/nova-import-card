@@ -6,15 +6,16 @@
 
 namespace App\Notifications;
 
-use App\CarePlan;
+use App\Contracts\FaxableNotification;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CarePlanProviderApproved extends Notification
+class CarePlanProviderApproved extends Notification implements FaxableNotification
 {
     use Queueable;
     public $attachment;
@@ -35,7 +36,7 @@ class CarePlanProviderApproved extends Notification
     ) {
         $this->attachment = $this->carePlan = $carePlan;
 
-        $this->channels = array_merge($this->channels, $channels);
+        $this->channels = array_unique(array_merge($this->channels, $channels));
     }
 
     /**
@@ -93,8 +94,8 @@ class CarePlanProviderApproved extends Notification
                 : null,
             'sender_email' => optional(auth()->user())->email,
 
-            'receiver_type'  => $notifiable->id,
-            'receiver_id'    => get_class($notifiable),
+            'receiver_type'  => get_class($notifiable),
+            'receiver_id'    => $notifiable->id,
             'receiver_email' => $notifiable->email,
 
             'body'    => $this->getBody(),
@@ -130,16 +131,12 @@ class CarePlanProviderApproved extends Notification
      * Get a pdf representation of the note to send via Fax.
      *
      * @param $notifiable
-     *
-     * @return bool|string
      */
-    public function toFax($notifiable)
+    public function toFax($notifiable = null): array
     {
-        if ( ! $notifiable || ! $notifiable->fax) {
-            return false;
-        }
-
-        return $this->toPdf();
+        return [
+            'file' => $this->toPdf($notifiable),
+        ];
     }
 
     /**

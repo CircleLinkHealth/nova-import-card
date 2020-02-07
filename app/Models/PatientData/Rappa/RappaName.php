@@ -38,7 +38,7 @@ namespace App\Models\PatientData\Rappa;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaName whereWorkPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaName whereZip($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaName newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaName newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaName query()

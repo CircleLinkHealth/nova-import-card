@@ -7,7 +7,7 @@
 namespace Tests\Helpers;
 
 use App\Models\CCD\CcdVendor;
-use App\Models\MedicalRecords\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 
 trait CcdImporterHelpers
 {

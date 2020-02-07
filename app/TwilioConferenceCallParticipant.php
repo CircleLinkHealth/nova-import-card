@@ -11,16 +11,16 @@ use CircleLinkHealth\Core\Entities\BaseModel;
 /**
  * Represents a participant of a conference call.
  *
- * @property string                                                                         $call_sid
- * @property string                                                                         $account_sid
- * @property string                                                                         $conference_sid
- * @property string                                                                         $participant_number
- * @property string                                                                         $status
- * @property int                                                                            $duration
- * @property int                                                                            $id
- * @property \Illuminate\Support\Carbon|null                                                $created_at
- * @property \Illuminate\Support\Carbon|null                                                $updated_at
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property string                                                                                      $call_sid
+ * @property string                                                                                      $account_sid
+ * @property string                                                                                      $conference_sid
+ * @property string                                                                                      $participant_number
+ * @property string                                                                                      $status
+ * @property int                                                                                         $duration
+ * @property int                                                                                         $id
+ * @property \Illuminate\Support\Carbon|null                                                             $created_at
+ * @property \Illuminate\Support\Carbon|null                                                             $updated_at
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TwilioConferenceCallParticipant query()

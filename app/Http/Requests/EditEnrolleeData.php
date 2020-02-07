@@ -6,7 +6,7 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\EligibilityPhones;
+use CircleLinkHealth\Eligibility\Rules\EligibilityPhones;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;

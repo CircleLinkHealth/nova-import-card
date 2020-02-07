@@ -7,13 +7,13 @@
 namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Importer\Models\ItemLogs\DocumentLog;
-use App\Importer\Models\ItemLogs\ProviderLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use App\Jobs\ImportCcda;
 use App\Jobs\ImportCsvPatientList;
-use App\Models\MedicalRecords\Ccda;
-use App\Models\MedicalRecords\ImportedMedicalRecord;
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
@@ -45,13 +45,29 @@ class ImporterController extends Controller
             ->with('location')
             ->with('billingProvider')
             ->get()
-            ->transform(function ($summary) {
-                $summary['flag'] = false;
-
+            ->transform(function (ImportedMedicalRecord $summary) {
                 $mr = $summary->medicalRecord();
 
                 if ( ! $mr) {
                     return false;
+                }
+
+                if ( ! $summary->billing_provider_id) {
+                    $mr = $mr->guessPracticeLocationProvider();
+
+                    $summary->billing_provider_id = $mr->getBillingProviderId();
+
+                    if ( ! $summary->location_id) {
+                        $summary->location_id = $mr->getLocationId();
+                    }
+
+                    if ( ! $summary->practice_id) {
+                        $summary->practice_id = $mr->getPracticeId();
+                    }
+
+                    if ($summary->isDirty()) {
+                        $summary->save();
+                    }
                 }
 
                 $providers = $mr->providers()->where([
@@ -62,6 +78,8 @@ class ImporterController extends Controller
                     return $m->first_name.$m->last_name;
                 });
 
+                $summary['flag'] = false;
+                
                 if ($providers->count() > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
                     $summary['flag'] = true;
                 }
@@ -270,8 +288,6 @@ class ImporterController extends Controller
     /**
      * Receives XML files, saves them in DB, and returns them JSON Encoded.
      *
-     * @param Request $request
-     *
      * @throws \Exception
      *
      * @return string
@@ -287,8 +303,6 @@ class ImporterController extends Controller
      * Route: /api/ccd-importer/import-medical-records.
      *
      * Receives XML and XLSX files, saves them in DB, and returns them JSON Encoded
-     *
-     * @param Request $request
      *
      * @throws \Exception
      *

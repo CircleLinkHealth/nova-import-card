@@ -29,8 +29,6 @@ class NursesPerformanceDailyReport extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param NursesPerformanceReportService $service
      */
     public function __construct(NursesPerformanceReportService $service)
     {
@@ -61,11 +59,13 @@ class NursesPerformanceDailyReport extends Command
         $path     = storage_path($fileName);
         $saved    = file_put_contents($path, json_encode($data));
 
-        if ( ! $saved && isProductionEnv()) {
-            sendSlackMessage(
+        if ( ! $saved) {
+            if (isProductionEnv()) {
+                sendSlackMessage(
                 '#carecoach_ops',
                 "Nurses And States dashboard report {$date->toDateString()} could not be created. \n"
             );
+            }
 
             $this->info('Nurses And States dashboard report could not be uploaded to S3');
         }

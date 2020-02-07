@@ -18,7 +18,7 @@ namespace App\CLH\CCD\Importer;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToICD10Map whereSnomedCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToICD10Map whereSnomedName($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToICD10Map newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToICD10Map newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\Importer\SnomedToICD10Map query()
