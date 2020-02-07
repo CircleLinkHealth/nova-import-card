@@ -131,7 +131,7 @@
     "circlelinkhealth/eligibility-module": "1.4.4",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
-    "circlelinkhealth/nurseinvoices-module": "1.2.5",
+    "circlelinkhealth/nurseinvoices-module": "1.2.6",
     "circlelinkhealth/patientapi-module": "1.1",
     "circlelinkhealth/raygun-module": "0.8",
     "circlelinkhealth/revisionable-module": "1.4.1",
