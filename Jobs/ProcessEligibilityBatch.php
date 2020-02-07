@@ -32,6 +32,13 @@ class ProcessEligibilityBatch implements ShouldQueue
      * @var EligibilityBatch
      */
     protected $batch;
+    
+    /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 300;
 
     /**
      * @var \CircleLinkHealth\Eligibility\ProcessEligibilityService
@@ -200,7 +207,7 @@ class ProcessEligibilityBatch implements ShouldQueue
     private function queueClhMedicalRecordTemplateJobs(EligibilityBatch $batch): EligibilityBatch
     {
         if ( ! (bool) $batch->options['finishedReadingFile']) {
-            ini_set('memory_limit', '800M');
+            ini_set('memory_limit', '1000M');
 
             $created = $this->createEligibilityJobsFromJsonFile($batch);
         }
