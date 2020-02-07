@@ -9,6 +9,8 @@ namespace App\Console;
 use App\Console\Commands\CreateLastMonthBillablePatientsReport;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
+use App\Console\Commands\CheckForMissingLogoutsAndInsert;
+use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
 use App\Console\Commands\EmailRNDailyReport;
@@ -172,6 +174,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:03')->onOneServer();
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
+
+        $schedule->command(CheckForMissingLogoutsAndInsert::class)->dailyAt('04:00')->onOneServer();
+
         $schedule->command(OverwriteNBIImportedData::class)->everyThirtyMinutes()->onOneServer();
 
         $schedule->command(OverwriteNBIPatientMRN::class)->everyThirtyMinutes()->onOneServer();
