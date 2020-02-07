@@ -704,7 +704,7 @@
 
                 if (clickedDate >= today) {
                     this.toggleModal();
-                    const clickedDayOfWeek = new Date(clickedDate.format()).getDay();
+                    const clickedDayOfWeek = new Date(clickedDate).getUTCDay();
                     const weekMapDay = this.weekMap.filter(q => q.weekMapClhDayOfWeek === clickedDayOfWeek);
                     this.dayInHumanLangForView = weekMapDay[0].label;
 
@@ -1017,9 +1017,9 @@
     }
 
     #calendar > div.fc-view-container > div > table > tbody > tr > td > div.fc-unselectable > div > div.fc-content-skeleton {
-        min-height: 100px;
-        overflow-y: scroll;
-        max-height: 670px;
+        /*min-height: 100px;*/
+        /*overflow-y: scroll;*/
+        /*max-height: 670px;*/
     }
 
     #calendar > div.fc-view-container {
