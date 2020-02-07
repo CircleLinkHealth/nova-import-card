@@ -6,7 +6,7 @@
 
 namespace App\Notifications;
 
-use App\EligibilityBatch;
+use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;

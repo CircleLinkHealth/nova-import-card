@@ -9,6 +9,7 @@ namespace App\Services\Calls;
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
+use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Note;
 use App\Repositories\PatientWriteRepository;
 use App\Services\NoteService;
@@ -16,6 +17,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Family;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\TimeTracking\Entities\Activity;
 use Illuminate\Support\Facades\Auth;
@@ -34,13 +36,62 @@ class SchedulerService
 
     /**
      * SchedulerService constructor.
-     *
-     * @param PatientWriteRepository $patientWriteRepository
      */
     public function __construct(PatientWriteRepository $patientWriteRepository, NoteService $noteService)
     {
         $this->patientWriteRepository = $patientWriteRepository;
         $this->noteService            = $noteService;
+    }
+
+    public function ensurePatientHasScheduledCall(User $patient)
+    {
+        $call = $this->getScheduledCallForPatient($patient);
+        if ($call) {
+            return;
+        }
+
+        $now = Carbon::now();
+
+        $patient->loadMissing('patientInfo');
+
+        $next_predicted_contact_window = (new PatientContactWindow())->getEarliestWindowForPatientFromDate(
+            $patient->patientInfo,
+            $now
+        );
+
+        //by default we do not assign a nurse
+        $nurseId = null;
+
+        //get patient's assigned nurse for this window
+        $patientNurses = $patient->patientInfo->getNurses();
+        if ($patientNurses) {
+            if (isset($patientNurses['temporary'])) {
+                $temp = $patientNurses['temporary'];
+                if ($now->isBetween($temp['from'], $temp['to'])) {
+                    $nurseId = $temp['user']->id;
+                }
+            } else {
+                $nurseId = $patientNurses['permanent']['user']->id;
+            }
+        } else {
+            //if we do not have an assigned nurse, look for last call attempt
+            /** @var Call $previousCall */
+            $previousCall = $this->getPreviousCall($patient);
+            if ($previousCall) {
+                $nurseId = $previousCall->outbound_cpm_id;
+            }
+        }
+
+        $this->storeScheduledCall(
+            $patient->id,
+            $next_predicted_contact_window['window_start'],
+            $next_predicted_contact_window['window_end'],
+            $next_predicted_contact_window['day'],
+            'call checker algorithm',
+            $nurseId,
+            '',
+            false
+        );
     }
 
     public static function getNextScheduledCall($patientId, $excludeToday = false)
@@ -77,7 +128,7 @@ class SchedulerService
      *
      * @return \Illuminate\Database\Eloquent\Model|object|static|null
      */
-    public function getPreviousCall($patient, $scheduled_call_id)
+    public function getPreviousCall($patient, $scheduled_call_id = null)
     {
         //be careful not to consider call just made,
         //since algo already updates it before getting here.
@@ -89,7 +140,7 @@ class SchedulerService
         })
             ->where('inbound_cpm_id', $patient->id)
             ->whereIn('status', ['reached', 'not reached'])
-            ->where('called_date', '!=', '')
+            ->whereNotNull('called_date')
             ->where('called_date', '<', Carbon::today()->startOfDay()->toDateTimeString())
             ->orderBy('called_date', 'desc')
             ->first();
@@ -134,8 +185,6 @@ class SchedulerService
      * So, run the query again to find any call of today with status of not 'reached' or 'not reached'.
      *
      * @param $patientId
-     *
-     * @return Call|null
      */
     public function getTodaysCall($patientId): ?Call
     {
@@ -522,14 +571,15 @@ class SchedulerService
      * Update a call based on info received from note.
      * If a call does not exist, one is created and linked to this note.
      *
-     * @param Note $note
      * @param $call
      * @param $status
+     * @param mixed $attestedProblems
      */
     public function updateCallWithNote(
         Note $note,
         $call,
-        $status
+        $status,
+        $attestedProblems = null
     ) {
         $patient = $note->patient;
 
@@ -541,7 +591,7 @@ class SchedulerService
             $call->save();
         } else {
             // If call doesn't exist, make one and store it
-            $this->noteService->storeCallForNote(
+            $call = $this->noteService->storeCallForNote(
                 $note,
                 $status,
                 $patient,
@@ -549,6 +599,12 @@ class SchedulerService
                 'outbound',
                 'core algorithm'
             );
+        }
+
+        //If this is the first call being created for the month, the patient might not have a summary - which gets created on the 'saved' event of the call
+        //So we are dispatching an event with a delayed job to make sure that the summary will be created before we attach the problems
+        if ($attestedProblems) {
+            event(new CallIsReadyForAttestedProblemsAttachment($call, $attestedProblems));
         }
     }
 
@@ -564,13 +620,15 @@ class SchedulerService
      * @param $patient
      * @param $noteId
      * @param $callStatus - 'reached', 'not reached', 'ignored'
+     * @param mixed $attestedProblems
      *
      * @return array
      */
     public function updateTodaysCallAndPredictNext(
         $patient,
         $noteId,
-        $callStatus
+        $callStatus,
+        $attestedProblems = null
     ) {
         $scheduled_call = $this->getTodaysCall($patient->id);
 
@@ -579,7 +637,8 @@ class SchedulerService
         $this->updateCallWithNote(
             $note,
             $scheduled_call,
-            $callStatus
+            $callStatus,
+            $attestedProblems
         );
 
         if (Call::IGNORED != $callStatus) {

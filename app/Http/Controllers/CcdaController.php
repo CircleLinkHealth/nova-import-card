@@ -6,8 +6,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MedicalRecords\Ccda;
 use App\Services\CcdaService;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
 
 class CcdaController extends Controller

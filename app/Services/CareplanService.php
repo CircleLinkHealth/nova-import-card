@@ -6,11 +6,6 @@
 
 namespace App\Services;
 
-use App\Models\CPM\CpmBiometric;
-use App\Models\CPM\CpmLifestyle;
-use App\Models\CPM\CpmMedicationGroup;
-use App\Models\CPM\CpmMisc;
-use App\Models\CPM\CpmSymptom;
 use App\Note;
 use App\Repositories\CareplanRepository;
 use App\Services\CCD\CcdAllergyService;
@@ -23,6 +18,12 @@ use App\Services\CPM\CpmMiscService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\CPM\CpmProblemUserService;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CpmBiometric;
+use CircleLinkHealth\SharedModels\Entities\CpmLifestyle;
+use CircleLinkHealth\SharedModels\Entities\CpmMedicationGroup;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
+use CircleLinkHealth\SharedModels\Entities\CpmSymptom;
+use CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem;
 
 class CareplanService
 {
@@ -96,22 +97,23 @@ class CareplanService
         ]);
 
         return [
-            'allCpmProblems'   => $this->cpmService->all(),
-            'cpmProblems'      => $this->cpmUserService->getPatientProblems($userId),
-            'ccdProblems'      => $this->ccdUserService->getPatientProblemsValues($user),
-            'medications'      => $user->ccdMedications,
-            'medicationGroups' => CpmMedicationGroup::get()->toArray(),
-            'healthGoals'      => $this->biometricService->patientBiometrics($user),
-            'baseHealthGoals'  => CpmBiometric::get(),
-            'symptoms'         => $user->cpmSymptoms,
-            'allSymptoms'      => CpmSymptom::get(),
-            'lifestyles'       => $user->cpmLifestyles,
-            'allLifestyles'    => CpmLifestyle::get(),
-            'allergies'        => $this->allergyService->patientAllergies($userId),
-            'misc'             => $this->miscService->patientMisc($userId),
-            'allMisc'          => CpmMisc::get(),
-            'appointments'     => $user->appointments,
-            'healthGoalNote'   => $this->healthGoalNote($user),
+            'allCpmProblems'     => $this->cpmService->all(),
+            'cpmProblems'        => $this->cpmUserService->getPatientProblems($userId),
+            'ccdProblems'        => $this->ccdUserService->getPatientProblemsValues($user),
+            'medications'        => $user->ccdMedications,
+            'medicationGroups'   => CpmMedicationGroup::get()->toArray(),
+            'healthGoals'        => $this->biometricService->patientBiometrics($user),
+            'baseHealthGoals'    => CpmBiometric::get(),
+            'symptoms'           => $user->cpmSymptoms,
+            'allSymptoms'        => CpmSymptom::get(),
+            'lifestyles'         => $user->cpmLifestyles,
+            'allLifestyles'      => CpmLifestyle::get(),
+            'allergies'          => $this->allergyService->patientAllergies($userId),
+            'misc'               => $this->miscService->patientMisc($userId),
+            'allMisc'            => CpmMisc::get(),
+            'appointments'       => $user->appointments,
+            'healthGoalNote'     => $this->healthGoalNote($user),
+            'allCpmProblemCodes' => ProblemCodeSystem::get(),
         ];
     }
 

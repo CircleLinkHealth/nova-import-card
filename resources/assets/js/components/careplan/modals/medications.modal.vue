@@ -70,7 +70,7 @@
                             </div>
                             <div class="top-20 text-right">
                                 <loader v-if="loaders.addMedication"></loader>
-                                <button class="btn btn-secondary selected">Create</button>
+                                <button :disabled="actionDisabled" class="btn btn-secondary selected">Create</button>
                             </div>
                         </div>
                     </form>
@@ -105,6 +105,9 @@
             },
             groupsForSelect() {
                 return this.groups.map(group => ({label: group.name, value: group.id}))
+            },
+            actionDisabled() {
+                return this.loaders.addMedication || this.loaders.removeMedication || this.loaders.editMedication;
             }
         },
         data() {
@@ -118,9 +121,9 @@
                 },
                 selectedMedication: null,
                 loaders: {
-                    addMedication: null,
-                    removeMedication: null,
-                    editMedication: null
+                    addMedication: false,
+                    removeMedication: false,
+                    editMedication: false
                 }
             }
         },
@@ -165,7 +168,13 @@
                 })
             },
             addMedication(e) {
-                e.preventDefault()
+
+                e.preventDefault();
+
+                if (this.actionDisabled) {
+                    return;
+                }
+
                 this.loaders.addMedication = true
                 return this.axios.post(rootUrl(`api/patients/${this.patientId}/medication`), {
                     active: this.newMedication.activeBool,
@@ -192,7 +201,7 @@
 <style>
     .modal-medications .modal-container {
         width: 900px;
-        max-height: 100%;
+        max-height: 100vh;
         overflow-y: auto;
     }
 

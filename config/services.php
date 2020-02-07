@@ -71,14 +71,6 @@ return [
             : 'false',
     ],
 
-    'ccd-parser' => [
-        'base-uri' => env('CCD_PARSER_BASE_URI', 'https://circlelink-ccd-parser.medstack.net'),
-    ],
-
-    'ccda' => [
-        'dropbox-path' => env('CCDA_DROPBOX_PATH'),
-    ],
-
     'no-call-mode' => [
         'env' => ! in_array(env('APP_ENV'), ['local', 'staging']),
     ],
@@ -91,6 +83,8 @@ return [
         'server-cert-pem-path' => env('EMR_DIRECT_SERVER_CERT_PEM_PATH'),
         'mail-server'          => env('EMR_DIRECT_MAIL_SERVER'),
         'port'                 => env('EMR_DIRECT_PORT'),
+        'client-cert-filename' => env('EMR_CLIENT_CERT_FILENAME'),
+        'server-cert-filename' => env('EMR_SERVER_CERT_FILENAME'),
     ],
 
     'athena' => [
@@ -102,4 +96,11 @@ return [
     'awv' => [
         'url' => env('AWV_URL', ''),
     ],
+    
+    'phaxio' => [
+        'host' => 'https://api.phaxio.com/v2.1/',
+
+        'key'    => env('PHAXIO_KEY', null),
+        'secret' => env('PHAXIO_SECRET', null),
+    ]
 ];

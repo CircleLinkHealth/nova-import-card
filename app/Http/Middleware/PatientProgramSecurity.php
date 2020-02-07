@@ -21,8 +21,6 @@ class PatientProgramSecurity
 
     /**
      * Create a new filter instance.
-     *
-     * @param Guard $auth
      */
     public function __construct(Guard $auth)
     {
@@ -44,6 +42,10 @@ class PatientProgramSecurity
 
         if ( ! $loggedInUser) {
             return redirect()->guest('login');
+        }
+
+        if ($loggedInUser->isParticipant()) {
+            abort(403);
         }
 
         if ($loggedInUser->hasRole('care-ambassador')) {

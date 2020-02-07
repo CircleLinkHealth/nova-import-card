@@ -6,9 +6,9 @@
 
 namespace App\Services\CPM;
 
-use App\Models\CCD\Medication;
 use App\Repositories\CpmMedicationRepository;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Medication;
 
 class CpmMedicationService
 {
@@ -45,14 +45,14 @@ class CpmMedicationService
 
     public function medications()
     {
-        return Medication::paginate();
+        return Medication::orderBy('name')->paginate();
     }
 
     public function patientMedicationPaginated(int $userId)
     {
         return Medication::where([
             'patient_id' => $userId,
-        ])->paginate();
+        ])->orderBy('name')->paginate();
     }
 
     public function repo()

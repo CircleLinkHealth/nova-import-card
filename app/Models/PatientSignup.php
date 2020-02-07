@@ -16,7 +16,6 @@ namespace App\Models;
  * @property string              $comment
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup whereComment($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup whereEmail($value)
@@ -25,13 +24,10 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup whereUpdatedAt($value)
  * @mixin \Eloquent
- *
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- *
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientSignup query()
- *
  * @property int|null $revision_history_count
  */
 class PatientSignup extends \CircleLinkHealth\Core\Entities\BaseModel

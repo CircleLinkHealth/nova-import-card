@@ -6,10 +6,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\DirectMail;
 use App\DirectMailMessage;
 
 class DirectMailController extends Controller
 {
+    public function checkInbox(DirectMail $directMail)
+    {
+        return $directMail->receive();
+    }
+
     public function show($directMailId)
     {
         $dm = DirectMailMessage::query()

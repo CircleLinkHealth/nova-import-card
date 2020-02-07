@@ -26,6 +26,8 @@ class UserLoggedOut
      */
     public function handle(Logout $event)
     {
+        session()->put('last_login', null);
+
         $user = $event->user;
         if ($user) {
             //not really needed here, but is saves the trip to redis when trying to destroy a non-existing session
@@ -42,7 +44,8 @@ class UserLoggedOut
             $activity->title             = 'Logout';
             $activity->url_short         = '/auth/logout/';
             $activity->url_full          = url()->current();
-            $activity->patient_id        = $user->id;
+            $activity->patient_id        = null;
+            $activity->provider_id       = $user->id;
             $activity->start_time        = Carbon::now();
             $activity->end_time          = Carbon::now();
             $activity->program_id        = $user->program_id;

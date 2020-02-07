@@ -13,34 +13,33 @@ use CircleLinkHealth\Customer\Entities\User;
 /**
  * App\Observation.
  *
- * @property int                                                                            $id
- * @property string                                                                         $obs_date
- * @property string                                                                         $obs_date_gmt
- * @property int                                                                            $comment_id
- * @property int                                                                            $sequence_id
- * @property string                                                                         $obs_message_id
- * @property int                                                                            $user_id
- * @property string                                                                         $obs_method
- * @property string                                                                         $obs_key
- * @property string                                                                         $obs_value
- * @property string                                                                         $obs_unit
- * @property int                                                                            $program_id
- * @property int                                                                            $legacy_obs_id
- * @property \Illuminate\Support\Carbon                                                     $created_at
- * @property \Illuminate\Support\Carbon                                                     $updated_at
- * @property \App\Comment                                                                   $comment
- * @property mixed                                                                          $alert_level
- * @property mixed                                                                          $alert_log
- * @property mixed                                                                          $alert_sort_weight
- * @property mixed                                                                          $alert_status_change
- * @property mixed                                                                          $alert_status_history
- * @property mixed                                                                          $starting_observation
- * @property mixed                                                                          $timezone
- * @property \App\ObservationMeta[]|\Illuminate\Database\Eloquent\Collection                $meta
- * @property \App\CPRulesQuestions                                                          $question
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
- * @property \CircleLinkHealth\Customer\Entities\User                                       $user
- *
+ * @property int                                                                                         $id
+ * @property string                                                                                      $obs_date
+ * @property string                                                                                      $obs_date_gmt
+ * @property int                                                                                         $comment_id
+ * @property int                                                                                         $sequence_id
+ * @property string                                                                                      $obs_message_id
+ * @property int                                                                                         $user_id
+ * @property string                                                                                      $obs_method
+ * @property string                                                                                      $obs_key
+ * @property string                                                                                      $obs_value
+ * @property string                                                                                      $obs_unit
+ * @property int                                                                                         $program_id
+ * @property int                                                                                         $legacy_obs_id
+ * @property \Illuminate\Support\Carbon                                                                  $created_at
+ * @property \Illuminate\Support\Carbon                                                                  $updated_at
+ * @property \App\Comment                                                                                $comment
+ * @property mixed                                                                                       $alert_level
+ * @property mixed                                                                                       $alert_log
+ * @property mixed                                                                                       $alert_sort_weight
+ * @property mixed                                                                                       $alert_status_change
+ * @property mixed                                                                                       $alert_status_history
+ * @property mixed                                                                                       $starting_observation
+ * @property mixed                                                                                       $timezone
+ * @property \App\ObservationMeta[]|\Illuminate\Database\Eloquent\Collection                             $meta
+ * @property \App\CPRulesQuestions                                                                       $question
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ * @property \CircleLinkHealth\Customer\Entities\User                                                    $user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation query()
@@ -60,7 +59,6 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Observation whereUserId($value)
  * @mixin \Eloquent
- *
  * @property int|null $meta_count
  * @property int|null $revision_history_count
  */

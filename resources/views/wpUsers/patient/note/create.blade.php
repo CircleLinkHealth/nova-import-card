@@ -9,6 +9,7 @@
               integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
               crossorigin="anonymous">
         <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
         <style>
 
             .modal-body {
@@ -39,7 +40,7 @@
                 /*border-radius: 4px;*/
             }
 
-            .phone-session-container {
+            .phone-session-container, #tasks-container {
                 border: 1px solid #ccc;
                 border-radius: 4px;
             }
@@ -72,12 +73,14 @@
 
     @include('partials.confirm-modal')
 
+    @if (!empty($note) && $note->status === 'draft')
     <form id="delete-form" action="{{ route('patient.note.delete.draft', [
-                                    'patientId' => Route::getCurrentRoute()->parameter('patientId'),
-                                    'noteId' => Route::getCurrentRoute()->parameter('noteId')
+                                    'patientId' => $note->patient_id,
+                                    'noteId' => $note->id
                                 ]) }}" method="POST" style="display: none;">
         {{ csrf_field() }}
     </form>
+    @endif
 
     <form id="newNote" method="post"
           action="{{route('patient.note.store', ['patientId' => $patient->id, 'noteId' => !empty($note) ? $note->id : null])}}"
@@ -276,8 +279,8 @@
                                                     </div>
                                                 </label>
                                             </div>
-                                            <div class="col-sm-12">
-                                                <label id="task-label" style="display: none;">
+                                            <div class="col-sm-12 no-padding-left">
+                                                <label id="task-label" style="display: none; margin-bottom: 0">
                                                     <div>
                                                         <input type="checkbox"
                                                                @if (!empty($note) && $note->status == \App\Note::STATUS_COMPLETE) disabled
@@ -285,7 +288,7 @@
                                                                @if (!empty($call) && !empty($call->sub_type)) checked
                                                                @endif
                                                                id="task"/>
-                                                        <label for="task">
+                                                        <label for="task" style="margin-bottom: 0">
                                                             <span> </span>Associate with Task
                                                         </label>
                                                     </div>
@@ -557,6 +560,7 @@
             </div>
         </div>
         </div>
+
     </form>
 
     <!-- Modal - CPM-182 -->
@@ -609,7 +613,10 @@
     @push('scripts')
         <script>
 
-
+            var careplan = @json([
+            'allCpmProblems' => $cpmProblems
+            ]);
+            const userIsCareCoach = @json(auth()->user()->isCareCoach());
             const userIsCCMCountable = @json(auth()->user()->isCCMCountable());
             const taskTypeToTopicMap = @json($task_types_to_topics);
             const noteTypesMap = @json($note_types);
@@ -639,6 +646,24 @@
             };
 
             $(document).ready(function () {
+
+                //Once nurse has attested call conditions add as form inputs and submit form
+                App.$on('call-conditions-attested', (data) => {
+                    conditionsAttested = true;
+
+                    let i = 0;
+                    data.attested_problems.map(function (condition) {
+                        $("<input>")
+                            .attr("id", "attested_problems")
+                            .attr("type", "hidden")
+                            .attr("name", "attested_problems["+i+"][ccd_problem_id]").val(condition).appendTo(form);
+                        i++;
+                    });
+                    confirmSubmitForm();
+                });
+
+                let callIsSuccess = false;
+                let conditionsAttested = false;
 
                 if (medications && medications.length) {
                     waitForEl('#note', () => {
@@ -843,7 +868,7 @@
                     const callHasTask = $('.tasks-radio').is(':checked');
 
                     const isPhoneSession = $('#phone').is(':checked');
-                    let callIsSuccess = false;
+
                     let callHasStatus = false;
                     if (userIsCCMCountable) {
                         //radio buttons
@@ -907,16 +932,22 @@
 
                 $(document).on("click", "#confirm-task-completed-submit", function (event) {
                     $('#task_status').val("done");
+                    $('#confirm-task-completed').modal('hide');
                     confirmSubmitForm();
                 });
 
                 $(document).on("click", "#confirm-task-not-completed-submit", function (event) {
                     $('#task_status').val("not_done");
+                    $('#confirm-task-completed').modal('hide');
                     confirmSubmitForm();
                 });
 
                 function confirmSubmitForm() {
 
+                    if (!conditionsAttested && callIsSuccess && userIsCareCoach){
+                        App.$emit('show-attest-call-conditions-modal');
+                        return;
+                    }
                     if (isSavingDraft) {
                         setTimeout(() => confirmSubmitForm(), 500);
                         return;

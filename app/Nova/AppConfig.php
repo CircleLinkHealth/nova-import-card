@@ -6,7 +6,7 @@
 
 namespace App\Nova;
 
-use App\AppConfig as AppConfigModel;
+use CircleLinkHealth\Core\Entities\AppConfig as AppConfigModel;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
 
@@ -26,7 +26,7 @@ class AppConfig extends Resource
      * @var array
      */
     public static $search = [
-        'setting',
+        'config_key',
     ];
 
     /**

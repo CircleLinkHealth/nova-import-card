@@ -118,6 +118,8 @@ class OpsDashboardController extends Controller
 
     public function getBillingChurn(Request $request)
     {
+        //Page times out. We should implement solution similar to OpsDashbboard (queue job save data on S3), or SQL view, or Nova page with metrics
+        return 'Page is unavailable. To be fixed in CPM-1717';
         if ($request->has('months')) {
             $months = $request['months'];
             if ('all' == $months) {

@@ -7,11 +7,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DownloadMediaWithSignedRequest;
-use App\Services\GoogleDrive;
+use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\MediaStream;
 
 class DownloadController extends Controller
 {
@@ -47,6 +48,20 @@ class DownloadController extends Controller
     public function downloadMediaFromSignedUrl(DownloadMediaWithSignedRequest $request)
     {
         return $this->downloadMedia(Media::findOrFail($request->route('media_id')));
+    }
+
+    public function downloadUserMediaCollectionAsZip($collectionName)
+    {
+        $collection = Media::where('collection_name', $collectionName)
+            ->where('model_id', auth()->user()->id)
+            ->whereIn('model_type', ['App\User', 'CircleLinkHealth\Customer\Entities\User'])
+            ->get();
+
+        if ($collection->isEmpty()) {
+            return 'We could not find the files you are looking for. Please contact Circle Link support.';
+        }
+
+        return MediaStream::create('patient-consent-letters.zip')->addMedia($collection);
     }
 
     /**

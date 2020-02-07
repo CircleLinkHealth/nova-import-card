@@ -118,7 +118,11 @@ class Dispute extends Resource
 
         return [
             BelongsTo::make('Care Coach', 'user', CareCoachUser::class)->hideWhenUpdating()->readonly(),
-            Button::make('View Invoice')->link(route('nurseinvoices.admin.show', [$disputable->nurse_info_id, $disputable->id]), '_blank')->style('info'),
+
+            Button::make('View Invoice')
+                ->link(route('nurseinvoices.admin.show', [$this->user_id, $disputable->id]), '_blank')
+                ->style('info')
+                ->visible(null != $disputable->id),
             Boolean::make('Is Resolved?', 'is_resolved')->hideWhenUpdating(),
             Text::make('reason')->hideWhenUpdating(),
             Text::make('resolved_at')->hideWhenUpdating(),

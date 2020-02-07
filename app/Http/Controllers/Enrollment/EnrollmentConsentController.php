@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\Enrollment;
 
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -100,6 +100,10 @@ class EnrollmentConsentController extends Controller
                 'consented_at'             => ucwords($enrollee->consented_at),
                 'preferred_days'           => $days,
                 'preferred_window'         => $times,
+                'agent_phone'              => $enrollee->getAgentAttribute(Enrollee::AGENT_PHONE_KEY),
+                'agent_name'               => $enrollee->getAgentAttribute(Enrollee::AGENT_NAME_KEY),
+                'agent_email'              => $enrollee->getAgentAttribute(Enrollee::AGENT_EMAIL_KEY),
+                'agent_relationship'       => $enrollee->getAgentAttribute(Enrollee::AGENT_RELATIONSHIP_KEY),
             ];
 
             ++$count;

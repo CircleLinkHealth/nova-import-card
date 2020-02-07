@@ -22,7 +22,7 @@ export default {
             return;
         }
 
-        window.axios.patch('practice/' + practiceId + '/locations/' + location.id, location).then(
+        return window.axios.patch('practice/' + practiceId + '/locations/' + location.id, location).then(
             (resp) => {
                 cb(resp.data)
             },

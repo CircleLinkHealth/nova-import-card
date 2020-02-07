@@ -52,12 +52,6 @@ return [
             'folderId'     => env('GOOGLE_DRIVE_FOLDER_ID'),
         ],
 
-        //The directory where Practices deposit CCDAs on the Worker environment
-        'ccdas' => [
-            'driver' => 'local',
-            'root'   => env('CCDA_DROPBOX_PATH') ?? null,
-        ],
-
         'local' => [
             'driver' => 'local',
             'root'   => storage_path('app'),
@@ -90,6 +84,14 @@ return [
             'region' => env('AWS_REGION'),
             'bucket' => env('AWS_BUCKET'),
             'url'    => env('AWS_URL'),
+        ],
+
+        'secrets' => [
+            'driver' => 's3',
+            'key'    => env('S3_SECRETS_KEY'),
+            'secret' => env('S3_SECRETS_SECRET'),
+            'region' => env('S3_SECRETS_REGION'),
+            'bucket' => env('S3_SECRETS_BUCKET'),
         ],
 
         'rackspace' => [

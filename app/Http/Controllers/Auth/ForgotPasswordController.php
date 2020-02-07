@@ -44,4 +44,17 @@ class ForgotPasswordController extends Controller
     {
         return view('auth.password');
     }
+
+    /**
+     * Get the response for a successful password reset link.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param string                   $response
+     *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     */
+    protected function sendResetLinkResponse(Request $request, $response)
+    {
+        return back()->with('messages', [trans($response)]);
+    }
 }

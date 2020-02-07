@@ -12,21 +12,27 @@ class PatientCareplanRelations
     {
         return [
             'appointments' => function ($q) {
-                $q->orderBy('id', 'desc')->with('provider')->take(5);
+                $q->orderBy('id', 'desc')->with('provider')->paginate();
             },
             'carePlan',
             'carePlanAssessment' => function ($q) {
                 $q->whereNotNull('key_treatment');
             },
             'ccdInsurancePolicies',
-            'ccdAllergies',
-            'ccdMedications',
+            'ccdAllergies' => function ($q) {
+                $q->orderBy('allergen_name');
+            },
+            'ccdMedications' => function ($q) {
+                $q->orderBy('name');
+            },
             'ccdProblems.cpmInstruction',
             'ccdProblems.codes',
             'ccdProblems.cpmProblem',
             'cpmMiscUserPivot.cpmInstruction',
             'cpmMiscUserPivot.cpmMisc',
-            'cpmSymptoms',
+            'cpmSymptoms' => function ($q) {
+                $q->orderBy('name');
+            },
             'cpmProblems',
             'cpmLifestyles',
             'cpmBiometrics',

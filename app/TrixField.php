@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string                          $body
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TrixField careAmbassador($language)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TrixField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TrixField newQuery()
@@ -37,6 +36,9 @@ class TrixField extends Model
      */
     const CARE_AMBASSADOR_SCRIPT = 'care_ambassador_script';
 
+    const ENGLISH_LANGUAGE = 'en';
+    const SPANISH_LANGUAGE = 'es';
+
     protected $fillable = [
         'type',
         'language',
@@ -51,7 +53,30 @@ class TrixField extends Model
      */
     public function scopeCareAmbassador($builder, $language)
     {
+        $scriptLanguage = '';
+
+        if (in_array(strtolower($language), [
+            'en',
+            'eng',
+            'english',
+        ]) ||
+            starts_with(strtolower($language), 'en')
+        ) {
+            $scriptLanguage = self::ENGLISH_LANGUAGE;
+        }
+
+        if (in_array(strtolower($language), [
+            'sp',
+            'es',
+            'spanish',
+            'spa',
+        ]) ||
+            starts_with(strtolower($language), ['es', 'sp'])
+        ) {
+            $scriptLanguage = self::SPANISH_LANGUAGE;
+        }
+
         $builder->where('type', TrixField::CARE_AMBASSADOR_SCRIPT)
-            ->where('language', strtolower($language));
+            ->where('language', $scriptLanguage);
     }
 }

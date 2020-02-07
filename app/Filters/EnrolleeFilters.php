@@ -6,6 +6,7 @@
 
 namespace App\Filters;
 
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Illuminate\Http\Request;
 
 class EnrolleeFilters extends QueryFilters
@@ -57,8 +58,9 @@ class EnrolleeFilters extends QueryFilters
 
         $decoded               = json_decode($query, true);
         $decoded['hideStatus'] = array_merge($decoded['hideStatus'], [
-            'legacy',
-            'rejected',
+            Enrollee::LEGACY,
+            Enrollee::REJECTED,
+            Enrollee::ENROLLED,
         ]);
 
         $filtered = collect($decoded)->filter();

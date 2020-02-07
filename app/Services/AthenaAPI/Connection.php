@@ -22,6 +22,8 @@ namespace App\Services\AthenaAPI;
    permissions and limitations under the License.
 */
 
+use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
+
 /**
  * This module contains utilities for communicating with the More Disruption Please API.
  */
@@ -45,7 +47,7 @@ namespace App\Services\AthenaAPI;
  * If an API response returns 401 Not Authorized, a new access token is obtained and the request is
  * retried.
  */
-class Connection
+class Connection implements AthenaApiConnection
 {
     public $practiceid;
     private $auth_url;
@@ -144,6 +146,11 @@ class Connection
     public function get_token()
     {
         return $this->token;
+    }
+
+    public function getVersion()
+    {
+        return $this->version;
     }
 
     /**

@@ -6,13 +6,13 @@
 
 namespace App\Listeners;
 
-use App\CarePlan;
 use App\Contracts\Efax;
 use App\Events\CarePlanWasApproved;
 use App\Events\PdfableCreated;
 use App\Observers\PatientObserver;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Log;
 
 class UpdateCarePlanStatus
@@ -32,8 +32,6 @@ class UpdateCarePlanStatus
 
     /**
      * Handle the event.
-     *
-     * @param CarePlanWasApproved $event
      */
     public function handle(CarePlanWasApproved $event)
     {
@@ -85,13 +83,13 @@ class UpdateCarePlanStatus
             $user->setCarePlanQADate(date('Y-m-d H:i:s')); // careplan_qa_date
         }
 
+        $user->carePlan->alertPatientAboutApproval();
+
         $user->save();
     }
 
     /**
      * Send patient consented note to practice only after CLH has approved CarePlan.
-     *
-     * @param User $user
      */
     private function addPatientConsentedNote(User $user)
     {

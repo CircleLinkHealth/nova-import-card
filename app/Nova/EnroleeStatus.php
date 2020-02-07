@@ -7,7 +7,7 @@
 namespace App\Nova;
 
 use App\Constants;
-use App\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Nova\Importers\EnroleeStatus as EnroleeStatusImporter;
 use Illuminate\Http\Request;
 use Jubeki\Nova\Cards\Linkable\LinkableAway;
@@ -102,7 +102,7 @@ class EnroleeStatus extends Resource
             new NovaImportCard(self::class),
             (new LinkableAway())
                 ->title('CSV Template')
-                ->url(route('download.google.csv', ['filename' => 'UpdateEnroleeDataTemplate']))
+                ->url('https://docs.google.com/spreadsheets/d/1hvA5ILwpDTX6D9rh81RUlMivhlfe7PVBDSwF6Td9-QI/edit?usp=sharing')
                 ->subtitle('Click to download.')
                 ->target('_self'),
         ];

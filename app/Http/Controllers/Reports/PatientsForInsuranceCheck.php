@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\Reports;
 
-use App\Exports\FromArray;
+use CircleLinkHealth\Core\Exports\FromArray;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;

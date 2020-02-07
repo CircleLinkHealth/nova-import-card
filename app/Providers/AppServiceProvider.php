@@ -8,17 +8,21 @@ namespace App\Providers;
 
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
-use App\Services\SnappyPdfWrapper;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\SQLiteBuilder;
+use Illuminate\Database\SQLiteConnection;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Fluent;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
-use Orangehill\Iseed\IseedServiceProvider;
 use Queue;
+use Tests\Commands\CreateAndSeedTestSuiteDB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Schema::defaultStringLength(255);
+        
         /*
          * If the current date is the 31st of the month, Carbon::now()->subMonth() will go back to the 31st of the previous month.
          * If the previous month does not have 31 days, `$startDate = Carbon::now()->subMonth()->startOfMonth();` jumps to the first day of the current month(!?!).
@@ -91,6 +97,31 @@ class AppServiceProvider extends ServiceProvider
                 return $this->getQuery()->toRawSql();
             }
         );
+
+        if ($this->app->runningUnitTests() && \Config::get('database.default')) {
+            \Illuminate\Database\Connection::resolverFor('sqlite', function ($connection, $database, $prefix, $config) {
+                return new class($connection, $database, $prefix, $config) extends SQLiteConnection {
+                    public function getSchemaBuilder()
+                    {
+                        if (null === $this->schemaGrammar) {
+                            $this->useDefaultSchemaGrammar();
+                        }
+
+                        return new class($this) extends SQLiteBuilder {
+                            protected function createBlueprint($table, \Closure $callback = null)
+                            {
+                                return new class($table, $callback) extends Blueprint {
+                                    public function dropForeign($index)
+                                    {
+                                        return new Fluent();
+                                    }
+                                };
+                            }
+                        };
+                    }
+                };
+            });
+        }
     }
 
     /**
@@ -112,7 +143,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\Yajra\DataTables\DataTablesServiceProvider::class);
 
         if ($this->app->environment('local')) {
-            DevelopmentServiceProvider::class;
+            $this->app->register(DevelopmentServiceProvider::class);
+        }
+
+        if ($this->app->environment('testing')) {
+            $this->commands([
+                CreateAndSeedTestSuiteDB::class,
+            ]);
         }
 
         $this->app->bind(

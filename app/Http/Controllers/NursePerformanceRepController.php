@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\FromArray;
+use CircleLinkHealth\Core\Exports\FromArray;
 use App\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
@@ -77,7 +77,7 @@ class NursePerformanceRepController extends Controller
     public function completionRate($reportPerDay)
     {
         return array_key_exists('completionRate', $reportPerDay)
-            ? $reportPerDay['completionRate']
+            ? (0 == $reportPerDay['committedHours'] ? 'N/A' : $reportPerDay['completionRate'])
             : 'N/A';
     }
 
@@ -89,7 +89,7 @@ class NursePerformanceRepController extends Controller
     public function efficiencyIndex($reportPerDay)
     {
         return array_key_exists('efficiencyIndex', $reportPerDay)
-            ? $reportPerDay['efficiencyIndex']
+            ? (0 == $reportPerDay['committedHours'] ? 'N/A' : $reportPerDay['efficiencyIndex'])
             : 'N/A';
     }
 
