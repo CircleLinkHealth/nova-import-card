@@ -18,7 +18,6 @@ class SurveyController extends Controller
 
     public function getCurrentSurvey($patientId)
     {
-
         //no need to have this check here
         if ( ! Auth::check()) {
             return redirect()->route('survey.vitals.welcome', ['patientId' => $patientId]);
@@ -50,6 +49,12 @@ class SurveyController extends Controller
 
         if ( ! $surveyData) {
             throw new \Error("Survey not found for patient " . $patientId);
+        }
+
+        if ($surveyData->surveyInstances[0]->survey->name === 'Enrollees'){
+            return view('survey.Enrollees.index', [
+                'data' => $surveyData->toArray(),
+            ]);
         }
 
         return view('survey.hra.index', [
