@@ -623,21 +623,6 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'ccd-old-viewer.post',
     ])->middleware('permission:ccda.read');
 
-    Route::get('imported-medical-records/{imrId}/training-results', [
-        'uses' => 'ImporterController@getTrainingResults',
-        'as'   => 'get.importer.training.results',
-    ])->middleware('permission:ccda.read');
-
-    Route::post('importer/train', [
-        'uses' => 'ImporterController@train',
-        'as'   => 'post.train.importing.algorithm',
-    ])->middleware('permission:ccda.create');
-
-    Route::post('importer/train/store', [
-        'uses' => 'ImporterController@storeTrainingFeatures',
-        'as'   => 'post.store.training.features',
-    ])->middleware('permission:ccda.update');
-
     // CCD Importer Routes
     Route::group([
         'middleware' => [

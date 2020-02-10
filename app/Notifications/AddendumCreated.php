@@ -177,7 +177,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      *
      * @return BroadcastMessage
      */
-    public function toBroadcast($notifiable): object
+    public function toBroadcast($notifiable): BroadcastMessage
     {
         return new BroadcastMessage([
         ]);

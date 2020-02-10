@@ -6,6 +6,8 @@
 
 namespace App\Contracts;
 
+use Illuminate\Notifications\Messages\BroadcastMessage;
+
 interface LiveNotification
 {
     /**
@@ -38,19 +40,24 @@ interface LiveNotification
     public function senderId(): int;
 
     public function senderName(): string;
-
+    
     /**
-     * Holds all data needed to represent notification in vue.
+     * Get the array representation of the notification.
      *
      * @param mixed $notifiable
+     *
+     * @return array
      */
     public function toArray($notifiable): array;
-
+    
     /**
-     * Returns by default -  ONLY the notification id & the notification type to be used in broadcasting the notification
-     * Broadcast will be listened by BroadcastServiceProvider.
+     * Get the broadcastable representation of the notification.
+     *
+     * NOTE: The `notification_id` and `notification_type` are automatically included by default.
      *
      * @param mixed $notifiable
+     *
+     * @return BroadcastMessage
      */
-    public function toBroadcast($notifiable): object;
+    public function toBroadcast($notifiable): BroadcastMessage;
 }
