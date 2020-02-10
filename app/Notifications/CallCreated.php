@@ -200,6 +200,6 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
      */
     public function getNotificationData($notifiable): array
     {
-        return $this->getNotificationData($notifiable);
+        return $this->notificationData($notifiable);
     }
 }
