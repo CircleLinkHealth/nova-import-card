@@ -7,15 +7,10 @@
 namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use App\Jobs\ImportCcda;
-use App\Jobs\ImportCsvPatientList;
-use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class ImporterController extends Controller
@@ -101,6 +96,8 @@ class ImporterController extends Controller
         $source = $this->getSource($request);
 
         foreach ($request->file('file') as $file) {
+            \Log::channel('logdna')->warning("reading file $file");
+    
             $xml = file_get_contents($file);
 
             $ccda = Ccda::create([
