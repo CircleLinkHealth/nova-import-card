@@ -54,7 +54,7 @@ class CcdaImportedNotification extends Notification implements ShouldBroadcast, 
         return (new MailMessage)
             ->greeting('Hello')
                     ->line('We would like to inform you that the CCDA(s) you uploaded earlied have been processed.')
-                    ->action('View Imported CCDAs', route('view.records.ready.to.import'))
+                    ->action('View Imported CCDAs', route('import.ccd.remix'))
                     ->line('Thank you for using our CarePlan Manager!');
     }
 
@@ -84,7 +84,7 @@ class CcdaImportedNotification extends Notification implements ShouldBroadcast, 
      */
     public function description(): string
     {
-        return "The CCDA with ID {$this->ccda->id} you had uploaded earlier has been imported.";
+        return "CCDA Imported";
     }
     
     public function getPatientName(): string
@@ -97,7 +97,7 @@ class CcdaImportedNotification extends Notification implements ShouldBroadcast, 
      */
     public function getSubject(): string
     {
-        return "The CCDA you uploaded has been imported.";
+        return "CCDA Imported";
     }
     
     public function noteId(): ?int
@@ -110,7 +110,7 @@ class CcdaImportedNotification extends Notification implements ShouldBroadcast, 
      */
     public function redirectLink(): string
     {
-        return route('view.records.ready.to.import');
+        return route('import.ccd.remix');
     }
     
     /**
