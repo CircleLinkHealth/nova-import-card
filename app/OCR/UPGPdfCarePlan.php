@@ -6,72 +6,108 @@
 namespace App\OCR;
 
 
-use Spatie\Image\Image;
-use Spatie\Image\Manipulations;
-use Spatie\PdfToImage\Pdf;
-use thiagoalessio\TesseractOCR\TesseractOCR;
+use CircleLinkHealth\Customer\Entities\Media;
+use setasign\Fpdi\Fpdi;
+use setasign\Fpdi\PdfReader\PdfReader;
+use Spatie\PdfToText\Pdf;
+
 
 class UPGPdfCarePlan
 {
-    protected $fileName;
+    protected $filePath;
 
-    protected $noOfPages;
+    protected $string;
 
-    public function __construct($fileName)
+    protected $carePlan;
+
+    public function __construct($filePath)
     {
-        $this->fileName = $fileName;
+        $this->filePath = $filePath;
     }
 
     public function read()
     {
         return $this
-            ->convert()
-            ->crop()
-            ->analyze();
+            ->getText()
+            ->parseString()
+            ->categorize();
     }
 
-    private function crop()
+    private function getText()
     {
-        for ($i = $this->noOfPages; $i > 0; $i --){
-            $image = Image::load(storage_path("{$this->fileName}{$i}.png"));
+        //crop PDF
+        //set .env var and config var
 
-            $image->crop(Manipulations::CROP_BOTTOM, 595, 760)->save();
-            $image->crop(Manipulations::CROP_TOP, 595, 670)->save();
+        $pdf = new Fpdi();
+
+        $pageCount = $pdf->setSourceFile($this->filePath);
+        $pdf->AddPage();
+
+        for ($n = 1; $n <= $pageCount; $n ++){
+            $tplId = $pdf->importPage($n);
+
+            $pdf->useTemplate($tplId, 0, -60, 210, 400);
+            $pdf->AddPage();
         }
+
+
+        $pdf->Output(storage_path('testarw2.pdf'), 'F');
+
+
+        Pdf::getText(storage_path('testarw2.pdf'), '/usr/local/bin/pdftotext', ['layout', 'nopgbrk']);
 
         return $this;
     }
 
-    private function convert()
+    private function parseString()
     {
-        //todo: set specific directory
+        $this->carePlan = $this->string;
 
-        ini_set('memory_limit', -1);
-        try{
-            $pdf = new Pdf(storage_path($this->fileName));
-
-            foreach (range(1, $this->noOfPages = $pdf->getNumberOfPages()) as $pageNumber) {
-                $pdf->setPage($pageNumber)
-                    ->setOutputFormat('png')
-                    ->setResolution(300)
-                    ->saveImage(storage_path("{$this->fileName}{$pageNumber}.png"));
-            }
-        }catch (\Exception $exception){
-            //
-        }
+//        $this->carePlan = explode('\n', $this->string);
+//        $this->carePlan = preg_split("/[\n]/", $this->string);
 
         return $this;
     }
 
-    private function analyze(){
+    private function categorize()
+    {
 
-        for ($i = $this->noOfPages; $i > 0; $i --){
-            $t = new TesseractOCR(storage_path("{$this->fileName}{$i}.png"));
-            //handle exceptions
-            $array[] = $t->run();
-        }
 
-        return implode('\n', $array);
+
+
+//        $pageCount = $pdf->setSourceFile($this->filePath);
+//
+//        $width = $pdf->GetPageWidth();
+//        $height = 0;
+//
+//        $_x = $x = 10;
+//        $_y = $y = 10;
+//
+//        $pdf->AddPage();
+//        for ($n = 1; $n <= $pageCount; $n++) {
+//            $pageId = $pdf->importPage($n);
+//
+//            $size = $pdf->useImportedPage($pageId, $x, $y, $width);
+//            $pdf->Rect($x, $y, $size['width'], $size['height']);
+//            $height = max($height, $size['height']);
+//            if ($n % 2 == 0) {
+//                $y += $height + 10;
+//                $x = $_x;
+//                $height = 0;
+//            } else {
+//                $x += $width + 10;
+//            }
+//
+//
+//                $pdf->AddPage();
+//                $x = $_x;
+//                $y = $_y;
+//
+//        }
+
+
+
+        return $this->string;
 
     }
 
