@@ -6,11 +6,9 @@
 
 namespace App\Http\Controllers;
 
-use App\CarePlan;
 use App\Contracts\ReportFormatter;
-use App\Exports\FromArray;
+use CircleLinkHealth\Core\Exports\FromArray;
 use App\Http\Requests\GetUnder20MinutesReport;
-use App\Models\CPM\CpmMisc;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanAssessmentService;
 use App\Services\CareplanService;
@@ -23,6 +21,8 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 

@@ -7,10 +7,10 @@
 namespace App\Traits\Tests;
 
 use App\Call;
-use App\CLH\Helpers\StringManipulation;
 use App\CLH\Repositories\UserRepository;
 use App\Repositories\PatientWriteRepository;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -67,7 +67,7 @@ trait UserHelpers
         $ccmStatus = 'enrolled'
     ): User {
         $practiceId = parseIds($practiceId)[0];
-        $roles      = (array) Role::whereName($roleName)->firstOrFail()->id;
+        $roles      = [Role::whereName($roleName)->firstOrFail()->id];
 
         //creates the User
         $user = $this->setupUser($practiceId, $roles, $ccmStatus);
@@ -113,7 +113,7 @@ trait UserHelpers
         if ('participant' == $roleName) {
             $user->carePlan()->updateOrCreate(
                 [
-                    'care_plan_template_id' => \App\AppConfig::pull('default_care_plan_template_id'),
+                    'care_plan_template_id' => \CircleLinkHealth\Core\Entities\AppConfig::pull('default_care_plan_template_id'),
                 ],
                 [
                     'status' => 'draft',

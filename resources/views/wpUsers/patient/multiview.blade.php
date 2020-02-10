@@ -189,7 +189,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row gutter">
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        Welcome to Dr. {{$billingDoctor->getFullName()}}'s Personalized Care Management
+                                        Welcome to @if('UPG' === $patient->primaryPractice->name)CircleLink Health's @else Dr. {{$billingDoctor->getFullName()}}'s @endif Personalized Care Management
                                         program!
                                     </div>
                                     <br>

@@ -78,7 +78,7 @@ $user = auth()->user();
             <div class="col-lg-8 col-sm-12 col-xs-12">
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $user->hasRole('care-center') && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
+                        @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && $user->isCareCoach() && isset($patient) && optional($patient)->id && !$noLiveCountTimeTracking)
                             <li>
                                 <time-tracker-call-mode ref="timeTrackerCallMode"
                                                         :twilio-enabled="@json(config('services.twilio.enabled') && ($patient->primaryPractice ? $patient->primaryPractice->isTwilioEnabled() : false))"
@@ -158,12 +158,12 @@ $user = auth()->user();
                                         class="top-nav-item-icon glyphicon glyphicon-user"></i>Patient List</a>
                         </li>
 
-                        @role('care-center')
+                        @if($user->isCareCoach())
                         <li>
                             <a href="{{ route('patientCallList.index') }}" class="text-white"><i
                                         class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
                         </li>
-                        @endrole
+                        @endif
 
                         <li class="dropdown">
                             <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
@@ -171,18 +171,18 @@ $user = auth()->user();
                                         class="caret text-white"></span></div>
 
                             <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                                @role('administrator')
+                                @if($user->isAdmin())
                                 <li>
                                     <a href="{{ route('patients.careplan.printlist') }}">Care Plan Print List</a>
                                 </li>
-                                @endrole
+                                @endif
                                 <li>
                                     <a href="{{ route('patient.note.listing') }}">Notes Report</a>
                                 </li>
                                 <li>
                                     <a href="{{route('patient.reports.u20')}}">Under 20 Minutes Report</a>
                                 </li>
-                                @role('developer')
+                                @if($user->hasRole('developer'))
                                 <li>
                                     <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
                                 </li>
@@ -190,7 +190,7 @@ $user = auth()->user();
                                     <a href="{{ route('admin.reports.nurse.metrics') }}">
                                         Nurse Performance Report</a>
                                 </li>
-                                @endrole
+                                @endif
                             </ul>
                         </li>
                         {{--Live Notifications--}}
@@ -199,14 +199,15 @@ $user = auth()->user();
                                  aria-expanded="false"><i class="glyphicon glyphicon-bell"></i> Notifications
                                 <a class="inline-block">
 
-                                <pusher-notifications
-                                        :user-id="{{json_encode(\Illuminate\Support\Facades\Auth::id())}}"></pusher-notifications>
-                            </a>
-                        </div>
-                    </li>
+                                    <pusher-notifications
+                                            :user-id="{{json_encode(\Illuminate\Support\Facades\Auth::id())}}"></pusher-notifications>
+                                </a>
+                            </div>
+                        </li>
 
-                    @include('partials.user-account-dropdown')
-                </ul>
+                        @include('partials.user-account-dropdown')
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

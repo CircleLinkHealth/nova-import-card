@@ -7,6 +7,7 @@
 namespace App\Notifications\Channels;
 
 use App\Contracts\DirectMail;
+use CircleLinkHealth\Core\Exceptions\InvalidTypeException;
 use App\Contracts\DirectMailableNotification;
 use App\DirectMailMessage;
 use App\Exceptions\InvalidTypeException;

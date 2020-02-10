@@ -26,7 +26,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereSectionText($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereStatus($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP query()

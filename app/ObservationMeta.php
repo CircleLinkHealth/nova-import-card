@@ -33,7 +33,7 @@ use CircleLinkHealth\Customer\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereProgramId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta query()

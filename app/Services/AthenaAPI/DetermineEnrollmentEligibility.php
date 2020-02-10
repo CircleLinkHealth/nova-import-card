@@ -6,7 +6,7 @@
 
 namespace App\Services\AthenaAPI;
 
-use App\TargetPatient;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Jobs\Athena\GetAppointmentsForDepartment;
@@ -81,7 +81,7 @@ class DetermineEnrollmentEligibility
 
         foreach ($departments['departments'] as $department) {
             if ( ! empty($department['departmentid'])) {
-                GetAppointmentsForDepartment::dispatch($department['departmentid'], $ehrPracticeId, $startDate, $endDate, $offset, $batchId);
+                GetAppointmentsForDepartment::dispatch($department['departmentid'], $ehrPracticeId, $startDate, $endDate, $offset, $batchId)->onQueue('low');
             }
         }
     }

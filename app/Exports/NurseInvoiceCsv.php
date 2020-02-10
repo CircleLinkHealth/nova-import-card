@@ -6,7 +6,7 @@
 
 namespace App\Exports;
 
-use App\Traits\AttachableAsMedia;
+use CircleLinkHealth\Core\Traits\AttachableAsMedia;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Entities\NurseInvoice;
 use Illuminate\Contracts\Support\Responsable;

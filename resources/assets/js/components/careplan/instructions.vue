@@ -107,6 +107,7 @@
 
             Event.$on('full-conditions:add', (ccdProblem) => {
                 if (ccdProblem) this.ccdProblems.push(this.setupCcdProblem(ccdProblem))
+                App.$emit('patient-problems-updated', this.ccdProblems);
             })
 
             Event.$on('full-conditions:remove', (id) => {

@@ -7,7 +7,7 @@
 namespace App\Nova;
 
 use App\Nova\Importers\PatientConsentLetters;
-use Circlelinkhealth\ClhImportCardExtended\ClhImportCardExtended;
+use CircleLinkHealth\ClhImportCardExtended\ClhImportCardExtended;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
@@ -72,7 +72,7 @@ class Practice extends Resource
                 Text::make('email')
                     ->withModel(\CircleLinkHealth\Customer\Entities\User::class, 'email')
                     ->inputRules(['required', 'email']),
-            ]),
+            ], 'Create and Send Patient Consent Letters'),
         ];
     }
 

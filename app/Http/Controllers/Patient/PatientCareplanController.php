@@ -6,26 +6,26 @@
 
 namespace App\Http\Controllers\Patient;
 
-use App\CarePlan;
 use App\CarePlanPrintListView;
 use App\CLH\Repositories\UserRepository;
 use App\Constants;
 use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateNewPatientRequest;
-use App\Models\CCD\CcdInsurancePolicy;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanService;
 use App\Services\PatientService;
-use App\Services\PdfService;
 use Auth;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringMedicareDisclaimer;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
@@ -439,7 +439,7 @@ class PatientCareplanController extends Controller
         }
 
         $showApprovalButton = false; // default hide
-        if (Auth::user()->hasRole(['provider'])) {
+        if (Auth::user()->isProvider()) {
             if ('provider_approved' != $patient->getCarePlanStatus()) {
                 $showApprovalButton = true;
             }

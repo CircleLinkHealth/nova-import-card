@@ -12,6 +12,7 @@ use App\Contracts\FaxableNotification;
 use App\Note;
 use App\ValueObjects\SimpleNotification;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;

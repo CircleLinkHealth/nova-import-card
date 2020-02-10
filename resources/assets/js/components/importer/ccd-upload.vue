@@ -1,17 +1,19 @@
 <template>
     <div>
         <vue-dropzone ref="vueDropzone" id="dropzone" param-name="file"
-            :url="dzOptions.url"
-            :headers="dzOptions.headers"
-            :upload-multiple="true"
-            :max-file-size-in-m-b="30"
-            :accepted-file-types="dzOptions.acceptedFileTypes"/>
+                      :duplicateCheck="true"
+                      :url="dzOptions.url"
+                      :headers="dzOptions.headers"
+                      :upload-multiple="true"
+                      :timeout="240000"
+                      :max-file-size-in-m-b="30"
+                      :accepted-file-types="dzOptions.acceptedFileTypes"/>
     </div>
 </template>
 
 <script>
     import vue2Dropzone from 'vue2-dropzone'
-    import { rootUrl, csrfToken } from '../../app.config'
+    import {rootUrl, csrfToken} from '../../app.config'
     import CcdRegisterEvents from './ccd-upload.event'
 
     export default {

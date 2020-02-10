@@ -15,6 +15,7 @@ use App\Repositories\PatientWriteRepository;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
+use App\Services\CPM\CpmProblemService;
 use App\Services\NoteService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -194,6 +195,7 @@ class NotesController extends Controller
             'patientWithdrawnReason' => $patientWithdrawnReason,
             'note'                   => $existingNote,
             'call'                   => $existingCall,
+            'cpmProblems'            => (new CpmProblemService())->all(),
         ];
 
         return view('wpUsers.patient.note.create', $view_data);
@@ -461,6 +463,12 @@ class NotesController extends Controller
 
         $patient = User::findOrFail($patientId);
 
+        // validating attested problems by nurse. Checking existence since we are about to attach them below
+        $request->validate([
+            'attested_problems.ccd_problem_id' => 'exists:ccd_problems',
+        ]);
+        $attestedProblems = isset($input['attested_problems']) ? $input['attested_problems'] : null;
+
         $editingNoteId = ! empty($input['noteId'])
             ? $input['noteId']
             : null;
@@ -538,7 +546,10 @@ class NotesController extends Controller
                         //Updates when the patient was successfully contacted last
                         //use $note->created_at, in case we are editing a note
                         $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
-                        $this->patientRepo->updateCallLogs($patient->patientInfo, true, true, $note->performed_at);
+                        $this->patientRepo->updateCallLogs($patient->patientInfo, Call::REACHED === $call->status, true, $note->performed_at);
+                        if ($attestedProblems) {
+                            $call->attachAttestedProblems($attestedProblems);
+                        }
                     } else {
                         $call->status = 'done';
                     }
@@ -592,10 +603,10 @@ class NotesController extends Controller
                         $prediction = $schedulerService->updateTodaysCallAndPredictNext(
                             $patient,
                             $note->id,
-                            $call_status
+                            $call_status,
+                            $attestedProblems
                         );
                     }
-
                     // add last contact time regardless of if success
                     $info->last_contact_time = $note->performed_at->format('Y-m-d H:i:s');
                     $info->save();
@@ -625,7 +636,7 @@ class NotesController extends Controller
             //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
             if ( ! $noteIsAlreadyComplete && $is_phone_session) {
                 if (isset($input['call_status']) && 'reached' == $input['call_status']) {
-                    if (auth()->user()->hasRole('provider')) {
+                    if (auth()->user()->isProvider()) {
                         $this->service->storeCallForNote(
                             $note,
                             'reached',

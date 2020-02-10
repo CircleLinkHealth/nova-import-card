@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\CarePlanTemplate;
+use CircleLinkHealth\SharedModels\Entities\CarePlanTemplate;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CarePlanTemplateObserver
@@ -14,7 +14,7 @@ class CarePlanTemplateObserver
     /**
      * Listen to the User created event.
      *
-     * @param CarePlanTemplate $carePlanTemplate
+     * @param \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate $carePlanTemplate
      */
     public function created(CarePlanTemplate $newCPT)
     {

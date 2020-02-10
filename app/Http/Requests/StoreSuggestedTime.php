@@ -41,7 +41,7 @@ class StoreSuggestedTime extends FormRequest
     {
         return [
             'invoiceId'              => 'required|exists:nurse_invoices,id',
-            'suggestedFormattedTime' => ['required', 'regex:/^(?:[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/'],
+            'suggestedFormattedTime' => ['required', 'regex: /^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
         ];
     }
 }

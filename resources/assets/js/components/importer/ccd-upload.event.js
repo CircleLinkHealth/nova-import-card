@@ -4,6 +4,12 @@ export default (App, VueDropZone) => {
     VueDropZone.$on('vdropzone-success', (file, response) => {
         console.log("vdropzone-success", file, response)
 
+        EventBus.$emit('notifications:create', {
+            message: `The CCDA(s) were successfully uploaded. We'll let you know once they've been processed.`,
+            type: 'success',
+            noTimeout: true
+        })
+
         EventBus.$emit('vdropzone:success', response)
     })
 

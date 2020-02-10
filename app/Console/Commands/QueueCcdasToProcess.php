@@ -6,9 +6,9 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\ProcessCcda;
-use App\Models\MedicalRecords\Ccda;
+use CircleLinkHealth\Eligibility\Jobs\ProcessCcda;
 use Carbon\Carbon;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 
 class QueueCcdasToProcess extends Command

@@ -7,7 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Models\MedicalRecords\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use Illuminate\Http\Request;
 
 class MedicalRecordImportController extends Controller

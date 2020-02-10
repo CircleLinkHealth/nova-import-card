@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Circlelinkhealth\ClhImportCardExtended;
+namespace CircleLinkHealth\ClhImportCardExtended;
 
 use Illuminate\Database\Eloquent\Model;
 use Validator;
@@ -74,6 +74,6 @@ class InputField
 
     private function getRules()
     {
-        return $this->field->inputRules ?: [];
+        return property_exists($this->field, 'inputRules') ? $this->field->inputRules : [];
     }
 }

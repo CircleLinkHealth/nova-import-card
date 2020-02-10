@@ -71,10 +71,6 @@ return [
             : 'false',
     ],
 
-    'ccd-parser' => [
-        'base-uri' => env('CCD_PARSER_BASE_URI', 'https://circlelink-ccd-parser.medstack.net'),
-    ],
-
     'no-call-mode' => [
         'env' => ! in_array(env('APP_ENV'), ['local', 'staging']),
     ],
@@ -98,7 +94,8 @@ return [
     ],
 
     'awv' => [
-        'url' => env('AWV_URL', ''),
+        'url'        => env('AWV_URL', ''),
+        'report_url' => env('AWV_URL', '').env('AWV_REPORT_URI', ''),
     ],
     
     'phaxio' => [

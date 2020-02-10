@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\CLH\Helpers\StringManipulation;
+use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -16,13 +16,14 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 use Validator;
 
 class OnboardingService
 {
     /**
-     * @var StringManipulation
+     * @var \CircleLinkHealth\Core\StringManipulation
      */
     protected $stringManipulation;
 
@@ -482,6 +483,7 @@ class OnboardingService
                     );
                 }
 
+                Cache::forget($user->getCpmRolesCacheKey());
 //                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
             } catch (\Exception $e) {
                 \Log::alert($e);
@@ -494,7 +496,7 @@ class OnboardingService
                         //we don't actually want to terminate the program if we detect duplicates
                         //we just don't wanna add the row again
                     }
-                } elseif ($e instanceof ValidatorException) {
+                } elseif ($e instanceof ValidationException) {
                     $errors[] = [
                         'index'    => $index,
                         'messages' => $e->getMessageBag()->getMessages(),

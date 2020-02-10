@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace Circlelinkhealth\GeneratePatientCallDataCsv;
+namespace CircleLinkHealth\GeneratePatientCallDataCsv;
 
 use Laravel\Nova\Card;
 

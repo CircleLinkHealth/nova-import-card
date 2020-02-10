@@ -6,10 +6,10 @@
 
 namespace App\Nova\Actions;
 
-use App\CarePlan;
 use App\Jobs\FaxPatientCarePlansToLocation;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\FaxChannel;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -45,7 +45,7 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
      */
     public function handle(ActionFields $fields, Collection $models)
     {
-        if ($models->count() > 1){
+        if ($models->count() > 1) {
             $this->markAsFailed(
                 $models->first(),
                 'Invalid number of practices. Action can be performed on 1 practice only.'
@@ -69,7 +69,7 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
                 ->whereHas('carePlan', function ($cp) {
                     $cp->where('status', CarePlan::PROVIDER_APPROVED);
                 })
-                ->chunk(5, function ($patients)use ($location){
+                ->chunk(5, function ($patients) use ($location) {
                     FaxPatientCarePlansToLocation::dispatch($patients, $location);
                 });
             $this->markAsFinished($practice);

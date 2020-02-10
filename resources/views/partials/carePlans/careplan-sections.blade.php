@@ -159,7 +159,7 @@ $healthNote     = $data['healthGoalNote'];
                 {{ $healthNote['body'] }}
             </div>
         @endif
-        @if (!$healthGoalsForListing->count())
+        @if ($healthGoalsForListing->isEmpty() && !$noteIsAvailable)
             <div class="col-sm-12 text-center top-20">No Health Goals at this time</div>
         @else
             @if ($noteIsAvailable)

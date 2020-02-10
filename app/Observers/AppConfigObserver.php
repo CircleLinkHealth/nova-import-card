@@ -6,7 +6,7 @@
 
 namespace App\Observers;
 
-use App\AppConfig;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use Carbon\Carbon;
 use CircleLinkHealth\NurseInvoices\Helpers\NurseInvoiceDisputeDeadline;
 

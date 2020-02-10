@@ -4,6 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+//use App\Notifications\TestEmail;
+
+use App\Notifications\TestEmail;
+
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
     'as'   => 'webhook.on-fax-sent',
@@ -395,7 +399,7 @@ Route::group(['middleware' => 'auth'], function () {
             'middleware' => [
                 'permission:ccd-import',
             ],
-            'prefix' => 'ccd-importer',
+            'prefix'     => 'ccd-importer',
         ], function () {
             Route::get('imported-medical-records', [
                 'uses' => 'ImporterController@records',
@@ -446,6 +450,18 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'API\PracticeLocationsController@update',
         'as'   => 'practice.locations.update',
     ])->middleware('permission:location.create,location.update');
+
+    Route::group(
+        [
+            'prefix' => 'enrollment',
+        ],
+        function () {
+            Route::get('/get-suggested-family-members/{enrolleeId}', [
+                'uses' => 'API\EnrollmentCenterController@getSuggestedFamilyMembers',
+                'as'   => 'enrollment-center.family-members',
+            ])->middleware('permission:enrollee.read');
+        }
+    );
 
     Route::resource(
         'practice.users',
@@ -572,6 +588,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'get.CCDViewerController.exportAllCCDs',
     ])->middleware('permission:ccda.read');
 
+    Route::get('ccd/export/user/{userId}', [
+        'uses' => 'CCDViewer\CCDViewerController@exportAllCcds',
+        'as'   => 'get.CCDViewerController.exportAllCCDs',
+    ])->middleware('permission:ccda.read');
+
     Route::get('ccd/show/{ccdaId}', [
         'uses' => 'CCDViewer\CCDViewerController@show',
         'as'   => 'get.CCDViewerController.show',
@@ -602,21 +623,6 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'ccd-old-viewer.post',
     ])->middleware('permission:ccda.read');
 
-    Route::get('imported-medical-records/{imrId}/training-results', [
-        'uses' => 'ImporterController@getTrainingResults',
-        'as'   => 'get.importer.training.results',
-    ])->middleware('permission:ccda.read');
-
-    Route::post('importer/train', [
-        'uses' => 'ImporterController@train',
-        'as'   => 'post.train.importing.algorithm',
-    ])->middleware('permission:ccda.create');
-
-    Route::post('importer/train/store', [
-        'uses' => 'ImporterController@storeTrainingFeatures',
-        'as'   => 'post.store.training.features',
-    ])->middleware('permission:ccda.update');
-
     // CCD Importer Routes
     Route::group([
         'middleware' => [
@@ -640,8 +646,6 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
-
-        Route::post('demographics', 'EditImportedCcda\DemographicsImportsController@store');
 
         Route::post('import', 'MedicalRecordImportController@importDEPRECATED');
     });
@@ -1079,85 +1083,6 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:note.send');
         });
 
-        Route::group(['prefix' => 'eligibility-batches'], function () {
-            Route::get('pending-jobs/count', [
-                'uses' => 'EligibilityBatchController@allJobsCount',
-                'as'   => 'all.eligibility.jobs.count',
-            ])->middleware('permission:batch.read');
-
-            Route::get('', [
-                'uses' => 'EligibilityBatchController@index',
-                'as'   => 'eligibility.batches.index',
-            ])->middleware('permission:batch.read');
-
-            Route::get('google-drive/create', [
-                'uses' => 'EligibilityBatchController@googleDriveCreate',
-                'as'   => 'eligibility.batches.google.drive.create',
-            ]);
-
-            Route::get('csv/create', [
-                'uses' => 'EligibilityBatchController@csvCreate',
-                'as'   => 'eligibility.batches.csv.create',
-            ]);
-
-            Route::group(['prefix' => '{batch}'], function () {
-                Route::get('', [
-                    'uses' => 'EligibilityBatchController@show',
-                    'as'   => 'eligibility.batch.show',
-                ])->middleware('permission:batch.read,practice.read,ccda.read');
-
-                Route::get('/counts', [
-                    'uses' => 'EligibilityBatchController@getCounts',
-                    'as'   => 'eligibility.batch.getCounts',
-                ])->middleware('permission:enrollee.read,ccda.read');
-
-                Route::get('/eligible-csv', [
-                    'uses' => 'EligibilityBatchController@downloadEligibleCsv',
-                    'as'   => 'eligibility.download.csv.eligible',
-                ])->middleware('permission:enrollee.read');
-
-                Route::get('/entire-patient-list-csv', [
-                    'uses' => 'EligibilityBatchController@downloadAllPatientsCsv',
-                    'as'   => 'eligibility.download.all',
-                ])->middleware('permission:enrollee.read');
-
-                Route::get('supplemental-insurance-info-csv', [
-                    'uses' => 'EligibilityBatchController@downloadAthenaApiInsuranceInfoCsv',
-                    'as'   => 'eligibility.download.supplemental_insurance_info',
-                ])->middleware('permission:enrollee.read');
-
-                Route::get('insurance-copays-csv', [
-                    'uses' => 'EligibilityBatchController@downloadAthenaApiInsuranceCopaysCsv',
-                    'as'   => 'eligibility.download.copays',
-                ])->middleware('permission:enrollee.read');
-
-                Route::get('/reprocess', [
-                    'uses' => 'EligibilityBatchController@getReprocess',
-                    'as'   => 'get.eligibility.reprocess',
-                ])->middleware('permission:enrollee.read');
-
-                Route::post('/reprocess', [
-                    'uses' => 'EligibilityBatchController@postReprocess',
-                    'as'   => 'post.eligibility.reprocess',
-                ])->middleware('permission:enrollee.read');
-
-                Route::get('/last-import-session-logs', [
-                    'uses' => 'EligibilityBatchController@getLastImportLog',
-                    'as'   => 'eligibility.download.last.import.logs',
-                ])->middleware('permission:batch.read');
-
-                Route::get('/download-patient-list-csv', [
-                    'uses' => 'EligibilityBatchController@downloadCsvPatientList',
-                    'as'   => 'eligibility.download.csv.patient.list',
-                ])->middleware('permission:batch.read');
-
-                Route::get('/batch-logs-csv', [
-                    'uses' => 'EligibilityBatchController@downloadBatchLogCsv',
-                    'as'   => 'eligibility.download.logs.csv',
-                ])->middleware('permission:batch.read');
-            });
-        });
-
         Route::group(['prefix' => 'ca-director'], function () {
             Route::get('', [
                 'uses' => 'EnrollmentDirectorController@index',
@@ -1205,40 +1130,8 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
         });
 
-        Route::group(['prefix' => 'enrollees'], function () {
-            Route::get('', [
-                'uses' => 'EnrolleesController@index',
-                'as'   => 'admin.enrollees.index',
-            ])->middleware('permission:enrollee.read,practice.read');
-            Route::get('batch/{batch}', [
-                'uses' => 'EnrolleesController@showBatch',
-                'as'   => 'admin.enrollees.show.batch',
-            ])->middleware('permission:enrollee.read,practice.read,batch.read');
-            Route::post('{batch}/import', [
-                'uses' => 'EnrolleesController@import',
-                'as'   => 'admin.enrollees.import',
-            ])->middleware('permission:enrollee.read,enrollee.update');
-            Route::post('import', [
-                'uses' => 'EnrolleesController@import',
-                'as'   => 'admin.enrollees.import.from.all.practices',
-            ])->middleware('permission:enrollee.read,enrollee.update');
-            Route::post('/import-array-of-ids', [
-                'uses' => 'EnrolleesController@importArray',
-                'as'   => 'admin.enrollees.import.array',
-            ])->middleware('permission:enrollee.read,enrollee.update');
-            Route::post('/import-using-medical-record-id', [
-                'uses' => 'EnrolleesController@importMedicalRecords',
-                'as'   => 'admin.enrollees.import.medical.records',
-            ])->middleware('permission:ccd-import');
-        });
-
         Route::get('saas-accounts/create', 'Admin\CRUD\SaasAccountController@create')->middleware('permission:saas.create');
         Route::post('saas-accounts', 'Admin\CRUD\SaasAccountController@store')->middleware('permission:saas.create');
-
-        Route::get(
-            'eligible-lists/phoenix-heart',
-            'Admin\WelcomeCallListController@makePhoenixHeartCallList'
-        )->middleware('permission:batch.create');
 
         Route::view('api-clients', 'admin.manage-api-clients');
 
@@ -1278,7 +1171,7 @@ Route::group(['middleware' => 'auth'], function () {
         ])->middleware('permission:careplan-pdf.create,careplan-pdf.read,patient.read');
 
         Route::get('nurses/windows', [
-            'uses' => 'CareCenter\WorkScheduleController@getAllNurseSchedules',
+            'uses' => 'CareCenter\WorkScheduleController@showAllNurseScheduleForAdmin',
             'as'   => 'get.admin.nurse.schedules',
         ])->middleware('permission:nurse.read');
 
@@ -1348,11 +1241,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'CallController@import',
             'as'   => 'post.CallController.import',
         ])->middleware('permission:call.update,call.create');
-
-        Route::post('make-welcome-call-list', [
-            'uses' => 'Admin\WelcomeCallListController@makeWelcomeCallList',
-            'as'   => 'make.welcome.call.list',
-        ])->middleware('permission:batch.create');
 
         Route::get('families/create', [
             'uses' => 'FamilyController@create',
@@ -1632,22 +1520,6 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
         });
 
-        //these fall under the admin-access permission
-        Route::get('reports/nurse/invoice', [
-            'uses' => 'NurseController@makeInvoice',
-            'as'   => 'admin.reports.nurse.invoice',
-        ])->middleware('permission:nurseInvoice.read');
-
-        Route::post('reports/nurse/invoice/generate', [
-            'uses' => 'NurseController@generateInvoice',
-            'as'   => 'admin.reports.nurse.generate',
-        ])->middleware('permission:nurseInvoice.create');
-
-        Route::post('reports/nurse/invoice/send', [
-            'uses' => 'NurseController@sendInvoice',
-            'as'   => 'admin.reports.nurse.send',
-        ])->middleware('permission:nurseInvoice.view');
-
         Route::get('reports/nurse/daily', [
             'uses' => 'NurseController@makeDailyReport',
             'as'   => 'admin.reports.nurse.daily',
@@ -1854,6 +1726,16 @@ Route::group(['middleware' => 'auth'], function () {
             ],
         ])->middleware('permission:nurseContactWindow.read,nurseContactWindow.create');
 
+        Route::get('work-schedule/get-calendar-data', [
+            'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
+            'as'   => 'care.center.work.schedule.getCalendarData',
+        ])->middleware('permission:nurseContactWindow.read');
+
+        Route::get('work-schedule/get-nurse-calendar-data', [
+            'uses' => 'CareCenter\WorkScheduleController@calendarWorkEventsForAuthNurse',
+            'as'   => 'care.center.work.schedule.calendarWorkEventsForAuthNurse',
+        ])->middleware('permission:nurseContactWindow.read');
+
         Route::get('work-schedule/destroy/{id}', [
             'uses' => 'CareCenter\WorkScheduleController@destroy',
             'as'   => 'care.center.work.schedule.destroy',
@@ -2051,7 +1933,13 @@ Route::group([
         'as'   => 'enrollment.sms.reply',
     ]);
 
-    Route::group(['middleware' => 'auth'], function () {
+    Route::group([
+        'middleware' =>
+            [
+                'auth',
+                'enrollmentCenter',
+            ],
+    ], function () {
         Route::get('/', [
             'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
             'as'   => 'enrollment-center.dashboard',
@@ -2295,19 +2183,6 @@ Route::group([
     });
 });
 
-Route::post('process-eligibility/drive/', [
-    'uses' => 'ProcessEligibilityController@fromGoogleDrive',
-    'as'   => 'process.eligibility.google.drive',
-])->middleware(['auth', 'role:administrator']);
-
-Route::get(
-    'process-eligibility/local-zip-from-drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}',
-    [
-        'uses' => 'ProcessEligibilityController@fromGoogleDriveDownloadedLocally',
-        'as'   => 'process.eligibility.local.zip',
-    ]
-)->middleware(['auth', 'role:administrator']);
-
 Route::get('notifications/{id}', [
     'uses' => 'NotificationController@showPusherNotification',
     'as'   => 'notifications.show',
@@ -2332,6 +2207,11 @@ Route::get('see-all-notifications', [
     'uses' => 'NotificationController@seeAllNotifications',
     'as'   => 'notifications.seeAll',
 ])->middleware('permission:provider.read,note.read');
+
+Route::get('nurses/holidays', [
+    'uses' => 'CareCenter\WorkScheduleController@getHolidays',
+    'as'   => 'get.admin.nurse.schedules.holidays',
+])->middleware('permission:nurse.read');
 
 Route::prefix('admin')->group(
     function () {
@@ -2390,3 +2270,24 @@ Route::prefix('admin')->group(
         );
     }
 );
+
+Route::get('/notification-unsubscribe', [
+    'uses' => 'NotificationsMailSubscriptionController@unsubscribe',
+    'as'   => 'unsubscribe.notifications.mail',
+])->middleware('signed', 'auth');
+
+Route::post('/update-subscriptions', [
+    'uses' => 'SubscriptionsDashboardController@updateSubscriptions',
+    'as'   => 'update.subscriptions',
+])->middleware('auth');
+
+Route::get('/notification-subscriptions-dashboard', [
+    'uses' => 'SubscriptionsDashboardController@subscriptionsIndex',
+    'as'   => 'subscriptions.notification.mail',
+])->middleware('auth');
+
+Route::post('nurses/nurse-calendar-data', [
+    'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
+    'as'   => 'get.nurse.schedules.selectedNurseCalendar',
+])->middleware('permission:nurse.read');
+
