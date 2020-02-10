@@ -24,7 +24,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\URL;
 
 class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQueue, LiveNotification, HasAttachment
 {
@@ -50,7 +49,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     public function __construct(Addendum $addendum, User $sender)
     {
         $this->addendum = $addendum;
-        $this->sender   = $sender;
+        $this->sender = $sender;
     }
 
     public function attachmentType(): string
@@ -68,28 +67,27 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
         return 'Addendum';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function descriptionForMail(): string
+    public function getSubject(): string
     {
-        return 'note';
+        $senderName = $this->senderName();
+        $patientName = $this->getPatientName();
+
+        return "<strong>$senderName</strong> responded to a note on $patientName";
     }
 
-    public function emailLineStyled(): string
-    { // @todo: maybe move this to a different interface
-        $senderName         = $this->senderName();
-        $descriptionForMail = $this->descriptionForMail();
-
-        return "<a style='color: #376a9c'> $senderName </a> has commented on a <a style='color: #376a9c'> $descriptionForMail </a>";
+    public function senderName(): string
+    {
+        return $this->sender->display_name;
     }
 
     /**
-     * Returns an Eloquent model.
+     * @return JsonResponse
      */
-    public function getAttachment(): ?Model
+    public function getPatientName(): string
     {
-        return $this->addendum;
+        $patientId = $this->getPatientId();
+
+        return NotificationService::getPatientName($patientId);
     }
 
     /**
@@ -103,58 +101,16 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     }
 
     /**
-     * @return JsonResponse
+     * Returns an Eloquent model.
      */
-    public function getPatientName(): string
+    public function getAttachment(): ?Model
     {
-        $patientId = $this->getPatientId();
-
-        return NotificationService::getPatientName($patientId);
-    }
-
-    public function getSubject(): string
-    {
-        $senderName  = $this->senderName();
-        $patientName = $this->getPatientName();
-
-        return "<strong>$senderName</strong> responded to a note on $patientName";
-    }
-
-    /**
-     * @param $notifiable
-     * @return array
-     */
-    public function mailData($notifiable): array
-    {
-        return $this->dataForClhEmail($notifiable->email);
-    }
-
-    /**
-     * @return int
-     */
-    public function noteId(): ?int
-    {
-        return $this->getAttachment()->addendumable_id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function redirectLink(): string
-    {
-        $note = Note::where('id', $this->noteId())->first();
-
-        return $note->link();
+        return $this->addendum;
     }
 
     public function senderId(): int
     {
         return $this->sender->id;
-    }
-
-    public function senderName(): string
-    {
-        return $this->sender->display_name;
     }
 
     /**
@@ -164,6 +120,14 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      * @return array
      */
     public function toArray($notifiable): array
+    {
+        return $this->getNotificationData($notifiable);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNotificationData($notifiable): array
     {
         return $this->notificationData($notifiable);
     }
@@ -193,12 +157,55 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     public function toMail($notifiable)
     {
         $subjectLineStyled = $this->emailLineStyled();
-        $emailData         = $this->mailData($notifiable);
-        $unsubscribeLink   = $this->createUnsubscribeUrl($emailData['activityType']);
+        $emailData = $this->mailData($notifiable);
+        $unsubscribeLink = $this->createUnsubscribeUrl($emailData['activityType']);
 
         return (new CircleLinkMailChannel($emailData, $unsubscribeLink))
             ->line($subjectLineStyled)
             ->action('View Comment', url($this->redirectLink()));
+    }
+
+    public function emailLineStyled(): string
+    { // @todo: maybe move this to a different interface
+        $senderName = $this->senderName();
+        $descriptionForMail = $this->descriptionForMail();
+
+        return "<a style='color: #376a9c'> $senderName </a> has commented on a <a style='color: #376a9c'> $descriptionForMail </a>";
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function descriptionForMail(): string
+    {
+        return 'note';
+    }
+
+    /**
+     * @param $notifiable
+     * @return array
+     */
+    public function mailData($notifiable): array
+    {
+        return $this->dataForClhEmail($notifiable->email);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function redirectLink(): string
+    {
+        $note = Note::where('id', $this->noteId())->first();
+
+        return $note->link();
+    }
+
+    /**
+     * @return int
+     */
+    public function noteId(): ?int
+    {
+        return $this->getAttachment()->addendumable_id;
     }
 
     /**

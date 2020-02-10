@@ -194,4 +194,12 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
     {
         return ['database', 'broadcast'];
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNotificationData($notifiable): array
+    {
+        return $this->getNotificationData($notifiable);
+    }
 }
