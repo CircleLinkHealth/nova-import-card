@@ -21,6 +21,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
 /**
  * CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord.
@@ -74,6 +75,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel implements ImportedMedicalRecordInterface
 {
+    use HasMediaTrait;
     use MedicalRecordIdAndTypeTrait;
     use SoftDeletes;
 
