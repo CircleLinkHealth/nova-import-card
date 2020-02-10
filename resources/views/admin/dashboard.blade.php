@@ -52,16 +52,6 @@
 
             <div class="col-md-4">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Train Medical Record Importing Algorithm</div>
-
-                    <div class="panel-body">
-                        @include('partials.importerTrainer')
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="panel panel-default">
                     <div class="panel-heading">Pull Eligible Patients from Athena</div>
                     <div class="panel-body">
                         <form action="{{ route('pull.athena.enrollees') }}" method="post" enctype="multipart/form-data">
@@ -95,9 +85,7 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">Send Sample note via Direct Mail</div>
