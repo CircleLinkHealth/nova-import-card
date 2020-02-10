@@ -5,6 +5,7 @@
                       :url="dzOptions.url"
                       :headers="dzOptions.headers"
                       :upload-multiple="true"
+                      :timeout="240000"
                       :max-file-size-in-m-b="30"
                       :accepted-file-types="dzOptions.acceptedFileTypes"/>
     </div>
