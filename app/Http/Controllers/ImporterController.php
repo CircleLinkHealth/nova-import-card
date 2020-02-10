@@ -109,7 +109,7 @@ class ImporterController extends Controller
                 'source'    => $source ?? Ccda::IMPORTER,
             ]);
 
-            ImportCcda::sedispatch($ccda);
+            ImportCcda::dispatch($ccda, true);
         }
     }
 
