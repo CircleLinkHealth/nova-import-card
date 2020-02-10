@@ -84,7 +84,7 @@ class CcdaImportedNotification extends Notification implements ShouldBroadcast, 
      */
     public function description(): string
     {
-        return "The CCDA with ID {$this->ccda->id} you had uploaded earlier has been imported.";
+        return "CCDA Imported";
     }
     
     public function getPatientName(): string
@@ -97,7 +97,7 @@ class CcdaImportedNotification extends Notification implements ShouldBroadcast, 
      */
     public function getSubject(): string
     {
-        return "The CCDA you uploaded has been imported.";
+        return "CCDA Imported";
     }
     
     public function noteId(): ?int
