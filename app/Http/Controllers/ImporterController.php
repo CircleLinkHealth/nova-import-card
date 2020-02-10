@@ -130,27 +130,20 @@ class ImporterController extends Controller
             return response()->json('No file found', 400);
         }
 
-        $records = new Collection();
-
         //example: http://cpm.clh.test/ccd-importer?source=importer_awv
         $source = $this->getSource($request);
 
         foreach ($request->file('file') as $file) {
-            \Log::info('Begin processing CCD '.Carbon::now()->toDateTimeString());
             $xml = file_get_contents($file);
 
             $ccda = Ccda::create([
                 'user_id'   => auth()->user()->id,
-                'vendor_id' => 1,
                 'xml'       => $xml,
                 'source'    => $source ?? Ccda::IMPORTER,
             ]);
 
-            $records->push($ccda->import());
-            \Log::info('End processing CCD '.Carbon::now()->toDateTimeString());
+            ImportCcda::sedispatch($ccda);
         }
-
-        return $records;
     }
 
     /**
@@ -313,13 +306,13 @@ class ImporterController extends Controller
      */
     public function uploadRecords(Request $request)
     {
-        $records = $this::handleCcdFilesUpload($request);
+        $this::handleCcdFilesUpload($request);
 
         if ( ! $request->has('json')) {
             return redirect()->route('import.ccd.remix');
         }
 
-        return response()->json($records);
+        return response()->json([]);
     }
 
     /**

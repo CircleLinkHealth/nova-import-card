@@ -6,6 +6,8 @@
 
 namespace App\Jobs;
 
+use App\Notifications\CcdaImportedNotification;
+use App\User;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
@@ -27,18 +29,26 @@ class ImportCcda implements ShouldQueue
      * @var int
      */
     public $timeout = 120;
-
+    /**
+     * @var bool
+     */
+    protected $notifyUploaderUser;
+    
     /**
      * @var \CircleLinkHealth\SharedModels\Entities\Ccda
      */
     private $ccda;
-
+    
     /**
      * Create a new job instance.
+     *
+     * @param Ccda $ccda
+     * @param bool $notifyUploaderUser
      */
-    public function __construct(Ccda $ccda)
+    public function __construct(Ccda $ccda, bool $notifyUploaderUser = false)
     {
         $this->ccda = $ccda;
+        $this->notifyUploaderUser = $notifyUploaderUser;
     }
 
     /**
@@ -56,6 +66,8 @@ class ImportCcda implements ShouldQueue
                         'imported' => true,
                     ]
                 );
+            
+            $this->sendCcdaUploadedNotification();
         }
     }
 
@@ -67,5 +79,12 @@ class ImportCcda implements ShouldQueue
     public function tags()
     {
         return ['import', 'ccda:'.$this->ccda->id];
+    }
+    
+    private function sendCcdaUploadedNotification()
+    {
+        if (!$this->notifyUploaderUser) return;
+        
+        User::findOrFail($this->ccda->user_id)->notify(new CcdaImportedNotification($this->ccda));
     }
 }
