@@ -45,7 +45,7 @@ class ReviewAppPostDeploy extends Command
      */
     public function handle()
     {
-        $this->info('Running post deploy command');
+        $this->output->note('Running post deploy command');
 
         if ( ! app()->environment(['review', 'local', 'testing'])) {
             throw new \Exception('Only review and local environments can run this');
@@ -53,7 +53,7 @@ class ReviewAppPostDeploy extends Command
 
         $dbName = config('database.connections.mysql.database');
 
-        $this->info("Checking if db [$dbName] exists");
+        $this->output->note("Checking if db [$dbName] exists");
 
         try {
             $dbTableExists = User::where('username', 'admin')->exists() && User::where('username', 'nurse')->exists();
@@ -63,19 +63,19 @@ class ReviewAppPostDeploy extends Command
 
         if (false === $dbTableExists) {
             $cmd = 'mysql:createdb';
-            $this->info("Running command $cmd");
+            $this->output->note("Running command $cmd");
             $this->runCommand(['php', 'artisan', '-vvv', $cmd, $dbName]);
 
             $cmd = 'migrate:fresh';
-            $this->info("Running command $cmd");
+            $this->output->note("Running command $cmd");
             $this->runCommand(['php', 'artisan', '-vvv', $cmd]);
 
             $cmd = 'migrate:views';
-            $this->info("Running command $cmd");
+            $this->output->note("Running command $cmd");
             $this->runCommand(['php', 'artisan', '-vvv', $cmd]);
 
             $cmd = 'db:seed';
-            $this->info("Running command $cmd");
+            $this->output->note("Running command $cmd");
             $this->runCommand(['php', 'artisan', '-vvv', $cmd, '--class=TestSuiteSeeder']);
         }
 
