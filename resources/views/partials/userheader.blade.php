@@ -47,11 +47,18 @@
                 <span style="font-size: 30px;">
                     <a href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
                     {{$patient->getFullName()}}
-                    </a> </span>
+                    </a>
+                </span>
 
                 <a href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}"
-                   style="padding-right: 2%;"><span
-                            class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a>
+                   style="padding-right: 5px; vertical-align: top">
+                    <span class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span>
+                </a>
+
+                @if ($patient->isCcmPlus())
+                    <span class="label label-info" style="vertical-align: top">CCM+</span>
+                @endif
+
                 {{-- red flag.indication patient is BHI eligible--}}
                 @if(isset($patient) && auth()->check()
                 && !isset($isPdf)
@@ -125,7 +132,8 @@
                         style="margin-top: -8px; margin-bottom: 20px !important; margin-left: -20px !important;">
                         @foreach($ccdMonitoredProblems as $problem)
                             @if($problem['name'] != 'Diabetes')
-                                <li class="inline-block"><input type="checkbox" id="item-{{$problem['id']}}" name="item-{{$problem['id']}}"
+                                <li class="inline-block"><input type="checkbox" id="item-{{$problem['id']}}"
+                                                                name="item-{{$problem['id']}}"
                                                                 value="Active"
                                                                 checked="checked" disabled="disabled">
                                     <label for="item-{{$problem['id']}}"><span> </span>{{$problem['name']}}</label>
@@ -228,11 +236,11 @@
                                         Wthdrn 1st Call
                                     </option>
                                 @else
-                                <option
-                                        class="withdrawn"
-                                        value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN ? 'selected' : ''}}>
-                                    Withdrawn
-                                </option>
+                                    <option
+                                            class="withdrawn"
+                                            value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN ? 'selected' : ''}}>
+                                        Withdrawn
+                                    </option>
                                 @endif
                                 <option class="paused"
                                         value="{{CircleLinkHealth\Customer\Entities\Patient::PAUSED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::PAUSED ? 'selected' : ''}}>
