@@ -107,9 +107,14 @@ class VariablePayCalculator
                 );
             }
 
-            $totalPay                  += $patientPayCalculation->pay;
-            $visits[$patientUserId]    = $patientPayCalculation->visits;
-            $bhiVisits[$patientUserId] = $patientPayCalculation->bhiVisits;
+            $totalPay += $patientPayCalculation->pay;
+            if ( ! empty($patientPayCalculation->visits)) {
+                $visits[$patientUserId] = $patientPayCalculation->visits;
+            }
+
+            if ( ! empty($patientPayCalculation->bhiVisits)) {
+                $bhiVisits[$patientUserId] = $patientPayCalculation->bhiVisits;
+            }
         });
 
         return new CalculationResult($ccmPlusAlgoEnabled, $visitFeeBased, $visits, $bhiVisits, $totalPay);

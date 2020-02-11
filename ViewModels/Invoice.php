@@ -413,12 +413,13 @@ class Invoice extends ViewModel
      * 4.4 pay percentage of time in range * VF.
      *
      * @return float
+     * @throws \Exception
      */
     private function getVariableRatePay()
     {
         $calculationResult        = $this->variablePayCalculator->calculate($this->user);
         $this->visits             = $calculationResult->visits;
-        $this->bhiVisits             = $calculationResult->bhiVisits;
+        $this->bhiVisits          = $calculationResult->bhiVisits;
         $this->visitsCount        = $calculationResult->visitsCount;
         $this->ccmPlusAlgoEnabled = $calculationResult->ccmPlusAlgoEnabled;
         $this->altAlgoEnabled     = $calculationResult->altAlgoEnabled;
