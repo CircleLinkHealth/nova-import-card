@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7cc465ad5ee2470ce7690d3d516fa0b3",
+    "content-hash": "d0394fe75fb0e27513bffd000aff2c61",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -811,11 +811,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.3.8",
+            "version": "v1.3.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "38ccbc54d38652ae6236765de7325070fc0db976"
+                "reference": "c1938bbcc0ac0ba525b635101452071de99e40b1"
             },
             "type": "laravel-module",
             "extra": {
@@ -837,7 +837,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-07T06:11:26+00:00"
+            "time": "2020-02-11T16:22:07+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -984,11 +984,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.2.6",
+            "version": "v1.2.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "0a8a3e320faa9aa555c4311fae683729dc17643a"
+                "reference": "7b8f27b1ec88fc78e894e2e19ece721eeea005b2"
             },
             "type": "laravel-module",
             "extra": {
@@ -1011,7 +1011,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-07T07:20:50+00:00"
+            "time": "2020-02-11T16:20:29+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
