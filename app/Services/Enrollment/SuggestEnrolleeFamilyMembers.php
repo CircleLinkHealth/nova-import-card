@@ -6,7 +6,6 @@
 
 namespace App\Services\Enrollment;
 
-
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 
 class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
@@ -16,23 +15,13 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
         return (new static($enrolleeId))->generate();
     }
 
-    private function generate()
-    {
-        $this->getModel();
-
-        $query = $this->constructQuery();
-
-        return $this->formatForView($query->take(20)
-                                          ->get());
-    }
-
     private function constructQuery()
     {
         $phonesQuery = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
-                               ->searchPhones($this->enrollee->getPhonesE164AsString());
+            ->searchPhones($this->enrollee->getPhonesE164AsString());
 
         $addressesQuery = Enrollee::shouldSuggestAsFamilyForEnrollee($this->enrolleeId)
-                                  ->searchAddresses($this->enrollee->getAddressesAsString());
+            ->searchAddresses($this->enrollee->getAddressesAsString());
 
         return $phonesQuery->union($addressesQuery);
     }
@@ -41,17 +30,27 @@ class SuggestEnrolleeFamilyMembers extends EnrolleeFamilyMembersService
     {
         return $family->map(function (Enrollee $e) {
             return [
-                'id'         => $e->id,
-                'first_name' => $e->first_name,
-                'last_name'  => $e->last_name,
+                'id'           => $e->id,
+                'first_name'   => $e->first_name,
+                'last_name'    => $e->last_name,
                 'is_confirmed' => $this->enrollee->confirmedFamilyMembers->contains('id', $e->id),
-                'phones'     => [
+                'phones'       => [
                     'value' => $e->getPhonesAsString(),
                 ],
-                'addresses'  => [
+                'addresses' => [
                     'value' => $e->getAddressesAsString(),
                 ],
             ];
         });
+    }
+
+    private function generate()
+    {
+        $this->getModel();
+
+        $query = $this->constructQuery();
+
+        return $this->formatForView($query->take(10)
+            ->get());
     }
 }
