@@ -11,7 +11,6 @@ use App\CareAmbassador;
 use App\CareplanAssessment;
 use App\Constants;
 use App\ForeignId;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport;
 use App\Message;
 use App\Models\EmailSettings;
 use App\Notifications\CarePlanApprovalReminder;
@@ -389,7 +388,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use Searchable;
     use SoftDeletes;
     use TimezoneTrait;
-    
+
     /**
      * Package Clockwork is hardcoded to look for $user->name. Adding this so that it will work.
      *
@@ -1678,10 +1677,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
-    * Workaround for Nova Action core code. It calls user->name, but our user does not have a 'name' attribute.
-    *
-    * @return string
-    */
+     * Workaround for Nova Action core code. It calls user->name, but our user does not have a 'name' attribute.
+     *
+     * @return string
+     */
     public function getNameAttribute()
     {
         return $this->display_name;
@@ -2131,6 +2130,16 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->exists();
     }
 
+    /**
+     * Returns true if the patient has CCM and the patient's practice has G2058 chargeable service code enabled.
+     *
+     * @return bool
+     */
+    public function isCcmPlus()
+    {
+        return $this->isCcm() && $this->primaryPractice->hasCCMPlusServiceCode();
+    }
+
     public function isCCMCountable()
     {
         return $this->roles()->whereIn('name', Role::CCM_TIME_ROLES)->exists();
@@ -2302,7 +2311,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function patientDemographics()
     {
-        return $this->hasMany(\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport::class, 'provider_id');
+        return $this->hasMany(\CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsImport::class,
+            'provider_id');
     }
 
     public function patientInfo()
@@ -3675,9 +3685,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * Determines whether to show the BHI banner to the logged in user, for a given patient.
      *
+     * @return bool
      * @throws \Exception
      *
-     * @return bool
      */
     public function shouldShowBhiBannerIfPatientHasScheduledCallToday(User $patient)
     {
@@ -3689,9 +3699,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * Determines whether to show the BHI banner to the logged in user, for a given patient.
      *
+     * @return bool
      * @throws \Exception
      *
-     * @return bool
      */
     public function shouldShowBhiFlagFor(User $patient)
     {
@@ -3719,7 +3729,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                                ->ofNurses(auth()->id())
                                ->exists();
 
-        return $invoice && $now->lte(NurseInvoiceDisputeDeadline::for ($invoiceMonth));
+        return $invoice && $now->lte(NurseInvoiceDisputeDeadline::for($invoiceMonth));
     }
 
     /**
