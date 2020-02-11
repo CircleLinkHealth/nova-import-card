@@ -469,23 +469,72 @@ class VariablePayCalculator
             return PatientPayCalculationResult::withVisits($visits, $bhiVisits);
         }
 
-        //if total ccm is greater than the range, then we can pay that range
-        foreach ($ranges as $key => $value) {
+        // CPM-1997
+        // If only 1 billable event, the RN(s) with successful call(s) split VF proportionally,
+        // any other RNs spending time without a successful call get 0%.
+        $noOfBillableEvents = 0;
+        $hasOneCcmBillable  = $totalCcm >= self::MONTHLY_TIME_TARGET_IN_SECONDS && $totalCcm < self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
+        if ($hasOneCcmBillable) {
+            $noOfBillableEvents++;
+        }
+        if ($totalBhi >= self::MONTHLY_TIME_TARGET_IN_SECONDS) {
+            $noOfBillableEvents++;
+        }
 
-            $ccmPay = $this->getVisitFeePayForRange($nurseInfo, $key, $value, $practiceHasCcmPlus, $totalCcm,
-                false);
-            if ($ccmPay) {
-                $visits[$key] = $ccmPay;
+        if ($noOfBillableEvents === 1) {
+            $pay = $this->getVisitFeePayForOneBillableEvent($nurseInfo, $ranges, ! $hasOneCcmBillable);
+            if ($hasOneCcmBillable) {
+                $visits[0] = $pay;
+            } else {
+                $bhiVisits[0] = $pay;
             }
+        } else {
+            //if total ccm is greater than the range, then we can pay that range
+            foreach ($ranges as $key => $value) {
 
-            $bhiPay = $this->getVisitFeePayForRange($nurseInfo, $key, $value, $practiceHasCcmPlus, $totalBhi,
-                true);
-            if ($bhiPay) {
-                $bhiVisits[$key] = $bhiPay;
+                $ccmPay = $this->getVisitFeePayForRange($nurseInfo, $key, $value, $practiceHasCcmPlus, $totalCcm,
+                    false);
+                if ($ccmPay) {
+                    $visits[$key] = $ccmPay;
+                }
+
+                $bhiPay = $this->getVisitFeePayForRange($nurseInfo, $key, $value, $practiceHasCcmPlus, $totalBhi,
+                    true);
+                if ($bhiPay) {
+                    $bhiVisits[$key] = $bhiPay;
+                }
             }
         }
 
         return PatientPayCalculationResult::withVisits($visits, $bhiVisits);
+    }
+
+    private function getVisitFeePayForOneBillableEvent(Nurse $nurseInfo, $ranges, $isBehavioral)
+    {
+        $elqRange = collect($ranges)->map(function ($r) use ($isBehavioral) {
+            return collect($r)->map(function ($r2) use ($isBehavioral) {
+                return $isBehavioral
+                    ? $r2['bhi']
+                    : $r2['ccm'];
+            });
+        });
+
+        // calculate time for each nurse that has a successful call
+        $nurseTimes = collect();
+        $elqRange->each(function (Collection $f) use ($nurseTimes) {
+            return $f->each(function ($f2, $key) use ($nurseTimes) {
+                if ( ! $f2['has_successful_call']) {
+                    return;
+                }
+                $current = $nurseTimes->get($key, 0);
+                $nurseTimes->put($key, $current + $f2['duration']);
+            });
+        });
+
+        $sumOfAllTime = $nurseTimes->sum();
+        $nurseTime    = $nurseTimes->get($nurseInfo->id, 0);
+
+        return ($nurseTime / $sumOfAllTime) * $nurseInfo->visit_fee;
     }
 
     private function getVisitFeePayForRange(
