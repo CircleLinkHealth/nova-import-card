@@ -55,7 +55,7 @@
                     <span class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span>
                 </a>
 
-                @if ($patient->isCcmPlus())
+                @if ($patient->shouldShowCcmPlusBadge())
                     <h4 style="display: inline">
                         <span class="label label-success with-tooltip"
                               data-placement="top"
