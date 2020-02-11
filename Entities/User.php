@@ -19,6 +19,7 @@ use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -2138,6 +2139,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function isCcmPlus()
     {
         return $this->isCcm() && $this->primaryPractice->hasCCMPlusServiceCode();
+    }
+
+    public function shouldShowCcmPlusBadge() {
+        return isPatientCcmPlusBadgeEnabled() && $this->isCcmPlus();
     }
 
     public function isCCMCountable()
