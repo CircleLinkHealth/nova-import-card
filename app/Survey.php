@@ -22,6 +22,8 @@ class Survey extends BaseModel
 
     const VITALS = 'Vitals';
 
+    const ENROLLEES = 'Enrollees';
+
     /**
      * The attributes that are mass assignable.
      *

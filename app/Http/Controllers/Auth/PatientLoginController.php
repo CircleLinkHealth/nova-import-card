@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Contracts\SurveyLoginInterface;
 use App\Http\Controllers\Controller;
 use App\Services\SurveyInvitationLinksService;
 use App\Survey;
@@ -12,7 +13,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
-class PatientLoginController extends Controller
+class PatientLoginController extends Controller implements SurveyLoginInterface
 {
     use AuthenticatesUsers {
         username as traitUsername;
@@ -38,34 +39,48 @@ class PatientLoginController extends Controller
     }
 
     /**
-     * Show the login form for patients.
-     *
      * @param Request $request
      * @param $userId
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function showLoginForm(Request $request, $userId)
     {
-        $urlWithToken = $request->getRequestUri();
-
-        $user         = User::with(['primaryPractice', 'billingProvider'])->where('id', '=', $userId)->firstOrFail();
-        $practiceName = $user->getPrimaryPracticeName();
-
-        $doctor          = $user->billingProviderUser();
-        $doctorsLastName = "???";
-        if ($doctor) {
-            $doctorsLastName = $doctor->display_name;
-        }
+        $loginFormData = $this->getLoginData($request, $userId);
+        $urlWithToken = $loginFormData['urlWithToken'];
+        $practiceName = $loginFormData['practiceName'];
+        $doctorsLastName = $loginFormData['doctorsLastName'];
 
         return view('surveyUrlAuth.surveyLoginForm',
             compact('userId', 'urlWithToken', 'practiceName', 'doctorsLastName'));
     }
 
     /**
+     * @param $request
+     * @param $userId
+     * @return array
+     */
+    public function getLoginData($request, $userId)
+    {
+        $user = User::with(['primaryPractice', 'billingProvider'])->where('id', '=', $userId)->firstOrFail();
+        $doctor = $user->billingProviderUser();
+        $doctorsLastName = "???";
+        if ($doctor) {
+            $doctorsLastName = $doctor->display_name;
+        }
+
+        return [
+            'urlWithToken' => $request->getRequestUri(),
+            'user' => $user,
+            'practiceName' => $user->getPrimaryPracticeName(),
+            'doctor' => $doctor,
+            'doctorsLastName' => $doctorsLastName,
+        ];
+    }
+
+    /**
      * Validate the user login request.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      *
      * @return void
      *
@@ -75,15 +90,20 @@ class PatientLoginController extends Controller
     {
         $request->validate([
             $this->username() => 'required|string',
-            'birth_date'      => 'required|date',
-            'url'             => 'required|string',
+            'birth_date' => 'required|date',
+            'url' => 'required|string',
         ]);
+    }
+
+    protected function username()
+    {
+        return 'name';
     }
 
     /**
      * Attempt to log the user into the application.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      *
      * @return bool
      */
@@ -95,25 +115,6 @@ class PatientLoginController extends Controller
     }
 
     /**
-     * Get the needed authorization credentials from the request.
-     *
-     * @param  Request $request
-     *
-     * @return array
-     */
-    protected function credentials(Request $request)
-    {
-        $input = $request->only($this->username(), 'birth_date', 'url');
-
-        return [
-            'name'         => $input[$this->username()],
-            'signed_token' => $this->service->parseUrl($input['url']),
-            'dob'          => Carbon::parse($input['birth_date'])->startOfDay(),
-        ];
-    }
-
-
-    /**
      * Get the guard to be used during authentication.
      *
      * @return \Illuminate\Contracts\Auth\StatefulGuard
@@ -123,26 +124,55 @@ class PatientLoginController extends Controller
         return Auth::guard();
     }
 
+    /**
+     * Get the needed authorization credentials from the request.
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    protected function credentials(Request $request)
+    {
+        $input = $request->only($this->username(), 'birth_date', 'url');
+
+        return [
+            'name' => $input[$this->username()],
+            'signed_token' => $this->service->parseUrl($input['url']),
+            'dob' => Carbon::parse($input['birth_date'])->startOfDay(),
+        ];
+    }
+
     protected function redirectTo()
     {
         /** @var User $user */
         $user = auth()->user();
 
         $prevUrl = Session::previousUrl();
-        if (empty($prevUrl) || ! $user->hasRole('participant')) {
+        if (empty($prevUrl) || !$user->hasRole('participant')) {
             return route('home');
         }
 
         $surveyId = $this->service->getSurveyIdFromSignedUrl($prevUrl);
-        $name     = Survey::find($surveyId, ['name'])->name;
+        $name = Survey::find($surveyId, ['name'])->name;
+
+
+        if (Survey::ENROLLEES === $name) {
+            $route = route('survey.enrollees',
+                [
+                    'patientId' => $user->id,
+                    'surveyId' => $surveyId,
+                ]);
+        }
 
         if (Survey::HRA === $name) {
             $route = route('survey.hra',
                 [
                     'patientId' => $user->id,
-                    'surveyId'  => $surveyId,
+                    'surveyId' => $surveyId,
                 ]);
-        } else {
+        }
+
+        if (Survey::VITALS === $name) {
             $route = route('survey.vitals.not.authorized',
                 [
                     'patientId' => $user->id,
@@ -155,10 +185,4 @@ class PatientLoginController extends Controller
 
         return $route;
     }
-
-    protected function username()
-    {
-        return 'name';
-    }
-
 }

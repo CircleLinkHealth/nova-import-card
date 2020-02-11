@@ -190,6 +190,7 @@ Route::group([
 
 
 });
+
 Route::group([
     'prefix'     => 'survey',
 //    'middleware' => ['auth'],
@@ -199,15 +200,21 @@ Route::group([
         'prefix' => 'enrollees',
     ], function () {
 
+
+        Route::get('create-url/{userId}/{surveyId}', [
+            'uses' => 'InvitationLinksController@createEnrolleesSurveyUrl',
+            'as'   => 'create.enrollees.survey.url',
+        ]);
+
         Route::get('{patientId}/{surveyId}', [
             'uses' => 'SurveyController@getSurvey',
             'as'   => 'survey.enrollees',
         ]);
 
-//        Route::post('{patientId}/save-answer', [
-//            'uses' => 'SurveyController@storeAnswer',
-//            'as'   => 'survey.hra.store.answer',
-//        ]);
+        Route::post('{patientId}/save-answer', [
+            'uses' => 'SurveyController@storeAnswer',
+            'as'   => 'survey.enrollees.store.answer',
+        ]);
 
     });
 });
