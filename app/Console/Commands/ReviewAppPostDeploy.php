@@ -45,11 +45,15 @@ class ReviewAppPostDeploy extends Command
      */
     public function handle()
     {
+        $this->info('Running post deploy command');
+
         if ( ! app()->environment(['review', 'local', 'testing'])) {
             throw new \Exception('Only review and local environments can run this');
         }
 
         $dbName = config('database.connections.mysql.database');
+
+        $this->info("Checking if db [$dbName] exists");
 
         try {
             $dbTableExists = User::where('username', 'admin')->exists() && User::where('username', 'nurse')->exists();
