@@ -153,10 +153,7 @@ class UPGPdfCarePlan
     {
         $this->array = collect(preg_split("/[\n]/", $this->string))->filter()->values()->all();
 
-        while ($this->count <= count($this->array)) {
-            if (! isset($this->array[$this->count])){
-                break;
-            }
+        while ($this->count < count($this->array)) {
 
             $checkpoint = $this->checkpoints[$this->currentCheckpoint];
 
