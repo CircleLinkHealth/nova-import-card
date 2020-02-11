@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Contracts\HasAttachment;
 use App\Contracts\LiveNotification;
+use App\Traits\ArrayableNotification;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
@@ -16,6 +17,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 
 class CcdaImportedNotification extends Notification implements ShouldBroadcast, ShouldQueue, LiveNotification, HasAttachment
 {
+    use ArrayableNotification;
     use Queueable;
     /**
      * @var Ccda
