@@ -6,6 +6,7 @@
 namespace App\OCR;
 
 
+use Carbon\Carbon;
 use setasign\Fpdi\Fpdi;
 use Spatie\PdfToText\Pdf;
 
@@ -18,19 +19,109 @@ class UPGPdfCarePlan
 
     protected $string;
 
-    protected $carePlan;
+    protected $carePlan = [];
+
+    protected $checkpoints;
+
+    protected $currentCheckpoint = 0;
+
+    protected $count = 0;
+
+    protected $array;
 
     public function __construct($fileName)
     {
-        $this->fileName = $fileName;
+        $this->fileName    = $fileName;
+        $this->checkpoints = $this->setCheckpoints();
+    }
+
+    protected function setCheckpoints()
+    {
+        return [
+            [
+                'search'   => 'First Name:',
+                'key'      => 'first_name',
+                'callback' => function ($string) {
+                    $this->carePlan['first_name'] = ucwords(strtolower($string));
+
+                    return true;
+                },
+            ],
+            [
+                'search'   => 'Last Name:',
+                'key'      => 'last_name',
+                'callback' => function ($string) {
+                    $this->carePlan['last_name'] = ucwords(strtolower($string));
+                },
+            ],
+            [
+                'search'   => 'Visit Date:',
+                'key'      => 'visit_date',
+                'callback' => function ($string) {
+                    $this->carePlan['visit_date'] = Carbon::parse($string);
+                },
+            ],
+            [
+                'search'   => 'Medical Record #:',
+                'key'      => 'mrn',
+                'callback' => function ($string) {
+                    $this->carePlan['mrn'] = (int)$string;
+                },
+            ],
+            [
+                'search' => 'Address:',
+                'key'    => 'address',
+            ],
+            [
+                'search'   => 'Date of Birth:',
+                'key'      => 'dob',
+                'callback' => function ($string) {
+                    $this->carePlan['dob'] = Carbon::parse($string);
+                },
+            ],
+            [
+                'search' => 'Sex:',
+                'key'    => 'sex',
+            ],
+            [
+                'search' => 'Phones:',
+                'key'    => 'phones',
+                //                'callback' => ['Home:', 'Cell:', 'Other:'],
+            ],
+            [
+                'search' => 'Dx:',
+                'key'    => 'conditions',
+            ],
+            [
+                'search'   => 'Active Problems:',
+                'key'      => 'instructions',
+                'callback' => function ($string) {
+
+                    if (str_contains(strtolower($string), 'recommendations:') || str_contains(strtolower($string), 'care plan')){
+                        $this->carePlan['instructions'][]= ['condition' => $this->array[$this->count - 1]];
+                        return;
+                    }
+                    if ( ! isset($this->carePlan['instructions']) && empty($this->carePlan['instructions'])) {
+                        return;
+                    }
+                    if (in_array($string, $this->carePlan['conditions'])){
+                        return;
+                    }
+                    $this->carePlan['instructions'][count($this->carePlan['instructions']) - 1][] = $string;
+                },
+            ],
+            [
+                'search' => 'Services Ordered:',
+                'key'    => 'chargeable_services',
+            ],
+        ];
     }
 
     public function read()
     {
         return $this
             ->getText()
-            ->parseString()
-            ->categorize();
+            ->parseString();
     }
 
     private function getText()
@@ -52,90 +143,56 @@ class UPGPdfCarePlan
         $pdf->Output(storage_path($this->processedFileName), 'F');
 
         //set .env var and config var
-        $this->string = Pdf::getText(storage_path($this->processedFileName), '/usr/local/bin/pdftotext', ['layout', 'nopgbrk']);
+        $this->string = Pdf::getText(storage_path($this->processedFileName), '/usr/local/bin/pdftotext',
+            ['layout', 'nopgbrk']);
 
         return $this;
     }
 
     private function parseString()
     {
-        $array = collect(preg_split("/[\n]/", $this->string))->filter()->values()->all();
+        $this->array = collect(preg_split("/[\n]/", $this->string))->filter()->values()->all();
 
-        $carePlan = [];
-
-
-        $checkpoints = [
-            [
-                'First Name:',
-                'first_name',
-                'uc_words',
-            ],
-            ['Last Name:', 'last_name', 'uc_words'],
-            ['Visit Date:', 'visit_date', 'date'],
-            ['Medical Record #:', 'mrn', 'int'],
-            ['Address:', 'address'],
-            ['Date of Birth:', 'dob', 'date'],
-            ['Sex:', 'sex'],
-            ['Phones:', 'phones', ['Home:', 'Cell:', 'Other:']],
-            ['Dx:', 'conditions'],
-            ['Active Problems:', 'instructions'],
-            ['Services Ordered:', 'chargeable_services'],
-        ];
-
-        $currentCheckpoint = 0;
-        for ($n = 0; $n <= count($array); $n++) {
-            //check if string is empty
-            if ( ! isset($array[$n])) {
-                //can i do this?
+        while ($this->count <= count($this->array)) {
+            if (! isset($this->array[$this->count])){
                 break;
             }
 
-            $string = $array[$n];
+            $checkpoint = $this->checkpoints[$this->currentCheckpoint];
 
-            if (empty(trim($string))) {
-                //can i do this?
-                continue;
-            }
-
-            $checkpoint = $checkpoints[$currentCheckpoint];
-
-            //add key as name
-            $checkpointKey = $checkpoint[0];
+            $search = $checkpoint['search'];
 
 
-            if (str_contains($string, $checkpointKey)) {
-                $string = trim(str_replace($checkpointKey, ' ', $string));
-
+            $string = $this->array[$this->count];
+            if (str_contains($string, $search)) {
+                $string = trim(str_replace($search, ' ', $string));
                 if (empty($string)) {
+                    $this->count++;
                     continue;
                 }
             }
 
-            //concat later? merge strings? (give other key) basically make all items arrays that contain all the values at the first level
-            $carePlan[$checkpoint[1]][] = $string;
+            if (isset($checkpoint['callback']) && ! empty($checkpoint['callback'])) {
+                $checkpoint['callback']($string);
+            } else {
+                $this->carePlan[$checkpoint['key']][] = $string;
+            }
 
-            $nextCheckpoint = $currentCheckpoint + 1;
-            if (isset($array[$n + 1]) && isset($checkpoints[$nextCheckpoint])) {
-                if (str_contains($array[$n + 1], $checkpoints[$nextCheckpoint][0])) {
-                    $currentCheckpoint = $nextCheckpoint;
+            //concat later? merge strings? (give other key) basically make all items arrays that contain all the values at the first level
+
+            $nextCheckpoint = $this->currentCheckpoint + 1;
+            if (isset($this->array[$this->count + 1]) && isset($this->checkpoints[$nextCheckpoint])) {
+                if (str_contains($this->array[$this->count + 1], $this->checkpoints[$nextCheckpoint]['search'])) {
+                    $this->currentCheckpoint = $nextCheckpoint;
                 }
             }
 
-            //then we talk about transforming, recognizing categorization and validating within a certain section
-
-            //when removing checkpoint key, trim string, check if empty, and proceed
+            $this->count++;
         }
 
-        $this->carePlan = $carePlan;
-
-        return $this;
-    }
-
-    private function categorize()
-    {
         unlink(storage_path($this->processedFileName));
+
 
         return $this->carePlan;
     }
-
 }
