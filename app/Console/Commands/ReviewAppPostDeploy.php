@@ -41,6 +41,7 @@ class ReviewAppPostDeploy extends Command
      * Execute the console command.
      *
      * @return mixed
+     * @throws \Exception
      */
     public function handle()
     {
@@ -57,10 +58,21 @@ class ReviewAppPostDeploy extends Command
         }
 
         if (false === $dbTableExists) {
-            $migrateInstallCommand  = $this->runCommand(['php', 'artisan', '-vvv', 'mysql:createdb', $dbName]);
-            $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh']);
-            $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:views']);
-            $testSuiteSeederCommand = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed', '--class=TestSuiteSeeder']);
+            $cmd = 'mysql:createdb';
+            $this->info("Running command $cmd");
+            $this->runCommand(['php', 'artisan', '-vvv', $cmd, $dbName]);
+
+            $cmd = 'migrate:fresh';
+            $this->info("Running command $cmd");
+            $this->runCommand(['php', 'artisan', '-vvv', $cmd]);
+
+            $cmd = 'migrate:views';
+            $this->info("Running command $cmd");
+            $this->runCommand(['php', 'artisan', '-vvv', $cmd]);
+
+            $cmd = 'db:seed';
+            $this->info("Running command $cmd");
+            $this->runCommand(['php', 'artisan', '-vvv', $cmd, '--class=TestSuiteSeeder']);
         }
 
         $this->warn('reviewapp:postdeploy ran');
