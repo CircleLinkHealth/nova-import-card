@@ -44,7 +44,7 @@ class HerokuOnRelease extends Command
      */
     public function handle()
     {
-        $this->warn('heroku:onrelease ran');
+        $this->warn('running heroku:onrelease');
 
         $base = ['php', 'artisan', '-vvv'];
 
@@ -52,9 +52,9 @@ class HerokuOnRelease extends Command
             $this->runCommand(array_merge($base, ['reviewapp:postdeploy']));
         }
 
-        $this->runCommand(array_merge($base, ['migrate', '--force']));
-        $this->runCommand(array_merge($base, ['migrate:views']));
-        $this->runCommand(array_merge($base, ['deploy:post']));
+//        $this->runCommand(array_merge($base, ['migrate', '--force']));
+//        $this->runCommand(array_merge($base, ['migrate:views']));
+//        $this->runCommand(array_merge($base, ['deploy:post']));
 
         $this->warn('heroku:onrelease ran');
     }
