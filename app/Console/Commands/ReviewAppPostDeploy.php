@@ -41,14 +41,19 @@ class ReviewAppPostDeploy extends Command
      * Execute the console command.
      *
      * @return mixed
+     * @throws \Exception
      */
     public function handle()
     {
+        $this->output->note('Running post deploy command');
+
         if ( ! app()->environment(['review', 'local', 'testing'])) {
             throw new \Exception('Only review and local environments can run this');
         }
 
         $dbName = config('database.connections.mysql.database');
+
+        $this->output->note("Checking if db [$dbName] exists");
 
         try {
             $dbTableExists = User::where('username', 'admin')->exists() && User::where('username', 'nurse')->exists();
@@ -57,10 +62,21 @@ class ReviewAppPostDeploy extends Command
         }
 
         if (false === $dbTableExists) {
-            $migrateInstallCommand  = $this->runCommand(['php', 'artisan', '-vvv', 'mysql:createdb', $dbName]);
-            $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh']);
-            $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:views']);
-            $testSuiteSeederCommand = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed', '--class=TestSuiteSeeder']);
+            $cmd = 'mysql:createdb';
+            $this->output->note("Running command $cmd");
+            $this->runCommand(['php', 'artisan', '-vvv', $cmd, $dbName]);
+
+            $cmd = 'migrate:fresh';
+            $this->output->note("Running command $cmd");
+            $this->runCommand(['php', 'artisan', '-vvv', $cmd]);
+
+            $cmd = 'migrate:views';
+            $this->output->note("Running command $cmd");
+            $this->runCommand(['php', 'artisan', '-vvv', $cmd]);
+
+            $cmd = 'db:seed';
+            $this->output->note("Running command $cmd");
+            $this->runCommand(['php', 'artisan', '-vvv', $cmd, '--class=TestSuiteSeeder']);
         }
 
         $this->warn('reviewapp:postdeploy ran');

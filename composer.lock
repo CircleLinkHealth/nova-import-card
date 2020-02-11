@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b05089d747e0e18b94f1e2c2d1ec58e",
+    "content-hash": "62e855de5ebb39e4f9861357453166cf",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -811,11 +811,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.3.8",
+            "version": "dev-CPM-1995_visit_fee_bhi",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "38ccbc54d38652ae6236765de7325070fc0db976"
+                "reference": "baeb523af954978968efa5659a0ffcd874b7becf"
             },
             "type": "laravel-module",
             "extra": {
@@ -837,15 +837,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-07T06:11:26+00:00"
+            "time": "2020-02-10T22:36:44+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.8.1",
+            "version": "dev-CPM-1995_visit_fee_bhi",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "686ae8251fe4164a6c72826000f5a29904fbdc8a"
+                "reference": "3b67775079201bed22d2aa128ed959e848b093e4"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -878,7 +878,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-04T15:33:45+00:00"
+            "time": "2020-02-10T22:36:44+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -984,11 +984,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.2.6",
+            "version": "dev-CPM-1995_visit_fee_bhi",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "0a8a3e320faa9aa555c4311fae683729dc17643a"
+                "reference": "a6c6f9cfc9daa1a6ef6af3dac937bf32291b9a9b"
             },
             "type": "laravel-module",
             "extra": {
@@ -1011,7 +1011,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-07T07:20:50+00:00"
+            "time": "2020-02-10T22:36:44+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -13623,6 +13623,9 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
