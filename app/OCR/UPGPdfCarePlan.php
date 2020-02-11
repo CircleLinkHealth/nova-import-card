@@ -12,15 +12,17 @@ use Spatie\PdfToText\Pdf;
 
 class UPGPdfCarePlan
 {
-    protected $filePath;
+    protected $fileName;
+
+    protected $processedFileName;
 
     protected $string;
 
     protected $carePlan;
 
-    public function __construct($filePath)
+    public function __construct($fileName)
     {
-        $this->filePath = $filePath;
+        $this->fileName = $fileName;
     }
 
     public function read()
@@ -35,32 +37,33 @@ class UPGPdfCarePlan
     {
         $pdf = new Fpdi();
 
-        $pageCount = $pdf->setSourceFile($this->filePath);
+        $pageCount = $pdf->setSourceFile(storage_path($this->fileName));
         $pdf->AddPage();
 
         for ($n = 1; $n <= $pageCount; $n++) {
             $tplId = $pdf->importPage($n);
 
+            //crop pdf
             $pdf->useTemplate($tplId, 0, -60, 210, 400);
             $pdf->AddPage();
         }
 
-        $pdf->Output(storage_path('testarw2.pdf'), 'F');
+        $this->processedFileName = preg_replace('/\\.[^.\\s]{3,4}$/', '', $this->fileName . '_processed.pdf');
+        $pdf->Output(storage_path($this->processedFileName), 'F');
 
         //set .env var and config var
-        $this->string = Pdf::getText(storage_path('testarw2.pdf'), '/usr/local/bin/pdftotext', ['layout', 'nopgbrk']);
+        $this->string = Pdf::getText(storage_path($this->processedFileName), '/usr/local/bin/pdftotext', ['layout', 'nopgbrk']);
 
         return $this;
     }
 
     private function parseString()
     {
-//        $this->carePlan = explode('\n', $this->string);
         $array = collect(preg_split("/[\n]/", $this->string))->filter()->values()->all();
 
         $carePlan = [];
 
-        //to add details dynamically for each checkpoint make these arrays
+
         $checkpoints = [
             [
                 'First Name:',
@@ -99,7 +102,7 @@ class UPGPdfCarePlan
             //add key as name
             $checkpointKey = $checkpoint[0];
 
-            //remove
+
             if (str_contains($string, $checkpointKey)) {
                 $string = trim(str_replace($checkpointKey, ' ', $string));
 
@@ -107,7 +110,6 @@ class UPGPdfCarePlan
                     continue;
                 }
             }
-            // checkpoints will be the set sections - to know where to put the variable data. At the end or start of the loop recognize if we are going to next checkpoint by checking the next?
 
             //concat later? merge strings? (give other key) basically make all items arrays that contain all the values at the first level
             $carePlan[$checkpoint[1]][] = $string;
@@ -126,22 +128,14 @@ class UPGPdfCarePlan
 
         $this->carePlan = $carePlan;
 
-        $x = 1;
-
         return $this;
     }
 
     private function categorize()
     {
+        unlink(storage_path($this->processedFileName));
 
-
-        return $this->string;
-
-    }
-
-    private function prepareField($field)
-    {
-        return ucwords(strtolower(trim($field)));
+        return $this->carePlan;
     }
 
 }
