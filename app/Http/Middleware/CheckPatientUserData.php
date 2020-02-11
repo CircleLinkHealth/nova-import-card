@@ -6,6 +6,7 @@
 
 namespace App\Http\Middleware;
 
+use App\CarePlan;
 use Closure;
 
 class CheckPatientUserData
@@ -36,6 +37,12 @@ class CheckPatientUserData
             auth()->logout();
 
             return redirect('login')->withErrors(['careplan-error' => "[402] There was an error retrieving your Care Plan and we are investigating the issue. <br> If the problem persists, please contact CircleLink Health Support at <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>."]);
+        }
+
+        if ($loggedUser->carePlan->status == CarePlan::DRAFT){
+            auth()->logout();
+
+            return redirect('login')->withErrors(['careplan-error' => "Your Care Plan is being reviewed. <br> For details, please contact CircleLink Health Support at <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>."]);
         }
 
         return $next($request);
