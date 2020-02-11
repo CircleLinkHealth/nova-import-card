@@ -9,11 +9,19 @@ namespace App\Contracts;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 
 interface LiveNotification
-{
+{//    mini documentation on LIVE NOTIFICATIONS
+//    1.    Add the notification class in config/live-notifications.php
     /**
      * Gets the notification attachment type. eg. App\Models\Addendum.
      */
     public function attachmentType(): string;
+
+    /**
+     * Get the array representation of notification
+     * @param $notifiable
+     * @return array
+     */
+    public function getNotificationData($notifiable): array;
 
     /**
      * A string with the attachments name. eg. "Addendum".
@@ -40,7 +48,7 @@ interface LiveNotification
     public function senderId(): int;
 
     public function senderName(): string;
-    
+
     /**
      * Get the array representation of the notification.
      *
@@ -49,7 +57,7 @@ interface LiveNotification
      * @return array
      */
     public function toArray($notifiable): array;
-    
+
     /**
      * Get the broadcastable representation of the notification.
      *
