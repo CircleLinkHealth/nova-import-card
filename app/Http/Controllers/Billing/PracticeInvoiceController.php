@@ -246,6 +246,9 @@ class PracticeInvoiceController extends Controller
      */
     public function makeInvoices(Request $request)
     {
+        //set to 5 mins
+        ini_set('max_execution_time', '300');
+
         $invoices = [];
 
         $date = Carbon::parse($request->input('date'));
