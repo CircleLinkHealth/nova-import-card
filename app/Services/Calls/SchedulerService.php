@@ -581,8 +581,6 @@ class SchedulerService
         $status,
         $attestedProblems = null
     ) {
-        $patient = $note->patient;
-
         if ($call) {
             $call->status          = $status;
             $call->note_id         = $note->id;
@@ -590,6 +588,7 @@ class SchedulerService
             $call->outbound_cpm_id = Auth::user()->id;
             $call->save();
         } else {
+            $patient = $note->patient;
             // If call doesn't exist, make one and store it
             $call = $this->noteService->storeCallForNote(
                 $note,
