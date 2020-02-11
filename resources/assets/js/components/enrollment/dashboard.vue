@@ -732,19 +732,19 @@
                 }
 
                 if (this.validatePhone(this.other_phone)) {
-                    return 'Other Phone Valid!';
+                    return 'Other Phone (Valid)';
                 }
 
-                return 'Other Phone Invalid..'
+                return 'Other Phone (Invalid)'
             },
             agent_phone_label: function () {
                 if (this.agent_phone == '') {
                     return 'Alternative Contact Person\'s Phone Unknown...';
                 }
                 if (this.validatePhone(this.agent_phone)) {
-                    return 'Alternative Contact Person\'s Phone Valid!';
+                    return 'Alternative Contact Person\'s Phone (Valid)';
                 }
-                return 'Alternative Contact Person\'s Phone Invalid..'
+                return 'Alternative Contact Person\'s Phone (Invalid)'
             },
             other_is_valid: function () {
                 return this.validatePhone(this.other_phone)
@@ -766,10 +766,10 @@
                 }
 
                 if (this.validatePhone(this.home_phone)) {
-                    return 'Home Phone Valid!';
+                    return 'Home Phone (Valid)';
                 }
 
-                return 'Home Phone Invalid..'
+                return 'Home Phone (Invalid)'
             },
             home_is_valid: function () {
                 return this.validatePhone(this.home_phone)
@@ -785,10 +785,10 @@
                 }
 
                 if (this.validatePhone(this.cell_phone)) {
-                    return 'Cell Phone Valid!';
+                    return 'Cell Phone (Valid)';
                 }
 
-                return 'Cell Phone Invalid..'
+                return 'Cell Phone (Invalid)'
             },
             cell_is_valid: function () {
                 return this.validatePhone(this.cell_phone)
