@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Contracts\SurveyLoginInterface;
 use App\Http\Controllers\Controller;
 use App\Services\SurveyInvitationLinksService;
 use App\Survey;
@@ -13,7 +12,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
-class PatientLoginController extends Controller implements SurveyLoginInterface
+class PatientLoginController extends Controller
 {
     use AuthenticatesUsers {
         username as traitUsername;
