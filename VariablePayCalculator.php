@@ -275,6 +275,7 @@ class VariablePayCalculator
         if ($visitFeeBased) {
             return $this->getPayForPatientWithCcmPlusAltAlgo(
                 $nurseInfo,
+                $patientUserId,
                 $totalCcm,
                 $totalBhi,
                 $ranges,
@@ -429,6 +430,7 @@ class VariablePayCalculator
 
     /**
      * @param Nurse $nurseInfo
+     * @param $patientId
      * @param $totalCcm
      * @param $totalBhi
      * @param $ranges
@@ -438,6 +440,7 @@ class VariablePayCalculator
      */
     private function getPayForPatientWithCcmPlusAltAlgo(
         Nurse $nurseInfo,
+        $patientId,
         $totalCcm,
         $totalBhi,
         $ranges,
@@ -473,17 +476,23 @@ class VariablePayCalculator
         // If only 1 billable event, the RN(s) with successful call(s) split VF proportionally,
         // any other RNs spending time without a successful call get 0%.
         $noOfBillableEvents = 0;
-        $hasOneCcmBillable  = $totalCcm >= self::MONTHLY_TIME_TARGET_IN_SECONDS && $totalCcm < self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
-        if ($hasOneCcmBillable) {
+        if ($totalCcm >= self::MONTHLY_TIME_TARGET_IN_SECONDS) {
             $noOfBillableEvents++;
         }
-        if ($totalBhi >= self::MONTHLY_TIME_TARGET_IN_SECONDS) {
+        if ($practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS) {
+            $noOfBillableEvents++;
+        }
+        if ($practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS) {
+            $noOfBillableEvents++;
+        }
+        $isBhiBillable = $totalBhi >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
+        if ($isBhiBillable) {
             $noOfBillableEvents++;
         }
 
         if ($noOfBillableEvents === 1) {
-            $pay = $this->getVisitFeePayForOneBillableEvent($nurseInfo, $ranges, ! $hasOneCcmBillable);
-            if ($hasOneCcmBillable) {
+            $pay = $this->getVisitFeePayForOneBillableEvent($nurseInfo, $patientId, $ranges, $isBhiBillable);
+            if ( ! $isBhiBillable) {
                 $visits[0] = $pay;
             } else {
                 $bhiVisits[0] = $pay;
@@ -509,7 +518,7 @@ class VariablePayCalculator
         return PatientPayCalculationResult::withVisits($visits, $bhiVisits);
     }
 
-    private function getVisitFeePayForOneBillableEvent(Nurse $nurseInfo, $ranges, $isBehavioral)
+    private function getVisitFeePayForOneBillableEvent(Nurse $nurseInfo, $patientId, $ranges, $isBehavioral)
     {
         $elqRange = collect($ranges)->map(function ($r) use ($isBehavioral) {
             return collect($r)->map(function ($r2) use ($isBehavioral) {
@@ -523,16 +532,39 @@ class VariablePayCalculator
         $nurseTimes = collect();
         $elqRange->each(function (Collection $f) use ($nurseTimes) {
             return $f->each(function ($f2, $key) use ($nurseTimes) {
-                if ( ! $f2['has_successful_call']) {
-                    return;
-                }
-                $current = $nurseTimes->get($key, 0);
-                $nurseTimes->put($key, $current + $f2['duration']);
+                $current = $nurseTimes->get($key, ['duration' => 0, 'has_successful_call' => false]);
+                $nurseTimes->put($key, [
+                    'duration'            => $current['duration'] + $f2['duration'],
+                    'has_successful_call' => $current['has_successful_call'] || $f2['has_successful_call'],
+                ]);
             });
         });
 
-        $sumOfAllTime = $nurseTimes->sum();
-        $nurseTime    = $nurseTimes->get($nurseInfo->id, 0);
+        $sumOfAllTime = 0;
+        $nurseTimes   = $nurseTimes->filter(function ($item) use (&$sumOfAllTime) {
+            $val = $item['has_successful_call'];
+
+            if ($val) {
+                $sumOfAllTime += $item['duration'];
+            }
+
+            return $val;
+        });
+
+        if ($sumOfAllTime === 0) {
+            $nurseUserId   = $nurseInfo->user->id;
+            $billableEvent = $isBehavioral
+                ? 'bhi'
+                : 'ccm';
+            sendSlackMessage(
+                '#nurse-invoices-alerts',
+                "Warning: Will not pay care coach [$nurseUserId] for time tracked on patient [$patientId] because I could not find successful call in billable event [$billableEvent]"
+            );
+
+            return 0;
+        }
+
+        $nurseTime = $nurseTimes->get($nurseInfo->id, ['duration' => 0, 'has_successful_call' => false])['duration'];
 
         return ($nurseTime / $sumOfAllTime) * $nurseInfo->visit_fee;
     }
