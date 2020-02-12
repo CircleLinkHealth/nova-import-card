@@ -256,7 +256,13 @@ class ImportConsentedEnrollees implements ShouldQueue
      */
     private function importCcdUsingMrnFromEligibilityJob(EligibilityJob $job, Enrollee $enrollee)
     {
-        $ccda = Ccda::whereBatchId($job->batch_id)->whereMrn($job->data['mrn_number'])->first();
+        $mrn = $job->data['mrn_number'] ?? $job->data['mrn'] ?? $job->data['patient_id'] ?? $job->data['internal_id'] ?? null;
+    
+        if ( ! $mrn) {
+            return false;
+        }
+        
+        $ccda = Ccda::whereBatchId($job->batch_id)->whereMrn($mrn)->first();
         
         if ( ! $ccda) {
             return false;
