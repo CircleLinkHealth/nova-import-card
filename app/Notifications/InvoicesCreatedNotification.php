@@ -179,7 +179,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     
     private function getSignedUrl($notifiable)
     {
-        if ( ! $this->signedUrl) {
+        if ( ! $this->signedUrl && $this->mediaIds) {
             $this->signedUrl = URL::temporarySignedRoute(
                 'download.zipped.media',
                 now()->addDays(2),
