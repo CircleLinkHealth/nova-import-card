@@ -68,9 +68,7 @@ class CcdaImportedNotification extends Notification implements ShouldBroadcast, 
      */
     public function toArray($notifiable):array
     {
-        return [
-            //
-        ];
+        $this->notificationData($notifiable);
     }
     
     /**

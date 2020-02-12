@@ -34,14 +34,14 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
      * @var string
      */
     public $mediaIds;
-
+    
     /**
      * The signed URL to download the Media.
      *
      * @var string
      */
     public $signedUrl;
-
+    
     /**
      * Create a new notification instance.
      */
@@ -50,7 +50,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
         $this->mediaIds = $media;
         $this->date     = $date;
     }
-
+    
     /**
      * Gets the notification attachment type. eg. App\Models\Addendum.
      */
@@ -58,7 +58,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return Media::class;
     }
-
+    
     /**
      * A string with the attachments name. eg. "Addendum".
      */
@@ -66,12 +66,12 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return 'The Invoices you requested are ready.';
     }
-
+    
     public function getPatientName(): string
     {
         return '';
     }
-
+    
     /**
      * A sentence to present the notification.
      */
@@ -79,12 +79,12 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return 'The Invoices you requested are ready.';
     }
-
+    
     public function noteId(): ?int
     {
         return null;
     }
-
+    
     /**
      * Redirect link to activity.
      */
@@ -92,7 +92,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return $this->getSignedUrl();
     }
-
+    
     /**
      * User id who sends the notification.
      */
@@ -100,12 +100,12 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return PatientSupportUser::id();
     }
-
+    
     public function senderName(): string
     {
         return 'CircleLink Health Invoicing';
     }
-
+    
     /**
      * Get the array representation of the notification.
      *
@@ -113,12 +113,15 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
      */
     public function toArray($notifiable): array
     {
-        return [
-            'date'      => $this->date->toDateTimeString(),
-            'media_ids' => $this->mediaIds,
-        ];
+        return array_merge(
+            $this->notificationData($notifiable),
+            [
+                'date' => $this->date->toDateTimeString(),
+                'media_ids' => $this->mediaIds,
+            ]
+        );
     }
-
+    
     /**
      * Get the broadcastable representation of the notification.
      *
@@ -130,7 +133,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return new BroadcastMessage([]);
     }
-
+    
     /**
      * Get the mail representation of the notification.
      *
@@ -141,23 +144,25 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     public function toMail($notifiable)
     {
         $invoicesMonthYear = "{$this->date->shortEnglishMonth} {$this->date->year}";
-
+        
         $mail = (new MailMessage())
             ->subject("CPM $invoicesMonthYear Invoices")
             ->greeting('Howdy there!');
-
+        
         if (empty($this->mediaIds)) {
             return $mail
-                ->line("Apologies. We did not generate any invoices because we did not have any data for $invoicesMonthYear.")
+                ->line(
+                    "Apologies. We did not generate any invoices because we did not have any data for $invoicesMonthYear."
+                )
                 ->line('Thank you for using our CarePlan Manager!');
         }
-
+        
         return $mail
             ->line("The invoices for $invoicesMonthYear you had requested are ready.")
             ->action('Download Invoices', $this->getSignedUrl())
             ->line('Thank you for using our CarePlan Manager!');
     }
-
+    
     /**
      * Get the notification's delivery channels.
      *
@@ -169,13 +174,17 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return ['database', 'mail', 'broadcast'];
     }
-
+    
     private function getSignedUrl($notifiable)
     {
         if ( ! $this->signedUrl) {
-            $this->signedUrl = \URL::temporarySignedRoute('download.zipped.media', now()->addDays(2), [$notifiable->id, $this->mediaIds]);
+            $this->signedUrl = \URL::temporarySignedRoute(
+                'download.zipped.media',
+                now()->addDays(2),
+                [$notifiable->id, $this->mediaIds]
+            );
         }
-
+        
         return $this->signedUrl;
     }
 }

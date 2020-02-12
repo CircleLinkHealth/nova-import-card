@@ -79,6 +79,8 @@ class CreatePracticeInvoice implements ShouldQueue
 
             if (false === $report) {
                 $user->notify(new InvoicesCreatedNotification([], $date));
+                
+                return;
             }
 
             $user->notify(new InvoicesCreatedNotification([$report->id], $date));
