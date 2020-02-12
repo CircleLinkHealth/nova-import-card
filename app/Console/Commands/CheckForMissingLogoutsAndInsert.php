@@ -46,13 +46,11 @@ class CheckForMissingLogoutsAndInsert extends Command
         if ($date) {
             $date = Carbon::parse($date);
         } else {
-            $date = Carbon::yesterday()->toDateString();
+            $date = Carbon::yesterday();
         }
 
         CheckLogoutEventAndSave::withChain([
             new CalculateAndSaveLoginLogoutActivity($date),
         ])->dispatch($date)->onQueue('low');
-
-        //@todo: notify somebody??
     }
 }

@@ -42,8 +42,8 @@ use Illuminate\Database\Eloquent\Model;
 class LoginLogout extends Model
 {
     protected $casts = [
-        'login_time'  => 'dateTime',
-        'logout_time' => 'dateTime',
+        'login_time'  => 'date',
+        'logout_time' => 'date',
     ];
     protected $fillable = [
         'user_id',

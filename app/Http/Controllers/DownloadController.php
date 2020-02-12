@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DownloadMediaWithSignedRequest;
+use App\Http\Requests\DownloadZippedMediaWithSignedRequest;
 use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -62,6 +63,18 @@ class DownloadController extends Controller
         }
 
         return MediaStream::create('patient-consent-letters.zip')->addMedia($collection);
+    }
+
+    public function downloadZippedMedia(DownloadZippedMediaWithSignedRequest $request)
+    {
+        $ids = explode(',', $request->route('media_ids'));
+
+        $mediaExport = Media::whereIn('id', $ids)->get();
+
+        if ($mediaExport->isNotEmpty()) {
+            $now = now()->toDateTimeString();
+            return MediaStream::create("Practice Billing Documents downloaded at $now.zip")->addMedia($mediaExport);
+        }
     }
 
     /**

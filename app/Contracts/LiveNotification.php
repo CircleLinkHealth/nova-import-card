@@ -6,51 +6,55 @@
 
 namespace App\Contracts;
 
+use App\Traits\ArrayableNotification;
+use Illuminate\Notifications\Messages\BroadcastMessage;
+
 interface LiveNotification
 {
     /**
-     * Gets the notification attachment type. eg. App\Models\Addendum.
-     */
-    public function attachmentType(): string;
-
-    /**
      * A string with the attachments name. eg. "Addendum".
+     *
+     * @param mixed $notifiable
      */
-    public function description(): string;
-
-    public function getPatientName(): string;
+    public function description($notifiable): string;
 
     /**
      * A sentence to present the notification.
+     *
+     * @param mixed $notifiable
      */
-    public function getSubject(): string;
+    public function getSubject($notifiable): string;
 
-    public function noteId(): ?int;
+    /**
+     * Array representation of required live notification data.
+     * Using ArrayableNotification trait covers everything needed.
+     *
+     * @see ArrayableNotification
+     *
+     * @param $notifiable
+     */
+    public function notificationData($notifiable): array;
 
     /**
      * Redirect link to activity.
+     *
+     * @param mixed $notifiable
      */
-    public function redirectLink(): string;
+    public function redirectLink($notifiable): string;
 
     /**
-     * User id who sends the notification.
-     */
-    public function senderId(): int;
-
-    public function senderName(): string;
-
-    /**
-     * Holds all data needed to represent notification in vue.
+     * Get the array representation of the notification.
      *
      * @param mixed $notifiable
      */
     public function toArray($notifiable): array;
 
     /**
-     * Returns by default -  ONLY the notification id & the notification type to be used in broadcasting the notification
-     * Broadcast will be listened by BroadcastServiceProvider.
+     * Get the broadcastable representation of the notification.
+     *
+     * NOTE: The `notification_id` and `notification_type` are automatically included by default.
      *
      * @param mixed $notifiable
      */
-    public function toBroadcast($notifiable): object;
+    public function toBroadcast($notifiable): BroadcastMessage;
 }

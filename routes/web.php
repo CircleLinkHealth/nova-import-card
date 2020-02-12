@@ -118,6 +118,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download.google.csv',
     ])->middleware('doNotCacheResponse');
 
+    Route::get('download-zipped-media/{user_id}/{media_ids}', [
+        'uses' => 'DownloadController@downloadZippedMedia',
+        'as'   => 'download.zipped.media',
+    ])->middleware('doNotCacheResponse')->middleware('signed');
+
     Route::group([
         'prefix'     => 'ehr-report-writer',
         'middleware' => ['permission:ehr-report-writer-access'],
@@ -399,7 +404,7 @@ Route::group(['middleware' => 'auth'], function () {
             'middleware' => [
                 'permission:ccd-import',
             ],
-            'prefix'     => 'ccd-importer',
+            'prefix' => 'ccd-importer',
         ], function () {
             Route::get('imported-medical-records', [
                 'uses' => 'ImporterController@records',
@@ -622,21 +627,6 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'CCDViewer\CCDViewerController@oldViewer',
         'as'   => 'ccd-old-viewer.post',
     ])->middleware('permission:ccda.read');
-
-    Route::get('imported-medical-records/{imrId}/training-results', [
-        'uses' => 'ImporterController@getTrainingResults',
-        'as'   => 'get.importer.training.results',
-    ])->middleware('permission:ccda.read');
-
-    Route::post('importer/train', [
-        'uses' => 'ImporterController@train',
-        'as'   => 'post.train.importing.algorithm',
-    ])->middleware('permission:ccda.create');
-
-    Route::post('importer/train/store', [
-        'uses' => 'ImporterController@storeTrainingFeatures',
-        'as'   => 'post.store.training.features',
-    ])->middleware('permission:ccda.update');
 
     // CCD Importer Routes
     Route::group([
@@ -1949,11 +1939,10 @@ Route::group([
     ]);
 
     Route::group([
-        'middleware' =>
-            [
-                'auth',
-                'enrollmentCenter',
-            ],
+        'middleware' => [
+            'auth',
+            'enrollmentCenter',
+        ],
     ], function () {
         Route::get('/', [
             'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
@@ -2305,4 +2294,3 @@ Route::post('nurses/nurse-calendar-data', [
     'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
-

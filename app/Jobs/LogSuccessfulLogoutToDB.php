@@ -42,32 +42,23 @@ class LogSuccessfulLogoutToDB implements ShouldQueue
      */
     public function handle()
     {
-        //What if Login event === null?
+        $authId = $this->event->user->id ?? auth()->id() ?? null;
         try {
-            $authId = null !== $this->event->user->id ? $this->event->user->id : auth()->id();
-            LoginLogout::where([
-                ['user_id', $authId],
-                ['login_time', '<', $this->loginDateTime()],
-                ['login_time', '>', $this->logoutDateTime()],
-            ])->get()->last()->update(['logout_time' => Carbon::parse(now())->toDateTime()]);
+            
+            $openSession = LoginLogout::where([
+                                                  ['user_id', $authId],
+                                                  ['login_time', '<', now()],
+                                                  ['login_time', '>', now()->startOfDay()],
+                                              ])->orderByDesc('id')->first();
+            
+            if ($openSession) {
+                $openSession->logout_time = now();
+                $openSession->duration_in_sec = $openSession->logout_time->diffInSeconds($openSession->login_time);
+                $openSession->save();
+            }
+            
         } catch (\Exception $exception) {
-            Log::error($exception->getMessage());
+            Log::error($exception->getMessage()." authid:$authId");
         }
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function loginDateTime()
-    {
-        return Carbon::parse(now())->toDateTime();
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function logoutDateTime()
-    {
-        return Carbon::parse(now())->startOfDay()->toDateTime();
     }
 }

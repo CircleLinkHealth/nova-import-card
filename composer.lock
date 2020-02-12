@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "347e4ed253832a19dc5ca06cade8830b",
+    "content-hash": "8318c2efb5fd89493490603518289c47",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.9",
+            "version": "3.133.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "59e059bd6d25d315a03cdad10b79102df5cb0a1b"
+                "reference": "56606a630c442beccd8d4b5fd0ae72ffddc1a768"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/59e059bd6d25d315a03cdad10b79102df5cb0a1b",
-                "reference": "59e059bd6d25d315a03cdad10b79102df5cb0a1b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/56606a630c442beccd8d4b5fd0ae72ffddc1a768",
+                "reference": "56606a630c442beccd8d4b5fd0ae72ffddc1a768",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-02-06T19:11:31+00:00"
+            "time": "2020-02-11T19:14:18+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -811,11 +811,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.3.8",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "38ccbc54d38652ae6236765de7325070fc0db976"
+                "reference": "af729c8ed66730342a5a489f3ee561bf969c5bf4"
             },
             "type": "laravel-module",
             "extra": {
@@ -837,15 +837,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-07T06:11:26+00:00"
+            "time": "2020-02-12T07:56:18+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.8.1",
+            "version": "v1.8.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "686ae8251fe4164a6c72826000f5a29904fbdc8a"
+                "reference": "dd2881d17fe6227fe54be6da2ccab797d8107531"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -878,7 +878,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-04T15:33:45+00:00"
+            "time": "2020-02-11T21:09:39+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -984,11 +984,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.2.6",
+            "version": "v1.2.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "0a8a3e320faa9aa555c4311fae683729dc17643a"
+                "reference": "50186960a383f431cb514635e57735f79811dec6"
             },
             "type": "laravel-module",
             "extra": {
@@ -1011,7 +1011,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-07T07:20:50+00:00"
+            "time": "2020-02-12T09:01:36+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -2448,16 +2448,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.125",
+            "version": "v0.126",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "5c55c1a08610c22de13a5374d4aef408aa470f6e"
+                "reference": "d296c140b9157b7f4fdf7bae125bf9ce16eeeabd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/5c55c1a08610c22de13a5374d4aef408aa470f6e",
-                "reference": "5c55c1a08610c22de13a5374d4aef408aa470f6e",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/d296c140b9157b7f4fdf7bae125bf9ce16eeeabd",
+                "reference": "d296c140b9157b7f4fdf7bae125bf9ce16eeeabd",
                 "shasum": ""
             },
             "require": {
@@ -2481,20 +2481,20 @@
             "keywords": [
                 "google"
             ],
-            "time": "2020-02-03T00:24:38+00:00"
+            "time": "2020-02-10T00:24:16+00:00"
         },
         {
             "name": "google/auth",
-            "version": "v1.6.1",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "45635ac69d0b95f38885531d4ebcdfcb2ebb6f36"
+                "reference": "e687f40eafe60f4622fa1bdb9244f9bfb835e0a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/45635ac69d0b95f38885531d4ebcdfcb2ebb6f36",
-                "reference": "45635ac69d0b95f38885531d4ebcdfcb2ebb6f36",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/e687f40eafe60f4622fa1bdb9244f9bfb835e0a9",
+                "reference": "e687f40eafe60f4622fa1bdb9244f9bfb835e0a9",
                 "shasum": ""
             },
             "require": {
@@ -2508,6 +2508,7 @@
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^1.11",
                 "guzzlehttp/promises": "0.1.1|^1.3",
+                "kelvinmo/simplejwt": "^0.2.5",
                 "phpseclib/phpseclib": "^2",
                 "phpunit/phpunit": "^4.8.36|^5.7",
                 "sebastian/comparator": ">=1.2.3"
@@ -2532,7 +2533,7 @@
                 "google",
                 "oauth2"
             ],
-            "time": "2019-10-29T20:13:04+00:00"
+            "time": "2020-02-11T17:45:21+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -2924,16 +2925,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.91",
+            "version": "v1.2.92",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "2af9b6429302fb25ea602f25a98151640ee77b47"
+                "reference": "eb167049d7de1e5320138186b9dcb2e5f9df260d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/2af9b6429302fb25ea602f25a98151640ee77b47",
-                "reference": "2af9b6429302fb25ea602f25a98151640ee77b47",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/eb167049d7de1e5320138186b9dcb2e5f9df260d",
+                "reference": "eb167049d7de1e5320138186b9dcb2e5f9df260d",
                 "shasum": ""
             },
             "require": {
@@ -2969,7 +2970,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2020-02-01T22:39:59+00:00"
+            "time": "2020-02-07T20:28:07+00:00"
         },
         {
             "name": "jenssegers/agent",
@@ -7314,145 +7315,6 @@
             "time": "2018-02-28T22:10:01+00:00"
         },
         {
-            "name": "setasign/fpdf",
-            "version": "1.8.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Setasign/FPDF.git",
-                "reference": "d77904018090c17dc9f3ab6e944679a7a47e710a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Setasign/FPDF/zipball/d77904018090c17dc9f3ab6e944679a7a47e710a",
-                "reference": "d77904018090c17dc9f3ab6e944679a7a47e710a",
-                "shasum": ""
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "fpdf.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Olivier Plathey",
-                    "email": "oliver@fpdf.org",
-                    "homepage": "http://fpdf.org/"
-                }
-            ],
-            "description": "FPDF is a PHP class which allows to generate PDF files with pure PHP. F from FPDF stands for Free: you may use it for any kind of usage and modify it to suit your needs.",
-            "homepage": "http://www.fpdf.org",
-            "keywords": [
-                "fpdf",
-                "pdf"
-            ],
-            "time": "2019-12-08T10:32:10+00:00"
-        },
-        {
-            "name": "setasign/fpdi",
-            "version": "v2.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Setasign/FPDI.git",
-                "reference": "3c266002f8044f61b17329f7cd702d44d73f0f7f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Setasign/FPDI/zipball/3c266002f8044f61b17329f7cd702d44d73f0f7f",
-                "reference": "3c266002f8044f61b17329f7cd702d44d73f0f7f",
-                "shasum": ""
-            },
-            "require": {
-                "ext-zlib": "*",
-                "php": "^5.6 || ^7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~5.7",
-                "setasign/fpdf": "~1.8",
-                "setasign/tfpdf": "1.25",
-                "tecnickcom/tcpdf": "~6.2"
-            },
-            "suggest": {
-                "setasign/fpdf": "FPDI will extend this class but as it is also possible to use TCPDF or tFPDF as an alternative. There's no fixed dependency configured.",
-                "setasign/fpdi-fpdf": "Use this package to automatically evaluate dependencies to FPDF.",
-                "setasign/fpdi-tcpdf": "Use this package to automatically evaluate dependencies to TCPDF.",
-                "setasign/fpdi-tfpdf": "Use this package to automatically evaluate dependencies to tFPDF."
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "setasign\\Fpdi\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jan Slabon",
-                    "email": "jan.slabon@setasign.com",
-                    "homepage": "https://www.setasign.com"
-                },
-                {
-                    "name": "Maximilian Kresse",
-                    "email": "maximilian.kresse@setasign.com",
-                    "homepage": "https://www.setasign.com"
-                }
-            ],
-            "description": "FPDI is a collection of PHP classes facilitating developers to read pages from existing PDF documents and use them as templates in FPDF. Because it is also possible to use FPDI with TCPDF, there are no fixed dependencies defined. Please see suggestions for packages which evaluates the dependencies automatically.",
-            "homepage": "https://www.setasign.com/fpdi",
-            "keywords": [
-                "fpdf",
-                "fpdi",
-                "pdf"
-            ],
-            "time": "2019-01-30T14:11:19+00:00"
-        },
-        {
-            "name": "setasign/fpdi-fpdf",
-            "version": "v2.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Setasign/FPDI-FPDF.git",
-                "reference": "e4363ac09e1b766b38ebea1c3cbe82b3480a11e9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Setasign/FPDI-FPDF/zipball/e4363ac09e1b766b38ebea1c3cbe82b3480a11e9",
-                "reference": "e4363ac09e1b766b38ebea1c3cbe82b3480a11e9",
-                "shasum": ""
-            },
-            "require": {
-                "setasign/fpdf": "^1.8",
-                "setasign/fpdi": "^2.2"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jan Slabon",
-                    "email": "jan.slabon@setasign.com",
-                    "homepage": "https://www.setasign.com"
-                }
-            ],
-            "description": "Kind of metadata package for dependencies of the latest versions of FPDI and FPDF.",
-            "homepage": "https://www.setasign.com/fpdi",
-            "keywords": [
-                "fpdf",
-                "fpdi",
-                "pdf"
-            ],
-            "time": "2019-01-30T14:38:19+00:00"
-        },
-        {
             "name": "sparclex/nova-import-card",
             "version": "v2.0.0",
             "source": {
@@ -7847,53 +7709,6 @@
                 "spatie"
             ],
             "time": "2016-12-14T15:37:00+00:00"
-        },
-        {
-            "name": "spatie/pdf-to-text",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/pdf-to-text.git",
-                "reference": "53b43c592c0a3f2df7bc0ceb48c6ce8bd51bb7e5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/pdf-to-text/zipball/53b43c592c0a3f2df7bc0ceb48c6ce8bd51bb7e5",
-                "reference": "53b43c592c0a3f2df7bc0ceb48c6ce8bd51bb7e5",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.0",
-                "symfony/process": "^3.3|^4.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\PdfToText\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Freek Van der Herten",
-                    "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Extract text from a pdf",
-            "homepage": "https://github.com/spatie/pdf-to-text",
-            "keywords": [
-                "pdf-to-text",
-                "spatie"
-            ],
-            "time": "2019-05-15T06:12:04+00:00"
         },
         {
             "name": "spatie/temporary-directory",
@@ -9494,51 +9309,6 @@
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
             "time": "2020-01-21T11:12:16+00:00"
-        },
-        {
-            "name": "thiagoalessio/tesseract_ocr",
-            "version": "2.9.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thiagoalessio/tesseract-ocr-for-php.git",
-                "reference": "e932f7410e753434b26b214f3f322933efafa0f0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/thiagoalessio/tesseract-ocr-for-php/zipball/e932f7410e753434b26b214f3f322933efafa0f0",
-                "reference": "e932f7410e753434b26b214f3f322933efafa0f0",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.4 || ^7.0"
-            },
-            "require-dev": {
-                "codacy/coverage": "dev-master",
-                "phpunit/php-code-coverage": "^2.2.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "thiagoalessio\\TesseractOCR\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "thiagoalessio",
-                    "email": "thiagoalessio@me.com"
-                }
-            ],
-            "description": "A wrapper to work with Tesseract OCR inside PHP.",
-            "keywords": [
-                "OCR",
-                "Tesseract",
-                "text recognition"
-            ],
-            "time": "2020-01-27T19:53:35+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
@@ -11874,41 +11644,38 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "4.3.4",
+            "version": "5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "da3fd972d6bafd628114f7e7e036f45944b62e9c"
+                "reference": "a48807183a4b819072f26e347bbd0b5199a9d15f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/da3fd972d6bafd628114f7e7e036f45944b62e9c",
-                "reference": "da3fd972d6bafd628114f7e7e036f45944b62e9c",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/a48807183a4b819072f26e347bbd0b5199a9d15f",
+                "reference": "a48807183a4b819072f26e347bbd0b5199a9d15f",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0",
-                "phpdocumentor/reflection-common": "^1.0.0 || ^2.0.0",
-                "phpdocumentor/type-resolver": "~0.4 || ^1.0.0",
-                "webmozart/assert": "^1.0"
+                "ext-filter": "^7.1",
+                "php": "^7.2",
+                "phpdocumentor/reflection-common": "^2.0",
+                "phpdocumentor/type-resolver": "^1.0",
+                "webmozart/assert": "^1"
             },
             "require-dev": {
-                "doctrine/instantiator": "^1.0.5",
-                "mockery/mockery": "^1.0",
-                "phpdocumentor/type-resolver": "0.4.*",
-                "phpunit/phpunit": "^6.4"
+                "doctrine/instantiator": "^1",
+                "mockery/mockery": "^1"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.x-dev"
+                    "dev-master": "5.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "phpDocumentor\\Reflection\\": [
-                        "src/"
-                    ]
+                    "phpDocumentor\\Reflection\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -11919,10 +11686,14 @@
                 {
                     "name": "Mike van Riel",
                     "email": "me@mikevanriel.com"
+                },
+                {
+                    "name": "Jaap van Otterdijk",
+                    "email": "account@ijaap.nl"
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2019-12-28T18:55:12+00:00"
+            "time": "2020-02-09T09:16:15+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",

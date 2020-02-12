@@ -291,7 +291,7 @@ if (isset($patient) && ! empty($patient)) {
                         </div>
                     @endif
 
-                    @if(!isset($isPdf) && !empty($patient->patientInfo->general_comment))
+                    @if(!isset($isPdf) && !auth()->user()->isParticipant() && !empty($patient->patientInfo->general_comment))
                         <div class="row"></div>
                         <div class="row gutter">
                             <div class="col-xs-12 print-row">

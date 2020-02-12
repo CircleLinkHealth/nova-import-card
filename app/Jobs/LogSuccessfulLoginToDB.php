@@ -48,16 +48,11 @@ class LogSuccessfulLoginToDB implements ShouldQueue
         try {
             LoginLogout::create([
                 'user_id'    => $this->event->user->id,
-                'login_time' => $this->loginDateTime(),
+                'login_time' => now(),
                 'ip_address' => getIpAddress(),
             ]);
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
         }
-    }
-
-    public function loginDateTime()
-    {
-        return Carbon::parse(now())->toDateTime();
     }
 }
