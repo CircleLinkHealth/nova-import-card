@@ -47,6 +47,227 @@ class SurveySeeder extends Seeder
 
     }
 
+    private function createQuestions($instance, $questionsData)
+    {
+        foreach ($questionsData as $questionData) {
+
+            if (array_key_exists('question_group', $questionData)) {
+                $groupId = QuestionGroup::firstOrCreate([
+                    'body' => $questionData['question_group'],
+                ])
+                    ->id;
+            } else {
+                $groupId = null;
+            }
+
+            $question = Question::create([
+                'identifier'        => $questionData['identifier'],
+                'survey_id'         => $instance->survey_id,
+                'body'              => $questionData['question_body'],
+                'question_group_id' => $groupId,
+                'optional'          => array_key_exists('optional', $questionData)
+                    ? $questionData['optional']
+                    : false,
+                'conditions'        => array_key_exists('conditions', $questionData)
+                    ? $questionData['conditions']
+                    : null,
+            ]);
+
+
+            $questionType = $question->type()->create([
+                'type' => $questionData['question_type'],
+            ]);
+
+            if (array_key_exists('question_type_answers', $questionData)) {
+                foreach ($questionData['question_type_answers'] as $questionTypeAnswer) {
+                    $questionType->questionTypeAnswers()->create([
+                        'value'   => array_key_exists('type_answer_body', $questionTypeAnswer)
+                            ? $questionTypeAnswer['type_answer_body']
+                            : null,
+                        'options' => array_key_exists('options', $questionTypeAnswer)
+                            ? $questionTypeAnswer['options']
+                            : null,
+                    ]);
+                }
+            }
+
+
+            $instance->questions()->attach(
+                $question->id,
+                [
+                    'order'     => $questionData['order'],
+                    'sub_order' => array_key_exists('sub_order', $questionData)
+                        ? $questionData['sub_order']
+                        : null,
+                ]
+            );
+        }
+
+    }
+
+    private function vitalsQuestionData(): Collection
+    {
+        return collect([
+            [
+                'identifier'            => VitalsQuestionIdentifier::BLOOD_PRESSURE,
+                'order'                 => 1,
+                'question_body'         => "What is the patient's blood pressure?",
+                'question_type'         => QuestionType::NUMBER,
+                'question_type_answers' => [
+                    [
+                        'options' => [
+                            'sub-parts'               => [
+                                [
+                                    'key' => 'first_metric',
+                                ],
+                                [
+                                    'key' => 'second_metric',
+                                ],
+                            ],
+                            'separate_sub_parts_with' => 'dash',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'identifier'            => VitalsQuestionIdentifier::WEIGHT,
+                'order'                 => 2,
+                'question_body'         => "What is the patient's weight?",
+                'question_type'         => QuestionType::NUMBER,
+                'question_type_answers' => [
+                    [
+                        'options' => [
+                            'placeholder' => 'ex. 150 (lbs)',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'identifier'            => VitalsQuestionIdentifier::HEIGHT,
+                'order'                 => 3,
+                'question_body'         => "What is the patient's height?",
+                'question_type'         => QuestionType::NUMBER,
+                'question_type_answers' => [
+                    [
+                        'options' =>
+                            [
+                                'sub_parts' => [
+                                    [
+                                        'placeholder' => "Feet'",
+                                        'key'         => 'feet',
+                                    ],
+                                    [
+                                        'placeholder' => 'Inches"',
+                                        'key'         => 'inches',
+                                    ],
+                                ],
+
+                            ],
+                    ],
+                ],
+            ],
+            [
+                'identifier'    => VitalsQuestionIdentifier::BMI,
+                'order'         => 4,
+                'question_body' => "What is the patient's body mass index (BMI)?",
+                'question_type' => QuestionType::NUMBER,
+                'conditions'    => [
+                    'is_auto_generated' => true,
+                    'generate_func'     => 'bmi_func',
+                    'generated_from'    => [
+                        [
+                            'order' => 2,
+                            'type'  => 'mass',
+                        ],
+                        [
+                            'order' => 3,
+                            'type'  => 'height',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'identifier'            => VitalsQuestionIdentifier::WORD_RECALL,
+                'order'                 => 5,
+                'sub_order'             => 'a',
+                'question_body'         => 'Word Recall (1 point for each word spontaneously recalled without cueing)',
+                'question_type'         => QuestionType::RADIO,
+                'question_group'        => 'Based off of the <a target="_blank" href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?',
+                'question_type_answers' => [
+                    [
+                        'type_answer_body' => 0,
+                    ],
+                    [
+                        'type_answer_body' => 1,
+                    ],
+                    [
+                        'type_answer_body' => 2,
+                    ],
+                    [
+                        'type_answer_body' => 3,
+                    ],
+                ],
+            ],
+            [
+                'identifier'            => VitalsQuestionIdentifier::CLOCK_DRAW,
+                'order'                 => 5,
+                'sub_order'             => 'b',
+                'question_body'         => 'Clock Draw (Normal clock = 2 points. A normal clock has all numbers placed in the cor-rect sequence and approximately correct position (e.g., 12, 3, 6 and 9 are in anchor positions) with no missing or duplicate numbers. Hands are point-ing to the 11 and 2 (11:10). Hand length is not scored.Inability or refusal to draw a clock (abnormal) = 0 points.)',
+                'question_type'         => QuestionType::RADIO,
+                'question_group'        => 'Based off of the <a target="_blank" href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?',
+                'question_type_answers' => [
+                    [
+                        'type_answer_body' => 0,
+                    ],
+                    [
+                        'type_answer_body' => 2,
+                    ],
+                ],
+            ],
+            [
+                'identifier'            => VitalsQuestionIdentifier::TOTAL_SCORE,
+                'order'                 => 5,
+                'sub_order'             => 'c',
+                'question_body'         => 'Total Score (Total score = Word Recall score + Clock Draw score)',
+                'question_type'         => QuestionType::RADIO,
+                'conditions'            => [
+                    'is_auto_generated' => true,
+                    'generated_from'    => [
+                        [
+                            'order'     => 5,
+                            'sub_order' => 'a',
+                        ],
+                        [
+                            'order'     => 5,
+                            'sub_order' => 'b',
+                        ],
+                    ],
+                ],
+                'question_group'        => 'Based off of the <a target="_blank" href="http://mini-cog.com/wp-content/uploads/2015/12/Universal-Mini-Cog-Form-011916.pdf">Mini-Cog(c) assessment</a>, how did your patient score?',
+                'question_type_answers' => [
+                    [
+                        'type_answer_body' => 0,
+                    ],
+                    [
+                        'type_answer_body' => 1,
+                    ],
+                    [
+                        'type_answer_body' => 2,
+                    ],
+                    [
+                        'type_answer_body' => 3,
+                    ],
+                    [
+                        'type_answer_body' => 4,
+                    ],
+                    [
+                        'type_answer_body' => 5,
+                    ],
+                ],
+            ],
+        ]);
+    }
+
     private function hraQuestionData(): Collection
     {
         return collect([
@@ -92,8 +313,8 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier' => HraQuestionIdentifier::AGE,
-                'order' => 2,
+                'identifier'    => HraQuestionIdentifier::AGE,
+                'order'         => 2,
                 'question_body' => 'What is your age?',
                 'question_type' => QuestionType::NUMBER,
             ],

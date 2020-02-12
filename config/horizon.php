@@ -141,7 +141,7 @@ return [
 
     'environments' => [
         'production' => [
-            'awv-supervisor-1' => [
+            'supervisor-1' => [
                 'connection' => 'redis',
                 'queue' => ['default'],
                 'balance' => 'simple',
@@ -151,7 +151,7 @@ return [
         ],
 
         'staging' => [
-            'awv-supervisor-1' => [
+            'supervisor-1' => [
                 'connection' => 'redis',
                 'queue' => ['default'],
                 'balance' => 'simple',
@@ -161,7 +161,7 @@ return [
         ],
 
         'local' => [
-            'awv-supervisor-1' => [
+            'supervisor-1' => [
                 'connection' => 'redis',
                 'queue' => ['default'],
                 'balance' => 'simple',
