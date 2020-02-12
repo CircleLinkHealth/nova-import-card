@@ -10,7 +10,7 @@ use App\Traits\RunsConsoleCommands;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
-class ReviewAppPostDeploy extends Command
+class ReviewAppCreateDb extends Command
 {
     use RunsConsoleCommands;
 
@@ -25,7 +25,7 @@ class ReviewAppPostDeploy extends Command
      *
      * @var string
      */
-    protected $signature = 'reviewapp:postdeploy';
+    protected $signature = 'reviewapp:create-db';
 
     /**
      * Create a new command instance.
@@ -45,11 +45,11 @@ class ReviewAppPostDeploy extends Command
      */
     public function handle()
     {
-        $this->output->note('Running post deploy command');
-
         if ( ! app()->environment(['review', 'local', 'testing'])) {
-            throw new \Exception('Only review and local environments can run this');
+            return;
         }
+
+        $this->output->note('Running reviewapp:create-db');
 
         $dbName = config('database.connections.mysql.database');
 
@@ -79,6 +79,6 @@ class ReviewAppPostDeploy extends Command
             $this->runCommand(['php', 'artisan', '-vvv', $cmd, '--class=TestSuiteSeeder']);
         }
 
-        $this->warn('reviewapp:postdeploy ran');
+        $this->warn('reviewapp:create-db ran');
     }
 }
