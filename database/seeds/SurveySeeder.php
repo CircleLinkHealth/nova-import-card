@@ -1,8 +1,8 @@
 <?php
 
+use App\HraQuestionIdentifier;
 use App\Question;
 use App\QuestionGroup;
-use App\HraQuestionIdentifier;
 use App\QuestionType;
 use App\Survey;
 use App\SurveyInstance;
@@ -77,6 +77,7 @@ class SurveySeeder extends Seeder
             }
 
             $question = Question::create([
+                'identifier'        => $questionData['identifier'],
                 'survey_id'         => $instance->survey_id,
                 'body'              => $questionData['question_body'],
                 'question_group_id' => $groupId,
@@ -182,7 +183,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => VitalsQuestionIdentifier::BMI,
+                'identifier'    => VitalsQuestionIdentifier::BMI,
                 'order'         => 4,
                 'question_body' => "What is the patient's body mass index (BMI)?",
                 'question_type' => QuestionType::NUMBER,
@@ -328,7 +329,7 @@ class SurveySeeder extends Seeder
                 ],
             ],
             [
-                'identifier'            => HraQuestionIdentifier::AGE,
+                'identifier'    => HraQuestionIdentifier::AGE,
                 'order'         => 2,
                 'question_body' => 'What is your age?',
                 'question_type' => QuestionType::NUMBER,
