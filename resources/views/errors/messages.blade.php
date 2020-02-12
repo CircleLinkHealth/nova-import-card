@@ -1,7 +1,7 @@
 @if (Session::has('messages'))
-    <?php
+    @php
     $messages = Session::get('messages') ?? $messages ?? null;
-    ?>
+    @endphp
     @if (is_array($messages) && count($messages) > 0)
         <div class="alert alert-success success">
             <ul>
@@ -11,5 +11,8 @@
             </ul>
         </div>
     @endif
+    @php
+        Session::forget('messages');
+    @endphp
 @endif
 
