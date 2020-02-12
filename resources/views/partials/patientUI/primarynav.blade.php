@@ -32,17 +32,19 @@ $user = auth()->user();
         .search-bar {
             width: 90%;
         }
+
+        .practice-logo {
+            padding-top: 2%;
+            font-weight: bolder;
+            font-family: "Roboto Slab",Georgia,Times,"Times New Roman",serif;
+        }
     </style>
 @endpush
 
 <nav class="navbar primary-navbar">
     <div class="container-fluid full-width margin-0">
         <div class="col-lg-6 col-sm-6 col-xs-6">
-            <a class="navbar-brand" href="{{ url('/') }}" style="border: none"><img
-                        src="{{mix('/img/logos/LogoHorizontal_White.svg')}}"
-                        alt="Care Plan Manager"
-                        style="position:relative;top:-7px"
-                        width="105px"/></a>
+            <a class="navbar-brand practice-logo" href="{{ url('/') }}" style="border: none"><span>{{$patient->getPrimaryPracticeName()}}</span></a>
         </div>
         <div class="col-lg-6 col-sm-6 col-xs-6">
             <div class="collapse navbar-collapse" id="navbar-collapse">
