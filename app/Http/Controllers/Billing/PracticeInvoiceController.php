@@ -246,7 +246,7 @@ class PracticeInvoiceController extends Controller
         $format    = $request['format'];
         $practices = $request['practices'];
 
-        CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id());
+        CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id())->onQueue('low');
 
         $practices = Practice::whereIn('id', $practices)->pluck('display_name')->all();
 
