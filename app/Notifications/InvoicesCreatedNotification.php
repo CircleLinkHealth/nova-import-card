@@ -16,6 +16,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\URL;
 
 class InvoicesCreatedNotification extends Notification implements ShouldBroadcast, ShouldQueue, LiveNotification
 {
@@ -50,6 +51,10 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     
     /**
      * Create a new notification instance.
+     *
+     * @param array $mediaIds
+     * @param Carbon $date
+     * @param array $practiceIds
      */
     public function __construct(array $mediaIds, Carbon $date, array $practiceIds)
     {
@@ -175,7 +180,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     private function getSignedUrl($notifiable)
     {
         if ( ! $this->signedUrl) {
-            $this->signedUrl = \URL::temporarySignedRoute(
+            $this->signedUrl = URL::temporarySignedRoute(
                 'download.zipped.media',
                 now()->addDays(2),
                 [

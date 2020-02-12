@@ -44,7 +44,7 @@ class PracticeInvoiceGenerator
 
         $data = [
             'invoice_url' => $pdfInvoice->getUrl(),
-            'media'       => $pdfInvoice,
+            'mediaIds'       => [$pdfInvoice->id],
         ];
 
         if ($withItemized) {
@@ -52,6 +52,7 @@ class PracticeInvoiceGenerator
             $pdfPatientReport = $this->makePatientReportPdf($reportName);
 
             $data['patient_report_url'] = $pdfPatientReport->getUrl();
+            $data['mediaIds'][] = $pdfPatientReport->id;
         }
 
         $data['practiceId'] = $this->practice->id;
