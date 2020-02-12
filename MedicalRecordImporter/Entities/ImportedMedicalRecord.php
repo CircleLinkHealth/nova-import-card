@@ -79,6 +79,12 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
     use MedicalRecordIdAndTypeTrait;
     use SoftDeletes;
 
+
+    /**
+     * For 'type' column, for G0506.
+     */
+    const COMPREHENSIVE_ASSESSMENT_TYPE = 'comprehensive_assessment';
+
     /**
      * An option in validation_checks.
      */
@@ -111,6 +117,8 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
         'practice_id',
         'duplicate_id',
         'validation_checks',
+        //For G0506 flow
+        'type'
     ];
 
     public function allergies()
