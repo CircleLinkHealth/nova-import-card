@@ -63,7 +63,6 @@ class Constants
     const SNOMED                          = 'snomed_code';
     const SNOMED_NAME                     = 'SNOMED CT';
     const VIEWING_PATIENT                 = 'viewing-patient';
-    const ADMIN_CHART_CACHE_KEY           = 'chart:clh:total_billable_patients';
     
     public static function athenaEhrId()
     {
