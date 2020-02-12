@@ -69,7 +69,7 @@ class DownloadController extends Controller
     {
         $ids = explode(',', $request->route('media_ids'));
 
-        $mediaExport = Media::whereIn('id', $ids)->where('model_type', Practice::class)->whereIn('model_id', auth()->user()->viewableProgramIds())->get();
+        $mediaExport = Media::whereIn('id', $ids)->get();
 
         if ($mediaExport->isNotEmpty()) {
             $now = now()->toDateTimeString();
