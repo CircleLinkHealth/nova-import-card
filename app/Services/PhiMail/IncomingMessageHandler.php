@@ -46,7 +46,12 @@ class IncomingMessageHandler
             $dm->save();
         } elseif (str_contains($showRes->mimeType, 'xml') && false !== stripos($showRes->data, '<ClinicalDocument')) {
             $this->storeAndImportCcd($showRes, $dm);
-        } else {
+        }
+        //todo: fix how to know we got from upg
+        elseif (str_contains($showRes->mimeType, 'pdf') && str_contains($dm->from, 'upg')){
+            $this->storePdf($showRes, $dm);
+        }
+        else {
             $path = storage_path('dm_id_'.$dm->id.'_attachment_'.Carbon::now()->toAtomString());
             file_put_contents($path, $showRes->data);
             $dm->addMedia($path)
@@ -90,5 +95,14 @@ class IncomingMessageHandler
         );
 
         ImportCcda::dispatch($ccda)->onQueue('low');
+    }
+
+    private function storePdf(){
+        //dispatch job for this, maybe ProcessDmPdfAttachment
+
+        //determine if imported medical record exists from this patient so we can save
+
+        // if not create medical record, and store it as media
+        //store file locally then to
     }
 }
