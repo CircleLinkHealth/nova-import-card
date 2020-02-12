@@ -68,7 +68,7 @@ class CreatePracticeInvoice implements ShouldQueue
 
             return;
         }
-        if ('csv' == $this->format or 'xls') {
+        if ('csv' == $this->format || 'xls' == $this->format) {
             $report = $practiceReportsService->getQuickbooksReport(
                 $this->practices,
                 $this->format,
