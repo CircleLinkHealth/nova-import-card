@@ -54,9 +54,15 @@ class PracticeReportsService
     public function getQuickbooksReport($practices, $format, Carbon $date)
     {
         $data = [];
+        
+        $saasAccount = null;
 
         foreach ($practices as $practiceId) {
-            $practice = Practice::with(['settings', 'chargeableServices'])->find($practiceId);
+            $practice = Practice::with(['settings', 'chargeableServices', 'saasAccount'])->find($practiceId);
+            
+            if (!$saasAccount) {
+                $saasAccount = $practice->saasAccount;
+            }
 
             if ('practice' == $practice->cpmSettings()->bill_to || empty($practice->cpmSettings()->bill_to)) {
                 $chargeableServices = $this->getChargeableServices($practice);
