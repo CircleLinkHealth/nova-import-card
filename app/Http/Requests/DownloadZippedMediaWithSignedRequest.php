@@ -7,8 +7,8 @@
 namespace App\Http\Requests;
 
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class DownloadZippedMediaWithSignedRequest extends FormRequest
 {
@@ -44,5 +44,10 @@ class DownloadZippedMediaWithSignedRequest extends FormRequest
                 Rule::exists('media', 'id'),
             ],
         ];
+    }
+    
+    public function validationData()
+    {
+        return $this->route()->parameters();
     }
 }

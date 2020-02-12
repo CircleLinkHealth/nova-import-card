@@ -32,19 +32,19 @@ class CreatePracticeInvoice implements ShouldQueue
     /**
      * @var string
      */
-    protected $date;
+    public $date;
     /**
      * @var string
      */
-    protected $format;
+    public $format;
     /**
      * @var array
      */
-    protected $practices;
+    public $practices;
     /**
      * @var int
      */
-    protected $requestedByUserId;
+    public $requestedByUserId;
 
     /**
      * Create a new job instance.
@@ -92,5 +92,21 @@ class CreatePracticeInvoice implements ShouldQueue
 
             return;
         }
+    }
+    
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        return [
+            'CreatePracticeInvoice',
+            'date:'.$this->date->toDateTimeString(),
+            'format:'.$this->format,
+            'practices:'.implode(',', $this->practices),
+            'requestedByUserId:'.$this->requestedByUserId,
+        ];
     }
 }

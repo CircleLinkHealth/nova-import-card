@@ -252,7 +252,7 @@ class PracticeInvoiceController extends Controller
 
         $niceDate = "{$date->shortEnglishMonth} {$date->year}";
 
-        session()->put('messages', array_merge(["We are creating invoices for $niceDate, for the following practices:"], $practices, ['We will send you an email when the invoices are ready!']));
+        session()->put('messages', array_merge(["We are creating reports for $niceDate, for the following practices:"], $practices, ['We will send you an email when they are ready.']));
 
         return redirect()->back();
     }

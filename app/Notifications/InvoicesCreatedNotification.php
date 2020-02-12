@@ -21,7 +21,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
 {
     use ArrayableNotification;
     use Queueable;
-
+    
     /**
      * @var Carbon
      */
@@ -36,7 +36,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
      * @var string
      */
     public $mediaIds;
-
+    
     /**
      * The signed URL to download the Media.
      *
@@ -47,7 +47,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
      * @var array
      */
     protected $practiceIds;
-
+    
     /**
      * Create a new notification instance.
      */
@@ -57,7 +57,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
         $this->date        = $date;
         $this->practiceIds = $practiceIds;
     }
-
+    
     /**
      * A string with the attachments name. eg. "Addendum".
      *
@@ -66,12 +66,14 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     public function description($notifiable): string
     {
         if ( ! $this->description) {
-            $this->description = 'Practices: '.Practice::whereIn('id', $this->practiceIds)->pluck('display_name')->implode('display_name', ', ');
+            $this->description = 'Practices: '.Practice::whereIn('id', $this->practiceIds)->pluck(
+                    'display_name'
+                )->implode('display_name', ', ');
         }
-
+        
         return $this->description;
     }
-
+    
     /**
      * A sentence to present the notification.
      *
@@ -81,7 +83,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return "The Invoices for {$this->getMonthYearText()} you had requested are ready.";
     }
-
+    
     /**
      * Redirect link to activity.
      *
@@ -91,7 +93,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return $this->getSignedUrl($notifiable);
     }
-
+    
     /**
      * Get the array representation of the notification.
      *
@@ -108,7 +110,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
             ]
         );
     }
-
+    
     /**
      * Get the broadcastable representation of the notification.
      *
@@ -120,7 +122,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return new BroadcastMessage([]);
     }
-
+    
     /**
      * Get the mail representation of the notification.
      *
@@ -133,7 +135,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
         $mail = (new MailMessage())
             ->subject("CPM {$this->getMonthYearText()} Invoices")
             ->greeting('Howdy there!');
-
+        
         if (empty($this->mediaIds)) {
             return $mail
                 ->line(
@@ -141,13 +143,14 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
                 )
                 ->line('Thank you for using our CarePlan Manager!');
         }
-
+        
         return $mail
             ->line($this->getSubject($notifiable))
             ->action('Download Invoices', $this->getSignedUrl($notifiable))
+            ->line('For security reasons, this link will expire in 48 hours.')
             ->line('Thank you for using our CarePlan Manager!');
     }
-
+    
     /**
      * Get the notification's delivery channels.
      *
@@ -157,24 +160,31 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
      */
     public function via($notifiable)
     {
+        if (empty($this->mediaIds)) {
+            return ['database', 'mail'];
+        }
+        
         return ['database', 'mail', 'broadcast'];
     }
-
+    
     private function getMonthYearText()
     {
         return "{$this->date->shortEnglishMonth} {$this->date->year}";
     }
-
+    
     private function getSignedUrl($notifiable)
     {
         if ( ! $this->signedUrl) {
             $this->signedUrl = \URL::temporarySignedRoute(
                 'download.zipped.media',
                 now()->addDays(2),
-                [$notifiable->id, $this->mediaIds]
+                [
+                    'user_id' => $notifiable->id,
+                    'media_ids' => $this->mediaIds
+                ]
             );
         }
-
+        
         return $this->signedUrl;
     }
 }
