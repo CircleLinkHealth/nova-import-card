@@ -120,12 +120,10 @@ class PracticeInvoiceController extends Controller
         $readyToBill = Practice::active()
             ->authUserCanAccess()
             ->get();
-        $needsQA    = [];
         $invoice_no = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
 
         return view('billing.practice.create', compact(
             [
-                'needsQA',
                 'readyToBill',
                 'invoice_no',
                 'dates',
@@ -231,7 +229,7 @@ class PracticeInvoiceController extends Controller
 
         $chargeableServices = ChargeableService::all();
 
-        return view('admin.reports.biclling', compact([
+        return view('admin.reports.billing', compact([
             'cpmProblems',
             'practices',
             'chargeableServices',
@@ -240,20 +238,23 @@ class PracticeInvoiceController extends Controller
     }
 
     /**
-     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
-     * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
-     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function makeInvoices(Request $request)
     {
-        $date      = $request->input('date');
+        $date      = Carbon::parse($request->input('date'));
         $format    = $request['format'];
         $practices = $request['practices'];
 
         CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id());
 
-        return redirect()->back()->with('message', 'We will send you an email when the invoices are ready!');
+        $practices = Practice::whereIn('id', $practices)->pluck('display_name')->all();
+
+        $niceDate = presentDate($date, false, false, true);
+
+        session()->put('messages', array_merge(["We are creating invoices for $niceDate, for the following practices:"], $practices, ['We will send you an email when the invoices are ready!']));
+
+        return redirect()->back();
     }
 
     /** open patient-monthly-summaries in a practice */

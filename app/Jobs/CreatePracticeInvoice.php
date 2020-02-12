@@ -42,7 +42,7 @@ class CreatePracticeInvoice implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(array $practices, string $date, string $format, int $requestedByUserId)
+    public function __construct(array $practices, Carbon $date, string $format, int $requestedByUserId)
     {
         $this->practices         = $practices;
         $this->date              = $date;
@@ -59,14 +59,12 @@ class CreatePracticeInvoice implements ShouldQueue
     {
         $invoices = [];
 
-        $date = Carbon::parse($this->date);
-
         $user = User::findOrFail($this->requestedByUserId);
 
         if ('pdf' == $this->format) {
-            $invoices = $practiceReportsService->getPdfInvoiceAndPatientReport($this->practices, $date);
+            $invoices = $practiceReportsService->getPdfInvoiceAndPatientReport($this->practices, $this->date);
 
-            $user->notify(new InvoicesCreatedNotification(collect($invoices)->pluck('media.id')->all(), $date, $this->practices));
+            $user->notify(new InvoicesCreatedNotification(collect($invoices)->pluck('media.id')->all(), $this->date, $this->practices));
 
             return;
         }
@@ -74,16 +72,16 @@ class CreatePracticeInvoice implements ShouldQueue
             $report = $practiceReportsService->getQuickbooksReport(
                 $this->practices,
                 $this->format,
-                $date
+                $this->date
             );
 
             if (false === $report) {
-                $user->notify(new InvoicesCreatedNotification([], $date, $this->practices));
-                
+                $user->notify(new InvoicesCreatedNotification([], $this->date, $this->practices));
+
                 return;
             }
 
-            $user->notify(new InvoicesCreatedNotification([$report->id], $date, $this->practices));
+            $user->notify(new InvoicesCreatedNotification([$report->id], $this->date, $this->practices));
 
             return;
         }

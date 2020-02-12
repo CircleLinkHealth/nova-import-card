@@ -21,18 +21,22 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
 {
     use ArrayableNotification;
     use Queueable;
-    
+
     /**
      * @var Carbon
      */
     public $date;
+    /**
+     * @var string
+     */
+    public $description;
     /**
      * Comma delimited string of Media IDs.
      *
      * @var string
      */
     public $mediaIds;
-    
+
     /**
      * The signed URL to download the Media.
      *
@@ -43,13 +47,9 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
      * @var array
      */
     protected $practiceIds;
-    
+
     /**
      * Create a new notification instance.
-     *
-     * @param array $mediaIds
-     * @param Carbon $date
-     * @param array $practiceIds
      */
     public function __construct(array $mediaIds, Carbon $date, array $practiceIds)
     {
@@ -57,7 +57,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
         $this->date        = $date;
         $this->practiceIds = $practiceIds;
     }
-    
+
     /**
      * A string with the attachments name. eg. "Addendum".
      *
@@ -65,9 +65,13 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
      */
     public function description($notifiable): string
     {
-        return 'Practices: '.Practice::whereIn('in', $this->practiceIds)->pluck('display_name')->implode('display_name', ', ');
+        if ( ! $this->description) {
+            $this->description = 'Practices: '.Practice::whereIn('id', $this->practiceIds)->pluck('display_name')->implode('display_name', ', ');
+        }
+
+        return $this->description;
     }
-    
+
     /**
      * A sentence to present the notification.
      *
@@ -77,7 +81,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return "The Invoices for {$this->getMonthYearText()} you had requested are ready.";
     }
-    
+
     /**
      * Redirect link to activity.
      *
@@ -87,7 +91,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return $this->getSignedUrl($notifiable);
     }
-    
+
     /**
      * Get the array representation of the notification.
      *
@@ -104,7 +108,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
             ]
         );
     }
-    
+
     /**
      * Get the broadcastable representation of the notification.
      *
@@ -116,7 +120,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return new BroadcastMessage([]);
     }
-    
+
     /**
      * Get the mail representation of the notification.
      *
@@ -129,7 +133,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
         $mail = (new MailMessage())
             ->subject("CPM {$this->getMonthYearText()} Invoices")
             ->greeting('Howdy there!');
-        
+
         if (empty($this->mediaIds)) {
             return $mail
                 ->line(
@@ -137,13 +141,13 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
                 )
                 ->line('Thank you for using our CarePlan Manager!');
         }
-        
+
         return $mail
             ->line($this->getSubject($notifiable))
             ->action('Download Invoices', $this->getSignedUrl($notifiable))
             ->line('Thank you for using our CarePlan Manager!');
     }
-    
+
     /**
      * Get the notification's delivery channels.
      *
@@ -155,7 +159,12 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return ['database', 'mail', 'broadcast'];
     }
-    
+
+    private function getMonthYearText()
+    {
+        return "{$this->date->shortEnglishMonth} {$this->date->year}";
+    }
+
     private function getSignedUrl($notifiable)
     {
         if ( ! $this->signedUrl) {
@@ -165,12 +174,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
                 [$notifiable->id, $this->mediaIds]
             );
         }
-        
+
         return $this->signedUrl;
-    }
-    
-    private function getMonthYearText()
-    {
-        return "{$this->date->shortEnglishMonth} {$this->date->year}";
     }
 }

@@ -23,13 +23,8 @@
         </script>
     @endpush
 
-    @if(!empty($message))
-        <div class="alert alert-success success">
-            {{$message}}
-        </div>
-    @endif
+    @include('errors.messages')
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     {!! Form::open(array('url' => route('practice.billing.make', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid" style="padding-top: 50px;">
         <div class="row">
@@ -100,23 +95,6 @@
                                     </div>
                                 </div>
                         </form>
-
-                        <hr>
-
-                        <div class="row" style="padding-left: 30px;">
-
-                            List of Practices with pending QA:
-                            <ul>
-
-                                @foreach($needsQA as $practice)
-
-                                    <li><a href="#">{{$practice->display_name}}</a></li>
-
-                                @endforeach
-
-                            </ul>
-
-                        </div>
                     </div>
                 </div>
             </div>
