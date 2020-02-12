@@ -1827,10 +1827,82 @@ class SurveySeeder extends Seeder
     {
         return collect([
             [
-//                'identifier' => EnrolleesSurveyIdentifier::DOB,
-//                'order' => 1,
-//                'question_body' => 'Please update or confirm your date of birth',
-//                'question_type' => QuestionType::NUMBER,
+                'identifier' => EnrolleesSurveyIdentifier::DOB,
+                'order' => 1,
+                'question_body' => 'Please update or confirm your date of birth',
+                'question_type' => QuestionType::NUMBER,
+            ],
+            [
+                'identifier' => EnrolleesSurveyIdentifier::PREFERRED_NUMBER,
+                'order' => 2,
+                'question_body' => 'Proffered phone number for nurse to call',
+                'question_type' => QuestionType::NUMBER,
+            ],
+            [
+                'identifier' => EnrolleesSurveyIdentifier::PREFERRED_DAYS,
+                'order' => 3,
+                'sub_order' => 'a',
+                'question_group' => 'Please choose preferred days and time to contact:',
+                'question_body' => 'Choose preferred contact days:',
+                'question_type' => QuestionType::RADIO,
+                'question_type_answers' => [
+                    ['type_answer_body' => 'Monday'],
+                    ['type_answer_body' => 'Tuesday'],
+                    ['type_answer_body' => 'Wednesday'],
+                    ['type_answer_body' => 'Thursday'],
+                    ['type_answer_body' => 'Friday'],
+                ],
+            ],
+            [
+                'identifier' => EnrolleesSurveyIdentifier::PREFERRED_TIME,
+                'order' => 3,
+                'sub_order' => 'b',
+                'question_group' => 'Please choose preferred days and time to contact:',
+                'question_body' => 'Choose preferred contact time:',
+                'question_type' => QuestionType::NUMBER,
+            ],
+
+            [
+                'identifier' => EnrolleesSurveyIdentifier::REQUESTS_INFO,
+                'order' => 4,
+                'question_body' => 'Anything you would like your nurse to know:',
+                'optional' => true,
+                'question_type' => QuestionType::TEXT,
+            ],
+
+            [
+                'identifier' => EnrolleesSurveyIdentifier::CONFIRM_ADDRESS,
+                'order' => 5,
+                'question_body' => 'Please confirm or update your address:',
+                'question_type' => QuestionType::TEXT,
+                'question_type_answers' => [
+                    [
+                        'options' => [
+                            'placeholder' => 'Known address if exists',
+                        ],
+                    ],
+                ],
+            ],
+
+            [
+                'identifier' => EnrolleesSurveyIdentifier::CONFIRM_EMAIL,
+                'order' => 6,
+                'question_body' => 'Please confirm or update your email address:',
+                'question_type' => QuestionType::TEXT,
+                'question_type_answers' => [
+                    [
+                        'options' => [
+                            'placeholder' => 'Known email if exists',
+                        ],
+                    ],
+                ],
+            ],
+
+            [
+                'identifier' => EnrolleesSurveyIdentifier::CONFIRM_LETTER,
+                'order' => 7,
+                'question_body' => 'Please confirm you have read the letter',
+                'question_type' => QuestionType::CHECKBOX,
             ],
         ]);
     }
