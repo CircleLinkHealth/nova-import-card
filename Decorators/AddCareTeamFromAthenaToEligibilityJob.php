@@ -31,12 +31,18 @@ class AddCareTeamFromAthenaToEligibilityJob
      * @return EligibilityJob
      * @throws \Exception
      */
-    public function addCareTeamFromAthena(EligibilityJob $eligibilityJob) :EligibilityJob
+    public function addCareTeamFromAthena(EligibilityJob $eligibilityJob, TargetPatient $targetPatient) :EligibilityJob
     {
+        if (array_key_exists('care_team', $eligibilityJob->data) && ! empty($eligibilityJob->data['care_team'])) {
+            return $eligibilityJob;
+        }
+        
+        $eligibilityJob->loadMissing('targetPatient');
+        
         $careTeam = $this->athenaApiImplementation->getCareTeam(
-            $eligibilityJob->targetPatient->ehr_patient_id,
-            $eligibilityJob->targetPatient->ehr_practice_id,
-            $eligibilityJob->targetPatient->ehr_department_id
+            $targetPatient->ehr_patient_id,
+            $targetPatient->ehr_practice_id,
+            $targetPatient->ehr_department_id
         );
         
         if (is_array($careTeam)) {
