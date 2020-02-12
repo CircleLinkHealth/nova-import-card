@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Location;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
@@ -1519,7 +1520,7 @@ class NursePaymentAlgoTest extends TestCase
     }
 
     /**
-     * Two patients, nurse on ccm plus algo, one practice does not have ccm plus enabled (therefore not paid)
+     * Two patients, nurse on ccm plus algo, one practice does not have ccm plus enabled (therefore not paid).
      *
      * - Hourly Rate $20
      * - High Rate $30
@@ -1580,10 +1581,565 @@ class NursePaymentAlgoTest extends TestCase
     }
 
     /**
-     * Add billable (ccm time) or not to a patient and credit nurse.
+     * - Default Algo - Fixed Rate
+     * - BHI = 25 minutes
+     * - Total CPM time = 45 minutes
+     * - No CCM Plus (G2058).
+     *
+     * Result: 30$ (45 minutes rounded to 1 hour * 30$/hr)
+     *
+     * @throws \Exception
      */
-    private function addTime(User $nurse, User $patient, int $minutes, bool $billable, bool $withSuccessfulCall = false)
+    public function test_bhi_time_default_algo_fixed_rate()
     {
+        $nurseHourlyRate = 30.0;
+        $practice        = $this->setupPractice(false, true);
+        $this->provider  = $this->createUser($practice->id);
+        $nurse           = $this->setupNurse($practice->id, false, $nurseHourlyRate);
+        $patient         = $this->setupPatient($practice, true);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        $this->addTime($nurse, $patient, 25, true, true, true);
+        $this->addTime($nurse, $patient, 20, false, false, true);
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+                                   ->orderBy('month_year', 'desc')
+                                   ->first()->invoice_data;
+
+        $fixedRatePay    = $invoiceData['fixedRatePay'];
+        $variableRatePay = $invoiceData['variableRatePay'];
+        $pay             = $invoiceData['baseSalary'];
+
+        self::assertEquals(0, $variableRatePay);
+        self::assertEquals($nurseHourlyRate, $fixedRatePay);
+        self::assertEquals($nurseHourlyRate, $pay);
+    }
+
+    /**
+     * - Default Algo - Variable Rate
+     * - BHI = 25 minutes
+     * - Total CPM time = 45 minutes
+     * - No CCM Plus (G2058).
+     *
+     * Result: 30$ (45 minutes rounded to 1 hour * 30$/hr)
+     *         Variable Rate Pay = (20 * 30/hr) + (5 * 10/hr) = 10.83
+     *
+     * @throws \Exception
+     */
+    public function test_bhi_time_default_algo_variable_rate()
+    {
+        $nurseHourlyRate = 30.0;
+        $practice        = $this->setupPractice(false, true);
+        $this->provider  = $this->createUser($practice->id);
+        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $patient         = $this->setupPatient($practice, true);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        $this->addTime($nurse, $patient, 25, true, true, true);
+        $this->addTime($nurse, $patient, 20, false, false, true);
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+                                   ->orderBy('month_year', 'desc')
+                                   ->first()->invoice_data;
+
+        $fixedRatePay    = $invoiceData['fixedRatePay'];
+        $variableRatePay = $invoiceData['variableRatePay'];
+        $pay             = $invoiceData['baseSalary'];
+
+        self::assertEquals(10.83, $variableRatePay);
+        self::assertEquals($nurseHourlyRate, $fixedRatePay);
+        self::assertEquals($nurseHourlyRate, $pay);
+    }
+
+    /**
+     * - CCM Plus Algo - Variable Rate
+     * - BHI = 25 minutes
+     * - Total CPM time = 45 minutes
+     * - No CCM Plus (G2058).
+     *
+     * Result: 30$ (45 minutes rounded to 1 hour * 30$/hr)
+     *         Variable Rate Pay = (20 * 30/hr) + (5 * 10/hr) = 10.83
+     *
+     * @throws \Exception
+     */
+    public function test_bhi_time_ccm_plus_algo()
+    {
+        $nurseHourlyRate = 30.0;
+        $practice        = $this->setupPractice(false, true);
+        $this->provider  = $this->createUser($practice->id);
+        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true);
+        $patient         = $this->setupPatient($practice, true);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        $this->addTime($nurse, $patient, 25, true, true, true);
+        $this->addTime($nurse, $patient, 20, false, false, true);
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+                                   ->orderBy('month_year', 'desc')
+                                   ->first()->invoice_data;
+
+        $fixedRatePay    = $invoiceData['fixedRatePay'];
+        $variableRatePay = $invoiceData['variableRatePay'];
+        $pay             = $invoiceData['baseSalary'];
+
+        self::assertEquals(10.83, $variableRatePay);
+        self::assertEquals($nurseHourlyRate, $fixedRatePay);
+        self::assertEquals($nurseHourlyRate, $pay);
+    }
+
+    /**
+     * - CCM Plus Alt Algo - Visit Fee
+     * - BHI = 25 minutes
+     * - Total CPM time = 45 minutes
+     * - No CCM Plus (G2058).
+     *
+     * Result: 30$ (45 minutes rounded to 1 hour * 30$/hr)
+     *         Variable Rate Pay = $12.50
+     *
+     * @throws \Exception
+     */
+    public function test_bhi_time_ccm_plus_alt_algo()
+    {
+        $visitFee        = 12.50;
+        $nurseHourlyRate = 30.0;
+        $practice        = $this->setupPractice(false, true);
+        $this->provider  = $this->createUser($practice->id);
+        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $visitFee);
+        $patient         = $this->setupPatient($practice, true);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        $this->addTime($nurse, $patient, 25, true, true, true);
+        $this->addTime($nurse, $patient, 20, false, false, true);
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+                                   ->orderBy('month_year', 'desc')
+                                   ->first()->invoice_data;
+
+        $fixedRatePay    = $invoiceData['fixedRatePay'];
+        $variableRatePay = $invoiceData['variableRatePay'];
+        $pay             = $invoiceData['baseSalary'];
+
+        self::assertEquals($visitFee, $variableRatePay);
+        self::assertEquals($nurseHourlyRate, $fixedRatePay);
+        self::assertEquals($nurseHourlyRate, $pay);
+    }
+
+    /**
+     * - CCM Plus Alt Algo - Visit Fee
+     * - BHI = 25 minutes
+     * - CCM = 25 minutes
+     * - Total CPM time = 50 minutes
+     * - No CCM Plus (G2058).
+     *
+     * Result: 30$ (50 minutes rounded to 1 hour * 30$/hr)
+     *         Variable Rate Pay = (20 * 30/hr) + (5 * 10/hr) = 10.83 + 10.83 ~ 21.67
+     *
+     * @throws \Exception
+     */
+    public function test_bhi_time_and_ccm_time_default_algo()
+    {
+        $nurseHourlyRate = 30.0;
+        $practice        = $this->setupPractice(false, true);
+        $this->provider  = $this->createUser($practice->id);
+        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate);
+        $patient         = $this->setupPatient($practice, true);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        $this->addTime($nurse, $patient, 25, true, true, true);
+        $this->addTime($nurse, $patient, 25, true, true, false);
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+                                   ->orderBy('month_year', 'desc')
+                                   ->first()->invoice_data;
+
+        $fixedRatePay    = $invoiceData['fixedRatePay'];
+        $variableRatePay = $invoiceData['variableRatePay'];
+        $pay             = $invoiceData['baseSalary'];
+
+        self::assertEquals(21.67, $variableRatePay);
+        self::assertEquals($nurseHourlyRate, $fixedRatePay);
+        self::assertEquals($nurseHourlyRate, $pay);
+    }
+
+    /**
+     * - CCM Plus Algo - Variable Rate
+     * - BHI = 25 minutes
+     * - CCM = 25 minutes
+     * - Total CPM time = 50 minutes
+     * - CCM Plus (G2058).
+     *
+     * Result: 30$ (50 minutes rounded to 1 hour * 30$/hr)
+     *         Variable Rate Pay = (20 * 30/hr) + (5 * 10/hr) = 10.83 + 10.83 ~ 21.67
+     *
+     * @throws \Exception
+     */
+    public function test_bhi_time_and_ccm_time_ccm_plus_algo()
+    {
+        $nurseHourlyRate = 30.0;
+        $practice        = $this->setupPractice(true, true);
+        $this->provider  = $this->createUser($practice->id);
+        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true);
+        $patient         = $this->setupPatient($practice, true);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        $this->addTime($nurse, $patient, 25, true, true, true);
+        $this->addTime($nurse, $patient, 25, true, true, false);
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+                                   ->orderBy('month_year', 'desc')
+                                   ->first()->invoice_data;
+
+        $fixedRatePay    = $invoiceData['fixedRatePay'];
+        $variableRatePay = $invoiceData['variableRatePay'];
+        $pay             = $invoiceData['baseSalary'];
+
+        self::assertEquals(21.67, $variableRatePay);
+        self::assertEquals($nurseHourlyRate, $fixedRatePay);
+        self::assertEquals($nurseHourlyRate, $pay);
+    }
+
+    /**
+     * - CCM Plus Alt Algo - Visit Fee
+     * - BHI = 25 minutes
+     * - CCM = 25 minutes
+     * - Total CPM time = 50 minutes
+     * - CCM Plus (G2058).
+     *
+     * Result: 30$ (50 minutes rounded to 1 hour * 30$/hr)
+     *         Visit Fee = $12.50 + $12.50 = $25.00
+     *
+     * @throws \Exception
+     */
+    public function test_bhi_time_and_ccm_time_ccm_plus_alt_algo()
+    {
+        $visitFee        = 12.50;
+        $nurseHourlyRate = 30.0;
+        $practice        = $this->setupPractice(true, true);
+        $this->provider  = $this->createUser($practice->id);
+        $nurse           = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $visitFee);
+        $patient         = $this->setupPatient($practice, true);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        $this->addTime($nurse, $patient, 25, true, true, true);
+        $this->addTime($nurse, $patient, 25, true, true, false);
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoiceData = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+                                   ->orderBy('month_year', 'desc')
+                                   ->first()->invoice_data;
+
+        $fixedRatePay    = $invoiceData['fixedRatePay'];
+        $variableRatePay = $invoiceData['variableRatePay'];
+        $pay             = $invoiceData['baseSalary'];
+
+        self::assertEquals(25.00, $variableRatePay);
+        self::assertEquals($nurseHourlyRate, $fixedRatePay);
+        self::assertEquals($nurseHourlyRate, $pay);
+    }
+
+    /**
+     * - Hourly Rate $20
+     * - High Rate $29
+     * - Low Rate $10
+     * - Visit Fee $12.50
+     * - Variable Pay = true.
+     *
+     * Two nurses, 1 patient with ccm plus algo.
+     * Nurse 2 has successful call in range 20-40 minutes.
+     * Nurse 1 has 15 minutes in 0-20 range.
+     * Nurse 2 has 5 minutes in 0-20 range and 5 minutes in 20-40 range.
+     *
+     * Result:
+     * Nurse 1 -> $10.00 (30 min hourly rate. no visit fee, patient has 1 billable event, no successful call)
+     * Nurse 2 -> $12.50 (successful call, takes all credit)
+     *
+     * @throws \Exception
+     */
+    public function test_CPM_1997_one_billable_event_pay_nurse_with_call()
+    {
+        $nurseVisitFee   = 12.50;
+        $nurseHourlyRate = 20.0;
+        $practice        = $this->setupPractice(true);
+        $nurse1          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse2          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $patient         = $this->setupPatient($practice);
+
+        $this->addTime($nurse1, $patient, 15, true, false);
+        $this->addTime($nurse2, $patient, 10, true, true);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse1->id, $nurse2->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoice1Data    = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
+                                       ->orderBy('month_year', 'desc')
+                                       ->first()->invoice_data;
+        $fixedRatePay    = $invoice1Data['fixedRatePay'];
+        $variableRatePay = $invoice1Data['variableRatePay'];
+        $pay             = $invoice1Data['baseSalary'];
+
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(0.00, $variableRatePay);
+        self::assertEquals(10.00, $pay);
+
+        $invoice2Data    = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
+                                       ->orderBy('month_year', 'desc')
+                                       ->first()->invoice_data;
+        $fixedRatePay    = $invoice2Data['fixedRatePay'];
+        $variableRatePay = $invoice2Data['variableRatePay'];
+        $pay             = $invoice2Data['baseSalary'];
+
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(12.50, $variableRatePay);
+        self::assertEquals(12.50, $pay);
+    }
+
+    /**
+     * - Hourly Rate $20
+     * - High Rate $29
+     * - Low Rate $10
+     * - Visit Fee $12.50
+     * - Variable Pay = true.
+     *
+     * Two nurses, 1 patient with ccm plus algo.
+     * Nurse 2 has successful call in range 20-40 minutes.
+     * Nurse 1 has 23 minutes in 0-20 range.
+     * Nurse 2 has 5 minutes in 20-40 range.
+     *
+     * Result:
+     * Nurse 1 -> $10.00 (30 min hourly rate. no visit fee, patient has 1 billable event, no successful call)
+     * Nurse 2 -> $12.50 (successful call, takes all credit)
+     *
+     * @throws \Exception
+     */
+    public function test_CPM_1997_one_billable_event_pay_nurse_with_call_2()
+    {
+        $nurseVisitFee   = 12.50;
+        $nurseHourlyRate = 20.0;
+        $practice        = $this->setupPractice(true);
+        $nurse1          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse2          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $patient         = $this->setupPatient($practice);
+
+        $this->addTime($nurse1, $patient, 23, true, false);
+        $this->addTime($nurse2, $patient, 5, true, true);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse1->id, $nurse2->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoice1Data    = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
+                                       ->orderBy('month_year', 'desc')
+                                       ->first()->invoice_data;
+        $fixedRatePay    = $invoice1Data['fixedRatePay'];
+        $variableRatePay = $invoice1Data['variableRatePay'];
+        $pay             = $invoice1Data['baseSalary'];
+
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(0.00, $variableRatePay);
+        self::assertEquals(10.00, $pay);
+
+        $invoice2Data    = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
+                                       ->orderBy('month_year', 'desc')
+                                       ->first()->invoice_data;
+        $fixedRatePay    = $invoice2Data['fixedRatePay'];
+        $variableRatePay = $invoice2Data['variableRatePay'];
+        $pay             = $invoice2Data['baseSalary'];
+
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(12.50, $variableRatePay);
+        self::assertEquals(12.50, $pay);
+    }
+
+    /**
+     * - Hourly Rate $20
+     * - High Rate $29
+     * - Low Rate $10
+     * - Visit Fee $12.50
+     * - Variable Pay = true.
+     *
+     * Two nurses, 1 patient with ccm plus algo.
+     * Nurse 1 0-17 minutes, no call.
+     * Nurse 2 17-23 minutes, call.
+     * Nurse 3 23-38 minutes, call.
+     *
+     * Result:
+     * Nurse 1 -> $10.00 (30 min * hourly rate. no visit fee, patient has 1 billable event, no successful call)
+     * Nurse 2 -> 6 / (6+15) * $12.50 = $3.57
+     * Nurse 3 -> 15 / (6+15) * $12.50 = $8.93
+     *
+     * @throws \Exception
+     */
+    public function test_CPM_1997_one_billable_event_pay_nurse_with_call_3()
+    {
+        $nurseVisitFee   = 12.50;
+        $nurseHourlyRate = 20.0;
+        $practice        = $this->setupPractice(true);
+        $nurse1          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse2          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $nurse3          = $this->setupNurse($practice->id, true, $nurseHourlyRate, true, $nurseVisitFee);
+        $patient         = $this->setupPatient($practice);
+
+        $this->addTime($nurse1, $patient, 17, true, false);
+        $this->addTime($nurse2, $patient, 6, true, true);
+        $this->addTime($nurse3, $patient, 15, true, true);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse1->id, $nurse2->id, $nurse3->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoice1Data    = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
+                                       ->orderBy('month_year', 'desc')
+                                       ->first()->invoice_data;
+        $fixedRatePay    = $invoice1Data['fixedRatePay'];
+        $variableRatePay = $invoice1Data['variableRatePay'];
+        $pay             = $invoice1Data['baseSalary'];
+
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(0.00, $variableRatePay);
+        self::assertEquals(10.00, $pay);
+
+        $invoice2Data    = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
+                                       ->orderBy('month_year', 'desc')
+                                       ->first()->invoice_data;
+        $fixedRatePay    = $invoice2Data['fixedRatePay'];
+        $variableRatePay = $invoice2Data['variableRatePay'];
+        $pay             = $invoice2Data['baseSalary'];
+
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(3.57, $variableRatePay);
+        self::assertEquals(10.00, $pay);
+
+        $invoice3Data    = NurseInvoice::where('nurse_info_id', $nurse3->nurseInfo->id)
+                                       ->orderBy('month_year', 'desc')
+                                       ->first()->invoice_data;
+        $fixedRatePay    = $invoice3Data['fixedRatePay'];
+        $variableRatePay = $invoice3Data['variableRatePay'];
+        $pay             = $invoice3Data['baseSalary'];
+
+        self::assertEquals(10.00, $fixedRatePay);
+        self::assertEquals(8.93, $variableRatePay);
+        self::assertEquals(10.00, $pay);
+    }
+
+    /**
+     * Add billable or not to a patient and credit nurse.
+     *
+     * @param User $nurse
+     * @param User $patient
+     * @param int $minutes
+     * @param bool $billable
+     * @param bool $withSuccessfulCall
+     * @param bool $bhiTime
+     */
+    private function addTime(
+        User $nurse,
+        User $patient,
+        int $minutes,
+        bool $billable,
+        bool $withSuccessfulCall = false,
+        bool $bhiTime = false
+    ) {
         if ($withSuccessfulCall) {
             /** @var Note $fakeNote */
             $fakeNote             = \factory(Note::class)->make();
@@ -1610,7 +2166,7 @@ class NursePaymentAlgoTest extends TestCase
                 : 0,
             'activities' => [
                 [
-                    'is_behavioral' => false,
+                    'is_behavioral' => $bhiTime,
                     'duration'      => $seconds,
                     'start_time'    => Carbon::now(),
                     'name'          => $withSuccessfulCall
@@ -1677,10 +2233,17 @@ class NursePaymentAlgoTest extends TestCase
         return $nurse;
     }
 
-    private function setupPatient(Practice $practice)
+    private function setupPatient(Practice $practice, $isBhi = false)
     {
         $patient = $this->createUser($practice->id, 'participant');
         $patient->setPreferredContactLocation($this->location->id);
+
+        if ($isBhi) {
+            $consentDate = Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI);
+            $consentDate->addDay();
+            $patient->patientInfo->consent_date = $consentDate;
+        }
+
         $patient->patientInfo->save();
         $cpmProblems = CpmProblem::get();
         $ccdProblems = $patient->ccdProblems()->createMany([
@@ -1688,15 +2251,23 @@ class NursePaymentAlgoTest extends TestCase
             ['name' => 'test' . str_random(5)],
             ['name' => 'test' . str_random(5)],
         ]);
-        foreach ($ccdProblems as $problem) {
-            $problem->cpmProblem()->associate($cpmProblems->random());
+
+        $len = $ccdProblems->count();
+        for ($i = 0; $i < $len; $i++) {
+            $problem = $ccdProblems->get($i);
+            $isLast  = $i === $len - 1;
+            if ($isLast && $isBhi) {
+                $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 1));
+            } else {
+                $problem->cpmProblem()->associate($cpmProblems->random());
+            }
             $problem->save();
         }
 
         return $patient;
     }
 
-    private function setupPractice(bool $addCcmPlusServices = false)
+    private function setupPractice(bool $addCcmPlusServices = false, bool $addBhiServices = false)
     {
         $practice       = factory(Practice::class)->create();
         $this->location = Location::firstOrCreate([
@@ -1706,6 +2277,12 @@ class NursePaymentAlgoTest extends TestCase
         $ccmService            = ChargeableService::where('code', '=', ChargeableService::CCM)->first();
         $sync                  = [];
         $sync[$ccmService->id] = ['amount' => 29.0];
+
+        if ($addBhiServices) {
+            $bhi            = ChargeableService::where('code', '=', ChargeableService::BHI)->first();
+            $sync[$bhi->id] = ['amount' => 28.0];
+        }
+
         if ($addCcmPlusServices) {
             $ccmPlus40            = ChargeableService::where('code', '=', ChargeableService::CCM_PLUS_40)->first();
             $ccmPlus60            = ChargeableService::where('code', '=', ChargeableService::CCM_PLUS_60)->first();

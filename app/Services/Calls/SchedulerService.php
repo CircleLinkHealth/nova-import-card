@@ -9,6 +9,7 @@ namespace App\Services\Calls;
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
+use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Note;
 use App\Repositories\PatientWriteRepository;
 use App\Services\NoteService;
@@ -102,10 +103,10 @@ class SchedulerService
             ->where('inbound_cpm_id', $patientId)
             ->where('status', '=', 'scheduled')
             ->when($excludeToday, function ($query) {
-                       $query->where('scheduled_date', '>', Carbon::today()->format('Y-m-d'));
-                   }, function ($query) {
-                       $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
-                   })
+                $query->where('scheduled_date', '>', Carbon::today()->format('Y-m-d'));
+            }, function ($query) {
+                $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
+            })
             ->orderBy('scheduled_date', 'desc')
             ->first();
     }
@@ -167,9 +168,9 @@ class SchedulerService
             ->where(function ($q) use (
                         $patient
                     ) {
-                        $q->where('outbound_cpm_id', $patient->id)
-                            ->orWhere('inbound_cpm_id', $patient->id);
-                    })
+                $q->where('outbound_cpm_id', $patient->id)
+                    ->orWhere('inbound_cpm_id', $patient->id);
+            })
             ->where('status', '=', 'scheduled')
             ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
             ->first();
@@ -219,11 +220,11 @@ class SchedulerService
                 ->whereHas('patientInfo', function ($q) use (
                                $row
                            ) {
-                               $q->where(
+                    $q->where(
                                    'birth_date',
                                    Carbon::parse($row['DOB'])->toDateString()
                                );
-                           })
+                })
                 ->first();
 
             if ( ! $patient) {
@@ -372,8 +373,8 @@ class SchedulerService
     {
         $nurseIds = User::select('id')
             ->whereHas('roles', function ($q) {
-                            $q->where('name', '=', 'care-center');
-                        })
+                $q->where('name', '=', 'care-center');
+            })
             ->pluck('id')
             ->all();
 
@@ -572,14 +573,14 @@ class SchedulerService
      *
      * @param $call
      * @param $status
+     * @param mixed $attestedProblems
      */
     public function updateCallWithNote(
         Note $note,
         $call,
-        $status
+        $status,
+        $attestedProblems = null
     ) {
-        $patient = $note->patient;
-
         if ($call) {
             $call->status          = $status;
             $call->note_id         = $note->id;
@@ -587,8 +588,9 @@ class SchedulerService
             $call->outbound_cpm_id = Auth::user()->id;
             $call->save();
         } else {
+            $patient = $note->patient;
             // If call doesn't exist, make one and store it
-            $this->noteService->storeCallForNote(
+            $call = $this->noteService->storeCallForNote(
                 $note,
                 $status,
                 $patient,
@@ -596,6 +598,12 @@ class SchedulerService
                 'outbound',
                 'core algorithm'
             );
+        }
+
+        //If this is the first call being created for the month, the patient might not have a summary - which gets created on the 'saved' event of the call
+        //So we are dispatching an event with a delayed job to make sure that the summary will be created before we attach the problems
+        if ($attestedProblems) {
+            event(new CallIsReadyForAttestedProblemsAttachment($call, $attestedProblems));
         }
     }
 
@@ -611,13 +619,15 @@ class SchedulerService
      * @param $patient
      * @param $noteId
      * @param $callStatus - 'reached', 'not reached', 'ignored'
+     * @param mixed $attestedProblems
      *
      * @return array
      */
     public function updateTodaysCallAndPredictNext(
         $patient,
         $noteId,
-        $callStatus
+        $callStatus,
+        $attestedProblems = null
     ) {
         $scheduled_call = $this->getTodaysCall($patient->id);
 
@@ -626,7 +636,8 @@ class SchedulerService
         $this->updateCallWithNote(
             $note,
             $scheduled_call,
-            $callStatus
+            $callStatus,
+            $attestedProblems
         );
 
         if (Call::IGNORED != $callStatus) {

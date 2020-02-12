@@ -6,8 +6,8 @@
 
 namespace App\Billing\Practices;
 
-use CircleLinkHealth\Core\PdfService;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\Entities\Practice;
 
 class PracticeInvoiceGenerator
@@ -19,9 +19,6 @@ class PracticeInvoiceGenerator
 
     /**
      * PracticeInvoiceGenerator constructor.
-     *
-     * @param Practice $practice
-     * @param Carbon   $month
      */
     public function __construct(
         Practice $practice,
@@ -47,6 +44,7 @@ class PracticeInvoiceGenerator
 
         $data = [
             'invoice_url' => $pdfInvoice->getUrl(),
+            'mediaIds'       => [$pdfInvoice->id],
         ];
 
         if ($withItemized) {
@@ -54,6 +52,7 @@ class PracticeInvoiceGenerator
             $pdfPatientReport = $this->makePatientReportPdf($reportName);
 
             $data['patient_report_url'] = $pdfPatientReport->getUrl();
+            $data['mediaIds'][] = $pdfPatientReport->id;
         }
 
         $data['practiceId'] = $this->practice->id;

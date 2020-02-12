@@ -40,6 +40,8 @@
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
 
     <style>
+        body {
+            font-family: Roboto, sans-serif;}
         .table-striped > tbody > tr:nth-child(odd) > td,
         .table-striped > tbody > tr:nth-child(odd) > th {
             /* background-color: #eee; */
@@ -62,7 +64,7 @@
 <body>
 <div id="app">
 
-    @if ( ! Auth::guest() && Cerberus::hasPermission('admin-access'))
+    @if (  ! Auth::guest() && Cerberus::hasPermission('admin-access') )
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -308,6 +310,10 @@
     @yield('content')
 </div>
 
+@isset($chart)
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js" charset="utf-8"></script>
+{!! $chart->script() !!}
+@endisset
 
 @if (Agent::isIE())
     <!-- Script for polyfilling Promises on IE9 and 10 -->

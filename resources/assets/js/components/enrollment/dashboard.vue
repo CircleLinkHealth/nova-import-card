@@ -1,171 +1,255 @@
 <template>
     <div id="enrollment_calls">
 
-        <ul class="side-nav fixed">
-
-            <div class="row">
-                <div class="col s6">
-                    <div class="card">
-                        <div class="card-content" style="text-align: center">
-                            <div style="color: #6d96c5" class="counter">
-                                {{report.total_calls ? report.total_calls : 0}}
-                            </div>
-                            <div class="card-subtitle">
-                                Total Calls
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col s6">
-                    <div class="card">
-                        <div class="card-content" style="text-align: center">
-                            <div style="color: #9fd05f" class="counter">
-                                {{report.no_enrolled ? report.no_enrolled : 0}}
-                            </div>
-                            <div class="card-subtitle">
-                                Enrolled
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col s12">
-                    <div class="card">
-                        <div class="card-content" style="text-align: center">
-                            <div style="color: #6d96c5" class="counter">
-                                {{formatted_total_time_in_system}}
-                            </div>
-                            <div class="card-subtitle">
-                                Time worked
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col s12">
-                    <div class="card">
-                        <div class="card-content">
-                            <ul>
-                                <li class="sidebar-demo-list"><span :title="name"><b>Name:</b> {{name}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="lang"><b>Language:</b> {{lang}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="practice_name"><b>Practice Name:</b> {{practice_name}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b> {{providerFullName}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="provider_pronunciation"><b>Provider Pronunciation:</b> {{provider_pronunciation}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="provider_sex"><b>Provider Sex:</b> {{provider_sex}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="providerPhone"><b>Provider Phone:</b> {{providerPhone}}</span></li>
-                                <li class="sidebar-demo-list"><span :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col s12">
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="row">
-
-                                <div v-if="callError">
-                                    <blockquote>Call Status: {{ callError }}</blockquote>
+        <div class="side-nav fixed">
+            <div style="height: 150%; overflow-y: hidden">
+                <div class="row">
+                    <div class="col s6">
+                        <div class="card">
+                            <div class="card-content" style="text-align: center">
+                                <div style="color: #6d96c5" class="counter">
+                                    {{report.total_calls ? report.total_calls : 0}}
                                 </div>
-
-                                <div v-if="onCall === true" style="text-align: center">
-
-                                    <blockquote>Call Status: {{ this.callStatus }}</blockquote>
-                                    <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
-                                            class="material-icons left">call_end</i>Hang Up</a>
+                                <div class="card-subtitle">
+                                    Total Calls
                                 </div>
-                                <div v-else style="text-align: center">
-                                    <div v-if="home_phone !== ''" class="col s4">
+                            </div>
+                        </div>
+                    </div>
 
-                                        <div class="waves-effect waves-light btn call-button"
-                                             v-on:click="call(home_phone, 'Home')">
-                                            <i class="material-icons">phone</i>
-                                        </div>
-                                        <div>
-                                            Home
-                                        </div>
+                    <div class="col s6">
+                        <div class="card">
+                            <div class="card-content" style="text-align: center">
+                                <div style="color: #9fd05f" class="counter">
+                                    {{report.no_enrolled ? report.no_enrolled : 0}}
+                                </div>
+                                <div class="card-subtitle">
+                                    Enrolled
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                                    </div>
-                                    <div v-if="cell_phone !== ''" class="col s4">
+                </div>
 
-                                        <div class="waves-effect waves-light btn call-button"
-                                             v-on:click="call(cell_phone, 'Cell')">
-                                            <i class="material-icons">phone</i>
-
-                                        </div>
-                                        <div>
-                                            Cell
-                                        </div>
-
-                                    </div>
-                                    <div v-if="other_phone !== ''" class="col s4">
-
-                                        <div class="waves-effect waves-light btn call-button"
-                                             v-on:click="call(other_phone, 'Other')">
-                                            <i class="material-icons">phone</i>
-
-                                        </div>
-
-                                        <div>
-                                            Other
-                                        </div>
-
-
-                                    </div>
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card">
+                            <div class="card-content" style="text-align: center">
+                                <div style="color: #6d96c5" class="counter">
+                                    {{formatted_total_time_in_system}}
+                                </div>
+                                <div class="card-subtitle">
+                                    Time worked
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col s12">
-                    <div class="card">
-                        <div class="card-content">
-                            <ul class="action-buttons">
-                                <li>
-                                    <a class="waves-effect waves-light btn modal-trigger" href="#consented">
-                                        Consented
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="waves-effect waves-light btn modal-trigger" href="#utc"
-                                       style="background: #ecb70e">
-                                        Unavailable
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="waves-effect waves-light btn modal-trigger" href="#rejected"
-                                       style="background: red;">
-                                        Hard Declined
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="waves-effect waves-light btn modal-trigger" href="#rejected"
-                                       v-on:click="softReject()"
-                                       style="background: #ff0000c2;">
-                                        Soft Declined
-                                    </a>
-                                </li>
-                            </ul>
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card">
+                            <div class="card-content">
+                                <ul>
+                                    <li class="sidebar-demo-list"><span :title="name"><b>Name:</b> {{name}}</span></li>
+                                    <li class="sidebar-demo-list"><span :title="lang"><b>Language:</b> {{lang}}</span>
+                                    </li>
+                                    <li class="sidebar-demo-list"><span :title="practice_name"><b>Practice Name:</b> {{practice_name}}</span>
+                                    </li>
+                                    <li class="sidebar-demo-list"><span :title="providerFullName"><b>Provider Name:</b> {{providerFullName}}</span>
+                                    </li>
+                                    <li v-if="provider_pronunciation_exists" class="sidebar-demo-list"><span
+                                            :title="provider_pronunciation"><b>Provider Pronunciation:</b> {{provider_pronunciation}}</span>
+                                    </li>
+                                    <li v-if="provider_sex_exists" class="sidebar-demo-list"><span
+                                            :title="provider_sex"><b>Provider Sex:</b> {{provider_sex}}</span>
+                                    </li>
+                                    <li class="sidebar-demo-list"><span :title="providerPhone"><b>Provider Phone:</b> {{providerPhone}}</span>
+                                    </li>
+                                    <li class="sidebar-demo-list"><span
+                                            :title="last_office_visit_at"><b>Last Office Visit:</b> {{last_office_visit_at}}</span>
+                                    </li>
+                                    <li class="sidebar-demo-list"><span
+                                            :title="last_attempt_at"><b>Last Attempt:</b> {{last_attempt_at}}</span>
+                                    </li>
+                                    <li class="sidebar-demo-list"><span
+                                            :title="attempt_count"><b>Attempt Count:</b> {{attempt_count}}</span>
+                                    </li>
+                                    <li class="sidebar-demo-list"><span> </span>
+                                    </li>
+                                    <li class="sidebar-demo-list"><span
+                                            :title="address"><b>Address:</b> {{address}}</span>
+                                    </li>
+                                    <li v-if="address_2_exists" class="sidebar-demo-list"><span
+                                            :title="address_2"><b>2nd Address:</b> {{address_2}}</span>
+                                    </li>
+                                    <li v-if="home_phone_exists" class="sidebar-demo-list"><span
+                                            :title="home_phone"><b>Home Phone:</b> {{home_phone}}</span>
+                                    </li>
+                                    <li v-if="cell_phone_exists" class="sidebar-demo-list"><span
+                                            :title="cell_phone"><b>Cell Phone:</b> {{cell_phone}}</span>
+                                    </li>
+                                    <li v-if="other_phone_exists" class="sidebar-demo-list"><span
+                                            :title="other_phone"><b>Other Phone:</b> {{other_phone}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card">
+                            <div class="card-content">
+                                <p style="text-align: center; padding-bottom: 10px"><strong>Suggested Family
+                                    Members</strong></p>
+                                <div v-if="this.family_loading">
+                                    <loader style="margin-left: 45%"/>
+                                </div>
+                                <div v-else>
+                                    <div v-if="showBanner" class="banner-class">{{this.bannerText}}</div>
+                                    <div v-else>
+                                        <div v-if="suggested_family_members_exist">
+                                            <p style="font-weight: lighter; padding-left: 15px">Check to confirm family
+                                                member(s):</p>
+                                            <hr>
+                                            <div class="scrollable-list">
+
+                                                <div v-for="member in suggested_family_members"
+                                                     class="sidebar-demo-list"
+                                                     style="height: auto !important; white-space: initial">
+                                                    <label>
+                                                        <input type="checkbox" :value="member.id"
+                                                               style="position: relative"
+                                                               v-model="confirmed_family_members"
+                                                        >
+                                                        <span>{{member.first_name}} {{member.last_name}}</span>
+                                                        <div style="padding-left: 10px">
+                                                            <div><strong>Addresses:</strong>{{member.addresses.value}}
+                                                            </div>
+                                                            <div><strong>Phones:</strong>{{member.phones.value}}</div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <p style="font-weight: lighter; padding-left: 15px">No suggested family
+                                                members found.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="row">
+
+                                    <div v-if="callError">
+                                        <blockquote>Call Status: {{ callError }}</blockquote>
+                                    </div>
+
+                                    <div v-if="onCall === true" style="text-align: center">
+
+                                        <blockquote>Call Status: {{ this.callStatus }}</blockquote>
+                                        <a v-on:click="hangUp" class="waves-effect waves-light btn"
+                                           style="background: red"><i
+                                                class="material-icons left">call_end</i>Hang Up</a>
+                                    </div>
+                                    <div v-else style="text-align: center">
+                                        <div v-if="home_phone !== ''" class="col s4">
+
+                                            <div class="waves-effect waves-light btn call-button"
+                                                 v-on:click="call(home_phone, 'Home')">
+                                                <i class="material-icons">phone</i>
+                                            </div>
+                                            <div>
+                                                Home
+                                            </div>
+
+                                        </div>
+                                        <div v-if="cell_phone !== ''" class="col s4">
+
+                                            <div class="waves-effect waves-light btn call-button"
+                                                 v-on:click="call(cell_phone, 'Cell')">
+                                                <i class="material-icons">phone</i>
+
+                                            </div>
+                                            <div>
+                                                Cell
+                                            </div>
+
+                                        </div>
+                                        <div v-if="other_phone !== ''" class="col s4">
+
+                                            <div class="waves-effect waves-light btn call-button"
+                                                 v-on:click="call(other_phone, 'Other')">
+                                                <i class="material-icons">phone</i>
+
+                                            </div>
+
+                                            <div>
+                                                Other
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card">
+                            <div class="card-content">
+                                <ul class="action-buttons">
+                                    <li>
+                                        <a class="waves-effect waves-light btn modal-trigger" href="#consented">
+                                            Consented
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="waves-effect waves-light btn modal-trigger" href="#utc"
+                                           style="background: #ecb70e">
+                                            Unavailable
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="waves-effect waves-light btn modal-trigger" href="#rejected"
+                                           style="background: red;">
+                                            Hard Declined
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="waves-effect waves-light btn modal-trigger" href="#rejected"
+                                           v-on:click="softReject()"
+                                           style="background: #ff0000c2;">
+                                            Soft Declined
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </ul>
+
+        </div>
 
         <div style="margin-left: 26%;">
 
-            <div style="padding: 0px 10px; font-size: 16px;">
+            <div class="padding-top-5" style="font-size: 16px;">
 
                 <blockquote v-if="last_call_outcome !== ''">
                     Last Call Outcome: {{ last_call_outcome }}
@@ -175,7 +259,7 @@
                     </span>
                 </blockquote>
 
-                <div class="padding-top-5 font-size-20">
+                <div class="font-size-20">
                     <p v-html="care_ambassador_script"></p>
                 </div>
             </div>
@@ -190,7 +274,7 @@
 
         <!-- Success / Patient Consented -->
         <div id="consented" class="modal confirm modal-fixed-footer consented_modal">
-            <form method="post" id="consented_form" :action="consentedUrl">
+            <form method="post" id="consented_form" :action="consentedUrl" v-on:submit="handleSubmit($event)">
 
                 <input type="hidden" name="_token" :value="csrf">
 
@@ -206,7 +290,7 @@
                                 contacto?
                             </template>
                             <template v-else>
-                                Do you want us to call you directly or is there someone else we should contact?
+                                Is this the best number for you to be reached?
                             </template>
                         </div>
                         <br>
@@ -216,7 +300,8 @@
                         <div class="col s6 m3 select-custom">
                             <label for="home_radio"
                                    :class="{valid: home_is_valid, invalid: home_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="home_radio" value="home"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio"
+                                       id="home_radio" value="home"
                                        :checked="home_phone != ''"/>
                                 <span class="phone-label">{{home_phone_label}}</span>
 
@@ -227,7 +312,8 @@
 
                             <label for="cell_radio"
                                    :class="{valid: cell_is_valid, invalid: cell_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="cell_radio" value="cell"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio"
+                                       id="cell_radio" value="cell"
                                        :checked="home_phone == '' && cell_phone != ''"/>
                                 <span class="phone-label">{{cell_phone_label}}</span></label>
                             <input class="input-field" name="cell_phone" id="cell_phone" v-model="cell_phone"/>
@@ -236,7 +322,8 @@
 
                             <label for="other_radio"
                                    :class="{valid: other_is_valid, invalid: other_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="other_radio" value="other"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio"
+                                       id="other_radio" value="other"
                                        :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
                                 <span class="phone-label">{{other_phone_label}}</span>
                             </label>
@@ -245,7 +332,8 @@
                         <div class="col s6 m3 select-custom">
                             <label for="agent_radio"
                                    :class="{valid: agent_is_valid, invalid: agent_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="agent_radio" value="agent"
+                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio"
+                                       id="agent_radio" value="agent"
                                        :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
                                 <span class="phone-label">{{agent_phone_label}}</span>
                             </label>
@@ -253,49 +341,27 @@
                         </div>
                     </div>
                     <div v-if="preferred_phone == 'agent' " class="row">
-                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out other contact's details</b></blockquote>
-                        <div  class="col s6 m4">
-                            <label for="agent_name" class="label">Other Contact's Name</label>
+                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out alternative contact person's
+                            details</b></blockquote>
+                        <div class="col s6 m4">
+                            <label for="agent_name" class="label">Alternative Contact Person's Name</label>
                             <input class="input-field" name="agent_name" id="agent_name" v-model="agent_name"/>
                         </div>
                         <div class="col s6 m4">
-                            <label for="agent_email" class="label">Other Contact's Email</label>
+                            <label for="agent_email" class="label">Alternative Contact Person's Email</label>
                             <input class="input-field" name="agent_email" id="agent_email" v-model="agent_email"/>
                         </div>
                         <div class="col s6 m4">
-                            <label for="agent_relationship" class="label">Other Contact's Relationship to the Patient</label>
-                            <input class="input-field" name="agent_relationship" id="agent_relationship"
-                                   v-model="agent_relationship"/>
-                        </div>
-                        <div class="col s6 m3 select-custom">
-                            <label for="agent_radio"
-                                   :class="{valid: agent_is_valid, invalid: agent_is_invalid}">
-                                <input class="with-gap" v-model="preferred_phone" name="preferred_phone" type="radio" id="agent_radio" value="agent"
-                                       :checked="home_phone == '' && cell_phone == '' && other_phone != ''"/>
-                                <span class="phone-label">{{agent_phone_label}}</span>
-                            </label>
-                            <input class="input-field" name="agent_phone" id="agent_phone" v-model="agent_phone"/>
-                        </div>
-                    </div>
-                    <div v-if="preferred_phone == 'agent' " class="row">
-                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out other contact's details</b></blockquote>
-                        <div  class="col s6 m4">
-                            <label for="agent_name" class="label">Other Contact's Name</label>
-                            <input class="input-field" name="agent_name" id="agent_name" v-model="agent_name"/>
-                        </div>
-                        <div class="col s6 m4">
-                            <label for="agent_email" class="label">Other Contact's Email</label>
-                            <input class="input-field" name="agent_email" id="agent_email" v-model="agent_email"/>
-                        </div>
-                        <div class="col s6 m4">
-                            <label for="agent_relationship" class="label">Other Contact's Relationship to the Patient</label>
+                            <label for="agent_relationship" class="label">Alternative Contact Person's Relationship to the
+                                Patient</label>
                             <input class="input-field" name="agent_relationship" id="agent_relationship"
                                    v-model="agent_relationship"/>
                         </div>
                     </div>
                     <div class="row">
                         <blockquote style="border-left: 5px solid #26a69a;">
-                            <span class="consented_title"><b>II.</b></span> Please confirm the patient’s mailing address and email address:
+                            <span class="consented_title"><b>II.</b></span> Please confirm the patient’s mailing address
+                            and email address:
                         </blockquote>
 
                         <div class="col s12 m3 select-custom">
@@ -332,7 +398,7 @@
                         </blockquote>
                         <div class="col s12 m3">
                             <label for="days[]" class="label">Day</label>
-                            <select  class="do-not-close" name="days[]" id="days[]" multiple>
+                            <select class="do-not-close" v-model="days" name="days[]" id="days[]" multiple>
                                 <option disabled selected>Days:</option>
                                 <option value="1">Monday</option>
                                 <option value="2">Tuesday</option>
@@ -343,7 +409,7 @@
                         </div>
                         <div class="col s12 m3">
                             <label for="times[]" class="label">Times</label>
-                            <select class="do-not-close" name="times[]" id="times[]" multiple>
+                            <select v-model="times" class="do-not-close" name="times[]" id="times[]" multiple>
                                 <option disabled selected>Times:</option>
                                 <option value="10:00-12:00">10AM - Noon</option>
                                 <option value="12:00-15:00">Noon - 3PM</option>
@@ -370,6 +436,13 @@
                                 A registered nurse will call you in the coming days from {{practice_phone}}.
                                 Please save this number so you accept the call when he or she rings.
                                 I am so glad we were able to connect! Have a great day!
+
+                                That’s all I need, a registered nurse will give you a call from this same number within the next week or so to introduce themselves.
+                                Do you want me to give you the number so you can be sure to save it on your phone or somewhere else?<br><br>
+
+                                <strong>If yes:</strong> Alright, the number is <strong>{{practice_phone}}</strong>.<br><br>
+
+                                As a reminder, you can withdraw at anytime, but I think you will see a lot of benefits from this program. Thank you for your time and I hope you have a great rest of your day!
                             </template>
                         </div>
                     </blockquote>
@@ -378,11 +451,12 @@
                     <input type="hidden" name="enrollee_id" :value="enrolleeId">
                     <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                     <input type="hidden" name="time_elapsed" :value="time_elapsed">
+                    <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
 
                 </div>
                 <div class="modal-footer">
-                    <button name="submit" type="submit"
-                            :disabled="home_is_invalid || cell_is_invalid || other_is_invalid"
+                    <button name="btnSubmit" type="submit"
+                            :disabled="home_is_invalid || cell_is_invalid || other_is_invalid || preferred_phone_empty || contact_day_or_time_empty"
                             class="modal-action waves-effect waves-light btn">Confirm and call next patient
                     </button>
                     <div v-if="onCall === true" style="text-align: center">
@@ -395,7 +469,7 @@
 
         <!-- Unable To Contact -->
         <div id="utc" class="modal confirm modal-fixed-footer">
-            <form method="post" id="utc_form" :action="utcUrl">
+            <form method="post" id="utc_form" :action="utcUrl" v-on:submit="handleSubmit($event)">
 
                 <input type="hidden" name="_token" :value="csrf">
 
@@ -403,11 +477,10 @@
                     <h4 style="color: #47beab">Please provide some details:</h4>
                     <blockquote style="border-left: 5px solid #26a69a;">
                         <b>If Caller Reaches Machine, Leave Voice Message: </b><br>
-                        Hi, this is {{userFullName}} calling on behalf of {{providerFullName}} at {{practice_name}}.
-                        The doctor(s) have invited you to their new personalized care management program.
-                        Please give us a call at {{practice_phone}} to learn more.
-                        Please note there is nothing to worry about, this program just lets your doctor take better care of you between visits.
-                        Again the number is {{practice_phone}}.
+                        Hi {{name}}, this is {{userFullName}} calling on behalf of {{providerFullName}} at {{practice_name}}.
+                        The reason for my call is that {{providerFullName}} has a new benefit they are offering patients,
+                        to improve access to your care team. You should have already received information about it in the mail.
+                        If you'd be kind enough to call us back at {{practice_phone}} to walk you through it, that would be great.
                     </blockquote>
 
                     <div class="row">
@@ -437,10 +510,11 @@
                     <input type="hidden" name="enrollee_id" :value="enrolleeId">
                     <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                     <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
+                    <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
 
                 </div>
                 <div class="modal-footer">
-                    <button name="submit" type="submit"
+                    <button name="btnSubmit" type="submit"
                             class="modal-action waves-effect waves-light btn">Call Next Patient
                     </button>
                     <div v-if="onCall === true" style="text-align: center">
@@ -453,7 +527,8 @@
 
         <!-- Rejected -->
         <div id="rejected" class="modal confirm modal-fixed-footer" style="height: 50% !important;">
-            <form method="post" id="rejected_form" :action="rejectedUrl">
+            <form ref="rejected" method="post" id="rejected_form" :action="rejectedUrl"
+                  v-on:submit="handleSubmit($event)">
 
                 <input type="hidden" name="_token" :value="csrf">
 
@@ -490,10 +565,10 @@
                     <input type="hidden" name="enrollee_id" :value="enrolleeId">
                     <input type="hidden" name="total_time_in_system" :value="total_time_in_system_running">
                     <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
-
+                    <input type="hidden" name="confirmed_family_members" v-model="confirmed_family_members">
                 </div>
                 <div class="modal-footer" style="padding-right: 60px">
-                    <button name="submit" type="submit"
+                    <button name="btnSubmit" type="submit"
                             class="modal-action waves-effect waves-light btn">Call Next Patient
                     </button>
                     <div v-if="onCall === true" style="text-align: center">
@@ -503,6 +578,41 @@
                 </div>
             </form>
         </div>
+
+        <!-- Suggested Family Members modal -->
+        <div id="suggested-family-members-modal" class="modal confirm-family-members-modal modal-fixed-footer"
+             href="#suggested-family-members-modal">
+
+            <div class="modal-content" style="overflow-y: hidden !important">
+                <div>
+                    <h5 style="color: #47beab">Are you sure you want to proceed without confirming any family members
+                        for this patient?</h5>
+                    <blockquote style="border-left: 5px solid #26a69a;">Check to confirm family member(s):</blockquote>
+                    <hr>
+                    <div class="scrollable-list-modal">
+                        <ul>
+                            <li v-for="member in suggested_family_members" class="" style="height: auto !important;">
+                                <label>
+                                    <input type="checkbox" :value="member.id" style="position: relative"
+                                           v-model="confirmed_family_members">
+                                    <span>{{member.first_name}} {{member.last_name}}</span>
+                                    <ul style="padding-left: 10px">
+                                        <li><strong>Addresses:</strong>{{member.addresses.value}}</li>
+                                        <li><strong>Phones:</strong>{{member.phones.value}}</li>
+                                    </ul>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding-right: 60px">
+                <button class="modal-action waves-effect waves-light btn" type="submit"
+                        v-on:click="submitPendingForm()">Proceed
+                </button>
+            </div>
+        </div>
+
 
         <!-- Enrollment tips -->
         <div id="tips" class="modal confirm modal-fixed-footer">
@@ -552,7 +662,7 @@
     import NoCoPayEn from './call-scripts/no-copay-en';
     import CoPayEs from './call-scripts/copay-es';
     import NoCoPayEs from './call-scripts/no-copay-es';
-
+    import Loader from '../loader.vue';
     //Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
     //for some reason i could not pass these as props from blade.php
@@ -572,6 +682,7 @@
             'no-copay-en': NoCoPayEn,
             'copay-es': CoPayEs,
             'no-copay-es': NoCoPayEs,
+            'loader': Loader,
         },
         computed: {
             enrolleeId: function () {
@@ -621,19 +732,19 @@
                 }
 
                 if (this.validatePhone(this.other_phone)) {
-                    return 'Other Phone Valid!';
+                    return 'Other Phone (Valid)';
                 }
 
-                return 'Other Phone Invalid..'
+                return 'Other Phone (Invalid)'
             },
             agent_phone_label: function () {
                 if (this.agent_phone == '') {
-                    return 'Other Contact\'s Phone Unknown...';
+                    return 'Alternative Contact Person\'s Phone Unknown...';
                 }
                 if (this.validatePhone(this.agent_phone)) {
-                    return 'Other Contact\'s Phone Valid!';
+                    return 'Alternative Contact Person\'s Phone (Valid)';
                 }
-                return 'Other Contact\'s Phone Invalid..'
+                return 'Alternative Contact Person\'s Phone (Invalid)'
             },
             other_is_valid: function () {
                 return this.validatePhone(this.other_phone)
@@ -655,10 +766,10 @@
                 }
 
                 if (this.validatePhone(this.home_phone)) {
-                    return 'Home Phone Valid!';
+                    return 'Home Phone (Valid)';
                 }
 
-                return 'Home Phone Invalid..'
+                return 'Home Phone (Invalid)'
             },
             home_is_valid: function () {
                 return this.validatePhone(this.home_phone)
@@ -674,10 +785,10 @@
                 }
 
                 if (this.validatePhone(this.cell_phone)) {
-                    return 'Cell Phone Valid!';
+                    return 'Cell Phone (Valid)';
                 }
 
-                return 'Cell Phone Invalid..'
+                return 'Cell Phone (Invalid)'
             },
             cell_is_valid: function () {
                 return this.validatePhone(this.cell_phone)
@@ -688,24 +799,30 @@
             utc_requested_callback() {
                 return this.utc_reason === 'requested callback';
             },
-            utc_other(){
+            utc_other() {
                 return this.utc_reason === 'other';
             },
-            rejected_other(){
+            rejected_other() {
                 return this.reason === 'other';
             },
-            provider_pronunciation: function(){
+            provider_pronunciation_exists() {
+                return providerInfo ? (!!providerInfo.pronunciation) : false;
+            },
+            provider_sex_exists() {
+                return providerInfo ? (!!providerInfo.sex) : false;
+            },
+            provider_pronunciation: function () {
                 return providerInfo ? (providerInfo.pronunciation ? providerInfo.pronunciation : 'N/A') : 'N/A';
             },
-            provider_sex: function(){
+            provider_sex: function () {
                 return providerInfo ? (providerInfo.sex ? providerInfo.sex : 'N/A') : 'N/A';
             },
-            last_office_visit_at: function(){
-                return enrollee.last_encounter ? enrollee.last_encounter: 'N/A';
+            last_office_visit_at: function () {
+                return enrollee.last_encounter ? enrollee.last_encounter : 'N/A';
             },
-            care_ambassador_script: function(){
+            care_ambassador_script: function () {
 
-                if(! script){
+                if (!script) {
                     return 'Script not found.'
                 }
                 let ca_script = script.body;
@@ -717,10 +834,43 @@
                     .replace(/{enroller}/gi, userFullName);
 
                 return processed_script;
+            },
+            suggested_family_members_exist: function () {
+                return Array.isArray(this.suggested_family_members) && this.suggested_family_members.length > 0;
+            },
+            attempt_count() {
+                return enrollee.attempt_count || 0;
+            },
+            last_attempt_at() {
+                return enrollee.last_attempt_at || 'N/A';
+            },
+            address_2_exists() {
+                return !!enrollee.address_2;
+            },
+            home_phone_exists() {
+                return !!enrollee.home_phone;
+            },
+            cell_phone_exists() {
+                return !!enrollee.cell_phone;
+            },
+            other_phone_exists() {
+                return !!enrollee.other_phone;
+            },
+            preferred_phone_empty(){
+                return ! this.preferred_phone;
+            },
+            contact_day_or_time_empty(){
+                return this.days.length <= 1 || this.times.length <= 1
             }
+
         },
         data: function () {
             return {
+                showBanner: false,
+                bannerText: '',
+                bannerType: 'info',
+
+                family_loading: false,
                 csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 userFullName: userFullName,
                 providerFullName: providerFullName,
@@ -765,9 +915,19 @@
                 agent_name: '',
                 agent_email: '',
                 agent_relationship: '',
+
+                suggested_family_members: [],
+                confirmed_family_members: [],
+
+                pending_form: null,
+
+                days: ['Days:'],
+                times: ['Times:']
             };
         },
         mounted: function () {
+
+            this.family_loading = true;
 
             this.start_time = Date.now();
             this.total_time_in_system_running = this.total_time_in_system;
@@ -783,6 +943,9 @@
             $(document).ready(function () {
 
                 M.Modal.init($('#consented'));
+
+                M.Modal.init($('#suggested-family-members-modal'));
+
                 M.Modal.init($('#utc'), {
                     onOpenEnd: function () {
                         M.Datepicker.init($('#utc_callback'), {
@@ -837,8 +1000,38 @@
                 }
 
             });
+
+            this.getSuggestedFamilyMembers();
         },
         methods: {
+            handleSubmit(event) {
+                if (this.suggested_family_members.length > 0 && this.confirmed_family_members.length == 0) {
+                    event.preventDefault();
+                    this.pending_form = event.target;
+                    let modal = M.Modal.getInstance(document.getElementById('suggested-family-members-modal'));
+                    modal.open();
+                }
+            },
+            submitPendingForm() {
+                this.pending_form.submit();
+            },
+            getSuggestedFamilyMembers() {
+                return this.axios
+                    .get(rootUrl('/enrollment/get-suggested-family-members/' + enrollee.id))
+                    .then(response => {
+                        this.family_loading = false;
+                        this.suggested_family_members = response.data.suggested_family_members;
+                        this.confirmed_family_members = response.data.suggested_family_members.map(function (member){
+                            return member.is_confirmed ? member.id : null;
+                        }).filter(x => !!x);
+                    })
+                    .catch(err => {
+                        this.family_loading = false;
+                        this.bannerText = err.response.data.message;
+                        this.bannerType = 'danger';
+                        this.showBanner = true;
+                    });
+            },
 
             getTimeDiffInSecondsFromMS(millis) {
                 return Math.round(Date.now() - millis) / 1000;
@@ -972,6 +1165,11 @@
 
 </script>
 <style>
+    .banner-class {
+        background-color: lightpink;
+        padding: 15px;
+        border-radius: 5px;
+    }
 
     .phone-label {
         margin-bottom: 10px;
@@ -984,15 +1182,19 @@
         top: 4% !important;
     }
 
+    .confirm-family-members-modal {
+        max-height: 80% !important;
+        overflow: auto;
+    }
+
     .sidebar-demo-list {
-        height: 24px;
+        min-height: 24px;
         width: 278px;
         font-size: 16px;
         padding-left: 15px;
         line-height: 20px !important;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
+        text-overflow: initial;
+        overflow: auto;
     }
 
     .valid {
@@ -1002,7 +1204,6 @@
     .invalid {
         color: red;
     }
-
 
     .padding-top-5 {
         padding-top: 5%;
@@ -1028,6 +1229,8 @@
         width: 25%;
         margin-top: 65px;
         position: fixed;
+        max-height: 90%;
+        overflow: scroll;
     }
 
     .side-nav a {
@@ -1066,6 +1269,18 @@
 
     .phone-label {
         margin-bottom: 10px;
+    }
+
+    div.scrollable-list {
+        height: 200px;
+        overflow-y: auto;
+
+    }
+
+    .scrollable-list-modal {
+        height: calc(90% - 86px);
+        width: 100%;
+        overflow-y: auto;
     }
 
 </style>

@@ -23,6 +23,7 @@ class SendCareDocument extends Notification
     private $channels = [
         'database',
     ];
+
     private $filePath;
     private $media;
     private $patient;
@@ -89,7 +90,7 @@ class SendCareDocument extends Notification
     {
         return [
             'channels'   => $this->via($notifiable),
-            'sender_id'  => auth()->user()->id,
+            'sender_id'  => auth()->user() ? auth()->user()->id : 'redis',
             'patient_id' => $this->patient->id,
             'media_id'   => $this->media->id,
         ];

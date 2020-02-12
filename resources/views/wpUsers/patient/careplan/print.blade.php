@@ -13,7 +13,7 @@ if (isset($patient) && ! empty($patient)) {
 
 @if(!isset($isPdf))
     @section('title', 'Care Plan View/Print')
-    @section('activity', 'Care Plan View/Print')
+@section('activity', 'Care Plan View/Print')
 @endif
 
 @section('content')
@@ -41,7 +41,8 @@ if (isset($patient) && ! empty($patient)) {
         <meta name="provider-destroy-route"
               content="{{ route('user.care-team.destroy', ['userId' => $patient->id,'id'=>'']) }}">
 
-        <meta name="provider-update-route" content="{{ route('user.care-team.update', ['userId' => $patient->id,'id'=>'']) }}">
+        <meta name="provider-update-route"
+              content="{{ route('user.care-team.update', ['userId' => $patient->id,'id'=>'']) }}">
         <meta name="providers-search" content="{{ route('providers.search') }}">
         <meta name="created_by" content="{{auth()->id()}}">
         <meta name="patient_id" content="{{$patient->id}}">
@@ -181,23 +182,28 @@ if (isset($patient) && ! empty($patient)) {
                                             </template>
 
                                             @if ( ($patient->getCarePlanStatus() == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->getCarePlanStatus() == 'draft' && auth()->user()->canQAApproveCarePlans()) )
-                                                <form action="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}"
+                                                <form id="form-approve"
+                                                      action="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}"
                                                       method="POST" style="display: inline">
                                                     {{ csrf_field() }}
-                                                    <input class="btn btn-info btn-sm inline-block"
-                                                   aria-label="..."
-                                                   role="button"
-                                                       type="submit" value="Approve">
+                                                    <button class="btn btn-info btn-sm inline-block"
+                                                            aria-label="..."
+                                                            form="form-approve"
+                                                            type="submit"
+                                                            role="button">
+                                                        Approve
+                                                    </button>
                                                 </form>
 
                                                 @if(auth()->user()->isProvider())
-                                                    <form action="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
+                                                    <form id="form-approve-next" action="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}"
                                                           method="POST" style="display: inline">
                                                         {{ csrf_field() }}
                                                         <input class="btn btn-success btn-sm inline-block"
-                                                       aria-label="..."
-                                                       type="submit"
-                                                       role="button" value="Approve
+                                                               aria-label="..."
+                                                               type="submit"
+
+                                                               role="button" value="Approve
                                                         and View Next">
                                                     </form>
 
@@ -285,7 +291,7 @@ if (isset($patient) && ! empty($patient)) {
                         </div>
                     @endif
 
-                    @if(!isset($isPdf) && !empty($patient->patientInfo->general_comment))
+                    @if(!isset($isPdf) && !auth()->user()->isParticipant() && !empty($patient->patientInfo->general_comment))
                         <div class="row"></div>
                         <div class="row gutter">
                             <div class="col-xs-12 print-row">
@@ -494,6 +500,7 @@ if (isset($patient) && ! empty($patient)) {
                 </others>
                 <!-- /OTHER NOTES -->
                 <!-- /OTHER INFORMATION -->
+                <diabetes-check-modal></diabetes-check-modal>
             </section>
         </div>
         @include('partials.confirm-modal')
@@ -505,6 +512,19 @@ if (isset($patient) && ! empty($patient)) {
                 </script>
             @endpush
         @endif
+        @push('scripts')
+            <script>
+                let patientProblemNames = Object.keys(@json($problems));
+                App.$emit('set-patient-problems', patientProblemNames)
+
+                function notEligibleClick() {
+                    if (confirm('CAUTION: Clicking "confirm" will delete this patient’s entire record from Care Plan Manager. This action cannot be undone. Do you want to delete this patients entire record?')) {
+                        document.getElementById('not-eligible-form').submit();
+                    }
+                }
+
+            </script>
+        @endpush
 
         @if ($recentSubmission)
             @push('scripts')

@@ -19,6 +19,7 @@ use App\Rules\PatientEmailBodyDoesNotContainPhi;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
+use App\Services\CPM\CpmProblemService;
 use App\Services\NoteService;
 use App\Services\PatientCustomEmail;
 use Carbon\Carbon;
@@ -116,9 +117,9 @@ class NotesController extends Controller
             $existingNote = Note::findOrFail($noteId);
         } else {
             $existingNote = Note::where('patient_id', '=', $patientId)
-                ->where('author_id', '=', $author_id)
-                ->where('status', '=', Note::STATUS_DRAFT)
-                ->first();
+                                ->where('author_id', '=', $author_id)
+                                ->where('status', '=', Note::STATUS_DRAFT)
+                                ->first();
         }
 
         if ($existingNote && $existingNote->author_id !== $author_id) {
@@ -134,21 +135,21 @@ class NotesController extends Controller
             $nurse_patient_tasks = [];
         } else {
             $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
-                ->where('type', '=', 'task')
-                ->where('inbound_cpm_id', '=', $patientId)
-                ->where('outbound_cpm_id', '=', $author_id)
-                ->select(
-                    [
-                        'id',
-                        'type',
-                        'sub_type',
-                        'attempt_note',
-                        'scheduled_date',
-                        'window_start',
-                        'window_end',
-                    ]
-                )
-                ->get();
+                                       ->where('type', '=', 'task')
+                                       ->where('inbound_cpm_id', '=', $patientId)
+                                       ->where('outbound_cpm_id', '=', $author_id)
+                                       ->select(
+                                           [
+                                               'id',
+                                               'type',
+                                               'sub_type',
+                                               'attempt_note',
+                                               'scheduled_date',
+                                               'window_start',
+                                               'window_end',
+                                           ]
+                                       )
+                                       ->get();
         }
 
         $isCareCoach = Auth::user()->isCareCoach();
@@ -200,6 +201,7 @@ class NotesController extends Controller
             'patientWithdrawnReason' => $patientWithdrawnReason,
             'note'                   => $existingNote,
             'call'                   => $existingCall,
+            'cpmProblems'            => (new CpmProblemService())->all(),
         ];
 
         return view('wpUsers.patient.note.create', $view_data);
@@ -245,28 +247,28 @@ class NotesController extends Controller
 
         $patient = User::with(
             [
-                'activities' => function ($q) use ($date) {
+                'activities'   => function ($q) use ($date) {
                     $q->where('logged_from', '=', 'manual_input')
-                        ->where('performed_at', '>=', $date)
-                        ->with('meta')
-                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type, lv_activities.id'))
-                        ->orderBy('performed_at', 'desc');
+                      ->where('performed_at', '>=', $date)
+                      ->with('meta')
+                      ->groupBy(DB::raw('provider_id, DATE(performed_at),type, lv_activities.id'))
+                      ->orderBy('performed_at', 'desc');
                 },
                 'appointments' => function ($q) use ($date) {
                     $q->where('date', '>=', $date)
-                        ->orderBy('date', 'desc');
+                      ->orderBy('date', 'desc');
                 },
                 'billingProvider',
                 'primaryPractice',
-                'notes' => function ($q) use ($date) {
+                'notes'        => function ($q) use ($date) {
                     $q->where('performed_at', '>=', $date)
-                        ->with(['author', 'call', 'notifications'])
-                        ->orderBy('performed_at', 'desc');
+                      ->with(['author', 'call', 'notifications'])
+                      ->orderBy('performed_at', 'desc');
                 },
                 'patientInfo',
             ]
         )
-            ->findOrFail($patientId);
+                       ->findOrFail($patientId);
 
         //if a patient has no notes for the past 2 months, we load all the results and DON'T display 'show all notes button'
         if ($patient->notes->isEmpty() and false == $showAll) {
@@ -305,16 +307,16 @@ class NotesController extends Controller
         }
 
         $data['providers'] = User::whereIn('id', $session_user->viewableProviderIds())
-            ->pluck('display_name', 'id')->sort();
+                                 ->pluck('display_name', 'id')->sort();
         $data['practices'] = Practice::whereIn('id', $session_user->viewableProgramIds())
-            ->pluck('display_name', 'id')->sort();
+                                     ->pluck('display_name', 'id')->sort();
 
         $start = Carbon::now()->startOfMonth()->subMonth(
             $request->has('range')
                 ? $request->range
                 : 0
         )->format('Y-m-d');
-        $end = Carbon::now()->endOfMonth()->format('Y-m-d');
+        $end   = Carbon::now()->endOfMonth()->format('Y-m-d');
 
         //Check to see whether there are providers to fetch notes for.
         if (isset($providers) && ! empty($providers)) {
@@ -360,7 +362,7 @@ class NotesController extends Controller
         $shouldNotifySupport    = isset($input['notify_circlelink_support']);
 
         $note = Note::where('patient_id', $input['patient_id'])
-            ->findOrFail($input['noteId']);
+                    ->findOrFail($input['noteId']);
 
         $patient = User::findOrFail($patientId);
 
@@ -385,10 +387,10 @@ class NotesController extends Controller
          * @var Note
          */
         $note = Note::with('author')
-            ->where('id', $noteId)
-            ->where('patient_id', $patientId)
-            ->with(['call', 'notifications', 'patient'])
-            ->firstOrFail();
+                    ->where('id', $noteId)
+                    ->where('patient_id', $patientId)
+                    ->with(['call', 'notifications', 'patient'])
+                    ->firstOrFail();
 
         $patient = $note->patient;
 
@@ -482,6 +484,14 @@ class NotesController extends Controller
 
         $patient = User::findOrFail($patientId);
 
+        // validating attested problems by nurse. Checking existence since we are about to attach them below
+        $request->validate([
+            'attested_problems.ccd_problem_id' => 'exists:ccd_problems',
+        ]);
+        $attestedProblems = isset($input['attested_problems'])
+            ? $input['attested_problems']
+            : null;
+
         $editingNoteId = ! empty($input['noteId'])
             ? $input['noteId']
             : null;
@@ -567,12 +577,14 @@ class NotesController extends Controller
                         }
 
                         //'reached' | 'not-reached'
-                        $call->status = $input['call_status'];
+                        $callStatus = $input['call_status'];
+                        $schedulerService->updateCallWithNote($note, $call, $callStatus, $attestedProblems);
 
                         //Updates when the patient was successfully contacted last
                         //use $note->created_at, in case we are editing a note
                         $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
-                        $this->patientRepo->updateCallLogs($patient->patientInfo, Call::REACHED === $call->status, true, $note->performed_at);
+                        $this->patientRepo->updateCallLogs($patient->patientInfo, Call::REACHED === $call->status, true,
+                            $note->performed_at);
                     } else {
                         $call->status = 'done';
                     }
@@ -626,10 +638,10 @@ class NotesController extends Controller
                         $prediction = $schedulerService->updateTodaysCallAndPredictNext(
                             $patient,
                             $note->id,
-                            $call_status
+                            $call_status,
+                            $attestedProblems
                         );
                     }
-
                     // add last contact time regardless of if success
                     $info->last_contact_time = $note->performed_at->format('Y-m-d H:i:s');
                     $info->save();
@@ -749,7 +761,7 @@ class NotesController extends Controller
             route(
                 'patient.note.view',
                 ['patientId' => $patientId, 'noteId' => $noteId]
-            ).'#create-addendum'
+            ) . '#create-addendum'
         );
     }
 
@@ -806,8 +818,8 @@ class NotesController extends Controller
     {
         return collect($getNotesFor)->map(
             function ($for) {
-                $data = explode(':', $for);
-                $selectKey = $data[0];
+                $data                 = explode(':', $for);
+                $selectKey            = $data[0];
                 $practiceOrProviderId = $data[1];
 
                 if ('practice' == $selectKey) {
@@ -817,8 +829,8 @@ class NotesController extends Controller
                 return optional(User::find($practiceOrProviderId))->id;
             }
         )
-            ->flatten()
-            ->all();
+                                    ->flatten()
+                                    ->all();
     }
 
     private function sendPatientEmail($input, $patient, $note)
@@ -863,13 +875,13 @@ class NotesController extends Controller
     private function shouldPrePopulateWithMedications(User $patient)
     {
         return Practice::whereId($patient->program_id)
-            ->where(
-                function ($q) {
-                    $q->where('name', '=', 'phoenix-heart')
-                        ->orWhere('name', '=', 'demo');
-                }
-            )
-            ->exists();
+                       ->where(
+                           function ($q) {
+                               $q->where('name', '=', 'phoenix-heart')
+                                 ->orWhere('name', '=', 'demo');
+                           }
+                       )
+                       ->exists();
     }
 
     private function updatePatientCallWindows(Patient $info, $input)
@@ -891,9 +903,9 @@ class NotesController extends Controller
         $info = $patient->patientInfo;
 
         if (isset($input['ccm_status']) && in_array(
-            $input['ccm_status'],
-            [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL]
-        )) {
+                $input['ccm_status'],
+                [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL]
+            )) {
             $inputCcmStatus = $input['ccm_status'];
             if (Patient::WITHDRAWN === $inputCcmStatus && $patient->onFirstCall(isset($input['welcome_call']) || isset($input['other_call']))) {
                 $inputCcmStatus = Patient::WITHDRAWN_1ST_CALL;

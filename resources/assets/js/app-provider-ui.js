@@ -10,6 +10,8 @@ import VueForm from "vue-form";
 import store from "./store";
 import {ClientTable} from 'vue-tables-2'
 import "vue-trix"
+import EventBus from './admin/time-tracker/comps/event-bus'
+import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
 
 Vue.use(ClientTable, {}, false)
 
@@ -56,6 +58,7 @@ const ServerTimeDisplay = () => import(/* webpackChunkName: "chunk" */ './admin/
 const LoaderComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/loader')
 const PersistentTextArea = () => import(/* webpackChunkName: "chunk-misc" */ './components/persistent-textarea')
 const CareAreasComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/care-areas')
+const DiabetesCheckModalComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/modals/diabetes-check.modal')
 const HealthGoalsComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/health-goals')
 const MedicationsComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/medications')
 const SymptomsComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/symptoms')
@@ -77,15 +80,17 @@ const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2
 const CcdUploader = () => import(/* webpackChunkName: "chunk-ccd-uploader" */ './components/importer/ccd-upload');
 const CcdViewer = () => import(/* webpackChunkName: "chunk-ccd-viewer" */ './components/importer/ccd-viewer');
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
+const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/NurseScheduleCalendar');
+const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/CalendarLoader');
 const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ './../../../Modules/Nurseinvoices/Resources/assets/js/components/dispute-invoice')
 const NurseInvoiceDailyDispute = () => import(/* webpackChunkName: "chunk-nurse" */ './../../../Modules/Nurseinvoices/Resources/assets/js/components/nurseInvoiceDailyDispute');
 const PusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-notifications')
 const PusherSeeAllNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-see-all-notifications')
 const SendEmailToPatientComponent = () => import('./components/send-email-to-patient')
+const AttestCallConditionsModalComponent = () => import(/* webpackChunkName: "chunk-attest-call-conditions" */  './components/attest-call-conditions.modal');
 
-import EventBus from './admin/time-tracker/comps/event-bus'
-import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
 
+Vue.component('attest-call-conditions-modal', AttestCallConditionsModalComponent);
 Vue.component('billing-report', BillingComponent);
 Vue.component('component-proxy', ComponentProxy);
 Vue.component('careTeam', CareTeamComponent);
@@ -119,6 +124,7 @@ Vue.component('allergies', AllergiesComponent);
 Vue.component('social-services', SocialServicesComponent);
 Vue.component('others', OthersComponent);
 Vue.component('misc-modal', MiscModalComponent);
+Vue.component('diabetes-check-modal', DiabetesCheckModalComponent);
 Vue.component('appointments', AppointmentsComponent);
 Vue.component('patient-list', PatientList);
 Vue.component('v-datepicker', DatepickerComponent);
@@ -133,6 +139,8 @@ Vue.component('ccd-viewer', CcdViewer);
 Vue.component('call-mgmt-app-v2', CallMgmtAppV2);
 Vue.component('dispute-nurse-invoice', DisputeNurseInvoice);
 Vue.component('nurse-invoice-daily-dispute', NurseInvoiceDailyDispute);
+Vue.component('nurse-schedule-calendar', NurseScheduleCalendar);
+Vue.component('calendar-loader', CalendarLoader);
 Vue.component('pusher-notifications', PusherNotifications);
 Vue.component('pusher-see-all-notifications', PusherSeeAllNotifications);
 

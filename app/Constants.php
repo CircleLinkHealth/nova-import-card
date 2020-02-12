@@ -62,11 +62,13 @@ class Constants
         'margin-bottom'      => '15',
         'margin-right'       => '0.75',
     ];
-    const SNOMED                     = 'snomed_code';
-    const SNOMED_NAME                = 'SNOMED CT';
+    const SNOMED          = 'snomed_code';
+    const SNOMED_NAME     = 'SNOMED CT';
+    const VIEWING_PATIENT = 'viewing-patient';
     const TRIX_ALLOWABLE_TAGS_STRING = '<div><strong><h1><em><del><blockquote><pre><br><ul><ol><li><span><a>';
     const TRIX_FIELDS                = ['patient-email-body'];
-    const VIEWING_PATIENT            = 'viewing-patient';
+
+
 
     public static function athenaEhrId()
     {
