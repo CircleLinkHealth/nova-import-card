@@ -7,6 +7,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Charts\TotalBillablePatients;
+use App\Constants;
 use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
@@ -102,8 +103,8 @@ class DashboardController extends Controller
         }
 
         return Cache::remember(
-            'chart:clh:total_billable_patients',
-            90,
+            Constants::ADMIN_CHART_CACHE_KEY,
+            1440,
             function () use ($clh) {
                 $period = CarbonPeriod::create(now()->subMonths(3), now());
                 $collections = [];
