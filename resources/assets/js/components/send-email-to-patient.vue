@@ -68,7 +68,8 @@
             handleFile(file) {
             },
             handleAttachmentAdd(event) {
-                //this is to upload as soon as file is selected via ajax
+                //temporary fix
+                this.$refs.patientEmail.$refs.trix.editor.insertLineBreak();
                 let formData = new FormData();
                 let file = event.attachment.file;
                 formData.append("file", file);
