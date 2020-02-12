@@ -47,24 +47,24 @@ class ReviewAppPostDeploy extends Command
     {
         $this->output->note('Running post deploy command');
 
-//        if ( ! app()->environment(['review', 'local', 'testing'])) {
-//            throw new \Exception('Only review and local environments can run this');
-//        }
+        if ( ! app()->environment(['review', 'local', 'testing'])) {
+            throw new \Exception('Only review and local environments can run this');
+        }
+
+        $dbName = config('database.connections.mysql.database');
+
+        $this->output->note("Checking if db [$dbName] exists");
+
+        try {
+            $dbTableExists = User::where('username', 'admin')->exists() && User::where('username', 'nurse')->exists();
+        } catch (\Exception $exception) {
+            $dbTableExists = false;
+        }
 //
-//        $dbName = config('database.connections.mysql.database');
-//
-//        $this->output->note("Checking if db [$dbName] exists");
-//
-//        try {
-//            $dbTableExists = User::where('username', 'admin')->exists() && User::where('username', 'nurse')->exists();
-//        } catch (\Exception $exception) {
-//            $dbTableExists = false;
-//        }
-//
-//        if (false === $dbTableExists) {
-//            $cmd = 'mysql:createdb';
-//            $this->output->note("Running command $cmd");
-//            $this->runCommand(['php', 'artisan', '-vvv', $cmd, $dbName]);
+        if (false === $dbTableExists) {
+            $cmd = 'mysql:createdb';
+            $this->output->note("Running command $cmd");
+            $this->runCommand(['php', 'artisan', '-vvv', $cmd, $dbName]);
 //
 //            $cmd = 'migrate:fresh';
 //            $this->output->note("Running command $cmd");
@@ -77,7 +77,7 @@ class ReviewAppPostDeploy extends Command
 //            $cmd = 'db:seed';
 //            $this->output->note("Running command $cmd");
 //            $this->runCommand(['php', 'artisan', '-vvv', $cmd, '--class=TestSuiteSeeder']);
-//        }
+        }
 
         $this->warn('reviewapp:postdeploy ran');
     }
