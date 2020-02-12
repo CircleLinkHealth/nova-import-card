@@ -72,7 +72,8 @@ class DownloadController extends Controller
         $mediaExport = Media::whereIn('id', $ids)->where('model_type', Practice::class)->whereIn('model_id', auth()->user()->viewableProgramIds())->get();
 
         if ($mediaExport->isNotEmpty()) {
-            return MediaStream::create('Practice Billing Documents.zip')->addMedia($mediaExport);
+            $now = now()->toDateTimeString();
+            return MediaStream::create("Practice Billing Documents downloaded at $now.zip")->addMedia($mediaExport);
         }
     }
 
