@@ -116,7 +116,7 @@ class ChargeableServiceSeeder extends Seeder
         ChargeableService::updateOrCreate([
                                               'code' => 'G2065',
                                           ], [
-                                              'order'       => null,
+                                              'order'       => 9,
                                               'is_enabled'  => true,
                                               'description' => 'PCM: Principal Care Management over 30 Minutes (1 month)',
                                               'amount'      => null,
