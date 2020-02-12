@@ -3,7 +3,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace App\OCR;
+namespace App\UPG;
 
 
 use Carbon\Carbon;

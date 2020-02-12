@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\OCR\UPGPdfCarePlan;
+use App\UPG\UPGPdfCarePlan;
 use Tests\TestCase;
 
 class OcrTest extends TestCase
