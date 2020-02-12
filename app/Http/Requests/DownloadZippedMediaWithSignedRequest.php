@@ -45,4 +45,9 @@ class DownloadZippedMediaWithSignedRequest extends FormRequest
             ],
         ];
     }
+    
+    public function validationData()
+    {
+        return $this->route()->parameters();
+    }
 }
