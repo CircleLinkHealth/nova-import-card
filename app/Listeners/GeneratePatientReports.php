@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\SurveyInstancePivotSaved;
 use App\Jobs\GeneratePatientReportsJob as GenerateReports;
+use App\Survey;
 use App\SurveyInstance;
 use App\User;
 
@@ -22,27 +23,27 @@ class GeneratePatientReports
     /**
      * Handle the event.
      *
-     * @param  SurveyInstancePivotSaved $event
+     * @param SurveyInstancePivotSaved $event
      *
      * @return void
      */
     public function handle(SurveyInstancePivotSaved $event)
     {
         $instance = $event->surveyInstance;
-
+        $surveyName = Survey::whereId($event->surveyInstance->survey_id)->first()->name;
         if ($instance->pivot->status === SurveyInstance::COMPLETED) {
-
             $patient = User::with([
                 'surveyInstances' => function ($i) use ($instance) {
                     $i->forYear($instance->year)
-                      ->where('survey_instances.survey_id', '!=', $instance->survey_id)
-                      ->where('users_surveys.status', SurveyInstance::COMPLETED);
+                        ->where('survey_instances.survey_id', '!=', $instance->survey_id)
+                        ->where('users_surveys.status', SurveyInstance::COMPLETED);
                 },
             ])->find($instance->pivot->user_id);
 
 
             $otherInstance = $patient->surveyInstances->first();
 
+//            Survey::ENROLLEES !== $surveyName
 
             if ($otherInstance) {
                 GenerateReports::dispatch($patient->id, $instance->year)->onQueue('high');

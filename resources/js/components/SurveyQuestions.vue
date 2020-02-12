@@ -168,6 +168,14 @@
                             </question-type-radio>
 
                             <question-type-date
+                                :question="question"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
                                 :read-only="readOnlyMode"
                                 v-if="question.type.type === 'date'">
                             </question-type-date>

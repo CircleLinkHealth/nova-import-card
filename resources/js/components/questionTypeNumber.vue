@@ -127,12 +127,31 @@
         },
 
         methods: {
+            hasSpecialInputFormat() {
+                if (this.hasAnswerType) {
+                    return this.questionOptions[0].hasOwnProperty('input_format');
+                }
+            },
+
+            checkRequiredFormat(inputVal) {
+                const requiredFormat = inputVal.input_format;
+                if (requiredFormat === 'phone') {
+                    // return inputVal.length === 10;
+                    return true;
+                }
+            },
+
             handleAnswer() {
                 if (!this.hasAnyInput) {
                     return;
                 }
 
                 const inputVal = this.inputNumbers;
+                if (!this.questionHasSubParts && this.hasSpecialInputFormat(inputVal)) {
+                    const x = this.checkRequiredFormat(inputVal);
+                    console.log(x);
+                }
+
                 const keys = this.keys;
                 let answer;
                 if (keys.length !== 0) {
@@ -329,6 +348,7 @@
         .vitals .number-field {
             width: 130px;
         }
+
         .vitals .number-field.parts-2 {
             width: 151px;
         }
