@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Cache;
 
 class TotalBillablePatients extends Chart
 {
-    const ADMIN_CHART_CACHE_KEY           = 'chart:clh:total_billable_patients';
+    const ADMIN_CHART_CACHE_KEY = 'chart:clh:total_billable_patients';
     
     /**
      * Initializes the chart.
@@ -38,9 +38,9 @@ class TotalBillablePatients extends Chart
         
         return Cache::remember(
             self::ADMIN_CHART_CACHE_KEY,
-            1,
+            1440,
             function () use ($clh) {
-                $period      = CarbonPeriod::create(now()->subMonths(3), now());
+                $period      = CarbonPeriod::create(now()->subMonths(2), now());
                 $collections = [];
                 
                 foreach ($period as $date) {
@@ -75,7 +75,7 @@ class TotalBillablePatients extends Chart
                                     'Paused'        => $clhTotals['Paused'] ?? null,
                                     'Unreachable'   => $clhTotals['Unreachable'] ?? null,
                                     'Withdrawn'     => $clhTotals['Withdrawn'] ?? null,
-                                    '0 mins'           => $clhTotals['0 mins'] ?? null,
+                                    '0 mins'        => $clhTotals['0 mins'] ?? null,
                                     '0-5'           => $clhTotals['0-5'] ?? null,
                                     '5-10'          => $clhTotals['5-10'] ?? null,
                                     '10-15'         => $clhTotals['10-15'] ?? null,
@@ -91,32 +91,103 @@ class TotalBillablePatients extends Chart
                 
                 $chart = new static();
                 $chart->labels($dataset->pluck('dateGenerated')->all());
-                $chart->dataset('Added', 'line', $dataset->pluck('Added')->all())->backgroundColor('#00ffcc')->fill(false)->options(['hidden' => true]);
-                $chart->dataset('Paused', 'line', $dataset->pluck('Paused')->all())->backgroundColor('#ff0000')->fill(false)->options(['hidden' => true]);
-                $chart->dataset('Unreachable', 'line', $dataset->pluck('Unreachable')->all())->backgroundColor('#ff0000')->fill(false)->options(['hidden' => true]);
-                $chart->dataset('Withdrawn', 'line', $dataset->pluck('Withdrawn')->all())->backgroundColor('#ff0000')->fill(false)->options(['hidden' => true]);
-                $chart->dataset('0 mins', 'line', $dataset->pluck('0 mins')->all())->options([
-                    'hidden' => true,
-                    'fill' => true,
-                    'backgroundColor' => 'rgba(238, 238, 238, 0.58)',
-                                                                                                                                     ]);
-                $chart->dataset('0-5', 'line', $dataset->pluck('0-5')->all())->backgroundColor('#ffff00')->fill(false)->options(['hidden' => true]);
-                $chart->dataset('5-10', 'line', $dataset->pluck('5-10')->all())->backgroundColor('#ffff00')->fill(false)->options(['hidden' => true]);
-                $chart->dataset('10-15', 'line', $dataset->pluck('10-15')->all())->backgroundColor('#ffff00')->fill(false)->options(['hidden' => true]);
-                $chart->dataset('15-20', 'line', $dataset->pluck('15-20')->all())->backgroundColor('#ffff00')->fill(false)->options(['hidden' => true]);
-                $chart->dataset('20+ Mins, Any Code', 'line', $dataset->pluck('20+')->all())->backgroundColor(
-                    '#8aed00'
-                )->fill(true);
-                $chart->dataset('Total Number Of Patients', 'line', $dataset->pluck('total')->all())->backgroundColor(
-                    '#179553'
-                )->fill(false);
+                $chart->dataset('Added', 'line', $dataset->pluck('Added')->all())
+                      ->options(
+                          [
+                              'hidden'          => true,
+                              'fill'            => false,
+                              'backgroundColor' => '#00ffcc',
+                              'color'           => '#00ffcc',
+                          ]
+                      );
+                $chart->dataset('Paused', 'line', $dataset->pluck('Paused')->all())->options(
+                    [
+                        'hidden'          => true,
+                        'fill'            => false,
+                        'backgroundColor' => 'rgba(63, 166, 206, 0.88)',
+                        'color'           => 'rgba(63, 166, 206, 0.88)',
+                    ]
+                );
+                $chart->dataset('Unreachable', 'line', $dataset->pluck('Unreachable')->all())->options(
+                    [
+                        'hidden'          => true,
+                        'fill'            => false,
+                        'backgroundColor' => 'ff0000',
+                        'color'           => 'ff0000',
+                    ]
+                );
+                $chart->dataset('Withdrawn', 'line', $dataset->pluck('Withdrawn')->all())->options(
+                    [
+                        'hidden'          => true,
+                        'fill'            => false,
+                        'backgroundColor' => 'rgb(255, 2, 2)',
+                        'color'           => 'rgb(255, 2, 2)',
+                    ]
+                );
+                $chart->dataset('0 mins', 'line', $dataset->pluck('0 mins')->all())->options(
+                    [
+                        'hidden'          => true,
+                        'fill'            => true,
+                        'backgroundColor' => 'rgba(238, 238, 238, 0.58)',
+                        'color'           => 'rgba(238, 238, 238, 0.58)',
+                    ]
+                );
+                $chart->dataset('0-5', 'line', $dataset->pluck('0-5')->all())->options(
+                    [
+                        'hidden'          => true,
+                        'fill'            => false,
+                        'backgroundColor' => 'rgba(238, 238, 238, 0.58)',
+                        'color'           => 'rgba(238, 238, 238, 0.58)',
+                    ]
+                );
+                $chart->dataset('5-10', 'line', $dataset->pluck('5-10')->all())->options(
+                    [
+                        'hidden'          => true,
+                        'fill'            => false,
+                        'backgroundColor' => 'rgba(120, 120, 120, 0.58)',
+                        'color'           => 'rgba(120, 120, 120, 0.58)',
+                    ]
+                );
+                $chart->dataset('10-15', 'line', $dataset->pluck('10-15')->all())->options(
+                    [
+                        'hidden'          => true,
+                        'fill'            => false,
+                        'backgroundColor' => '#ffff00',
+                        'color'           => '#ffff00',
+                    ]
+                );
+                $chart->dataset('15-20', 'line', $dataset->pluck('15-20')->all())->options(
+                    [
+                        'hidden'          => true,
+                        'fill'            => false,
+                        'backgroundColor' => 'rgb(255, 2, 2)',
+                        'color'           => 'rgb(255, 2, 2)',
+                    ]
+                );
+                $chart->dataset('20+ Mins, Any Code', 'line', $dataset->pluck('20+')->all())->options(
+                    [
+                        'hidden'          => false,
+                        'fill'            => true,
+                        'backgroundColor' => '#8aed00',
+                        'color'           => '#8aed00',
+                    ]
+                );
+                $chart->dataset('Total Number Of Patients', 'line', $dataset->pluck('total')->all())->options(
+                    [
+                        'hidden'          => false,
+                        'fill'            => false,
+                        'backgroundColor' => '#179553',
+                        'color'           => '#179553',
+                    ]
+                );
                 
                 return $chart;
             }
         );
     }
     
-    public static function clearClhCachedChart() {
+    public static function clearClhCachedChart()
+    {
     
     }
 }
