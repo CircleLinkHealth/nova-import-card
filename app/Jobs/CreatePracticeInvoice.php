@@ -18,6 +18,13 @@ use Illuminate\Queue\SerializesModels;
 
 class CreatePracticeInvoice implements ShouldQueue
 {
+    /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 300;
+    
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;

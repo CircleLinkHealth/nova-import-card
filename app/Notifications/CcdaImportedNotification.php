@@ -63,11 +63,6 @@ class CcdaImportedNotification extends Notification implements ShouldBroadcast, 
         return $this->ccda;
     }
 
-    public function getPatientName(): string
-    {
-        return '';
-    }
-
     /**
      * A sentence to present the notification.
      *
@@ -76,11 +71,6 @@ class CcdaImportedNotification extends Notification implements ShouldBroadcast, 
     public function getSubject($notifiable): string
     {
         return 'CCDA Imported';
-    }
-
-    public function noteId(): ?int
-    {
-        // TODO: Implement noteId() method.
     }
 
     /**
@@ -92,20 +82,7 @@ class CcdaImportedNotification extends Notification implements ShouldBroadcast, 
     {
         return route('import.ccd.remix');
     }
-
-    /**
-     * User id who sends the notification.
-     */
-    public function senderId(): int
-    {
-        return PatientSupportUser::id();
-    }
-
-    public function senderName(): string
-    {
-        return 'CarePlan Manager';
-    }
-
+    
     /**
      * Get the array representation of the notification.
      *

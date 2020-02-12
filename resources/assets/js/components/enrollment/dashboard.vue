@@ -74,9 +74,6 @@
                                             :title="last_attempt_at"><b>Last Attempt:</b> {{last_attempt_at}}</span>
                                     </li>
                                     <li class="sidebar-demo-list"><span
-                                            :title="enrollee_total_time_spent"><b>Total Time(Patient):</b> {{enrollee_total_time_spent}}</span>
-                                    </li>
-                                    <li class="sidebar-demo-list"><span
                                             :title="attempt_count"><b>Attempt Count:</b> {{attempt_count}}</span>
                                     </li>
                                     <li class="sidebar-demo-list"><span> </span>
@@ -293,7 +290,7 @@
                                 contacto?
                             </template>
                             <template v-else>
-                                Do you want us to call you directly or is there someone else we should contact?
+                                Is this the best number for you to be reached?
                             </template>
                         </div>
                         <br>
@@ -344,18 +341,18 @@
                         </div>
                     </div>
                     <div v-if="preferred_phone == 'agent' " class="row">
-                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out other contact's
+                        <blockquote style="border-left: 5px solid #26a69a;"><b>Please fill out alternative contact person's
                             details</b></blockquote>
                         <div class="col s6 m4">
-                            <label for="agent_name" class="label">Other Contact's Name</label>
+                            <label for="agent_name" class="label">Alternative Contact Person's Name</label>
                             <input class="input-field" name="agent_name" id="agent_name" v-model="agent_name"/>
                         </div>
                         <div class="col s6 m4">
-                            <label for="agent_email" class="label">Other Contact's Email</label>
+                            <label for="agent_email" class="label">Alternative Contact Person's Email</label>
                             <input class="input-field" name="agent_email" id="agent_email" v-model="agent_email"/>
                         </div>
                         <div class="col s6 m4">
-                            <label for="agent_relationship" class="label">Other Contact's Relationship to the
+                            <label for="agent_relationship" class="label">Alternative Contact Person's Relationship to the
                                 Patient</label>
                             <input class="input-field" name="agent_relationship" id="agent_relationship"
                                    v-model="agent_relationship"/>
@@ -401,7 +398,7 @@
                         </blockquote>
                         <div class="col s12 m3">
                             <label for="days[]" class="label">Day</label>
-                            <select class="do-not-close" name="days[]" id="days[]" multiple>
+                            <select class="do-not-close" v-model="days" name="days[]" id="days[]" multiple>
                                 <option disabled selected>Days:</option>
                                 <option value="1">Monday</option>
                                 <option value="2">Tuesday</option>
@@ -412,7 +409,7 @@
                         </div>
                         <div class="col s12 m3">
                             <label for="times[]" class="label">Times</label>
-                            <select class="do-not-close" name="times[]" id="times[]" multiple>
+                            <select v-model="times" class="do-not-close" name="times[]" id="times[]" multiple>
                                 <option disabled selected>Times:</option>
                                 <option value="10:00-12:00">10AM - Noon</option>
                                 <option value="12:00-15:00">Noon - 3PM</option>
@@ -439,6 +436,13 @@
                                 A registered nurse will call you in the coming days from {{practice_phone}}.
                                 Please save this number so you accept the call when he or she rings.
                                 I am so glad we were able to connect! Have a great day!
+
+                                That’s all I need, a registered nurse will give you a call from this same number within the next week or so to introduce themselves.
+                                Do you want me to give you the number so you can be sure to save it on your phone or somewhere else?<br><br>
+
+                                <strong>If yes:</strong> Alright, the number is <strong>{{practice_phone}}</strong>.<br><br>
+
+                                As a reminder, you can withdraw at anytime, but I think you will see a lot of benefits from this program. Thank you for your time and I hope you have a great rest of your day!
                             </template>
                         </div>
                     </blockquote>
@@ -452,7 +456,7 @@
                 </div>
                 <div class="modal-footer">
                     <button name="btnSubmit" type="submit"
-                            :disabled="home_is_invalid || cell_is_invalid || other_is_invalid"
+                            :disabled="home_is_invalid || cell_is_invalid || other_is_invalid || preferred_phone_empty || contact_day_or_time_empty"
                             class="modal-action waves-effect waves-light btn">Confirm and call next patient
                     </button>
                     <div v-if="onCall === true" style="text-align: center">
@@ -473,12 +477,10 @@
                     <h4 style="color: #47beab">Please provide some details:</h4>
                     <blockquote style="border-left: 5px solid #26a69a;">
                         <b>If Caller Reaches Machine, Leave Voice Message: </b><br>
-                        Hi, this is {{userFullName}} calling on behalf of {{providerFullName}} at {{practice_name}}.
-                        The doctor(s) have invited you to their new personalized care management program.
-                        Please give us a call at {{practice_phone}} to learn more.
-                        Please note there is nothing to worry about, this program just lets your doctor take better care
-                        of you between visits.
-                        Again the number is {{practice_phone}}.
+                        Hi {{name}}, this is {{userFullName}} calling on behalf of {{providerFullName}} at {{practice_name}}.
+                        The reason for my call is that {{providerFullName}} has a new benefit they are offering patients,
+                        to improve access to your care team. You should have already received information about it in the mail.
+                        If you'd be kind enough to call us back at {{practice_phone}} to walk you through it, that would be great.
                     </blockquote>
 
                     <div class="row">
@@ -730,19 +732,19 @@
                 }
 
                 if (this.validatePhone(this.other_phone)) {
-                    return 'Other Phone Valid!';
+                    return 'Other Phone (Valid)';
                 }
 
-                return 'Other Phone Invalid..'
+                return 'Other Phone (Invalid)'
             },
             agent_phone_label: function () {
                 if (this.agent_phone == '') {
-                    return 'Other Contact\'s Phone Unknown...';
+                    return 'Alternative Contact Person\'s Phone Unknown...';
                 }
                 if (this.validatePhone(this.agent_phone)) {
-                    return 'Other Contact\'s Phone Valid!';
+                    return 'Alternative Contact Person\'s Phone (Valid)';
                 }
-                return 'Other Contact\'s Phone Invalid..'
+                return 'Alternative Contact Person\'s Phone (Invalid)'
             },
             other_is_valid: function () {
                 return this.validatePhone(this.other_phone)
@@ -764,10 +766,10 @@
                 }
 
                 if (this.validatePhone(this.home_phone)) {
-                    return 'Home Phone Valid!';
+                    return 'Home Phone (Valid)';
                 }
 
-                return 'Home Phone Invalid..'
+                return 'Home Phone (Invalid)'
             },
             home_is_valid: function () {
                 return this.validatePhone(this.home_phone)
@@ -783,10 +785,10 @@
                 }
 
                 if (this.validatePhone(this.cell_phone)) {
-                    return 'Cell Phone Valid!';
+                    return 'Cell Phone (Valid)';
                 }
 
-                return 'Cell Phone Invalid..'
+                return 'Cell Phone (Invalid)'
             },
             cell_is_valid: function () {
                 return this.validatePhone(this.cell_phone)
@@ -836,9 +838,6 @@
             suggested_family_members_exist: function () {
                 return Array.isArray(this.suggested_family_members) && this.suggested_family_members.length > 0;
             },
-            enrollee_total_time_spent() {
-                return enrollee.total_time_spent ? new Date(1000 * enrollee.total_time_spent).toISOString().substr(11, 8) : 'N/A';
-            },
             attempt_count() {
                 return enrollee.attempt_count || 0;
             },
@@ -856,7 +855,14 @@
             },
             other_phone_exists() {
                 return !!enrollee.other_phone;
+            },
+            preferred_phone_empty(){
+                return ! this.preferred_phone;
+            },
+            contact_day_or_time_empty(){
+                return this.days.length <= 1 || this.times.length <= 1
             }
+
         },
         data: function () {
             return {
@@ -913,7 +919,10 @@
                 suggested_family_members: [],
                 confirmed_family_members: [],
 
-                pending_form: null
+                pending_form: null,
+
+                days: ['Days:'],
+                times: ['Times:']
             };
         },
         mounted: function () {

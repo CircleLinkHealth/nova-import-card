@@ -46,8 +46,8 @@
             @endif
 
             <li>
-                <a href="https://drive.google.com/file/d/0Byt9en_0bcOpRGM3LVBQamh4WkE/view" target="_blank">
-                    Training Materials
+                <a href="https://circlelinkhealth.zendesk.com/hc/en-us/categories/360002207051-Care-Ambassador-Support" target="_blank">
+                    Enrollment Resources
                 </a>
             </li>
             <!-- Dropdown Trigger -->
