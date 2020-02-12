@@ -532,15 +532,25 @@ class VariablePayCalculator
         $nurseTimes = collect();
         $elqRange->each(function (Collection $f) use ($nurseTimes) {
             return $f->each(function ($f2, $key) use ($nurseTimes) {
-                if ( ! $f2['has_successful_call']) {
-                    return;
-                }
-                $current = $nurseTimes->get($key, 0);
-                $nurseTimes->put($key, $current + $f2['duration']);
+                $current = $nurseTimes->get($key, ['duration' => 0, 'has_successful_call' => false]);
+                $nurseTimes->put($key, [
+                    'duration'            => $current['duration'] + $f2['duration'],
+                    'has_successful_call' => $current['has_successful_call'] || $f2['has_successful_call'],
+                ]);
             });
         });
 
-        $sumOfAllTime = $nurseTimes->sum();
+        $sumOfAllTime = 0;
+        $nurseTimes   = $nurseTimes->filter(function ($item) use (&$sumOfAllTime) {
+            $val = $item['has_successful_call'];
+
+            if ($val) {
+                $sumOfAllTime += $item['duration'];
+            }
+
+            return $val;
+        });
+
         if ($sumOfAllTime === 0) {
             $nurseUserId   = $nurseInfo->user->id;
             $billableEvent = $isBehavioral
@@ -550,9 +560,11 @@ class VariablePayCalculator
                 '#nurse-invoices-alerts',
                 "Warning: Will not pay care coach [$nurseUserId] for time tracked on patient [$patientId] because I could not find successful call in billable event [$billableEvent]"
             );
+
             return 0;
         }
-        $nurseTime = $nurseTimes->get($nurseInfo->id, 0);
+
+        $nurseTime = $nurseTimes->get($nurseInfo->id, ['duration' => 0, 'has_successful_call' => false])['duration'];
 
         return ($nurseTime / $sumOfAllTime) * $nurseInfo->visit_fee;
     }
