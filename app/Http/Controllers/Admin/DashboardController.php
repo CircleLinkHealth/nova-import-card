@@ -6,7 +6,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Charts\TotalBillablePatients;
 use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
@@ -55,9 +54,7 @@ class DashboardController extends Controller
 
         // switch dashboard view based on logged in user
         if ($user->hasRole(['administrator', 'administrator-view-only'])) {
-            $chart = TotalBillablePatients::clhGrowthChart();
-
-            return view('admin.dashboard', compact(['user', 'chart']));
+            return view('admin.dashboard', compact(['user']));
         }
 
         return redirect()->route('patients.dashboard', []);

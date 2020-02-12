@@ -14,7 +14,7 @@ use ConsoleTVs\Charts\Classes\Chartjs\Chart;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
-class TotalBillablePatients extends Chart
+class OpsChart extends Chart
 {
     const ADMIN_CHART_CACHE_KEY = 'chart:clh:total_billable_patients';
 
@@ -97,13 +97,13 @@ class TotalBillablePatients extends Chart
                 $chart->labels($dataset->pluck('dateGenerated')->all());
                 $chart->dataset('Added', 'line', $dataset->pluck('Added')->all())
                     ->options(
-                          [
-                              'hidden'          => true,
-                              'fill'            => false,
-                              'backgroundColor' => '#00ffcc',
-                              'color'           => '#00ffcc',
-                          ]
-                      );
+                        [
+                            'hidden'          => true,
+                            'fill'            => false,
+                            'backgroundColor' => '#00ffcc',
+                            'color'           => '#00ffcc',
+                        ]
+                    );
                 $chart->dataset('Paused', 'line', $dataset->pluck('Paused')->all())->options(
                     [
                         'hidden'          => true,

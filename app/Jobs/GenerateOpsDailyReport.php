@@ -6,7 +6,7 @@
 
 namespace App\Jobs;
 
-use App\Charts\TotalBillablePatients;
+use App\Charts\OpsChart;
 use App\Services\OpsDashboardService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -131,7 +131,7 @@ class GenerateOpsDailyReport implements ShouldQueue
             ->addMedia($path)
             ->toMediaCollection("ops-daily-report-{$this->date->toDateString()}.json");
 
-        \Cache::forget(TotalBillablePatients::ADMIN_CHART_CACHE_KEY);
+        \Cache::forget(OpsChart::ADMIN_CHART_CACHE_KEY);
 
         if (isProductionEnv()) {
             sendSlackMessage(
