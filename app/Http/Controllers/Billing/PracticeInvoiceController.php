@@ -8,6 +8,7 @@ namespace App\Http\Controllers\Billing;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovableBillablePatient;
+use App\Jobs\CreatePracticeInvoice;
 use App\Notifications\PracticeInvoice;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
@@ -246,31 +247,15 @@ class PracticeInvoiceController extends Controller
      */
     public function makeInvoices(Request $request)
     {
-        //set to 5 mins
-        ini_set('max_execution_time', '300');
+        $date      = $request->input('date');
+        $format    = $request['format'];
+        $practices = $request['practices'];
 
-        $invoices = [];
+        CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id());
 
-        $date = Carbon::parse($request->input('date'));
+        session()->put('messages', ['We will send you an email when the invoices are ready!']);
 
-        if ('pdf' == $request['format']) {
-            $invoices = $this->practiceReportsService->getPdfInvoiceAndPatientReport($request['practices'], $date);
-
-            return view('billing.practice.list', compact(['invoices']));
-        }
-        if ('csv' == $request['format'] or 'xls') {
-            $report = $this->practiceReportsService->getQuickbooksReport(
-                $request['practices'],
-                $request['format'],
-                $date
-            );
-
-            if (false === $report) {
-                return 'No data found. Please hit back and try again.';
-            }
-
-            return $this->downloadMedia($report);
-        }
+        return redirect()->back();
     }
 
     /** open patient-monthly-summaries in a practice */

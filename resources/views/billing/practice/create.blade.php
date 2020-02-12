@@ -23,6 +23,8 @@
         </script>
     @endpush
 
+    @include('errors.messages')
+
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     {!! Form::open(array('url' => route('practice.billing.make', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid" style="padding-top: 50px;">

@@ -118,6 +118,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download.google.csv',
     ])->middleware('doNotCacheResponse');
 
+    Route::get('download-zipped-media/{user_id}/{media_ids}', [
+        'uses' => 'DownloadController@downloadZippedMedia',
+        'as'   => 'download.zipped.media',
+    ])->middleware('doNotCacheResponse')->middleware('signed');
+
     Route::group([
         'prefix'     => 'ehr-report-writer',
         'middleware' => ['permission:ehr-report-writer-access'],
@@ -399,7 +404,7 @@ Route::group(['middleware' => 'auth'], function () {
             'middleware' => [
                 'permission:ccd-import',
             ],
-            'prefix'     => 'ccd-importer',
+            'prefix' => 'ccd-importer',
         ], function () {
             Route::get('imported-medical-records', [
                 'uses' => 'ImporterController@records',
@@ -1934,11 +1939,10 @@ Route::group([
     ]);
 
     Route::group([
-        'middleware' =>
-            [
-                'auth',
-                'enrollmentCenter',
-            ],
+        'middleware' => [
+            'auth',
+            'enrollmentCenter',
+        ],
     ], function () {
         Route::get('/', [
             'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
@@ -2290,4 +2294,3 @@ Route::post('nurses/nurse-calendar-data', [
     'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
-

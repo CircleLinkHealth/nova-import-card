@@ -7,9 +7,9 @@
 namespace App\Services;
 
 use App\Billing\Practices\PracticeInvoiceGenerator;
-use CircleLinkHealth\Core\Exports\FromArray;
 use App\ValueObjects\QuickBooksRow;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -56,7 +56,7 @@ class PracticeReportsService
         $data = [];
 
         foreach ($practices as $practiceId) {
-            $practice = Practice::find($practiceId);
+            $practice = Practice::with(['settings', 'chargeableServices'])->find($practiceId);
 
             if ('practice' == $practice->cpmSettings()->bill_to || empty($practice->cpmSettings()->bill_to)) {
                 $chargeableServices = $this->getChargeableServices($practice);
@@ -98,10 +98,12 @@ class PracticeReportsService
      */
     private function getChargeableServices($chargeable)
     {
-        $chargeableServices = $chargeable->chargeableServices()->get();
+        $chargeable->loadMissing('chargeableServices');
+
+        $chargeableServices = $chargeable->chargeableServices;
 
         //defaults to CPT 99490 if practice doesnt have a chargeableService, until further notice
-        if ( ! $chargeableServices) {
+        if ($chargeableServices->isEmpty()) {
             $chargeableServices = ChargeableService::where('id', 1)->get();
         }
 
