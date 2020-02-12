@@ -87,6 +87,14 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getNotificationData($notifiable): array
+    {
+        return $this->notificationData($notifiable);
+    }
+
+    /**
      * @return int
      */
     public function getPatientId()
