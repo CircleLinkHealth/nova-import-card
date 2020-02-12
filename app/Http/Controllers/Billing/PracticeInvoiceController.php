@@ -231,7 +231,7 @@ class PracticeInvoiceController extends Controller
 
         $chargeableServices = ChargeableService::all();
 
-        return view('admin.reports.billing', compact([
+        return view('admin.reports.biclling', compact([
             'cpmProblems',
             'practices',
             'chargeableServices',
@@ -253,9 +253,7 @@ class PracticeInvoiceController extends Controller
 
         CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id());
 
-        session()->put('messages', ['We will send you an email when the invoices are ready!']);
-
-        return redirect()->back();
+        return redirect()->back()->with('message', 'We will send you an email when the invoices are ready!');
     }
 
     /** open patient-monthly-summaries in a practice */

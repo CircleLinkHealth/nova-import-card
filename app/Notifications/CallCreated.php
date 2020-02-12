@@ -64,7 +64,7 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
 //        return Carbon::parse(now())->toDayDateTimeString();
     }
 
-    public function description(): string
+    public function description($notifiable): string
     {
         return 'Activity';
     }
@@ -104,7 +104,7 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
         return NotificationService::getPatientName($patientId);
     }
 
-    public function getSubject(): string
+    public function getSubject($notifiable): string
     {
         $activity    = $this->activityType();
         $patientName = $this->getPatientName();
@@ -127,7 +127,7 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
         return $this->call->note_id;
     }
 
-    public function redirectLink(): string
+    public function redirectLink($notifiable): string
     {
         $patientId = $this->getPatientId();
 
@@ -159,8 +159,6 @@ class CallCreated extends Notification implements ShouldBroadcast, ShouldQueue, 
      *Returns by default -  ONLY the notification id & the notification type.
      *
      * @param mixed $notifiable
-     *
-     * @return BroadcastMessage
      */
     public function toBroadcast($notifiable): BroadcastMessage
     {

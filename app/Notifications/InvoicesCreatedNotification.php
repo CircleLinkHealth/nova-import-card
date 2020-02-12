@@ -22,8 +22,8 @@ use Illuminate\Notifications\Notification;
 class InvoicesCreatedNotification extends Notification implements ShouldBroadcast, ShouldQueue, LiveNotification
 {
     use ArrayableNotification;
-    use NotificationSubscribable;
     use Queueable;
+
     /**
      * @var Carbon
      */
@@ -34,78 +34,55 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
      * @var string
      */
     public $mediaIds;
-    
+
     /**
      * The signed URL to download the Media.
      *
      * @var string
      */
     public $signedUrl;
-    
+
     /**
      * Create a new notification instance.
+     *
+     * @param array $media
      */
-    public function __construct(array $media, Carbon $date)
+    public function __construct(array $mediaIds, Carbon $date)
     {
-        $this->mediaIds = $media;
+        $this->mediaIds = implode(',', $mediaIds);
         $this->date     = $date;
     }
-    
-    /**
-     * Gets the notification attachment type. eg. App\Models\Addendum.
-     */
-    public function attachmentType(): string
-    {
-        return Media::class;
-    }
-    
+
     /**
      * A string with the attachments name. eg. "Addendum".
+     *
+     * @param mixed $notifiable
      */
-    public function description(): string
+    public function description($notifiable): string
     {
         return 'The Invoices you requested are ready.';
     }
-    
-    public function getPatientName(): string
-    {
-        return '';
-    }
-    
+
     /**
      * A sentence to present the notification.
+     *
+     * @param mixed $notifiable
      */
-    public function getSubject(): string
+    public function getSubject($notifiable): string
     {
         return 'The Invoices you requested are ready.';
     }
-    
-    public function noteId(): ?int
-    {
-        return null;
-    }
-    
+
     /**
      * Redirect link to activity.
+     *
+     * @param null $notifiable
      */
-    public function redirectLink(): string
+    public function redirectLink($notifiable): string
     {
-        return $this->getSignedUrl();
+        return $this->getSignedUrl($notifiable);
     }
-    
-    /**
-     * User id who sends the notification.
-     */
-    public function senderId(): int
-    {
-        return PatientSupportUser::id();
-    }
-    
-    public function senderName(): string
-    {
-        return 'CircleLink Health Invoicing';
-    }
-    
+
     /**
      * Get the array representation of the notification.
      *
@@ -116,12 +93,12 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
         return array_merge(
             $this->notificationData($notifiable),
             [
-                'date' => $this->date->toDateTimeString(),
+                'date'      => $this->date->toDateTimeString(),
                 'media_ids' => $this->mediaIds,
             ]
         );
     }
-    
+
     /**
      * Get the broadcastable representation of the notification.
      *
@@ -133,7 +110,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return new BroadcastMessage([]);
     }
-    
+
     /**
      * Get the mail representation of the notification.
      *
@@ -144,11 +121,11 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     public function toMail($notifiable)
     {
         $invoicesMonthYear = "{$this->date->shortEnglishMonth} {$this->date->year}";
-        
+
         $mail = (new MailMessage())
             ->subject("CPM $invoicesMonthYear Invoices")
             ->greeting('Howdy there!');
-        
+
         if (empty($this->mediaIds)) {
             return $mail
                 ->line(
@@ -156,13 +133,13 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
                 )
                 ->line('Thank you for using our CarePlan Manager!');
         }
-        
+
         return $mail
             ->line("The invoices for $invoicesMonthYear you had requested are ready.")
-            ->action('Download Invoices', $this->getSignedUrl())
+            ->action('Download Invoices', $this->getSignedUrl($notifiable))
             ->line('Thank you for using our CarePlan Manager!');
     }
-    
+
     /**
      * Get the notification's delivery channels.
      *
@@ -174,7 +151,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return ['database', 'mail', 'broadcast'];
     }
-    
+
     private function getSignedUrl($notifiable)
     {
         if ( ! $this->signedUrl) {
@@ -184,7 +161,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
                 [$notifiable->id, $this->mediaIds]
             );
         }
-        
+
         return $this->signedUrl;
     }
 }
