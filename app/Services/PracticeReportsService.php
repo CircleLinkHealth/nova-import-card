@@ -94,7 +94,7 @@ class PracticeReportsService
             return false;
         }
 
-        return $this->makeQuickbookReport($data, $format, $date);
+        return $this->makeQuickbookReport($data, $format, $date, $saasAccount);
     }
 
     /**
@@ -122,11 +122,10 @@ class PracticeReportsService
      *
      * @return mixed
      */
-    private function makeQuickbookReport($rows, $format, Carbon $date)
+    private function makeQuickbookReport($rows, $format, Carbon $date, $saasAccount)
     {
         return (new FromArray("Billable Patients Report - ${date}.$format", $rows))->storeAndAttachMediaTo(
-            auth()->user()
-                ->saasAccount,
+            $saasAccount,
             "quickbooks_report_for_{$date->toDateString()}"
         );
     }
