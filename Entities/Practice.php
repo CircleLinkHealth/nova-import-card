@@ -9,7 +9,6 @@ namespace CircleLinkHealth\Customer\Entities;
 use App\CareAmbassadorLog;
 use CircleLinkHealth\Core\StringManipulation;
 use App\EnrolleeCustomFilter;
-use App\Models\CCD\Problem;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\ValueObjects\PatientReportData;
 use Carbon\Carbon;
@@ -425,7 +424,7 @@ class Practice extends BaseModel implements HasMedia
                         )
             ->has('patientInfo')
                         ->chunkById(
-                            500,
+                            100,
                             function ($patients) use (&$data, $repo, $month) {
                                 foreach ($patients as $u) {
                                     $summary = $u->patientSummaries->first();
