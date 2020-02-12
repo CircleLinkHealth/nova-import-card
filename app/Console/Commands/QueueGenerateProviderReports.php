@@ -69,7 +69,7 @@ class QueueGenerateProviderReports extends Command
 
         $debug = $this->option('debug');
         foreach ($this->patientIds as $patientId){
-            GeneratePatientReportsJob::dispatch($patientId, $this->date, $debug)->onQueue('high');
+            GeneratePatientReportsJob::dispatch($patientId, $this->date, $debug)->onQueue('awv-high');
         }
     }
 }

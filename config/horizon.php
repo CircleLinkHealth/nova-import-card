@@ -143,7 +143,7 @@ return [
         'production' => [
             'awv-supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['awv-default'],
+                'queue' => ['awv-default', 'awv-high'],
                 'balance' => 'simple',
                 'minProcesses' => 1,
                 'maxProcesses' => 5,
@@ -154,7 +154,7 @@ return [
         'staging' => [
             'awv-supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['awv-default'],
+                'queue' => ['awv-default', 'awv-high'],
                 'balance' => 'simple',
                 'minProcesses' => 1,
                 'maxProcesses' => 2,
@@ -165,7 +165,7 @@ return [
         'local' => [
             'awv-supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['awv-default'],
+                'queue' => ['awv-default', 'awv-high'],
                 'balance' => 'simple',
                 'minProcesses' => 1,
                 'maxProcesses' => 2,

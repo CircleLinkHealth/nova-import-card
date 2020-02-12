@@ -45,7 +45,7 @@ class GeneratePatientReports
 
 
             if ($otherInstance) {
-                GenerateReports::dispatch($patient->id, $instance->year)->onQueue('high');
+                GenerateReports::dispatch($patient->id, $instance->year)->onQueue('awv-high');
             }
         }
     }

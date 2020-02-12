@@ -61,4 +61,14 @@ class GeneratePersonalizedPreventionPlanJob implements ShouldQueue
         $service = new GeneratePersonalizedPreventionPlanService($patient);
         $service->generateData();
     }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        return ['Generate Personalized Prevention Plan', $this->patientId];
+    }
 }
