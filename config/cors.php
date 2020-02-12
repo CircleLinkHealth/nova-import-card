@@ -15,7 +15,7 @@ return [
     'supportsCredentials'    => true,
     'allowedOrigins'         => (env('APP_ENV', 'production') === 'production' || env('APP_ENV',
             'production') === 'worker' || env('APP_ENV', 'production') === 'staging')
-        ? ['*careplanmanager.com']
+        ? ['*careplanmanager.com', '*clh-staging.com']
         : ['*.ngrok.io', '*.test'],
     'allowedOriginsPatterns' => [],
     'allowedHeaders'         => ['*'],
