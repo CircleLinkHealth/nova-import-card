@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Checkables;
 
+use CircleLinkHealth\Eligibility\Adapters\AddCareTeamFromAthena;
 use CircleLinkHealth\Eligibility\Adapters\AddInsurancesFromAthena;
 use CircleLinkHealth\Eligibility\Adapters\CcdaToEligibilityJobAdapter;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
@@ -34,12 +35,12 @@ class AthenaCheckable implements Checkable
      * @var TargetPatient
      */
     protected $targetPatient;
-
+    
     /**
      * @var EligibilityJob
      */
     private $eligibilityJob;
-
+    
     public function __construct(Ccda $ccda, Practice $practice, EligibilityBatch $batch, TargetPatient $targetPatient)
     {
         $this->ccda          = $ccda;
@@ -47,7 +48,7 @@ class AthenaCheckable implements Checkable
         $this->batch         = $batch;
         $this->targetPatient = $targetPatient;
     }
-
+    
     /**
      * @throws \Exception
      *
@@ -59,19 +60,21 @@ class AthenaCheckable implements Checkable
             //We are "decorating" existing Ccda adapter to add insurance we will get from Athena API
             //In other words CcdaToEligibilityJobAdapter will extract data for eligibility from CCD. We will take that
             //result, add insurance from AthenaAPI to it and store it.
-            $decoratedAdapter = new AddInsurancesFromAthena(
-                new CcdaToEligibilityJobAdapter($this->ccda, $this->practice, $this->batch),
-                $this->getTargetPatient(),
-                $this->ccda
+            $decoratedAdapter = new AddCareTeamFromAthena(
+                new AddInsurancesFromAthena(
+                    new CcdaToEligibilityJobAdapter($this->ccda, $this->practice, $this->batch),
+                    $this->getTargetPatient(),
+                    $this->ccda
+                )
             );
-
+            
             $this->eligibilityJob = $decoratedAdapter->adaptToEligibilityJob()
-                ->process()->getEligibilityJob();
+                                                     ->process()->getEligibilityJob();
         }
-
+        
         return $this->eligibilityJob;
     }
-
+    
     /**
      * @return EligibilityJob
      */
@@ -79,7 +82,7 @@ class AthenaCheckable implements Checkable
     {
         return $this->eligibilityJob;
     }
-
+    
     /**
      * @return \CircleLinkHealth\Eligibility\MedicalRecordImporter\\CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordForEligibilityCheck
      */
@@ -87,7 +90,7 @@ class AthenaCheckable implements Checkable
     {
         return $this->ccda;
     }
-
+    
     /**
      * This Model holds the data we need to make a request to an EHR API to get patient data.
      *
