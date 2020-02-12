@@ -246,11 +246,11 @@ class PracticeInvoiceController extends Controller
         $format    = $request['format'];
         $practices = $request['practices'];
 
-        CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id());
+        CreatePracticeInvoice::dispatch($practices, $date, $format, auth()->id())->onQueue('low');
 
         $practices = Practice::whereIn('id', $practices)->pluck('display_name')->all();
 
-        $niceDate = presentDate($date, false, false, true);
+        $niceDate = "{$date->shortEnglishMonth} {$date->year}";
 
         session()->put('messages', array_merge(["We are creating invoices for $niceDate, for the following practices:"], $practices, ['We will send you an email when the invoices are ready!']));
 
