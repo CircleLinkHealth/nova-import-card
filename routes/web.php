@@ -171,6 +171,10 @@ Route::group(['middleware' => 'auth'], function () {
     // API
     Route::group(['prefix' => 'api', 'middleware' => ['cacheResponse']], function () {
         Route::group(['prefix' => 'admin'], function () {
+            Route::get('clear-cache/{key}', [
+                'uses' => 'Admin\DashboardController@clearCache',
+                'as'   => 'clear.cache.key',
+            ])->middleware('permission:call.read');
             //the new calls route that uses calls-view table
             Route::get('calls-v2', [
                 'uses' => 'API\Admin\CallsViewController@index',

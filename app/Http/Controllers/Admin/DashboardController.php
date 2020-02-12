@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Charts\TotalBillablePatients;
 use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
@@ -13,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
@@ -35,6 +37,13 @@ class DashboardController extends Controller
         $this->middleware('auth');
     }
 
+    public function clearCache($key)
+    {
+        return response()->json([
+            'cleared' => Cache::forget($key),
+        ]);
+    }
+
     /**
      * Show the application dashboard to the user.
      *
@@ -46,7 +55,9 @@ class DashboardController extends Controller
 
         // switch dashboard view based on logged in user
         if ($user->hasRole(['administrator', 'administrator-view-only'])) {
-            return view('admin.dashboard', compact(['user']));
+            $chart = TotalBillablePatients::clhGrowthChart();
+
+            return view('admin.dashboard', compact(['user', 'chart']));
         }
 
         return redirect()->route('patients.dashboard', []);
@@ -61,9 +72,10 @@ class DashboardController extends Controller
 
         Artisan::call(
             'athena:autoPullEnrolleesFromAthena',
-            ['athenaPracticeId' => $practice->external_id,
-                'from'          => $from->format('y-m-d'),
-                'to'            => $to->format('y-m-d'),
+            [
+                'athenaPracticeId' => $practice->external_id,
+                'from'             => $from->format('y-m-d'),
+                'to'               => $to->format('y-m-d'),
             ]
         );
 
