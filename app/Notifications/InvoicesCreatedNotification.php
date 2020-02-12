@@ -8,10 +8,8 @@ namespace App\Notifications;
 
 use App\Contracts\LiveNotification;
 use App\Traits\ArrayableNotification;
-use App\Traits\NotificationSubscribable;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
-use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,7 +21,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
 {
     use ArrayableNotification;
     use Queueable;
-
+    
     /**
      * @var Carbon
      */
@@ -34,25 +32,32 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
      * @var string
      */
     public $mediaIds;
-
+    
     /**
      * The signed URL to download the Media.
      *
      * @var string
      */
     public $signedUrl;
-
+    /**
+     * @var array
+     */
+    protected $practiceIds;
+    
     /**
      * Create a new notification instance.
      *
-     * @param array $media
+     * @param array $mediaIds
+     * @param Carbon $date
+     * @param array $practiceIds
      */
-    public function __construct(array $mediaIds, Carbon $date)
+    public function __construct(array $mediaIds, Carbon $date, array $practiceIds)
     {
-        $this->mediaIds = implode(',', $mediaIds);
-        $this->date     = $date;
+        $this->mediaIds    = implode(',', $mediaIds);
+        $this->date        = $date;
+        $this->practiceIds = $practiceIds;
     }
-
+    
     /**
      * A string with the attachments name. eg. "Addendum".
      *
@@ -60,9 +65,9 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
      */
     public function description($notifiable): string
     {
-        return 'The Invoices you requested are ready.';
+        return 'Practices: '.Practice::whereIn('in', $this->practiceIds)->pluck('display_name')->implode('display_name', ', ');
     }
-
+    
     /**
      * A sentence to present the notification.
      *
@@ -70,9 +75,9 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
      */
     public function getSubject($notifiable): string
     {
-        return 'The Invoices you requested are ready.';
+        return "The Invoices for {$this->getMonthYearText()} you had requested are ready.";
     }
-
+    
     /**
      * Redirect link to activity.
      *
@@ -82,7 +87,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return $this->getSignedUrl($notifiable);
     }
-
+    
     /**
      * Get the array representation of the notification.
      *
@@ -93,12 +98,13 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
         return array_merge(
             $this->notificationData($notifiable),
             [
-                'date'      => $this->date->toDateTimeString(),
-                'media_ids' => $this->mediaIds,
+                'date'            => $this->date->toDateTimeString(),
+                'month_year_text' => $this->getMonthYearText(),
+                'media_ids'       => $this->mediaIds,
             ]
         );
     }
-
+    
     /**
      * Get the broadcastable representation of the notification.
      *
@@ -110,7 +116,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return new BroadcastMessage([]);
     }
-
+    
     /**
      * Get the mail representation of the notification.
      *
@@ -120,26 +126,24 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
      */
     public function toMail($notifiable)
     {
-        $invoicesMonthYear = "{$this->date->shortEnglishMonth} {$this->date->year}";
-
         $mail = (new MailMessage())
-            ->subject("CPM $invoicesMonthYear Invoices")
+            ->subject("CPM {$this->getMonthYearText()} Invoices")
             ->greeting('Howdy there!');
-
+        
         if (empty($this->mediaIds)) {
             return $mail
                 ->line(
-                    "Apologies. We did not generate any invoices because we did not have any data for $invoicesMonthYear."
+                    "Apologies. We did not generate any invoices because we did not have any data for {$this->getMonthYearText()}."
                 )
                 ->line('Thank you for using our CarePlan Manager!');
         }
-
+        
         return $mail
-            ->line("The invoices for $invoicesMonthYear you had requested are ready.")
+            ->line($this->getSubject($notifiable))
             ->action('Download Invoices', $this->getSignedUrl($notifiable))
             ->line('Thank you for using our CarePlan Manager!');
     }
-
+    
     /**
      * Get the notification's delivery channels.
      *
@@ -151,7 +155,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     {
         return ['database', 'mail', 'broadcast'];
     }
-
+    
     private function getSignedUrl($notifiable)
     {
         if ( ! $this->signedUrl) {
@@ -161,7 +165,12 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
                 [$notifiable->id, $this->mediaIds]
             );
         }
-
+        
         return $this->signedUrl;
+    }
+    
+    private function getMonthYearText()
+    {
+        return "{$this->date->shortEnglishMonth} {$this->date->year}";
     }
 }

@@ -66,7 +66,7 @@ class CreatePracticeInvoice implements ShouldQueue
         if ('pdf' == $this->format) {
             $invoices = $practiceReportsService->getPdfInvoiceAndPatientReport($this->practices, $date);
 
-            $user->notify(new InvoicesCreatedNotification(collect($invoices)->pluck('media.id')->all(), $date));
+            $user->notify(new InvoicesCreatedNotification(collect($invoices)->pluck('media.id')->all(), $date, $this->practices));
 
             return;
         }
@@ -78,12 +78,12 @@ class CreatePracticeInvoice implements ShouldQueue
             );
 
             if (false === $report) {
-                $user->notify(new InvoicesCreatedNotification([], $date));
+                $user->notify(new InvoicesCreatedNotification([], $date, $this->practices));
                 
                 return;
             }
 
-            $user->notify(new InvoicesCreatedNotification([$report->id], $date));
+            $user->notify(new InvoicesCreatedNotification([$report->id], $date, $this->practices));
 
             return;
         }
