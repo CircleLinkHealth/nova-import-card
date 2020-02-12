@@ -95,14 +95,18 @@ class TotalBillablePatients extends Chart
                 $chart->dataset('Paused', 'line', $dataset->pluck('Paused')->all())->backgroundColor('#ff0000')->fill(false)->options(['hidden' => true]);
                 $chart->dataset('Unreachable', 'line', $dataset->pluck('Unreachable')->all())->backgroundColor('#ff0000')->fill(false)->options(['hidden' => true]);
                 $chart->dataset('Withdrawn', 'line', $dataset->pluck('Withdrawn')->all())->backgroundColor('#ff0000')->fill(false)->options(['hidden' => true]);
-                $chart->dataset('0 mins', 'line', $dataset->pluck('0 mins')->all())->backgroundColor('#ffff00')->fill(false)->options(['hidden' => true]);
+                $chart->dataset('0 mins', 'line', $dataset->pluck('0 mins')->all())->options([
+                    'hidden' => true,
+                    'fill' => true,
+                    'backgroundColor' => 'rgba(238, 238, 238, 0.58)',
+                                                                                                                                     ]);
                 $chart->dataset('0-5', 'line', $dataset->pluck('0-5')->all())->backgroundColor('#ffff00')->fill(false)->options(['hidden' => true]);
                 $chart->dataset('5-10', 'line', $dataset->pluck('5-10')->all())->backgroundColor('#ffff00')->fill(false)->options(['hidden' => true]);
                 $chart->dataset('10-15', 'line', $dataset->pluck('10-15')->all())->backgroundColor('#ffff00')->fill(false)->options(['hidden' => true]);
                 $chart->dataset('15-20', 'line', $dataset->pluck('15-20')->all())->backgroundColor('#ffff00')->fill(false)->options(['hidden' => true]);
                 $chart->dataset('20+ Mins, Any Code', 'line', $dataset->pluck('20+')->all())->backgroundColor(
                     '#8aed00'
-                )->fill(false);
+                )->fill(true);
                 $chart->dataset('Total Number Of Patients', 'line', $dataset->pluck('total')->all())->backgroundColor(
                     '#179553'
                 )->fill(false);
