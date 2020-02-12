@@ -166,7 +166,7 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     public function via($notifiable)
     {
         if (empty($this->mediaIds)) {
-            return ['database', 'mail'];
+            return ['mail'];
         }
         
         return ['database', 'mail', 'broadcast'];
@@ -179,7 +179,10 @@ class InvoicesCreatedNotification extends Notification implements ShouldBroadcas
     
     private function getSignedUrl($notifiable)
     {
-        if ( ! $this->signedUrl && $this->mediaIds) {
+        if (!$this->mediaIds) {
+            return '';
+        }
+        if ( ! $this->signedUrl) {
             $this->signedUrl = URL::temporarySignedRoute(
                 'download.zipped.media',
                 now()->addDays(2),
