@@ -7,8 +7,8 @@
 namespace App\Http\Requests;
 
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class DownloadZippedMediaWithSignedRequest extends FormRequest
 {
