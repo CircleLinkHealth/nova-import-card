@@ -26,7 +26,7 @@ class ReviewAppSeedDb extends Command
      *
      * @var string
      */
-    protected $signature = 'heroku:onrelease-seed-review-app';
+    protected $signature = 'reviewapp:seed-db';
 
     /**
      * Create a new command instance.
