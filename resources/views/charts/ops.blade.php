@@ -3,9 +3,9 @@
 @section('content')
     @isset($chart)
         <div class="container-fluid">
-        <div class="row" style="margin: 5% 0;">
+        <div class="row">
                 <div class="col-md-12">
-                    <h1 class="text-center" style="font-size: 6rem;">
+                    <h1 style="font-size: 6rem;">
                         <span style="color: rgb(41, 90, 146);">Ops</span><span class="font-weight-bold" style="color: rgb(200, 211, 224);">Chart</span>
                     </h1>
                 </div>
