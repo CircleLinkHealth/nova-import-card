@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Contracts\FaxableNotification;
 use App\ValueObjects\SimpleNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
@@ -16,7 +17,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
-class SendCareDocument extends Notification
+class SendCareDocument extends Notification implements FaxableNotification
 {
     use Queueable;
 
@@ -66,7 +67,7 @@ class SendCareDocument extends Notification
         $link = $this->getReportLink();
 
         $message  = "Please find attached an AWV {$this->reportType} regarding one of your patients";
-        $lastLine = PHP_EOL . PHP_EOL . "The web version of the report can be found at $link";
+        $lastLine = PHP_EOL.PHP_EOL."The web version of the report can be found at $link";
 
         return $this->getBody($message, $lastLine);
     }
@@ -91,8 +92,8 @@ class SendCareDocument extends Notification
     public function toArray($notifiable)
     {
         return [
-            'channels'   => $this->via($notifiable),
-            'sender_id'  => auth()->user()
+            'channels'  => $this->via($notifiable),
+            'sender_id' => auth()->user()
                 ? auth()->user()->id
                 : 'redis',
             'patient_id' => $this->patient->id,
@@ -105,16 +106,14 @@ class SendCareDocument extends Notification
      *
      * @param $notifiable
      *
-     * @return bool|string
      * @throws \Exception
      *
+     * @return SimpleNotification
      */
     public function toDirectMail($notifiable)
     {
         if ( ! $notifiable || ! $notifiable->emr_direct_address) {
-            throw new \Exception('Notifiable or Emr direct address not found.', 500);
-
-            return false;
+            throw new \Exception('Notifiable or Emr direct address not found.', 400);
         }
 
         return (new SimpleNotification())
@@ -128,15 +127,17 @@ class SendCareDocument extends Notification
      *
      * @param $notifiable
      *
-     * @return bool|string
+     * @throws \Exception
      */
-    public function toFax($notifiable)
+    public function toFax($notifiable = null): array
     {
         if ( ! $notifiable || ! $notifiable->fax) {
-            return false;
+            throw new \Exception('Notifiable or fax number not found.', 400);
         }
 
-        return $this->toPdf();
+        return [
+            'file' => $this->toPdf(),
+        ];
     }
 
     /**
@@ -144,9 +145,9 @@ class SendCareDocument extends Notification
      *
      * @param mixed $notifiable
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
      * @throws \Exception
      *
+     * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
@@ -202,11 +203,11 @@ class SendCareDocument extends Notification
      */
     private function getBody($greeting, $lastLine = '')
     {
-        $message = $greeting . ', created on '
-                   . $this->media->created_at->toFormattedDateString();
+        $message = $greeting.', created on '
+                   .$this->media->created_at->toFormattedDateString();
 
         if (auth()->check()) {
-            $message .= PHP_EOL . PHP_EOL . 'This Report was forwarded to you by ' . auth()->user()->getFullName() . '.';
+            $message .= PHP_EOL.PHP_EOL.'This Report was forwarded to you by '.auth()->user()->getFullName().'.';
         }
 
         $message .= $lastLine;
@@ -215,8 +216,9 @@ class SendCareDocument extends Notification
     }
 
     /**
-     * @return string
      * @throws \Exception
+     *
+     * @return string
      */
     private function getReportLink()
     {
