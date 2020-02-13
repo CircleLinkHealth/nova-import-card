@@ -112,5 +112,14 @@ class ChargeableServiceSeeder extends Seeder
             'description' => 'Enrollment in office & Care Planning by Provider',
             'amount'      => null,
         ]);
+
+        ChargeableService::updateOrCreate([
+            'code' => 'G2065',
+        ], [
+            'order'       => 9,
+            'is_enabled'  => true,
+            'description' => 'PCM: Principal Care Management over 30 Minutes (1 month)',
+            'amount'      => null,
+        ]);
     }
 }

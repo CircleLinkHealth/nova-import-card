@@ -10,7 +10,7 @@ use App\Traits\RunsConsoleCommands;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
-class ReviewAppPostDeploy extends Command
+class ReviewAppSeedDb extends Command
 {
     use RunsConsoleCommands;
 
@@ -19,13 +19,14 @@ class ReviewAppPostDeploy extends Command
      *
      * @var string
      */
-    protected $description = 'Commands to run on event postdeploy of a Heroku review app. Only run this for review apps.';
+    protected $description = 'Run this command upon releasing a new version of CPM on Heroku';
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'reviewapp:postdeploy';
+    protected $signature = 'reviewapp:seed-db';
 
     /**
      * Create a new command instance.
@@ -40,20 +41,19 @@ class ReviewAppPostDeploy extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
-     * @throws \Exception
+     * @return void
      */
     public function handle()
     {
-        $this->output->note('Running post deploy command');
-
         if ( ! app()->environment(['review', 'local', 'testing'])) {
-            throw new \Exception('Only review and local environments can run this');
+            return;
         }
+
+        $this->output->note('Running reviewapp:seed-db');
 
         $dbName = config('database.connections.mysql.database');
 
-        $this->output->note("Checking if db [$dbName] exists");
+        $this->output->note("Checking if should run seeder on db [$dbName]");
 
         try {
             $dbTableExists = User::where('username', 'admin')->exists() && User::where('username', 'nurse')->exists();
@@ -62,23 +62,11 @@ class ReviewAppPostDeploy extends Command
         }
 
         if (false === $dbTableExists) {
-            $cmd = 'mysql:createdb';
-            $this->output->note("Running command $cmd");
-            $this->runCommand(['php', 'artisan', '-vvv', $cmd, $dbName]);
-
-            $cmd = 'migrate:fresh';
-            $this->output->note("Running command $cmd");
-            $this->runCommand(['php', 'artisan', '-vvv', $cmd]);
-
-            $cmd = 'migrate:views';
-            $this->output->note("Running command $cmd");
-            $this->runCommand(['php', 'artisan', '-vvv', $cmd]);
-
             $cmd = 'db:seed';
             $this->output->note("Running command $cmd");
             $this->runCommand(['php', 'artisan', '-vvv', $cmd, '--class=TestSuiteSeeder']);
         }
 
-        $this->warn('reviewapp:postdeploy ran');
+        $this->warn('reviewapp:seed-db ran');
     }
 }

@@ -41,8 +41,8 @@ class AlternativeCareTimePayableCalculator
         if ( ! $user) {
             //in case the patient was deleted
             $user = User::withTrashed()
-                        ->with('chargeableServices')
-                        ->findOrFail($activity->patient_id);
+                ->with('chargeableServices')
+                ->findOrFail($activity->patient_id);
         } else {
             $user->loadMissing('chargeableServices');
         }
@@ -52,8 +52,8 @@ class AlternativeCareTimePayableCalculator
         $monthYear = Carbon::parse($activity->performed_at)->startOfMonth();
 
         $summary = $user->patientSummaries()
-                        ->whereMonthYear($monthYear)
-                        ->first();
+            ->whereMonthYear($monthYear)
+            ->first();
 
         $totalTime = $activity->is_behavioral
             ? $summary->bhi_time
@@ -120,7 +120,7 @@ class AlternativeCareTimePayableCalculator
 
     private function isActivityForSuccessfulCall(Activity $activity): bool
     {
-        if ('Patient Note Creation' !== $activity->type) {
+        if ( ! in_array($activity->type, ['Patient Note Creation', 'Patient Note Edit'])) {
             return false;
         }
 
@@ -130,16 +130,16 @@ class AlternativeCareTimePayableCalculator
                 $performedAt->copy()->startOfDay(),
                 $performedAt->copy()->endOfDay(),
             ])
-            ->where('status', '=', Note::STATUS_COMPLETE)
-            ->where('author_id', '=', $activity->logger_id)
-            ->where('patient_id', '=', $activity->patient_id)
-            ->pluck('id');
+                ->where('status', '=', Note::STATUS_COMPLETE)
+                ->where('author_id', '=', $activity->logger_id)
+                ->where('patient_id', '=', $activity->patient_id)
+                ->pluck('id');
 
         $hasSuccessfulCall = false;
         if ( ! empty($noteIds)) {
             $hasSuccessfulCall = Call::whereIn('note_id', $noteIds)
-                                     ->where('status', '=', Call::REACHED)
-                                     ->count() > 0;
+                ->where('status', '=', Call::REACHED)
+                ->count() > 0;
         }
 
         return $hasSuccessfulCall;
