@@ -23,6 +23,10 @@ class AddCareTeamFromAthena implements EligibilityCheckAdapter
      * @var TargetPatient
      */
     protected $targetPatient;
+    /**
+     * @var Ccda
+     */
+    protected $ccda;
     
     /**
      * AddInsurancesFromAthena constructor.
@@ -31,10 +35,11 @@ class AddCareTeamFromAthena implements EligibilityCheckAdapter
      * @param TargetPatient $targetPatient
      * @param Ccda $ccda
      */
-    public function __construct(EligibilityCheckAdapter $adapter, TargetPatient $targetPatient)
+    public function __construct(EligibilityCheckAdapter $adapter, TargetPatient $targetPatient, Ccda $ccda)
     {
         $this->adapter = $adapter;
         $this->targetPatient = $targetPatient;
+        $this->ccda = $ccda;
     }
     
     /**
@@ -43,7 +48,7 @@ class AddCareTeamFromAthena implements EligibilityCheckAdapter
     public function adaptToEligibilityJob(): EligibilityJob
     {
         return app(AddCareTeamFromAthenaToEligibilityJob::class)->addCareTeamFromAthena(
-            $this->adapter->adaptToEligibilityJob(), $this->targetPatient
+            $this->adapter->adaptToEligibilityJob(), $this->targetPatient, $this->ccda
         );
     }
     

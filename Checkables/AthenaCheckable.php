@@ -65,7 +65,9 @@ class AthenaCheckable implements Checkable
                     new CcdaToEligibilityJobAdapter($this->ccda, $this->practice, $this->batch),
                     $this->getTargetPatient(),
                     $this->ccda
-                ),$this->getTargetPatient()
+                ),
+                $this->getTargetPatient(),
+                $this->ccda
             );
             
             $this->eligibilityJob = $decoratedAdapter->adaptToEligibilityJob()
