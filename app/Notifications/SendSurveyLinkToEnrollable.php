@@ -40,7 +40,7 @@ class SendSurveyLinkToEnrollable extends Notification
      */
     public function toMail($notifiable)
     {
-//        @todo:  should not say "Regards AWV" & also send sms
+//        @todo:  should not say "Regards AWV" & also send sms MAYBE emmit an event
         return (new MailMessage)
             ->line('You have successfully logged in to your Enrollment Survey.')
             ->line('Please use the link bellow if you wish to fill the survey some other time.')

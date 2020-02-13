@@ -203,7 +203,7 @@ class InvitationLinksController extends Controller
     {
         $user = User::whereId($userId)->firstOrFail();
         $survey = Survey::whereId($surveyId)->firstOrFail();
-        $url = $this->service->createAndSaveUrl($user, $survey->name, false);
+        $url = $this->service->createAndSaveUrl($user, $survey->name, true);
 
         $user->notify(new SendSurveyLinkToEnrollable($url));
 

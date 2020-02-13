@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\CPM\EnrollableCompletedSurvey;
 use App\Events\SurveyInstancePivotSaved;
 use App\Jobs\GeneratePatientReportsJob as GenerateReports;
 use App\Survey;
@@ -40,14 +41,17 @@ class GeneratePatientReports
                 },
             ])->find($instance->pivot->user_id);
 
-
-            $otherInstance = $patient->surveyInstances->first();
-
-//            Survey::ENROLLEES !== $surveyName
-
-            if ($otherInstance) {
-                GenerateReports::dispatch($patient->id, $instance->year)->onQueue('high');
+            if (Survey::ENROLLEES === $surveyName) {
+                //Instantiate Redis Event class to emit report created events to CPM
+                $redisSurveyCompletedEvent = new EnrollableCompletedSurvey($patient);
+                $redisSurveyCompletedEvent->publishEnrollableCompletedSurvey($instance->id);
+            } else {
+                $otherInstance = $patient->surveyInstances->first();
+                if ($otherInstance) {
+                    GenerateReports::dispatch($patient->id, $instance->year)->onQueue('high');
+                }
             }
+
         }
     }
 }
