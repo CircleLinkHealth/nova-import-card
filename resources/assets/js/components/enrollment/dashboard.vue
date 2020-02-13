@@ -433,10 +433,6 @@
                                 ¡Me alegro de haberme conectado! ¡Que tenga un muy buen día!
                             </template>
                             <template v-else>
-                                A registered nurse will call you in the coming days from {{practice_phone}}.
-                                Please save this number so you accept the call when he or she rings.
-                                I am so glad we were able to connect! Have a great day!
-
                                 That’s all I need, a registered nurse will give you a call from this same number within the next week or so to introduce themselves.
                                 Do you want me to give you the number so you can be sure to save it on your phone or somewhere else?<br><br>
 

@@ -171,4 +171,12 @@ class EnrolleeFilters extends QueryFilters
 
         return $this->builder->where('tertiary_insurance', 'like', '%'.$insurance.'%');
     }
+
+    public function requested_callback($dateString){
+        if (empty($date)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('requested_callback', 'like', '%'.$dateString.'%');
+    }
 }

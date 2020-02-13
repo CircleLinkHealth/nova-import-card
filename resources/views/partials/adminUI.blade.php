@@ -40,6 +40,8 @@
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
 
     <style>
+        body {
+            font-family: Roboto, sans-serif;}
         .table-striped > tbody > tr:nth-child(odd) > td,
         .table-striped > tbody > tr:nth-child(odd) > th {
             /* background-color: #eee; */
@@ -168,6 +170,9 @@
 
                                 <li>
                                     <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
+                                </li>
+                                <li>
+                                    <a href="{{route('OpsDashboard.index.chart')}}">Ops Chart</a>
                                 </li>
                                 <li><a href="{{ route('admin.reports.nurse.metrics') }}">
                                         Nurse Performance Report</a></li>
@@ -307,7 +312,6 @@
     @include('partials.footer')
     @yield('content')
 </div>
-
 
 @if (Agent::isIE())
     <!-- Script for polyfilling Promises on IE9 and 10 -->
