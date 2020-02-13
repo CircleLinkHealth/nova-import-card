@@ -474,13 +474,9 @@ class EligibilityChecker
                     }
                     
                     if ($this->practice->hasServiceCode('G2065')) {
-                        $pcmProblemId = optional(
-                            (new PcmProblemByNameOrCode())->setQueryChain(function ($q) {
-                                return $q->where('practice_id', $this->practice->id);
-                            }, $this->practice->id)->find($p->getCode())
-                        )->id;
+                        $pcmProblemId = PcmProblem::where('practice_id', $this->practice->id)->where('code', $p->getCode())->first();
                         if ($pcmProblemId) {
-                            $pcmProblems[] = $pcmProblemId;
+                            $pcmProblems[] = $pcmProblemId->id;
                         }
                     }
                 }
@@ -488,13 +484,9 @@ class EligibilityChecker
                 // Try to match keywords
                 if ($p->getName()) {
                     if ($this->practice->hasServiceCode('G2065')) {
-                        $pcmProblemId = optional(
-                            (new PcmProblemByNameOrCode())->setQueryChain(function ($q) {
-                                return $q->where('practice_id', $this->practice->id);
-                            }, $this->practice->id)->find($p->getName())
-                        )->id;
+                        $pcmProblemId = PcmProblem::where('practice_id', $this->practice->id)->where('description', $p->getName())->first();
                         if ($pcmProblemId) {
-                            $pcmProblems[] = $pcmProblemId;
+                            $pcmProblems[] = $pcmProblemId->id;
                         }
                     }
                     //Reject if patientData is on dialysis
