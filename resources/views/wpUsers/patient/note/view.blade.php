@@ -226,26 +226,26 @@
                                                 e.preventDefault();
                                                 form = this;
                                                 //prevent sent if send patient email is check and email body is empty
-                                                if($("[id='email-patient']").prop("checked") == true && shouldValidateEmailBody){
+                                                if ($("[id='email-patient']").prop("checked") == true && shouldValidateEmailBody) {
 
 
-                                                    if ($("[id='patient-email-body-input']").val() == 0){
+                                                    if ($("[id='patient-email-body-input']").val() == 0) {
                                                         alert("Please fill out the patient email!");
                                                         return;
-                                                    }else{
+                                                    } else {
                                                         return validateEmailBody()
                                                     }
                                                 }
                                                 //append patient email attachments on form if the exist
-                                                if (formAttachments){
+                                                if (formAttachments) {
                                                     let i = 0;
                                                     formAttachments.map(function (attachment) {
                                                         $("<input>")
                                                             .attr("type", "hidden")
-                                                            .attr("name", "attachments["+i+"][media_id]").val(attachment.media_id).appendTo(form);
+                                                            .attr("name", "attachments[" + i + "][media_id]").val(attachment.media_id).appendTo(form);
                                                         $("<input>")
                                                             .attr("type", "hidden")
-                                                            .attr("name", "attachments["+i+"][path]").val(attachment.path).appendTo(form);
+                                                            .attr("name", "attachments[" + i + "][path]").val(attachment.path).appendTo(form);
                                                         i++;
                                                     });
                                                 }
@@ -256,10 +256,10 @@
                                         const validateEmailBody = async () => {
                                             return await window.axios
                                                 .post(validateEmailBodyUrl, {
-                                                    patient_email_body : $("[id='patient-email-body-input']").val()
+                                                    patient_email_body: $("[id='patient-email-body-input']").val()
                                                 })
                                                 .then((response) => {
-                                                    if (response.data.status == 400){
+                                                    if (response.data.status == 400) {
                                                         App.$emit('patient-email-body-errors', response.data.messages);
                                                         return false;
                                                     }
@@ -292,7 +292,7 @@
                                     </script>
                                 @endpush
                                 {!! Form::close() !!}
-
+                                @include('wpUsers.patient.note.patient-emails')
                                 <div class="col-sm-12">
                                     @include('wpUsers.patient.note.manage-addendums')
                                 </div>
