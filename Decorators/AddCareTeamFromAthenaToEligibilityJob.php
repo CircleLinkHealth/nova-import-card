@@ -31,7 +31,7 @@ class AddCareTeamFromAthenaToEligibilityJob
      * @return EligibilityJob
      * @throws \Exception
      */
-    public function addCareTeamFromAthena(EligibilityJob $eligibilityJob, TargetPatient $targetPatient) :EligibilityJob
+    public function addCareTeamFromAthena(EligibilityJob $eligibilityJob, TargetPatient $targetPatient, Ccda $ccda) :EligibilityJob
     {
         if (array_key_exists('care_team', $eligibilityJob->data) && ! empty($eligibilityJob->data['care_team'])) {
             return $eligibilityJob;
@@ -48,6 +48,20 @@ class AddCareTeamFromAthenaToEligibilityJob
         if (is_array($careTeam)) {
             $data                 = $eligibilityJob->data;
             $data['care_team']    = $careTeam;
+    
+            
+                foreach ($careTeam['members'] as $member) {
+                    if (array_key_exists('name', $member)) {
+                        $providerName = $member['name'];
+    
+                        $data['referring_provider_name'] = $ccda->referring_provider_name = $providerName;
+                        $ccda->save();
+                
+                        break;
+                    }
+                }
+            
+            
             $eligibilityJob->data = $data;
             $eligibilityJob->save();
         }
