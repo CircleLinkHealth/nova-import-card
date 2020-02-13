@@ -58,6 +58,9 @@ class CallObserver
 
             $this->activityService->processMonthlyActivityTime($patient->id, $date);
 
+            /*
+             * this is done in updateCallLogs, which is called on demand when needed
+
             $start = $date->copy()->startOfMonth();
             $end   = $date->copy()->endOfMonth();
 
@@ -83,6 +86,7 @@ class CallObserver
                     'no_of_calls'            => $no_of_calls->count(),
                     'no_of_successful_calls' => $no_of_successful_calls,
                 ]);
+            */
         }
 
         if ('reached' === $call->status || 'done' === $call->status) {

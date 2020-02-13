@@ -2,24 +2,6 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="row" style="margin: 5% 0;">
-            @isset($chart)
-                <div class="col-md-12">
-                    <h1 class="text-center"><small style="font-size: 6rem;color: rgb(200, 211, 224);">Think</small> <span class="font-weight-bold" style="font-size: 12rem;color: rgb(41, 90, 146);">Growth</span></h1>
-                </div>
-                <div class="col-md-12">
-                    {!! $chart->container() !!}
-                </div>
-                <div class="col-md-12">
-                    <p class="text-right">
-                        <small style="color: rgb(48, 175, 209);">* data obtained from Daily Ops Report.</small>
-                    </p>
-                </div>
-            @endisset
-        </div>
-        <br>
-        <br>
-        <br>
         <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-default">

@@ -65,18 +65,6 @@ class ReviewAppCreateDb extends Command
             $cmd = 'mysql:createdb';
             $this->output->note("Running command $cmd");
             $this->runCommand(['php', 'artisan', '-vvv', $cmd, $dbName]);
-
-            $cmd = 'migrate:fresh';
-            $this->output->note("Running command $cmd");
-            $this->runCommand(['php', 'artisan', '-vvv', $cmd]);
-
-            $cmd = 'migrate:views';
-            $this->output->note("Running command $cmd");
-            $this->runCommand(['php', 'artisan', '-vvv', $cmd]);
-
-            $cmd = 'db:seed';
-            $this->output->note("Running command $cmd");
-            $this->runCommand(['php', 'artisan', '-vvv', $cmd, '--class=TestSuiteSeeder']);
         }
 
         $this->warn('reviewapp:create-db ran');

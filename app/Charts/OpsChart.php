@@ -14,10 +14,10 @@ use ConsoleTVs\Charts\Classes\Chartjs\Chart;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
-class TotalBillablePatients extends Chart
+class OpsChart extends Chart
 {
     const ADMIN_CHART_CACHE_KEY = 'chart:clh:total_billable_patients';
-    
+
     /**
      * Initializes the chart.
      *
@@ -27,28 +27,32 @@ class TotalBillablePatients extends Chart
     {
         parent::__construct();
     }
-    
+
+    public static function clearClhCachedChart()
+    {
+    }
+
     public static function clhGrowthChart()
     {
         $clh = SaasAccount::whereSlug('circlelink-health')->first();
-        
+
         if ( ! $clh) {
             return new static();
         }
-        
+
         return Cache::remember(
             self::ADMIN_CHART_CACHE_KEY,
             1440,
             function () use ($clh) {
-                $period      = CarbonPeriod::create(now()->subMonths(2), now());
+                $period = CarbonPeriod::create(now()->subMonths(2), now());
                 $collections = [];
-                
+
                 foreach ($period as $date) {
                     $collections[] = "ops-daily-report-{$date->toDateString()}.json";
                 }
-                
+
                 $dataset = collect();
-                
+
                 Media::whereModelType(SaasAccount::class)->whereIn('collection_name', $collections)->orderByDesc(
                     'id'
                 )->chunkById(
@@ -57,7 +61,7 @@ class TotalBillablePatients extends Chart
                         $medias->each(
                             function (Media $media) use (&$dataset) {
                                 $json = $media->getFile();
-                                
+
                                 //first check if we have a valid file
                                 if ( ! $json) {
                                     return [];
@@ -66,10 +70,10 @@ class TotalBillablePatients extends Chart
                                 if ( ! is_json($json)) {
                                     throw new \Exception('File retrieved is not in json format.', 500);
                                 }
-                                
-                                $decoded   = json_decode($json, true);
+
+                                $decoded = json_decode($json, true);
                                 $clhTotals = $decoded['rows']['CircleLink Total'] ?? [];
-                                
+
                                 $dataset[] = [
                                     'Added'         => $clhTotals['Added'] ?? null,
                                     'Paused'        => $clhTotals['Paused'] ?? null,
@@ -88,18 +92,18 @@ class TotalBillablePatients extends Chart
                         );
                     }
                 );
-                
+
                 $chart = new static();
                 $chart->labels($dataset->pluck('dateGenerated')->all());
                 $chart->dataset('Added', 'line', $dataset->pluck('Added')->all())
-                      ->options(
-                          [
-                              'hidden'          => true,
-                              'fill'            => false,
-                              'backgroundColor' => '#00ffcc',
-                              'color'           => '#00ffcc',
-                          ]
-                      );
+                    ->options(
+                        [
+                            'hidden'          => true,
+                            'fill'            => false,
+                            'backgroundColor' => '#00ffcc',
+                            'color'           => '#00ffcc',
+                        ]
+                    );
                 $chart->dataset('Paused', 'line', $dataset->pluck('Paused')->all())->options(
                     [
                         'hidden'          => true,
@@ -180,14 +184,9 @@ class TotalBillablePatients extends Chart
                         'color'           => '#179553',
                     ]
                 );
-                
+
                 return $chart;
             }
         );
-    }
-    
-    public static function clearClhCachedChart()
-    {
-    
     }
 }
