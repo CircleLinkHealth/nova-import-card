@@ -139,6 +139,16 @@ class EligibilityChecker
         if ($this->eligibilityJob) {
             try {
                 $this->eligibilityJob->save();
+                
+                if ($tP = $this->eligibilityJob->targetPatient) {
+                    $tP->status = $this->eligibilityJob->status;
+                    $tP->save();
+                }
+    
+                if ($ccd = $tP->ccda) {
+                    $ccd->status = $this->eligibilityJob->status;
+                    $ccd->save();
+                }
             } catch (\Exception $e) {
                 \Log::critical($e);
                 \Log::critical($this->eligibilityJob);
