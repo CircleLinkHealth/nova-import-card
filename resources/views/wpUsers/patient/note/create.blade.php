@@ -497,12 +497,14 @@
 
                                                 </div>
                                                 <div class="col-md-4">
+                                                    @if(authUserCanSendPatientEmail())
                                                     <!-- Email Patient Checkbox -->
                                                     <div class="form-block col-md-12" style="margin-bottom: 10px">
                                                         <input type="checkbox" id="email-patient"
                                                                name="email-patient" value="1">
                                                         <label for="email-patient"><span> </span>Email Patient</label>
                                                     </div>
+                                                        @endif
                                                 </div>
                                             </div>
                                         </div>

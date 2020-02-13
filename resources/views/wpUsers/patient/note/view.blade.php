@@ -292,7 +292,9 @@
                                     </script>
                                 @endpush
                                 {!! Form::close() !!}
+                                @if(authUserCanSendPatientEmail())
                                 @include('wpUsers.patient.note.patient-emails')
+                                @endif
                                 <div class="col-sm-12">
                                     @include('wpUsers.patient.note.manage-addendums')
                                 </div>

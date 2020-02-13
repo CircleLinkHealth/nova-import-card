@@ -40,11 +40,13 @@
                 @endempty
             </div>
             <div class="col-sm-2" style="margin-right: 0; padding-right: 0">
+                @if(authUserCanSendPatientEmail())
                 <div>
                     <input type="checkbox" id="email-patient"
                            name="email-patient" value="1">
                     <label for="email-patient"><span> </span>Email Patient</label>
                 </div>
+                    @endif
             </div>
             <div class="col-sm-2" style="text-align: right">
                 @if(Route::is('patient.note.view'))

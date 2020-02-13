@@ -297,14 +297,19 @@ class NoteService
             if (isset($data['attachments'])) {
                 foreach ($data['attachments'] as $attachment) {
                     $a['id'] = $attachment['media_id'];
-                    $a['url'] = Media::where('collection_name', 'patient-email-attachments')
+                    $media = Media::where('collection_name', 'patient-email-attachments')
                         ->where('model_id', $n->notifiable_id)
                         ->whereIn(
-                                                              'model_type',
-                                                              ['App\User', 'CircleLinkHealth\Customer\Entities\User']
-                                                          )
-                        ->where('mime_type', 'like', '%'.'image'.'%')
-                        ->find($attachment['media_id'])->getUrl();
+                                        'model_type',
+                                        ['App\User', 'CircleLinkHealth\Customer\Entities\User']
+                                    )
+                        ->find($attachment['media_id']);
+
+                    $a['url'] = $media->getUrl();
+                    $a['file_name'] = $media->file_name;
+                    $a['is_image'] = str_contains($media->mime_type, 'image')
+                        ?: false;
+
                     $email['attachments'][] = $a;
                 }
             }

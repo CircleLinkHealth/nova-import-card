@@ -175,19 +175,19 @@ if ( ! function_exists('activeNurseNames')) {
     function activeNurseNames()
     {
         return User::ofType('care-center')
-                   ->with(
+            ->with(
                        [
                            'nurseInfo' => function ($q) {
                                $q->where('is_demo', '!=', true);
                            },
                        ]
                    )->whereHas(
-                'nurseInfo',
-                function ($q) {
-                    $q->where('is_demo', '!=', true);
-                }
-            )->where('user_status', 1)
-                   ->pluck('display_name', 'id');
+                       'nurseInfo',
+                       function ($q) {
+                           $q->where('is_demo', '!=', true);
+                       }
+                   )->where('user_status', 1)
+            ->pluck('display_name', 'id');
     }
 }
 
@@ -819,7 +819,20 @@ if ( ! function_exists('defaultCarePlanTemplate')) {
         return CarePlanTemplate::findOrFail(AppConfig::pull('default_care_plan_template_id'));
     }
 }
+if ( ! function_exists('authUserCanSendPatientEmail')) {
+    /**
+     * Toggles patient email for auth user.
+     */
+    function authUserCanSendPatientEmail(): bool
+    {
+        $key = 'enable_patient_email_for_user';
 
+        return \Cache::remember($key, 2, function () use ($key) {
+            return AppConfig::where('config_key', $key)
+                ->where('config_value', auth()->user()->id)->exists();
+        });
+    }
+}
 if ( ! function_exists('setAppConfig')) {
     /**
      * Save an AppConfig key, value and then return it.
@@ -1033,35 +1046,35 @@ if ( ! function_exists('validProblemName')) {
     function validProblemName($name)
     {
         return ! str_contains(
-                strtolower($name),
-                [
-                    'screening',
-                    'history',
-                    'scan',
-                    'immunization',
-                    'immunisation',
-                    'injection',
-                    'vaccine',
-                    'vaccination',
-                    'vaccin',
-                    'screen',
-                    'follow up',
-                    'followup',
-                    'labs',
-                    'f/u',
-                    'mo fu',
-                    'fu on',
-                    'fu from',
-                    'm fu',
-                    'counsel',
-                    'adverse effect drug',
-                    'counseling',
-                    'new pt',
-                    'hx',
-                    'prediabetes',
-                    'check',
-                ]
-            ) && ! in_array(
+            strtolower($name),
+            [
+                'screening',
+                'history',
+                'scan',
+                'immunization',
+                'immunisation',
+                'injection',
+                'vaccine',
+                'vaccination',
+                'vaccin',
+                'screen',
+                'follow up',
+                'followup',
+                'labs',
+                'f/u',
+                'mo fu',
+                'fu on',
+                'fu from',
+                'm fu',
+                'counsel',
+                'adverse effect drug',
+                'counseling',
+                'new pt',
+                'hx',
+                'prediabetes',
+                'check',
+            ]
+        ) && ! in_array(
                 strtolower($name),
                 [
                     'fu',

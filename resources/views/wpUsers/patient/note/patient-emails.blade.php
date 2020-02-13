@@ -18,8 +18,14 @@
                             @foreach($email['attachments'] as $attachment)
                                 <div class="col-md-3"
                                      style="max-height: 250px; max-width: 250px">
-                                    <a href="{{$attachment['url']}}" target="_blank"><img style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
-                                            src="{{$attachment['url']}}"></a>
+                                    <a href="{{$attachment['url']}}" target="_blank">
+                                        @if($attachment['is_image'])
+                                        <img style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
+                                            src="{{$attachment['url']}}">
+                                            @else
+                                            <i class="far fa-file-alt"></i> &nbsp;{{$attachment['file_name']}}
+                                        @endif
+                                    </a>
                                 </div>
                             @endforeach
                         </div>
