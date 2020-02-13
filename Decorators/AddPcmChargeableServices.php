@@ -19,6 +19,7 @@ class AddPcmChargeableServices
     public function decorate(EligibilityJob $eligibilityJob): EligibilityJob
     {
         $data = $eligibilityJob->data;
+        $pcmProblems = [];
     
         $problems = EligibilityChecker::getProblemsForEligibility($eligibilityJob);
     
@@ -47,8 +48,8 @@ class AddPcmChargeableServices
                     $pcmProblems[] = $pcmProblemId->id;
                 }
             
-                if ( ! empty($pcmProblems)) {
-                    $data['chargeable_services']['G2065']['problems'] = array_unique(array_filter($pcmProblems));
+                if ( ! empty($pcmProblems = array_unique(array_filter($pcmProblems)))) {
+                    $data['chargeable_services']['G2065']['problems'] = $pcmProblems;
                     $eligibilityJob->data = $data;
                 }
             }

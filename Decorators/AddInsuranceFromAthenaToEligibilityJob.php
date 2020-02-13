@@ -32,9 +32,12 @@ class AddInsuranceFromAthenaToEligibilityJob
     }
     
     /**
-     * @throws \Exception
+     * @param EligibilityJob $eligibilityJob
+     * @param TargetPatient $targetPatient
+     * @param Ccda $ccda
      *
      * @return EligibilityJob
+     * @throws \Exception
      */
     public function addInsurancesFromAthena(EligibilityJob $eligibilityJob, TargetPatient $targetPatient, Ccda $ccda)
     {
