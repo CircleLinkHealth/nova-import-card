@@ -6,21 +6,21 @@
 
 namespace CircleLinkHealth\Eligibility;
 
-use CircleLinkHealth\Core\StringManipulation;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use App\Constants;
+use Carbon\Carbon;
+use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
+use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Exceptions\InvalidStructureException;
-use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
-use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
+use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\Entities\Problem;
-use CircleLinkHealth\Eligibility\ValidatesEligibility;
-use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Exceptions\InvalidStructureException;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Collection;
 use Validator;
 
@@ -408,6 +408,7 @@ class EligibilityChecker
                 }
                 
                 $codeType = null;
+                $pcmProblems = [];
                 
                 if ($p->getCodeSystemName()) {
                     $codeType = getProblemCodeSystemName([$p->getCodeSystemName()]);
@@ -470,10 +471,17 @@ class EligibilityChecker
                             continue;
                         }
                     }
+                    
+                    if ($this->practice->hasServiceCode('G2065')) {
+                        $pcmProblems[] = optional(PcmProblem::search($p->getCode())->where('practice_id', $this->practice->id)->first())->id;
+                    }
                 }
                 
                 // Try to match keywords
                 if ($p->getName()) {
+                    if ($this->practice->hasServiceCode('G2065')) {
+                        $pcmProblems[] = optional(PcmProblem::search($p->getName())->where('practice_id', $this->practice->id)->first())->id;
+                    }
                     //Reject if patientData is on dialysis
                     //https://circlelinkhealth.atlassian.net/browse/CPM-954
                     if (str_contains($p->getName(), ['End stage renal disease'])) {
@@ -536,6 +544,13 @@ class EligibilityChecker
             $this->eligibilityJob->bhi_problem_id   = $qualifyingBhiProblems[0] ?? null;
             $this->eligibilityJob->ccm_problem_1_id = $qualifyingCcmProblemsCpmIdStack[0] ?? null;
             $this->eligibilityJob->ccm_problem_2_id = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
+    
+            if (!empty($pcmProblems)) {
+                $data =  $this->eligibilityJob->data;
+                $data['chargeable_services'][] = 'G2065';
+                $data['chargeable_services']['G2065']['problems'] = $pcmProblems;
+                $this->eligibilityJob->data = $data;
+            }
         }
         
         if ($ccmProbCount < 2 && 0 == $bhiProbCount) {
@@ -764,7 +779,7 @@ class EligibilityChecker
         } elseif (empty($args['mrn']) && array_key_exists('internal_id', $args) && ! empty($args['internal_id'])) {
             $args['mrn'] = $args['internal_id'];
         }
-    
+        
         $args['dob'] = $args['dob'] ?? $args['date_of_birth'] ?? $args['birth_date'];
         
         $enrolleeExists = Enrollee::where(

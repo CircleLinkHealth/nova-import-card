@@ -176,6 +176,8 @@ class ProcessEligibilityBatch implements ShouldQueue
 
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
     {
+        ini_set('memory_limit', '200M');
+        
         $query          = TargetPatient::whereBatchId($batch->id)->whereStatus(TargetPatient::STATUS_TO_PROCESS);
         $targetPatients = $query->with('batch')->chunkById(30, function ($targetPatients) use ($batch) {
             $batch->status = EligibilityBatch::STATUSES['processing'];
