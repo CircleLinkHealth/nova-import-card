@@ -128,7 +128,7 @@ abstract class BaseScoutSearch implements ScoutSearch
         if (!is_callable($this->fn))
             return $query;
     
-        return $this->fn($query)();
+        return ($this->fn)($query);
     }
     
     /**
