@@ -52,7 +52,11 @@ class AddDemographicsFromAthenaToEligibilityJob
         
         if ( ! array_key_exists('provider', $eligibilityJob->data) && array_key_exists('patient_demographics', $eligibilityJob->data)) {
             if ($provId = $data['patient_demographics']['primaryproviderid']) {
-                $provider = $this->athenaApiImplementation->getProvider($targetPatient->ehr_practice_id, $provId);
+                try {
+                    $provider = $this->athenaApiImplementation->getProvider($targetPatient->ehr_practice_id, $provId);
+                } catch (\Exception $exception) {
+                    \Log::error($exception->getMessage());
+                }
             }
             
             if (is_array($provider) && array_key_exists(0, $provider)) {
