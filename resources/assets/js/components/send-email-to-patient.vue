@@ -68,8 +68,8 @@
             handleFile(file) {
             },
             handleAttachmentAdd(event) {
-                //temporary fix
-                this.$refs.patientEmail.$refs.trix.editor.insertLineBreak();
+                //temporary fix, to prevent attachment from hiding text
+                this.$refs.patientEmail.$refs.trix.editor.insertString("  ");
                 let formData = new FormData();
                 let file = event.attachment.file;
                 formData.append("file", file);
