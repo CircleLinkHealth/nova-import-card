@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility;
 
 use App\Constants;
+use App\Search\PcmProblemByNameOrCode;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -474,7 +475,9 @@ class EligibilityChecker
                     
                     if ($this->practice->hasServiceCode('G2065')) {
                         $pcmProblemId = optional(
-                            PcmProblem::search($p->getCode())->where('practice_id', $this->practice->id)->first()
+                            (new PcmProblemByNameOrCode())->setQueryChain(function ($q) {
+                                return $q->where('practice_id', $this->practice->id);
+                            })->find($p->getCode())
                         )->id;
                         if ($pcmProblemId) {
                             $pcmProblems[] = $pcmProblemId;
@@ -486,7 +489,9 @@ class EligibilityChecker
                 if ($p->getName()) {
                     if ($this->practice->hasServiceCode('G2065')) {
                         $pcmProblemId = optional(
-                            PcmProblem::search($p->getName())->where('practice_id', $this->practice->id)->first()
+                            (new PcmProblemByNameOrCode())->setQueryChain(function ($q) {
+                                return $q->where('practice_id', $this->practice->id);
+                            })->find($p->getName())
                         )->id;
                         if ($pcmProblemId) {
                             $pcmProblems[] = $pcmProblemId;

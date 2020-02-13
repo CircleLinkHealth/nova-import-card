@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\Checkables;
 
 use CircleLinkHealth\Eligibility\Adapters\AddCareTeamFromAthena;
+use CircleLinkHealth\Eligibility\Adapters\AddDemographicsFromAthena;
 use CircleLinkHealth\Eligibility\Adapters\AddInsurancesFromAthena;
 use CircleLinkHealth\Eligibility\Adapters\CcdaToEligibilityJobAdapter;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
@@ -60,15 +61,17 @@ class AthenaCheckable implements Checkable
             //We are "decorating" existing Ccda adapter to add insurance we will get from Athena API
             //In other words CcdaToEligibilityJobAdapter will extract data for eligibility from CCD. We will take that
             //result, add insurance from AthenaAPI to it and store it.
-            $decoratedAdapter = new AddCareTeamFromAthena(
-                new AddInsurancesFromAthena(
-                    new CcdaToEligibilityJobAdapter($this->ccda, $this->practice, $this->batch),
-                    $this->getTargetPatient(),
-                    $this->ccda
-                ),
-                $this->getTargetPatient(),
-                $this->ccda
-            );
+            $decoratedAdapter = new AddDemographicsFromAthena(new AddCareTeamFromAthena(
+                                                                  new AddInsurancesFromAthena(
+                                                                      new CcdaToEligibilityJobAdapter($this->ccda, $this->practice, $this->batch),
+                                                                      $this->getTargetPatient(),
+                                                                      $this->ccda
+                                                                  ),
+                                                                  $this->getTargetPatient(),
+                                                                  $this->ccda
+                                                              ),
+                                                              $this->getTargetPatient(),
+                                                              $this->ccda);
             
             $this->eligibilityJob = $decoratedAdapter->adaptToEligibilityJob()
                                                      ->process()->getEligibilityJob();
