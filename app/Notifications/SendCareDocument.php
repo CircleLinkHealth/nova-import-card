@@ -28,6 +28,7 @@ class SendCareDocument extends Notification
     private $media;
     private $patient;
     private $reportType;
+    private $reportYear;
 
     /**
      * Create a new notification instance.
@@ -41,6 +42,7 @@ class SendCareDocument extends Notification
         $this->media = $media;
 
         $this->reportType = $this->media->getCustomProperty('doc_type');
+        $this->reportYear = $this->media->getCustomProperty('year', Carbon::parse($this->media->created_at)->year);
 
         $this->patient = $patient;
 
@@ -64,7 +66,7 @@ class SendCareDocument extends Notification
         $link = $this->getReportLink();
 
         $message  = "Please find attached an AWV {$this->reportType} regarding one of your patients";
-        $lastLine = PHP_EOL.PHP_EOL."The web version of the report can be found at $link";
+        $lastLine = PHP_EOL . PHP_EOL . "The web version of the report can be found at $link";
 
         return $this->getBody($message, $lastLine);
     }
@@ -90,7 +92,9 @@ class SendCareDocument extends Notification
     {
         return [
             'channels'   => $this->via($notifiable),
-            'sender_id'  => auth()->user() ? auth()->user()->id : 'redis',
+            'sender_id'  => auth()->user()
+                ? auth()->user()->id
+                : 'redis',
             'patient_id' => $this->patient->id,
             'media_id'   => $this->media->id,
         ];
@@ -101,9 +105,9 @@ class SendCareDocument extends Notification
      *
      * @param $notifiable
      *
+     * @return bool|string
      * @throws \Exception
      *
-     * @return bool|string
      */
     public function toDirectMail($notifiable)
     {
@@ -140,9 +144,9 @@ class SendCareDocument extends Notification
      *
      * @param mixed $notifiable
      *
+     * @return \Illuminate\Notifications\Messages\MailMessage
      * @throws \Exception
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
@@ -150,7 +154,7 @@ class SendCareDocument extends Notification
 
         return (new MailMessage())
             ->subject($this->getSubject())
-            ->line("Click at link below to see the web version the patient's AWV {$this->reportType}.")
+            ->line("Click at link below to see the web version of the patient's AWV {$this->reportType}.")
             ->action('Go to report', $link);
     }
 
@@ -198,11 +202,11 @@ class SendCareDocument extends Notification
      */
     private function getBody($greeting, $lastLine = '')
     {
-        $message = $greeting.', created on '
-                   .$this->media->created_at->toFormattedDateString();
+        $message = $greeting . ', created on '
+                   . $this->media->created_at->toFormattedDateString();
 
         if (auth()->check()) {
-            $message .= PHP_EOL.PHP_EOL.'This Report was forwarded to you by '.auth()->user()->getFullName().'.';
+            $message .= PHP_EOL . PHP_EOL . 'This Report was forwarded to you by ' . auth()->user()->getFullName() . '.';
         }
 
         $message .= $lastLine;
@@ -210,6 +214,10 @@ class SendCareDocument extends Notification
         return $message;
     }
 
+    /**
+     * @return string
+     * @throws \Exception
+     */
     private function getReportLink()
     {
         $awvUrl = config('services.awv.report_url');
@@ -227,7 +235,7 @@ class SendCareDocument extends Notification
 
         return Str::replaceFirst(
             '$YEAR$',
-            Carbon::parse($this->media->created_at)->year,
+            $this->reportYear,
             $awvUrl
         );
     }
@@ -244,6 +252,6 @@ class SendCareDocument extends Notification
             return 'provider-report';
         }
 
-        throw new \Exception('Invalid Report Type', 500);
+        throw new \Exception('Invalid Report Type', 400);
     }
 }
