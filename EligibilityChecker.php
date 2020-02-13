@@ -130,6 +130,26 @@ class EligibilityChecker
         }
     }
     
+    public static function getProblemsForEligibility(EligibilityJob $eligibilityJob)
+    {
+        $problems = $eligibilityJob->data['problems'] ?? $eligibilityJob->data['problems_string'] ?? null;
+        
+        if (empty($problems)) {
+            return false;
+        }
+        
+        foreach (config('importer.problem_loggers') as $class) {
+            $class = app($class);
+            
+            if ($class->shouldHandle($problems)) {
+                $problems = $class->handle($problems);
+                break;
+            }
+        }
+        
+        return $problems;
+    }
+    
     public function __destruct()
     {
         if ($this->batch) {
@@ -144,7 +164,7 @@ class EligibilityChecker
                     $tP->status = $this->eligibilityJob->status;
                     $tP->save();
                 }
-    
+                
                 if ($ccd = $tP->ccda) {
                     $ccd->status = $this->eligibilityJob->status;
                     $ccd->save();
@@ -367,34 +387,23 @@ class EligibilityChecker
                 return $cpmProblems->where('is_behavioral', '=', true)->pluck('id');
             }
         );
-        
+    
         $eligibilityJobData = $this->eligibilityJob->data;
-        
+    
         $eligibilityJobData['ccm_condition_1'] = '';
         $eligibilityJobData['ccm_condition_2'] = '';
         $eligibilityJobData['cpm_problem_1']   = '';
         $eligibilityJobData['cpm_problem_2']   = '';
         
-        $problems = $eligibilityJobData['problems'] ?? $eligibilityJobData['problems_string'] ?? null;
+        $problems = self::getProblemsForEligibility($this->eligibilityJob);
         
-        if (empty($problems)) {
+        if ($problems === false) {
             $this->setEligibilityJobStatus(
                 3,
                 ['problems' => 'Patient has 0 conditions.'],
                 EligibilityJob::INELIGIBLE,
                 'problems'
             );
-            
-            return false;
-        }
-        
-        foreach (config('importer.problem_loggers') as $class) {
-            $class = app($class);
-            
-            if ($class->shouldHandle($problems)) {
-                $problems = $class->handle($problems);
-                break;
-            }
         }
         
         $qualifyingCcmProblems = [];
@@ -484,7 +493,10 @@ class EligibilityChecker
                     }
                     
                     if ($this->practice->hasServiceCode('G2065')) {
-                        $pcmProblemId = PcmProblem::where('practice_id', $this->practice->id)->where('code', $p->getCode())->first();
+                        $pcmProblemId = PcmProblem::where('practice_id', $this->practice->id)->where(
+                            'code',
+                            $p->getCode()
+                        )->first();
                         if ($pcmProblemId) {
                             $pcmProblems[] = $pcmProblemId->id;
                         }
@@ -494,7 +506,10 @@ class EligibilityChecker
                 // Try to match keywords
                 if ($p->getName()) {
                     if ($this->practice->hasServiceCode('G2065')) {
-                        $pcmProblemId = PcmProblem::where('practice_id', $this->practice->id)->where('description', $p->getName())->first();
+                        $pcmProblemId = PcmProblem::where('practice_id', $this->practice->id)->where(
+                            'description',
+                            $p->getName()
+                        )->first();
                         if ($pcmProblemId) {
                             $pcmProblems[] = $pcmProblemId->id;
                         }
@@ -563,7 +578,7 @@ class EligibilityChecker
             $this->eligibilityJob->ccm_problem_2_id = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
             
             if ( ! empty($pcmProblems)) {
-                $eligibilityJobData['chargeable_services']['G2065']['problems'] = array_filter($pcmProblems);
+                $eligibilityJobData['chargeable_services']['G2065']['problems'] = array_unique(array_filter($pcmProblems));
             }
         }
         
@@ -922,7 +937,7 @@ class EligibilityChecker
             
             return false;
         }
-        
+
 //        Jobs may be picked up twice for processing
 //        if ($duplicateMySqlError) {
 //            $this->setEligibilityJobStatus(
