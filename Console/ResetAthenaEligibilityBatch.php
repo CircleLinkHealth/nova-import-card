@@ -4,6 +4,7 @@ namespace CircleLinkHealth\Eligibility\Console;
 
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -78,6 +79,10 @@ class ResetAthenaEligibilityBatch extends Command
         );
     
         $this->line('Finished resetting eligibility jobs.');
+        
+        Enrollee::whereBatchId($this->argument('batch_id'))->delete();
+    
+        $this->line('Finished deleting enrollees.');
     
         EligibilityBatch::whereId($this->argument('batch_id'))->update(
             [

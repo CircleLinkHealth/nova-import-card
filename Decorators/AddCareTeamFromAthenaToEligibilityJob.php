@@ -34,6 +34,12 @@ class AddCareTeamFromAthenaToEligibilityJob
     public function addCareTeamFromAthena(EligibilityJob $eligibilityJob, TargetPatient $targetPatient, Ccda $ccda) :EligibilityJob
     {
         if (array_key_exists('care_team', $eligibilityJob->data) && ! empty($eligibilityJob->data['care_team'])) {
+            $careTeam = $eligibilityJob->data['care_team'];
+            
+            if (is_array($careTeam) && empty($eligibilityJob->data['referring_provider_name'])) {
+                $this->fillProvider($eligibilityJob, $ccda, $careTeam);
+            }
+            
             return $eligibilityJob;
         }
         
@@ -46,26 +52,31 @@ class AddCareTeamFromAthenaToEligibilityJob
         );
         
         if (is_array($careTeam)) {
-            $data                 = $eligibilityJob->data;
-            $data['care_team']    = $careTeam;
-    
-            
-                foreach ($careTeam['members'] as $member) {
-                    if (array_key_exists('name', $member)) {
-                        $providerName = $member['name'];
-    
-                        $data['referring_provider_name'] = $ccda->referring_provider_name = $providerName;
-                        $ccda->save();
-                
-                        break;
-                    }
-                }
-            
-            
-            $eligibilityJob->data = $data;
-            $eligibilityJob->save();
+            $this->fillProvider($eligibilityJob, $ccda, $careTeam);
         }
         
         return $eligibilityJob;
+    }
+    
+    private function fillProvider(EligibilityJob &$eligibilityJob, Ccda $ccda, array &$careTeam)
+    {
+        $data                 = $eligibilityJob->data;
+        $data['care_team']    = $careTeam;
+    
+    
+        foreach ($careTeam['members'] as $member) {
+            if (array_key_exists('name', $member)) {
+                $providerName = $member['name'];
+            
+                $data['referring_provider_name'] = $ccda->referring_provider_name = $providerName;
+                $ccda->save();
+            
+                break;
+            }
+        }
+    
+        $eligibilityJob->data = $data;
+    
+        $eligibilityJob->save();
     }
 }

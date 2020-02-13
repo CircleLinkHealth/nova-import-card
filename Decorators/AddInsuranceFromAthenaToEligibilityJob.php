@@ -25,12 +25,12 @@ class AddInsuranceFromAthenaToEligibilityJob
      * @var Collection
      */
     private $insuranceCollection;
-
+    
     public function __construct(AthenaApiImplementation $athenaApiImplementation)
     {
         $this->athenaApiImplementation = $athenaApiImplementation;
     }
-
+    
     /**
      * @throws \Exception
      *
@@ -39,22 +39,32 @@ class AddInsuranceFromAthenaToEligibilityJob
     public function addInsurancesFromAthena(EligibilityJob $eligibilityJob, TargetPatient $targetPatient, Ccda $ccda)
     {
         if (array_key_exists('insurances', $eligibilityJob->data) && ! empty($eligibilityJob->data['insurances'])) {
+            if (empty($eligibilityJob->primary_insurance) || empty($eligibilityJob->secondary_insurance) || empty($eligibilityJob->tertiary_insurance)) {
+                $data = $eligibilityJob->data;
+                $this->fillInsuranceFields($eligibilityJob, $data);
+                $eligibilityJob->data = $data;
+                $eligibilityJob->save();
+            }
+            
             return $eligibilityJob;
         }
-
+        
         $response = $this->getAndStoreInsuranceFromAthenaApi($targetPatient, $ccda);
-
+        
         if (is_array($response) && array_key_exists('insurances', $response)) {
-            $data                 = $eligibilityJob->data;
-            $data['insurances']   = $response['insurances'];
+            $data               = $eligibilityJob->data;
+            $data['insurances'] = $response['insurances'];
+            
+            $this->fillInsuranceFields($eligibilityJob, $data);
+            
             $eligibilityJob->data = $data;
         }
-
+        
         $eligibilityJob->save();
-
+        
         return $eligibilityJob;
     }
-
+    
     /**
      * @throws \Exception
      *
@@ -67,7 +77,7 @@ class AddInsuranceFromAthenaToEligibilityJob
             $targetPatient->ehr_practice_id,
             $targetPatient->ehr_department_id
         );
-
+        
         return tap(
             $insurances,
             function (array $insurances) use ($ccda) {
@@ -75,14 +85,14 @@ class AddInsuranceFromAthenaToEligibilityJob
             }
         );
     }
-
+    
     /**
      * @return Collection
      */
     private function storeInsuranceFromAthenaApi(array $insurances, MedicalRecord $medicalRecord)
     {
         $this->insuranceCollection = collect();
-
+        
         if (array_key_exists('insurances', $insurances)) {
             foreach ($insurances['insurances'] as $insurance) {
                 $this->insuranceCollection->push(
@@ -102,7 +112,28 @@ class AddInsuranceFromAthenaToEligibilityJob
                 );
             }
         }
-
+        
         return $this->insuranceCollection;
+    }
+    
+    private function fillInsuranceFields(EligibilityJob &$eligibilityJob, array &$record)
+    {
+        $i = 0;
+        
+        foreach ($record['insurances'] as $insurance) {
+            if (array_key_exists('insuranceplanname', $insurance)) {
+                if (0 == $i) {
+                    $eligibilityJob->primary_insurance = $record['primary_insurance'] = $insurance['insuranceplanname'];
+                    ++$i;
+                } elseif (1 == $i) {
+                    $eligibilityJob->secondary_insurance = $record['secondary_insurance'] = $insurance['insuranceplanname'];
+                    ++$i;
+                } elseif (2 == $i) {
+                    $eligibilityJob->tertiary_insurance = $record['tertiary_insurance'] = $insurance['insuranceplanname'];
+                    ++$i;
+                }
+            }
+            
+        }
     }
 }
