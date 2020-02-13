@@ -11,11 +11,13 @@ use App\CareplanAssessment;
 use App\CLH\Repositories\UserRepository;
 use App\Filters\NoteFilters;
 use App\Note;
+use App\Notifications\SendPatientEmail;
 use App\Repositories\CareplanAssessmentRepository;
 use App\Repositories\NoteRepository;
 use App\View\MetaTag;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\URL;
 
@@ -74,7 +76,7 @@ class NoteService
         $patient = User::find($note->patient_id);
 
         $note->body = 'Created/Edited Assessment for '.$patient->name().' ('.$assessment->careplan_id.') ... See '.
-            URL::to('/manage-patients/'.$assessment->careplan_id.'/view-careplan/assessment');
+                              URL::to('/manage-patients/'.$assessment->careplan_id.'/view-careplan/assessment');
         $note->type         = 'Edit Assessment';
         $note->performed_at = Carbon::now();
         $note->save();
@@ -262,12 +264,53 @@ class NoteService
             ->with('notifiable')
             ->get()
             ->mapWithKeys(function ($notification) {
-                if ( ! $notification->notifiable) {
-                    return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
-                }
+                        if ( ! $notification->notifiable) {
+                            return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
+                        }
 
-                return [$notification->notifiable->getFullName() => $notification->created_at->format('m/d/y h:iA T')];
-            });
+                        return [$notification->notifiable->getFullName() => $notification->created_at->format('m/d/y h:iA T')];
+                    });
+    }
+
+    public function getNoteEmails(Note $note)
+    {
+        return $note->patient->notifications()->where('type', SendPatientEmail::class)->where(
+            'data->note_id',
+            $note->id
+        )->get()->map(function ($n) {
+            $data = $n->data;
+
+            if (isset($data['sender_id'])) {
+                $sender = User::find($n->data['sender_id']);
+                $email['senderFullName'] = $sender
+                    ? $sender->getFullName()
+                    : 'N/A';
+            }
+
+            if (isset($data['email_content'])) {
+                $email['content'] = $data['email_content']
+                    ?: 'No content found';
+            }
+
+            $email['created_at'] = presentDate($n->created_at);
+
+            if (isset($data['attachments'])) {
+                foreach ($data['attachments'] as $attachment) {
+                    $a['id'] = $attachment['media_id'];
+                    $a['url'] = Media::where('collection_name', 'patient-email-attachments')
+                        ->where('model_id', $n->notifiable_id)
+                        ->whereIn(
+                                                              'model_type',
+                                                              ['App\User', 'CircleLinkHealth\Customer\Entities\User']
+                                                          )
+                        ->where('mime_type', 'like', '%'.'image'.'%')
+                        ->find($attachment['media_id'])->getUrl();
+                    $email['attachments'][] = $a;
+                }
+            }
+
+            return $email;
+        });
     }
 
     //Get all notes for patients with specified date range
@@ -344,8 +387,8 @@ class NoteService
             ->whereNotNull('read_at')
             ->get()
             ->mapWithKeys(function ($notification) {
-                return [$notification->notifiable->getFullName() => $notification->read_at->format('m/d/y h:iA T')];
-            });
+                        return [$notification->notifiable->getFullName() => $notification->read_at->format('m/d/y h:iA T')];
+                    });
     }
 
     public function getUserDraftNotes($userId)
