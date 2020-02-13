@@ -171,6 +171,9 @@
                                 <li>
                                     <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
                                 </li>
+                                <li>
+                                    <a href="{{route('OpsDashboard.index.chart')}}">Ops Chart</a>
+                                </li>
                                 <li><a href="{{ route('admin.reports.nurse.metrics') }}">
                                         Nurse Performance Report</a></li>
                                 <li>
@@ -309,11 +312,6 @@
     @include('partials.footer')
     @yield('content')
 </div>
-
-@isset($chart)
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js" charset="utf-8"></script>
-{!! $chart->script() !!}
-@endisset
 
 @if (Agent::isIE())
     <!-- Script for polyfilling Promises on IE9 and 10 -->
