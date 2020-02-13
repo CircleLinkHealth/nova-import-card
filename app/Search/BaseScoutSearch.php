@@ -10,6 +10,7 @@ use App\Contracts\ScoutSearch;
 
 abstract class BaseScoutSearch implements ScoutSearch
 {
+    private $fn;
     /**
      * Tag all searches with this so we can easily flush them from the cache.
      *
@@ -66,13 +67,17 @@ abstract class BaseScoutSearch implements ScoutSearch
      */
     public function find(string $term)
     {
+        return $this->cache(function () use ($term) {
+            return $this->decorateQuery($this->query($term))->first();
+        }, $term);
+    }
+    
+    public function cache(callable $fn, string $term) {
         return \Cache::tags($this->tags())
-            ->remember(
-                self::key($term),
-                $this->duration(),
-                function () use ($term) {
-                    return $this->query($term)->first();
-                }
+                     ->remember(
+                         self::key($term),
+                         $this->duration(),
+              $fn
             );
     }
 
@@ -116,5 +121,22 @@ abstract class BaseScoutSearch implements ScoutSearch
     private function generateSearchName()
     {
         $this->name = $this->prefix.get_class($this);
+    }
+    
+    private function decorateQuery(\Laravel\Scout\Builder $query)
+    {
+        if (!is_callable($this->fn))
+            return $query;
+    
+        return $this->fn($query)();
+    }
+    
+    /**
+     * @param callable $fn
+     */
+    public function setQueryChain(callable $fn) {
+        $this->fn = $fn;
+        
+        return $this;
     }
 }
