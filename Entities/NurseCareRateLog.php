@@ -19,6 +19,7 @@ use CircleLinkHealth\TimeTracking\Entities\Activity;
  * @property int|null $patient_user_id
  * @property string $ccm_type
  * @property int $increment
+ * @property bool|null $is_behavioral
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property \CircleLinkHealth\TimeTracking\Entities\Activity|null $activity
@@ -54,6 +55,7 @@ class NurseCareRateLog extends \CircleLinkHealth\Core\Entities\BaseModel
         'patient_user_id',
         'time_before',
         'is_successful_call',
+        'is_behavioral',
     ];
 
     public function activity()
