@@ -46,6 +46,7 @@ class AddDemographicsFromAthenaToEligibilityJob
             
             if (is_array($demographics) && array_key_exists(0, $demographics)) {
                 $data['patient_demographics'] = $demographics[0];
+                $eligibilityJob->data = $data;
             }
         }
         
@@ -59,10 +60,12 @@ class AddDemographicsFromAthenaToEligibilityJob
                 $data['provider']                = $provider[0];
                 $ccda->save();
             }
-            
+    
             $eligibilityJob->data = $data;
-            $eligibilityJob->save();
         }
+        
+        if ($eligibilityJob->isDirty())
+        $eligibilityJob->save();
         
         return $eligibilityJob;
     }
