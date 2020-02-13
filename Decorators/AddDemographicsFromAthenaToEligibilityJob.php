@@ -42,18 +42,19 @@ class AddDemographicsFromAthenaToEligibilityJob
                 $targetPatient->ehr_practice_id
             );
             
-            if (is_array($demographics)) {
+            if (is_array($demographics) && array_key_exists(0, $demographics)) {
                 $data = $eligibilityJob->data;
-                $data['patient_demographics'] = $demographics;
+                $data['patient_demographics'] = $demographics[0];
             }
         }
         
-        if ($provId = $eligibilityJob->data['patient_demographics'][0]['primaryproviderid']) {
+        if ($provId = $data['patient_demographics']['primaryproviderid']) {
             $provider = $this->athenaApiImplementation->getProvider($targetPatient->ehr_practice_id, $provId);
         }
         
-        if ($provider) {
+        if (is_array($provider) && array_key_exists(0, $provider)) {
             $data['referring_provider_name'] = $ccda->referring_provider_name = $provider[0]['displayname'];
+            $data['provider'] = $provider[0];
             $ccda->save();
         }
     
