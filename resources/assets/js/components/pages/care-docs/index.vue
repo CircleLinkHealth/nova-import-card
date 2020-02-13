@@ -30,7 +30,7 @@
         </div>
 
         <div v-if="noDocsFound" class="col-md-12" style="padding-left: 42%">
-            <div><strong>No Care Documents were found.</strong></div>
+            <div><span class="strong-custom">No Care Documents were found.</span></div>
         </div>
         <div class="col-md-12">
             <div v-if="showBanner" :class="bannerClass">{{this.errors.errors}}</div>
@@ -53,7 +53,8 @@
                                     </button>
                                 </div>
                                 <div class="col-md-6">
-                                    <a class="blue-link" style="float: right; padding-top: 7px" :href="getViewHraSurveyUrl()" target="_blank">View</a>
+                                    <a class="blue-link" style="float: right; padding-top: 7px"
+                                       :href="getViewHraSurveyUrl()" target="_blank">View</a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
@@ -62,7 +63,7 @@
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
-                                <p><strong>Send Assessment Link to Provider via:</strong></p>
+                                <p><span class="strong-custom">Send assessment link to patient via:</span></p>
                             </div>
                             <div class="col-md-12  panel-section">
                                 <a
@@ -95,7 +96,8 @@
                                     </button>
                                 </div>
                                 <div class="col-md-6">
-                                    <a class="blue-link" style="float: right; padding-top: 7px" :href="getViewVitalsSurveyUrl()" target="_blank">View</a>
+                                    <a class="blue-link" style="float: right; padding-top: 7px"
+                                       :href="getViewVitalsSurveyUrl()" target="_blank">View</a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
@@ -104,19 +106,19 @@
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
-                                <p><strong>Send Assessment Link to Provider via:</strong></p>
+                                <p><span class="strong-custom">Send assessment link to provider via:</span></p>
                             </div>
                             <div class="col-md-12  panel-section">
                                 <a
-                                   class="col-md-6 btn btn-method btn-width-100 btn-s"
-                                   target="_blank"
-                                   :href="getAwvSendSmsForm('vitals')">
+                                        class="col-md-6 btn btn-method btn-width-100 btn-s"
+                                        target="_blank"
+                                        :href="getAwvSendSmsForm('vitals')">
                                     SMS
                                 </a>
                                 <a
-                                   class="col-md-6 btn btn-width-100 btn-method btn-s"
-                                   target="_blank"
-                                   :href="getAwvSendEmailForm('vitals')">
+                                        class="col-md-6 btn btn-width-100 btn-method btn-s"
+                                        target="_blank"
+                                        :href="getAwvSendEmailForm('vitals')">
                                     Email
                                 </a>
                             </div>
@@ -138,7 +140,7 @@
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'PPP'"  :patientId="patientId"></care-document-box>
+                    <care-document-box :type="'PPP'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Provider Report']">
@@ -148,7 +150,7 @@
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'Provider Report'"  :patientId="patientId"></care-document-box>
+                    <care-document-box :type="'Provider Report'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Lab Results']">
@@ -168,7 +170,7 @@
             <template slot="body">
                 <div class="col-md-12">
                     <div class="col-md-12 row">
-                        <p><strong>Select Document Type</strong></p>
+                        <p><span class="strong-custom">Select Document Type</span></p>
                     </div>
                     <div class="col-md-12 row">
                         <v-select max-height="200px" v-model="selectedDocumentType"
@@ -310,8 +312,7 @@
 
                 if (this.awvUrl[this.awvUrl.length - 1] === "/") {
                     return this.awvUrl + path;
-                }
-                else {
+                } else {
                     return this.awvUrl + "/" + path;
                 }
             },
@@ -324,11 +325,11 @@
                 return this.getAwvUrl(`survey/vitals/${this.patientId}`);
             },
 
-            getAwvSendSmsForm(survey){
+            getAwvSendSmsForm(survey) {
                 return this.getAwvUrl(`manage-patients/${this.patientId}/` + survey + `/sms/send-assessment-link`);
             },
 
-            getAwvSendEmailForm(survey){
+            getAwvSendEmailForm(survey) {
                 return this.getAwvUrl(`manage-patients/${this.patientId}/` + survey + `/email/send-assessment-link`);
             },
 
@@ -451,11 +452,12 @@
 
     .btn-method {
         border-color: #5cc0dd;
+        color: #5cc0dd;
         max-height: 30px;
         margin: 2px;
     }
 
-    .btn-width-100{
+    .btn-width-100 {
         width: 100px;
     }
 
@@ -518,7 +520,7 @@
     }
 
     .shadow {
-        box-shadow:         1px 1px 1px 1px #ccc;
+        box-shadow: 1px 1px 1px 1px #ccc;
     }
 
     .blue-link {
