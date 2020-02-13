@@ -477,7 +477,7 @@ class EligibilityChecker
                         $pcmProblemId = optional(
                             (new PcmProblemByNameOrCode())->setQueryChain(function ($q) {
                                 return $q->where('practice_id', $this->practice->id);
-                            })->find($p->getCode())
+                            }, $this->practice->id)->find($p->getCode())
                         )->id;
                         if ($pcmProblemId) {
                             $pcmProblems[] = $pcmProblemId;
@@ -491,7 +491,7 @@ class EligibilityChecker
                         $pcmProblemId = optional(
                             (new PcmProblemByNameOrCode())->setQueryChain(function ($q) {
                                 return $q->where('practice_id', $this->practice->id);
-                            })->find($p->getName())
+                            }, $this->practice->id)->find($p->getName())
                         )->id;
                         if ($pcmProblemId) {
                             $pcmProblems[] = $pcmProblemId;
