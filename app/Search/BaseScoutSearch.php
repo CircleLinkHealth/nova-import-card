@@ -10,6 +10,11 @@ use App\Contracts\ScoutSearch;
 
 abstract class BaseScoutSearch implements ScoutSearch
 {
+    /**
+     * Callback given to setQueryChain
+     *
+     * @var callable
+     */
     private $fn;
     /**
      * Tag all searches with this so we can easily flush them from the cache.
@@ -44,7 +49,13 @@ abstract class BaseScoutSearch implements ScoutSearch
      * @var string
      */
     protected $prefix = 'search:';
-
+    /**
+     * Add this to hash for uniqueness between practices
+     *
+     * @var string
+     */
+    private   $practiceId;
+    
     public function __construct()
     {
         if ( ! $this->name) {
@@ -90,13 +101,15 @@ abstract class BaseScoutSearch implements ScoutSearch
     {
         return (new static())->find($term);
     }
-
+    
     /**
+     * @param string $term
+     *
      * @return string
      */
     public function key(string $term)
     {
-        return "{$this->name()}:$term";
+        return empty($this->practiceId) ? "{$this->name()}:$term" : "{$this->name()}:$term:$this->practiceId";
     }
 
     /**
@@ -133,9 +146,14 @@ abstract class BaseScoutSearch implements ScoutSearch
     
     /**
      * @param callable $fn
+     * @param int $practiceId
+     *
+     * @return BaseScoutSearch
      */
-    public function setQueryChain(callable $fn) {
+    public function setQueryChain(callable $fn, int $practiceId) {
         $this->fn = $fn;
+        
+        $this->practiceId = $practiceId;
         
         return $this;
     }
