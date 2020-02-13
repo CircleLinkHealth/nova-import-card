@@ -100,7 +100,7 @@ class CreateRolesPermissionsMigration extends Command
      */
     protected function getMigrationPath()
     {
-        return app()->databasePath().DIRECTORY_SEPARATOR.'migrations';
+        return app()->basePath().DIRECTORY_SEPARATOR.'Modules'.DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR.'CpmMigrations'.DIRECTORY_SEPARATOR.'Database'.DIRECTORY_SEPARATOR.'Migrations';
     }
 
     /**
