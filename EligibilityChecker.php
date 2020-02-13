@@ -407,7 +407,7 @@ class EligibilityChecker
                     return false;
                 }
                 
-                $codeType = null;
+                $codeType    = null;
                 $pcmProblems = [];
                 
                 if ($p->getCodeSystemName()) {
@@ -473,14 +473,24 @@ class EligibilityChecker
                     }
                     
                     if ($this->practice->hasServiceCode('G2065')) {
-                        $pcmProblems[] = optional(PcmProblem::search($p->getCode())->where('practice_id', $this->practice->id)->first())->id;
+                        $pcmProblemId = optional(
+                            PcmProblem::search($p->getCode())->where('practice_id', $this->practice->id)->first()
+                        )->id;
+                        if ($pcmProblemId) {
+                            $pcmProblems[] = $pcmProblemId;
+                        }
                     }
                 }
                 
                 // Try to match keywords
                 if ($p->getName()) {
                     if ($this->practice->hasServiceCode('G2065')) {
-                        $pcmProblems[] = optional(PcmProblem::search($p->getName())->where('practice_id', $this->practice->id)->first())->id;
+                        $pcmProblemId = optional(
+                            PcmProblem::search($p->getName())->where('practice_id', $this->practice->id)->first()
+                        )->id;
+                        if ($pcmProblemId) {
+                            $pcmProblems[] = $pcmProblemId;
+                        }
                     }
                     //Reject if patientData is on dialysis
                     //https://circlelinkhealth.atlassian.net/browse/CPM-954
@@ -544,12 +554,12 @@ class EligibilityChecker
             $this->eligibilityJob->bhi_problem_id   = $qualifyingBhiProblems[0] ?? null;
             $this->eligibilityJob->ccm_problem_1_id = $qualifyingCcmProblemsCpmIdStack[0] ?? null;
             $this->eligibilityJob->ccm_problem_2_id = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
-    
-            if (!empty($pcmProblems)) {
-                $data =  $this->eligibilityJob->data;
-                $data['chargeable_services'][] = 'G2065';
+            
+            if ( ! empty($pcmProblems)) {
+                $data                                             = $this->eligibilityJob->data;
+                $data['chargeable_services'][]                    = 'G2065';
                 $data['chargeable_services']['G2065']['problems'] = $pcmProblems;
-                $this->eligibilityJob->data = $data;
+                $this->eligibilityJob->data                       = $data;
             }
         }
         
