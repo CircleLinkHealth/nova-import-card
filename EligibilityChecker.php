@@ -891,8 +891,6 @@ class EligibilityChecker
         try {
             $this->enrollee = Enrollee::create($args);
         } catch (\Illuminate\Database\QueryException $e) {
-            //                    @todo:heroku query to see if it exists, then attach
-            
             $errorCode = $e->errorInfo[1];
             if (1062 == $errorCode) {
                 $duplicateMySqlError = true;
@@ -915,15 +913,17 @@ class EligibilityChecker
             return false;
         }
         
-        if ($duplicateMySqlError) {
-            $this->setEligibilityJobStatus(
-                3,
-                ['duplicate' => "Seems like the Enrollee already exists. Error caused: ${errorMsg}."],
-                EligibilityJob::DUPLICATE
-            );
-            
-            return true;
-        }
+//        Jobs may be picked up twice for processing
+//        if ($duplicateMySqlError) {
+//            $this->setEligibilityJobStatus(
+//                3,
+//                ['duplicate' => "Seems like the Enrollee already exists. Error caused: ${errorMsg}."],
+//                EligibilityJob::DUPLICATE
+//            );
+//
+//            return true;
+//        }
+        
         $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
         
         return true;
