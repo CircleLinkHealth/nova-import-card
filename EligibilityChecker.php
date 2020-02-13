@@ -561,7 +561,7 @@ class EligibilityChecker
             $this->eligibilityJob->ccm_problem_2_id = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
             
             if ( ! empty($pcmProblems)) {
-                $eligibilityJobData['chargeable_services']['G2065']['problems'] = $pcmProblems;
+                $eligibilityJobData['chargeable_services']['G2065']['problems'] = array_filter($pcmProblems);
             }
         }
         
