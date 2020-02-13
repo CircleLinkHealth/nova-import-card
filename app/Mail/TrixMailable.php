@@ -55,8 +55,9 @@ class TrixMailable extends Mailable
 
         $email = $this->view('patient.patient-email')
             ->with([
-                'content'     => $this->content,
-                'attachments' => collect($media)->filter(),
+                'practiceName' => $this->patient->getPrimaryPracticeName(),
+                'content'      => $this->content,
+                'attachments'  => collect($media)->filter(),
             ])
             ->from('no-reply@circlelinkhealth.com', 'CircleLink Health')
             ->subject('You have received a message from CircleLink Health');

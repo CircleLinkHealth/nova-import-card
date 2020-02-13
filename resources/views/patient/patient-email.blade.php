@@ -62,7 +62,7 @@ $style = [
                     <td style="{{ $style['email-masthead'] }}">
                         <a style="{{ $fontFamily }} {{ $style['email-masthead_name'] }}" href="{{ url('/') }}"
                            target="_blank">
-                            {{ $saasAccountName ?? 'CircleLink Health' }}
+                            {{$practiceName}}
                         </a>
                     </td>
                 </tr>
@@ -109,10 +109,7 @@ $style = [
                             <tr>
                                 <td style="{{ $fontFamily }} {{ $style['email-footer_cell'] }}">
                                     <p style="{{ $style['paragraph-sub'] }}">
-                                        &copy; {{ date('Y') }}
-                                        <a style="{{ $style['anchor'] }}" href="{{ url('/') }}" target="_blank">CircleLink
-                                            Health</a>.
-                                        All rights reserved.
+                                        {{$practiceName}}
                                     </p>
                                 </td>
                             </tr>
