@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "583c31059ac1b75811277153490cd11f",
+    "content-hash": "8238500c07aea176aead5f4c0bee2d42",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -854,11 +854,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-CPM-2012_pcm",
+            "version": "v1.4.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "df1826b7b2648ab4bc6fb31d179568eb2d4a847f"
+                "reference": "c82632218ccfb69a8e22abe15b3ed8397fbb5fa7"
             },
             "type": "laravel-module",
             "extra": {
@@ -880,7 +880,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-12T08:34:04+00:00"
+            "time": "2020-02-13T04:05:40+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -925,11 +925,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-CPM-2012_pcm",
+            "version": "v1.4.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "e4d4e2f36c90d1abdf1ecf8a2a459dc4063750d1"
+                "reference": "8a02f782184723a986cde2827a3af089c6a7f07c"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -954,7 +954,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-12T08:34:04+00:00"
+            "time": "2020-02-13T04:18:24+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -13714,8 +13714,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
-        "circlelinkhealth/eligibility-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
