@@ -60,10 +60,10 @@ class Constants
         'margin-bottom'      => '15',
         'margin-right'       => '0.75',
     ];
-    const SNOMED          = 'snomed_code';
-    const SNOMED_NAME     = 'SNOMED CT';
-    const VIEWING_PATIENT = 'viewing-patient';
-
+    const SNOMED                          = 'snomed_code';
+    const SNOMED_NAME                     = 'SNOMED CT';
+    const VIEWING_PATIENT                 = 'viewing-patient';
+    
     public static function athenaEhrId()
     {
         return \Cache::remember('athena_ehr_id_in_cpm', 5, function () {

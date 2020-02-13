@@ -60,23 +60,11 @@ class ReviewAppCreateDb extends Command
         } catch (\Exception $exception) {
             $dbTableExists = false;
         }
-//
+
         if (false === $dbTableExists) {
             $cmd = 'mysql:createdb';
             $this->output->note("Running command $cmd");
             $this->runCommand(['php', 'artisan', '-vvv', $cmd, $dbName]);
-//
-//            $cmd = 'migrate:fresh';
-//            $this->output->note("Running command $cmd");
-//            $this->runCommand(['php', 'artisan', '-vvv', $cmd]);
-//
-//            $cmd = 'migrate:views';
-//            $this->output->note("Running command $cmd");
-//            $this->runCommand(['php', 'artisan', '-vvv', $cmd]);
-//
-//            $cmd = 'db:seed';
-//            $this->output->note("Running command $cmd");
-//            $this->runCommand(['php', 'artisan', '-vvv', $cmd, '--class=TestSuiteSeeder']);
         }
 
         $this->warn('reviewapp:create-db ran');
