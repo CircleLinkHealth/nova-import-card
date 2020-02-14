@@ -127,14 +127,14 @@ class GeneratePatientReportsJob implements ShouldQueue
             $redisEvent->publishReportCreated($providerReportMedia);
         }
 
-//        $pppMedia = $this->createAndUploadPdfPPP($pppReport, $patient, $this->debug);
-//        if ( ! $pppMedia) {
-//            throw new \Exception("Something went wrong while uploading PPP for patient with id:{$patient->id}");
-//        }
-//
-//        if ( ! $this->debug) {
-//            $redisEvent->publishReportCreated($pppMedia);
-//        }
+        $pppMedia = $this->createAndUploadPdfPPP($pppReport, $patient, $this->debug);
+        if ( ! $pppMedia) {
+            throw new \Exception("Something went wrong while uploading PPP for patient with id:{$patient->id}");
+        }
+
+        if ( ! $this->debug) {
+            $redisEvent->publishReportCreated($pppMedia);
+        }
 
         if ($this->debug) {
             return;
