@@ -164,8 +164,7 @@ class GeneratePatientReportsJob implements ShouldQueue
     {
         $pathToCoverPage = $this->getCoverPagePdf($patient, $providerReport->updated_at, 'Provider Report');
         if ( ! $pathToCoverPage) {
-            Log::error("Could not get cover page for Provider Report");
-            return false;
+            throw new \Exception("Could not get cover page for Provider Report");
         }
 
         $providerReportFormattedData = (new ProviderReportService())->formatReportDataForView($providerReport);
@@ -190,16 +189,13 @@ class GeneratePatientReportsJob implements ShouldQueue
         $pathToData = storage_path("provider_report_{$patient->id}_{$this->currentDate->toDateTimeString()}_data.pdf");
         $savedData  = file_put_contents($pathToData, $pdf->output());
         if ( ! $savedData) {
-            Log::error("Could not get store file $pathToData");
-            return false;
+            throw new \Exception("Could not get store file $pathToData");
         }
 
         $path  = storage_path("provider_report_{$patient->id}_{$this->currentDate->toDateTimeString()}.pdf");
         $saved = $this->mergePdfs($path, $pathToCoverPage, $pathToData);
-
         if ( ! $saved) {
-            Log::error("Could not merge pdfs");
-            return false;
+            throw new \Exception("Could not merge pdfs [$path]");
         }
 
         if ($saveLocally) {
@@ -275,9 +271,10 @@ class GeneratePatientReportsJob implements ShouldQueue
             return $saved;
 
         } catch (\Exception $e) {
-            \Log::error($e->getMessage());
+            throw $e;
+//            \Log::error($e->getMessage());
 
-            return false;
+//            return false;
         }
     }
 
