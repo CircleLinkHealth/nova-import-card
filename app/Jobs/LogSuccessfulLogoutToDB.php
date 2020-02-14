@@ -42,7 +42,7 @@ class LogSuccessfulLogoutToDB implements ShouldQueue
      */
     public function handle()
     {
-        $authId = $this->event->user->id ?? auth()->id() ?? null;
+        $authId = $this->event->user->id ?? null;
         try {
             
             $openSession = LoginLogout::where([
