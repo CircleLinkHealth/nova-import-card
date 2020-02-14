@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.7.28 on 2020-02-05 22:09:24.
+ * Generated for Laravel 5.7.28 on 2020-02-14 15:40:01.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -7917,89 +7917,6 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Get the number of queue jobs that are ready to process.
-         *
-         * @param string|null $queue
-         * @return int 
-         * @static 
-         */ 
-        public static function readyNow($queue = null)
-        {
-                        /** @var \Laravel\Horizon\RedisQueue $instance */
-                        return $instance->readyNow($queue);
-        }
-        
-        /**
-         * Migrate the delayed jobs that are ready to the regular queue.
-         *
-         * @param string $from
-         * @param string $to
-         * @return void 
-         * @static 
-         */ 
-        public static function migrateExpiredJobs($from, $to)
-        {
-                        /** @var \Laravel\Horizon\RedisQueue $instance */
-                        $instance->migrateExpiredJobs($from, $to);
-        }
-        
-        /**
-         * Delete a reserved job from the queue.
-         *
-         * @param string $queue
-         * @param \Illuminate\Queue\Jobs\RedisJob $job
-         * @return void 
-         * @static 
-         */ 
-        public static function deleteReserved($queue, $job)
-        {
-                        /** @var \Laravel\Horizon\RedisQueue $instance */
-                        $instance->deleteReserved($queue, $job);
-        }
-        
-        /**
-         * Delete a reserved job from the reserved queue and release it.
-         *
-         * @param string $queue
-         * @param \Illuminate\Queue\Jobs\RedisJob $job
-         * @param int $delay
-         * @return void 
-         * @static 
-         */ 
-        public static function deleteAndRelease($queue, $job, $delay)
-        {
-                        /** @var \Laravel\Horizon\RedisQueue $instance */
-                        $instance->deleteAndRelease($queue, $job, $delay);
-        }
-        
-        /**
-         * Get the queue or return the default.
-         *
-         * @param string|null $queue
-         * @return string 
-         * @static 
-         */ 
-        public static function getQueue($queue)
-        {
-            //Method inherited from \Illuminate\Queue\RedisQueue            
-                        /** @var \Laravel\Horizon\RedisQueue $instance */
-                        return $instance->getQueue($queue);
-        }
-        
-        /**
-         * Get the underlying Redis instance.
-         *
-         * @return \Illuminate\Contracts\Redis\Factory 
-         * @static 
-         */ 
-        public static function getRedis()
-        {
-            //Method inherited from \Illuminate\Queue\RedisQueue            
-                        /** @var \Laravel\Horizon\RedisQueue $instance */
-                        return $instance->getRedis();
-        }
-        
-        /**
          * Get the expiration timestamp for an object-based queue handler.
          *
          * @param mixed $job
@@ -8009,7 +7926,7 @@ namespace Illuminate\Support\Facades {
         public static function getJobExpiration($job)
         {
             //Method inherited from \Illuminate\Queue\Queue            
-                        /** @var \Laravel\Horizon\RedisQueue $instance */
+                        /** @var \Illuminate\Queue\SyncQueue $instance */
                         return $instance->getJobExpiration($job);
         }
         
@@ -8023,7 +7940,7 @@ namespace Illuminate\Support\Facades {
         public static function createPayloadUsing($callback)
         {
             //Method inherited from \Illuminate\Queue\Queue            
-                        \Laravel\Horizon\RedisQueue::createPayloadUsing($callback);
+                        \Illuminate\Queue\SyncQueue::createPayloadUsing($callback);
         }
         
         /**
@@ -8036,7 +7953,7 @@ namespace Illuminate\Support\Facades {
         public static function setContainer($container)
         {
             //Method inherited from \Illuminate\Queue\Queue            
-                        /** @var \Laravel\Horizon\RedisQueue $instance */
+                        /** @var \Illuminate\Queue\SyncQueue $instance */
                         $instance->setContainer($container);
         }
          
@@ -14671,6 +14588,148 @@ namespace Illuminate\Support\Facades {
  
 }
 
+namespace GrofGraf\LaravelPDFMerger\Facades { 
+
+    /**
+     * 
+     *
+     */ 
+    class PDFMergerFacade {
+        
+        /**
+         * Initialize a new internal instance of FPDI in order to prevent any problems with shared resources
+         * Please visit https://www.setasign.com/products/fpdi/manual/#p-159 for more information on this issue
+         *
+         * @return self 
+         * @static 
+         */ 
+        public static function init()
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->init();
+        }
+        
+        /**
+         * Stream the merged PDF content
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function inline()
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->inline();
+        }
+        
+        /**
+         * Download the merged PDF content
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function download()
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->download();
+        }
+        
+        /**
+         * Save the merged PDF content to the filesystem
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function save($filePath = null)
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->save($filePath);
+        }
+        
+        /**
+         * Get the merged PDF content as binary string
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function string()
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->string();
+        }
+        
+        /**
+         * Set the generated PDF fileName
+         *
+         * @param string $fileName
+         * @return string 
+         * @static 
+         */ 
+        public static function setFileName($fileName)
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->setFileName($fileName);
+        }
+        
+        /**
+         * Add a PDF for inclusion in the merge with a binary string. Pages should be formatted: 1,3,6, 12-16.
+         *
+         * @param string $string
+         * @param mixed $pages
+         * @param mixed $orientation
+         * @return void 
+         * @static 
+         */ 
+        public static function addPDFString($string, $pages = 'all', $orientation = null)
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        $instance->addPDFString($string, $pages, $orientation);
+        }
+        
+        /**
+         * Add a PDF for inclusion in the merge with a valid file path. Pages should be formatted: 1,3,6, 12-16.
+         *
+         * @param string $filePath
+         * @param string $pages
+         * @param string $orientation
+         * @return self 
+         * @throws \Exception if the given pages aren't correct
+         * @static 
+         */ 
+        public static function addPathToPDF($filePath, $pages = 'all', $orientation = null)
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->addPathToPDF($filePath, $pages, $orientation);
+        }
+        
+        /**
+         * Merges your provided PDFs and outputs to specified location.
+         *
+         * @param string $orientation
+         * @return void 
+         * @throws \Exception if there are now PDFs to merge
+         * @static 
+         */ 
+        public static function duplexMerge($orientation = 'P')
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        $instance->duplexMerge($orientation);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function merge($orientation = 'P', $duplex = false)
+        {
+                        /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $instance */
+                        return $instance->merge($orientation, $duplex);
+        }
+         
+    }
+ 
+}
+
 namespace Waavi\UrlShortener\Facades { 
 
     /**
@@ -15333,83 +15392,6 @@ namespace Michalisantoniou6\Cerberus {
         {
                         /** @var \Michalisantoniou6\Cerberus\Cerberus $instance */
                         $instance->routeNeedsRoleOrPermission($route, $roles, $permissions, $result, $requireAll);
-        }
-         
-    }
- 
-}
-
-namespace LynX39\LaraPdfMerger\Facades { 
-
-    /**
-     * 
-     *
-     */ 
-    class PdfMerger {
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function init()
-        {
-                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
-                        return $instance->init();
-        }
-        
-        /**
-         * Add a PDF for inclusion in the merge with a valid file path. Pages should be formatted: 1,3,6, 12-16.
-         *
-         * @param $filepath
-         * @param $pages
-         * @return \LynX39\LaraPdfMerger\PdfManage 
-         * @throws Exception
-         * @static 
-         */ 
-        public static function addPDF($filepath, $pages = 'all', $orientation = null)
-        {
-                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
-                        return $instance->addPDF($filepath, $pages, $orientation);
-        }
-        
-        /**
-         * Merges your provided PDFs and outputs to specified location.
-         *
-         * @param string $orientation
-         * @return void 
-         * @throws \Exception if there are no PDFs to merge
-         * @static 
-         */ 
-        public static function merge($orientation = null, $meta = [])
-        {
-                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
-                        $instance->merge($orientation, $meta);
-        }
-        
-        /**
-         * Merges your provided PDFs and adds blank pages between documents as needed to allow duplex printing
-         *
-         * @param string $orientation
-         * @return void 
-         * @throws \Exception if there are no PDFs to merge
-         * @static 
-         */ 
-        public static function duplexMerge($orientation = null, $meta = [])
-        {
-                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
-                        $instance->duplexMerge($orientation, $meta);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function save($outputpath = 'newfile.pdf', $outputmode = 'file')
-        {
-                        /** @var \LynX39\LaraPdfMerger\PdfManage $instance */
-                        return $instance->save($outputpath, $outputmode);
         }
          
     }
@@ -18914,6 +18896,8 @@ namespace  {
 
     class Password extends \Illuminate\Support\Facades\Password {}
 
+    class PDFMerger extends \GrofGraf\LaravelPDFMerger\Facades\PDFMergerFacade {}
+
     class Queue extends \Illuminate\Support\Facades\Queue {}
 
     class Redirect extends \Illuminate\Support\Facades\Redirect {}
@@ -18945,8 +18929,6 @@ namespace  {
     class SnappyImage extends \Barryvdh\Snappy\Facades\SnappyImage {}
 
     class Cerberus extends \Michalisantoniou6\Cerberus\CerberusFacade {}
-
-    class PdfMerger extends \LynX39\LaraPdfMerger\Facades\PdfMerger {}
 
     class Image extends \Intervention\Image\Facades\Image {}
 

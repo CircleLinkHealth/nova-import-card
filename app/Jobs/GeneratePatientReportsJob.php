@@ -12,6 +12,7 @@ use App\Services\ProviderReportService;
 use App\User;
 use Barryvdh\Snappy\PdfWrapper;
 use Carbon\Carbon;
+use GrofGraf\LaravelPDFMerger\PDFMerger;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -20,7 +21,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
-use LynX39\LaraPdfMerger\Facades\PdfMerger;
 
 class GeneratePatientReportsJob implements ShouldQueue
 {
@@ -254,19 +254,19 @@ class GeneratePatientReportsJob implements ShouldQueue
         }
     }
 
-    private function mergePdfs($targetPath, $pdf1, $pdf2): string
+    private function mergePdfs(string $targetPath, string $pdf1Path, string $pdf2Path): string
     {
         try {
-            /** @var \LynX39\LaraPdfMerger\PdfManage $pdfMerger */
-            $pdfMerger = PDFMerger::init();
-            $pdfMerger->addPDF($pdf1);
-            $pdfMerger->addPDF($pdf2);
+            /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $pdfMerger */
+            $pdfMerger = app('PDFMerger');
+            $pdfMerger->addPathToPDF($pdf1Path);
+            $pdfMerger->addPathToPDF($pdf2Path);
             $pdfMerger->merge();
             $saved = $pdfMerger->save($targetPath);
 
             //delete temp files
-            unlink($pdf1);
-            unlink($pdf2);
+            unlink($pdf1Path);
+            unlink($pdf2Path);
 
             return $saved;
 
