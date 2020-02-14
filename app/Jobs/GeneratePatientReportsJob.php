@@ -269,8 +269,8 @@ class GeneratePatientReportsJob implements ShouldQueue
             $saved = $pdfMerger->save($targetPath);
 
             //delete temp files
-            unlink($pdf1);
-            unlink($pdf2);
+            //unlink($pdf1);
+            //unlink($pdf2);
 
             return $saved;
 
