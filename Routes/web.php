@@ -114,6 +114,11 @@ Route::prefix('eligibility')->group(function () {
                 ])->middleware('permission:batch.read');
             });
         });
+        
+        Route::post('commonwealth-pcm', [
+            'uses' => 'CommonwealthPCMController@downloadCsvList',
+            'as' => 'commonwealth.pcm.alpha.version'
+        ])->middleware('role:administrator');
     
         Route::group(['prefix' => 'enrollees'], function () {
             Route::get('', [
