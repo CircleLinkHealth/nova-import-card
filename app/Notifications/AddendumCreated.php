@@ -204,7 +204,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
 
         return (new CircleLinkMailChannel($emailData, $unsubscribeLink))
             ->line($subjectLineStyled)
-            ->action('View Comment', url($this->redirectLink()));
+            ->action('View Comment', url($this->redirectLink($notifiable)));
     }
 
     /**

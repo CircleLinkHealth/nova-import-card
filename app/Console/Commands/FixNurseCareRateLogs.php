@@ -69,10 +69,9 @@ class FixNurseCareRateLogs extends Command
                           'patient_user_id'    => $activity->patient_id,
                           'is_successful_call' => $isSuccessfulCall,
                       ]);
-
-                  $count += $chunk;
-                  $this->info("Processed $count records");
               });
+              $count += $chunk;
+              $this->info("Processed $count records");
           });
 
         $this->info('Done.');

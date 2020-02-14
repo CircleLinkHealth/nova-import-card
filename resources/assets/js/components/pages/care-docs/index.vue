@@ -1,19 +1,22 @@
 <template>
     <div class="container-fluid">
         <div class="col-md-12" style="margin-top: 15px">
-            <div class="col-md-8 text-left" style="height: 30px; padding-top: 5px">
-                <button class="col-md-1 btn btn-secondary btn-s pointer" v-bind:class="{'btn-info': !this.showPast}"
-                        @click="showCurrentDocuments()">Current
-                </button>
-                <button class="col-md-1 btn btn-secondary btn-s pointer" v-bind:class="{'btn-info': this.showPast}"
-                        style="margin-right: 40px"
-                        @click="showPastDocuments()">Past
-                </button>
-                <button class="col-md-3 btn btn-info btn-s pointer"
+            <div class="col-md-8 text-left" style="height: 30px; padding-top: 5px;">
+                <div class="col-md-3 btn-group btn-group-toggle" data-toggle="buttons"">
+                    <button class="col-md-4 btn btn-secondary btn-s pointer btn-switch"
+                            v-bind:class="{'btn-info': !this.showPast}"
+                            @click="showCurrentDocuments()">Current
+                    </button>
+                    <button class="col-md-4 btn btn-secondary btn-s pointer btn-switch"
+                            v-bind:class="{'btn-info': this.showPast}"
+                            @click="showPastDocuments()">Past
+                    </button>
+                </div>
+                <button class="col-md-3 btn btn-info btn-s pointer btn-upload-documents"
                         @click="uploadCareDocument()">Upload Documents
                 </button>
                 <a v-if="!userEnrolledIntoAwv"
-                   class="col-md-2 btn btn-info btn-s pointer"
+                   class="col-md-2 btn btn-info btn-s pointer btn-upload-documents"
                    style="margin-left: 10px"
                    target="_blank"
                    :href="getAwvUrl(`manage-patients/${this.patientId}/enroll`)">
@@ -30,7 +33,7 @@
         </div>
 
         <div v-if="noDocsFound" class="col-md-12" style="padding-left: 42%">
-            <div><strong>No Care Documents were found.</strong></div>
+            <div><span class="strong-custom">No Care Documents were found.</span></div>
         </div>
         <div class="col-md-12">
             <div v-if="showBanner" :class="bannerClass">{{this.errors.errors}}</div>
@@ -47,13 +50,14 @@
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
                                 <div>
-                                    <button class="col-md-6 btn btn-m"
+                                    <button class="col-md-6 btn btn-m btn-static disabled"
                                             :class="getButtonColorFromStatus(status.hra_status)">
                                         {{getButtonTextFromStatus(status.hra_status)}}
                                     </button>
                                 </div>
                                 <div class="col-md-6">
-                                    <a class="blue-link" style="float: right; padding-top: 7px" :href="getViewHraSurveyUrl()" target="_blank">View</a>
+                                    <a class="blue-link" style="float: right; padding-top: 7px"
+                                       :href="getViewHraSurveyUrl()" target="_blank">View</a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
@@ -62,7 +66,7 @@
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
-                                <p><strong>Send Assessment Link to Provider via:</strong></p>
+                                <p><span class="strong-custom">Send assessment link to patient via:</span></p>
                             </div>
                             <div class="col-md-12  panel-section">
                                 <a
@@ -89,13 +93,14 @@
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
                                 <div>
-                                    <button class="col-md-6 btn btn-m"
+                                    <button class="col-md-6 btn btn-m btn-static disabled"
                                             :class="getButtonColorFromStatus(status.vitals_status)">
                                         {{getButtonTextFromStatus(status.vitals_status)}}
                                     </button>
                                 </div>
                                 <div class="col-md-6">
-                                    <a class="blue-link" style="float: right; padding-top: 7px" :href="getViewVitalsSurveyUrl()" target="_blank">View</a>
+                                    <a class="blue-link" style="float: right; padding-top: 7px"
+                                       :href="getViewVitalsSurveyUrl()" target="_blank">View</a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
@@ -104,19 +109,19 @@
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
-                                <p><strong>Send Assessment Link to Provider via:</strong></p>
+                                <p><span class="strong-custom">Send assessment link to provider via:</span></p>
                             </div>
                             <div class="col-md-12  panel-section">
                                 <a
-                                   class="col-md-6 btn btn-method btn-width-100 btn-s"
-                                   target="_blank"
-                                   :href="getAwvSendSmsForm('vitals')">
+                                        class="col-md-6 btn btn-method btn-width-100 btn-s"
+                                        target="_blank"
+                                        :href="getAwvSendSmsForm('vitals')">
                                     SMS
                                 </a>
                                 <a
-                                   class="col-md-6 btn btn-width-100 btn-method btn-s"
-                                   target="_blank"
-                                   :href="getAwvSendEmailForm('vitals')">
+                                        class="col-md-6 btn btn-width-100 btn-method btn-s"
+                                        target="_blank"
+                                        :href="getAwvSendEmailForm('vitals')">
                                     Email
                                 </a>
                             </div>
@@ -138,7 +143,7 @@
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'PPP'"  :patientId="patientId"></care-document-box>
+                    <care-document-box :type="'PPP'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Provider Report']">
@@ -148,7 +153,7 @@
             </div>
             <div v-else>
                 <div class="col-md-3">
-                    <care-document-box :type="'Provider Report'"  :patientId="patientId"></care-document-box>
+                    <care-document-box :type="'Provider Report'" :patientId="patientId"></care-document-box>
                 </div>
             </div>
             <div v-if="careDocs['Lab Results']">
@@ -168,7 +173,7 @@
             <template slot="body">
                 <div class="col-md-12">
                     <div class="col-md-12 row">
-                        <p><strong>Select Document Type</strong></p>
+                        <p><span class="strong-custom">Select Document Type</span></p>
                     </div>
                     <div class="col-md-12 row">
                         <v-select max-height="200px" v-model="selectedDocumentType"
@@ -310,8 +315,7 @@
 
                 if (this.awvUrl[this.awvUrl.length - 1] === "/") {
                     return this.awvUrl + path;
-                }
-                else {
+                } else {
                     return this.awvUrl + "/" + path;
                 }
             },
@@ -324,11 +328,11 @@
                 return this.getAwvUrl(`survey/vitals/${this.patientId}`);
             },
 
-            getAwvSendSmsForm(survey){
+            getAwvSendSmsForm(survey) {
                 return this.getAwvUrl(`manage-patients/${this.patientId}/` + survey + `/sms/send-assessment-link`);
             },
 
-            getAwvSendEmailForm(survey){
+            getAwvSendEmailForm(survey) {
                 return this.getAwvUrl(`manage-patients/${this.patientId}/` + survey + `/email/send-assessment-link`);
             },
 
@@ -451,11 +455,12 @@
 
     .btn-method {
         border-color: #5cc0dd;
+        color: #5cc0dd;
         max-height: 30px;
         margin: 2px;
     }
 
-    .btn-width-100{
+    .btn-width-100 {
         width: 100px;
     }
 
@@ -518,12 +523,20 @@
     }
 
     .shadow {
-        box-shadow:         1px 1px 1px 1px #ccc;
+        box-shadow: 1px 1px 1px 1px #ccc;
     }
 
     .blue-link {
         color: #5cc0dd;
         font-weight: 700;
+    }
+
+    .btn-switch {
+        max-width: 100px;
+    }
+
+    .btn-upload-documents {
+        max-width: 150px;
     }
 
 </style>

@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Contracts\FaxableNotification;
 use App\ValueObjects\SimpleNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
@@ -16,7 +17,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
-class SendCareDocument extends Notification
+class SendCareDocument extends Notification implements FaxableNotification
 {
     use Queueable;
 
@@ -107,14 +108,12 @@ class SendCareDocument extends Notification
      *
      * @throws \Exception
      *
-     * @return bool|string
+     * @return SimpleNotification
      */
     public function toDirectMail($notifiable)
     {
         if ( ! $notifiable || ! $notifiable->emr_direct_address) {
-            throw new \Exception('Notifiable or Emr direct address not found.', 500);
-
-            return false;
+            throw new \Exception('Notifiable or Emr direct address not found.', 400);
         }
 
         return (new SimpleNotification())
@@ -128,15 +127,17 @@ class SendCareDocument extends Notification
      *
      * @param $notifiable
      *
-     * @return bool|string
+     * @throws \Exception
      */
-    public function toFax($notifiable)
+    public function toFax($notifiable = null): array
     {
         if ( ! $notifiable || ! $notifiable->fax) {
-            return false;
+            throw new \Exception('Notifiable or fax number not found.', 400);
         }
 
-        return $this->toPdf();
+        return [
+            'file' => $this->toPdf(),
+        ];
     }
 
     /**
