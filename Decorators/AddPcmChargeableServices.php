@@ -68,8 +68,6 @@ class AddPcmChargeableServices
     
     private function addPcmCodeAndProblems(array &$data, array $pcmProblems)
     {
-        $data['chargeable_services_codes_and_problems'] = [
-            'G2065' => $pcmProblems,
-        ];
+        $data['chargeable_services_codes_and_problems']['G2065'] = $pcmProblems;
     }
 }
