@@ -55,7 +55,6 @@ class GeneratePatientReportsJob implements ShouldQueue
         $this->patientId    = $patientId;
         $this->currentDate  = Carbon::now();
         $this->debug        = $debug;
-
     }
 
     /**
@@ -133,8 +132,9 @@ class GeneratePatientReportsJob implements ShouldQueue
             return;
         }
 
-        $redisEvent->publishReportCreated($providerReportMedia);
-
+        if ( ! $this->debug) {
+            $redisEvent->publishReportCreated($providerReportMedia);
+        }
 
         $pppMedia = $this->createAndUploadPdfPPP($pppReport, $patient, $this->debug);
 
@@ -144,7 +144,9 @@ class GeneratePatientReportsJob implements ShouldQueue
             return;
         }
 
-        $redisEvent->publishReportCreated($pppMedia);
+        if ( ! $this->debug) {
+            $redisEvent->publishReportCreated($pppMedia);
+        }
 
         if ($this->debug) {
             return;
