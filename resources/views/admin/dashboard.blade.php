@@ -100,5 +100,19 @@
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Commonwealth Pain PCM Eligible Patient List</div>
+                    <div class="panel-body">
+                        <form action="" method="POST">
+                            {{csrf_field()}}
+                            <input type="submit" value="Download">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
