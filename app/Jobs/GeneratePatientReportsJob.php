@@ -18,6 +18,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 use LynX39\LaraPdfMerger\Facades\PdfMerger;
 
@@ -163,6 +164,7 @@ class GeneratePatientReportsJob implements ShouldQueue
     {
         $pathToCoverPage = $this->getCoverPagePdf($patient, $providerReport->updated_at, 'Provider Report');
         if ( ! $pathToCoverPage) {
+            Log::error("Could not get cover page for Provider Report");
             return false;
         }
 
@@ -188,6 +190,7 @@ class GeneratePatientReportsJob implements ShouldQueue
         $pathToData = storage_path("provider_report_{$patient->id}_{$this->currentDate->toDateTimeString()}_data.pdf");
         $savedData  = file_put_contents($pathToData, $pdf->output());
         if ( ! $savedData) {
+            Log::error("Could not get store file $pathToData");
             return false;
         }
 
@@ -195,6 +198,7 @@ class GeneratePatientReportsJob implements ShouldQueue
         $saved = $this->mergePdfs($path, $pathToCoverPage, $pathToData);
 
         if ( ! $saved) {
+            Log::error("Could not merge pdfs");
             return false;
         }
 
