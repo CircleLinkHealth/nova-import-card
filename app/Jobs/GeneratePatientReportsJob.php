@@ -233,12 +233,14 @@ class GeneratePatientReportsJob implements ShouldQueue
             'practiceName' => $patient->primaryProgramName(),
             'providerName' => $doctorsName,
         ]);
-        $coverPath  = storage_path("{$reportTitle}_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_temp_cover.pdf");
+
+        return $cover->output();
+        /*$coverPath  = storage_path("{$reportTitle}_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_temp_cover.pdf");
         $coverSaved = file_put_contents($coverPath, $cover->output());
 
         return $coverSaved
-            ? $coverPath
-            : null;
+            ? $cover->output()
+            : null;*/
     }
 
     private function setPdfOptions(PdfWrapper $pdf, bool $addPageNumbers = true)
@@ -254,19 +256,19 @@ class GeneratePatientReportsJob implements ShouldQueue
         }
     }
 
-    private function mergePdfs(string $targetPath, string $pdf1Path, string $pdf2Path): string
+    private function mergePdfs(string $targetPath, string $pdf1, string $pdf2): string
     {
         try {
             /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $pdfMerger */
             $pdfMerger = app('PDFMerger');
-            $pdfMerger->addPathToPDF($pdf1Path);
-            $pdfMerger->addPathToPDF($pdf2Path);
+            $pdfMerger->addPDFString($pdf1);
+            $pdfMerger->addPDFString($pdf2);
             $pdfMerger->merge();
             $saved = $pdfMerger->save($targetPath);
 
             //delete temp files
-            unlink($pdf1Path);
-            unlink($pdf2Path);
+            //unlink($pdf1Path);
+            //unlink($pdf2Path);
 
             return $saved;
 
@@ -280,8 +282,8 @@ class GeneratePatientReportsJob implements ShouldQueue
 
     private function createAndUploadPdfPPP(PersonalizedPreventionPlan $ppp, User $patient, $saveLocally = false)
     {
-        $pathToCoverPage = $this->getCoverPagePdf($patient, $ppp->updated_at, 'Personalized', 'Prevention Plan');
-        if ( ! $pathToCoverPage) {
+        $coverPage = $this->getCoverPagePdf($patient, $ppp->updated_at, 'Personalized', 'Prevention Plan');
+        if ( ! $coverPage) {
             return false;
         }
 
@@ -308,14 +310,16 @@ class GeneratePatientReportsJob implements ShouldQueue
             'isPdf'                     => true,
         ]);
 
-        $dataPath  = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_data.pdf");
+        $data = $pdf->output();
+        /*$dataPath  = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_data.pdf");
         $dataSaved = file_put_contents($dataPath, $pdf->output());
         if ( ! $dataSaved) {
             return false;
-        }
+        }*/
 
         $path  = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}.pdf");
-        $saved = $this->mergePdfs($path, $pathToCoverPage, $dataPath);
+        $saved = $this->mergePdfs($path, $coverPage, $data);
+//        $saved = $this->mergePdfs($path, $pathToCoverPage, $dataPath);
 
         if ( ! $saved) {
             return false;
