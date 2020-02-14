@@ -262,7 +262,7 @@ class GeneratePatientReportsJob implements ShouldQueue
             Log::info("Merging [$pdf1, $pdf2] to $targetPath");
 
             /** @var \GrofGraf\LaravelPDFMerger\PDFMerger $pdfMerger */
-            $pdfMerger = app('PDFMerger');
+            $pdfMerger = new PDFMerger(app('files'));
             $pdfMerger->addPathToPDF($pdf1);
             $pdfMerger->addPathToPDF($pdf2);
             $pdfMerger->merge();
