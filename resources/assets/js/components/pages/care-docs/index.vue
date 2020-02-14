@@ -1,19 +1,22 @@
 <template>
     <div class="container-fluid">
         <div class="col-md-12" style="margin-top: 15px">
-            <div class="col-md-8 text-left" style="height: 30px; padding-top: 5px">
-                <button class="col-md-1 btn btn-secondary btn-s pointer" v-bind:class="{'btn-info': !this.showPast}"
-                        @click="showCurrentDocuments()">Current
-                </button>
-                <button class="col-md-1 btn btn-secondary btn-s pointer" v-bind:class="{'btn-info': this.showPast}"
-                        style="margin-right: 40px"
-                        @click="showPastDocuments()">Past
-                </button>
-                <button class="col-md-3 btn btn-info btn-s pointer"
+            <div class="col-md-8 text-left" style="height: 30px; padding-top: 5px;">
+                <div class="col-md-3 btn-group btn-group-toggle" data-toggle="buttons"">
+                    <button class="col-md-4 btn btn-secondary btn-s pointer btn-switch"
+                            v-bind:class="{'btn-info': !this.showPast}"
+                            @click="showCurrentDocuments()">Current
+                    </button>
+                    <button class="col-md-4 btn btn-secondary btn-s pointer btn-switch"
+                            v-bind:class="{'btn-info': this.showPast}"
+                            @click="showPastDocuments()">Past
+                    </button>
+                </div>
+                <button class="col-md-3 btn btn-info btn-s pointer btn-upload-documents"
                         @click="uploadCareDocument()">Upload Documents
                 </button>
                 <a v-if="!userEnrolledIntoAwv"
-                   class="col-md-2 btn btn-info btn-s pointer"
+                   class="col-md-2 btn btn-info btn-s pointer btn-upload-documents"
                    style="margin-left: 10px"
                    target="_blank"
                    :href="getAwvUrl(`manage-patients/${this.patientId}/enroll`)">
@@ -47,7 +50,7 @@
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
                                 <div>
-                                    <button class="col-md-6 btn btn-m"
+                                    <button class="col-md-6 btn btn-m btn-static disabled"
                                             :class="getButtonColorFromStatus(status.hra_status)">
                                         {{getButtonTextFromStatus(status.hra_status)}}
                                     </button>
@@ -90,7 +93,7 @@
                         <div class="panel-body">
                             <div class="col-md-12  panel-section" style="margin-top: 20px">
                                 <div>
-                                    <button class="col-md-6 btn btn-m"
+                                    <button class="col-md-6 btn btn-m btn-static disabled"
                                             :class="getButtonColorFromStatus(status.vitals_status)">
                                         {{getButtonTextFromStatus(status.vitals_status)}}
                                     </button>
@@ -526,6 +529,14 @@
     .blue-link {
         color: #5cc0dd;
         font-weight: 700;
+    }
+
+    .btn-switch {
+        max-width: 100px;
+    }
+
+    .btn-upload-documents {
+        max-width: 150px;
     }
 
 </style>
