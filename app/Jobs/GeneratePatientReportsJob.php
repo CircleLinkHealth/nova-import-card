@@ -186,24 +186,23 @@ class GeneratePatientReportsJob implements ShouldQueue
             'isPdf'      => true,
         ]);
 
-        $data = $pdf->output();
-        /*$pathToData = storage_path("provider_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_data.pdf");
+        $pathToData = storage_path("provider_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_data.pdf");
         $savedData  = file_put_contents($pathToData, $pdf->output());
         if ( ! $savedData) {
             throw new \Exception("Could not get store file $pathToData");
-        }*/
+        }
 
-        $path  = storage_path("provider_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}.pdf");
+        /*$path  = storage_path("provider_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}.pdf");
         $saved = $this->mergePdfs($path, $coverPage, $data);
         if ( ! $saved) {
             throw new \Exception("Could not merge pdfs [$path]");
-        }
+        }*/
 
         if ($saveLocally) {
-            return $saved;
+            return $savedData;
         }
 
-        return $patient->addMedia($path)
+        return $patient->addMedia($pathToData)
                        ->withCustomProperties(['doc_type' => 'Provider Report', 'year' => $this->instanceYear])
                        ->toMediaCollection('patient-care-documents');
     }
@@ -291,7 +290,6 @@ class GeneratePatientReportsJob implements ShouldQueue
         $personalizedHealthAdvices = (new PersonalizedPreventionPlanPrepareData())->prepareRecommendations($ppp);
         $suggestedCheckListData    = PersonalizedPreventionPlanPrepareData::getOrderedSuggestedChecklist($personalizedHealthAdvices);
 
-
         /** @var PdfWrapper $pdf */
         $pdf = App::make('snappy.pdf.wrapper');
         $this->setPdfOptions($pdf);
@@ -311,26 +309,24 @@ class GeneratePatientReportsJob implements ShouldQueue
             'isPdf'                     => true,
         ]);
 
-        $data = $pdf->output();
-        /*$dataPath  = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_data.pdf");
+        $dataPath  = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_data.pdf");
         $dataSaved = file_put_contents($dataPath, $pdf->output());
         if ( ! $dataSaved) {
             return false;
-        }*/
+        }
 
-        $path  = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}.pdf");
-        $saved = $this->mergePdfs($path, $coverPage, $data);
+//        $path  = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}.pdf");
 //        $saved = $this->mergePdfs($path, $pathToCoverPage, $dataPath);
 
-        if ( ! $saved) {
+        if ( ! $dataSaved) {
             return false;
         }
 
         if ($saveLocally) {
-            return $saved;
+            return $dataSaved;
         }
 
-        return $patient->addMedia($path)
+        return $patient->addMedia($dataPath)
                        ->withCustomProperties(['doc_type' => 'PPP', 'year' => $this->instanceYear])
                        ->toMediaCollection('patient-care-documents');
     }
