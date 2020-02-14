@@ -15,6 +15,9 @@ class CommonwealthPCMController extends Controller
 {
     public function downloadCsvList()
     {
+        ini_set('max_execution_time', 600);
+        ini_set('max_memory', '2000M');
+    
         $fileName = "Commonwealth Pain PCM Eligible Patients created ".Carbon::now()->toAtomString();
         
         return new StreamedResponse(
