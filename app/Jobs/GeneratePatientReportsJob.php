@@ -108,28 +108,18 @@ class GeneratePatientReportsJob implements ShouldQueue
 
         //Generate Reports
         $providerReport = (new GenerateProviderReportService($patient))->generateData();
-
         if ( ! $providerReport) {
-            \Log::error("Something went wrong while generating Provider Report for patient with id:{$patient->id} ");
-
-            //todo: send notification to slack? when command stops?
-            return;
+            throw new \Exception("Something went wrong while generating Provider Report for patient with id:{$patient->id}");
         }
 
         $pppReport = (new GeneratePersonalizedPreventionPlanService($patient))->generateData();
-
         if ( ! $pppReport) {
-            \Log::error("Something went wrong while generating PPP for patient with id:{$patient->id} ");
-
-            return;
+            throw new \Exception("Something went wrong while generating Provider Report for patient with id:{$patient->id}");
         }
 
         $providerReportMedia = $this->createAndUploadPdfProviderReport($providerReport, $patient, $this->debug);
-
         if ( ! $providerReportMedia) {
-            \Log::error("Something went wrong while uploading Provider Report for patient with id:{$patient->id} ");
-
-            return;
+            throw new \Exception("Something went wrong while uploading Provider Report for patient with id:{$patient->id}");
         }
 
         if ( ! $this->debug) {
@@ -137,11 +127,8 @@ class GeneratePatientReportsJob implements ShouldQueue
         }
 
         $pppMedia = $this->createAndUploadPdfPPP($pppReport, $patient, $this->debug);
-
         if ( ! $pppMedia) {
-            \Log::error("Something went wrong while uploading PPP for patient with id:{$patient->id} ");
-
-            return;
+            throw new \Exception("Something went wrong while uploading PPP for patient with id:{$patient->id}");
         }
 
         if ( ! $this->debug) {

@@ -54,7 +54,6 @@ class QueueGenerateProviderReports extends Command
      */
     public function handle()
     {
-
         $patientIds = $this->argument('patientIds') ?? null;
         if ($patientIds) {
             $patientIds = explode(',', $patientIds);
@@ -68,7 +67,11 @@ class QueueGenerateProviderReports extends Command
             : Carbon::now()->year;
 
         $debug = $this->option('debug');
+
+        $this->info("Ready to start generating reports [year=$this->year, debug=$debug] ");
+
         foreach ($this->patientIds as $patientId){
+            $this->info("Generating reports for $patientId");
             GeneratePatientReportsJob::dispatch($patientId, $this->year, $debug)->onQueue('awv-high');
         }
     }
