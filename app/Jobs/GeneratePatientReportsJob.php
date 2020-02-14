@@ -162,8 +162,8 @@ class GeneratePatientReportsJob implements ShouldQueue
      */
     private function createAndUploadPdfProviderReport($providerReport, $patient, $saveLocally = false)
     {
-        $pathToCoverPage = $this->getCoverPagePdf($patient, $providerReport->updated_at, 'Provider Report');
-        if ( ! $pathToCoverPage) {
+        $coverPage = $this->getCoverPagePdf($patient, $providerReport->updated_at, 'Provider Report');
+        if ( ! $coverPage) {
             throw new \Exception("Could not get cover page for Provider Report");
         }
 
@@ -186,14 +186,15 @@ class GeneratePatientReportsJob implements ShouldQueue
             'isPdf'      => true,
         ]);
 
-        $pathToData = storage_path("provider_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_data.pdf");
+        $data = $pdf->output();
+        /*$pathToData = storage_path("provider_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_data.pdf");
         $savedData  = file_put_contents($pathToData, $pdf->output());
         if ( ! $savedData) {
             throw new \Exception("Could not get store file $pathToData");
-        }
+        }*/
 
         $path  = storage_path("provider_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}.pdf");
-        $saved = $this->mergePdfs($path, $pathToCoverPage, $pathToData);
+        $saved = $this->mergePdfs($path, $coverPage, $data);
         if ( ! $saved) {
             throw new \Exception("Could not merge pdfs [$path]");
         }
