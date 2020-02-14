@@ -256,6 +256,7 @@
                                         const validateEmailBody = async () => {
                                             return await window.axios
                                                 .post(validateEmailBodyUrl, {
+                                                    patient_emaile_subject:  $("[id='email-subject']").val(),
                                                     patient_email_body: $("[id='patient-email-body-input']").val()
                                                 })
                                                 .then((response) => {
@@ -267,7 +268,7 @@
                                                     return $('#viewNote').submit();
                                                 })
                                                 .catch(err => {
-                                                    App.$emit('patient-email-body-errors', err);
+                                                    App.$emit('patient-email-errors', err);
                                                     return false
                                                 });
                                         };

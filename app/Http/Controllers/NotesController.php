@@ -14,7 +14,7 @@ use App\Jobs\SendSingleNotification;
 use App\Note;
 use App\Repositories\PatientWriteRepository;
 use App\Rules\PatientEmailAttachments;
-use App\Rules\PatientEmailBodyDoesNotContainPhi;
+use App\Rules\PatientEmailDoesNotContainPhi;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
@@ -22,7 +22,6 @@ use App\Services\CPM\CpmProblemService;
 use App\Services\NoteService;
 use App\Services\PatientCustomEmail;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -369,7 +368,7 @@ class NotesController extends Controller
         $note->forward($shouldNotifyCareTeam, $shouldNotifySupport);
         if ($shouldSendPatientEmail) {
             Validator::make($input, [
-                'patient-email-body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
+                'patient-email-body' => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
                 'attachments'        => ['sometimes', new PatientEmailAttachments()],
             ])->validate();
 
@@ -503,7 +502,8 @@ class NotesController extends Controller
 
         if ($shouldSendPatientEmail) {
             Validator::make($input, [
-                'patient-email-body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi($patient)],
+                'email-subject'      => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
+                'patient-email-body' => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
                 'attachments'        => ['sometimes', new PatientEmailAttachments()],
             ])->validate();
         }
@@ -859,7 +859,8 @@ class NotesController extends Controller
             isset($input['attachments'])
                 ? $input['attachments']
                 : [],
-            $note->id
+            $note->id,
+            $input['email-subject']
         ));
     }
 

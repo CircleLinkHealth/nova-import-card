@@ -19,6 +19,8 @@ class SendPatientEmail extends Notification
 
     protected $content;
 
+    protected $emailSubject;
+
     protected $noteId;
 
     protected $patient;
@@ -28,19 +30,20 @@ class SendPatientEmail extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param User $patient
      * @param $senderId
      * @param mixed      $content
      * @param mixed      $attachments
      * @param mixed|null $noteId
+     * @param mixed      $emailSubject
      */
-    public function __construct(User $patient, $senderId, string $content, $attachments, $noteId = null)
+    public function __construct(User $patient, $senderId, string $content, $attachments, $noteId = null, $emailSubject)
     {
-        $this->senderId    = $senderId;
-        $this->patient     = $patient;
-        $this->content     = $content;
-        $this->attachments = $attachments;
-        $this->noteId      = $noteId;
+        $this->senderId     = $senderId;
+        $this->patient      = $patient;
+        $this->content      = $content;
+        $this->attachments  = $attachments;
+        $this->noteId       = $noteId;
+        $this->emailSubject = $emailSubject;
     }
 
     public function __destruct()
@@ -66,6 +69,7 @@ class SendPatientEmail extends Notification
         $toArray = [
             'recipient_email' => $notifiable->email,
             'email_content'   => $this->content,
+            'email_subject'   => $this->emailSubject,
             'sender_id'       => $this->senderId,
         ];
 
@@ -91,7 +95,7 @@ class SendPatientEmail extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new TrixMailable($this->patient, $this->content, $this->attachments))
+        return (new TrixMailable($this->patient, $this->content, $this->attachments, $this->emailSubject))
             ->to($notifiable->email);
     }
 

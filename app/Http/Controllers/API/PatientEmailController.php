@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Rules\PatientEmailBodyDoesNotContainPhi;
+use App\Rules\PatientEmailDoesNotContainPhi;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Request;
@@ -76,12 +76,22 @@ class PatientEmailController extends Controller
     public function validateEmailBody(Request $request, $patientId)
     {
         $validator = \Validator::make($request->input(), [
-            'patient_email_body' => ['sometimes', new PatientEmailBodyDoesNotContainPhi(User::findOrFail($patientId))],
+            'patient_email_subject' => [
+                'sometimes',
+                new PatientEmailDoesNotContainPhi(User::findOrFail($patientId)),
+            ],
+            'patient_email_body' => [
+                'sometimes',
+                new PatientEmailDoesNotContainPhi(User::findOrFail($patientId)),
+            ],
         ]);
 
         return response()->json([
-            'status'   => $validator->passes() ? 200 : 400,
-            'messages' => collect($validator->getMessageBag()->toArray())->first()[0] ?: '',
+            'status' => $validator->passes()
+                ? 200
+                : 400,
+            'messages' => collect($validator->getMessageBag()->toArray())->flatten()->toArray()
+                ?: '',
         ]);
     }
 }

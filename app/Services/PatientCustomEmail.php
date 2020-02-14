@@ -10,7 +10,6 @@ use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Notifications\SendCareDocument;
 use App\Notifications\SendPatientEmail;
 use CircleLinkHealth\Core\Traits\Notifiable;
-use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use Notification;
 
@@ -30,6 +29,8 @@ class PatientCustomEmail extends SendsNotification
      */
     protected $content;
 
+    protected $emailSubject;
+
     /**
      * @var int
      */
@@ -42,20 +43,28 @@ class PatientCustomEmail extends SendsNotification
     /**
      * EmailPatientDocument constructor.
      *
-     * @param string $content
+     * @param mixed  $senderId
      * @param string $address
      * @param mixed  $attachments
      * @param null   $noteId
-     * @param mixed  $senderId
+     * @param string $emailSubject
      */
-    public function __construct(User $patient, $senderId, string $content, $address, $attachments = [], $noteId = null)
-    {
-        $this->patient     = $patient;
-        $this->senderId    = $senderId;
-        $this->content     = $content;
-        $this->address     = $address;
-        $this->attachments = $attachments;
-        $this->noteId      = $noteId;
+    public function __construct(
+        User $patient,
+        $senderId,
+        string $content,
+        $address,
+        $attachments = [],
+        $noteId = null,
+        $emailSubject
+    ) {
+        $this->patient      = $patient;
+        $this->senderId     = $senderId;
+        $this->content      = $content;
+        $this->address      = $address;
+        $this->attachments  = $attachments;
+        $this->noteId       = $noteId;
+        $this->emailSubject = $emailSubject;
     }
 
     /**
@@ -77,7 +86,8 @@ class PatientCustomEmail extends SendsNotification
             $this->senderId,
             $this->content,
             $this->attachments,
-            $this->noteId
+            $this->noteId,
+            $this->emailSubject
         );
     }
 }

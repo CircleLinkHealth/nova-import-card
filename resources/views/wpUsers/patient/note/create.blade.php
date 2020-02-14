@@ -1046,6 +1046,8 @@
                 const validateEmailBody = async () => {
                     return await window.axios
                         .post(validateEmailBodyUrl, {
+                            //validate subject as well
+                            patient_email_subject: $("[id='email-subject']").val(),
                             patient_email_body : $("[id='patient-email-body-input']").val()
                         })
                         .then((response) => {

@@ -17,8 +17,15 @@
         </div>
         <div class="form-group">
             <div v-if="this.errors.length > 0" class="alert alert-danger" >
-                <span>{{this.errors}}</span>
+                <ul>
+                    <li style="list-style: disc !important" v-for="error in this.errors">{{error}}</li>
+                </ul>
             </div>
+            <div class="col-sm-6" style="padding-left: 0 !important">
+                <input class="form-control" type="text" placeholder="Enter subject..." id="email-subject" name="email-subject" v-model="emailSubject">
+            </div>
+        </div>
+        <div class="form-group">
             <VueTrix ref="patientEmail" id="patient-email-body" inputId="patient-email-body-input"
                      inputName="patient-email-body"
                      v-model="editorContent"
@@ -48,6 +55,7 @@
         data() {
             return {
                 editorContent: '',
+                emailSubject: '',
                 attachments: [],
                 errors: '',
             }
@@ -135,7 +143,6 @@
             }
         },
         mounted(){
-
             App.$on('patient-email-body-errors', (errors) => {
                this.errors = errors;
             });

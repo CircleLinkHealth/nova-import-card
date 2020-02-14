@@ -6,6 +6,9 @@
                 sent an email
                 on <span style="color: lightgrey">{{$email['created_at']}}</span>
             </div>
+            <div>
+                <span><strong>Subject:</strong>&nbsp; {{$email['subject']}}</span>
+            </div>
             <div class="col-md-12"
                  style="margin-bottom: 10px; margin-top: 10px; background-color: #eee; border: 1px solid lightgrey; border-radius: 3px">
                                              <span style="margin-top: 5px">

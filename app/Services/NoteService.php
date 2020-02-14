@@ -264,12 +264,12 @@ class NoteService
             ->with('notifiable')
             ->get()
             ->mapWithKeys(function ($notification) {
-                        if ( ! $notification->notifiable) {
-                            return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
-                        }
+                if ( ! $notification->notifiable) {
+                    return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
+                }
 
-                        return [$notification->notifiable->getFullName() => $notification->created_at->format('m/d/y h:iA T')];
-                    });
+                return [$notification->notifiable->getFullName() => $notification->created_at->format('m/d/y h:iA T')];
+            });
     }
 
     public function getNoteEmails(Note $note)
@@ -291,6 +291,7 @@ class NoteService
                 $email['content'] = $data['email_content']
                     ?: 'No content found';
             }
+            $email['subject'] = $data['email_subject'];
 
             $email['created_at'] = presentDate($n->created_at);
 
@@ -300,9 +301,9 @@ class NoteService
                     $media = Media::where('collection_name', 'patient-email-attachments')
                         ->where('model_id', $n->notifiable_id)
                         ->whereIn(
-                                        'model_type',
-                                        ['App\User', 'CircleLinkHealth\Customer\Entities\User']
-                                    )
+                            'model_type',
+                            ['App\User', 'CircleLinkHealth\Customer\Entities\User']
+                        )
                         ->find($attachment['media_id']);
 
                     $a['url'] = $media->getUrl();
@@ -392,8 +393,8 @@ class NoteService
             ->whereNotNull('read_at')
             ->get()
             ->mapWithKeys(function ($notification) {
-                        return [$notification->notifiable->getFullName() => $notification->read_at->format('m/d/y h:iA T')];
-                    });
+                return [$notification->notifiable->getFullName() => $notification->read_at->format('m/d/y h:iA T')];
+            });
     }
 
     public function getUserDraftNotes($userId)

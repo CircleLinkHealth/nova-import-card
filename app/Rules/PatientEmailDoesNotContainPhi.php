@@ -12,8 +12,9 @@ use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class PatientEmailBodyDoesNotContainPhi implements Rule
+class PatientEmailDoesNotContainPhi implements Rule
 {
+    private $field;
     private $patientUser;
 
     private $phiFound = [];
@@ -29,6 +30,8 @@ class PatientEmailBodyDoesNotContainPhi implements Rule
 
     /**
      * Create a new rule instance.
+     *
+     * @param string $field
      */
     public function __construct(User $patientUser)
     {
@@ -46,7 +49,7 @@ class PatientEmailBodyDoesNotContainPhi implements Rule
             return Str::title(str_replace('_', ' ', $field));
         })->implode(', ');
 
-        return 'Email body contains patient PHI: '.$phiFieldsString;
+        return "Email {$this->field} contains patient PHI: ".$phiFieldsString;
     }
 
     /**
@@ -59,6 +62,8 @@ class PatientEmailBodyDoesNotContainPhi implements Rule
      */
     public function passes($attribute, $value)
     {
+        $this->field = 'patient_email_body' == $attribute ? 'body' : 'subject';
+
         $this->patientUser->loadMissing(Constants::PATIENT_PHI_RELATIONSHIPS);
 
         //check if string contains and just add fields that are found. Looping over each one individually, so we can report back to the user which phi exist in the message

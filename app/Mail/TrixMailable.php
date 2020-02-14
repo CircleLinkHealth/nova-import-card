@@ -18,6 +18,8 @@ class TrixMailable extends Mailable
 
     protected $content;
 
+    protected $emailSubject;
+
     protected $mailAttachments;
 
     protected $patient;
@@ -25,15 +27,21 @@ class TrixMailable extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param mixed $content
-     * @param array $mailAttachments
-     * @param mixed $patient
+     * @param mixed  $patient
+     * @param mixed  $content
+     * @param array  $mailAttachments
+     * @param string $emailSubject
      */
-    public function __construct($patient, $content, $mailAttachments = [])
-    {
+    public function __construct(
+        $patient,
+        $content,
+        $mailAttachments = [],
+        $emailSubject
+    ) {
         $this->patient         = $patient;
         $this->content         = $content;
         $this->mailAttachments = $mailAttachments;
+        $this->emailSubject    = ! empty($emailSubject) ? $emailSubject : 'You have received a message from your personalized Care Coach';
     }
 
     /**
@@ -59,8 +67,8 @@ class TrixMailable extends Mailable
                 'content'      => $this->content,
                 'attachments'  => collect($media)->filter(),
             ])
-            ->from('no-reply@circlelinkhealth.com', 'CircleLink Health')
-            ->subject('You have received a message from CircleLink Health');
+            ->from('no-reply@circlelinkhealth.com', 'Care Coaching Team')
+            ->subject($this->emailSubject);
 
         //attach media
         if ( ! empty($this->mailAttachments)) {
