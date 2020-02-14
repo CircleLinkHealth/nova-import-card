@@ -165,7 +165,7 @@ class EligibilityChecker
                     $tP->save();
                 }
                 
-                if ($ccd = $tP->ccda) {
+                if ($ccd = optional($tP)->ccda) {
                     $ccd->status = $this->eligibilityJob->status;
                     $ccd->save();
                 }
