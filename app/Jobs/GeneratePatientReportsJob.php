@@ -186,13 +186,13 @@ class GeneratePatientReportsJob implements ShouldQueue
             'isPdf'      => true,
         ]);
 
-        $pathToData = storage_path("provider_report_{$patient->id}_{$this->currentDate->toDateTimeString()}_data.pdf");
+        $pathToData = storage_path("provider_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_data.pdf");
         $savedData  = file_put_contents($pathToData, $pdf->output());
         if ( ! $savedData) {
             throw new \Exception("Could not get store file $pathToData");
         }
 
-        $path  = storage_path("provider_report_{$patient->id}_{$this->currentDate->toDateTimeString()}.pdf");
+        $path  = storage_path("provider_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}.pdf");
         $saved = $this->mergePdfs($path, $pathToCoverPage, $pathToData);
         if ( ! $saved) {
             throw new \Exception("Could not merge pdfs [$path]");
@@ -233,7 +233,7 @@ class GeneratePatientReportsJob implements ShouldQueue
             'practiceName' => $patient->primaryProgramName(),
             'providerName' => $doctorsName,
         ]);
-        $coverPath  = storage_path("{$reportTitle}_report_{$patient->id}_{$this->currentDate->toDateTimeString()}_temp_cover.pdf");
+        $coverPath  = storage_path("{$reportTitle}_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_temp_cover.pdf");
         $coverSaved = file_put_contents($coverPath, $cover->output());
 
         return $coverSaved
@@ -308,13 +308,13 @@ class GeneratePatientReportsJob implements ShouldQueue
             'isPdf'                     => true,
         ]);
 
-        $dataPath  = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toDateTimeString()}_data.pdf");
+        $dataPath  = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_data.pdf");
         $dataSaved = file_put_contents($dataPath, $pdf->output());
         if ( ! $dataSaved) {
             return false;
         }
 
-        $path  = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toDateTimeString()}.pdf");
+        $path  = storage_path("ppp_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}.pdf");
         $saved = $this->mergePdfs($path, $pathToCoverPage, $dataPath);
 
         if ( ! $saved) {
