@@ -6,10 +6,10 @@
         <div class="panel-body">
             <div class="col-md-12  panel-section" style="margin-top: 20px">
                 <div v-if="doc" class="">
-                    <button class="btn btn-success  col-md-6 btn-m">Available</button>
+                    <button class="btn btn-success btn-static disabled col-md-6 btn-m">Available</button>
                 </div>
                 <div class="" v-else>
-                    <button class="btn col-md-6 btn-default btn-m">Unavailable</button>
+                    <button class="btn col-md-6 btn-default btn-static disabled btn-m">Unavailable</button>
                 </div>
                 <div v-if="doc" class="col-md-6">
                     <a class="blue-link" v-bind:class="{'isDisabled': !doc}" style="float: right; padding-top: 7px"
