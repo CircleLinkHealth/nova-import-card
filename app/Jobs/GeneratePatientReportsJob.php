@@ -127,14 +127,14 @@ class GeneratePatientReportsJob implements ShouldQueue
             $redisEvent->publishReportCreated($providerReportMedia);
         }
 
-        $pppMedia = $this->createAndUploadPdfPPP($pppReport, $patient, $this->debug);
-        if ( ! $pppMedia) {
-            throw new \Exception("Something went wrong while uploading PPP for patient with id:{$patient->id}");
-        }
-
-        if ( ! $this->debug) {
-            $redisEvent->publishReportCreated($pppMedia);
-        }
+//        $pppMedia = $this->createAndUploadPdfPPP($pppReport, $patient, $this->debug);
+//        if ( ! $pppMedia) {
+//            throw new \Exception("Something went wrong while uploading PPP for patient with id:{$patient->id}");
+//        }
+//
+//        if ( ! $this->debug) {
+//            $redisEvent->publishReportCreated($pppMedia);
+//        }
 
         if ($this->debug) {
             return;
@@ -234,7 +234,8 @@ class GeneratePatientReportsJob implements ShouldQueue
             'providerName' => $doctorsName,
         ]);
 
-        $coverPath  = storage_path("{$reportTitle}_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_temp_cover.pdf");
+        $title = snake_case($reportTitle);
+        $coverPath  = storage_path("{$title}_report_{$patient->id}_{$this->currentDate->toIso8601ZuluString()}_temp_cover.pdf");
         $coverSaved = file_put_contents($coverPath, $cover->output());
 
         return $coverSaved
