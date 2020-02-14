@@ -25,6 +25,7 @@ if (isset($patient) && ! empty($patient)) {
                 background-color: #ffffff;
                 padding: initial;
             }
+
             .patient-documents-container {
                 background-color: #f2f6f9;
                 min-height: 1000px;
@@ -36,12 +37,15 @@ if (isset($patient) && ! empty($patient)) {
                 padding-bottom: 35px;
                 padding-top: 25px;
             }
+
             body {
                 font-family: 'Roboto', sans-serif !important;
             }
+
             h4 {
                 font-family: 'Roboto', sans-serif !important;
             }
+
             b {
                 font-weight: bolder;
             }
@@ -54,6 +58,11 @@ if (isset($patient) && ! empty($patient)) {
                 color: #000000;
                 font-weight: 500;
             }
+
+            .btn-static {
+                opacity: 1 !important;
+            }
+
         </style>
     @endpush
     <div>
@@ -102,7 +111,9 @@ if (isset($patient) && ! empty($patient)) {
                         <div style="margin-left: 40px">
                             <div>
                                 <div>
-                                    <care-docs-index patient-id="{{$patient->id}}" awv-url="{{config('services.awv.url')}}" ref="CareDocs"></care-docs-index>
+                                    <care-docs-index patient-id="{{$patient->id}}"
+                                                     awv-url="{{config('services.awv.url')}}"
+                                                     ref="CareDocs"></care-docs-index>
                                 </div>
                             </div>
                         </div>
