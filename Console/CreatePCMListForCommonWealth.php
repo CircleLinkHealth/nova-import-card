@@ -57,7 +57,7 @@ class CreatePCMListForCommonWealth extends Command
      *
      * @param EligibilityJob $eligibilityJob
      */
-    private function resetPcm(EligibilityJob $eligibilityJob)
+    private function resetPcm(EligibilityJob $eligibilityJob): EligibilityJob
     {
         $data = $eligibilityJob->data;
         
@@ -66,5 +66,7 @@ class CreatePCMListForCommonWealth extends Command
             $eligibilityJob->data = $data;
             $eligibilityJob->save();
         }
+        
+        return $eligibilityJob;
     }
 }
