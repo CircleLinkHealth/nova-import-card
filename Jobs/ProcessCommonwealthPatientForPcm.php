@@ -48,7 +48,7 @@ class ProcessCommonwealthPatientForPcm implements ShouldQueue
         AddInsuranceFromAthenaToEligibilityJob $addInsuranceFromAthenaToEligibilityJob,
         AddPcmChargeableServices $addPcmChargeableServices
     ) {
-        $addPcmChargeableServices->decorate(
+        $addPcmChargeableServices->addPcm(
             $addInsuranceFromAthenaToEligibilityJob->addInsurancesFromAthena(
                 $addDemographicsFromAthenaToEligibilityJob->addDemographicsFromAthena(
                     $addCareTeamFromAthenaToEligibilityJob->addCareTeamFromAthena(

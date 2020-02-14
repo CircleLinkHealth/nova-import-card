@@ -45,10 +45,26 @@ class CreatePCMListForCommonWealth extends Command
             function ($jobs) {
                 $jobs->each(
                     function ($job) {
-                        ProcessCommonwealthPatientForPcm::dispatch($job);
+                        ProcessCommonwealthPatientForPcm::dispatch($this->resetPcm($job));
                     }
                 );
             }
         );
+    }
+    
+    /**
+     * The structure I chose is difficult to query. Resetting it and introducing new one.
+     *
+     * @param EligibilityJob $eligibilityJob
+     */
+    private function resetPcm(EligibilityJob $eligibilityJob)
+    {
+        $data = $eligibilityJob->data;
+        
+        if (array_key_exists('chargeable_services', $data)) {
+            unset($data['chargeable_services']);
+            $eligibilityJob->data = $data;
+            $eligibilityJob->save();
+        }
     }
 }
