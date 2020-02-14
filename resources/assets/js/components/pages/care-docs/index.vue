@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="col-md-12" style="margin-top: 15px">
             <div class="col-md-8 text-left" style="height: 30px; padding-top: 5px;">
-                <div class="col-md-3 btn-group btn-group-toggle" data-toggle="buttons"">
+                <div class="col-md-3 btn-group btn-group-toggle" data-toggle="buttons">
                     <button class="col-md-4 btn btn-secondary btn-s pointer btn-switch"
                             v-bind:class="{'btn-info': !this.showPast}"
                             @click="showCurrentDocuments()">Current
