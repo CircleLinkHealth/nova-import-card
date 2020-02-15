@@ -8,7 +8,6 @@
 
 namespace CircleLinkHealth\Eligibility\Exports;
 
-use App\Contracts\Reports\PracticeDataExport;
 use App\Exports\PracticeReports\PracticeReport;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
@@ -17,26 +16,6 @@ use Illuminate\Database\Eloquent\Builder;
 class CommonwealthPcmEligibleExport extends PracticeReport
 {
     const COMMONWEALTH_PAIN_PRACTICE_ID = 232;
-    
-    /**
-     * @param null $mediaCollectionName
-     *
-     * @return PracticeDataExport
-     */
-    public function createMedia($mediaCollectionName = null): PracticeDataExport
-    {
-        if ( ! $this->media) {
-            if ( ! $mediaCollectionName) {
-                $mediaCollectionName = "commonwealth_pain_pcm_eligible_patients";
-            }
-        
-            $this->store($this->filename(), 'media', null, 'private');
-        
-            $this->media = $this->practice->addMedia($this->fullPath())->toMediaCollection($mediaCollectionName);
-        }
-    
-        return $this;
-    }
     
     /**
      * @return string
@@ -150,5 +129,10 @@ class CommonwealthPcmEligibleExport extends PracticeReport
                 $q->where('practice_id', self::COMMONWEALTH_PAIN_PRACTICE_ID);
             }
         )->with('targetPatient');
+    }
+    
+    public function mediaCollectionName(): string
+    {
+        return 'pcm_eligible_patients_report_from_all_batches';
     }
 }
