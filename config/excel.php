@@ -177,6 +177,6 @@ return [
         | in conjunction with queued imports and exports.
         |
         */
-        'remote_disk' => 'cloud',
+        'remote_disk' => 'media',
     ],
 ];
