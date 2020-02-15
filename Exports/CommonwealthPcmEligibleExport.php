@@ -13,8 +13,6 @@ use App\Exports\PracticeReports\PracticeReport;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use Illuminate\Database\Eloquent\Builder;
-use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\FromQuery;
 
 class CommonwealthPcmEligibleExport extends PracticeReport
 {
@@ -32,7 +30,7 @@ class CommonwealthPcmEligibleExport extends PracticeReport
                 $mediaCollectionName = "commonwealth_pain_pcm_eligible_patients";
             }
         
-            $this->queue($this->filename(), self::STORE_TEMP_REPORT_ON_DISK);
+            $this->store($this->filename(), 'media', null, 'private');
         
             $this->media = $this->practice->addMedia($this->fullPath())->toMediaCollection($mediaCollectionName);
         }
