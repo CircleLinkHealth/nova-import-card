@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Jobs\GeneratePatientReportsJob;
-use CircleLinkHealth\Customer\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -70,7 +69,7 @@ class QueueGenerateProviderReports extends Command
 
         $this->info("Ready to start generating reports [year=$this->year, debug=$debug] ");
 
-        foreach ($this->patientIds as $patientId){
+        foreach ($this->patientIds as $patientId) {
             $this->info("Generating reports for $patientId");
             GeneratePatientReportsJob::dispatch($patientId, $this->year, $debug)->onQueue('awv-high');
         }
