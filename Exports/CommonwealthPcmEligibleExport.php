@@ -8,12 +8,12 @@
 
 namespace CircleLinkHealth\Eligibility\Exports;
 
-use App\Exports\PracticeReports\PracticeReport;
+use App\Exports\PracticeReports\PracticeReportInterface;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use Illuminate\Database\Eloquent\Builder;
 
-class CommonwealthPcmEligibleExport extends PracticeReport
+class CommonwealthPcmEligibleExport extends PracticeReportInterface
 {
     const COMMONWEALTH_PAIN_PRACTICE_ID = 232;
     
