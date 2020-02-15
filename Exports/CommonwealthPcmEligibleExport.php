@@ -16,7 +16,7 @@ use Maatwebsite\Excel\Concerns\WithCustomQuerySize;
 
 class CommonwealthPcmEligibleExport extends PracticeReportInterface implements WithCustomQuerySize
 {
-    const COMMONWEALTH_PAIN_PRACTICE_ID = 232;
+    const COMMONWEALTH_PAIN_PRACTICE_ID = 1;
     
     /**
      * @return string
@@ -86,8 +86,8 @@ class CommonwealthPcmEligibleExport extends PracticeReportInterface implements W
             'pcm_problem_code_type'   => optional($problems->first())->code_type,
             'pcm_problem_description' => optional($problems->first())->description,
             'eligibility_job_id'      => $eligibilityJob->id,
-            'cpm_patient_id'          => $eligibilityJob->targetPatient->user_id,
-            'athenahealth_id'         => $eligibilityJob->targetPatient->ehr_patient_id,
+            'cpm_patient_id'          => optional($eligibilityJob->targetPatient)->user_id,
+            'athenahealth_id'         => optional($eligibilityJob->targetPatient)->ehr_patient_id,
             'medical_record_type'     => $eligibilityJob->data['medical_record_type'] ?? '',
             'medical_record_id'       => $eligibilityJob->data['medical_record_id'] ?? '',
             'mrn'                     => $eligibilityJob->data['mrn_number'] ?? '',
