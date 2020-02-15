@@ -118,7 +118,7 @@ abstract class PracticeReport implements FromQuery, WithMapping, PracticeDataExp
      */
     public function getTempStorage(): \Illuminate\Filesystem\FilesystemAdapter
     {
-        return \Storage::disk('local');
+        return \Storage::disk(self::STORE_TEMP_REPORT_ON_DISK);
     }
 
     /**
