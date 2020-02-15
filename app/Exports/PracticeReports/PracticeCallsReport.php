@@ -39,8 +39,7 @@ class PracticeCallsReport extends PracticeReport
     public function filename(): string
     {
         if ( ! $this->filename) {
-            $generatedAt    = now()->toDateTimeString();
-            $this->filename = "practice_calls_last_three_months_generated_at_$generatedAt.csv";
+            $this->filename = $this->mediaCollectionName();
         }
 
         return $this->filename;
@@ -97,5 +96,12 @@ class PracticeCallsReport extends PracticeReport
                            'patientInfo',
                        ]
                    )->select('id', 'display_name');
+    }
+    
+    public function mediaCollectionName(): string
+    {
+        $generatedAt    = now()->toDateTimeString();
+        
+        return "practice_calls_last_three_months_generated_at_$generatedAt.csv";
     }
 }

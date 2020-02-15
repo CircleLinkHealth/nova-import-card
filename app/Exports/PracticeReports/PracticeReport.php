@@ -50,16 +50,15 @@ abstract class PracticeReport implements FromQuery, WithMapping, PracticeDataExp
     protected $user;
 
     /**
-     * @param null $mediaCollectionName
-     *
-     * @return PracticeDataExport
-     */
-    abstract public function createMedia($mediaCollectionName = null): PracticeDataExport;
-
-    /**
      * @return string
      */
     abstract public function filename(): string;
+    
+    /**
+     * The name of the Media Collection
+     * @return string
+     */
+    abstract public function mediaCollectionName(): string;
 
     /**
      * @param int $practiceId

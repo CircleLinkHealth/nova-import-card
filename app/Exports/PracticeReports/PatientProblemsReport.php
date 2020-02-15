@@ -17,7 +17,7 @@ class PatientProblemsReport extends PracticeReport
     {
         if ( ! $this->media) {
             if ( ! $mediaCollectionName) {
-                $mediaCollectionName = "{$this->practice->name}_patients_with_problems_reports";
+                $mediaCollectionName = $this->mediaCollectionName();
             }
 
             $this->store($this->filename(), self::STORE_TEMP_REPORT_ON_DISK);
@@ -100,5 +100,10 @@ class PatientProblemsReport extends PracticeReport
                            },
                        ]
                    )->select('id', 'display_name');
+    }
+    
+    public function mediaCollectionName(): string
+    {
+        return "{$this->practice->name}_patients_with_problems_reports";
     }
 }

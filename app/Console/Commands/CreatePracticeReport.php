@@ -1,0 +1,78 @@
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Console\Commands;
+
+use App\Contracts\Reports\PracticeDataExport;
+use App\Jobs\StoreReportAsMedia;
+use Illuminate\Console\Command;
+use Symfony\Component\Console\Input\InputArgument;
+
+class CreatePracticeReport extends Command
+{
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Runs a practice report class.';
+    
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $name = 'reports:create';
+    
+    /**
+     * @var PracticeDataExport
+     */
+    private $report;
+    
+    public function handle()
+    {
+        $report = $this->getReportClass();
+        
+        $report->forPractice($this->argument('practice_id'))
+               ->forUser($this->argument('user_id'))
+               ->queue($report->filename(), $report::STORE_TEMP_REPORT_ON_DISK, null, 'private')
+               ->chain(
+                   [
+                        StoreReportAsMedia::dispatch($report->getTempStorage(), $report->filename(), $this->argument('practice_id'), $report->mediaCollectionName())
+                   ]
+               );
+        
+        $this->info('Report command ran.');
+    }
+    
+    /**
+     * Get a report class instance from the container.
+     *
+     * @return PracticeDataExport
+     */
+    protected function getReportClass(): PracticeDataExport
+    {
+        if ( ! $this->report) {
+            $this->report = $this->laravel->make($this->input->getArgument('class'));
+        }
+        
+        return $this->report;
+    }
+    
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getArguments()
+    {
+        return [
+            ['class', InputArgument::REQUIRED, 'The class name of the report to run'],
+            ['practice_id', InputArgument::REQUIRED, 'The practice ID.'],
+            ['user_id', InputArgument::REQUIRED, 'The user ID who will have access to download this report.'],
+        ];
+    }
+}

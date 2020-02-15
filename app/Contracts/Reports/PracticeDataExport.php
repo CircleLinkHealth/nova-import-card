@@ -80,7 +80,7 @@ interface PracticeDataExport
      *
      * @return mixed
      */
-    public function notifyUser(): MediableReport;
+    public function notifyUser(): PracticeDataExport;
     
     /**
      * User we are making report available to.
@@ -97,4 +97,10 @@ interface PracticeDataExport
      * @return \Illuminate\Filesystem\FilesystemAdapter
      */
     public function getTempStorage(): \Illuminate\Filesystem\FilesystemAdapter;
+    
+    /**
+     * The name of the Media Collection
+     * @return string
+     */
+    public function mediaCollectionName(): string;
 }
