@@ -12,31 +12,23 @@ use Maatwebsite\Excel\Exceptions\NoFilePathGivenException;
 interface PracticeDataExport
 {
     /**
+     * This is the path to store the temporary report while it's created. Once report is fully generated, it will be
+     * attached as Media to the Practice.
+     */
+    const STORE_TEMP_REPORT_ON_DISK = 'media';
+    
+    /**
      * Company policy for one time reports to expire in two days.
      */
     const EXPIRES_IN_DAYS = 2;
-
-    /**
-     * This is the path to store the temporary report while it's created. Once report is fully generated, it will be attached as Media to the Practice.
-     */
-    const STORE_TEMP_REPORT_ON_DISK = 'local';
-
-    /**
-     * Store the report using Media PAckage.
-     *
-     * @param null $mediaCollectionName
-     *
-     * @return PracticeDataExport
-     */
-    public function createMedia($mediaCollectionName = null): self;
-
+    
     /**
      * Get the filename.
      *
      * @return string
      */
     public function filename(): string;
-
+    
     /**
      * Practice whose data we are getting.
      *
@@ -45,7 +37,51 @@ interface PracticeDataExport
      * @return PracticeDataExport
      */
     public function forPractice(int $practiceId): self;
-
+    
+    /**
+     * Get the fullpath.
+     *
+     * @return string
+     */
+    public function fullPath(): string;
+    
+    /**
+     * Make user there is a store method.
+     * Make sure you use Maatwebsite\Excel\Concerns\Exportable;.
+     *
+     * @param string $filePath
+     * @param string|null $disk
+     * @param string|null $writerType
+     * @param mixed $diskOptions
+     *
+     * @throws NoFilePathGivenException
+     *
+     * @return bool|PendingDispatch
+     */
+    public function store(string $filePath = null, string $disk = null, string $writerType = null, $diskOptions = []);
+    
+    /**
+     * Make user there is a store method.
+     * Make sure you use Maatwebsite\Excel\Concerns\Exportable;.
+     *
+     * @param string $filePath
+     * @param string|null $disk
+     * @param string|null $writerType
+     * @param mixed $diskOptions
+     *
+     * @throws NoFilePathGivenException
+     *
+     * @return bool|PendingDispatch
+     */
+    public function queue(string $filePath = null, string $disk = null, string $writerType = null, $diskOptions = []);
+    
+    /**
+     * Notify User.
+     *
+     * @return mixed
+     */
+    public function notifyUser(): MediableReport;
+    
     /**
      * User we are making report available to.
      *
@@ -54,40 +90,11 @@ interface PracticeDataExport
      * @return PracticeDataExport
      */
     public function forUser(int $userId): self;
-
-    /**
-     * Get the fullpath.
-     *
-     * @return string
-     */
-    public function fullPath(): string;
-
+    
     /**
      * Get the disk we're storing our temporary file on.
      *
      * @return \Illuminate\Filesystem\FilesystemAdapter
      */
     public function getTempStorage(): \Illuminate\Filesystem\FilesystemAdapter;
-
-    /**
-     * Notify User.
-     *
-     * @return mixed
-     */
-    public function notifyUser(): self;
-
-    /**
-     * Make user there is a store method.
-     * Make sure you use Maatwebsite\Excel\Concerns\Exportable;.
-     *
-     * @param string      $filePath
-     * @param string|null $disk
-     * @param string|null $writerType
-     * @param mixed       $diskOptions
-     *
-     * @throws NoFilePathGivenException
-     *
-     * @return bool|PendingDispatch
-     */
-    public function store(string $filePath = null, string $disk = null, string $writerType = null, $diskOptions = []);
 }
