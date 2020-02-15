@@ -41,7 +41,7 @@ class CreatePracticeReport extends Command
                ->queue($report->filename(), $report::STORE_TEMP_REPORT_ON_DISK, null, 'private')
                ->chain(
                    [
-                        StoreReportAsMedia::dispatch($report->filename(), $report::STORE_TEMP_REPORT_ON_DISK, $this->argument('practice_id'), $report->mediaCollectionName())
+                        new StoreReportAsMedia($report->filename(), $report::STORE_TEMP_REPORT_ON_DISK, $this->argument('practice_id'), $report->mediaCollectionName()),
                    ]
                );
         
