@@ -6,7 +6,7 @@
 
 namespace App\Console\Commands;
 
-use App\Contracts\Reports\PracticeDataExport;
+use App\Contracts\Reports\PracticeDataExportInterface;
 use App\Jobs\StoreReportAsMedia;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -28,7 +28,7 @@ class CreatePracticeReport extends Command
     protected $name = 'reports:create';
     
     /**
-     * @var PracticeDataExport
+     * @var PracticeDataExportInterface
      */
     private $report;
     
@@ -51,9 +51,9 @@ class CreatePracticeReport extends Command
     /**
      * Get a report class instance from the container.
      *
-     * @return PracticeDataExport
+     * @return PracticeDataExportInterface
      */
-    protected function getReportClass(): PracticeDataExport
+    protected function getReportClass(): PracticeDataExportInterface
     {
         if ( ! $this->report) {
             $this->report = $this->laravel->make($this->input->getArgument('class'));

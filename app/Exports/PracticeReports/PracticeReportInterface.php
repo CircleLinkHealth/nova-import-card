@@ -6,7 +6,7 @@
 
 namespace App\Exports\PracticeReports;
 
-use App\Contracts\Reports\PracticeDataExport;
+use App\Contracts\Reports\PracticeDataExportInterface;
 use App\Notifications\SendSignedUrlToDownloadPracticeReport;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -19,7 +19,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use URL;
 
-abstract class PracticeReport implements FromQuery, WithMapping, PracticeDataExport, WithHeadings, ShouldQueue
+abstract class PracticeReportInterface implements FromQuery, WithMapping, PracticeDataExportInterface, WithHeadings, ShouldQueue
 {
     use Exportable;
     /**
@@ -63,9 +63,9 @@ abstract class PracticeReport implements FromQuery, WithMapping, PracticeDataExp
     /**
      * @param int $practiceId
      *
-     * @return PracticeDataExport
+     * @return PracticeDataExportInterface
      */
-    public function forPractice(int $practiceId): PracticeDataExport
+    public function forPractice(int $practiceId): PracticeDataExportInterface
     {
         if ( ! $this->practice) {
             $this->practice = Practice::findOrFail($practiceId);
@@ -77,10 +77,10 @@ abstract class PracticeReport implements FromQuery, WithMapping, PracticeDataExp
     /**
      * @param int $userId
      *
-     * @return PracticeDataExport
+     * @return PracticeDataExportInterface
      * @throws \Exception
      */
-    public function forUser(int $userId): PracticeDataExport
+    public function forUser(int $userId): PracticeDataExportInterface
     {
         if ( ! $this->practice) {
             throw new \Exception('Please call forPractice and provide valid practice first');
@@ -136,7 +136,7 @@ abstract class PracticeReport implements FromQuery, WithMapping, PracticeDataExp
     /**
      * @return mixed
      */
-    public function notifyUser(): PracticeDataExport
+    public function notifyUser(): PracticeDataExportInterface
     {
         if ( ! is_a($this->media, Media::class) || ! $this->media->id || ! is_a($this->user,
                 User::class) || ! $this->user->id) {

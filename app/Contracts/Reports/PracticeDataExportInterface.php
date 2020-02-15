@@ -9,7 +9,7 @@ namespace App\Contracts\Reports;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Maatwebsite\Excel\Exceptions\NoFilePathGivenException;
 
-interface PracticeDataExport
+interface PracticeDataExportInterface
 {
     /**
      * This is the path to store the temporary report while it's created. Once report is fully generated, it will be
@@ -34,7 +34,7 @@ interface PracticeDataExport
      *
      * @param int $practiceId
      *
-     * @return PracticeDataExport
+     * @return PracticeDataExportInterface
      */
     public function forPractice(int $practiceId): self;
     
@@ -80,14 +80,14 @@ interface PracticeDataExport
      *
      * @return mixed
      */
-    public function notifyUser(): PracticeDataExport;
+    public function notifyUser(): PracticeDataExportInterface;
     
     /**
      * User we are making report available to.
      *
      * @param int $userId
      *
-     * @return PracticeDataExport
+     * @return PracticeDataExportInterface
      */
     public function forUser(int $userId): self;
     

@@ -6,28 +6,12 @@
 
 namespace App\Exports\PracticeReports;
 
-use App\Contracts\Reports\PracticeDataExport;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Database\Eloquent\Builder;
 
-class PatientProblemsReport extends PracticeReport
+class PatientProblemsReport extends PracticeReportInterface
 {
-    public function createMedia($mediaCollectionName = null): PracticeDataExport
-    {
-        if ( ! $this->media) {
-            if ( ! $mediaCollectionName) {
-                $mediaCollectionName = $this->mediaCollectionName();
-            }
-
-            $this->store($this->filename(), self::STORE_TEMP_REPORT_ON_DISK);
-
-            $this->media = $this->practice->addMedia($this->fullPath())->toMediaCollection($mediaCollectionName);
-        }
-
-        return $this;
-    }
-
     public function filename(): string
     {
         if ( ! $this->filename) {
