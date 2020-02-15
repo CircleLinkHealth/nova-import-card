@@ -8,6 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\Models\Media;
 
 class StoreReportAsMedia implements ShouldQueue
@@ -16,7 +17,7 @@ class StoreReportAsMedia implements ShouldQueue
     /**
      * @var \Illuminate\Filesystem\FilesystemAdapter
      */
-    protected $storage;
+    protected $filesystemName;
     /**
      * @var string
      */
@@ -33,16 +34,16 @@ class StoreReportAsMedia implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param \Illuminate\Filesystem\FilesystemAdapter $storage
      * @param string $filename
+     * @param string $filesystemName
      * @param int $practiceId
      * @param string $mediaCollectionName
      */
-    public function __construct(\Illuminate\Filesystem\FilesystemAdapter $storage, string $filename, int $practiceId, string $mediaCollectionName)
+    public function __construct(string $filename, string $filesystemName, int $practiceId, string $mediaCollectionName)
     {
-        $this->storage = $storage;
-        $this->filename = $filename;
-        $this->practiceId = $practiceId;
+        $this->filesystemName      = $filesystemName;
+        $this->filename            = $filename;
+        $this->practiceId          = $practiceId;
         $this->mediaCollectionName = $mediaCollectionName;
     }
     
@@ -66,6 +67,6 @@ class StoreReportAsMedia implements ShouldQueue
     
     private function fullPath()
     {
-        return $this->storage->path($this->filename);
+        return Storage::disk($this->filesystemName)->path($this->filename);
     }
 }
