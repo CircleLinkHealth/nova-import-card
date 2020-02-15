@@ -26,9 +26,11 @@ class CreateCommonwealthEligiblePatientsCsv extends CreatePracticeReportForUser
      * @var string
      */
     protected $name = 'reports:CreateCommonwealthEligiblePatientsCsv';
-
+    
     /**
      * CreatePatientProblemsReportForPractice constructor.
+     *
+     * @param CommonwealthPcmEligibleExport $report
      */
     public function __construct(CommonwealthPcmEligibleExport $report)
     {
