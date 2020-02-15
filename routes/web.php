@@ -4,10 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-//use App\Notifications\TestEmail;
-
-use App\Notifications\TestEmail;
-
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
     'as'   => 'webhook.on-fax-sent',
