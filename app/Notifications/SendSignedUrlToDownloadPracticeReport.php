@@ -20,34 +20,29 @@ class SendSignedUrlToDownloadPracticeReport extends Notification implements Shou
     public $signedLink;
 
     /**
-     * @var string
+     * @var int
      */
-    protected $reportClass;
+    protected $mediaId;
 
     /**
      * @var int
      */
     protected $practiceId;
 
-
     /**
-     * @var int
+     * @var string
      */
-    protected $mediaId;
+    protected $reportClass;
 
     /**
      * Create a new notification instance.
-     *
-     * @param string $reportClass
-     * @param string $signedUrl
-     * @param int $practiceId
      */
     public function __construct(string $reportClass, string $signedUrl, int $practiceId, int $mediaId)
     {
         $this->signedLink  = $signedUrl;
         $this->reportClass = $reportClass;
         $this->practiceId  = $practiceId;
-        $this->mediaId = $mediaId;
+        $this->mediaId     = $mediaId;
     }
 
     /**
@@ -60,9 +55,9 @@ class SendSignedUrlToDownloadPracticeReport extends Notification implements Shou
     public function toArray($notifiable)
     {
         return [
-            'report_class'  => $this->reportClass,
-            'practice_id'   => $this->practiceId,
-            'media_id'      => $this->mediaId
+            'report_class' => $this->reportClass,
+            'practice_id'  => $this->practiceId,
+            'media_id'     => $this->mediaId,
         ];
     }
 
@@ -93,6 +88,6 @@ class SendSignedUrlToDownloadPracticeReport extends Notification implements Shou
      */
     public function via($notifiable)
     {
-        return ['database', 'mail'];
+        return ['database', 'mail', 'broadcast'];
     }
 }
