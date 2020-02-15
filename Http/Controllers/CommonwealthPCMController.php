@@ -37,7 +37,7 @@ class CommonwealthPCMController extends Controller
                         $q->where('practice_id', 232);
                     }
                 )->with('targetPatient')->chunkById(
-                    300,
+                    50,
                     function (Collection $eJs) use (&$firstIteration, $handle) {
                         $eJs->each(
                             function ($eJ) use (&$firstIteration, $handle) {
