@@ -108,7 +108,7 @@
                     <div class="panel-body">
                         <form action="{{route('commonwealth.pcm.alpha.version')}}" method="POST">
                             {{csrf_field()}}
-                            <input class="btn-success col-md-12 btn" type="submit" value="Download">
+                            <input class="btn-success col-md-12 btn" type="submit" value="Request Sheet">
                         </form>
                     </div>
                 </div>
