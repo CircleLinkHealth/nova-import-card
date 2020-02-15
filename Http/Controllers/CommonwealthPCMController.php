@@ -12,6 +12,6 @@ class CommonwealthPCMController extends Controller
     {
         Artisan::queue(CreateCommonwealthEligiblePatientsCsv::class, ['practice_id' => 232, 'user_id' => auth()->id()]);
         
-        return response()->json(['We will reach out to you once it is complete!']);
+        return response()->json(['We received your request. We will email you when it is complete!']);
     }
 }
