@@ -17,7 +17,7 @@ class CommonwealthPCMController extends Controller
     {
         ini_set('max_execution_time', 600);
         ini_set('max_memory', '2000M');
-    
+        
         $fileName = "Commonwealth Pain PCM Eligible Patients created ".Carbon::now()->toAtomString();
         
         return new StreamedResponse(
@@ -34,13 +34,13 @@ class CommonwealthPCMController extends Controller
                 )->whereHas(
                     'batch',
                     function ($q) {
-                        $q->where('practice_id', 132);
+                        $q->where('practice_id', 232);
                     }
-                )->chunkById(
-                    200,
-                    function (Collection $eJs) use (&$firstIteration, &$handle) {
+                )->with('targetPatient')->chunkById(
+                    300,
+                    function (Collection $eJs) use (&$firstIteration, $handle) {
                         $eJs->each(
-                            function ($eJ) use (&$firstIteration, &$handle) {
+                            function ($eJ) use (&$firstIteration, $handle) {
                                 $problems = PcmProblem::whereIn(
                                     'id',
                                     $eJ->data['chargeable_services_codes_and_problems']['G2065']
@@ -50,32 +50,34 @@ class CommonwealthPCMController extends Controller
                                     'pcm_problem_code'        => optional($problems->first())->code,
                                     'pcm_problem_code_type'   => optional($problems->first())->code_type,
                                     'pcm_problem_description' => optional($problems->first())->description,
-                                    'all_pcm_problems'        => $problems->toJson(),
                                     
                                     'eligibility_job_id'      => $eJ->id,
-                                    'medical_record_type'     => $eJ->data['medical_record_type'],
-                                    'medical_record_id'       => $eJ->data['medical_record_id'],
-                                    'mrn'                     => $eJ->data['mrn_number'],
+                                    'cpm_patient_id'          => $eJ->targetPatient->user_id,
+                                    'athenahealth_id'         => $eJ->targetPatient->ehr_patient_id,
+                                    'medical_record_type'     => $eJ->data['medical_record_type'] ?? '',
+                                    'medical_record_id'       => $eJ->data['medical_record_id'] ?? '',
+                                    'mrn'                     => $eJ->data['mrn_number'] ?? '',
                                     'first_name'              => $eJ->data['first_name'],
                                     'last_name'               => $eJ->data['last_name'],
-                                    'address'                 => $eJ->data['street'],
-                                    'address_2'               => $eJ->data['streets'],
+                                    'address'                 => $eJ->data['street'] ?? '',
+                                    'address_2'               => $eJ->data['street2'] ?? '',
                                     'city'                    => $eJ->data['city'],
                                     'state'                   => $eJ->data['state'],
                                     'zip'                     => $eJ->data['zip'],
-                                    'primary_phone'           => $eJ->data['primary_phone'],
-                                    'other_phone'             => $eJ->data['other_phone'],
-                                    'home_phone'              => $eJ->data['home_phone'],
-                                    'cell_phone'              => $eJ->data['cell_phone'],
-                                    'email'                   => $eJ->data['email'],
+                                    'primary_phone'           => $eJ->data['primary_phone'] ?? '',
+                                    'other_phone'             => $eJ->data['other_phone'] ?? '',
+                                    'home_phone'              => $eJ->data['home_phone'] ?? '',
+                                    'cell_phone'              => $eJ->data['cell_phone'] ?? '',
+                                    'email'                   => $eJ->data['email'] ?? '',
                                     'dob'                     => $eJ->data['dob'],
-                                    'lang'                    => $eJ->data['language'],
+                                    'lang'                    => $eJ->data['language'] ?? '',
                                     'primary_insurance'       => $eJ->data['primary_insurance'],
                                     'secondary_insurance'     => $eJ->data['secondary_insurance'],
                                     'tertiary_insurance'      => $eJ->data['tertiary_insurance'],
-                                    'last_encounter'          => $eJ->data['last_encounter'],
+                                    'last_encounter'          => $eJ->data['last_encounter'] ?? '',
                                     'referring_provider_name' => $eJ->data['referring_provider_name'],
-                                    'problems'                => $eJ->data['problems'],
+
+                                    'all_pcm_problems'        => $problems->toJson(),
                                 ];
                                 
                                 if ($firstIteration) {
