@@ -76,13 +76,6 @@ interface PracticeDataExportInterface
     public function queue(string $filePath = null, string $disk = null, string $writerType = null, $diskOptions = []);
     
     /**
-     * Notify User.
-     *
-     * @return mixed
-     */
-    public function notifyUser(): PracticeDataExportInterface;
-    
-    /**
      * User we are making report available to.
      *
      * @param int $userId
