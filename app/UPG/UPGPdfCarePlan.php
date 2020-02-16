@@ -6,6 +6,7 @@
 namespace App\UPG;
 
 
+use App\UPG\ValueObjects\PdfCarePlan;
 use Carbon\Carbon;
 use setasign\Fpdi\Fpdi;
 use Spatie\PdfToText\Pdf;
@@ -43,8 +44,6 @@ class UPGPdfCarePlan
                 'key'      => 'first_name',
                 'callback' => function ($string) {
                     $this->carePlan['first_name'] = ucwords(strtolower($string));
-
-                    return true;
                 },
             ],
             [
@@ -175,8 +174,6 @@ class UPGPdfCarePlan
                 $this->carePlan[$checkpoint['key']][] = $string;
             }
 
-            //concat later? merge strings? (give other key) basically make all items arrays that contain all the values at the first level
-
             $nextCheckpoint = $this->currentCheckpoint + 1;
             if (isset($this->array[$this->count + 1]) && isset($this->checkpoints[$nextCheckpoint])) {
                 if (str_contains($this->array[$this->count + 1], $this->checkpoints[$nextCheckpoint]['search'])) {
@@ -189,7 +186,6 @@ class UPGPdfCarePlan
 
         unlink(storage_path($this->processedFileName));
 
-
-        return $this->carePlan;
+        return new PdfCarePlan($this->carePlan);
     }
 }

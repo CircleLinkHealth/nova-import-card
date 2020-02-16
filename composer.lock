@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.13",
+            "version": "3.133.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "225409f1df6df25c46d72369034e1e5894629173"
+                "reference": "18289bf4a3fe68e9a0853f29d82b6cd4b1de2f9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/225409f1df6df25c46d72369034e1e5894629173",
-                "reference": "225409f1df6df25c46d72369034e1e5894629173",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/18289bf4a3fe68e9a0853f29d82b6cd4b1de2f9e",
+                "reference": "18289bf4a3fe68e9a0853f29d82b6cd4b1de2f9e",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-02-12T19:12:46+00:00"
+            "time": "2020-02-14T19:09:24+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -2003,16 +2003,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "2.1.16",
+            "version": "2.1.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "5065fafc8c29d229ff207f2a89b02175f479a909"
+                "reference": "ade6887fd9bd74177769645ab5c474824f8a418a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/5065fafc8c29d229ff207f2a89b02175f479a909",
-                "reference": "5065fafc8c29d229ff207f2a89b02175f479a909",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/ade6887fd9bd74177769645ab5c474824f8a418a",
+                "reference": "ade6887fd9bd74177769645ab5c474824f8a418a",
                 "shasum": ""
             },
             "require": {
@@ -2057,7 +2057,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2020-02-12T22:28:28+00:00"
+            "time": "2020-02-13T22:36:52+00:00"
         },
         {
             "name": "erusev/parsedown",
@@ -3392,16 +3392,16 @@
         },
         {
             "name": "jubeki/nova-card-linkable",
-            "version": "v1.0.1",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Jubeki/Nova-Card-Linkable.git",
-                "reference": "2de82012ec71de4f731695da9f89bab7586dda38"
+                "reference": "2b71925efe1cab207bcc235ffc8214d1a383ecbe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Jubeki/Nova-Card-Linkable/zipball/2de82012ec71de4f731695da9f89bab7586dda38",
-                "reference": "2de82012ec71de4f731695da9f89bab7586dda38",
+                "url": "https://api.github.com/repos/Jubeki/Nova-Card-Linkable/zipball/2b71925efe1cab207bcc235ffc8214d1a383ecbe",
+                "reference": "2b71925efe1cab207bcc235ffc8214d1a383ecbe",
                 "shasum": ""
             },
             "require": {
@@ -3429,7 +3429,7 @@
                 "laravel",
                 "nova"
             ],
-            "time": "2019-03-04T15:17:41+00:00"
+            "time": "2020-02-14T10:20:16+00:00"
         },
         {
             "name": "julien-c/iso3166",
@@ -3827,16 +3827,16 @@
         },
         {
             "name": "laravel/horizon",
-            "version": "v3.6.1",
+            "version": "v3.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/horizon.git",
-                "reference": "56d25493d1d994a30ae0a20002428d6fd64b567f"
+                "reference": "f0295eec1fb96d0adace50aac01c3984877c034c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/horizon/zipball/56d25493d1d994a30ae0a20002428d6fd64b567f",
-                "reference": "56d25493d1d994a30ae0a20002428d6fd64b567f",
+                "url": "https://api.github.com/repos/laravel/horizon/zipball/f0295eec1fb96d0adace50aac01c3984877c034c",
+                "reference": "f0295eec1fb96d0adace50aac01c3984877c034c",
                 "shasum": ""
             },
             "require": {
@@ -3892,7 +3892,7 @@
                 "laravel",
                 "queue"
             ],
-            "time": "2020-02-12T14:13:07+00:00"
+            "time": "2020-02-14T15:17:05+00:00"
         },
         {
             "name": "laravel/nexmo-notification-channel",
@@ -5460,16 +5460,16 @@
         },
         {
             "name": "myclabs/php-enum",
-            "version": "1.7.5",
+            "version": "1.7.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/php-enum.git",
-                "reference": "aef7b9f343a677744d7410485a60fe16c46ca1ed"
+                "reference": "5f36467c7a87e20fbdc51e524fd8f9d1de80187c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/php-enum/zipball/aef7b9f343a677744d7410485a60fe16c46ca1ed",
-                "reference": "aef7b9f343a677744d7410485a60fe16c46ca1ed",
+                "url": "https://api.github.com/repos/myclabs/php-enum/zipball/5f36467c7a87e20fbdc51e524fd8f9d1de80187c",
+                "reference": "5f36467c7a87e20fbdc51e524fd8f9d1de80187c",
                 "shasum": ""
             },
             "require": {
@@ -5502,7 +5502,7 @@
             "keywords": [
                 "enum"
             ],
-            "time": "2020-02-13T09:43:36+00:00"
+            "time": "2020-02-14T08:15:52+00:00"
         },
         {
             "name": "nao-pon/flysystem-cached-extra",
@@ -10557,16 +10557,16 @@
         },
         {
             "name": "composer/spdx-licenses",
-            "version": "1.5.2",
+            "version": "1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/spdx-licenses.git",
-                "reference": "7ac1e6aec371357df067f8a688c3d6974df68fa5"
+                "reference": "0c3e51e1880ca149682332770e25977c70cf9dae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/spdx-licenses/zipball/7ac1e6aec371357df067f8a688c3d6974df68fa5",
-                "reference": "7ac1e6aec371357df067f8a688c3d6974df68fa5",
+                "url": "https://api.github.com/repos/composer/spdx-licenses/zipball/0c3e51e1880ca149682332770e25977c70cf9dae",
+                "reference": "0c3e51e1880ca149682332770e25977c70cf9dae",
                 "shasum": ""
             },
             "require": {
@@ -10613,7 +10613,7 @@
                 "spdx",
                 "validator"
             ],
-            "time": "2019-07-29T10:31:59+00:00"
+            "time": "2020-02-14T07:44:31+00:00"
         },
         {
             "name": "composer/xdebug-handler",
@@ -13161,16 +13161,16 @@
         },
         {
             "name": "seld/phar-utils",
-            "version": "1.0.2",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/phar-utils.git",
-                "reference": "84715761c35808076b00908a20317a3a8a67d17e"
+                "reference": "8800503d56b9867d43d9c303b9cbcc26016e82f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/phar-utils/zipball/84715761c35808076b00908a20317a3a8a67d17e",
-                "reference": "84715761c35808076b00908a20317a3a8a67d17e",
+                "url": "https://api.github.com/repos/Seldaek/phar-utils/zipball/8800503d56b9867d43d9c303b9cbcc26016e82f0",
+                "reference": "8800503d56b9867d43d9c303b9cbcc26016e82f0",
                 "shasum": ""
             },
             "require": {
@@ -13199,9 +13199,9 @@
             ],
             "description": "PHAR file format utilities, for when PHP phars you up",
             "keywords": [
-                "phra"
+                "phar"
             ],
-            "time": "2020-01-13T10:41:09+00:00"
+            "time": "2020-02-14T15:25:33+00:00"
         },
         {
             "name": "spatie/phpunit-watcher",
@@ -13685,16 +13685,16 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "1.6.0",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozart/assert.git",
-                "reference": "573381c0a64f155a0d9a23f4b0c797194805b925"
+                "reference": "aed98a490f9a8f78468232db345ab9cf606cf598"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/573381c0a64f155a0d9a23f4b0c797194805b925",
-                "reference": "573381c0a64f155a0d9a23f4b0c797194805b925",
+                "url": "https://api.github.com/repos/webmozart/assert/zipball/aed98a490f9a8f78468232db345ab9cf606cf598",
+                "reference": "aed98a490f9a8f78468232db345ab9cf606cf598",
                 "shasum": ""
             },
             "require": {
@@ -13729,7 +13729,7 @@
                 "check",
                 "validate"
             ],
-            "time": "2019-11-24T13:36:37+00:00"
+            "time": "2020-02-14T12:15:55+00:00"
         },
         {
             "name": "xethron/laravel-4-generators",
