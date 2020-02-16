@@ -38,7 +38,7 @@ class PdfCarePlan
             'sex'                 => isset($this->data['sex'])
                 ? $this->data['sex']
                 : 'N/A',
-            'visit'               => isset($this->data['visit_date'])
+            'visit_date'               => isset($this->data['visit_date'])
                 ? $this->data['visit_date']
                 : 'N/A',
             'address'             => $this->getAddresses(),
