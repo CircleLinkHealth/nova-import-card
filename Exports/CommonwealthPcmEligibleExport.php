@@ -16,8 +16,6 @@ use Maatwebsite\Excel\Concerns\WithCustomQuerySize;
 
 class CommonwealthPcmEligibleExport extends PracticeReportInterface implements WithCustomQuerySize
 {
-    const COMMONWEALTH_PAIN_PRACTICE_ID = 1;
-    
     /**
      * @return string
      */
@@ -127,7 +125,7 @@ class CommonwealthPcmEligibleExport extends PracticeReportInterface implements W
         )->whereHas(
             'batch',
             function ($q) {
-                $q->where('practice_id', self::COMMONWEALTH_PAIN_PRACTICE_ID);
+                $q->where('practice_id', $this->practice->id);
             }
         )->with('targetPatient');
     }
