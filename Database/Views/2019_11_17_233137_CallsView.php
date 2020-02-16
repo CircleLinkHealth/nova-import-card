@@ -103,6 +103,11 @@ class CallsView extends BaseSqlView
     /**
      * Return a start of month query compatible with both sqlite and mysql.
      *
+     * For this to work, you need to have time zone info in your database. Run the following command if you get nulls.
+     * mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql
+     *
+     * Alternative command: DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY)
+     *
      * @return string
      */
     private function safeStartOfMonthQuery()
