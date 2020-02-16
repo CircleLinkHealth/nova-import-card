@@ -186,8 +186,8 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
         $lastEncounter = $encounters->sortByDesc(function ($el) {
             return $el->date;
         })->first();
-
-        if (property_exists($lastEncounter, 'date')) {
+        
+        if (is_object($lastEncounter) && property_exists($lastEncounter, 'date')) {
             $v = \Validator::make(['date' => $lastEncounter->date], ['date' => 'required|date']);
 
             if ($v->passes()) {

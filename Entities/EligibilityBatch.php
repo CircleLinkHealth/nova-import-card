@@ -280,6 +280,10 @@ class EligibilityBatch extends BaseModel
     {
         $this->eligibilityJobs()
             ->where('status', '=', 0)
+            ->orWhere([
+                ['status', '=', 1],
+                ['updated_at', '>', now()->subMinutes(10)],
+                      ])
             ->chunkById($pageSize, function ($ejs) use ($onQueue) {
                 $ejs->each(function ($job) use ($onQueue) {
                     ProcessSinglePatientEligibility::dispatch(

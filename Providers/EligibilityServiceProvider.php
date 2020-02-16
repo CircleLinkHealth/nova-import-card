@@ -17,8 +17,10 @@ use CircleLinkHealth\Eligibility\Console\Athena\GetPatientIdFromAppointments;
 use CircleLinkHealth\Eligibility\Console\Athena\GetPatientIdFromLastYearAppointments;
 use CircleLinkHealth\Eligibility\Console\Athena\PostPatientCarePlanAsAppointmentNote;
 use CircleLinkHealth\Eligibility\Console\Athena\UpdatePracticeAppointments;
+use CircleLinkHealth\Eligibility\Console\CreatePCMListForCommonWealth;
 use CircleLinkHealth\Eligibility\Console\Make65PlusPatientsEligible;
 use CircleLinkHealth\Eligibility\Console\ProcessNextEligibilityBatchChunk;
+use CircleLinkHealth\Eligibility\Console\ResetAthenaEligibilityBatch;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use Illuminate\Database\Eloquent\Factory;
@@ -45,6 +47,7 @@ class EligibilityServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         $this->commands([
             AutoPullEnrolleesFromAthena::class,
+            CreatePCMListForCommonWealth::class,
             DetermineTargetPatientEligibility::class,
             FixBatch235::class,
             GetAppointments::class,
@@ -52,6 +55,7 @@ class EligibilityServiceProvider extends ServiceProvider
             GetPatientIdFromAppointments::class,
             GetPatientIdFromLastYearAppointments::class,
             PostPatientCarePlanAsAppointmentNote::class,
+            ResetAthenaEligibilityBatch::class,
             UpdatePracticeAppointments::class,
             Make65PlusPatientsEligible::class,
             ProcessNextEligibilityBatchChunk::class,

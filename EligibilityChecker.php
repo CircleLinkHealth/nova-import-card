@@ -6,21 +6,22 @@
 
 namespace CircleLinkHealth\Eligibility;
 
-use CircleLinkHealth\Core\StringManipulation;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
 use App\Constants;
+use App\Search\PcmProblemByNameOrCode;
+use Carbon\Carbon;
+use CircleLinkHealth\Core\StringManipulation;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
+use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
 use CircleLinkHealth\Eligibility\Entities\EligibilityBatch;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\Eligibility\Exceptions\InvalidStructureException;
-use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use CircleLinkHealth\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
-use CircleLinkHealth\Eligibility\Entities\CsvPatientList;
+use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\Entities\Problem;
-use CircleLinkHealth\Eligibility\ValidatesEligibility;
-use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Exceptions\InvalidStructureException;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\SnomedToCpmIcdMap;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Collection;
 use Validator;
 
@@ -129,6 +130,26 @@ class EligibilityChecker
         }
     }
     
+    public static function getProblemsForEligibility(EligibilityJob $eligibilityJob)
+    {
+        $problems = $eligibilityJob->data['problems'] ?? $eligibilityJob->data['problems_string'] ?? null;
+        
+        if (empty($problems)) {
+            return false;
+        }
+        
+        foreach (config('importer.problem_loggers') as $class) {
+            $class = app($class);
+            
+            if ($class->shouldHandle($problems)) {
+                $problems = $class->handle($problems);
+                break;
+            }
+        }
+        
+        return $problems;
+    }
+    
     public function __destruct()
     {
         if ($this->batch) {
@@ -138,6 +159,16 @@ class EligibilityChecker
         if ($this->eligibilityJob) {
             try {
                 $this->eligibilityJob->save();
+                
+                if ($tP = $this->eligibilityJob->targetPatient) {
+                    $tP->status = $this->eligibilityJob->status;
+                    $tP->save();
+                }
+                
+                if ($ccd = optional($tP)->ccda) {
+                    $ccd->status = $this->eligibilityJob->status;
+                    $ccd->save();
+                }
             } catch (\Exception $e) {
                 \Log::critical($e);
                 \Log::critical($this->eligibilityJob);
@@ -356,34 +387,23 @@ class EligibilityChecker
                 return $cpmProblems->where('is_behavioral', '=', true)->pluck('id');
             }
         );
-        
+    
         $eligibilityJobData = $this->eligibilityJob->data;
-        
+    
         $eligibilityJobData['ccm_condition_1'] = '';
         $eligibilityJobData['ccm_condition_2'] = '';
         $eligibilityJobData['cpm_problem_1']   = '';
         $eligibilityJobData['cpm_problem_2']   = '';
         
-        $problems = $eligibilityJobData['problems'] ?? $eligibilityJobData['problems_string'] ?? null;
+        $problems = self::getProblemsForEligibility($this->eligibilityJob);
         
-        if (empty($problems)) {
+        if ($problems === false) {
             $this->setEligibilityJobStatus(
                 3,
                 ['problems' => 'Patient has 0 conditions.'],
                 EligibilityJob::INELIGIBLE,
                 'problems'
             );
-            
-            return false;
-        }
-        
-        foreach (config('importer.problem_loggers') as $class) {
-            $class = app($class);
-            
-            if ($class->shouldHandle($problems)) {
-                $problems = $class->handle($problems);
-                break;
-            }
         }
         
         $qualifyingCcmProblems = [];
@@ -407,7 +427,8 @@ class EligibilityChecker
                     return false;
                 }
                 
-                $codeType = null;
+                $codeType    = null;
+                $pcmProblems = [];
                 
                 if ($p->getCodeSystemName()) {
                     $codeType = getProblemCodeSystemName([$p->getCodeSystemName()]);
@@ -470,10 +491,29 @@ class EligibilityChecker
                             continue;
                         }
                     }
+                    
+                    if ($this->practice->hasServiceCode('G2065')) {
+                        $pcmProblemId = PcmProblem::where('practice_id', $this->practice->id)->where(
+                            'code',
+                            $p->getCode()
+                        )->first();
+                        if ($pcmProblemId) {
+                            $pcmProblems[] = $pcmProblemId->id;
+                        }
+                    }
                 }
                 
                 // Try to match keywords
                 if ($p->getName()) {
+                    if ($this->practice->hasServiceCode('G2065')) {
+                        $pcmProblemId = PcmProblem::where('practice_id', $this->practice->id)->where(
+                            'description',
+                            $p->getName()
+                        )->first();
+                        if ($pcmProblemId) {
+                            $pcmProblems[] = $pcmProblemId->id;
+                        }
+                    }
                     //Reject if patientData is on dialysis
                     //https://circlelinkhealth.atlassian.net/browse/CPM-954
                     if (str_contains($p->getName(), ['End stage renal disease'])) {
@@ -536,6 +576,10 @@ class EligibilityChecker
             $this->eligibilityJob->bhi_problem_id   = $qualifyingBhiProblems[0] ?? null;
             $this->eligibilityJob->ccm_problem_1_id = $qualifyingCcmProblemsCpmIdStack[0] ?? null;
             $this->eligibilityJob->ccm_problem_2_id = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
+            
+            if ( ! empty($pcmProblems = array_unique(array_filter($pcmProblems)))) {
+                $eligibilityJobData['chargeable_services']['G2065']['problems'] = $pcmProblems;
+            }
         }
         
         if ($ccmProbCount < 2 && 0 == $bhiProbCount) {
@@ -764,7 +808,7 @@ class EligibilityChecker
         } elseif (empty($args['mrn']) && array_key_exists('internal_id', $args) && ! empty($args['internal_id'])) {
             $args['mrn'] = $args['internal_id'];
         }
-    
+        
         $args['dob'] = $args['dob'] ?? $args['date_of_birth'] ?? $args['birth_date'];
         
         $enrolleeExists = Enrollee::where(
@@ -872,8 +916,6 @@ class EligibilityChecker
         try {
             $this->enrollee = Enrollee::create($args);
         } catch (\Illuminate\Database\QueryException $e) {
-            //                    @todo:heroku query to see if it exists, then attach
-            
             $errorCode = $e->errorInfo[1];
             if (1062 == $errorCode) {
                 $duplicateMySqlError = true;
@@ -895,16 +937,18 @@ class EligibilityChecker
             
             return false;
         }
+
+//        Jobs may be picked up twice for processing
+//        if ($duplicateMySqlError) {
+//            $this->setEligibilityJobStatus(
+//                3,
+//                ['duplicate' => "Seems like the Enrollee already exists. Error caused: ${errorMsg}."],
+//                EligibilityJob::DUPLICATE
+//            );
+//
+//            return true;
+//        }
         
-        if ($duplicateMySqlError) {
-            $this->setEligibilityJobStatus(
-                3,
-                ['duplicate' => "Seems like the Enrollee already exists. Error caused: ${errorMsg}."],
-                EligibilityJob::DUPLICATE
-            );
-            
-            return true;
-        }
         $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
         
         return true;

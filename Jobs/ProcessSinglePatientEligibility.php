@@ -22,7 +22,7 @@ class ProcessSinglePatientEligibility implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-
+    
     /**
      * @var EligibilityBatch
      */
@@ -31,32 +31,32 @@ class ProcessSinglePatientEligibility implements ShouldQueue
      * @var \CircleLinkHealth\Eligibility\Entities\EligibilityJob
      */
     private $eligibilityJob;
-
+    
     /**
      * @var bool
      */
     private $filterInsurance;
-
+    
     /**
      * @var bool
      */
     private $filterLastEncounter;
-
+    
     /**
      * @var bool
      */
     private $filterProblems;
-
+    
     /**
      * @var \CircleLinkHealth\Customer\Entities\Practice
      */
     private $practice;
-
+    
     /**
      * Create a new job instance.
      *
-     * @param \CircleLinkHealth\Eligibility\Entities\EligibilityJob                               $eligibilityJob
-     * @param \CircleLinkHealth\Eligibility\Entities\EligibilityBatch                             $batch
+     * @param \CircleLinkHealth\Eligibility\Entities\EligibilityJob $eligibilityJob
+     * @param \CircleLinkHealth\Eligibility\Entities\EligibilityBatch $batch
      * @param \CircleLinkHealth\Customer\Entities\Practice $practice
      */
     public function __construct(
@@ -71,7 +71,7 @@ class ProcessSinglePatientEligibility implements ShouldQueue
         $this->filterInsurance     = $batch->shouldFilterInsurance();
         $this->eligibilityJob      = $eligibilityJob;
     }
-
+    
     /**
      * Execute the job.
      *
@@ -79,8 +79,9 @@ class ProcessSinglePatientEligibility implements ShouldQueue
      */
     public function handle()
     {
-        //Only process if EligibilityJob status is 0 (not_started)
-        if (0 == $this->eligibilityJob->status) {
+        //Only process if EligibilityJob status is 0 (not_started), or 1 (processing) and last update is more than 10 minutes ago
+        if (0 == $this->eligibilityJob->status
+            || (1 == $this->eligibilityJob->status && $this->eligibilityJob->updated_at->gt(now()->subMinutes(10)))) {
             new EligibilityChecker(
                 $this->eligibilityJob,
                 $this->practice,
