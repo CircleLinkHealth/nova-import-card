@@ -81,11 +81,13 @@ class UPGPdfCarePlan
             [
                 'search' => 'Sex:',
                 'key'    => 'sex',
+                'callback' => function($string){
+                    $this->carePlan['sex'] = strtolower($string);
+                }
             ],
             [
                 'search' => 'Phones:',
                 'key'    => 'phones',
-                //                'callback' => ['Home:', 'Cell:', 'Other:'],
             ],
             [
                 'search' => 'Dx:',
