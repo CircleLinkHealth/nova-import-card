@@ -38,10 +38,10 @@ class CreatePracticeReport extends Command
         
         $report->forPractice($this->argument('practice_id'))
                ->forUser($this->argument('user_id'))
-               ->queue($report->filename(), $report::STORE_TEMP_REPORT_ON_DISK)
+               ->queue($report->filename(), $report::STORE_TEMP_REPORT_ON_DISK, \Maatwebsite\Excel\Excel::XLS)
                ->chain(
                    [
-                        new StoreReportAsMedia($report->filename(), $report::STORE_TEMP_REPORT_ON_DISK, $this->argument('practice_id'), $report->mediaCollectionName()),
+                        new StoreReportAsMedia($report->filename(), $report::STORE_TEMP_REPORT_ON_DISK, $this->argument('practice_id'), $report->mediaCollectionName(), $this->argument('user_id')),
                    ]
                );
         

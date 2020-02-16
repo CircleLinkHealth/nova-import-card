@@ -132,29 +132,6 @@ abstract class PracticeReportInterface implements FromQuery, WithMapping, Practi
      */
     abstract public function map($row): array;
 
-
-    /**
-     * @return mixed
-     */
-    public function notifyUser(): PracticeDataExportInterface
-    {
-        if ( ! is_a($this->media, Media::class) || ! $this->media->id || ! is_a($this->user,
-                User::class) || ! $this->user->id) {
-            return false;
-        }
-
-        $this->signedLink = URL::temporarySignedRoute('download.media.from.signed.url',
-            now()->addDays(self::EXPIRES_IN_DAYS), [
-                'media_id'    => $this->media->id,
-                'user_id'     => $this->user->id,
-                'practice_id' => $this->practice->id,
-            ]);
-
-        $this->user->notify(new SendSignedUrlToDownloadPracticeReport(get_called_class(), $this->signedLink, $this->practice->id, $this->media->id));
-
-        return $this;
-    }
-
     /**
      * @return Builder
      */
