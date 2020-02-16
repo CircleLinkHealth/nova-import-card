@@ -6,7 +6,7 @@
 
 namespace App\Exports\PracticeReports;
 
-use App\Contracts\Reports\PracticeDataExport;
+use App\Contracts\Reports\PracticeDataExportInterface;
 use App\Notifications\SendSignedUrlToDownloadPracticeReport;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -19,7 +19,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use URL;
 
-abstract class PracticeReport implements FromQuery, WithMapping, PracticeDataExport, WithHeadings, ShouldQueue
+abstract class PracticeReportInterface implements FromQuery, WithMapping, PracticeDataExportInterface, WithHeadings, ShouldQueue
 {
     use Exportable;
     /**
@@ -50,13 +50,22 @@ abstract class PracticeReport implements FromQuery, WithMapping, PracticeDataExp
     protected $user;
 
     /**
-     * @param null $mediaCollectionName
+     * @return string
      */
-    abstract public function createMedia($mediaCollectionName = null): PracticeDataExport;
-
     abstract public function filename(): string;
+    
+    /**
+     * The name of the Media Collection
+     * @return string
+     */
+    abstract public function mediaCollectionName(): string;
 
-    public function forPractice(int $practiceId): PracticeDataExport
+    /**
+     * @param int $practiceId
+     *
+     * @return PracticeDataExportInterface
+     */
+    public function forPractice(int $practiceId): PracticeDataExportInterface
     {
         if ( ! $this->practice) {
             $this->practice = Practice::findOrFail($practiceId);
@@ -66,9 +75,12 @@ abstract class PracticeReport implements FromQuery, WithMapping, PracticeDataExp
     }
 
     /**
+     * @param int $userId
+     *
+     * @return PracticeDataExportInterface
      * @throws \Exception
      */
-    public function forUser(int $userId): PracticeDataExport
+    public function forUser(int $userId): PracticeDataExportInterface
     {
         if ( ! $this->practice) {
             throw new \Exception('Please call forPractice and provide valid practice first');
@@ -80,6 +92,9 @@ abstract class PracticeReport implements FromQuery, WithMapping, PracticeDataExp
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function fullPath(): string
     {
         if ( ! $this->fullPath) {
@@ -89,49 +104,37 @@ abstract class PracticeReport implements FromQuery, WithMapping, PracticeDataExp
         return $this->fullPath;
     }
 
+    /**
+     * @return string
+     */
     public function getSignedLink(): string
     {
         return $this->signedLink;
     }
 
+    /**
+     * @return \Illuminate\Filesystem\FilesystemAdapter
+     */
     public function getTempStorage(): \Illuminate\Filesystem\FilesystemAdapter
     {
-        return \Storage::disk('local');
+        return \Storage::disk(self::STORE_TEMP_REPORT_ON_DISK);
     }
 
+    /**
+     * @return array
+     */
     abstract public function headings(): array;
 
     /**
      * @param mixed $row
+     *
+     * @return array
      */
     abstract public function map($row): array;
 
     /**
-     * @return mixed
+     * @return Builder
      */
-    public function notifyUser(): PracticeDataExport
-    {
-        if ( ! is_a($this->media, Media::class) || ! $this->media->id || ! is_a(
-            $this->user,
-            User::class
-        ) || ! $this->user->id) {
-            return false;
-        }
-
-        $this->signedLink = URL::temporarySignedRoute(
-            'download.media.from.signed.url',
-            now()->addDays(self::EXPIRES_IN_DAYS),
-            [
-                'media_id'    => $this->media->id,
-                'user_id'     => $this->user->id,
-                'practice_id' => $this->practice->id,
-            ]
-        );
-
-        $this->user->notify(new SendSignedUrlToDownloadPracticeReport(get_called_class(), $this->signedLink, $this->practice->id, $this->media->id));
-
-        return $this;
-    }
-
     abstract public function query(): Builder;
+
 }
