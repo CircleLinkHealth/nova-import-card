@@ -25,7 +25,7 @@ class PdfCarePlan
             'last_name'  => isset($this->data['last_name'])
                 ? $this->data['last_name']
                 : 'N/A',
-            //throw exception if mrn does not exist
+            //throw exception if mrn does not exist?
             'mrn'        => isset($this->data['mrn'])
                 ? $this->data['mrn']
                 : 'N/A',
@@ -39,7 +39,6 @@ class PdfCarePlan
                 ? $this->data['visit_date']
                 : 'N/A',
             'address'    => $this->getAddresses(),
-            //split to home, cell, other
             'phones'     => $this->getPhones(),
             //with instructions
             'problems'   => $this->getProblemsWithInstructions(),
@@ -53,9 +52,9 @@ class PdfCarePlan
 
     private function getAddresses()
     {
-        //split to zip etc ?
+        //categorize state, zip?
         return isset($this->data['address'])
-            ? $this->data['address']
+            ? collect($this->data['address'])->implode(' ')
             : 'N/A';
     }
 
@@ -90,8 +89,6 @@ class PdfCarePlan
                             $phones[] = $currentPhone;
                             $currentPhone = [];
                         }
-                        //reset object for later iterations
-                        //utilize type?
                         $currentPhone['type']  = $type['key'];
                         $currentPhone['value'][] = trim(str_replace($type['search'], ' ', $string));
                         $valueIsSet = true;
@@ -120,6 +117,25 @@ class PdfCarePlan
 
     private function getProblemsWithInstructions()
     {
+        $problemsWithInstructions = [];
+
+        if (isset($this->data['problems'])){
+            foreach ($this->data['problems'] as $problemName){
+                if (isset($this->data['instructions'])){
+                    $instructions = collect($this->data['instructions'])->where('problem_name', $problemName)->first();
+
+                    if (isset($instructions['value'])){
+                        $instructionsString = collect($instructions['value'])->implode(' ');
+                    }
+
+                    $problemsWithInstructions[] = [
+                        'problem_name' => $problemName,
+                        'instructions' => isset($instructionsString) ? $instructionsString : 'N/A'
+                    ];
+                }
+            }
+            return $problemsWithInstructions;
+        }
         return [];
     }
 }

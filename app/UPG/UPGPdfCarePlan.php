@@ -89,7 +89,7 @@ class UPGPdfCarePlan
             ],
             [
                 'search' => 'Dx:',
-                'key'    => 'conditions',
+                'key'    => 'problems',
             ],
             [
                 'search'   => 'Active Problems:',
@@ -97,16 +97,16 @@ class UPGPdfCarePlan
                 'callback' => function ($string) {
 
                     if (str_contains(strtolower($string), 'recommendations:') || str_contains(strtolower($string), 'care plan')){
-                        $this->carePlan['instructions'][]= ['condition' => $this->array[$this->count - 1]];
+                        $this->carePlan['instructions'][]= ['problem_name' => $this->array[$this->count - 1]];
                         return;
                     }
                     if ( ! isset($this->carePlan['instructions']) && empty($this->carePlan['instructions'])) {
                         return;
                     }
-                    if (in_array($string, $this->carePlan['conditions'])){
+                    if (in_array($string, $this->carePlan['problems'])){
                         return;
                     }
-                    $this->carePlan['instructions'][count($this->carePlan['instructions']) - 1][] = $string;
+                    $this->carePlan['instructions'][count($this->carePlan['instructions']) - 1]['value'][] = $string;
                 },
             ],
             [
