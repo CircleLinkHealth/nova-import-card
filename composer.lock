@@ -929,7 +929,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "e4a656d8f60ad2d160fe934a3a0c21bdb88a9417"
+                "reference": "b25992025d85ebc567d348221166f35a7068e850"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -954,7 +954,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-16T00:31:55+00:00"
+            "time": "2020-02-16T00:47:39+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
