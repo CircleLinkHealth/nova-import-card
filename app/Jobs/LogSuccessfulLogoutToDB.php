@@ -29,8 +29,6 @@ class LogSuccessfulLogoutToDB implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param Logout $event
      */
     public function __construct(Logout $event)
     {
@@ -42,21 +40,19 @@ class LogSuccessfulLogoutToDB implements ShouldQueue
      */
     public function handle()
     {
-        $authId = $this->event->user->id ?? auth()->id() ?? null;
+        $authId = $this->event->user->id ?? null;
         try {
-            
             $openSession = LoginLogout::where([
-                                                  ['user_id', $authId],
-                                                  ['login_time', '<', now()],
-                                                  ['login_time', '>', now()->startOfDay()],
-                                              ])->orderByDesc('id')->first();
-            
+                ['user_id', $authId],
+                ['login_time', '<', now()],
+                ['login_time', '>', now()->startOfDay()],
+            ])->orderByDesc('id')->first();
+
             if ($openSession) {
-                $openSession->logout_time = now();
+                $openSession->logout_time     = now();
                 $openSession->duration_in_sec = $openSession->logout_time->diffInSeconds($openSession->login_time);
                 $openSession->save();
             }
-            
         } catch (\Exception $exception) {
             Log::error($exception->getMessage()." authid:$authId");
         }
