@@ -147,7 +147,7 @@ class PatientLoginController extends Controller
         $user = auth()->user();
 
         $prevUrl = Session::previousUrl();
-        if (empty($prevUrl) || !$user->hasRole('participant')) {
+        if ((empty($prevUrl) || !$user->hasRole('participant')) && !$user->hasRole('survey-only')) {
             return route('home');
         }
 

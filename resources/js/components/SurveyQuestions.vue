@@ -60,6 +60,10 @@
                         reps
                         will also reach out shortly. Thanks!
                     </div>
+                    <div v-else-if="isEnrollees" class="survey-sub-welcome-text">
+                        Almost done! Just need some information.<br>
+                        Ask what to show here
+                    </div>
                     <div v-else class="survey-sub-welcome-text">
                         Here is the form to fill out {{patientName}}'s Vitals. Once completed, a PPP will be
                         generated
@@ -386,6 +390,10 @@
 
             isHra() {
                 return this.surveyName === 'hra';
+            },
+
+            isEnrollees(){
+                return this.surveyName === 'enrollees';
             },
 
             subQuestionsConditions() {
