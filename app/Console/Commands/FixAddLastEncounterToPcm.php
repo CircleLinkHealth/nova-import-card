@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
+use CircleLinkHealth\Eligibility\Jobs\AddLastEncounterToEligibilityCheckFromTargetPatient;
 use Illuminate\Console\Command;
 
 class FixAddLastEncounterToPcm extends Command
@@ -42,24 +43,9 @@ class FixAddLastEncounterToPcm extends Command
             'data->chargeable_services_codes_and_problems->G2065',
             '>',
             0
-        )->with('targetPatient.ccda')->chunkById(200, function ($eJs) {
+        )->select('id')->chunkById(1000, function ($eJs) {
             foreach ($eJs as $e) {
-                $encounters = collect($e->targetPatient->ccda->blueButtonJson()->encounters);
-            
-                $lastEncounter = $encounters->sortByDesc(function ($el) {
-                    return $el->date;
-                })->first();
-            
-                if (is_object($lastEncounter) && property_exists($lastEncounter, 'date')) {
-                    $v = \Validator::make(['date' => $lastEncounter->date], ['date' => 'required|date']);
-                
-                    if ($v->passes()) {
-                        $data = $e->data;
-                        $data['last_encounter'] = $lastEncounter->date;
-                        $e->data = $data;
-                        $e->save();
-                    }
-                }
+                AddLastEncounterToEligibilityCheckFromTargetPatient::dispatch($e->id);
             }
         });
     }
