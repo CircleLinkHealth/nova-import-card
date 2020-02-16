@@ -186,6 +186,6 @@ class UPGPdfCarePlan
 
         unlink(storage_path($this->processedFileName));
 
-        return new PdfCarePlan($this->carePlan);
+        return (new PdfCarePlan($this->carePlan))->toArray();
     }
 }
