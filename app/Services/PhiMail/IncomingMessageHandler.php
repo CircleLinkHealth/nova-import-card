@@ -47,7 +47,7 @@ class IncomingMessageHandler
         } elseif (str_contains($showRes->mimeType, 'xml') && false !== stripos($showRes->data, '<ClinicalDocument')) {
             $this->storeAndImportCcd($showRes, $dm);
         }
-        //todo: fix how to know we got from upg
+        //todo: fix how to know we got from upg => check direct mails from from the db from UPG
         elseif (str_contains($showRes->mimeType, 'pdf') && str_contains($dm->from, 'upg')){
             $this->storePdf($showRes, $dm);
         }
@@ -94,15 +94,17 @@ class IncomingMessageHandler
             ]
         );
 
-        ImportCcda::dispatch($ccda)->onQueue('low');
+        ImportCcda::dispatch($ccda)->withChain([
+            //if upg change status.
+            //re-run until we get pdf?
+            //call itself every 30secs
+        (new ProcessPdfIfYouShould())->dispatch()
+        ])->onQueue('low');
     }
 
     private function storePdf(){
-        //dispatch job for this, maybe ProcessDmPdfAttachment
-
-        //determine if imported medical record exists from this patient so we can save
-
-        // if not create medical record, and store it as media
-        //store file locally then to
+        //read pdf
+        //put media on UPG along with patient json after you read
+        (new ProcessThisPdf())->dispatch();
     }
 }

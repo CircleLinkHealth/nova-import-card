@@ -177,7 +177,6 @@
     "spatie/laravel-medialibrary": "^7.0.0",
     "spatie/laravel-view-models": "^1.1",
     "spatie/pdf-to-text": "^1.2",
-    "thiagoalessio/tesseract_ocr": "^2.9",
     "titasgailius/search-relations": "^1.0",
     "twilio/sdk": "5.7",
     "waavi/url-shortener": "dev-master",

@@ -40,6 +40,8 @@ class ImporterController extends Controller
             ->with('location')
             ->with('billingProvider')
             ->get()
+            //where not in UPG + G0506
+            //where media. where id = upg, custom_properties->mrn = imr.mrn, finished_processing()
             ->transform(function (ImportedMedicalRecord $summary) {
                 $mr = $summary->medicalRecord();
 
