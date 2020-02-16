@@ -23,14 +23,14 @@ class CommonwealthPCMEligible extends Resource
      * @var array
      */
     public static $with = ['targetPatient'];
-
+    
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
     public static $title = 'id';
-
+    
     /**
      * The columns that should be searched.
      *
@@ -38,12 +38,26 @@ class CommonwealthPCMEligible extends Resource
      */
     public static $search = [
         'id',
+        'data->referring_provider_name',
+        'data->last_encounter',
+        'data->primary_insurance',
+        'data->secondary_insurance',
+        'data->tertiary_insurance',
+        'data->primary_phone',
+        'data->other_phone',
+        'data->home_phone',
+        'data->cell_phone',
+        'data->email',
+        'data->dob',
+        'data->first_name',
+        'data->last_name',
     ];
-
+    
     /**
      * Get the fields displayed by the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return array
      */
     public function fields(Request $request)
@@ -74,44 +88,48 @@ class CommonwealthPCMEligible extends Resource
             ID::make()->sortable(),
         ];
     }
-
+    
     /**
      * Get the cards available for the request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return array
      */
     public function cards(Request $request)
     {
         return [];
     }
-
+    
     /**
      * Get the filters available for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return array
      */
     public function filters(Request $request)
     {
         return [];
     }
-
+    
     /**
      * Get the lenses available for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return array
      */
     public function lenses(Request $request)
     {
         return [];
     }
-
+    
     /**
      * Get the actions available for the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return array
      */
     public function actions(Request $request)
@@ -123,7 +141,7 @@ class CommonwealthPCMEligible extends Resource
      * Build an "index" query for the given resource.
      *
      * @param \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @param \Illuminate\Database\Eloquent\Builder   $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -142,7 +160,7 @@ class CommonwealthPCMEligible extends Resource
      * This query determines which instances of the model may be attached to other resources.
      *
      * @param \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @param \Illuminate\Database\Eloquent\Builder   $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
