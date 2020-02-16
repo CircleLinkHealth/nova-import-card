@@ -42,7 +42,7 @@ class FixAddLastEncounterToPcm extends Command
             'data->chargeable_services_codes_and_problems->G2065',
             '>',
             0
-        )->with('targetPatient.ccda')->chunkById(10, function ($eJs) {
+        )->with('targetPatient.ccda')->chunkById(getenv('chunksizeFixAddLastEncounterToPcm') ?? 200, function ($eJs) {
             foreach ($eJs as $e) {
                 $encounters = collect($e->targetPatient->ccda->blueButtonJson()->encounters);
             
