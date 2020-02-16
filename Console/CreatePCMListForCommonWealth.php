@@ -40,7 +40,7 @@ class CreatePCMListForCommonWealth extends Command
             function ($q) {
                 $q->where('practice_id', self::PRACTICE_ID);
             }
-        )->with(['eligibilityJob', 'targetPatient.ccda'])->chunkById(
+        )->with(['targetPatient.ccda'])->chunkById(
             100,
             function ($jobs) {
                 $jobs->each(
