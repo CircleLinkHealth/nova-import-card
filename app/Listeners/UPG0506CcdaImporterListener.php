@@ -41,10 +41,11 @@ class UPG0506CcdaImporterListener
             function ($medias) {
                 $medias->each(
                     function ($media) {
-                        $data                     = $media->custom_properties;
-                        $data['is_ccda']          = 'true';
-                        $data['is_upg0506']       = 'true';
-                        $media->custom_properties = $data;
+                        $data                        = $media->custom_properties;
+                        $data['is_ccda']             = 'true';
+                        $data['is_upg0506']          = 'true';
+                        $data['is_upg0506_complete'] = 'false';
+                        $media->custom_properties    = $data;
                         $media->save();
                     }
                 );
@@ -54,6 +55,9 @@ class UPG0506CcdaImporterListener
     
     private function shouldBail(Ccda $ccda)
     {
-        return ! (str_contains(optional(DirectMailMessage::find($ccda->direct_mail_message_id))->from, '@upg.ssdirect.aprima.com') && $ccda->hasProcedureCode('G0506'));
+        return ! (str_contains(
+                      optional(DirectMailMessage::find($ccda->direct_mail_message_id))->from,
+                      '@upg.ssdirect.aprima.com'
+                  ) && $ccda->hasProcedureCode('G0506'));
     }
 }

@@ -36,13 +36,6 @@ class ImporterController extends Controller
     public function getImportedRecords()
     {
         return ImportedMedicalRecord::whereNull('patient_id')
-            ->whereDoesntHave('ccda', function ($q) {
-                $q->whereHas('media', function ($q) {
-                    $q->where('custom_properties->is_upg0506_complete', '!=','true');
-                })->whereHas('directMessage', function ($q) {
-                    $q->where('from', 'like', "%@upg.ssdirect.aprima.com");
-                });
-            })
             ->with('demographics')
             ->with('practice')
             ->with('location')
@@ -53,7 +46,21 @@ class ImporterController extends Controller
             ->transform(function (ImportedMedicalRecord $summary) {
                 $mr = $summary->medicalRecord();
 
-                if ( ! $mr) {
+                if ( ! $mr ) {
+                    return false;
+                }
+    
+                $isUpg0506Incomplete = false;
+    
+                if ($mr instanceof Ccda) {
+                    $isUpg0506Incomplete = Ccda::whereHas('media', function ($q) {
+                        $q->where('custom_properties->is_upg0506_complete', '!=','true');
+                    })->whereHas('directMessage', function ($q) {
+                        $q->where('from', 'like', "%@upg.ssdirect.aprima.com");
+                    })->where('id', $mr->id)->exists();
+                }
+    
+                if ($isUpg0506Incomplete) {
                     return false;
                 }
 
