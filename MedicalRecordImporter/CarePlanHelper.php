@@ -793,7 +793,7 @@ class CarePlanHelper
         return optional($problemImport)->instruction();
     }
     
-    private function createInstructionFromUPG0506($cpmProblem):CpmInstruction
+    private function createInstructionFromUPG0506(ProblemImport $problemImport):CpmInstruction
     {
         // get instructions from pdf and store it and return model
         //            return CpmInstruction::create([
