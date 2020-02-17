@@ -54,7 +54,7 @@ class CcdaToEligibilityJobAdapter implements EligibilityCheckAdapter
      */
     public function adaptToEligibilityJob(): EligibilityJob
     {
-        $this->decodedCcda = $this->ccda->bluebuttonJson();
+        $this->decodedCcda = optional($this->ccda->bluebuttonJson());
 
         $demographics = collect($this->transformer->demographics($this->decodedCcda->demographics));
         $problems     = collect($this->decodedCcda->problems)->map(
