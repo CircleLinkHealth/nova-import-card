@@ -8,6 +8,7 @@ namespace CircleLinkHealth\Eligibility\MedicalRecordImporter;
 
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Eligibility\Events\PatientUserCreated;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\BloodPressure;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\Weight;
@@ -16,6 +17,7 @@ use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\SharedModels\Entities\Allergy;
 use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
 use CircleLinkHealth\SharedModels\Entities\Medication;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\SharedModels\Entities\CpmMisc;
@@ -53,7 +55,15 @@ class CarePlanHelper
      */
     private $enrollee;
     private $str;
-
+    /**
+     * @var Contracts\MedicalRecord|null
+     */
+    private $mr;
+    /**
+     * @var boolean|null
+     */
+    private $hasUPG0506Instructions;
+    
     public function __construct(
         User $user,
         ImportedMedicalRecord $importedMedicalRecord
@@ -64,6 +74,7 @@ class CarePlanHelper
         $this->probs = $importedMedicalRecord->problems()->get();
         $this->user  = $user;
         $this->imr   = $importedMedicalRecord;
+        $this->mr   = $importedMedicalRecord->medicalRecord();
         $this->str   = new StringManipulation();
     }
 
@@ -573,14 +584,10 @@ class CarePlanHelper
             return $this;
         }
 
-        $cpmProblems = CpmProblem::get()->keyBy('id');
-
+        /** @var ProblemImport $problem */
         foreach ($this->probs as $problem) {
-            $cpmProblem = $problem->cpm_problem_id
-                ? $cpmProblems[$problem->cpm_problem_id]
-                : null;
-            $defaultInstruction = optional($cpmProblem)->instruction();
-
+            $instruction = $this->getInstruction($problem);
+    
             $ccdProblem = Problem::create(
                 [
                     'is_monitored'       => (bool) $problem->cpm_problem_id,
@@ -589,7 +596,7 @@ class CarePlanHelper
                     'name'               => $problem->name,
                     'cpm_problem_id'     => $problem->cpm_problem_id,
                     'patient_id'         => $this->user->id,
-                    'cpm_instruction_id' => $defaultInstruction->id ?? null,
+                    'cpm_instruction_id' => $instruction->id ?? null,
                 ]
             );
 
@@ -661,17 +668,15 @@ class CarePlanHelper
             return $this;
         }
 
-        $ccda = $this->imr->medicalRecord();
-
-        if ( ! $ccda) {
+        if ( ! $this->mr) {
             return $this;
         }
 
         //doing this here to not break View CCDA button
-        $ccda->patient_id = $this->user->id;
-        $ccda->save();
+        $this->mr->patient_id = $this->user->id;
+        $this->mr->save();
 
-        $decodedCcda = $ccda->bluebuttonJson();
+        $decodedCcda = $this->mr->bluebuttonJson();
 
         //Weight
         $weightParseAndStore = new Weight($this->user->program_id, $this->user);
@@ -716,8 +721,7 @@ class CarePlanHelper
     private function updateTrainingFeatures()
     {
         $this
-            ->imr
-            ->medicalRecord()
+            ->mr
             ->document
             ->each(
                 function ($documentLog) {
@@ -730,8 +734,7 @@ class CarePlanHelper
             );
 
         $this
-            ->imr
-            ->medicalRecord()
+            ->mr
             ->providers
             ->each(
                 function ($providerLog) {
@@ -744,8 +747,7 @@ class CarePlanHelper
             );
 
         $mr = $this
-            ->imr
-            ->medicalRecord();
+            ->mr;
 
         if ($mr) {
             $mr->practice_id         = $this->imr->practice_id;
@@ -768,5 +770,33 @@ class CarePlanHelper
         );
 
         return $validator->passes();
+    }
+    
+    private function getInstruction(ProblemImport $problemImport)
+    {
+        if (is_null($this->hasUPG0506Instructions)) {
+            $this->hasUPG0506Instructions = $this->mr->cchasUPG0506PdfCareplanMedia()->exists();
+        }
+        
+        if (true === $this->hasUPG0506Instructions) {
+            return $this->createInstructionFromUPG0506($problemImport);
+        }
+    
+        $cpmProblems = \Cache::remember('all_cpm_problems_keyed_by_id', 2, function () {
+            return CpmProblem::get()->keyBy('id');
+        });
+    
+        $cpmProblem = $problemImport->cpm_problem_id
+            ? $cpmProblems[$problemImport->cpm_problem_id]
+            : null;
+        
+        return optional($problemImport)->instruction();
+    }
+    
+    private function createInstructionFromUPG0506($cpmProblem):CpmInstruction
+    {
+        //            return CpmInstruction::create([
+//                                                      'name' => 'Instruction text goes here',
+//                                                  ]);
     }
 }
