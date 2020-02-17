@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Jobs\ImportCcda;
+use App\Listeners\UPG0506CcdaImporterListener;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
@@ -35,6 +36,11 @@ class ImporterController extends Controller
     public function getImportedRecords()
     {
         return ImportedMedicalRecord::whereNull('patient_id')
+            ->whereDoesntHave('ccda', function ($q) {
+                $q->whereHas('media', function ($q) {
+                    $q->where('custom_properties->is_upg0506_complete', 'false');
+                });
+            })
             ->with('demographics')
             ->with('practice')
             ->with('location')
