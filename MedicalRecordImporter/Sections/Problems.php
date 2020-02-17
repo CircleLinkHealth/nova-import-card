@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities;
+namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections;
 
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\BaseImporter;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\ConsolidatesProblemInfo;

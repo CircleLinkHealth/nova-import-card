@@ -28,6 +28,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Allergies;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Demographics;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Insurance;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Medications;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Problems;
 use Illuminate\Support\Collection;
 
 abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\BaseModel implements MedicalRecord
