@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class UpgPdfReadTest extends TestCase
 {
-    protected $testFileName = 'test_upg_careplan.pdf';
+    protected $testFileName = 'files-for-demos/upg0506/upg0506-care-plan.pdf';
 
 
     /**
@@ -31,7 +31,7 @@ class UpgPdfReadTest extends TestCase
 
         $this->assertEquals('Barbara', $carePlan['first_name']);
         $this->assertEquals('Zznigro', $carePlan['last_name']);
-        $this->assertEquals(334417, $carePlan['mrn']);
+        $this->assertEquals('334417', $carePlan['mrn']);
         $this->assertEquals('female', $carePlan['sex']);
         $this->assertTrue(Carbon::parse('01/29/2020')->eq($carePlan['visit_date']));
         $this->assertTrue(Carbon::parse('05/25/1945')->eq($carePlan['dob']));

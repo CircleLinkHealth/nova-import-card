@@ -209,7 +209,7 @@ class PdfCarePlan
     {
         return [
             'custodian'           => [
-                'name' => $this->data['provider']['full_name'],
+                'name' => isset($this->data['provider']['full_name']) ? $this->data['provider']['full_name'] : '',
             ],
             'date'                => '',
             'title'               => '',
@@ -243,7 +243,7 @@ class PdfCarePlan
                     'name'        => [
                         'prefix' => null,
                         'given'  => [
-                            0 => $this->data['provider']['full_name'],
+                            0 => isset($this->data['provider']['full_name']) ? $this->data['provider']['full_name'] : '',
                         ],
                         'family' => '',
                         'suffix' => '',
