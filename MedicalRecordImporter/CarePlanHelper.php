@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter;
 
 use CircleLinkHealth\Core\Entities\AppConfig;
+use CircleLinkHealth\Eligibility\Events\PatientUserCreated;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\BloodPressure;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\Weight;
@@ -259,6 +260,8 @@ class CarePlanHelper
 
         $this->handleEnrollees()
             ->updateTrainingFeatures();
+        
+        event(new PatientUserCreated($this->user));
 
         return $this->carePlan;
     }
