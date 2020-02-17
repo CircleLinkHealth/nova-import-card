@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\DirectMailMessage;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -53,8 +54,6 @@ class UPG0506CcdaImporterListener
     
     private function shouldBail(Ccda $ccda)
     {
-        $ccda->loadMissing('practice');
-        
-        return ! (optional($ccda->practice)->name === self::UPG_NAME && $ccda->hasProcedureCode('G0506'));
+        return ! (str_contains(optional(DirectMailMessage::find($ccda->direct_mail_message_id))->from, '@upg.ssdirect.aprima.com') && $ccda->hasProcedureCode('G0506'));
     }
 }
