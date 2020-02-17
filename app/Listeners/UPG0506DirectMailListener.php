@@ -114,16 +114,17 @@ class UPG0506DirectMailListener implements ShouldQueue
 
         file_put_contents($filePath, $pdf->getFile());
 
-        $carePlan = new UPGPdfCarePlan($pdf->file_name);
+        $carePlan = (new UPGPdfCarePlan($pdf->file_name))->read();
 
 
         if($carePlan){
             //fix this tanginess
+            $carePlan = $carePlan->toArray();
             $data = $pdf->custom_properties;
-            $data['is_upg0506'] = $carePlan['is_upg0506'];
+            $data['is_upg0506'] = true;
             //check if it's pdf
-            $data['is_pdf'] = $carePlan['t'];
-            $data['care_plan'] = $carePlan->toArray();
+            $data['is_pdf'] = true;
+            $data['care_plan'] = $carePlan;
             $pdf->custom_properties = $data;
             $pdf->save();
         }

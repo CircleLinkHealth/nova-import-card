@@ -36,13 +36,13 @@ class PdfCarePlan
                 ? $this->data['mrn']
                 : 'N/A',
             'date_of_birth'                 => isset($this->data['dob'])
-                ? $this->data['dob']->toDateString()
+                ? $this->data['dob']
                 : 'N/A',
             'gender'                 => isset($this->data['sex'])
                 ? $this->data['sex']
                 : 'N/A',
             'visit_date'          => isset($this->data['visit_date'])
-                ? $this->data['visit_date']->toDateString()
+                ? $this->data['visit_date']
                 : 'N/A',
             'address'             => $this->getAddresses(),
             'phones'              => $this->getPhones(),

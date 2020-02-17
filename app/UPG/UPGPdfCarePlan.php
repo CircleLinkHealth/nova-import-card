@@ -147,7 +147,7 @@ class UPGPdfCarePlan
             $tplId = $pdf->importPage($n);
 
             //crop pdf
-            $pdf->useTemplate($tplId, 0, -60, 210, 400);
+            $pdf->useTemplate($tplId, 0, -50, 210, 380);
             $pdf->AddPage();
         }
 
