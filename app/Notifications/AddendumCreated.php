@@ -63,7 +63,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
         return Carbon::parse(now())->toDayDateTimeString();
     }
 
-    public function description(): string
+    public function description($notifiable): string
     {
         return 'Addendum';
     }
@@ -112,7 +112,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
         return NotificationService::getPatientName($patientId);
     }
 
-    public function getSubject(): string
+    public function getSubject($notifiable): string
     {
         $senderName  = $this->senderName();
         $patientName = $this->getPatientName();
@@ -122,7 +122,6 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
 
     /**
      * @param $notifiable
-     * @return array
      */
     public function mailData($notifiable): array
     {
@@ -138,9 +137,11 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
     }
 
     /**
+     * @param mixed $notifiable
+     *
      * @return mixed
      */
-    public function redirectLink(): string
+    public function redirectLink($notifiable): string
     {
         $note = Note::where('id', $this->noteId())->first();
 
@@ -161,11 +162,18 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      * Get the array representation of the notification.
      *
      * @param mixed $notifiable
-     * @return array
      */
     public function toArray($notifiable): array
     {
-        return $this->notificationData($notifiable);
+        return array_merge($this->notificationData($notifiable), [
+            'patient_name'    => $this->getPatientName(),
+            'note_id'         => $this->noteId(), //for activities will be null till task is completed. then will be updated
+            'attachment_id'   => $this->getAttachment()->id,
+            'attachment_type' => $this->attachmentType(),
+            'sender_id'       => $this->senderId(),
+            'sender_name'     => $this->senderName(),
+            'receiver_id'     => $notifiable->id,
+        ]);
     }
 
     /**
@@ -174,8 +182,6 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
      * Returns by default -  ONLY the notification id & the notification type
      *
      * @param mixed $notifiable
-     *
-     * @return BroadcastMessage
      */
     public function toBroadcast($notifiable): BroadcastMessage
     {
@@ -198,7 +204,7 @@ class AddendumCreated extends Notification implements ShouldBroadcast, ShouldQue
 
         return (new CircleLinkMailChannel($emailData, $unsubscribeLink))
             ->line($subjectLineStyled)
-            ->action('View Comment', url($this->redirectLink()));
+            ->action('View Comment', url($this->redirectLink($notifiable)));
     }
 
     /**

@@ -7,40 +7,17 @@
 namespace App\Exports\PracticeReports;
 
 use App\Call;
-use App\Contracts\Reports\PracticeDataExport;
+use App\Contracts\Reports\PracticeDataExportInterface;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class PracticeCallsReport extends PracticeReport
+class PracticeCallsReport extends PracticeReportInterface
 {
-    /**
-     * @param null $mediaCollectionName
-     *
-     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\DiskDoesNotExist
-     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileDoesNotExist
-     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileIsTooBig
-     */
-    public function createMedia($mediaCollectionName = null): PracticeDataExport
-    {
-        if ( ! $this->media) {
-            if ( ! $mediaCollectionName) {
-                $mediaCollectionName = "{$this->practice->name}_practice_calls_reports";
-            }
-
-            $this->store($this->filename(), self::STORE_TEMP_REPORT_ON_DISK);
-
-            $this->media = $this->practice->addMedia($this->fullPath())->toMediaCollection($mediaCollectionName);
-        }
-
-        return $this;
-    }
-
     public function filename(): string
     {
         if ( ! $this->filename) {
-            $generatedAt    = now()->toDateTimeString();
-            $this->filename = "practice_calls_last_three_months_generated_at_$generatedAt.csv";
+            $this->filename = $this->mediaCollectionName();
         }
 
         return $this->filename;
@@ -97,5 +74,12 @@ class PracticeCallsReport extends PracticeReport
                            'patientInfo',
                        ]
                    )->select('id', 'display_name');
+    }
+    
+    public function mediaCollectionName(): string
+    {
+        $generatedAt    = now()->toDateTimeString();
+        
+        return "practice_calls_last_three_months_generated_at_$generatedAt.csv";
     }
 }

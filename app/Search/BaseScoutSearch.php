@@ -11,6 +11,12 @@ use App\Contracts\ScoutSearch;
 abstract class BaseScoutSearch implements ScoutSearch
 {
     /**
+     * Callback given to setWheres
+     *
+     * @var callable
+     */
+    private $fn;
+    /**
      * Tag all searches with this so we can easily flush them from the cache.
      *
      * @var string
@@ -22,35 +28,41 @@ abstract class BaseScoutSearch implements ScoutSearch
      * @var int
      */
     const TWO_WEEKS = 21600;
-
+    
     /**
      * The time in minutes to cache the result of this search for.
      *
      * @var int
      */
     protected $duration = self::TWO_WEEKS;
-
+    
     /**
      * The name of thi search.
      *
      * @var string
      */
     protected $name;
-
+    
     /**
      * The prefix of the search's name.
      *
      * @var string
      */
     protected $prefix = 'search:';
-
+    /**
+     * Add this to hash for uniqueness between practices
+     *
+     * @var array
+     */
+    private $wheres;
+    
     public function __construct()
     {
         if ( ! $this->name) {
             $this->generateSearchName();
         }
     }
-
+    
     /**
      * How long to store in cache for.
      */
@@ -58,24 +70,34 @@ abstract class BaseScoutSearch implements ScoutSearch
     {
         return $this->duration;
     }
-
+    
     /**
      * Search using given term.
+     *
+     * @param string $term
      *
      * @return mixed
      */
     public function find(string $term)
     {
-        return \Cache::tags($this->tags())
-            ->remember(
-                self::key($term),
-                $this->duration(),
-                function () use ($term) {
-                    return $this->query($term)->first();
-                }
-            );
+        return $this->cache(
+            function () use ($term) {
+                return $this->decorateQuery($this->query($term))->first();
+            },
+            $term
+        );
     }
-
+    
+    public function cache(callable $fn, string $term)
+    {
+        return \Cache::tags($this->tags())
+                     ->remember(
+                         self::key($term),
+                         $this->duration(),
+                         $fn
+                     );
+    }
+    
     /**
      * Essentially a static wrapper for find so that we can do `ProviderByName::first($term)`.
      *
@@ -85,15 +107,21 @@ abstract class BaseScoutSearch implements ScoutSearch
     {
         return (new static())->find($term);
     }
-
+    
     /**
+     * @param string $term
+     *
      * @return string
      */
     public function key(string $term)
     {
-        return "{$this->name()}:$term";
+        if (empty($this->wheres)) {
+            return sha1("{$this->name()}:$term");
+        }
+        
+        return sha1("{$this->name()}:$term:".json_encode($this->wheres));
     }
-
+    
     /**
      * The name of this search. Will be used in cache keys, tags.
      */
@@ -101,7 +129,7 @@ abstract class BaseScoutSearch implements ScoutSearch
     {
         return $this->name;
     }
-
+    
     /**
      * Tags for this search.
      */
@@ -112,9 +140,34 @@ abstract class BaseScoutSearch implements ScoutSearch
             self::SCOUT_SEARCHES_CACHE_TAG,
         ];
     }
-
+    
     private function generateSearchName()
     {
         $this->name = $this->prefix.get_class($this);
+    }
+    
+    private function decorateQuery(\Laravel\Scout\Builder $query)
+    {
+        if ( empty($this->wheres)) {
+            return $query;
+        }
+        
+        foreach ($this->wheres as $key => $value) {
+            $query->where($key, $value);
+        }
+        
+        return $query;
+    }
+    
+    /**
+     * @param array $wheres
+     *
+     * @return BaseScoutSearch
+     */
+    public function setWheres(array $wheres)
+    {
+        $this->wheres = $wheres;
+        
+        return $this;
     }
 }

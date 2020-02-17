@@ -10,7 +10,7 @@ use App\Traits\RunsConsoleCommands;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Console\Command;
 
-class ReviewAppPostDeploy extends Command
+class ReviewAppCreateDb extends Command
 {
     use RunsConsoleCommands;
 
@@ -25,7 +25,7 @@ class ReviewAppPostDeploy extends Command
      *
      * @var string
      */
-    protected $signature = 'reviewapp:postdeploy';
+    protected $signature = 'reviewapp:create-db';
 
     /**
      * Create a new command instance.
@@ -41,14 +41,19 @@ class ReviewAppPostDeploy extends Command
      * Execute the console command.
      *
      * @return mixed
+     * @throws \Exception
      */
     public function handle()
     {
         if ( ! app()->environment(['review', 'local', 'testing'])) {
-            throw new \Exception('Only review and local environments can run this');
+            return;
         }
 
+        $this->output->note('Running reviewapp:create-db');
+
         $dbName = config('database.connections.mysql.database');
+
+        $this->output->note("Checking if db [$dbName] exists");
 
         try {
             $dbTableExists = User::where('username', 'admin')->exists() && User::where('username', 'nurse')->exists();
@@ -57,12 +62,11 @@ class ReviewAppPostDeploy extends Command
         }
 
         if (false === $dbTableExists) {
-            $migrateInstallCommand  = $this->runCommand(['php', 'artisan', '-vvv', 'mysql:createdb', $dbName]);
-            $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:fresh']);
-            $migrateCommand         = $this->runCommand(['php', 'artisan', '-vvv', 'migrate:views']);
-            $testSuiteSeederCommand = $this->runCommand(['php', 'artisan', '-vvv', 'db:seed', '--class=TestSuiteSeeder']);
+            $cmd = 'mysql:createdb';
+            $this->output->note("Running command $cmd");
+            $this->runCommand(['php', 'artisan', '-vvv', $cmd, $dbName]);
         }
 
-        $this->warn('reviewapp:postdeploy ran');
+        $this->warn('reviewapp:create-db ran');
     }
 }

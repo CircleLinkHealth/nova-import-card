@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Contracts\FaxableNotification;
 use App\ValueObjects\SimpleNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
@@ -16,7 +17,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
-class SendCareDocument extends Notification
+class SendCareDocument extends Notification implements FaxableNotification
 {
     use Queueable;
 
@@ -28,6 +29,7 @@ class SendCareDocument extends Notification
     private $media;
     private $patient;
     private $reportType;
+    private $reportYear;
 
     /**
      * Create a new notification instance.
@@ -41,6 +43,7 @@ class SendCareDocument extends Notification
         $this->media = $media;
 
         $this->reportType = $this->media->getCustomProperty('doc_type');
+        $this->reportYear = $this->media->getCustomProperty('year', Carbon::parse($this->media->created_at)->year);
 
         $this->patient = $patient;
 
@@ -89,8 +92,10 @@ class SendCareDocument extends Notification
     public function toArray($notifiable)
     {
         return [
-            'channels'   => $this->via($notifiable),
-            'sender_id'  => auth()->user() ? auth()->user()->id : 'redis',
+            'channels'  => $this->via($notifiable),
+            'sender_id' => auth()->user()
+                ? auth()->user()->id
+                : 'redis',
             'patient_id' => $this->patient->id,
             'media_id'   => $this->media->id,
         ];
@@ -103,14 +108,12 @@ class SendCareDocument extends Notification
      *
      * @throws \Exception
      *
-     * @return bool|string
+     * @return SimpleNotification
      */
     public function toDirectMail($notifiable)
     {
         if ( ! $notifiable || ! $notifiable->emr_direct_address) {
-            throw new \Exception('Notifiable or Emr direct address not found.', 500);
-
-            return false;
+            throw new \Exception('Notifiable or Emr direct address not found.', 400);
         }
 
         return (new SimpleNotification())
@@ -124,15 +127,17 @@ class SendCareDocument extends Notification
      *
      * @param $notifiable
      *
-     * @return bool|string
+     * @throws \Exception
      */
-    public function toFax($notifiable)
+    public function toFax($notifiable = null): array
     {
         if ( ! $notifiable || ! $notifiable->fax) {
-            return false;
+            throw new \Exception('Notifiable or fax number not found.', 400);
         }
 
-        return $this->toPdf();
+        return [
+            'file' => $this->toPdf(),
+        ];
     }
 
     /**
@@ -150,7 +155,7 @@ class SendCareDocument extends Notification
 
         return (new MailMessage())
             ->subject($this->getSubject())
-            ->line("Click at link below to see the web version the patient's AWV {$this->reportType}.")
+            ->line("Click at link below to see the web version of the patient's AWV {$this->reportType}.")
             ->action('Go to report', $link);
     }
 
@@ -210,6 +215,11 @@ class SendCareDocument extends Notification
         return $message;
     }
 
+    /**
+     * @throws \Exception
+     *
+     * @return string
+     */
     private function getReportLink()
     {
         $awvUrl = config('services.awv.report_url');
@@ -227,7 +237,7 @@ class SendCareDocument extends Notification
 
         return Str::replaceFirst(
             '$YEAR$',
-            Carbon::parse($this->media->created_at)->year,
+            $this->reportYear,
             $awvUrl
         );
     }
@@ -244,6 +254,6 @@ class SendCareDocument extends Notification
             return 'provider-report';
         }
 
-        throw new \Exception('Invalid Report Type', 500);
+        throw new \Exception('Invalid Report Type', 400);
     }
 }

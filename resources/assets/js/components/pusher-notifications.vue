@@ -139,7 +139,7 @@
         position: absolute;
         top: 50px;
         width: 430px;
-        z-index: 1;
+        z-index: 100;
         max-height: 702%;
         word-spacing: 5px;
         padding-bottom: unset;

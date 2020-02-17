@@ -25,6 +25,7 @@ if (isset($patient) && ! empty($patient)) {
                 background-color: #ffffff;
                 padding: initial;
             }
+
             .patient-documents-container {
                 background-color: #f2f6f9;
                 min-height: 1000px;
@@ -35,18 +36,33 @@ if (isset($patient) && ! empty($patient)) {
                 margin: auto;
                 padding-bottom: 35px;
                 padding-top: 25px;
-                width: 80%;
-                text-align: center;
             }
+
             body {
                 font-family: 'Roboto', sans-serif !important;
             }
+
             h4 {
                 font-family: 'Roboto', sans-serif !important;
             }
+
             b {
                 font-weight: bolder;
             }
+
+            .patient-documents-container {
+                letter-spacing: 1.33px;
+            }
+
+            .strong-custom {
+                color: #000000;
+                font-weight: 500;
+            }
+
+            .btn-static {
+                opacity: 1 !important;
+            }
+
         </style>
     @endpush
     <div>
@@ -58,34 +74,34 @@ if (isset($patient) && ! empty($patient)) {
             <div class="col-md-12">
                 <div class="patient-details">
                     <div class="patient-details-row">
-                        <div class="col-sm-12">
+                        <div class="col-md-offset-2 col-md-8 col-sm-12">
                             <div class="col-sm-4">
                                 Patient Name<br>
-                                <strong>{{$patient->getFullName()}}</strong>
+                                <span class="strong-custom">{{$patient->getFullName()}}</span>
                             </div>
                             <div class="col-sm-4">
                                 Date of Birth (DOB)<br>
-                                <strong>{{$patient->getBirthDate()}}</strong>
+                                <span class="strong-custom">{{$patient->getBirthDate()}}</span>
                             </div>
                             <div class="col-sm-4">
                                 Phone Number<br>
-                                <strong>{{$patient->getPhone()}}</strong>
+                                <span class="strong-custom">{{$patient->getPhone()}}</span>
                             </div>
                         </div>
                     </div>
                     <div class="patient-details-row">
-                        <div class="col-sm-12">
+                        <div class="col-md-offset-2 col-md-8 col-sm-12">
                             <div class="col-sm-4">
                                 Provider Name<br>
-                                <strong>{{$patient->getBillingProviderName()}}</strong>
+                                <span class="strong-custom">{{$patient->getBillingProviderName()}}</span>
                             </div>
                             <div class="col-sm-4">
                                 Practice<br>
-                                <strong>{{$patient->getPrimaryPracticeName()}}</strong>
+                                <span class="strong-custom">{{$patient->getPrimaryPracticeName()}}</span>
                             </div>
                             <div class="col-sm-4">
                                 Phone Number<br>
-                                <strong>{{$patient->getBillingProviderPhone()}}</strong>
+                                <span class="strong-custom">{{$patient->getBillingProviderPhone()}}</span>
                             </div>
                         </div>
                     </div>
@@ -95,7 +111,9 @@ if (isset($patient) && ! empty($patient)) {
                         <div style="margin-left: 40px">
                             <div>
                                 <div>
-                                    <care-docs-index patient-id="{{$patient->id}}" awv-url="{{config('services.awv.url')}}" ref="CareDocs"></care-docs-index>
+                                    <care-docs-index patient-id="{{$patient->id}}"
+                                                     awv-url="{{config('services.awv.url')}}"
+                                                     ref="CareDocs"></care-docs-index>
                                 </div>
                             </div>
                         </div>
