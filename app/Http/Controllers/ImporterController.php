@@ -39,6 +39,8 @@ class ImporterController extends Controller
             ->whereDoesntHave('ccda', function ($q) {
                 $q->whereHas('media', function ($q) {
                     $q->where('custom_properties->is_upg0506_complete', '!=','true');
+                })->whereHas('directMessage', function ($q) {
+                    $q->where('from', 'like', "%@upg.ssdirect.aprima.com");
                 });
             })
             ->with('demographics')
