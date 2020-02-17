@@ -328,7 +328,7 @@ class PersonalizedPreventionPlanPrepareData
             return $default;
         }
 
-        return ProviderReportService::getStringValue($coll[$key], $default);
+        return getStringValueFromAnswer($coll[$key], $default);
     }
 
     /**

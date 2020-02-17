@@ -68,7 +68,7 @@ class ProviderReportService
      */
     public function formatReportDataForView($report)
     {
-        $demographicData['age']       = $this->getStringValue($report->demographic_data['age'], 'N/A');
+        $demographicData['age']       = getStringValueFromAnswer($report->demographic_data['age'], 'N/A');
         $demographicData['race']      = ucwords(strtolower($this->checkInputValueIsNotEmpty($report->demographic_data['race'],
             'race', [])));
         $demographicData['ethnicity'] = ucwords(strtolower($this->checkInputValueIsNotEmpty($report->demographic_data['ethnicity'],
@@ -153,12 +153,12 @@ class ProviderReportService
         $screenings = [];
         if ( ! self::filterAnswer($report->screenings)) {
             $gender                  = $report->demographic_data['gender'];
-            $age                     = self::getStringValue($report->demographic_data['age']);
+            $age                     = getStringValueFromAnswer($report->demographic_data['age']);
             $conditionsSelectedInQ18 = collect($report->family_medical_history)->map(function ($condition) {
                 return $condition['name'];
             })->toArray();
 
-            $breastCancer              = $this->getStringValue($report->screenings['breast_cancer']);
+            $breastCancer              = getStringValueFromAnswer($report->screenings['breast_cancer']);
             $breastCancerSelectedInQ18 = in_array('Breast Cancer', $conditionsSelectedInQ18);
             if ( ! empty($breastCancer)) {
                 if ($gender !== 'Male' && '50' < $age && $age < '74') {
@@ -174,7 +174,7 @@ class ProviderReportService
                 }
             }
 
-            $cervicalCancer = $this->getStringValue($report->screenings['cervical_cancer']);
+            $cervicalCancer = getStringValueFromAnswer($report->screenings['cervical_cancer']);
             if ( ! empty($cervicalCancer)) {
                 if ($gender === 'Female'
                     && '21' <= $age
@@ -233,7 +233,7 @@ class ProviderReportService
 
             }
 
-            $prostateCancer              = $this->getStringValue($report->screenings['prostate_cancer']);
+            $prostateCancer              = getStringValueFromAnswer($report->screenings['prostate_cancer']);
             $race                        = $report->demographic_data['race'];
             $prostateCancerSelectedInQ18 = in_array('Prostate Cancer', $conditionsSelectedInQ18);
             if ( ! empty($prostateCancer)) {
@@ -274,7 +274,7 @@ class ProviderReportService
 
             }
 
-            $violence = $this->getStringValue($report->screenings['violence']);
+            $violence = getStringValueFromAnswer($report->screenings['violence']);
 
             if ( ! empty($violence) && $gender === 'Female') {
                 if ($violence === '10+ years ago/Never/Unsure'
@@ -308,7 +308,7 @@ class ProviderReportService
         }
         if ( ! self::filterAnswer($report->vitals['bmi'])) {
 
-            $bmiVal = $this->getStringValue($report->vitals['bmi']);
+            $bmiVal = getStringValueFromAnswer($report->vitals['bmi']);
 
             $vitals['bmi'] = $bmiVal;
             if ((float)$bmiVal < 18.5) {
@@ -337,7 +337,7 @@ class ProviderReportService
             : 'N/A';
 
 
-        $vitals['weight'] = $this->getStringValue($report->vitals['weight'], 'N/A');
+        $vitals['weight'] = getStringValueFromAnswer($report->vitals['weight'], 'N/A');
 
 
         $diet = [];
@@ -365,13 +365,13 @@ class ProviderReportService
             'has_fallen', [])) === 'yes'
             ? 'has'
             : 'has not';
-        $functionalCapacity['have_assistance']              = strtolower($this->getStringValue($report->functional_capacity['have_assistance'])) === 'yes'
+        $functionalCapacity['have_assistance']              = strtolower(getStringValueFromAnswer($report->functional_capacity['have_assistance'])) === 'yes'
             ? 'do'
             : 'do not';
         $functionalCapacity['hearing_difficulty']           = strtolower($this->checkInputValueIsNotEmpty($report->functional_capacity['hearing_difficulty'],
             'hearing_difficulty', [])) === 'yes'
             ? 'has'
-            : (strtolower($this->getStringValue($report->functional_capacity['hearing_difficulty'])) === 'sometimes'
+            : (strtolower(getStringValueFromAnswer($report->functional_capacity['hearing_difficulty'])) === 'sometimes'
                 ? 'sometimes has'
                 : 'does not have');
         $functionalCapacity['mci_cognitive']['clock']       = $report->functional_capacity['mci_cognitive']['clock'] == 2
@@ -420,7 +420,7 @@ class ProviderReportService
             'has_attonery', [])) === 'yes'
             ? 'has'
             : 'does not have';
-        $advancedCarePlanning['existing_copy'] = strtolower($this->getStringValue($report->advanced_care_planning['existing_copy'])) === 'yes'
+        $advancedCarePlanning['existing_copy'] = strtolower(getStringValueFromAnswer($report->advanced_care_planning['existing_copy'])) === 'yes'
             ? 'is'
             : 'is not';
 
@@ -448,35 +448,8 @@ class ProviderReportService
             'functional_capacity'        => $functionalCapacity,
             'current_providers'          => $currentProviders,
             'advanced_care_planning'     => $advancedCarePlanning,
-            'specific_patient_requests'  => $this->getStringValue($report->specific_patient_requests),
+            'specific_patient_requests'  => getStringValueFromAnswer($report->specific_patient_requests),
         ]);
-    }
-
-    public static function getStringValue($val, $default = '')
-    {
-
-        if (self::filterAnswer($val)) {
-            return $default;
-        }
-
-        if (is_string($val)) {
-            return $val;
-        }
-
-        if (is_array($val)) {
-
-            if (array_key_exists('name', $val)) {
-                return self::getStringValue($val['name']);
-            }
-
-            if (array_key_exists('value', $val)) {
-                return self::getStringValue($val['value']);
-            }
-
-            return self::getStringValue($val[0]);
-        }
-
-        return $val;
     }
 
     /**
@@ -491,7 +464,7 @@ class ProviderReportService
     {
         $value = ! is_array($answer)
             ? $answer
-            : self::getStringValue($answer);
+            : getStringValueFromAnswer($answer);
 
         return $value;
 
@@ -516,7 +489,7 @@ class ProviderReportService
             $allowExceptionExists = array_key_exists($errorDescription, $allowExceptions);
 
             if ($allowExceptionExists && !empty($operator) && $operator === 'greater_or_equal_than') {
-                if (self::getStringValue($answerToCompare[$keyToCheck]) >= $validationValue) {
+                if (getStringValueFromAnswer($answerToCompare[$keyToCheck]) >= $validationValue) {
                     return $value;
                 }
             }

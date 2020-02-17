@@ -1,31 +1,4 @@
 @extends('layouts.surveysMaster')
-<?php
-function getStringValue($val, $default = '')
-{
-    if (empty($val)) {
-        return $default;
-    }
-
-    if (is_string($val)) {
-        return $val;
-    }
-
-    if (is_array($val)) {
-
-        if (array_key_exists('name', $val)) {
-            return getStringValue($val['name']);
-        }
-
-        if (array_key_exists('value', $val)) {
-            return getStringValue($val['value']);
-        }
-
-        return getStringValue($val[0]);
-    }
-
-    return $val;
-}
-?>
 @section('content')
 
     @if (isset($isPdf) && $isPdf)
@@ -53,7 +26,7 @@ function getStringValue($val, $default = '')
         <div class="report-data">
             Patient Name: <strong><span style="color: #50b2e2">{{$patient->display_name}}</span></strong> <br>
             Date of Birth (records): <strong>{{$patient->patientInfo->dob()}}</strong><br>
-            Age (self-reported): <strong>{{getStringValue($patientPppData->answers_for_eval['age'])}}</strong> <br>
+            Age (self-reported): <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['age'])}}</strong> <br>
             Address: <strong>{{$patient->address}}</strong> <br>
             City, State, Zip: <strong>{{$patient->city}}, {{$patient->state}}, {{$patient->zip}}</strong> <br>
             Provider: <strong>{{$patient->getBillingProviderName()}}</strong>
@@ -64,15 +37,15 @@ function getStringValue($val, $default = '')
             <hr/>
         </div>
         <div class="report-data">
-            Weight: <strong>{{getStringValue($patientPppData->answers_for_eval['weight'])}} </strong><br>
-            Height: <strong>{{getStringValue($patientPppData->answers_for_eval['height']['feet'])}}
-                ' {{getStringValue($patientPppData->answers_for_eval['height']['inches'])}}" </strong><br>
-            Body Mass Index (BMI): <strong>{{getStringValue($patientPppData->answers_for_eval['bmi'])}}</strong> <br>
+            Weight: <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['weight'])}} </strong><br>
+            Height: <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['height']['feet'])}}
+                ' {{getStringValueFromAnswer($patientPppData->answers_for_eval['height']['inches'])}}" </strong><br>
+            Body Mass Index (BMI): <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['bmi'])}}</strong> <br>
             Blood Pressure:
             <strong>
-                {{getStringValue($patientPppData->answers_for_eval['blood_pressure']['first_metric'])}}
+                {{getStringValueFromAnswer($patientPppData->answers_for_eval['blood_pressure']['first_metric'])}}
                 &nbsp;/&nbsp;
-                {{getStringValue($patientPppData->answers_for_eval['blood_pressure']['second_metric'])}}
+                {{getStringValueFromAnswer($patientPppData->answers_for_eval['blood_pressure']['second_metric'])}}
             </strong><br>
         </div>
 

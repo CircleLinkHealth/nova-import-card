@@ -76,3 +76,31 @@ if ( ! function_exists('getCpmCallerToken')) {
     }
 
 }
+
+if ( ! function_exists('getStringValueFromAnswer')) {
+    function getStringValueFromAnswer($val, $default = '')
+    {
+        if (empty($val)) {
+            return $default;
+        }
+
+        if (is_string($val)) {
+            return $val;
+        }
+
+        if (is_array($val)) {
+
+            if (array_key_exists('name', $val)) {
+                return getStringValueFromAnswer($val['name']);
+            }
+
+            if (array_key_exists('value', $val)) {
+                return getStringValueFromAnswer($val['value']);
+            }
+
+            return getStringValueFromAnswer($val[0]);
+        }
+
+        return $val;
+    }
+}
