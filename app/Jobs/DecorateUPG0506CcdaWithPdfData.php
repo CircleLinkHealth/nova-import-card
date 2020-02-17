@@ -41,15 +41,7 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
             return $this->release(60);
         }
 
-        $this->addProblemsInstructionsFromPdf();
-
         $this->markUPG0506FlowAsDone();
-    }
-
-    private function addProblemsInstructionsFromPdf()
-    {
-        //@constantinos
-        //@todo fill in this method
     }
 
     private function markUPG0506FlowAsDone()

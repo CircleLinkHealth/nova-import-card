@@ -38,4 +38,8 @@ class PatientUserCreated
     {
         return new PrivateChannel('channel-name');
     }
+
+    public function getUser(){
+        return $this->user;
+    }
 }
