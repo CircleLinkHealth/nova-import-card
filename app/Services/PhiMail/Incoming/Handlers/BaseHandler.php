@@ -10,7 +10,6 @@ namespace App\Services\PhiMail\Incoming\Handlers;
 
 use App\DirectMailMessage;
 use App\Services\PhiMail\Incoming\IncomingDMMimeHandlerInterface;
-use App\Services\PhiMail\ShowResult;
 
 abstract class BaseHandler implements IncomingDMMimeHandlerInterface
 {
