@@ -36,8 +36,8 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
      */
     public function handle()
     {
-        if ( ! $this->ccda->hasUPG0506PdfCareplanMedia()) {
-            $this->release(60);
+        if ( ! $this->ccda->hasUPG0506PdfCareplanMedia()->exists()) {
+            return $this->release(60);
         }
         
         $this->addProblemsInstructionsFromPdf();
