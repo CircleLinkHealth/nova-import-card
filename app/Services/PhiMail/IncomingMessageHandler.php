@@ -94,12 +94,12 @@ class IncomingMessageHandler
             ]
         );
 
-        ImportCcda::dispatch($ccda)->withChain([
-            //if upg change status.
-            //re-run until we get pdf?
-            //call itself every 30secs
-        (new ProcessPdfIfYouShould())->dispatch()
-        ])->onQueue('low');
+        ImportCcda::withChain([
+                                  //if upg change status.
+                                  //re-run until we get pdf?
+                                  //call itself every 30secs
+//                                  new ProcessPdfIfYouShould()
+                              ])->dispatch($ccda)->onQueue('low');
     }
 
     private function storePdf(){
