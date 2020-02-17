@@ -116,8 +116,6 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
         'practice_id',
         'duplicate_id',
         'validation_checks',
-        //For G0506 flow
-        'type'
     ];
 
     public function allergies()
