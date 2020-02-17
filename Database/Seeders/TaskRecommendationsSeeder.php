@@ -173,9 +173,9 @@ class TaskRecommendationsSeeder extends Seeder
                     'less_three_week_older' => [
                         'qualitative_trigger' => 'Exercise',
                         'task_body'           => 'Everyone benefits from exercise, regardless of age, sex or physical ability. Exercise can help prevent excess weight gain or help maintain weight loss. It is a fundamental component of healthy active living and involves 3 major components. Aerobic (running, swimming, biking etc.), Resistance (pushups, squats, planks etc.) and Balance training (tai chi, etc.) No matter what your current weight, being active boosts high-density lipoprotein (HDL), or "good," cholesterol and decreases unhealthy triglycerides, decreasing your risk of cardiovascular diseases. Exercise also improves mood, energy, sleep quality, and sex life. Ideally, aim for:',
-                        'recommendation_body' => ['At least 2 hours and 30 minutes to 5 hours a week of moderate-intensity 
+                        'recommendation_body' => ['At least 2 hours and 30 minutes to 5 hours a week of moderate-intensity
 OR 1 hour and 15 minutes to 2 hours and 30 minutes a week of vigorous-intensity aerobic physical activity
-OR an equivalent combination of moderate- and vigorous-intensity aerobic activity. 
+OR an equivalent combination of moderate- and vigorous-intensity aerobic activity.
 If you cannot do this because of chronic conditions, be as physically active as their abilities and conditions safely allow.',
                             'Preferably, aerobic activity should be spread throughout the week',
                             'Muscle-strengthening activities of moderate or greater intensity and that involve all major muscle groups 2+ days a week',
@@ -679,7 +679,7 @@ If you cannot do this because of chronic conditions, be as physically active as 
                     // Advanced Care Planning
                     'nmpa' => [// No Medical Power of Attorney = NMPA
                         'sub_title'           => 'Advanced Care Planning / NMPA',
-                        'qualitative_trigger' => 'No Medical Power of Attorney',
+                        'qualitative_trigger' => 'Advanced Care Planning',
                         'task_body'           => 'A Medical Power of Attorney is a legal instrument (separate from a durable power of attorney) that allows you to select the person that you want to make healthcare decisions for you if and when you become unable to make them for yourself. The person you pick is your representative in that situation for purposes of healthcare decision-making. You could limit your representative to certain types of decisions, or allow your representative to make any healthcare decision that might come up. Talk to your doctor about taking steps to:',
                         'recommendation_body' => ['Set up a Medical Power of Attorney'],
                         'report_table_data'   => [
