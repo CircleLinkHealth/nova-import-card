@@ -1,29 +1,33 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\DirectMailMessage;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use App\Services\PhiMail\Incoming\Handlers\XML;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
 class UPG0506Demo extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'demo:upg0506 {providerDm} {--pdf} {--ccd}';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Helper commands for UPG0506 demo';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'demo:upg0506 {providerDm?} {--pdf} {--ccd} {--delete}';
 
     /**
      * Create a new command instance.
@@ -44,23 +48,72 @@ class UPG0506Demo extends Command
     {
         if ($this->option('pdf')) {
             $pdfDm = $this->createNewDemoDirectMessage();
-            $pdf = new Pdf($pdfDm, file_get_contents(storage_path('files-for-demos/upg0506/upg0506-care-plan.pdf')));
+            $pdf   = new Pdf($pdfDm, file_get_contents(storage_path('files-for-demos/upg0506/upg0506-care-plan.pdf')));
             $pdf->handle();
             event(new DirectMailMessageReceived($pdfDm));
-    
+
             $this->info('demo pdf sent');
         }
-    
+
         if ($this->option('ccd')) {
             $ccdDm = $this->createNewDemoDirectMessage();
-            $ccd = new XML($ccdDm, file_get_contents(storage_path('files-for-demos/upg0506/upg0506-ccda.xml')));
+            $ccd   = new XML($ccdDm, file_get_contents(storage_path('files-for-demos/upg0506/upg0506-ccda.xml')));
             $ccd->handle();
             event(new DirectMailMessageReceived($ccdDm));
-    
+
             $this->info('demo ccd sent');
         }
+
+        if ($this->option('delete')) {
+            $this->clearTestData();
+
+            $this->info('test data deleted');
+        }
     }
-    
+
+    private function clearTestData()
+    {
+        $ccdas = Ccda::where('mrn', '334417')
+            ->where(function ($q) {
+                $q->where(function ($q) {
+                    $q->hasUPG0506PdfCareplanMedia();
+                })
+                    ->orWhere(function ($q) {
+                    $q->hasUPG0506Media();
+                });
+            })
+            ->get();
+
+        if ($ccdas->isEmpty()) {
+            return;
+        }
+
+        foreach ($ccdas as $ccda) {
+            $ccda->media()
+                ->get()
+                ->each(function ($media) {
+                $media->delete();
+            });
+
+            $dm = $ccda->directMessage();
+
+            if ($dm) {
+                $dm->media()
+                    ->get()
+                    ->each(function ($media) {
+                                $media->delete();
+                            });
+                $dm->delete();
+            }
+
+            $ccda->importedMedicalRecord()->forceDelete();
+
+            optional($ccda->getPatient())->forceDelete();
+
+            $ccda->forceDelete();
+        }
+    }
+
     /**
      * Creates a new Direct Message.
      *
@@ -73,7 +126,7 @@ class UPG0506Demo extends Command
         return DirectMailMessage::create(
             [
                 'message_id'      => Str::uuid(),
-                'from'            => $this->argument('providerDm'),
+                'from'            => $this->argument('providerDm') ?: 'drraph@upg.ssdirect.aprima.com',
                 'to'              => config('services.emr-direct.user'),
                 'body'            => 'This is a demo message.',
                 'num_attachments' => collect([$this->option('ccd'), $this->option('pdf')])->filter()->count(),
