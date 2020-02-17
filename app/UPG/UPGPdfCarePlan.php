@@ -69,7 +69,7 @@ class UPGPdfCarePlan
                 'search'   => 'Medical Record #:',
                 'key'      => 'mrn',
                 'callback' => function ($string) {
-                    $this->carePlan['mrn'] = (int)$string;
+                    $this->carePlan['mrn'] = $string;
                 },
             ],
             [

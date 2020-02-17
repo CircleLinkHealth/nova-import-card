@@ -159,7 +159,11 @@ class PdfCarePlan
             'problems'     => $this->fillProblemsSection(),
             'vitals'       => [],
             //add problems with instructions array. Template ['name' => problem name, 'value' => instruction]
-            'instructions' => $this->data['problems']
+            'instructions' => $this->data['problems'],
+            'chargeable_services' => $this->data['chargeable_services'],
+            'is_g0506' => str_contains(collect($this->data['chargeable_services'])->transform(function ($cs) {
+                return isset($cs['subject']) ? $cs['subject'] : '';
+            })->filter()->implode(' '), 'G0506') ? 'true': 'false'
         ];
 
     }
@@ -431,9 +435,8 @@ class PdfCarePlan
                         $currentChargeableService = [];
                     }
 
-                    //todo: fix/improve this check
                     if (str_contains(collect($chargeableServices)->transform(function ($cs) {
-                        return $cs['provider'];
+                        return isset($cs['provider']) ? $cs['provider'] : 'N/A';
                     })->implode(' '), explode(' ', $string))) {
                         $this->providers['primary'] = $string;
                         continue;
