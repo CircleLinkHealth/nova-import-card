@@ -33,7 +33,7 @@
                         </div>
                         <br>
                         <div class="form-group form-group-input">
-                            <label for="birth-date" class="birth-date">Date of Birth</label>
+                            <label for="birth-date" class="birth-date">Date of Birth (DOB)</label>
                             <br>
                             <input type="date" name="birth_date"
                                    class="login-inputs"
@@ -107,8 +107,8 @@
         @media (max-width: 490px) {
             .main-container {
                 height: 560px;
-                margin-top: 125px;
-                margin-left: 7px;
+                /*margin-top: 125px;*/
+                /*margin-left: 7px;*/
             }
 
             .survey-container {

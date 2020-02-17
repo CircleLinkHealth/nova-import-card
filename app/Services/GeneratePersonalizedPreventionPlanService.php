@@ -60,7 +60,7 @@ class GeneratePersonalizedPreventionPlanService extends GenerateReportService
             'candy_sugary_beverages'         => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SUGAR),
             'current_smoker'                 => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::TOBACCO),
             'smoker_interested_quitting'     => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::TOBACCO_QUIT),
-            'alcohol_use'                    => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::ALCOHOL),
+            'alcohol_use'                    => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::ALCOHOL_CONSUMPTION),
             'recreational_drugs'             => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::RECREATIONAL_DRUGS),
             'physical_activity'              => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::EXERCISE),
             'sexually_active'                => $this->answerForHraQuestionWithIdentifier(HraQuestionIdentifier::SEXUALLY_ACTIVE),

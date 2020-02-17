@@ -120,8 +120,27 @@ class SurveyInvitationLinksService
     }
 
     /**
+     * @param $userId
+     *
+     * @throws \Exception
+     */
+    public function enrolUserId($userId)
+    {
+        $user = User
+            ::with([
+                'patientInfo',
+                'surveyInstances' => function ($query) {
+                    $query->mostRecent();
+                },
+            ])
+            ->where('id', '=', $userId)
+            ->firstOrFail();
+
+        $this->enrolUser($user);
+    }
+
+    /**
      * @param User $user
-     * @param string|null $forYear
      *
      * @return array
      * @throws \Exception
