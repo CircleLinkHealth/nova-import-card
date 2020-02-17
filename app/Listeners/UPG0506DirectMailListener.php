@@ -15,7 +15,7 @@ use Illuminate\Queue\InteractsWithQueue;
 class UPG0506DirectMailListener implements ShouldQueue
 {
     use InteractsWithQueue;
-    
+
     /**
      * Create the event listener.
      *
@@ -25,7 +25,7 @@ class UPG0506DirectMailListener implements ShouldQueue
     {
         //
     }
-    
+
     /**
      * Handle the event.
      *
@@ -38,10 +38,9 @@ class UPG0506DirectMailListener implements ShouldQueue
         if ($this->shouldBail($event->directMailMessage->from)) {
             return;
         }
-    
+
         if ($ccd = $this->getG0506Ccda($event->directMailMessage->id)) {
-            // @constantinos
-            //
+
             // If we got here it means the CCD has been imported, and has
             // custom_properties->is_upg0506 = 'true'
             // custom_properties->is_ccda = 'true'
@@ -51,84 +50,69 @@ class UPG0506DirectMailListener implements ShouldQueue
             // custom_properties->is_upg0506_complete = true
             DecorateUPG0506CcdaWithPdfData::dispatch($ccd);
         }
-        
+
         if ($this->hasG0506Pdf($event->directMailMessage->id)) {
-            // @constantinos
-            // @todo
-            $pdfMedia = $this->getG0506Pdf($event->directMailMessage->id);
-
-            $this->parseAndUpdatePdfMedia($pdfMedia);
-
-
-            //read and store on media
-
-
-
-            // 1. Parse PDF
-            // 2. Store media and add the following varibles
-            // custom_properties->is_upg0506 = 'true'
-            // custom_properties->is_pdf = 'true'
-            // custom_properties->is_upg0506_complete = false
-            // custom_properties->is_upg0506_complete = true
+            $this->parseAndUpdatePdfMedia($event->directMailMessage->id);
         }
     }
-    
+
     private function shouldBail(string $sender)
     {
         return ! str_contains($sender, '@upg.ssdirect.aprima.com');
     }
-    
-    private function hasG0506Pdf(int $dmId) :bool
+
+    private function hasG0506Pdf(int $dmId): bool
     {
         return $this->mediaAttachmentCollectionQuery($dmId)->exists();
     }
 
     private function mediaAttachmentCollectionQuery(int $dmId)
     {
-        return $this->mediaQuery(DirectMailMessage::class, $dmId)->where('collection_name', Pdf::mediaCollectionNameFactory($dmId));
+        return $this->mediaQuery(DirectMailMessage::class, $dmId)->where('collection_name',
+            Pdf::mediaCollectionNameFactory($dmId));
     }
 
-    private function getG0506Pdf(int $dmId) :? Media
+    private function getG0506Pdf(int $dmId): ? Media
     {
         return $this->mediaAttachmentCollectionQuery($dmId)->first();
     }
-    
+
     private function getG0506Ccda(int $dmId)
     {
         return $this->ccdaQuery($dmId)->first();
     }
-    
+
     private function mediaQuery(string $modelType, int $modelId)
     {
         return Media::where('model_type', $modelType)->where('model_id', $modelId);
     }
-    
+
     private function ccdaQuery(int $dmId)
     {
         return Ccda::where('direct_mail_message_id', $dmId)->hasUPG0506Media();
     }
 
-    private function parseAndUpdatePdfMedia(Media $pdf)
+    private function parseAndUpdatePdfMedia(int $dmId)
     {
-        $filePath = storage_path($pdf->file_name);
+        $pdf = $this->getG0506Pdf($dmId);
 
+
+        $filePath = storage_path($pdf->file_name);
         file_put_contents($filePath, $pdf->getFile());
 
-        $carePlan = (new UPGPdfCarePlan($pdf->file_name))->read();
+        $carePlan = (new UPGPdfCarePlan($pdf->file_name))->read()->toArray();
 
-
-        if($carePlan){
-            //fix this tanginess
-            $carePlan = $carePlan->toArray();
-            $data = $pdf->custom_properties;
-            $data['is_upg0506'] = true;
-            //check if it's pdf
-            $data['is_pdf'] = true;
-            $data['care_plan'] = $carePlan;
-            $pdf->custom_properties = $data;
+        if ( ! empty($carePlan)) {
+            //create constants for these keys?
+            $data                        = $pdf->custom_properties;
+            $data['is_pdf']              = 'true';
+            $data['is_upg0506']          = $carePlan['is_g0506'];
+            $data['is_upg0506_complete'] = 'false';
+            $data['mrn']                 = $carePlan['demographics']['mrn_number'];
+            $data['care_plan']           = $carePlan;
+            $pdf->custom_properties      = $data;
             $pdf->save();
         }
-
 
         unlink($filePath);
     }
