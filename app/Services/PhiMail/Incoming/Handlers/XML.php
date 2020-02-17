@@ -34,14 +34,14 @@ class XML extends BaseHandler
      * @param DirectMailMessage $dm
      */
     private function storeAndImportCcd(
-        $attachment,
+        string $attachment,
         DirectMailMessage $dm
     ) {
         $ccda = Ccda::create(
             [
                 'direct_mail_message_id' => $dm->id,
                 'user_id'                => null,
-                'xml'                    => $attachment->data,
+                'xml'                    => $attachment,
                 'source'                 => Ccda::EMR_DIRECT,
             ]
         );
