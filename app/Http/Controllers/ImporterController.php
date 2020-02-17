@@ -38,7 +38,7 @@ class ImporterController extends Controller
         return ImportedMedicalRecord::whereNull('patient_id')
             ->whereDoesntHave('ccda', function ($q) {
                 $q->whereHas('media', function ($q) {
-                    $q->where('custom_properties->is_upg0506_complete', 'false');
+                    $q->where('custom_properties->is_upg0506_complete', '!=','true');
                 });
             })
             ->with('demographics')
