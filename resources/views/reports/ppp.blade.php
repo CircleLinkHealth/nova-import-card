@@ -90,7 +90,9 @@
             @endforeach
             </tbody>
         </table>
-        <br>
+        @if (!isset($isPdf) || !$isPdf)
+            <br>
+        @endif
         <div class="row">
             <div class="col">
 
@@ -105,7 +107,7 @@
                     @empty(array_filter($tasks['tasks']))
                         @continue
                     @else
-                        <div class="avoid-page-break">
+                        <div @if($loop->last) class="avoid-page-break" @endif>
                             <div class="recommendation-title avoid-page-break">
                                 <div class="image {{$tasks['image']}}"></div>
                                 <strong>
