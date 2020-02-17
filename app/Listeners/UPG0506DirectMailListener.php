@@ -53,9 +53,9 @@ class UPG0506DirectMailListener implements ShouldQueue
         
         if ($this->hasG0506Pdf($event->directMailMessage->id)) {
             // @constantinos
-            //
+            // @todo
             // 1. Parse PDF
-            // 2. Store media
+            // 2. Store media and add the following varibles
             // custom_properties->is_upg0506 = 'true'
             // custom_properties->is_pdf = 'true'
             // custom_properties->is_upg0506_complete = false
