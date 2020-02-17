@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\DirectMailMessage;
+use App\Jobs\DecorateUPG0506CcdaWithPdfData;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use CircleLinkHealth\Customer\Entities\Media;
@@ -37,7 +38,7 @@ class UPG0506DirectMailListener implements ShouldQueue
             return;
         }
     
-        if ($this->hasG0506Ccda($event->directMailMessage->id)) {
+        if ($ccd = $this->getG0506Ccda($event->directMailMessage->id)) {
             // @constantinos
             //
             // If we got here it means the CCD has been imported, and has
@@ -47,6 +48,7 @@ class UPG0506DirectMailListener implements ShouldQueue
             // Let's use the following status
             // custom_properties->is_upg0506_complete = false
             // custom_properties->is_upg0506_complete = true
+            DecorateUPG0506CcdaWithPdfData::dispatch($ccd);
         }
         
         if ($this->hasG0506Pdf($event->directMailMessage->id)) {
@@ -71,13 +73,18 @@ class UPG0506DirectMailListener implements ShouldQueue
         return $this->mediaQuery(DirectMailMessage::class, $dmId)->where('collection_name', Pdf::mediaCollectionNameFactory($dmId))->exists();
     }
     
-    private function hasG0506Ccda(int $dmId)
+    private function getG0506Ccda(int $dmId)
     {
-        return Ccda::where('direct_mail_message_id', $dmId)->hasUPG0506Media()->exists();
+        return $this->ccdaQuery($dmId)->first();
     }
     
     private function mediaQuery(string $modelType, int $modelId)
     {
         return Media::where('model_type', $modelType)->where('model_id', $modelId);
+    }
+    
+    private function ccdaQuery(int $dmId)
+    {
+        return Ccda::where('direct_mail_message_id', $dmId)->hasUPG0506Media();
     }
 }
