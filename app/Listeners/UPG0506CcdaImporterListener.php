@@ -35,15 +35,20 @@ class UPG0506CcdaImporterListener
             return;
         }
         
-        Media::where('model_type', Ccda::class)->where('model_id', $event->ccda->id)->chunkById(10,function ($medias) {
-            $medias->each(function ($media) {
-                $data = $media->custom_properties;
-                $data['is_ccda'] = 'true';
-                $data['is_upg0506'] = 'true';
-                $media->custom_properties = $data;
-                $media->save();
-            });
-        });
+        Media::where('model_type', Ccda::class)->where('model_id', $event->ccda->id)->chunkById(
+            10,
+            function ($medias) {
+                $medias->each(
+                    function ($media) {
+                        $data                     = $media->custom_properties;
+                        $data['is_ccda']          = 'true';
+                        $data['is_upg0506']       = 'true';
+                        $media->custom_properties = $data;
+                        $media->save();
+                    }
+                );
+            }
+        );
     }
     
     private function shouldBail(Ccda $ccda)
