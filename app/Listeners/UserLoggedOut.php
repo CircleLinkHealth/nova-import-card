@@ -9,9 +9,13 @@ namespace App\Listeners;
 use Carbon\Carbon;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
-class UserLoggedOut
+class UserLoggedOut implements ShouldQueue
 {
+    use InteractsWithQueue;
+    
     /**
      * Create the event listener.
      */
