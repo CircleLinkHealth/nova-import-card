@@ -71,9 +71,9 @@ class UPG0506DirectMailListener implements ShouldQueue
         return $this->mediaQuery(DirectMailMessage::class, $dmId)->where('collection_name', Pdf::mediaCollectionNameFactory($dmId))->exists();
     }
     
-    private function hasG0506Ccda(int $ccdaId)
+    private function hasG0506Ccda(int $dmId)
     {
-        return $this->mediaQuery(Ccda::class, $ccdaId)->where('custom_properties->is_ccda', 'true')->where('custom_properties->is_upg0506', 'true')->exists();
+        return Ccda::where('direct_mail_message_id', $dmId)->hasUPG0506Media()->exists();
     }
     
     private function mediaQuery(string $modelType, int $modelId)
