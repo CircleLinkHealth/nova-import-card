@@ -13,7 +13,7 @@ class Plain extends BaseHandler
 {
     public function handle()
     {
-        $this->dm->body = $this->showRes->data;
+        $this->dm->body = $this->attachmentData;
         $this->dm->save();
     }
 }

@@ -10,11 +10,10 @@ namespace App\Services\PhiMail\Incoming;
 
 
 use App\DirectMailMessage;
-use App\Services\PhiMail\ShowResult;
 
 interface IncomingDMMimeHandlerInterface
 {
-    public function __construct(DirectMailMessage &$dm, ShowResult $showRes);
+    public function __construct(DirectMailMessage &$dm, string $attachmentData);
     
     public function handle();
 }

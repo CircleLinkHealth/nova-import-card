@@ -19,13 +19,13 @@ abstract class BaseHandler implements IncomingDMMimeHandlerInterface
      */
     protected $dm;
     /**
-     * @var ShowResult
+     * @var string
      */
-    protected $showRes;
+    protected $attachmentData;
     
-    public function __construct(DirectMailMessage &$dm, ShowResult $showRes)
+    public function __construct(DirectMailMessage &$dm, string $attachmentData)
     {
-        $this->dm = $dm;
-        $this->showRes = $showRes;
+        $this->dm             = $dm;
+        $this->attachmentData = $attachmentData;
     }
 }

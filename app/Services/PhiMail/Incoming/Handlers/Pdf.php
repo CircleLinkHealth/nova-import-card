@@ -40,7 +40,7 @@ class Pdf extends BaseHandler implements Mediable
     {
         $path = $this->fullPath();
     
-        file_put_contents($path, $this->showRes->data);
+        file_put_contents($path, $this->attachmentData);
     
         $this->dm->addMedia($path)
                  ->toMediaCollection($this->mediaCollectionName());

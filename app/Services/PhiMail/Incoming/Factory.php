@@ -46,25 +46,25 @@ class Factory
     {
         $static = new static();
         
-        return $static->{$static->getHandlerMethodName($showRes->mimeType)}($dm, $showRes);
+        return $static->{$static->getHandlerMethodName($showRes->mimeType)}($dm, $showRes->data);
     }
     
-    private function handleUnknownMimeType(DirectMailMessage &$dm, ShowResult $showRes) {
-        return new Unknown($dm, $showRes);
+    private function handleUnknownMimeType(DirectMailMessage &$dm, string $attachmentData) {
+        return new Unknown($dm, $attachmentData);
     }
     
-    private function handlePdfMimeType(DirectMailMessage &$dm, ShowResult $showRes) {
-        return new Pdf($dm, $showRes);
+    private function handlePdfMimeType(DirectMailMessage &$dm, string $attachmentData) {
+        return new Pdf($dm, $attachmentData);
     }
     
-    private function handleXmlMimeType(DirectMailMessage &$dm, ShowResult $showRes)
+    private function handleXmlMimeType(DirectMailMessage &$dm, string $attachmentData)
     {
-        return new XML($dm, $showRes);
+        return new XML($dm, $attachmentData);
     }
     
-    private function handlePlainMimeType(DirectMailMessage &$dm, ShowResult $showRes)
+    private function handlePlainMimeType(DirectMailMessage &$dm, string $attachmentData)
     {
-        return new Plain($dm, $showRes);
+        return new Plain($dm, $attachmentData);
     }
     
     private function getHandlerMethodName(string $mimeType)

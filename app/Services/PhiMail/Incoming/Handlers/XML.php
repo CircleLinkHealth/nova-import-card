@@ -22,9 +22,9 @@ class XML extends BaseHandler
     
     public function handle()
     {
-        if (false === stripos($this->showRes->data, '<ClinicalDocument')) return;
+        if (false === stripos($this->attachmentData, '<ClinicalDocument')) return;
     
-        $this->storeAndImportCcd($this->showRes, $this->dm);
+        $this->storeAndImportCcd($this->attachmentData, $this->dm);
     }
     
     /**
