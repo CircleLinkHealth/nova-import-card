@@ -101,6 +101,6 @@ class DashboardController extends Controller
 
         Artisan::call('demo:upg0506', ["--{$type}" => true]);
 
-        return redirect()->back();
+        return redirect()->back()->with(['upg0506-command-success' => 'Command ran successfully']);
     }
 }

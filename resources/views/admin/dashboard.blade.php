@@ -101,6 +101,11 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Demo UPG G0506 Flow</div>
                     <div class="panel-body">
+                        @if (\Session::has('upg0506-command-success'))
+                            <div class="alert alert-success">
+                                <span>{{\Session::get('upg0506-command-success')}}</span>
+                            </div>
+                        @endif
                         <a class="btn btn-m btn-primary" href="{{route('upg0506.demo', ['type'=>'pdf'])}}">Send PDF</a>
                         <a class="btn btn-m btn-info" href="{{route('upg0506.demo', ['type'=> 'ccd'])}}">Send CCD</a>
                         <a class="btn btn-m btn-danger" href="{{route('upg0506.demo', ['type' => 'delete'])}}">Delete Test Data</a>
