@@ -6,11 +6,13 @@
 
 namespace App\Providers;
 
+use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Events\CarePlanWasApproved;
 use App\Events\NoteFinalSaved;
 use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
+use App\Listeners\AttachAttestedProblemsToCall;
 use App\Listeners\CheckBeforeSendMessageListener;
 use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\ForwardNote;
@@ -20,6 +22,9 @@ use App\Listeners\LogSuccessfulLogout;
 use App\Listeners\PatientContactWindowUpdated;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UserLoggedOut;
+use App\Services\PhiMail\Events\DirectMailMessageReceived;
+use App\Listeners\NotifySlackChannel;
+use App\Listeners\UPG0506WorkflowListener;
 use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;
@@ -65,8 +70,12 @@ class CpmEventServiceProvider extends ServiceProvider
         PatientContactWindowUpdatedEvent::class => [
             PatientContactWindowUpdated::class,
         ],
-        'App\Events\CallIsReadyForAttestedProblemsAttachment' => [
-            'App\Listeners\AttachAttestedProblemsToCall',
+        CallIsReadyForAttestedProblemsAttachment::class => [
+            AttachAttestedProblemsToCall::class,
+        ],
+        DirectMailMessageReceived::class => [
+            UPG0506WorkflowListener::class,
+            NotifySlackChannel::class,
         ],
     ];
 
