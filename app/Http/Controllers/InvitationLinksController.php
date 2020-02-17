@@ -10,7 +10,6 @@ use App\Services\SurveyService;
 use App\Services\TwilioClientService;
 use App\Survey;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class InvitationLinksController extends Controller
@@ -84,21 +83,10 @@ class InvitationLinksController extends Controller
         ]);
     }
 
-
     public function enrollUser(Request $request, $userId)
     {
         try {
-            $user = User
-                ::with([
-                    'patientInfo',
-                    'surveyInstances' => function ($query) {
-                        $query->mostRecent();
-                    },
-                ])
-                ->where('id', '=', $userId)
-                ->firstOrFail();
-
-            $this->service->enrolUser($user);
+            $this->service->enrolUserId($userId);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
@@ -174,11 +162,11 @@ class InvitationLinksController extends Controller
             $providerFullName = optional($targetNotifiable->billingProviderUser())->getFullName();
         }
 
-        if (!$practiceName) {
+        if ( ! $practiceName) {
             $practiceName = "your physician's office";
         }
 
-        if (!$providerFullName) {
+        if ( ! $providerFullName) {
             $providerFullName = "provider";
         }
 
