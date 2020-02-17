@@ -11,7 +11,7 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UPG0506WorkflowListener implements ShouldQueue
+class UPG0506DirectMailListener implements ShouldQueue
 {
     use InteractsWithQueue;
     
@@ -37,14 +37,14 @@ class UPG0506WorkflowListener implements ShouldQueue
         if ($this->shouldBail($event->directMailMessage->from)) {
             return;
         }
-        
-        //@constantinos
-        if ($this->hasPdfAttachment($event->directMailMessage->id)) {
+    
+        if ($this->hasG0506Ccda($event->directMailMessage->id)) {
         
         }
-    
-        if ($this->hasCcdaAttachment($event->directMailMessage->id)) {
         
+        if ($this->hasG0506Pdf($event->directMailMessage->id)) {
+            //@constantinos
+            
         }
     }
     
@@ -53,20 +53,18 @@ class UPG0506WorkflowListener implements ShouldQueue
         return ! str_contains($sender, '@upg.ssdirect.aprima.com');
     }
     
-    private function hasPdfAttachment(int $dmId) :bool
+    private function hasG0506Pdf(int $dmId) :bool
     {
         return $this->mediaExists(DirectMailMessage::class, $dmId, Pdf::mediaCollectionNameFactory($dmId));
     }
     
-    private function hasCcdaAttachment(int $ccdaId)
+    private function hasG0506Ccda(int $ccdaId)
     {
         return $this->mediaExists(Ccda::class, $ccdaId, XML::mediaCollectionNameFactory());
     }
     
     private function mediaExists(string $modelType, int $modelId, string $collectionName)
     {
-        Media::whereModelType($modelType)->whereModelId($modelId)->whereCollectionName(
-            $collectionName
-        )->exists();
+        return Media::where('model_type', $modelType)->where('model_id', $modelId)->where('custom_properties->is_ccda', 'true')->where('custom_properties->is_upg0506', 'true')->exists();
     }
 }

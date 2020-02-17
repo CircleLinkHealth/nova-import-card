@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dff1f84c88b89957243adfca31109959",
+    "content-hash": "25142ec20493b639e5e210ac5dc50edd",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1170,11 +1170,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.1.6",
+            "version": "dev-CPM-1937-OCR",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "2d5b6d8e4a99b1c7a148d3bd73cc6767835a4ec4"
+                "reference": "5d627c5c49d1e0b6b8db38ee750e9701ce7a06b6"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1188,7 +1188,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-07T04:33:22+00:00"
+            "time": "2020-02-17T07:18:31+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -13907,6 +13907,7 @@
         "amnuts/opcache-gui": 20,
         "circlelinkhealth/cpm-migrations-module": 20,
         "circlelinkhealth/eligibility-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,

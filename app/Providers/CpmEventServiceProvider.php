@@ -21,11 +21,13 @@ use App\Listeners\LogSuccessfulLogin;
 use App\Listeners\LogSuccessfulLogout;
 use App\Listeners\PatientContactWindowUpdated;
 use App\Listeners\UpdateCarePlanStatus;
+use App\Listeners\UPG0506CcdaImporterListener;
 use App\Listeners\UserLoggedOut;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Listeners\NotifySlackChannel;
-use App\Listeners\UPG0506WorkflowListener;
+use App\Listeners\UPG0506DirectMailListener;
 use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
@@ -74,9 +76,12 @@ class CpmEventServiceProvider extends ServiceProvider
             AttachAttestedProblemsToCall::class,
         ],
         DirectMailMessageReceived::class => [
-            UPG0506WorkflowListener::class,
+            UPG0506DirectMailListener::class,
             NotifySlackChannel::class,
         ],
+        CcdaImported::class => [
+            UPG0506CcdaImporterListener::class
+        ]
     ];
 
     /**
