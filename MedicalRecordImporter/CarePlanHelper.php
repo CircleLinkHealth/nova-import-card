@@ -795,6 +795,7 @@ class CarePlanHelper
     
     private function createInstructionFromUPG0506($cpmProblem):CpmInstruction
     {
+        // get instructions from pdf and store it and return model
         //            return CpmInstruction::create([
 //                                                      'name' => 'Instruction text goes here',
 //                                                  ]);
