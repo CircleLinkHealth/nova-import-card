@@ -15,6 +15,11 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class XML extends BaseHandler
 {
+    public static function mediaCollectionNameFactory()
+    {
+        return Ccda::CCD_MEDIA_COLLECTION_NAME;
+    }
+    
     public function handle()
     {
         if (false === stripos($this->showRes->data, '<ClinicalDocument')) return;

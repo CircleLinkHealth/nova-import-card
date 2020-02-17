@@ -14,6 +14,13 @@ use Carbon\Carbon;
 
 class Pdf extends BaseHandler implements Mediable
 {
+    const MEDIA_COLLECTION_NAME_STUB = 'dm_:dm_id:_attachments_pdf';
+    
+    public static function mediaCollectionNameFactory(int $id)
+    {
+        return str_replace(':dm_id:', $id, self::MEDIA_COLLECTION_NAME_STUB);
+    }
+    
     public function handle()
     {
         $this->storeAsMedia();
@@ -21,7 +28,7 @@ class Pdf extends BaseHandler implements Mediable
     
     public function mediaCollectionName() : string
     {
-        return "dm_{$this->dm->id}_attachments_pdf";
+        return self::mediaCollectionNameFactory($this->dm->id);
     }
     
     public function filename() : string
