@@ -26,7 +26,8 @@
         <div class="report-data">
             Patient Name: <strong><span style="color: #50b2e2">{{$patient->display_name}}</span></strong> <br>
             Date of Birth (records): <strong>{{$patient->patientInfo->dob()}}</strong><br>
-            Age (self-reported): <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['age'])}}</strong> <br>
+            Age (self-reported): <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['age'])}}</strong>
+            <br>
             Address: <strong>{{$patient->address}}</strong> <br>
             City, State, Zip: <strong>{{$patient->city}}, {{$patient->state}}, {{$patient->zip}}</strong> <br>
             Provider: <strong>{{$patient->getBillingProviderName()}}</strong>
@@ -40,7 +41,8 @@
             Weight: <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['weight'])}} </strong><br>
             Height: <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['height']['feet'])}}
                 ' {{getStringValueFromAnswer($patientPppData->answers_for_eval['height']['inches'])}}" </strong><br>
-            Body Mass Index (BMI): <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['bmi'])}}</strong> <br>
+            Body Mass Index (BMI):
+            <strong>{{getStringValueFromAnswer($patientPppData->answers_for_eval['bmi'])}}</strong> <br>
             Blood Pressure:
             <strong>
                 {{getStringValueFromAnswer($patientPppData->answers_for_eval['blood_pressure']['first_metric'])}}
@@ -77,9 +79,12 @@
                         <td class="suggested-list-body">
                             <strong>{!!$recommendation[0]['body']!!}</strong>
                         </td>
-                        <td>{!!$recommendation[0]['time_frame']!!}</td>
-                        <td style="font-weight: 500">{!!$recommendation[0]['code']!!}</td>
-
+                        <td>
+                            {!!$recommendation[0]['time_frame']!!}
+                        </td>
+                        <td>
+                            <strong>{!!$recommendation[0]['code']!!}</strong>
+                        </td>
                     </tr>
                 @endforeach
             @endforeach

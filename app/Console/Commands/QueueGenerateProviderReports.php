@@ -27,7 +27,7 @@ class QueueGenerateProviderReports extends Command
      *
      * @var string
      */
-    protected $signature = 'reports:providerReport {patientIds : comma separated.} {year?} {--debug}';
+    protected $signature = 'generate:reports {patientIds : comma separated.} {year?} {--debug}';
 
     /**
      * The console command description.
