@@ -75,7 +75,6 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  */
 class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel implements ImportedMedicalRecordInterface
 {
-    use HasMediaTrait;
     use MedicalRecordIdAndTypeTrait;
     use SoftDeletes;
 
