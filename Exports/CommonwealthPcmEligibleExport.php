@@ -8,36 +8,14 @@
 
 namespace CircleLinkHealth\Eligibility\Exports;
 
-use App\Contracts\Reports\PracticeDataExport;
-use App\Exports\PracticeReports\PracticeReport;
+use App\Exports\PracticeReports\PracticeReportInterface;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use Illuminate\Database\Eloquent\Builder;
+use Maatwebsite\Excel\Concerns\WithCustomQuerySize;
 
-class CommonwealthPcmEligibleExport extends PracticeReport
+class CommonwealthPcmEligibleExport extends PracticeReportInterface
 {
-    const COMMONWEALTH_PAIN_PRACTICE_ID = 232;
-    
-    /**
-     * @param null $mediaCollectionName
-     *
-     * @return PracticeDataExport
-     */
-    public function createMedia($mediaCollectionName = null): PracticeDataExport
-    {
-        if ( ! $this->media) {
-            if ( ! $mediaCollectionName) {
-                $mediaCollectionName = "commonwealth_pain_pcm_eligible_patients";
-            }
-        
-            $this->store($this->filename(), 'media', null, 'private');
-        
-            $this->media = $this->practice->addMedia($this->fullPath())->toMediaCollection($mediaCollectionName);
-        }
-    
-        return $this;
-    }
-    
     /**
      * @return string
      */
@@ -106,8 +84,8 @@ class CommonwealthPcmEligibleExport extends PracticeReport
             'pcm_problem_code_type'   => optional($problems->first())->code_type,
             'pcm_problem_description' => optional($problems->first())->description,
             'eligibility_job_id'      => $eligibilityJob->id,
-            'cpm_patient_id'          => $eligibilityJob->targetPatient->user_id,
-            'athenahealth_id'         => $eligibilityJob->targetPatient->ehr_patient_id,
+            'cpm_patient_id'          => optional($eligibilityJob->targetPatient)->user_id,
+            'athenahealth_id'         => optional($eligibilityJob->targetPatient)->ehr_patient_id,
             'medical_record_type'     => $eligibilityJob->data['medical_record_type'] ?? '',
             'medical_record_id'       => $eligibilityJob->data['medical_record_id'] ?? '',
             'mrn'                     => $eligibilityJob->data['mrn_number'] ?? '',
@@ -147,8 +125,13 @@ class CommonwealthPcmEligibleExport extends PracticeReport
         )->whereHas(
             'batch',
             function ($q) {
-                $q->where('practice_id', self::COMMONWEALTH_PAIN_PRACTICE_ID);
+                $q->where('practice_id', $this->practice->id);
             }
         )->with('targetPatient');
+    }
+    
+    public function mediaCollectionName(): string
+    {
+        return 'pcm_eligible_patients_report_from_all_batches';
     }
 }
