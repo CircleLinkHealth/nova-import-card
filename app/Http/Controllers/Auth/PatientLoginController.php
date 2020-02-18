@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class PatientLoginController extends Controller
@@ -125,11 +126,14 @@ class PatientLoginController extends Controller
 
     protected function redirectTo()
     {
+        Log::debug('PatientLoginController->redirectTo');
+
         /** @var User $user */
         $user = auth()->user();
 
         $prevUrl = Session::previousUrl();
         if (empty($prevUrl) || ! $user->hasRole('participant')) {
+            Log::debug('PatientLoginController: no prevUrl or no participant. Going `home`');
             return route('home');
         }
 
@@ -137,12 +141,14 @@ class PatientLoginController extends Controller
         $name     = Survey::find($surveyId, ['name'])->name;
 
         if (Survey::HRA === $name) {
+            Log::debug('PatientLoginController: should redirect to HRA');
             $route = route('survey.hra',
                 [
                     'patientId' => $user->id,
                     'surveyId'  => $surveyId,
                 ]);
         } else {
+            Log::debug('PatientLoginController: should redirect to Vitals - Not Authorized');
             $route = route('survey.vitals.not.authorized',
                 [
                     'patientId' => $user->id,
