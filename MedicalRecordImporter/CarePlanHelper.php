@@ -16,7 +16,7 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\PatientData as NbiPatientData;
-use CircleLinkHealth\Eligibility\Events\PatientUserCreated;
+use App\Events\PatientUserCreated;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\BloodPressure;
@@ -793,7 +793,7 @@ class CarePlanHelper
         return optional($problemImport)->instruction();
     }
 
-    private function createInstructionFromUPG0506(ProblemImport $problemImport): CpmInstruction
+    private function createInstructionFromUPG0506(ProblemImport $problemImport): ?CpmInstruction
     {
         $pdfMedia = $this->mr->getUPG0506PdfCareplanMedia();
 
