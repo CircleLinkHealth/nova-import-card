@@ -133,7 +133,7 @@ class PatientLoginController extends Controller
 
         $prevUrl = Session::previousUrl();
         if (empty($prevUrl) || ! $user->hasRole('participant')) {
-            Log::debug('PatientLoginController: no prevUrl or no participant. Going `home`');
+            Log::debug("PatientLoginController: no prevUrl or no participant [$user->id]. Going `home`");
             return route('home');
         }
 
