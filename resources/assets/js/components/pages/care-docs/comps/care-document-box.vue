@@ -25,21 +25,21 @@
                 <p><span class="strong-custom">Send document via:</span></p>
             </div>
             <div class="col-md-12  panel-section" style="margin-top: 9px">
-                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc}"
+                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc, 'disabled': !doc}"
                         @click="openSendModal('direct')">
                     DIRECT
                 </button>
-                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc}"
+                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc, 'disabled': !doc}"
                         @click="openSendModal('fax')">
                     Fax
                 </button>
                 <button title="(Secure Link)" class="col-md-4 btn btn-method btn-width-60  btn-xs"
-                        v-bind:class="{'isDisabled': !doc}" @click="openSendModal('email')">
+                        v-bind:class="{'isDisabled': !doc, 'disabled': !doc}" @click="openSendModal('email')">
                     Email
                 </button>
             </div>
             <div class="col-md-12 panel-section" style="margin-top: 10px">
-                <a class="blue-link" v-bind:class="{'isDisabled': !doc}" :href="downloadApi()">Download</a>
+                <a class="blue-link" v-bind:class="{'isDisabled': !doc, 'disabled': !doc}" :href="downloadApi()">Download</a>
             </div>
         </div>
         <modal v-show="showSendModal" name="send-care-doc" class="modal-send-care-doc" :no-title="true"
@@ -258,13 +258,6 @@
         width: 65px;
         min-width: 65px !important;
         height: 30px;
-    }
-
-    .isDisabled {
-        color: grey !important;
-        cursor: not-allowed;
-        opacity: 0.5;
-        text-decoration: none;
     }
 
     .modal-send-care-doc .loader {
