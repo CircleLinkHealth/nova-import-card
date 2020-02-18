@@ -266,9 +266,14 @@ class VariablePayCalculator
             throw new \Exception("Could not find user with id $patientUserId");
         }
 
-        $practiceHasCcmPlus = $this->practiceHasCcmPlusCode($patient->primaryPractice);
         /** @var PatientMonthlySummary $patientSummary */
         $patientSummary = $patient->patientSummaryForMonth($this->startDate);
+        if (!$patientSummary) {
+            $month = $this->startDate->toDateString();
+            throw new \Exception("Could not find patient summary for user $patientUserId and month $month");
+        }
+
+        $practiceHasCcmPlus = $this->practiceHasCcmPlusCode($patient->primaryPractice);
         $totalCcm       = $patientSummary->ccm_time;
         $totalBhi       = $patientSummary->bhi_time;
         $ranges         = $this->separateTimeAccruedInRanges($patientCareRateLogs);
