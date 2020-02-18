@@ -48,11 +48,35 @@ trait ConsolidatesProblemInfo
                 $consolidatedProblem->cons_name = $problemLog->name;
             }
         }
+        
+        if (!$this->isSensible($consolidatedProblem->cons_name)) {
+            $consolidatedProblem->cons_name = null;
+        }
 
-        if (empty($consolidatedProblem->cons_name) && ! empty($problemLog->reference_title)) {
+        if (empty($consolidatedProblem->cons_name) && ! empty($problemLog->reference_title) && $this->isSensible($problemLog->reference_title)) {
             $consolidatedProblem->cons_name = $problemLog->reference_title;
         }
 
         return $consolidatedProblem;
+    }
+    
+    /**
+     * Determine whether the problem name is a valid one.
+     *
+     * @param $problemName
+     *
+     * @return bool
+     */
+    private function isSensible($problemName) :bool {
+        return !empty($problemName) && ! in_array(strtolower(trim($problemName)), $this->invalidNames());
+    }
+    
+    /**
+     * Invalid problem names. Use small caps only.
+     *
+     * @return array
+     */
+    private function invalidNames() {
+        return ['condition'];
     }
 }
