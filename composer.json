@@ -132,7 +132,7 @@
     "circlelinkhealth/eligibility-module": "dev-CPM-1937-OCR",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
-    "circlelinkhealth/nurseinvoices-module": "1.2.8",
+    "circlelinkhealth/nurseinvoices-module": "1.2.9",
     "circlelinkhealth/patientapi-module": "1.1",
     "circlelinkhealth/raygun-module": "0.8",
     "circlelinkhealth/revisionable-module": "1.4.1",
