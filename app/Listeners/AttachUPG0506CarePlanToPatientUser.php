@@ -43,7 +43,7 @@ class AttachUPG0506CarePlanToPatientUser
     {
         $user = $event->getUser();
 
-        $ccda = $user->ccdas()->hasUPG0506PdfCareplanMedia() - first();
+        $ccda = $user->ccdas()->hasUPG0506PdfCareplanMedia()->first();
 
         if ($ccda) {
             $pdfMedia = $ccda->getUPG0506PdfCareplanMedia();
