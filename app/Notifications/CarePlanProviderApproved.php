@@ -6,7 +6,6 @@
 
 namespace App\Notifications;
 
-use App\CarePlan;
 use App\Contracts\DirectMailableNotification;
 use App\Contracts\FaxableNotification;
 use App\Note;

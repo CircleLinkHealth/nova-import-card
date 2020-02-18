@@ -10,7 +10,6 @@ use App\Contracts\DirectMail;
 use CircleLinkHealth\Core\Exceptions\InvalidTypeException;
 use App\Contracts\DirectMailableNotification;
 use App\DirectMailMessage;
-use App\Exceptions\InvalidTypeException;
 use App\Services\PhiMail\SendResult;
 use App\ValueObjects\SimpleNotification;
 
