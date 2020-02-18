@@ -27,7 +27,7 @@
 
     export default {
         name: "questionTypeDate",
-        props: ['question', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
+        props: ['question', 'nonAwvPatients', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
         components: {
             mdbBtn,
             mdbIcon
@@ -46,11 +46,7 @@
                 return this.inputDate.length > 0 ? this.showNextButton = true : this.showNextButton = false;
             },
 
-            sex(){
-                const x =  new Date('12/12/1987').getDate();
-                console.log(x);
-                return x;
-            },
+
         },
 
         methods: {
@@ -58,6 +54,16 @@
             //     return this.question.conditions && this.question.conditions.is_auto_generated;
             // },
 
+            // dobPlaceHolder() {
+            //     if (this.nonAwvPatients.dob[0] !== ""
+            //         && this.nonAwvPatients.isSurveyOnlyRole
+            //         && this.question.identifier === "Q_DOB") {
+            //         this.inputNumbers = new Date(this.nonAwvPatients.dob[0]).toISOString().substr(0, 10);
+            //     }
+            //     else {
+            //         this.inputNumbers = 'lsdfhaj;';
+            //     }
+            // },
 
             handleAnswer() {
                 if (!this.hasAnyInput) {

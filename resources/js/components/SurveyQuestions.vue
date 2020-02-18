@@ -108,6 +108,7 @@
                         <div class="question-answer-type">
                             <question-type-text
                                 :question="question"
+                                :nonAwvPatients="nonAwvPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :on-done-func="postAnswerAndGoToNext"
@@ -173,6 +174,7 @@
 
                             <question-type-date
                                 :question="question"
+                                :nonAwvPatients="nonAwvPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :style-horizontal="false"
@@ -383,16 +385,25 @@
                 totalQuestions: 0,
                 totalQuestionWithSubQuestions: 0,
                 readOnlyMode: false,
+
+                //    RE-ENROLLMENT USERS DATA
+                nonAwvPatients:{
+                    dob: [],
+                    address: [],
+                    patientEmail: [],
+                    preferredContactNumber:[],
+                    isSurveyOnlyRole: false,
+                }
+                //
             }
         },
 
         computed: {
-
             isHra() {
                 return this.surveyName === 'hra';
             },
 
-            isEnrollees(){
+            isEnrollees() {
                 return this.surveyName === 'enrollees';
             },
 
@@ -1093,6 +1104,33 @@
             if (this.adminMode) {
                 this.stage = "survey";
                 this.readOnlyMode = true;
+            }
+
+            if (this.isEnrollees) {
+                axios.post('/get-enrollable-data', {
+                    user_id: this.userId,
+                    survey_instance_id: this.surveyInstanceId
+                })
+                    .then((response) => {
+                        const data = response.data.data;
+
+                        const dob = data.dob;
+                        const address = data.address;
+                        const patientEmail = data.patientEmail;
+                        const preferredContactNumber = data.preferredContactNumber;
+                        const isSurveyOnlyRole = data.isSurveyOnlyRole;
+
+                        this.nonAwvPatients.dob.push(dob);
+                        this.nonAwvPatients.address.push(address);
+                        this.nonAwvPatients.patientEmail.push(patientEmail);
+                        this.nonAwvPatients.preferredContactNumber.push(preferredContactNumber);
+                        this.nonAwvPatients.isSurveyOnlyRole = isSurveyOnlyRole;
+
+                    })
+                    .catch((error) => {
+                        console.log(error);
+
+                    });
             }
         },
 

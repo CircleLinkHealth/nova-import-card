@@ -1867,7 +1867,10 @@ class SurveySeeder extends Seeder
                 'sub_order' => 'b',
                 'question_group' => 'Please choose preferred days and time to contact:',
                 'question_body' => 'Choose preferred contact time:',
-                'question_type' => QuestionType::NUMBER,
+                'question_type' => QuestionType::TEXT,
+                'conditions' => [
+                    'required_regex' => 'time'
+                ],
                 'question_type_answers' => [
                     [
                         'options' => [

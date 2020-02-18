@@ -216,7 +216,15 @@ Route::group([
             'as'   => 'survey.enrollees.store.answer',
         ]);
 
+
+
     });
 });
 Route::post('twilio/sms/status', 'TwilioController@smsStatusCallback')
      ->name('twilio.sms.status');
+
+Route::post('get-enrollable-data', [
+    'uses' => 'SurveyController@getEnrollableQuestionsData',
+    'as'   => 'get.enrollable.data',
+]);
+
