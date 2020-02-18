@@ -10,6 +10,7 @@ use App\DirectMailMessage;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use App\Services\PhiMail\Incoming\Handlers\XML;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
@@ -74,14 +75,14 @@ class UPG0506Demo extends Command
     private function clearTestData()
     {
         $ccdas = Ccda::where('mrn', '334417')
-            ->where(function ($q) {
-                $q->where(function ($q) {
-                    $q->hasUPG0506PdfCareplanMedia();
-                })
-                    ->orWhere(function ($q) {
-                    $q->hasUPG0506Media();
-                });
-            })
+//            ->where(function ($q) {
+//                $q->where(function ($q) {
+//                    $q->hasUPG0506PdfCareplanMedia();
+//                })
+//                    ->orWhere(function ($q) {
+//                    $q->hasUPG0506Media();
+//                });
+//            })
             ->get();
 
         if ($ccdas->isEmpty()) {
@@ -95,7 +96,7 @@ class UPG0506Demo extends Command
                 $media->delete();
             });
 
-            $dm = $ccda->directMessage();
+            $dm = $ccda->directMessage()->first();
 
             if ($dm) {
                 $dm->media()
@@ -108,10 +109,24 @@ class UPG0506Demo extends Command
 
             $ccda->importedMedicalRecord()->forceDelete();
 
-            optional($ccda->getPatient())->forceDelete();
+            $patient = $ccda->getPatient();
+
+            if ($patient){
+                $patient->patientSummaries()->delete();
+                $patient->forceDelete();
+            }
 
             $ccda->forceDelete();
         }
+
+
+        User::whereFirstName('Barbara')
+            ->whereLastName('Zznigro')
+            ->get()
+            ->each(function (User $u){
+                $u->patientSummaries()->delete();
+                $u->forceDelete();
+            });
     }
 
     /**

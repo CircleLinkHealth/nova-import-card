@@ -1,15 +1,12 @@
 <?php
 
-namespace CircleLinkHealth\Eligibility\Events;
+namespace App\Events;
 
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
 class PatientUserCreated
 {
@@ -18,7 +15,7 @@ class PatientUserCreated
      * @var User
      */
     protected $user;
-    
+
     /**
      * Create a new event instance.
      *
@@ -39,7 +36,8 @@ class PatientUserCreated
         return new PrivateChannel('channel-name');
     }
 
-    public function getUser(){
+    public function getUser()
+    {
         return $this->user;
     }
 }
