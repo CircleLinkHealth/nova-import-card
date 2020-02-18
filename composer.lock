@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2b56d06e7e350fca4324b95d3a084eee",
+    "content-hash": "366bba32f99e8f3940ad013bdb7db4f9",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.15",
+            "version": "3.133.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "18289bf4a3fe68e9a0853f29d82b6cd4b1de2f9e"
+                "reference": "69836088f178890c16f47bc1c67ca36ebcad22f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/18289bf4a3fe68e9a0853f29d82b6cd4b1de2f9e",
-                "reference": "18289bf4a3fe68e9a0853f29d82b6cd4b1de2f9e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/69836088f178890c16f47bc1c67ca36ebcad22f8",
+                "reference": "69836088f178890c16f47bc1c67ca36ebcad22f8",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-02-14T19:09:24+00:00"
+            "time": "2020-02-17T19:13:12+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -884,11 +884,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.8.4",
+            "version": "v1.8.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "dd2881d17fe6227fe54be6da2ccab797d8107531"
+                "reference": "2c2249b41417211378577ed76955a68f1067edc8"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -921,7 +921,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-11T21:09:39+00:00"
+            "time": "2020-02-18T19:53:32+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -2104,6 +2104,56 @@
                 "parser"
             ],
             "time": "2019-12-30T22:54:17+00:00"
+        },
+        {
+            "name": "fico7489/laravel-pivot",
+            "version": "3.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fico7489/laravel-pivot.git",
+                "reference": "8c4aeef7ce5b0cd52b6f32b6c6f78da9d0c78ca4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fico7489/laravel-pivot/zipball/8c4aeef7ce5b0cd52b6f32b6c6f78da9d0c78ca4",
+                "reference": "8c4aeef7ce5b0cd52b6f32b6c6f78da9d0c78ca4",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": ">5.5.0  || 6.*"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": ">2.0",
+                "orchestra/testbench": ">3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Fico7489\\Laravel\\Pivot\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Filip Horvat",
+                    "email": "filip.horvat@am2studio.hr",
+                    "homepage": "http://am2studio.hr",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This package introduces new eloquent events for sync(), attach(), detach() or updateExistingPivot() methods on BelongsToMany relation.",
+            "homepage": "https://github.com/fico7489/laravel-pivot",
+            "keywords": [
+                "eloquent events",
+                "eloquent extra events",
+                "laravel BelongsToMany events",
+                "laravel pivot events",
+                "laravel sync events"
+            ],
+            "time": "2019-09-28T08:00:50+00:00"
         },
         {
             "name": "fideloper/proxy",
