@@ -26,6 +26,7 @@ use CircleLinkHealth\Core\Filters\Filterable;
 use CircleLinkHealth\Core\Traits\Notifiable;
 use CircleLinkHealth\Customer\AppConfig\PracticesRequiringSpecialBhiConsent;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
+use CircleLinkHealth\Customer\Tasks\ClearUserCache;
 use CircleLinkHealth\Customer\Traits\HasEmrDirectAddress;
 use CircleLinkHealth\Customer\Traits\MakesOrReceivesCalls;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
@@ -55,6 +56,7 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use DateTime;
+use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -390,6 +392,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     use Searchable;
     use SoftDeletes;
     use TimezoneTrait;
+    use PivotEventTrait;
 
     /**
      * Package Clockwork is hardcoded to look for $user->name. Adding this so that it will work.
@@ -751,6 +754,26 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 $user->careTeamMembers()->restore();
             }
         );
+    
+        static::pivotAttached(function ($user, $relationName, $pivotIds, $pivotIdsAttributes) {
+            if ('roles' === $relationName) {$user->clearRolesCache();}
+        });
+    
+        static::pivotDetached(function ($user, $relationName, $pivotIds) {
+            if ('roles' === $relationName) {$user->clearRolesCache();}
+        });
+        
+        static::pivotUpdated(function ($user, $relationName, $pivotIds, $pivotIdsAttributes) {
+            if ('roles' === $relationName) {$user->clearRolesCache();}
+        });
+    
+        static::updating(function ($model) {
+            //this is how we catch standard eloquent events
+        });
+    }
+    
+    public function clearRolesCache() {
+        ClearUserCache::roles($this);
     }
 
     public function cachedNotificationsList()
