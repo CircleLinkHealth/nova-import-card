@@ -19,7 +19,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use URL;
 
-abstract class PracticeReportInterface implements FromQuery, WithMapping, PracticeDataExportInterface, WithHeadings, ShouldQueue
+abstract class PracticeReportInterface implements FromQuery, WithMapping, PracticeDataExportInterface, WithHeadings, ShouldQueue, Mediable
 {
     use Exportable;
     /**
