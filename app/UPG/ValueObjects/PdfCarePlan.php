@@ -369,7 +369,7 @@ class PdfCarePlan
                     $instructions = collect($this->data['instructions'])->where('problem_name', $problemName)->first();
 
                     if (isset($instructions['value'])) {
-                        $instructionsString = collect($instructions['value'])->implode(' ');
+                        $instructionsString = collect($instructions['value'])->implode(PHP_EOL);
                     }
 
                     $problemsWithInstructions[] = [

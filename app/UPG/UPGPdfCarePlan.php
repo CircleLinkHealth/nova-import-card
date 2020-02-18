@@ -48,28 +48,36 @@ class UPGPdfCarePlan
                 'search'   => 'First Name:',
                 'key'      => 'first_name',
                 'callback' => function ($string) {
-                    $this->carePlan['first_name'] = ucwords(strtolower($string));
+                    if (! empty($string)){
+                        $this->carePlan['first_name'] = ucwords(strtolower($string));
+                    }
                 },
             ],
             [
                 'search'   => 'Last Name:',
                 'key'      => 'last_name',
                 'callback' => function ($string) {
-                    $this->carePlan['last_name'] = ucwords(strtolower($string));
+                    if (! empty($string)) {
+                        $this->carePlan['last_name'] = ucwords(strtolower($string));
+                    }
                 },
             ],
             [
                 'search'   => 'Visit Date:',
                 'key'      => 'visit_date',
                 'callback' => function ($string) {
-                    $this->carePlan['visit_date'] = Carbon::parse($string);
+                    if (! empty($string)) {
+                        $this->carePlan['visit_date'] = Carbon::parse($string);
+                    }
                 },
             ],
             [
                 'search'   => 'Medical Record #:',
                 'key'      => 'mrn',
                 'callback' => function ($string) {
-                    $this->carePlan['mrn'] = $string;
+                    if (! empty($string)) {
+                        $this->carePlan['mrn'] = $string;
+                    }
                 },
             ],
             [
@@ -80,14 +88,18 @@ class UPGPdfCarePlan
                 'search'   => 'Date of Birth:',
                 'key'      => 'dob',
                 'callback' => function ($string) {
-                    $this->carePlan['dob'] = Carbon::parse($string);
+                    if (! empty($string)) {
+                        $this->carePlan['dob'] = Carbon::parse($string);
+                    }
                 },
             ],
             [
                 'search' => 'Sex:',
                 'key'    => 'sex',
                 'callback' => function($string){
-                    $this->carePlan['sex'] = strtolower($string);
+                    if (! empty($string)) {
+                        $this->carePlan['sex'] = strtolower($string);
+                    }
                 }
             ],
             [
@@ -166,7 +178,7 @@ class UPGPdfCarePlan
 
     private function parseString()
     {
-        $this->array = collect(preg_split("/[\n]/", $this->string))->filter()->values()->all();
+        $this->array = collect(preg_split("/[\n]/", $this->string))->values()->all();
 
         while ($this->count < count($this->array)) {
 
@@ -180,17 +192,15 @@ class UPGPdfCarePlan
             //if the search term exists in the string remove it. If nothing is left after that, get next string
             if (str_contains($string, $search)) {
                 $string = trim(str_replace($search, ' ', $string));
-                if (empty($string)) {
-                    $this->count++;
-                    continue;
-                }
             }
 
             //perform callback if it exists in the section, else just store the string
             if (isset($checkpoint['callback']) && ! empty($checkpoint['callback'])) {
                 $checkpoint['callback']($string);
             } else {
-                $this->carePlan[$checkpoint['key']][] = $string;
+                if (! empty($string)){
+                    $this->carePlan[$checkpoint['key']][] = $string;
+                }
             }
 
             //check next string, to see if we have reached the next checkpoint
