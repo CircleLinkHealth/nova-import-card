@@ -155,9 +155,8 @@ class PatientLoginController extends Controller
                 ]);
         }
 
-        //fixme: don't know why I had to do this
-        //without it, it would redirect to home page '/'
-        Session::put('url.intended', $route);
+        //make sure url.intended is not set
+        Session::pull('url.intended');
 
         return $route;
     }
