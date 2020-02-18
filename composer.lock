@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "bc66e39a353f4389364efe850f6d5c5f",
+    "content-hash": "2b56d06e7e350fca4324b95d3a084eee",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1027,11 +1027,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.2.8",
+            "version": "v1.2.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "50186960a383f431cb514635e57735f79811dec6"
+                "reference": "aac32f5a7b63a207fbe4bba21c4cf8f71a7ccede"
             },
             "type": "laravel-module",
             "extra": {
@@ -1054,7 +1054,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-12T09:01:36+00:00"
+            "time": "2020-02-18T13:32:40+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
