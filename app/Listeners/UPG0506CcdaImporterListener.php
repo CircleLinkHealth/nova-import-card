@@ -33,18 +33,10 @@ class UPG0506CcdaImporterListener
      */
     public function handle(CcdaImported $event)
     {
-        AppConfig::create([
-            'config_key' => 'debug',
-            'config_value' => 'UPG0506CcdaImporterListener entered'
-        ]);
         if ($this->shouldBail($event->ccda)) {
             return;
         }
-        AppConfig::create([
-            'config_key' => 'debug',
-            'config_value' => 'UPG0506CcdaImporterListener not bailed'
-        ]);
-        
+
         Media::where('model_type', Ccda::class)->where('model_id', $event->ccda->id)->chunkById(
             10,
             function ($medias) {
