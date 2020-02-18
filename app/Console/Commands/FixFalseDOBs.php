@@ -54,7 +54,7 @@ class FixFalseDOBs extends Command
             function ($tmr) {
                 $tmr->each(
                     function (Patient $patient) {
-                        $e = Enrollee::whereMrn($patient->mrn_number)->with('eligibilityJob')->first();
+                        $e = Enrollee::whereMrn($patient->mrn_number)->whereHas('eligibilityJob')->with('eligibilityJob')->first();
     
                         $dob = Carbon::parse($e->eligibilityJob->data['dob']);
     
