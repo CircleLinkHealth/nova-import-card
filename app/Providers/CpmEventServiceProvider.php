@@ -28,7 +28,7 @@ use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Listeners\NotifySlackChannel;
 use App\Listeners\UPG0506DirectMailListener;
 use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
-use CircleLinkHealth\Eligibility\Events\PatientUserCreated;
+use App\Events\PatientUserCreated;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;
