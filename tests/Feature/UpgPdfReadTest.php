@@ -38,7 +38,6 @@ class UpgPdfReadTest extends TestCase
         $this->assertEquals('8012 BROOKLYN, NY 11209', $carePlan['demographics']['address']['street'][0]);
 
         $this->assertCount(4, $carePlan['problems']);
-
         $this->assertEquals($carePlan['is_g0506'], 'true');
     }
 }
