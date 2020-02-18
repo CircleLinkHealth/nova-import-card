@@ -18,6 +18,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
+use CircleLinkHealth\Customer\Tasks\ClearUserCache;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Config;
@@ -597,36 +598,15 @@ class UserRepository
         }
         $user->save();
     }
-
+    
     /**
      * Clear Cerberus roles cache for User.
+     *
+     * @param User $user
      */
     private function clearRolesCache(User $user)
     {
-        $keys = [
-            'cerberus_roles_for_user_'.$user->id,
-            'cerberus_permissions_for_user_'.$user->id,
-            $user->getCpmRolesCacheKey(),
-        ];
-        if (\Cache::getStore() instanceof TaggableStore) {
-            $store = \Cache::tags(Config::get('cerberus.role_user_site_table'));
-        } else {
-            $store = \Cache::getStore();
-        }
-
-        foreach ($keys as $key) {
-            $store->forget($key);
-            Cache::forget($key);
-        }
-
-        $cacheDriver = config('cache.default');
-
-        if ('redis' === $cacheDriver) {
-            \RedisManager::del($user->getCpmRolesCacheKey());
-        }
-
-        $user->clearObjectCache();
-        $user->unsetRelation('roles');
+        ClearUserCache::roles($user);
     }
 
     private function forceEnable2fa(AuthyUser $authyUser)
