@@ -65,7 +65,7 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
         $ccdMedia->custom_properties = $ccdData;
         $ccdMedia->save();
 
-        $pdfMedia->custom_properties = $ccdData;
+        $pdfMedia->custom_properties = $pdfData;
         $pdfMedia->save();
     }
 }
