@@ -56,11 +56,7 @@ class DeleteScheduledCallsForWithdrawnPatients extends CustomerTestCase
             'calls',
             [
                 'inbound_cpm_id' => $patient->id,
-                'scheduler'      => $this->careCoach()->id,
                 'status'         => 'scheduled',
-                'scheduled_date' => $date,
-                'window_start'   => $windowStart,
-                'window_end'     => $windowEnd,
             ]
         );
     }

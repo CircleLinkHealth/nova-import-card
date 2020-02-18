@@ -3,14 +3,16 @@
         <div class="col-md-12" style="margin-top: 15px">
             <div class="col-md-8 text-left" style="height: 30px; padding-top: 5px;">
                 <div class="col-md-3 btn-group btn-group-toggle" data-toggle="buttons">
-                    <button class="col-md-4 btn btn-secondary btn-s pointer btn-switch"
-                            v-bind:class="{'btn-info': !this.showPast}"
-                            @click="showCurrentDocuments()">Current
-                    </button>
-                    <button class="col-md-4 btn btn-secondary btn-s pointer btn-switch"
-                            v-bind:class="{'btn-info': this.showPast}"
-                            @click="showPastDocuments()">Past
-                    </button>
+                    <label class="col-md-4 btn btn-secondary btn-s pointer btn-switch active"
+                           v-bind:class="{'btn-info': !this.showPast}"
+                           @click="showCurrentDocuments()">
+                        <input type="radio" name="documents" id="current" autocomplete="off" checked> Current
+                    </label>
+                    <label class="col-md-4 btn btn-secondary btn-s pointer btn-switch"
+                           v-bind:class="{'btn-info': this.showPast}"
+                           @click="showPastDocuments()">
+                        <input type="radio" name="documents" id="past" autocomplete="off"> Past
+                    </label>
                 </div>
                 <button class="col-md-3 btn btn-info btn-s pointer btn-upload-documents"
                         @click="uploadCareDocument()">Upload Documents
@@ -56,31 +58,32 @@
                                     </button>
                                 </div>
                                 <div class="col-md-6">
-                                    <a class="blue-link" style="float: right; padding-top: 7px"
+                                    <a v-if="userEnrolledIntoAwv" class="blue-link"
+                                       style="float: right; padding-top: 7px"
                                        :href="getViewHraSurveyUrl()" target="_blank">View</a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
                                 <div>
-                                    {{status.hra_display_date}}
+                                    {{userEnrolledIntoAwv ? status.hra_display_date : '&nbsp'}}
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
                                 <p><span class="strong-custom">Send assessment link to patient via:</span></p>
                             </div>
                             <div class="col-md-12  panel-section">
-                                <a
+                                <button
                                         class="col-md-6 btn btn-method btn-width-100 btn-s"
-                                        target="_blank"
-                                        :href="getAwvSendSmsForm('hra')">
+                                        :class="{'isDisabled': !userEnrolledIntoAwv, 'disabled': !userEnrolledIntoAwv}"
+                                        @click="openInNewTab(getAwvSendSmsForm('hra'))">
                                     SMS
-                                </a>
-                                <a
+                                </button>
+                                <button
                                         class="col-md-6 btn btn-method btn-width-100 btn-s"
-                                        target="_blank"
-                                        :href="getAwvSendEmailForm('hra')">
+                                        :class="{'isDisabled': !userEnrolledIntoAwv, 'disabled': !userEnrolledIntoAwv}"
+                                        @click="openInNewTab(getAwvSendEmailForm('hra'))">
                                     Email
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -99,31 +102,32 @@
                                     </button>
                                 </div>
                                 <div class="col-md-6">
-                                    <a class="blue-link" style="float: right; padding-top: 7px"
+                                    <a v-if="userEnrolledIntoAwv" class="blue-link"
+                                       style="float: right; padding-top: 7px"
                                        :href="getViewVitalsSurveyUrl()" target="_blank">View</a>
                                 </div>
                             </div>
                             <div class="col-md-12  panel-section" style="margin-top: 5px">
                                 <div>
-                                    {{status.v_display_date}}
+                                    {{userEnrolledIntoAwv ? status.v_display_date : '&nbsp'}}
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-top: 6px">
                                 <p><span class="strong-custom">Send assessment link to provider via:</span></p>
                             </div>
                             <div class="col-md-12  panel-section">
-                                <a
+                                <button
                                         class="col-md-6 btn btn-method btn-width-100 btn-s"
-                                        target="_blank"
-                                        :href="getAwvSendSmsForm('vitals')">
+                                        :class="{'isDisabled': !userEnrolledIntoAwv, 'disabled': !userEnrolledIntoAwv}"
+                                        @click="openInNewTab(getAwvSendSmsForm('vitals'))">
                                     SMS
-                                </a>
-                                <a
+                                </button>
+                                <button
                                         class="col-md-6 btn btn-width-100 btn-method btn-s"
-                                        target="_blank"
-                                        :href="getAwvSendEmailForm('vitals')">
+                                        :class="{'isDisabled': !userEnrolledIntoAwv, 'disabled': !userEnrolledIntoAwv}"
+                                        @click="openInNewTab(getAwvSendEmailForm('vitals'))">
                                     Email
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -336,6 +340,13 @@
                 return this.getAwvUrl(`manage-patients/${this.patientId}/` + survey + `/email/send-assessment-link`);
             },
 
+            openInNewTab(url) {
+                if (!this.userEnrolledIntoAwv) {
+                    return;
+                }
+                window.open(url, "_blank");
+            },
+
             getButtonTextFromStatus(status) {
                 switch (status) {
                     case "pending":
@@ -346,9 +357,10 @@
 
                     case "completed":
                         return "Completed";
-                }
 
-                return status;
+                    default:
+                        return 'Not Enrolled';
+                }
             },
 
             getButtonColorFromStatus(status) {
@@ -361,9 +373,10 @@
 
                     case "completed":
                         return "btn-success";
-                }
 
-                return status;
+                    default:
+                        return "btn-default";
+                }
             },
 
             uploadCareDocument() {
@@ -533,10 +546,17 @@
 
     .btn-switch {
         max-width: 100px;
+        background-color: #ffffff;
+        border: solid 1px #f2f2f2;
     }
 
     .btn-upload-documents {
         max-width: 150px;
+    }
+
+    .isDisabled {
+        color: grey !important;
+        opacity: 0.5;
     }
 
 </style>
