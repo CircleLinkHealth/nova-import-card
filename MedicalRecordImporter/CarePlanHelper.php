@@ -801,11 +801,13 @@ class CarePlanHelper
             return null;
         }
 
-        if (! isset($pdfMedia->custom_properties['care_plan'])){
+        $customProperties = json_decode($pdfMedia->custom_properties);
+
+        if (! isset($customProperties->care_plan)){
             return null;
         }
 
-        $matchingProblem = collect($pdfMedia->custom_properties['care_plan']['instructions'])
+        $matchingProblem = collect($pdfMedia->custom_properties->care_plan->instructions)
             ->where('name', $problemImport->name)
             ->first();
 
@@ -815,7 +817,7 @@ class CarePlanHelper
         }
 
         return CpmInstruction::create([
-            'name' => $matchingProblem['instructions'],
+            'name' => $matchingProblem->instructions,
         ]);
     }
 }
