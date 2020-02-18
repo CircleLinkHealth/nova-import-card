@@ -4,10 +4,6 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-//use App\Notifications\TestEmail;
-
-use App\Notifications\TestEmail;
-
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
     'as'   => 'webhook.on-fax-sent',
@@ -118,6 +114,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download.google.csv',
     ])->middleware('doNotCacheResponse');
 
+    Route::get('download-zipped-media/{user_id}/{media_ids}', [
+        'uses' => 'DownloadController@downloadZippedMedia',
+        'as'   => 'download.zipped.media',
+    ])->middleware('doNotCacheResponse')->middleware('signed');
+
     Route::group([
         'prefix'     => 'ehr-report-writer',
         'middleware' => ['permission:ehr-report-writer-access'],
@@ -166,6 +167,10 @@ Route::group(['middleware' => 'auth'], function () {
     // API
     Route::group(['prefix' => 'api', 'middleware' => ['cacheResponse']], function () {
         Route::group(['prefix' => 'admin'], function () {
+            Route::get('clear-cache/{key}', [
+                'uses' => 'Admin\DashboardController@clearCache',
+                'as'   => 'clear.cache.key',
+            ])->middleware('permission:call.read');
             //the new calls route that uses calls-view table
             Route::get('calls-v2', [
                 'uses' => 'API\Admin\CallsViewController@index',
@@ -399,7 +404,7 @@ Route::group(['middleware' => 'auth'], function () {
             'middleware' => [
                 'permission:ccd-import',
             ],
-            'prefix'     => 'ccd-importer',
+            'prefix' => 'ccd-importer',
         ], function () {
             Route::get('imported-medical-records', [
                 'uses' => 'ImporterController@records',
@@ -1760,6 +1765,10 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'OpsDashboardController@index',
             'as'   => 'OpsDashboard.index',
         ])->middleware('permission:opsReport.read');
+        Route::get('/chart', [
+            'uses' => 'OpsDashboardController@opsGraph',
+            'as'   => 'OpsDashboard.index.chart',
+        ])->middleware('permission:opsReport.read');
         Route::get('/index/csv', [
             'uses' => 'OpsDashboardController@dailyCsv',
             'as'   => 'OpsDashboard.dailyCsv',
@@ -1934,11 +1943,10 @@ Route::group([
     ]);
 
     Route::group([
-        'middleware' =>
-            [
-                'auth',
-                'enrollmentCenter',
-            ],
+        'middleware' => [
+            'auth',
+            'enrollmentCenter',
+        ],
     ], function () {
         Route::get('/', [
             'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
@@ -2290,4 +2298,3 @@ Route::post('nurses/nurse-calendar-data', [
     'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
-

@@ -5,6 +5,7 @@
  */
 
 use App\Call;
+use App\Models\CCD\CcdVendor;
 use App\Services\PdfReports\Handlers\AthenaApiPdfHandler;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Ehr;

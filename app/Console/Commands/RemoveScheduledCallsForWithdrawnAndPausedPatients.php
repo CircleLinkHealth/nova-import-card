@@ -22,7 +22,7 @@ class RemoveScheduledCallsForWithdrawnAndPausedPatients extends Command
      *
      * @var string
      */
-    protected $signature = 'calls:removeWithdrawnAndPaused';
+    protected $signature = 'calls:removeWithdrawnAndPaused {patientUserIds?}';
     private $schedulerService;
 
     /**
@@ -44,7 +44,9 @@ class RemoveScheduledCallsForWithdrawnAndPausedPatients extends Command
      */
     public function handle()
     {
-        $result = $this->schedulerService->removeScheduledCallsForWithdrawnAndPausedPatients();
+        $userIds = $this->argument('patientUserIds') ?? [];
+        
+        $result = $this->schedulerService->removeScheduledCallsForWithdrawnAndPausedPatients($userIds);
 
         $this->comment("${result} calls deleted.");
     }

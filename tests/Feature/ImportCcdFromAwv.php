@@ -40,7 +40,7 @@ class ImportCcdFromAwv extends TestCase
             'file' => [new UploadedFile($ccdaPath, 'demo.xml', 'text/xml', null, true)],
         ]);
 
-        self::assertTrue(200 === $uploadCcdResponse->status());
+        self::assertEquals(200, $uploadCcdResponse->status());
         self::assertNotEmpty($uploadCcdResponse->json());
         self::assertArrayHasKey('medical_record_id', $uploadCcdResponse->json()[0]);
 

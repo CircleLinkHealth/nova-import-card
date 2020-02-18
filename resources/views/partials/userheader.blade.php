@@ -47,11 +47,25 @@
                 <span style="font-size: 30px;">
                     <a href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
                     {{$patient->getFullName()}}
-                    </a> </span>
+                    </a>
+                </span>
 
                 <a href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}"
-                   style="padding-right: 2%;"><span
-                            class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a>
+                   style="padding-right: 5px; vertical-align: top">
+                    <span class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span>
+                </a>
+
+                @if ($patient->shouldShowCcmPlusBadge())
+                    <h4 style="display: inline">
+                        <span class="label label-success with-tooltip"
+                              data-placement="top"
+                              title="This patient is eligible for additional CCM reimbursements if CCM time is over 40 and/or 60 minutes"
+                              style="vertical-align: top; margin-right: 3px">
+                            CCM+
+                        </span>
+                    </h4>
+                @endif
+
                 {{-- red flag.indication patient is BHI eligible--}}
                 @if(isset($patient) && auth()->check()
                 && !isset($isPdf)
@@ -125,7 +139,8 @@
                         style="margin-top: -8px; margin-bottom: 20px !important; margin-left: -20px !important;">
                         @foreach($ccdMonitoredProblems as $problem)
                             @if($problem['name'] != 'Diabetes')
-                                <li class="inline-block"><input type="checkbox" id="item-{{$problem['id']}}" name="item-{{$problem['id']}}"
+                                <li class="inline-block"><input type="checkbox" id="item-{{$problem['id']}}"
+                                                                name="item-{{$problem['id']}}"
                                                                 value="Active"
                                                                 checked="checked" disabled="disabled">
                                     <label for="item-{{$problem['id']}}"><span> </span>{{$problem['name']}}</label>
@@ -228,11 +243,11 @@
                                         Wthdrn 1st Call
                                     </option>
                                 @else
-                                <option
-                                        class="withdrawn"
-                                        value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN ? 'selected' : ''}}>
-                                    Withdrawn
-                                </option>
+                                    <option
+                                            class="withdrawn"
+                                            value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN ? 'selected' : ''}}>
+                                        Withdrawn
+                                    </option>
                                 @endif
                                 <option class="paused"
                                         value="{{CircleLinkHealth\Customer\Entities\Patient::PAUSED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::PAUSED ? 'selected' : ''}}>
@@ -330,6 +345,18 @@
             -webkit-animation: bounce 0.65s 4;
         }
 
+        .custom-tooltip {
+            display: none;
+            z-index: 9999999;
+            position: absolute;
+            border: 1px solid #333;
+            background-color: #161616;
+            border-radius: 5px;
+            padding: 10px;
+            color: #fff;
+            font-size: 12px;
+        }
+
     </style>
 
 @endpush
@@ -340,6 +367,31 @@
             $('.glyphicon-flag').click(function (e) {
                 $(".load-hidden-bhi, .modal-mask").show();
             });
+
+            $('.with-tooltip')
+                .hover(function () {
+                    // Hover over code
+                    var title = $(this).attr('title');
+
+                    $(this)
+                        .data('tipText', title)
+                        .removeAttr('title');
+
+                    $('<p class="custom-tooltip"></p>')
+                        .text(title)
+                        .appendTo('body')
+                        .fadeIn('slow');
+
+                }, function () {
+                    // Hover out code
+                    $(this).attr('title', $(this).data('tipText'));
+                    $('.custom-tooltip').remove();
+                })
+                .mousemove(function (e) {
+                    var mousex = e.pageX + 20; //Get X coordinates
+                    var mousey = e.pageY + 10; //Get Y coordinates
+                    $('.custom-tooltip').css({top: mousey, left: mousex})
+                });
 
         })(jQuery);
     </script>
