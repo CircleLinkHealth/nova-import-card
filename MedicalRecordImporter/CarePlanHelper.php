@@ -807,7 +807,7 @@ class CarePlanHelper
             return null;
         }
 
-        $matchingProblem = collect($pdfMedia->custom_properties->care_plan->instructions)
+        $matchingProblem = collect($customProperties->care_plan->instructions)
             ->where('name', $problemImport->name)
             ->first();
 
