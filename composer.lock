@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "44bfce125b73dafe603961aee8b36c20",
+    "content-hash": "1c1e912df0db9f0e88b12f8438891723",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.16",
+            "version": "3.133.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "69836088f178890c16f47bc1c67ca36ebcad22f8"
+                "reference": "6d0036fe1be474d2849dc990daaaa76215846966"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/69836088f178890c16f47bc1c67ca36ebcad22f8",
-                "reference": "69836088f178890c16f47bc1c67ca36ebcad22f8",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6d0036fe1be474d2849dc990daaaa76215846966",
+                "reference": "6d0036fe1be474d2849dc990daaaa76215846966",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-02-17T19:13:12+00:00"
+            "time": "2020-02-18T19:11:24+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -884,15 +884,16 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.8.4",
+            "version": "v1.8.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "dd2881d17fe6227fe54be6da2ccab797d8107531"
+                "reference": "c273c33b4f323a5687de3f2e11b493bc7d643a2d"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
                 "circlelinkhealth/core-module": "*",
+                "fico7489/laravel-pivot": "^3.0",
                 "laravel/passport": "^7.0",
                 "laravel/scout": "^7.1",
                 "spatie/laravel-medialibrary": "^7.0.0"
@@ -921,7 +922,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-11T21:09:39+00:00"
+            "time": "2020-02-18T20:19:04+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -929,7 +930,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "fef37baaee3846c190a2542166cb1eaf3f4ee25a"
+                "reference": "78c38a2625fe1f2d9c3a9864045d24b612a0959f"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -954,7 +955,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-18T12:35:29+00:00"
+            "time": "2020-02-18T17:49:27+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -2104,6 +2105,56 @@
                 "parser"
             ],
             "time": "2019-12-30T22:54:17+00:00"
+        },
+        {
+            "name": "fico7489/laravel-pivot",
+            "version": "3.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fico7489/laravel-pivot.git",
+                "reference": "8c4aeef7ce5b0cd52b6f32b6c6f78da9d0c78ca4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fico7489/laravel-pivot/zipball/8c4aeef7ce5b0cd52b6f32b6c6f78da9d0c78ca4",
+                "reference": "8c4aeef7ce5b0cd52b6f32b6c6f78da9d0c78ca4",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": ">5.5.0  || 6.*"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": ">2.0",
+                "orchestra/testbench": ">3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Fico7489\\Laravel\\Pivot\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Filip Horvat",
+                    "email": "filip.horvat@am2studio.hr",
+                    "homepage": "http://am2studio.hr",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This package introduces new eloquent events for sync(), attach(), detach() or updateExistingPivot() methods on BelongsToMany relation.",
+            "homepage": "https://github.com/fico7489/laravel-pivot",
+            "keywords": [
+                "eloquent events",
+                "eloquent extra events",
+                "laravel BelongsToMany events",
+                "laravel pivot events",
+                "laravel sync events"
+            ],
+            "time": "2019-09-28T08:00:50+00:00"
         },
         {
             "name": "fideloper/proxy",
@@ -3827,16 +3878,16 @@
         },
         {
             "name": "laravel/horizon",
-            "version": "v3.7.0",
+            "version": "v3.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/horizon.git",
-                "reference": "f0295eec1fb96d0adace50aac01c3984877c034c"
+                "reference": "42f565649fa778a9a2b1c995df932871f89afa35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/horizon/zipball/f0295eec1fb96d0adace50aac01c3984877c034c",
-                "reference": "f0295eec1fb96d0adace50aac01c3984877c034c",
+                "url": "https://api.github.com/repos/laravel/horizon/zipball/42f565649fa778a9a2b1c995df932871f89afa35",
+                "reference": "42f565649fa778a9a2b1c995df932871f89afa35",
                 "shasum": ""
             },
             "require": {
@@ -3892,7 +3943,7 @@
                 "laravel",
                 "queue"
             ],
-            "time": "2020-02-14T15:17:05+00:00"
+            "time": "2020-02-18T19:28:58+00:00"
         },
         {
             "name": "laravel/nexmo-notification-channel",
@@ -7890,24 +7941,24 @@
         },
         {
             "name": "spatie/pdf-to-image",
-            "version": "1.2.2",
+            "version": "1.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/pdf-to-image.git",
-                "reference": "9a5cb264a99e87e010c65d4ece03b51f821d55bd"
+                "reference": "22a580e03550c95ce810ad430e3c44d2f7a1c75a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/pdf-to-image/zipball/9a5cb264a99e87e010c65d4ece03b51f821d55bd",
-                "reference": "9a5cb264a99e87e010c65d4ece03b51f821d55bd",
+                "url": "https://api.github.com/repos/spatie/pdf-to-image/zipball/22a580e03550c95ce810ad430e3c44d2f7a1c75a",
+                "reference": "22a580e03550c95ce810ad430e3c44d2f7a1c75a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.0"
+                "ext-imagick": "*",
+                "php": "^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.*",
-                "scrutinizer/ocular": "~1.1"
+                "phpunit/phpunit": "^6.2"
             },
             "type": "library",
             "autoload": {
@@ -7936,7 +7987,7 @@
                 "pdf-to-image",
                 "spatie"
             ],
-            "time": "2016-12-14T15:37:00+00:00"
+            "time": "2019-07-31T06:46:19+00:00"
         },
         {
             "name": "spatie/pdf-to-text",
