@@ -23,28 +23,22 @@ class UpgPdfReadTest extends TestCase
 
         $this->assertTrue(is_a($carePlan, PdfCarePlan::class));
 
-        $this->assertTrue(is_json($carePlan->toJson()));
 
         $carePlan = $carePlan->toArray();
 
         $this->assertNotEmpty($carePlan);
 
-        $this->assertEquals('Barbara', $carePlan['first_name']);
-        $this->assertEquals('Zznigro', $carePlan['last_name']);
-        $this->assertEquals('334417', $carePlan['mrn']);
-        $this->assertEquals('female', $carePlan['sex']);
-        $this->assertTrue(Carbon::parse('01/29/2020')->eq($carePlan['visit_date']));
-        $this->assertTrue(Carbon::parse('05/25/1945')->eq($carePlan['dob']));
+        $this->assertEquals('Barbara', $carePlan['demographics']['name']['given'][0]);
+        $this->assertEquals('Zznigro', $carePlan['demographics']['name']['family']);
+        $this->assertEquals('334417', $carePlan['demographics']['mrn_number']);
+        $this->assertEquals('female', $carePlan['demographics']['gender']);
+        $this->assertTrue(Carbon::parse('05/25/1945')->eq($carePlan['demographics']['dob']));
 
-
-        $this->assertEquals('(718)274-5745', collect($carePlan['phones'])->where('type', 'home_phone')->first()['value']);
-        $this->assertEquals('8012 BROOKLYN, NY 11209', $carePlan['address']);
+        $this->assertEquals('(718)274-5745', collect($carePlan['demographics']['phones'])->where('type', 'home')->first()['number']);
+        $this->assertEquals('8012 BROOKLYN, NY 11209', $carePlan['demographics']['address']['street'][0]);
 
         $this->assertCount(4, $carePlan['problems']);
 
-        $this->assertEquals('Jeffrey', $carePlan['provider']['first_name']);
-        $this->assertEquals('Hyman', $carePlan['provider']['last_name']);
-
-        $this->assertTrue($carePlan['chargeable_services'][0]['is_g0506']);
+        $this->assertEquals($carePlan['is_g0506'], 'true');
     }
 }
