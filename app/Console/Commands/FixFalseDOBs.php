@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
 use Illuminate\Console\Command;
 
 class FixFalseDOBs extends Command
@@ -59,8 +61,15 @@ class FixFalseDOBs extends Command
                         $mr = optional($patient->importedMedicalRecord)->medicalRecord();
                         if ($mr) {
                             if ($dob->gte(Carbon::createFromDate(2000, 1, 1))) {
-                                $mr->dob = $dob->subYears(100)->toDateTimeString();
-                                $mr->save();
+                                if($mr instanceof TabularMedicalRecord) {
+                                    $mr->dob = $dob->subYears(100)->toDateString();
+                                    $mr->save();
+                                } elseif ($mr instanceof Ccda) {
+                                    $data = json_decode($mr->json);
+                                    $data->demographics->dob = $dob->subYears(100)->toDateString();
+                                    $mr->json = json_encode($data);
+                                    $mr->save();
+                                }
                             }
                         }
                         
