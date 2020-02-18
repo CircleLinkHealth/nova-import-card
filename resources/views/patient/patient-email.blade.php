@@ -60,8 +60,7 @@ $style = [
                 <!-- Logo -->
                 <tr>
                     <td style="{{ $style['email-masthead'] }}">
-                        <a style="{{ $fontFamily }} {{ $style['email-masthead_name'] }}" href="{{ url('/') }}"
-                           target="_blank">
+                        <a style="{{ $fontFamily }} {{ $style['email-masthead_name'] }}">
                             {{$practiceName}}
                         </a>
                     </td>
