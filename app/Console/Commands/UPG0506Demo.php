@@ -85,11 +85,11 @@ class UPG0506Demo extends Command
                 $media->delete();
             });
 
-            $pdf = $ccda->getUPG0506PdfCareplanMedia();
-
-            if ($pdf){
-                $pdf->delete();
-            }
+            \DB::table('media')
+                      ->where('custom_properties->is_pdf', 'true')
+                      ->where('custom_properties->is_upg0506', 'true')
+                      ->where('custom_properties->care_plan->demographics->mrn_number', '334417')
+                      ->delete();
 
             $dm = $ccda->directMessage()->first();
 
@@ -114,9 +114,13 @@ class UPG0506Demo extends Command
             $ccda->forceDelete();
         }
 
-        Media::where('custom_properties->is_upg0506', 'true')
+        $pdf = Media::where('custom_properties->is_upg0506', 'true')
              ->where('custom_properties->care_plan->demographics->mrn_number', '334417')
-             ->delete();
+            ->first();
+
+        if ($pdf){
+            $pdf->delete();
+        }
 
         User::whereFirstName('Barbara')
             ->whereLastName('Zznigro')
