@@ -8,12 +8,14 @@ namespace App\Providers;
 
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Events\CarePlanWasApproved;
+use App\Events\CarePlanWasQAApproved;
 use App\Events\NoteFinalSaved;
 use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
 use App\Listeners\AttachAttestedProblemsToCall;
 use App\Listeners\AttachUPG0506CarePlanToPatientUser;
+use App\Listeners\AutoApproveCarePlan;
 use App\Listeners\CheckBeforeSendMessageListener;
 use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\ForwardNote;
@@ -86,6 +88,9 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         PatientUserCreated::class => [
             AttachUPG0506CarePlanToPatientUser::class
+        ],
+        CarePlanWasQAApproved::class => [
+            AutoApproveCarePlan::class,
         ]
     ];
 
