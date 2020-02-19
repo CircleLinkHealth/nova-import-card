@@ -152,7 +152,7 @@ return [
                 'queue'         => ['high', 'default', 'low'],
                 'balance'       => 'auto',
                 'minProcesses' => 5,
-                'maxProcesses' => 20,
+                'maxProcesses' => 10,
                 'tries'         => 3,
                 'timeout'       => 300,
             ]
