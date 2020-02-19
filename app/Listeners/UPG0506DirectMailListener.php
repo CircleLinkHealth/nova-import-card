@@ -44,7 +44,7 @@ class UPG0506DirectMailListener implements ShouldQueue
         ]);
         AppConfig::create([
             'config_key'   => "CCDA_for_dm_with_id:{$event->directMailMessage->id}",
-            'config_value' => Ccda::with('media')->whereDirectMailMessageId($event->directMailMessage->id)->first()->media
+            'config_value' => optional(Ccda::with('media')->whereDirectMailMessageId($event->directMailMessage->id)->first())->media
                 ?: 'none',
         ]);
         AppConfig::create([
