@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="col-sm-12 top-20" v-if="newProblem.is_monitored">
-                <input type="text" class="form-control" v-model="newProblem.icd10"
+                <input type="text" :required="codeIsRequired" class="form-control" v-model="newProblem.icd10"
                        placeholder="ICD10 Code"/>
             </div>
             <div class="col-sm-12 text-right top-20">
@@ -54,7 +54,8 @@
             'patient-id': String,
             'problems': Array,
             'shouldSelectIsMonitored':  Boolean,
-            'cpmProblems': Array
+            'cpmProblems': Array,
+            'codeIsRequired': Boolean
         },
         mixins: [
             CareplanMixin,
@@ -100,6 +101,10 @@
             },
             pId(){
                 return this.patient_id ? this.patient_id : this.patientId;
+            },
+            isNotesPage() {
+                //if patient id prop has been passed in, then this is for the notes pages, else, approve billable patients page
+                return !!this.patientId
             }
         },
         methods: {

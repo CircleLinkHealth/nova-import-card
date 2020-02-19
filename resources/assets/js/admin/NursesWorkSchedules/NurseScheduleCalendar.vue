@@ -55,7 +55,7 @@
 
                             <div class="modal-title" id="exampleModalLabel">
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12" style="text-align: center">
                                         <h3>{{this.modalTitle}}</h3>
                                     </div>
                                 </div>
@@ -78,14 +78,36 @@
                             </div>
 
                             <div class="row">
-                                <div class="day-off">
+                                <div class="holiday-on-off">
                                     <div v-if="! authIsAdmin && (clickedOnDay || addNewEventMainClicked)">
-                                        <input id="addHolidays"
-                                               type="checkbox"
-                                               class="add-holidays-button"
-                                               v-model="addHolidays">
-                                        <span class="modal-inputs-labels"
-                                              style="font-size: 20px;">I am taking the day off</span>
+
+                                        <div class="event-toggle">
+                                            <button id="workDayToggle"
+                                                    type="button"
+                                                    class="btn btn-primary"
+                                                    :class="{disableToggleButtons : disableAddWorkDayToggle}"
+                                                    style="background-color: white; font-size: 20px; color: #5b5858;"
+                                                    @click="toggleEventSwitch(true)">Work Day
+                                            </button>
+
+                                            <div class="toggle-switch">
+                                                <label class="switch">
+                                                    <input id="toggleSwitch"
+                                                           type="checkbox"
+                                                           v-model="addHolidays"
+                                                           checked>
+                                                    <span class="slider round"></span>
+                                                </label>
+
+                                                <button type="button"
+                                                        class="btn btn-primary"
+                                                        :class="{disableToggleButtons : disableAddDayOffToggle}"
+                                                        style="background-color: white; font-size: 20px; color: #5b5858;"
+                                                        @click="toggleEventSwitch(false)">Day Off
+                                                </button>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -177,7 +199,7 @@
                             <div v-if="clickedToViewEvent && eventToViewData[0].eventType === 'holiday'"
                                  class="view-event">
                                 <div v-if="authIsAdmin" class="nurse-name">{{this.eventToViewData[0].name}}</div>
-                                <div class="work-day-read">Day off on {{this.eventToViewData[0].day}}
+                                <div class="work-day-read">Choose Day-off: {{this.eventToViewData[0].day}}
                                     {{this.eventToViewData[0].date}}
                                 </div>
                             </div>
@@ -207,7 +229,7 @@
 
                             <button v-if="!clickedToViewEvent" type="button"
                                     class="btn btn-primary"
-                                    @click="addNewEvent">Save
+                                    @click="addNewEvent">{{this.modalSubmitButton}}
                             </button>
                             <button type="button"
                                     class="btn btn-primary"
@@ -398,6 +420,16 @@
         },
 
         methods: Object.assign(mapActions(['addNotification']), {
+            toggleEventSwitch(status) {
+                //If day off is clicked then toggle checkbox to "checked" else to "unchecked"
+                if (status) {
+                    this.addHolidays = false;
+                    document.getElementById("toggleSwitch").checked = false;
+                } else {
+                    this.addHolidays = true;
+                    document.getElementById("toggleSwitch").checked = true;
+                }
+            },
             eventIsTomorrow() {
                 const todayDate = new Date(this.today);
                 const eventDate = new Date(this.workEventDate);
@@ -419,7 +451,7 @@
                 $("#addWorkEvent").modal('toggle');
             },
 
-            userIsNurseAndDeletesTomorrowEvent(eventType){
+            userIsNurseAndDeletesTomorrowEvent(eventType) {
                 return this.eventIsTomorrow() && this.authIsNurse && eventType === 'workDay';
             },
 
@@ -830,6 +862,13 @@
         }),
 //@todo:implement a count for search bar results - for results found - and in which month are found. maybe a side bar
         computed: {
+            disableAddWorkDayToggle() {
+                return this.addHolidays;
+            },
+
+            disableAddDayOffToggle() {
+                return !this.addHolidays;
+            },
             repeatFrequencyHasSelected() {
                 return this.eventFrequency !== null && this.eventFrequency.length !== 0;
             },
@@ -842,6 +881,10 @@
                     return 'Add Workday/Holiday';
                 }
                 return 'Add Workday';
+            },
+
+            modalSubmitButton() {
+                return this.addHolidays ? 'Save Day Off' : 'Save Work Day';
             },
 
             modalTitle() {
@@ -1089,6 +1132,7 @@
     .modal-inputs-labels {
         color: #5b5858;
         font-weight: bolder;
+        font-size: 15px;
     }
 
     .repeat-until-input {
@@ -1102,8 +1146,9 @@
         padding-top: 15px;
     }
 
-    .day-off {
-        padding-left: 14em;
+    .holiday-on-off {
+        padding-left: 1em;
+        padding-bottom: 1em;
     }
 
     #excludeWeekends {
@@ -1123,6 +1168,78 @@
 
     #addWorkEvent > div.modal-dialog > div > div.modal-header {
         border-bottom: unset;
+    }
+
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #47bdab;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked + .slider {
+        background-color: #40a0b1;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #40a0b1;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+
+    .toggle-switch-name {
+        font-size: 20px;
+    }
+
+    .event-toggle {
+        margin-left: 11em;
+        display: inline-flex;
+    }
+
+    .toggle-switch {
+        display: inline-flex;
+    }
+
+    .disableToggleButtons {
+        opacity: 0.3;
     }
 </style>
 
