@@ -22,6 +22,7 @@ class NurseCalendarService
     const TITLE = 'title';
     const SATURDAY = 6;
     const SUNDAY = 0;
+    const COMPANY_HOLIDAY = 'companyHoliday';
 
     /**
      * @param $nurseInfoId
@@ -251,23 +252,27 @@ class NurseCalendarService
             ->where('date', '>=', $startDate)
             ->where('date', '<=', $endDate)
             ->map(function ($holiday) use ($nurse) {
-                $holidayDate = Carbon::parse($holiday->date)->toDateString();
+                $holidayDate = Carbon::parse($holiday['date'])->toDateString();
                 $holidayDateInDayOfWeek = Carbon::parse($holidayDate)->dayOfWeek;
                 $holidayInHumanLang = clhDayOfWeekToDayName($holidayDateInDayOfWeek);
                 $eventType = 'holiday';
 //                If it does not have an id, it is a company holiday
-                if (!$holiday->id) {
-                    $eventType = 'companyHoliday';
+                if (array_key_exists('eventType', $holiday) && $holiday['eventType'] === self::COMPANY_HOLIDAY) {
+                    $eventType = self::COMPANY_HOLIDAY;
                 }
+
+                $title = $eventType === 'holiday'
+                    ? "$nurse->display_name day-off"
+                    : $holiday['holiday_name'];
 
                 return collect(
                     [
-                        self::TITLE => "$nurse->display_name day-off",
+                        self::TITLE => $title,
                         self::START => $holidayDate,
                         'allDay' => true,
                         'color' => '#f5c431',
                         'data' => [
-                            'holidayId' => $holiday->id,
+                            'holidayId' => $holiday['id'],
                             'nurseId' => $nurse->nurseInfo->id,
                             'name' => $nurse->display_name,
                             'date' => $holidayDate,
