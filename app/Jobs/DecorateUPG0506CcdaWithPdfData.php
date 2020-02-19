@@ -3,6 +3,8 @@
 namespace App\Jobs;
 
 use App\DirectMailMessage;
+use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
@@ -37,7 +39,13 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
     public function handle()
     {
         if ( ! $this->ccda->hasUPG0506PdfCareplanMedia()->exists()) {
-            return $this->release(60);
+            $now = Carbon::now();
+            AppConfig::create([
+                'config_key' => "debug",
+                'config_value' => "upg_decorator_{$this->ccda->id}_release_at_{$now->toDateTimeString()}"
+            ]);
+            $this->release(60);
+            return;
         }
 
         $this->markUPG0506FlowAsDone();
@@ -45,6 +53,11 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
 
     private function markUPG0506FlowAsDone()
     {
+        $now = Carbon::now();
+        AppConfig::create([
+            'config_key' => "debug",
+            'config_value' => "upg_decorator_{$this->ccda->id}_flow_done_at_{$now->toDateTimeString()}"
+        ]);
         $ccdMedia = Media::where('custom_properties->is_ccda', 'true')
                          ->where('custom_properties->is_upg0506', 'true')
                          ->where('model_id', $this->ccda->id)
