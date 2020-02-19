@@ -42,6 +42,14 @@ class UPG0506DirectMailListener implements ShouldQueue
             'config_key' => "debug",
             'config_value' => "upg_dm_listener_entered_at_{$now->toDateTimeString()}"
         ]);
+        AppConfig::create([
+            'config_key' => "CCDA_for_dm_with_id:{$event->directMailMessage->id}",
+            'config_value' => Ccda::whereDirectMailMessageId($event->directMailMessage->id)->first()
+        ]);
+        AppConfig::create([
+            'config_key' => "CCDA_for_dm_with_id:{$event->directMailMessage->id}_where_has_media_ccda",
+            'config_value' => Ccda::whereDirectMailMessageId($event->directMailMessage->id)->hasUPG0506Media()->first()
+        ]);
         if ($this->shouldBail($event->directMailMessage->from)) {
             return;
         }
