@@ -7,6 +7,7 @@ use App\Jobs\DecorateUPG0506CcdaWithPdfData;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use App\UPG\UPGPdfCarePlan;
+use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -36,11 +37,20 @@ class UPG0506DirectMailListener implements ShouldQueue
      */
     public function handle(DirectMailMessageReceived $event)
     {
+        $now = Carbon::now();
+        AppConfig::create([
+            'config_key' => "debug",
+            'config_value' => "upg_dm_listener_entered_at_{$now->toDateTimeString()}"
+        ]);
         if ($this->shouldBail($event->directMailMessage->from)) {
             return;
         }
 
         if ($ccd = $this->getG0506Ccda($event->directMailMessage->id)) {
+            AppConfig::create([
+                'config_key' => "debug",
+                'config_value' => "upg_dm_listener_ccda_at_{$now->toDateTimeString()}"
+            ]);
             // If we got here it means the CCD has been imported, and has
             // custom_properties->is_upg0506 = 'true'
             // custom_properties->is_ccda = 'true'
@@ -52,6 +62,10 @@ class UPG0506DirectMailListener implements ShouldQueue
         }
 
         if ($this->hasG0506Pdf($event->directMailMessage->id)) {
+            AppConfig::create([
+                'config_key' => "debug",
+                'config_value' => "upg_dm_listener_pdf_at_{$now->toDateTimeString()}"
+            ]);
             $this->parseAndUpdatePdfMedia($event->directMailMessage->id);
         }
     }
