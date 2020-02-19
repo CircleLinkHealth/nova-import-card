@@ -590,6 +590,10 @@
                     survey_complete: isLastQuestion
                 })
                     .then((response) => {
+
+                        const surveyStatus = response.data ? response.data.survey_status : "in_progress";
+                        const nextQuestionId = response.data ? response.data.next_question_id : null;
+
                         this.waiting = false;
                         //save the answer in state
                         const q = this.questions.find(x => x.id === questionId);
@@ -597,10 +601,45 @@
                         //increment progress only if question was not answered before
                         const incrementProgress = typeof q.answer === "undefined" || (typeof q.answer.value === "undefined" || q.answer.value === null);
                         q.answer = {value: answer};
+                        if (!this.surveyData.answers) {
+                            this.surveyData.answers = [];
+                        }
+                        const currentAnswer = this.surveyData.answers.find(a => a.question_id === questionId);
+                        if (currentAnswer) {
+                            currentAnswer.value = answer;
+                        } else {
+                            this.surveyData.answers.push({question_id: questionId, value: {value: answer}});
+                        }
 
-                        if (this.isHra && isLastQuestion) {
+                        if (this.isHra && isLastQuestion && surveyStatus === "completed") {
                             window.location.href = this.getVitalsWelcomeUrl();
                             return;
+                        }
+
+                        //cover the case where survey was completed, but an answer was changed
+                        //and now a question that was not shown before needs to be answered
+                        //or the opposite
+                        if (nextQuestionId && this.progress === this.totalQuestions) {
+                            this.calculateSurveyProgress();
+                            if (this.progress !== this.totalQuestions) {
+                                let nextQuestionIndex = -1;
+                                const nextQuestion = this.questions.find((q, index) => {
+                                    if (q.id === nextQuestionId) {
+                                        nextQuestionIndex = index;
+                                        return true;
+                                    }
+                                    return false;
+                                });
+                                nextQuestion.disabled = false;
+
+                                const next = this.getNextQuestion(nextQuestionIndex - 1);
+                                if (next) {
+                                    this.currentQuestionIndex = next.index;
+                                }
+                            }
+                        }
+                        else if (nextQuestionId === null && this.progress !== this.totalQuestions) {
+                            this.calculateSurveyProgress();
                         }
 
                         this.goToNextQuestion(incrementProgress)
@@ -767,63 +806,56 @@
                 //it might still be disabled though -> think completing questions then refreshing the page
                 //need to check if there are certain conditions that have to be met before showing this question
                 let canGoToNext = true;
-                if (nextQuestion.conditions && nextQuestion.conditions.length) {
-                    const q = nextQuestion.conditions;
-                    for (let i = 0; i < nextQuestion.conditions.length; i++) {
-                        const nextQuestConditions = q[i];
-                        //we are evaluating only the first condition.related_question_order_number
-                        //For now is OK since we are depending only on ONE related Question
-                        const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
-                        const firstQuestion = questions[0];
-                        if (!firstQuestion.answer || !firstQuestion.answer.value) {
-                            canGoToNext = false;
+                const allQuestionConditions = nextQuestion.conditions || [];
+                for (let i = 0; i < allQuestionConditions.length; i++) {
+                    const nextQuestConditions = allQuestionConditions[i];
+                    //we are evaluating only the first condition.related_question_order_number
+                    //For now is OK since we are depending only on ONE related Question
+                    const questions = this.getQuestionsOfOrder(nextQuestConditions.related_question_order_number);
+                    const firstQuestion = questions[0];
+                    if (!firstQuestion.answer || !firstQuestion.answer.value) {
+                        canGoToNext = false;
+                        break;
+                    }
+
+                    //If conditions needs to be compared against to "gte" or "lte"
+                    if (nextQuestConditions.hasOwnProperty('operator')) {
+                        const answerValue = Array.isArray(firstQuestion.answer.value.value) ? firstQuestion.answer.value.value[0] : firstQuestion.answer.value.value;
+
+                        if (nextQuestConditions.operator === 'greater_or_equal_than') {
+                            //Again we use only the first Question of the related Questions, which is OK for now.
+                            canGoToNext = answerValue >= nextQuestConditions.related_question_expected_answer;
                             break;
                         }
 
-                        //If conditions needs to be compared against to "gte" or "lte"
-                        if (nextQuestConditions.hasOwnProperty('operator')) {
-                            if (nextQuestConditions.operator === 'greater_or_equal_than') {
-                                //Again we use only the first Question of the related Questions, which is OK for now.
-                                if (!(firstQuestion.answer.value.value >= nextQuestConditions.related_question_expected_answer)) {
-                                    canGoToNext = false;
-                                    break;
-                                }
-                                canGoToNext = true;
-                                break;
-                            }
-
-                            if (nextQuestConditions.operator === 'less_or_equal_than') {
-                                if (!(firstQuestion.answer.value.value <= nextQuestConditions.related_question_expected_answer)) {
-                                    canGoToNext = false;
-                                    break;
-                                }
-                                canGoToNext = true;
-                                break;
-                            }
-                        }
-                        //default comparison
-                        const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === firstQuestion.answer.value.value);
-
-                        if (!expectedAnswersEqualsValue.includes(true)) {
-                            canGoToNext = false;
+                        if (nextQuestConditions.operator === 'less_or_equal_than') {
+                            canGoToNext = answerValue <= nextQuestConditions.related_question_expected_answer;
                             break;
                         }
-                        //if no expected answer, we look for any answer, if any
-                        else if (typeof q.related_question_expected_answer === "undefined") {
-                            if (Array.isArray(firstQuestion.answer.value) && firstQuestion.answer.value.length === 0) {
-                                canGoToNext = false;
-                            } else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
-                                canGoToNext = false;
-                            } else if (firstQuestion.answer.value.value && firstQuestion.answer.value.value.length === 0) {
-                                canGoToNext = false;
-                            }
+                    }
+                    //default comparison
+                    const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === firstQuestion.answer.value.value);
 
-                            if (!canGoToNext) {
-                                break;
-                            }
+                    if (!expectedAnswersEqualsValue.includes(true)) {
+                        canGoToNext = false;
+                        break;
+                    }
+                    //if no expected answer, we look for any answer, if any
+                    else if (typeof nextQuestConditions.related_question_expected_answer === "undefined") {
+                        if (Array.isArray(firstQuestion.answer.value) && firstQuestion.answer.value.length === 0) {
+                            canGoToNext = false;
+                        } else if (typeof firstQuestion.answer.value === "string" && firstQuestion.answer.value.length === 0) {
+                            canGoToNext = false;
+                        } else if (firstQuestion.answer.value.value && firstQuestion.answer.value.value.length === 0) {
+                            canGoToNext = false;
+                        }
+
+                        if (!canGoToNext) {
+                            break;
                         }
                     }
                 }
+
                 return canGoToNext ? newIndex : this.getNextQuestionIndex(index + 1);
             },
 
@@ -852,22 +884,16 @@
 
                         //If conditions needs to be compared against to "gte" or "lte"
                         if (nextQuestConditions.hasOwnProperty('operator')) {
+                            const answerValue = Array.isArray(firstQuestion.answer.value.value) ? firstQuestion.answer.value.value[0] : firstQuestion.answer.value.value;
+
                             if (nextQuestConditions.operator === 'greater_or_equal_than') {
                                 //Again we use only the first Question of the related Questions, which is OK for now.
-                                if (!(firstQuestion.answer.value.value >= nextQuestConditions.related_question_expected_answer)) {
-                                    shouldDisable = true;
-                                    break;
-                                }
-                                shouldDisable = false;
+                                shouldDisable = !(answerValue >= nextQuestConditions.related_question_expected_answer);
                                 break;
                             }
 
                             if (nextQuestConditions.operator === 'less_or_equal_than') {
-                                if (!(firstQuestion.answer.value.value <= nextQuestConditions.related_question_expected_answer)) {
-                                    shouldDisable = true;
-                                    break;
-                                }
-                                shouldDisable = false;
+                                shouldDisable = !(answerValue <= nextQuestConditions.related_question_expected_answer);
                                 break;
                             }
                         }
@@ -961,6 +987,59 @@
 
             getQuestionsOfOrder(order) {
                 return this.questions.filter(q => q.pivot.order === order);
+            },
+
+            calculateSurveyProgress() {
+                const answers = this.surveyData.answers;
+                if (!answers || !answers.length) {
+                    this.progress = 0;
+                    return;
+                }
+
+                let progress = 0;
+                let lastOrder = -1;
+                this.questions.forEach((q, index) => {
+
+                    const a = answers.find(a => a.question_id === q.id);
+                    if (a) {
+                        q.answer = a;
+                    }
+
+                    if (lastOrder === q.pivot.order) {
+                        return;
+                    }
+
+                    let increment = false;
+
+                    if (a && a.value) {
+                        //check if answer is actually answered and not just a suggested answer
+                        increment = true;
+                    } else {
+                        // now figure out if an answer is expected from this question
+                        // i.e. q32 might not be shown to the user because of its conditions
+                        //      still, progress should be incremented
+                        //      so:
+                        //      - check if conditions of question have been answered
+                        //        -> to make sure question is not shown because of answer value (not because answer does not exist)
+                        //      - check if this question should be shown (this.getNextQuestion(index - 1))
+                        //        -> to know whether an answer is expected for this question
+                        //      - check if we have answers ahead of this question
+                        //        -> if the two previous checks fail, it might be because user has not reached to that part of the survey yet
+                        //           so, we check if there are answers ahead
+                        const conditionsAnswered = this.isQuestionAnsweredFromQuestionConditions(index);
+                        const isThisQuestionShownToUser = this.getNextQuestionIndex(index - 1) === index;
+                        const hasAnswerAhead = this.hasAnswerAheadOfQuestion(index);
+                        if (conditionsAnswered && !isThisQuestionShownToUser && hasAnswerAhead) {
+                            increment = true;
+                        }
+                    }
+
+                    if (increment) {
+                        progress += 1;
+                    }
+                    lastOrder = q.pivot.order;
+                });
+                this.progress = progress;
             },
 
             toggleReadOnlyMode() {
@@ -1084,53 +1163,7 @@
                 }
             }
 
-            if (this.surveyData.answers && this.surveyData.answers.length) {
-                let progress = 0;
-                const answers = this.surveyData.answers;
-                let lastOrder = -1;
-                this.questions.forEach((q, index) => {
-
-                    const a = answers.find(a => a.question_id === q.id);
-                    if (a) {
-                        q.answer = a;
-                    }
-
-                    if (lastOrder === q.pivot.order) {
-                        return;
-                    }
-
-                    let increment = false;
-
-                    if (a && a.value) {
-                        //check if answer is actually answered and not just a suggested answer
-                        increment = true;
-                    } else {
-                        // now figure out if an answer is expected from this question
-                        // i.e. q32 might not be shown to the user because of its conditions
-                        //      still, progress should be incremented
-                        //      so:
-                        //      - check if conditions of question have been answered
-                        //        -> to make sure question is not shown because of answer value (not because answer does not exist)
-                        //      - check if this question should be shown (this.getNextQuestion(index - 1))
-                        //        -> to know whether an answer is expected for this question
-                        //      - check if we have answers ahead of this question
-                        //        -> if the two previous checks fail, it might be because user has not reached to that part of the survey yet
-                        //           so, we check if there are answers ahead
-                        const conditionsAnswered = this.isQuestionAnsweredFromQuestionConditions(index);
-                        const isThisQuestionShownToUser = this.getNextQuestionIndex(index - 1) === index;
-                        const hasAnswerAhead = this.hasAnswerAheadOfQuestion(index);
-                        if (conditionsAnswered && !isThisQuestionShownToUser && hasAnswerAhead) {
-                            increment = true;
-                        }
-                    }
-
-                    if (increment) {
-                        progress += 1;
-                    }
-                    lastOrder = q.pivot.order;
-                });
-                this.progress = progress;
-            }
+            this.calculateSurveyProgress();
 
             this.totalQuestionWithSubQuestions = this.questions.length;
             this.totalQuestions = _.uniqBy(this.questions, (elem) => {
