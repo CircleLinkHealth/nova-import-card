@@ -10,6 +10,7 @@ namespace App\Services\PhiMail\Incoming\Handlers;
 
 
 use App\DirectMailMessage;
+use App\Jobs\DecorateUPG0506CcdaWithPdfData;
 use App\Jobs\ImportCcda;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
@@ -46,6 +47,8 @@ class XML extends BaseHandler
             ]
         );
         
-        ImportCcda::dispatch($ccda)->onQueue('low');
+        ImportCcda::withChain([
+            new DecorateUPG0506CcdaWithPdfData($ccda)
+        ])->dispatch($ccda)->onQueue('low');
     }
 }

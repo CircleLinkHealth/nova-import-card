@@ -68,7 +68,7 @@ class UPG0506DirectMailListener implements ShouldQueue
             // Let's use the following status
             // custom_properties->is_upg0506_complete = false
             // custom_properties->is_upg0506_complete = true
-            DecorateUPG0506CcdaWithPdfData::dispatch($ccd);
+//            DecorateUPG0506CcdaWithPdfData::dispatch($ccd);
         }
 
         if ($this->hasG0506Pdf($event->directMailMessage->id)) {
