@@ -26,7 +26,6 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
      */
     public function __construct(Ccda $ccda)
     {
-        //
         $this->ccda = $ccda;
     }
 

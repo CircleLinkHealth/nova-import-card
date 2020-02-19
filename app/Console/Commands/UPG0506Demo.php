@@ -10,6 +10,7 @@ use App\DirectMailMessage;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use App\Services\PhiMail\Incoming\Handlers\XML;
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
@@ -75,19 +76,7 @@ class UPG0506Demo extends Command
     private function clearTestData()
     {
         $ccdas = Ccda::where('mrn', '334417')
-//            ->where(function ($q) {
-//                $q->where(function ($q) {
-//                    $q->hasUPG0506PdfCareplanMedia();
-//                })
-//                    ->orWhere(function ($q) {
-//                    $q->hasUPG0506Media();
-//                });
-//            })
             ->get();
-
-        if ($ccdas->isEmpty()) {
-            return;
-        }
 
         foreach ($ccdas as $ccda) {
             $ccda->media()
@@ -95,6 +84,12 @@ class UPG0506Demo extends Command
                 ->each(function ($media) {
                 $media->delete();
             });
+
+            $pdf = $ccda->getUPG0506PdfCareplanMedia();
+
+            if ($pdf){
+                $pdf->delete();
+            }
 
             $dm = $ccda->directMessage()->first();
 
@@ -119,6 +114,9 @@ class UPG0506Demo extends Command
             $ccda->forceDelete();
         }
 
+        Media::where('custom_properties->is_upg0506', 'true')
+             ->where('custom_properties->care_plan->demographics->mrn_number', '334417')
+             ->delete();
 
         User::whereFirstName('Barbara')
             ->whereLastName('Zznigro')
