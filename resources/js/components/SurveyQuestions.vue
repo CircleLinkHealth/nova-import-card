@@ -719,6 +719,43 @@
                 return canGoToPrev ? newIndex : this.getPreviousQuestionIndex(index - 1);
             },
 
+            hasAnswerAheadOfQuestion(index) {
+                const next = this.getNextQuestion(index);
+                if (!next) {
+                    return false;
+                }
+                const answers = this.surveyData.answers;
+                const a = answers.find(a => a.question_id === next.question.id);
+                return a && a.value;
+            },
+
+            /**
+             * Check if a question has been answered from another question's conditions
+             * i.e. q32 -> conditions -> q2 => return true if q2 has been answered
+             * Will be used to check whether a question (q32)
+             * has not been answered because its not shown
+             * or whether user hasn't reached there.
+             * Needed for the survey progress bar.
+             *
+             * @param index
+             * @return boolean
+             */
+            isQuestionAnsweredFromQuestionConditions(index) {
+                const q = this.questions[index];
+                const conditions = q.conditions;
+                if (!conditions || conditions.length === 0) {
+                    return true;
+                }
+
+                // we are evaluating only the first condition.related_question_order_number
+                const condition = conditions[0];
+
+                //For now is OK since we are depending only on ONE related Question
+                const questions = this.getQuestionsOfOrder(condition.related_question_order_number);
+                const question = questions[0];
+                return !!question.answer;
+            },
+
             getNextQuestionIndex(index) {
                 const newIndex = index + 1;
                 const nextQuestion = this.questions[newIndex];
@@ -731,8 +768,8 @@
                 //need to check if there are certain conditions that have to be met before showing this question
                 let canGoToNext = true;
                 if (nextQuestion.conditions && nextQuestion.conditions.length) {
+                    const q = nextQuestion.conditions;
                     for (let i = 0; i < nextQuestion.conditions.length; i++) {
-                        const q = nextQuestion.conditions;
                         const nextQuestConditions = q[i];
                         //we are evaluating only the first condition.related_question_order_number
                         //For now is OK since we are depending only on ONE related Question
@@ -747,7 +784,7 @@
                         if (nextQuestConditions.hasOwnProperty('operator')) {
                             if (nextQuestConditions.operator === 'greater_or_equal_than') {
                                 //Again we use only the first Question of the related Questions, which is OK for now.
-                                if (firstQuestion.answer.value.value >= nextQuestConditions.related_question_expected_answer) {
+                                if (!(firstQuestion.answer.value.value >= nextQuestConditions.related_question_expected_answer)) {
                                     canGoToNext = false;
                                     break;
                                 }
@@ -756,7 +793,7 @@
                             }
 
                             if (nextQuestConditions.operator === 'less_or_equal_than') {
-                                if (firstQuestion.answer.value.value <= nextQuestConditions.related_question_expected_answer) {
+                                if (!(firstQuestion.answer.value.value <= nextQuestConditions.related_question_expected_answer)) {
                                     canGoToNext = false;
                                     break;
                                 }
@@ -1037,21 +1074,6 @@
             this.questions.push(...questionsData);
             this.subQuestions.push(...subQuestions);
 
-            if (this.surveyData.answers && this.surveyData.answers.length) {
-                let lastOrder = -1;
-                this.questions.forEach(q => {
-                    const a = this.surveyData.answers.find(a => a.question_id === q.id);
-                    if (a) {
-                        q.answer = a;
-                        //check if answer is actually answered and not just a suggested answer
-                        if (a.value && lastOrder !== q.pivot.order) {
-                            this.progress = this.progress + 1;
-                        }
-                    }
-                    lastOrder = q.pivot.order;
-                });
-            }
-
             if (typeof this.surveyData.survey_instances[0].pivot.last_question_answered_id !== "undefined") {
                 const lastQuestionAnsweredId = this.surveyData.survey_instances[0].pivot.last_question_answered_id;
                 const index = this.questions.findIndex(q => q.id === lastQuestionAnsweredId);
@@ -1060,6 +1082,54 @@
                 if (next) {
                     this.currentQuestionIndex = next.index;
                 }
+            }
+
+            if (this.surveyData.answers && this.surveyData.answers.length) {
+                let progress = 0;
+                const answers = this.surveyData.answers;
+                let lastOrder = -1;
+                this.questions.forEach((q, index) => {
+
+                    const a = answers.find(a => a.question_id === q.id);
+                    if (a) {
+                        q.answer = a;
+                    }
+
+                    if (lastOrder === q.pivot.order) {
+                        return;
+                    }
+
+                    let increment = false;
+
+                    if (a && a.value) {
+                        //check if answer is actually answered and not just a suggested answer
+                        increment = true;
+                    } else {
+                        // now figure out if an answer is expected from this question
+                        // i.e. q32 might not be shown to the user because of its conditions
+                        //      still, progress should be incremented
+                        //      so:
+                        //      - check if conditions of question have been answered
+                        //        -> to make sure question is not shown because of answer value (not because answer does not exist)
+                        //      - check if this question should be shown (this.getNextQuestion(index - 1))
+                        //        -> to know whether an answer is expected for this question
+                        //      - check if we have answers ahead of this question
+                        //        -> if the two previous checks fail, it might be because user has not reached to that part of the survey yet
+                        //           so, we check if there are answers ahead
+                        const conditionsAnswered = this.isQuestionAnsweredFromQuestionConditions(index);
+                        const isThisQuestionShownToUser = this.getNextQuestionIndex(index - 1) === index;
+                        const hasAnswerAhead = this.hasAnswerAheadOfQuestion(index);
+                        if (conditionsAnswered && !isThisQuestionShownToUser && hasAnswerAhead) {
+                            increment = true;
+                        }
+                    }
+
+                    if (increment) {
+                        progress += 1;
+                    }
+                    lastOrder = q.pivot.order;
+                });
+                this.progress = progress;
             }
 
             this.totalQuestionWithSubQuestions = this.questions.length;
