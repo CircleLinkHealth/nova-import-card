@@ -38,8 +38,12 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
      */
     public function handle()
     {
+        $now = Carbon::now();
+        AppConfig::create([
+            'config_key' => "debug",
+            'config_value' => "upg_decorator_{$this->ccda->id}_entered_at_{$now->toDateTimeString()}"
+        ]);
         if ( ! $this->ccda->hasUPG0506PdfCareplanMedia()->exists()) {
-            $now = Carbon::now();
             AppConfig::create([
                 'config_key' => "debug",
                 'config_value' => "upg_decorator_{$this->ccda->id}_release_at_{$now->toDateTimeString()}"
