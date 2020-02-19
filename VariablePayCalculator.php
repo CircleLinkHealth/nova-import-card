@@ -652,6 +652,10 @@ class VariablePayCalculator
 
     private function isNewNursePayAltAlgoEnabledForUser($nurseUserId)
     {
+        if (NurseCcmPlusConfig::altAlgoEnabledForAll()) {
+            return true;
+        }
+
         $enabledForUserIds = NurseCcmPlusConfig::altAlgoEnabledForUserIds();
         if ($enabledForUserIds) {
             return in_array($nurseUserId, $enabledForUserIds);
