@@ -87,7 +87,7 @@
         "BROADCAST_DRIVER": "log",
         "CACHE_DRIVER": "array",
         "SESSION_DRIVER": "array",
-        "QUEUE_DRIVER": "sync",
+        "QUEUE_CONNECTION": "sync",
         "SCOUT_DRIVER": "null"
       }
     }
