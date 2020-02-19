@@ -39,16 +39,18 @@ class UPG0506DirectMailListener implements ShouldQueue
     {
         $now = Carbon::now();
         AppConfig::create([
-            'config_key' => "debug",
-            'config_value' => "upg_dm_listener_entered_at_{$now->toDateTimeString()}"
+            'config_key'   => "debug",
+            'config_value' => "upg_dm_listener_entered_at_{$now->toDateTimeString()}",
         ]);
         AppConfig::create([
-            'config_key' => "CCDA_for_dm_with_id:{$event->directMailMessage->id}",
-            'config_value' => Ccda::with('media')->whereDirectMailMessageId($event->directMailMessage->id)->first()
+            'config_key'   => "CCDA_for_dm_with_id:{$event->directMailMessage->id}",
+            'config_value' => Ccda::with('media')->whereDirectMailMessageId($event->directMailMessage->id)->first()->media
+                ?: 'none',
         ]);
         AppConfig::create([
-            'config_key' => "CCDA_for_dm_with_id:{$event->directMailMessage->id}_where_has_media_ccda",
-            'config_value' => Ccda::whereDirectMailMessageId($event->directMailMessage->id)->hasUPG0506Media()->first() ?: "none"
+            'config_key'   => "CCDA_for_dm_with_id:{$event->directMailMessage->id}_where_has_media_ccda",
+            'config_value' => Ccda::whereDirectMailMessageId($event->directMailMessage->id)->hasUPG0506Media()->first()
+                ?: "none",
         ]);
         if ($this->shouldBail($event->directMailMessage->from)) {
             return;
@@ -56,8 +58,8 @@ class UPG0506DirectMailListener implements ShouldQueue
 
         if ($ccd = $this->getG0506Ccda($event->directMailMessage->id)) {
             AppConfig::create([
-                'config_key' => "debug",
-                'config_value' => "upg_dm_listener_ccda_at_{$now->toDateTimeString()}"
+                'config_key'   => "debug",
+                'config_value' => "upg_dm_listener_ccda_at_{$now->toDateTimeString()}",
             ]);
             // If we got here it means the CCD has been imported, and has
             // custom_properties->is_upg0506 = 'true'
@@ -71,8 +73,8 @@ class UPG0506DirectMailListener implements ShouldQueue
 
         if ($this->hasG0506Pdf($event->directMailMessage->id)) {
             AppConfig::create([
-                'config_key' => "debug",
-                'config_value' => "upg_dm_listener_pdf_at_{$now->toDateTimeString()}"
+                'config_key'   => "debug",
+                'config_value' => "upg_dm_listener_pdf_at_{$now->toDateTimeString()}",
             ]);
             $this->parseAndUpdatePdfMedia($event->directMailMessage->id);
         }
