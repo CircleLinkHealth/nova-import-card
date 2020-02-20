@@ -72,12 +72,13 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
             ],
         ];
     }
-
+    
     /**
      * Get the mail representation of the notification.
      *
      * @param mixed $notifiable
      *
+     * @return SimpleNotification
      * @throws \Exception
      */
     public function toDirectMail($notifiable): SimpleNotification
@@ -101,13 +102,18 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
     {
         return ['database', DirectMailChannel::class];
     }
-
+    
+    /**
+     * @param $notifiable
+     *
+     * @return string
+     */
     private function passwordlessLoginLink($notifiable)
     {
         $token = PasswordlessLoginToken::create(
             [
                 'user_id' => $notifiable->id,
-                'token'   => str_random(15).time(),
+                'token'   => sha1(str_random(15).time()),
             ]
         );
 

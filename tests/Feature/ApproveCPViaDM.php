@@ -7,6 +7,7 @@
 namespace Tests\Feature;
 
 use App\Contracts\DirectMail;
+use App\Contracts\DirectMailableNotification;
 use App\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
 use App\Notifications\Channels\DirectMailChannel;
@@ -67,9 +68,11 @@ class ApproveCPViaDM extends CustomerTestCase
         Notification::assertSentTo(
             $this->provider(),
             SendCarePlanForDirectMailApprovalNotification::class,
-            function ($notification, $channels, $notifiable) {
+            function (DirectMailableNotification $notification, $channels, $notifiable) use ($patient) {
                 $this->assertContains(DirectMailChannel::class, $channels);
-
+                $this->assertStringContainsString('#approve'.$patient->carePlan->id, $notification->directMailBody($notifiable));
+                $this->assertStringContainsString('#change'.$patient->carePlan->id, $notification->directMailBody($notifiable));
+                
                 return true;
             }
         );
