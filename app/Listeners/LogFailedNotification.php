@@ -6,10 +6,13 @@
 
 namespace App\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Events\NotificationFailed;
+use Illuminate\Queue\InteractsWithQueue;
 
-class LogFailedNotification
+class LogFailedNotification implements ShouldQueue
 {
+    use InteractsWithQueue;
     /**
      * Create the event listener.
      */

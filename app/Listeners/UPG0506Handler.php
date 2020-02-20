@@ -6,8 +6,9 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UPG0506Handler
+class UPG0506Handler implements ShouldQueue
 {
+    use InteractsWithQueue;
     /**
      * Create the event listener.
      *

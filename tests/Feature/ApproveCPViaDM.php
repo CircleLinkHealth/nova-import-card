@@ -10,8 +10,10 @@ use App\Contracts\DirectMail;
 use App\Contracts\DirectMailableNotification;
 use App\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
+use App\Listeners\ChangeOrApproveCareplanResponseListener;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
+use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Event;
@@ -91,13 +93,31 @@ class ApproveCPViaDM extends CustomerTestCase
     }
     
     public function test_provider_can_approve_careplan_with_valid_dm_response() {
+        $patient = $this->patient();
+        $patient->setCarePlanStatus(CarePlan::QA_APPROVED);
+        $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
     
+    
+        $approvalCode = "#approve{$patient->carePlan->id}";
+        $directMail = factory(DirectMailMessage::class)->create([
+            'body' => "Yes, I approve $approvalCode"
+                                                                ]);
+        
+        event(new DirectMailMessageReceived($directMail));
+        
+        $this->assertEquals(CarePlan::PROVIDER_APPROVED, $patient->carePlan->status, "Careplan was not approved after DM with approval code was removed");
     }
 
-    public function test_receive_dm()
+    public function test_extracting_approval_or_rejection_codes()
     {
-        $dm = app(DirectMail::class);
+        $listener = app(ChangeOrApproveCareplanResponseListener::class);
 
-        $dm->receive();
+        $this->assertEquals(120, $listener->getApprovalCode('   #approve120'));
+        $this->assertEquals(120, $listener->getApprovalCode('#approve120'));
+        $this->assertEquals(32, $listener->getApprovalCode('#approve 32'));
+        $this->assertEquals(3, $listener->getApprovalCode('#approve       3   '));
+    
+        $this->assertEquals(2, $listener->getChangesCode('#change2'));
+        
     }
 }

@@ -5,8 +5,10 @@ namespace App\Listeners;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class NotifyPatientOfCarePlanApproval
+class NotifyPatientOfCarePlanApproval implements ShouldQueue
 {
+    use InteractsWithQueue;
+    
     /**
      * Handle the event.
      *

@@ -10,8 +10,9 @@ use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendCarePlanForDMProviderApproval
+class SendCarePlanForDMProviderApproval implements ShouldQueue
 {
+    use InteractsWithQueue;
     /**
      * Create the event listener.
      *

@@ -4,9 +4,13 @@ namespace App\Listeners;
 
 use App\Events\CarePlanWasQAApproved;
 use App\Observers\PatientObserver;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
-class AddPatientConsentNote
+class AddPatientConsentNote implements ShouldQueue
 {
+    use InteractsWithQueue;
+    
     /**
      * Handle the event.
      *
