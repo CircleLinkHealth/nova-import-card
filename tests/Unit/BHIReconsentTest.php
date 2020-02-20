@@ -30,9 +30,8 @@ class BHIReconsentTest extends TestCase
         $bhiPatient  = $this->createPatient($bhiPractice->id, true, true, false, true);
         $provider    = $this->createUser($bhiPractice->id, 'provider');
         $nurse       = $this->createUser($bhiPractice->id, 'care-center');
-        //Create 2 calls for today
+        
         $c1 = $this->createCall($nurse, $bhiPatient, Carbon::now());
-        $c2 = $this->createCall($nurse, $bhiPatient, Carbon::now());
 
         //Add billing provider
         $billing = CarePerson::create(
