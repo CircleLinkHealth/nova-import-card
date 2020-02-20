@@ -64,7 +64,7 @@ class ApproveCPViaDM extends CustomerTestCase
         $patient->setBillingProviderId($this->provider()->id);
 
         $this->assertEquals(CarePlan::DRAFT, $patient->carePlan->status);
-        event(new CarePlanWasApproved($patient));
+        event(new CarePlanWasApproved($patient, $this->administrator()));
         $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
 
         Notification::assertSentTo(
@@ -108,7 +108,7 @@ class ApproveCPViaDM extends CustomerTestCase
         
         event(new DirectMailMessageReceived($directMail));
         
-        $this->assertEquals(CarePlan::PROVIDER_APPROVED, $patient->carePlan->status, "Careplan was not approved after DM with approval code was removed");
+        $this->assertEquals(CarePlan::PROVIDER_APPROVED, $patient->carePlan->fresh()->status, "Careplan was not approved after DM with approval code was removed");
     }
 
     public function test_extracting_approval_or_rejection_codes()

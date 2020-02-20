@@ -35,7 +35,8 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
         
         $careplanId = $this->getCareplanIdToApprove($event->directMailMessage->body);
         if ($careplanId && $this->actionIsAuthorized($event->directMailMessage->from, $careplanId)) {
-            event(new CarePlanWasApproved(CarePlan::has('patient')->with('patient')->findOrFail($careplanId)->patient));
+            $cp = CarePlan::has('patient.billingProvider')->with('patient.billingProvider')->findOrFail($careplanId);
+            event(new CarePlanWasApproved($cp->patient, $cp->patient->billingProviderUser()));
         }
     }
     
@@ -73,7 +74,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
      */
     public function actionIsAuthorized(string $from, int $careplanId)
     {
-        return CarePerson::joinWhere('care_plans', 'care_plans.user_id', '=', 'patient_care_team_members.user_id')->joinWhere(
+        return CarePerson::join('care_plans', 'care_plans.user_id', '=', 'patient_care_team_members.user_id')->join(
             'emr_direct_addresses',
             'emr_direct_addresses.emrDirectable_id',
             '=',

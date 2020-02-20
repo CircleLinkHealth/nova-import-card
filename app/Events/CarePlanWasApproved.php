@@ -17,15 +17,21 @@ class CarePlanWasApproved extends Event
      * @var User
      */
     public $patient;
-
+    /**
+     * @var User
+     */
+    public $approver;
+    
     /**
      * Create a new event instance.
      *
      * @param User $patient
+     * @param User $approver
      */
-    public function __construct(User $patient)
+    public function __construct(User $patient, User $approver)
     {
         $this->patient          = $patient;
+        $this->approver = $approver;
     }
 
     /**

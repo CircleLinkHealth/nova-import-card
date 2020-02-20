@@ -30,15 +30,16 @@ class UpdateCarePlanStatus
             return;
         }
         
-        $this->attemptApproval($event->patient);
+        $this->attemptApproval($event->patient, $event->approver);
     }
     
-    private function providerApprove(User &$patient)
+    /**
+     * @param User $patient
+     * @param User $approver
+     */
+    private function providerApprove(User &$patient, User $approver)
     {
         Log::debug('UpdateCarePlanStatus: Ready to set status to PROVIDER_APPROVED');
-        
-        /** @var User $approver */
-        $approver = auth()->user();
     
         $patient->carePlan->status         = CarePlan::PROVIDER_APPROVED;
         $patient->carePlan->provider_approver_id = $approver->id;
@@ -54,10 +55,14 @@ class UpdateCarePlanStatus
         }
     }
     
-    private function qaApprove(User &$patient)
+    /**
+     * @param User $patient
+     * @param User $approver
+     */
+    private function qaApprove(User &$patient, User $approver)
     {
         $patient->carePlan->status         = CarePlan::QA_APPROVED;
-        $patient->carePlan->qa_approver_id = auth()->id();
+        $patient->carePlan->qa_approver_id = $approver->id;
         $patient->carePlan->qa_date        = now()->toDateTimeString();
         $patient->carePlan->save();
     }
@@ -68,11 +73,13 @@ class UpdateCarePlanStatus
      *
      * @param User $patient
      *
+     * @param User $approver
+     *
      * @return bool
      */
-    private function shouldBeProviderApproved(User $patient): bool
+    private function shouldBeProviderApproved(User $patient, User $approver): bool
     {
-        return CarePlan::QA_APPROVED == $patient->getCarePlanStatus() && auth()->user()->canApproveCarePlans();
+        return CarePlan::QA_APPROVED == $patient->getCarePlanStatus() && $approver->canApproveCarePlans();
     }
     
     /**
@@ -80,25 +87,28 @@ class UpdateCarePlanStatus
      *
      * @param User $patient
      *
+     * @param User $approver
+     *
      * @return bool
      */
-    private function shouldBeQAApproved(User $patient): bool
+    private function shouldBeQAApproved(User $patient, User $approver): bool
     {
         return CarePlan::DRAFT == $patient->getCarePlanStatus()
-               && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $patient->getPrimaryPracticeId());
+               && $approver->hasPermissionForSite('care-plan-qa-approve', $patient->getPrimaryPracticeId());
     }
     
     /**
      * Attempt to approve
      *
      * @param User $patient
+     * @param User $approver
      */
-    private function attemptApproval(User &$patient)
+    private function attemptApproval(User &$patient, User &$approver)
     {
-        if ($this->shouldBeProviderApproved($patient)) {
-            $this->providerApprove($patient);
-        } elseif ($this->shouldBeQAApproved($patient)) {
-            $this->qaApprove($patient);
+        if ($this->shouldBeProviderApproved($patient, $approver)) {
+            $this->providerApprove($patient, $approver);
+        } elseif ($this->shouldBeQAApproved($patient, $approver)) {
+            $this->qaApprove($patient, $approver);
         }
         
         $patient->save();

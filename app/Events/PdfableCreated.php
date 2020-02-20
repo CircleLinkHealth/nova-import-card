@@ -20,7 +20,11 @@ class PdfableCreated extends Event
      *
      * @var PdfReport
      */
-    public $pdfReport;
+    public  $pdfReport;
+    /**
+     * @var bool|mixed
+     */
+    public $notifyPractice;
     
     /**
      * Create a new event instance.
