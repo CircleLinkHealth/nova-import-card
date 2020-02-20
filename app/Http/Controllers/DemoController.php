@@ -31,4 +31,8 @@ class DemoController extends Controller
         );
         dd($test);
     }
+    
+    public function sentry() {
+        throw new \Exception('My first Sentry error!');
+    }
 }
