@@ -37,45 +37,11 @@ class UPG0506DirectMailListener implements ShouldQueue
      */
     public function handle(DirectMailMessageReceived $event)
     {
-        $now = Carbon::now();
-        AppConfig::create([
-            'config_key'   => "debug",
-            'config_value' => "upg_dm_listener_entered_at_{$now->toDateTimeString()}",
-        ]);
-        AppConfig::create([
-            'config_key'   => "CCDA_for_dm_with_id:{$event->directMailMessage->id}",
-            'config_value' => optional(Ccda::with('media')->whereDirectMailMessageId($event->directMailMessage->id)->first())->media
-                ?: 'none',
-        ]);
-        AppConfig::create([
-            'config_key'   => "CCDA_for_dm_with_id:{$event->directMailMessage->id}_where_has_media_ccda",
-            'config_value' => Ccda::whereDirectMailMessageId($event->directMailMessage->id)->hasUPG0506Media()->first()
-                ?: "none",
-        ]);
         if ($this->shouldBail($event->directMailMessage->from)) {
             return;
         }
 
-        if ($ccd = $this->getG0506Ccda($event->directMailMessage->id)) {
-            AppConfig::create([
-                'config_key'   => "debug",
-                'config_value' => "upg_dm_listener_ccda_at_{$now->toDateTimeString()}",
-            ]);
-            // If we got here it means the CCD has been imported, and has
-            // custom_properties->is_upg0506 = 'true'
-            // custom_properties->is_ccda = 'true'
-            //
-            // Let's use the following status
-            // custom_properties->is_upg0506_complete = false
-            // custom_properties->is_upg0506_complete = true
-//            DecorateUPG0506CcdaWithPdfData::dispatch($ccd);
-        }
-
         if ($this->hasG0506Pdf($event->directMailMessage->id)) {
-            AppConfig::create([
-                'config_key'   => "debug",
-                'config_value' => "upg_dm_listener_pdf_at_{$now->toDateTimeString()}",
-            ]);
             $this->parseAndUpdatePdfMedia($event->directMailMessage->id);
         }
     }
@@ -101,19 +67,9 @@ class UPG0506DirectMailListener implements ShouldQueue
         return $this->mediaAttachmentCollectionQuery($dmId)->first();
     }
 
-    private function getG0506Ccda(int $dmId)
-    {
-        return $this->ccdaQuery($dmId)->first();
-    }
-
     private function mediaQuery(string $modelType, int $modelId)
     {
         return Media::where('model_type', $modelType)->where('model_id', $modelId);
-    }
-
-    private function ccdaQuery(int $dmId)
-    {
-        return Ccda::where('direct_mail_message_id', $dmId)->hasUPG0506Media();
     }
 
     private function parseAndUpdatePdfMedia(int $dmId)

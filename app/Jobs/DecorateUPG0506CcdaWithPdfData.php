@@ -38,16 +38,12 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
      */
     public function handle()
     {
-        $now = Carbon::now();
-        AppConfig::create([
-            'config_key' => "debug",
-            'config_value' => "upg_decorator_{$this->ccda->id}_entered_at_{$now->toDateTimeString()}"
-        ]);
+        if (! $this->ccda->hasUPG0506Media()){
+            return;
+        }
+
         if ( ! $this->ccda->hasUPG0506PdfCareplanMedia()->exists()) {
-            AppConfig::create([
-                'config_key' => "debug",
-                'config_value' => "upg_decorator_{$this->ccda->id}_release_at_{$now->toDateTimeString()}"
-            ]);
+
             $this->release(60);
             return;
         }
@@ -57,11 +53,6 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
 
     private function markUPG0506FlowAsDone()
     {
-        $now = Carbon::now();
-        AppConfig::create([
-            'config_key' => "debug",
-            'config_value' => "upg_decorator_{$this->ccda->id}_flow_done_at_{$now->toDateTimeString()}"
-        ]);
         $ccdMedia = Media::where('custom_properties->is_ccda', 'true')
                          ->where('custom_properties->is_upg0506', 'true')
                          ->where('model_id', $this->ccda->id)
