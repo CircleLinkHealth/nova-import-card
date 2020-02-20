@@ -13,8 +13,6 @@ use Illuminate\Validation\ValidationException;
 
 trait PasswordLessAuth
 {
-    use AuthenticatesUsers;
-
     /**
      * Handle a login request to the application.
      *
@@ -24,14 +22,14 @@ trait PasswordLessAuth
      *
      * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response|void
      */
-    public function login(Request $request, $token)
+    public function passwordlessLogin(Request $request, $token)
     {
         if ($this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
 
             return $this->sendLockoutResponse($request);
         }
-        if ($this->attemptLogin($token, $request)) {
+        if ($this->attemptPasswordlessLogin($token, $request)) {
             return $this->sendLoginResponse($request);
         }
         $this->incrementLoginAttempts($request);
@@ -46,7 +44,7 @@ trait PasswordLessAuth
      *
      * @return void
      */
-    protected function attemptLogin($token, Request $request)
+    protected function attemptPasswordlessLogin($token, Request $request)
     {
         $user = PasswordlessLoginToken::userFromToken($token);
         if (is_object($user)) {

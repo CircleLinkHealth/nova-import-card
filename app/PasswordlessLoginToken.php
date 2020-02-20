@@ -6,6 +6,7 @@
 
 namespace App;
 
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Model;
 
 class PasswordlessLoginToken extends Model
@@ -25,7 +26,7 @@ class PasswordlessLoginToken extends Model
      */
     public function user()
     {
-        return $this->hasOne(User::class, 'email', 'email');
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -33,7 +34,7 @@ class PasswordlessLoginToken extends Model
      *
      * @return User|null
      */
-    public static function userFromToken($token)
+    public static function userFromToken($token) :?User
     {
         $query = self::where('token', $token)
             ->with('user')

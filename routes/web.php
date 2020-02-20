@@ -4,7 +4,7 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-Route::get('login/{token}/validate', 'Auth\LoginController@passwordlessLogin')
+Route::get('login/{token}/validate', 'Auth\LoginController@login')
     ->name('login.token.validate')
     ->middleware('signed');
 

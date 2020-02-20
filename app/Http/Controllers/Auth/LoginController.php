@@ -7,11 +7,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Traits\PasswordLessAuth;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 use Jenssegers\Agent\Agent;
 
@@ -31,6 +33,7 @@ class LoginController extends Controller
     use AuthenticatesUsers {
         login as traitLogin;
     }
+    use PasswordLessAuth;
 
     const MIN_PASSWORD_CHANGE_IN_DAYS = 180;
 
@@ -98,18 +101,25 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        $this->usernameOrEmail($request);
-        $loginResponse = $this->traitLogin($request);
+        $shouldUsePasswordless = Route::is('login.token.validate');
+        
+        if (! $shouldUsePasswordless) {
+            $this->usernameOrEmail($request);
+        }
+        
+        $loginResponse = $shouldUsePasswordless
+            ? $this->passwordlessLogin($request, $request->route('token'))
+            : $this->traitLogin($request);
 
         $agent = new Agent();
 
-        $isClh = auth()->user()->hasRole(['care-center', 'administrator']);
+        $isClh = auth()->user()->hasRole(['care-center', 'administrator', 'developer']);
 
         if ( ! $this->validateBrowserCompatibility($agent, $isClh)) {
             $this->sendInvalidBrowserResponse($agent->browser(), $isClh);
         }
 
-        if ( ! $this->validatePasswordAge() && config('auth.force_password_change')) {
+        if ( ! $shouldUsePasswordless && ! $this->validatePasswordAge() && config('auth.force_password_change')) {
             auth()->logout();
             $days = LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
 

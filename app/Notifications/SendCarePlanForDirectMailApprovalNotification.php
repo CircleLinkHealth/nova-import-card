@@ -108,7 +108,7 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
      *
      * @return string
      */
-    private function passwordlessLoginLink($notifiable)
+    public function passwordlessLoginLink($notifiable)
     {
         $token = PasswordlessLoginToken::create(
             [

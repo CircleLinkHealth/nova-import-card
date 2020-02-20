@@ -77,6 +77,22 @@ class ApproveCPViaDM extends CustomerTestCase
             }
         );
     }
+    
+    public function tests_provider_can_login_with_passwordless_link() {
+        $this->assertFalse(auth()->check());
+        
+        $notification = new SendCarePlanForDirectMailApprovalNotification($this->patient());
+        
+        $link = $notification->passwordlessLoginLink($this->provider());
+        
+        $response = $this->get($link)->assertStatus(302);
+        
+        $this->assertEquals($this->provider()->id, auth()->id());
+    }
+    
+    public function test_provider_can_approve_careplan_with_valid_dm_response() {
+    
+    }
 
     public function test_receive_dm()
     {
