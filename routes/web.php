@@ -3,6 +3,9 @@
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
+Route::get('/debug-sentry', function () {
+    throw new Exception('My first Sentry error!');
+});
 
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
