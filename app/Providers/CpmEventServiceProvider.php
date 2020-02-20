@@ -27,6 +27,7 @@ use App\Listeners\LogSuccessfulLogin;
 use App\Listeners\LogSuccessfulLogout;
 use App\Listeners\NotifyPatientOfCarePlanApproval;
 use App\Listeners\PatientContactWindowUpdated;
+use App\Listeners\SendCarePlanForDMProviderApproval;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UPG0506CcdaImporterListener;
 use App\Listeners\UPG0506Handler;
@@ -58,9 +59,6 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         Authenticated::class => [
             UpdateUserSessionInfo::class,
-        ],
-        CarePlanWasApproved::class => [
-            UpdateCarePlanStatus::class,
         ],
         PdfableCreated::class => [
             CreateAndHandlePdfReport::class,
@@ -94,10 +92,14 @@ class CpmEventServiceProvider extends ServiceProvider
         PatientUserCreated::class => [
             AttachUPG0506CarePlanToPatientUser::class
         ],
+        CarePlanWasApproved::class => [
+            UpdateCarePlanStatus::class,
+        ],
         CarePlanWasQAApproved::class => [
             AddPatientConsentNote::class,
             AutoApproveCarePlan::class,
             UPG0506Handler::class,
+            SendCarePlanForDMProviderApproval::class,
             NotifyPatientOfCarePlanApproval::class,
         ],
         CarePlanWasProviderApproved::class => [

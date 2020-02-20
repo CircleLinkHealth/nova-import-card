@@ -6,10 +6,14 @@
 
 namespace Tests\Feature;
 
-use App\CarePlan;
 use App\Contracts\DirectMail;
 use App\DirectMailMessage;
+use App\Events\CarePlanWasApproved;
+use App\Events\CarePlanWasQAApproved;
 use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
+use CircleLinkHealth\Core\Facades\Notification;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use Event;
 use Tests\CustomerTestCase;
 
 class ApproveCPViaDM extends CustomerTestCase
@@ -20,19 +24,18 @@ class ApproveCPViaDM extends CustomerTestCase
     }
     
     public function test_it_sends_careplan_approval_dm_upon_qa_approval () {
-        Event::fake();
+        Notification::fake();
+        $this->actingAs($this->administrator());
+        
+        $patient = $this->patient();
+        $patient->setCarePlanStatus(CarePlan::DRAFT);
+        $patient->setBillingProviderId($this->provider()->id);
+        
+        $this->assertEquals(CarePlan::DRAFT,$patient->carePlan->status);
+        event(new CarePlanWasApproved($patient));
+        $this->assertEquals(CarePlan::QA_APPROVED,$patient->carePlan->status);
     
-        // Perform order shipping...
-    
-        Event::assertDispatched(OrderShipped::class, function ($e) use ($order) {
-            return $e->order->id === $order->id;
-        });
-    
-        // Assert an event was dispatched twice...
-        Event::assertDispatched(OrderShipped::class, 2);
-    
-        // Assert an event was not dispatched...
-        Event::assertNotDispatched(OrderFailedToShip::class);
+        Notification::assertSentTo($this->provider(), SendCarePlanForDirectMailApprovalNotification::class);
     }
 
     /**

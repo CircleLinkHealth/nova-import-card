@@ -35,8 +35,14 @@ class CustomerTestCase extends TestCase
      * @var array|User
      */
     private $provider;
-
     /**
+     * @var array|User
+     */
+    private $administrator;
+    
+    /**
+     * @param int $number
+     *
      * @return array|User
      */
     protected function careCoach(int $number = 1)
@@ -63,8 +69,10 @@ class CustomerTestCase extends TestCase
 
         return $this->location;
     }
-
+    
     /**
+     * @param int $number
+     *
      * @return array|User
      */
     protected function patient(int $number = 1)
@@ -87,8 +95,10 @@ class CustomerTestCase extends TestCase
 
         return $this->practice;
     }
-
+    
     /**
+     * @param int $number
+     *
      * @return array|User
      */
     protected function provider(int $number = 1)
@@ -98,6 +108,20 @@ class CustomerTestCase extends TestCase
         }
 
         return $this->provider;
+    }
+    
+    /**
+     * @param int $number
+     *
+     * @return array|User
+     */
+    protected function administrator(int $number = 1)
+    {
+        if ( ! $this->administrator) {
+            $this->administrator = $this->createUsersOfType('administrator', $number);
+        }
+        
+        return $this->administrator;
     }
 
     /**

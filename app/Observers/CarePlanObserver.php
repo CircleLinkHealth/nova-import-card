@@ -6,6 +6,9 @@
 
 namespace App\Observers;
 
+use App\Events\CarePlanWasProviderApproved;
+use App\Events\CarePlanWasQAApproved;
+use App\Events\PdfableCreated;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\AppConfig\PatientSupportUser;
@@ -34,6 +37,15 @@ class CarePlanObserver
             $carePlan->load('patient');
             $this->addCarePlanPrintedNote($carePlan);
         }
+    
+        if (CarePlan::QA_APPROVED == $carePlan->status) {
+            event(new CarePlanWasQAApproved($carePlan->patient));
+        }
+    
+        if (CarePlan::PROVIDER_APPROVED == $carePlan->status) {
+            event(new CarePlanWasProviderApproved($carePlan->patient));
+            event(new PdfableCreated($carePlan));
+        }
     }
 
     /**
@@ -43,11 +55,12 @@ class CarePlanObserver
     {
         if (CarePlan::QA_APPROVED == $carePlan->status) {
             $carePlan->provider_approver_id = null;
+            $carePlan->provider_date = null;
             /** @var SchedulerService $schedulerService */
             $schedulerService = app()->make(SchedulerService::class);
             $schedulerService->ensurePatientHasScheduledCall($carePlan->patient);
         }
-
+        
         if ( ! array_key_exists('care_plan_template_id', $carePlan->getAttributes())) {
             $carePlan->care_plan_template_id = getDefaultCarePlanTemplate()->id;
         }

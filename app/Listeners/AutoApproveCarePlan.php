@@ -24,8 +24,6 @@ class AutoApproveCarePlan
         $event->patient->carePlan->status               = CarePlan::PROVIDER_APPROVED;
         $event->patient->carePlan->provider_approver_id = optional($event->patient->billingProviderUser())->id;
         $event->patient->carePlan->save();
-        
-        event(new PdfableCreated($event->patient->carePlan));
     }
     
     private function shouldAutoApprove(CarePlanWasQAApproved $event): bool

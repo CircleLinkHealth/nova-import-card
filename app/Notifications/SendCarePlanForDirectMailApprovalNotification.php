@@ -22,9 +22,11 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
      * @var User
      */
     protected $patientUser;
-
+    
     /**
      * Create a new notification instance.
+     *
+     * @param User $patientUser
      */
     public function __construct(User $patientUser)
     {

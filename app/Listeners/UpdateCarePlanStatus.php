@@ -45,10 +45,6 @@ class UpdateCarePlanStatus
         $patient->carePlan->provider_date        = now()->toDateTimeString();
         $patient->carePlan->save();
         
-        event(new CarePlanWasProviderApproved($patient));
-    
-        event(new PdfableCreated($patient->carePlan));
-        
         //@todo: refactor to laravel notification via slack channel
         if (isProductionEnv()) {
             sendSlackMessage(
@@ -64,8 +60,6 @@ class UpdateCarePlanStatus
         $patient->carePlan->qa_approver_id = auth()->id();
         $patient->carePlan->qa_date        = now()->toDateTimeString();
         $patient->carePlan->save();
-        
-        event(new CarePlanWasQAApproved($patient));
     }
     
     /**

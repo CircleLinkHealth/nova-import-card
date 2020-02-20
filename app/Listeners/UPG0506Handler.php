@@ -26,7 +26,9 @@ class UPG0506Handler
      */
     public function handle($event)
     {
-        if (! $event->patient->ccdas()->hasUPG0506PdfCareplanMedia()->exists()) {
+        if (!$event->patient->hasCcda()) return;
+        
+        if (! $event->patient->latestCcda()->hasUPG0506PdfCareplanMedia()->exists()) {
             return;
         }
         $event->patient->carePlan->status               = CarePlan::PROVIDER_APPROVED;
