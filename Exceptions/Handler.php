@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
@@ -81,23 +82,30 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
-        parent::report($e);
-
         if ( ! $this->shouldReport($e)) {
             return;
         }
-
-        if ($e instanceof \Illuminate\Database\QueryException) {
-            //                    @todo:heroku query to see if it exists, then attach
-
+    
+        if ($e instanceof QueryException) {
             $errorCode = $e->errorInfo[1] ?? null;
+            
             if (1062 == $errorCode) {
-                //do nothing
-                //we don't actually want to terminate the program if we detect duplicates
+                //1062 means we violated some key constraint (eg. trying to enter a duplicate value on a column with a unique index)
+                //we don't actually want to terminate the program if this happens
                 //we just don't wanna add the row again
                 return;
             }
+            
+            //Query exceptions may contain PHI, so we don't want to send them to bug trackers. We will quietly log it in the background and bail
+            StorePHIException::dispatch($e);
+            return;
         }
+    
+        if (app()->bound('sentry')) {
+            app('sentry')->captureException($e);
+        }
+    
+        parent::report($e);
     }
 
     /**
