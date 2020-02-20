@@ -97,8 +97,9 @@ class Handler extends ExceptionHandler
             }
             
             //Query exceptions may contain PHI, so we don't want to send them to bug trackers. We will quietly log it in the background and bail
-            StorePHIException::dispatch($e);
-            return;
+//            @todo: decide if we want to implement fully
+//            StorePHIException::dispatch($e);
+//            return;
         }
     
         if (app()->bound('sentry')) {
