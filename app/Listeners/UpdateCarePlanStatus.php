@@ -70,7 +70,7 @@ class UpdateCarePlanStatus
             $user->carePlan->qa_approver_id = auth()->id();
             $user->carePlan->save();
 
-            if ((bool) $practiceSettings->auto_approve_careplans || $user->ccdas()->hasUPG0506PdfCareplanMedia()->exists()) {
+            if ((bool) $practiceSettings->auto_approve_careplans || $user->ccdas()->first()->hasUPG0506PdfCareplanMedia()->exists()) {
                 $user->carePlan->status               = CarePlan::PROVIDER_APPROVED;
                 $user->carePlan->provider_approver_id = optional($user->billingProviderUser())->id;
                 $user->carePlan->save();
