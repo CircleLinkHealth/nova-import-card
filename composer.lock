@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e041bb45881b5be0e0fbbaa4f727dfe7",
+    "content-hash": "3136696603c2a6413720ef4709f6b5f9",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -471,15 +471,16 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.8.6",
+            "version": "v1.8.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "0f0bca8c6485b821a52ea4846d9165b8328bfff8"
+                "reference": "c273c33b4f323a5687de3f2e11b493bc7d643a2d"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
                 "circlelinkhealth/core-module": "*",
+                "fico7489/laravel-pivot": "^3.0",
                 "laravel/passport": "^7.0",
                 "laravel/scout": "^7.1",
                 "spatie/laravel-medialibrary": "^7.0.0"
@@ -508,7 +509,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-17T20:39:22+00:00"
+            "time": "2020-02-18T20:19:04+00:00"
         },
         {
             "name": "circlelinkhealth/raygun-module",
@@ -1312,6 +1313,56 @@
                 "parser"
             ],
             "time": "2019-12-30T22:54:17+00:00"
+        },
+        {
+            "name": "fico7489/laravel-pivot",
+            "version": "3.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fico7489/laravel-pivot.git",
+                "reference": "8c4aeef7ce5b0cd52b6f32b6c6f78da9d0c78ca4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fico7489/laravel-pivot/zipball/8c4aeef7ce5b0cd52b6f32b6c6f78da9d0c78ca4",
+                "reference": "8c4aeef7ce5b0cd52b6f32b6c6f78da9d0c78ca4",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": ">5.5.0  || 6.*"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": ">2.0",
+                "orchestra/testbench": ">3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Fico7489\\Laravel\\Pivot\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Filip Horvat",
+                    "email": "filip.horvat@am2studio.hr",
+                    "homepage": "http://am2studio.hr",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This package introduces new eloquent events for sync(), attach(), detach() or updateExistingPivot() methods on BelongsToMany relation.",
+            "homepage": "https://github.com/fico7489/laravel-pivot",
+            "keywords": [
+                "eloquent events",
+                "eloquent extra events",
+                "laravel BelongsToMany events",
+                "laravel pivot events",
+                "laravel sync events"
+            ],
+            "time": "2019-09-28T08:00:50+00:00"
         },
         {
             "name": "fideloper/proxy",

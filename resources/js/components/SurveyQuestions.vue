@@ -834,7 +834,7 @@
                         }
                     }
                     //default comparison
-                    const expectedAnswersEqualsValue = q.map(q => q.related_question_expected_answer === firstQuestion.answer.value.value);
+                    const expectedAnswersEqualsValue = allQuestionConditions.map(q => q.related_question_expected_answer === firstQuestion.answer.value.value);
 
                     if (!expectedAnswersEqualsValue.includes(true)) {
                         canGoToNext = false;
