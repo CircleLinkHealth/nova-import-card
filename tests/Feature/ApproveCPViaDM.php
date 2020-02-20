@@ -9,7 +9,7 @@ namespace Tests\Feature;
 use App\Contracts\DirectMail;
 use App\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
-use App\Events\CarePlanWasQAApproved;
+use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -21,21 +21,6 @@ class ApproveCPViaDM extends CustomerTestCase
     public function directMailSubject($patient): string
     {
         return "{$patient->getFullName()}'s CCM Care Plan to approve!";
-    }
-    
-    public function test_it_sends_careplan_approval_dm_upon_qa_approval () {
-        Notification::fake();
-        $this->actingAs($this->administrator());
-        
-        $patient = $this->patient();
-        $patient->setCarePlanStatus(CarePlan::DRAFT);
-        $patient->setBillingProviderId($this->provider()->id);
-        
-        $this->assertEquals(CarePlan::DRAFT,$patient->carePlan->status);
-        event(new CarePlanWasApproved($patient));
-        $this->assertEquals(CarePlan::QA_APPROVED,$patient->carePlan->status);
-    
-        Notification::assertSentTo($this->provider(), SendCarePlanForDirectMailApprovalNotification::class);
     }
 
     /**
@@ -53,14 +38,41 @@ class ApproveCPViaDM extends CustomerTestCase
         $notification = new SendCarePlanForDirectMailApprovalNotification($this->patient());
         $this->provider()->notify($notification);
 
-        $this->assertDatabaseHas((new DirectMailMessage())->getTable(), [
-            'from'       => config('services.emr-direct.user'),
-            'to'         => 'circlelinkhealth@test.directproject.net',
-            'subject'    => $this->directMailSubject($this->patient()),
-            'status'     => DirectMailMessage::STATUS_SUCCESS,
-            'direction'  => DirectMailMessage::DIRECTION_SENT,
-            'error_text' => null,
-        ]);
+        $this->assertDatabaseHas(
+            (new DirectMailMessage())->getTable(),
+            [
+                'from'       => config('services.emr-direct.user'),
+                'to'         => 'circlelinkhealth@test.directproject.net',
+                'subject'    => $this->directMailSubject($this->patient()),
+                'status'     => DirectMailMessage::STATUS_SUCCESS,
+                'direction'  => DirectMailMessage::DIRECTION_SENT,
+                'error_text' => null,
+            ]
+        );
+    }
+
+    public function test_it_sends_careplan_approval_dm_upon_qa_approval()
+    {
+        Notification::fake();
+        $this->actingAs($this->administrator());
+
+        $patient = $this->patient();
+        $patient->setCarePlanStatus(CarePlan::DRAFT);
+        $patient->setBillingProviderId($this->provider()->id);
+
+        $this->assertEquals(CarePlan::DRAFT, $patient->carePlan->status);
+        event(new CarePlanWasApproved($patient));
+        $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
+
+        Notification::assertSentTo(
+            $this->provider(),
+            SendCarePlanForDirectMailApprovalNotification::class,
+            function ($notification, $channels, $notifiable) {
+                $this->assertContains(DirectMailChannel::class, $channels);
+
+                return true;
+            }
+        );
     }
 
     public function test_receive_dm()
