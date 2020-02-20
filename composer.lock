@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b3ccd70a7a992fd99d0ee3fd8e79b39",
+    "content-hash": "35e2957d936619896401050f3f65d471",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.15",
+            "version": "3.133.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "18289bf4a3fe68e9a0853f29d82b6cd4b1de2f9e"
+                "reference": "e5a78b0704bba3024abac91a1009dde8f8ec1fa8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/18289bf4a3fe68e9a0853f29d82b6cd4b1de2f9e",
-                "reference": "18289bf4a3fe68e9a0853f29d82b6cd4b1de2f9e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e5a78b0704bba3024abac91a1009dde8f8ec1fa8",
+                "reference": "e5a78b0704bba3024abac91a1009dde8f8ec1fa8",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-02-14T19:09:24+00:00"
+            "time": "2020-02-20T19:10:17+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -817,11 +817,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.4.4",
+            "version": "v1.4.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "f61ada7eed4e61a4ec55df6de18b1d37bc3a01da"
+                "reference": "592fb6680ef8f8e1178d98e7ccafb5c55f43cb3b"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -850,7 +850,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-07T04:09:19+00:00"
+            "time": "2020-02-20T20:36:33+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -925,11 +925,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v1.7.2",
+            "version": "v1.7.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "35a45494c14ef500556a32bc7df73445ab2add2a"
+                "reference": "276d0dff3bdb03832843e6e3f1e40f8767b911b6"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -954,7 +954,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-17T18:54:02+00:00"
+            "time": "2020-02-20T20:38:12+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -3980,16 +3980,16 @@
         },
         {
             "name": "laravel/horizon",
-            "version": "v3.7.0",
+            "version": "v3.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/horizon.git",
-                "reference": "f0295eec1fb96d0adace50aac01c3984877c034c"
+                "reference": "42f565649fa778a9a2b1c995df932871f89afa35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/horizon/zipball/f0295eec1fb96d0adace50aac01c3984877c034c",
-                "reference": "f0295eec1fb96d0adace50aac01c3984877c034c",
+                "url": "https://api.github.com/repos/laravel/horizon/zipball/42f565649fa778a9a2b1c995df932871f89afa35",
+                "reference": "42f565649fa778a9a2b1c995df932871f89afa35",
                 "shasum": ""
             },
             "require": {
@@ -4045,7 +4045,7 @@
                 "laravel",
                 "queue"
             ],
-            "time": "2020-02-14T15:17:05+00:00"
+            "time": "2020-02-18T19:28:58+00:00"
         },
         {
             "name": "laravel/nexmo-notification-channel",
