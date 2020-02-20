@@ -96,11 +96,14 @@ class ApproveCPViaDM extends CustomerTestCase
         $patient = $this->patient();
         $patient->setCarePlanStatus(CarePlan::QA_APPROVED);
         $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
-    
+        $patient->setBillingProviderId($this->provider()->id);
+        
+        $this->provider()->emr_direct_address = 'drtest@upg.ssdirect.aprima.com'.str_random(5);
     
         $approvalCode = "#approve{$patient->carePlan->id}";
         $directMail = factory(DirectMailMessage::class)->create([
-            'body' => "Yes, I approve $approvalCode"
+            'body' => "Yes, I approve $approvalCode",
+            'from' => $this->provider()->emr_direct_address,
                                                                 ]);
         
         event(new DirectMailMessageReceived($directMail));
@@ -112,12 +115,12 @@ class ApproveCPViaDM extends CustomerTestCase
     {
         $listener = app(ChangeOrApproveCareplanResponseListener::class);
 
-        $this->assertEquals(120, $listener->getApprovalCode('   #approve120'));
-        $this->assertEquals(120, $listener->getApprovalCode('#approve120'));
-        $this->assertEquals(32, $listener->getApprovalCode('#approve 32'));
-        $this->assertEquals(3, $listener->getApprovalCode('#approve       3   '));
+        $this->assertEquals(120, $listener->getCareplanIdToApprove('   #approve120'));
+        $this->assertEquals(120, $listener->getCareplanIdToApprove('#approve120'));
+        $this->assertEquals(32, $listener->getCareplanIdToApprove('#approve 32'));
+        $this->assertEquals(3, $listener->getCareplanIdToApprove('#approve       3   '));
     
-        $this->assertEquals(2, $listener->getChangesCode('#change2'));
+        $this->assertEquals(2, $listener->getCareplanIdToChange('#change2'));
         
     }
 }
