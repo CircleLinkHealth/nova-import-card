@@ -18,7 +18,7 @@ class CarePlanWasQAApproved extends Event
     /**
      * @var User
      */
-    public  $patient;
+    public $patient;
     
     
     /**

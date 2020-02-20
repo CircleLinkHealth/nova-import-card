@@ -18,6 +18,22 @@ class ApproveCPViaDM extends CustomerTestCase
     {
         return "{$patient->getFullName()}'s CCM Care Plan to approve!";
     }
+    
+    public function test_it_sends_careplan_approval_dm_upon_qa_approval () {
+        Event::fake();
+    
+        // Perform order shipping...
+    
+        Event::assertDispatched(OrderShipped::class, function ($e) use ($order) {
+            return $e->order->id === $order->id;
+        });
+    
+        // Assert an event was dispatched twice...
+        Event::assertDispatched(OrderShipped::class, 2);
+    
+        // Assert an event was not dispatched...
+        Event::assertNotDispatched(OrderFailedToShip::class);
+    }
 
     /**
      * A basic feature test example.

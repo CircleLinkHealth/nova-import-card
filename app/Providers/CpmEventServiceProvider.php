@@ -8,23 +8,28 @@ namespace App\Providers;
 
 use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Events\CarePlanWasApproved;
+use App\Events\CarePlanWasProviderApproved;
 use App\Events\CarePlanWasQAApproved;
 use App\Events\NoteFinalSaved;
 use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
+use App\Listeners\AddPatientConsentNote;
 use App\Listeners\AttachAttestedProblemsToCall;
 use App\Listeners\AttachUPG0506CarePlanToPatientUser;
 use App\Listeners\AutoApproveCarePlan;
 use App\Listeners\CheckBeforeSendMessageListener;
 use App\Listeners\CreateAndHandlePdfReport;
+use App\Listeners\ForwardApprovedCarePlanToPractice;
 use App\Listeners\ForwardNote;
 use App\Listeners\LogFailedNotification;
 use App\Listeners\LogSuccessfulLogin;
 use App\Listeners\LogSuccessfulLogout;
+use App\Listeners\NotifyPatientOfCarePlanApproval;
 use App\Listeners\PatientContactWindowUpdated;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UPG0506CcdaImporterListener;
+use App\Listeners\UPG0506Handler;
 use App\Listeners\UserLoggedOut;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Listeners\NotifySlackChannel;
@@ -90,7 +95,13 @@ class CpmEventServiceProvider extends ServiceProvider
             AttachUPG0506CarePlanToPatientUser::class
         ],
         CarePlanWasQAApproved::class => [
+            AddPatientConsentNote::class,
             AutoApproveCarePlan::class,
+            UPG0506Handler::class,
+            NotifyPatientOfCarePlanApproval::class,
+        ],
+        CarePlanWasProviderApproved::class => [
+            ForwardApprovedCarePlanToPractice::class,
         ]
     ];
 
