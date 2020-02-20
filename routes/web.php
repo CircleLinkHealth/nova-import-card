@@ -4,6 +4,10 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
+Route::get('login/{token}/validate', 'Auth\LoginController@passwordlessLogin')
+    ->name('login.token.validate')
+    ->middleware('signed');
+
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
     'as'   => 'webhook.on-fax-sent',
