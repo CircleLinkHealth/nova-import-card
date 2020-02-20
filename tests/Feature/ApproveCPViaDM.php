@@ -65,6 +65,7 @@ class ApproveCPViaDM extends CustomerTestCase
 
         $this->assertEquals(CarePlan::DRAFT, $patient->carePlan->status);
         event(new CarePlanWasApproved($patient, $this->administrator()));
+        $patient->carePlan->fresh();
         $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
 
         Notification::assertSentTo(
