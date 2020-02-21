@@ -6,12 +6,12 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Mockery as m;
 use Tests\TestCase;
 
@@ -160,8 +160,10 @@ class ProtectPHITest extends TestCase
             //this is the easiest way to resolve this. We could also check patient names upon seeding the data but that would slow down the test suite
             if (in_array($phi, [
                 $this->admin->first_name,
-                $this->admin->last_name
-            ]))
+                $this->admin->last_name,
+            ])) {
+                continue;
+            }
             $response->assertDontSee($phi);
         }
     }
@@ -190,7 +192,7 @@ class ProtectPHITest extends TestCase
     private function disablePHIForUser(User $user)
     {
         $user->setCanSeePhi(false);
-        $this->assertTrue( ! $user->hasPermission('phi.read'));
+        $this->assertTrue(! $user->hasPermission('phi.read'));
     }
 
     private function getExpectedValueForKey($model, $phiField)
