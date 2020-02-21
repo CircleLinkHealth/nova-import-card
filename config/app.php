@@ -300,6 +300,14 @@ return [
     'debug_blacklist' => [
         '_COOKIE' => array_keys($_COOKIE),
         '_SERVER' => array_keys($_SERVER),
-        '_ENV'    => array_except(array_keys($_ENV), ['APP_ENV']),
+        '_ENV'    => array_except(array_keys($_ENV), [
+            'APP_ENV',
+            'SCOUT_DRIVER',
+            'BROADCAST_DRIVER',
+            'CACHE_DRIVER',
+            'SESSION_DRIVER',
+            'SESSION_DOMAIN',
+            'TWO_FA_ENABLED',
+            ]),
     ],
 ];

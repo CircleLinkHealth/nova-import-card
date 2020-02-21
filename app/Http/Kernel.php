@@ -19,6 +19,7 @@ use App\Http\Middleware\EnrollmentCenter;
 use App\Http\Middleware\LogoutIfAccessDisabled;
 use App\Http\Middleware\PatientProgramSecurity;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\SentryContext;
 use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\VerifyCsrfToken;
 use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
@@ -48,6 +49,7 @@ class Kernel extends HttpKernel
         CheckForMaintenanceMode::class,
         TrustProxies::class,
         FrameGuard::class,
+        SentryContext::class,
     ];
 
     /**

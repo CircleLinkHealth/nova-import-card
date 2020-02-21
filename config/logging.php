@@ -41,7 +41,7 @@ return [
     'channels' => [
         'stack' => [
             'driver'            => 'stack',
-            'channels'          => ['daily'],
+            'channels'          => ['single', 'logdna'],
             'ignore_exceptions' => false,
         ],
 
@@ -86,6 +86,10 @@ return [
                 'level'         => env('LOG_DNA_LEVEl', \Monolog\Logger::DEBUG),
             ],
             'formatter' => LogdnaFormatter::class,
+        ],
+
+        'sentry' => [
+            'driver' => 'sentry',
         ],
 
         'stderr' => [
