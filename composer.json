@@ -18,10 +18,6 @@
         },
         {
             "type": "git",
-            "url": "git@github.com:CircleLinkHealth/module-raygun.git"
-        },
-        {
-            "type": "git",
             "url": "git@github.com:CircleLinkHealth/module-time-tracking.git"
         },
         {
@@ -72,10 +68,9 @@
         "ext-simplexml": "*",
         "barryvdh/laravel-cors": "^0.11.3",
         "barryvdh/laravel-snappy": "^0.4.5",
-        "circlelinkhealth/core-module": "1.4.3",
+        "circlelinkhealth/core-module": "1.4.5",
         "circlelinkhealth/cpm-migrations-module": "1.4.2",
         "circlelinkhealth/customer-module": "1.8.8",
-        "circlelinkhealth/raygun-module": "0.8",
         "circlelinkhealth/revisionable-module": "^1.4",
         "circlelinkhealth/shared-models-module": "1.1.5",
         "circlelinkhealth/sqlviews-module": "1.0",
@@ -96,6 +91,7 @@
         "michalisantoniou6/laravel-cerberus": "dev-master",
         "nvanheuverzwijn/monolog-logdna": "^2.1",
         "nwidart/laravel-modules": "^6.2",
+        "sentry/sentry-laravel": "1.6.1",
         "twilio/sdk": "^5.28",
         "waavi/url-shortener": "dev-master"
     },
