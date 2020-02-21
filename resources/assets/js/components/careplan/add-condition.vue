@@ -7,8 +7,8 @@
                 </label>
             </div>
             <div class="col-sm-12 top-10">
-                <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name"
-                            :value="newProblem.name" :limit="15"
+                <v-complete class="v-complete" placeholder="Enter a Condition" :required="true" v-model="newProblem.name"
+                            :value="newProblem.name" :limit="99"
                             :suggestions="cpmProblemsForAutoComplete"
                             :class="{ error: patientHasSelectedProblem }" :threshold="0.8"
                             @input="resolveIcd10Code">
@@ -154,5 +154,8 @@
 </script>
 
 <style>
-
+    .v-complete ul {
+        max-height: 200px!important;
+        overflow: scroll;
+    }
 </style>
