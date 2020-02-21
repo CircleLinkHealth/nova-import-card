@@ -77,8 +77,12 @@ class ApproveBillablePatientsService
      */
     public function getBillablePatientsForMonth($practiceId, Carbon $date)
     {
+        // 1. this will fetch billable patients that have
+        //    ccm > 1200 and/or bhi > 1200
         $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(30);
 
+        // 2. if patient is only eligible for PCM, we should make sure ccm time is over 30 mins
+        //    if patient is eligible for both PCM and CCM we choose CCM
         $summaries->getCollection()->transform(function ($summary) {
             if ( ! $summary->actor_id) {
                 $summary = $this->patientSummaryRepo->attachChargeableServices($summary);
