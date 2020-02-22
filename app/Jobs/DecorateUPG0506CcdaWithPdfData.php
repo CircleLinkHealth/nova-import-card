@@ -3,6 +3,8 @@
 namespace App\Jobs;
 
 use App\DirectMailMessage;
+use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
@@ -26,7 +28,6 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
      */
     public function __construct(Ccda $ccda)
     {
-        //
         $this->ccda = $ccda;
     }
 
@@ -37,8 +38,14 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
      */
     public function handle()
     {
+        if (! $this->ccda->hasUPG0506Media()){
+            return;
+        }
+
         if ( ! $this->ccda->hasUPG0506PdfCareplanMedia()->exists()) {
-            return $this->release(60);
+
+            $this->release(60);
+            return;
         }
 
         $this->markUPG0506FlowAsDone();

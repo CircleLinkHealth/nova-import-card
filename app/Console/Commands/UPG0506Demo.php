@@ -10,6 +10,7 @@ use App\DirectMailMessage;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use App\Services\PhiMail\Incoming\Handlers\Pdf;
 use App\Services\PhiMail\Incoming\Handlers\XML;
+use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
@@ -74,51 +75,54 @@ class UPG0506Demo extends Command
 
     private function clearTestData()
     {
-        $ccdas = Ccda::where('mrn', '334417')
-//            ->where(function ($q) {
-//                $q->where(function ($q) {
-//                    $q->hasUPG0506PdfCareplanMedia();
-//                })
-//                    ->orWhere(function ($q) {
-//                    $q->hasUPG0506Media();
-//                });
-//            })
-            ->get();
+        if (! isProductionEnv()){
+            $ccdas = Ccda::where('mrn', '334417')
+                         ->get();
 
-        if ($ccdas->isEmpty()) {
-            return;
-        }
+            foreach ($ccdas as $ccda) {
+                $ccda->media()
+                     ->get()
+                     ->each(function ($media) {
+                         $media->delete();
+                     });
 
-        foreach ($ccdas as $ccda) {
-            $ccda->media()
-                ->get()
-                ->each(function ($media) {
-                $media->delete();
-            });
+                \DB::table('media')
+                   ->where('custom_properties->is_pdf', 'true')
+                   ->where('custom_properties->is_upg0506', 'true')
+                   ->where('custom_properties->care_plan->demographics->mrn_number', '334417')
+                   ->delete();
 
-            $dm = $ccda->directMessage()->first();
+                $dm = $ccda->directMessage()->first();
 
-            if ($dm) {
-                $dm->media()
-                    ->get()
-                    ->each(function ($media) {
-                                $media->delete();
-                            });
-                $dm->delete();
+                if ($dm) {
+                    $dm->media()
+                       ->get()
+                       ->each(function ($media) {
+                           $media->delete();
+                       });
+                    $dm->delete();
+                }
+
+                $ccda->importedMedicalRecord()->forceDelete();
+
+                $patient = $ccda->getPatient();
+
+                if ($patient){
+                    $patient->patientSummaries()->delete();
+                    $patient->forceDelete();
+                }
+
+                $ccda->forceDelete();
             }
 
-            $ccda->importedMedicalRecord()->forceDelete();
+            $pdf = Media::where('custom_properties->is_upg0506', 'true')
+                        ->where('custom_properties->care_plan->demographics->mrn_number', '334417')
+                        ->first();
 
-            $patient = $ccda->getPatient();
-
-            if ($patient){
-                $patient->patientSummaries()->delete();
-                $patient->forceDelete();
+            if ($pdf){
+                $pdf->delete();
             }
-
-            $ccda->forceDelete();
         }
-
 
         User::whereFirstName('Barbara')
             ->whereLastName('Zznigro')
