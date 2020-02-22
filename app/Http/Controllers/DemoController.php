@@ -6,10 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\Core\StringManipulation;
 use App\Contracts\DirectMail;
 use App\Contracts\Efax;
+use CircleLinkHealth\Core\StringManipulation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DemoController extends Controller
 {
@@ -21,7 +22,7 @@ class DemoController extends Controller
                        ->send();
         dd($faxTest);
     }
-    
+
     public function sendSampleEMRNote(Request $request, DirectMail $dm)
     {
         $test = $dm->send(
@@ -31,8 +32,15 @@ class DemoController extends Controller
         );
         dd($test);
     }
-    
-    public function sentry() {
+
+    public function sentry()
+    {
         throw new \Exception('My first Sentry error!');
+    }
+
+    public function sentryLog()
+    {
+        Log::error('Log that should reach both stderr and Sentry!');
+        return response([]);
     }
 }
