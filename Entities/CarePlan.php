@@ -12,11 +12,11 @@ use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NotifyPatientCarePlanApproved;
-use App\Rules\HasAtLeast2CcmOr1BhiProblems;
+use App\Rules\HasEnoughProblems;
 use App\Services\CareplanService;
-use CircleLinkHealth\Core\PdfService;
 use App\Traits\PdfReportTrait;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -30,24 +30,24 @@ use Validator;
 /**
  * App\CarePlan.
  *
- * @property int                                                        $id
- * @property string                                                     $mode
- * @property int                                                        $user_id
- * @property int|null                                                   $provider_approver_id
- * @property int|null                                                   $qa_approver_id
- * @property int                                                        $care_plan_template_id
- * @property string                                                     $type
- * @property string                                                     $status
- * @property \Carbon\Carbon                                             $qa_date
- * @property \Carbon\Carbon                                             $provider_date
- * @property string|null                                                $last_printed
- * @property \Carbon\Carbon                                             $created_at
- * @property \Carbon\Carbon                                             $updated_at
- * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate                                      $carePlanTemplate
- * @property \App\CareplanAssessment                                    $assessment
- * @property \CircleLinkHealth\Customer\Entities\User                   $patient
+ * @property int $id
+ * @property string $mode
+ * @property int $user_id
+ * @property int|null $provider_approver_id
+ * @property int|null $qa_approver_id
+ * @property int $care_plan_template_id
+ * @property string $type
+ * @property string $status
+ * @property \Carbon\Carbon $qa_date
+ * @property \Carbon\Carbon $provider_date
+ * @property string|null $last_printed
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate $carePlanTemplate
+ * @property \App\CareplanAssessment $assessment
+ * @property \CircleLinkHealth\Customer\Entities\User $patient
  * @property \App\Models\Pdf[]|\Illuminate\Database\Eloquent\Collection $pdfs
- * @property \CircleLinkHealth\Customer\Entities\User|null              $providerApproverUser
+ * @property \CircleLinkHealth\Customer\Entities\User|null $providerApproverUser
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCarePlanTemplateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCreatedAt($value)
@@ -64,11 +64,13 @@ use Validator;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereUserId($value)
  * @mixin \Eloquent
  *
- * @property int|null                                                                                                        $first_printed_by
- * @property \Illuminate\Support\Carbon|null                                                                                 $first_printed
- * @property string                                                                                                          $provider_approver_name
- * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
- * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]                                  $revisionHistory
+ * @property int|null $first_printed_by
+ * @property \Illuminate\Support\Carbon|null $first_printed
+ * @property string $provider_approver_name
+ * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection
+ *     $notifications
+ * @property \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Revisionable\Entities\Revision[]
+ *     $revisionHistory
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan newQuery()
@@ -83,26 +85,26 @@ use Validator;
 class CarePlan extends BaseModel implements PdfReport
 {
     use PdfReportTrait;
-    
+
     // status options
-    const DRAFT             = 'draft';
-    const PDF               = 'pdf';
+    const DRAFT = 'draft';
+    const PDF = 'pdf';
     const PROVIDER_APPROVED = 'provider_approved';
-    const QA_APPROVED       = 'qa_approved';
-    
+    const QA_APPROVED = 'qa_approved';
+
     // mode options
     const WEB = 'web';
-    
+
     protected $attributes = [
         'mode' => self::WEB,
     ];
-    
+
     protected $dates = [
         'qa_date',
         'provider_date',
         'first_printed',
     ];
-    
+
     protected $fillable = [
         'user_id',
         'mode',
@@ -119,60 +121,60 @@ class CarePlan extends BaseModel implements PdfReport
         'created_at',
         'updated_at',
     ];
-    
+
     public function alertPatientAboutApproval()
     {
         $this->patient->notify(new NotifyPatientCarePlanApproved($this));
     }
-    
+
     public function carePlanTemplate()
     {
         return $this->belongsTo(CarePlanTemplate::class);
     }
-    
+
     /**
      * Forwards CarePlan to CareTeam and/or Support.
      */
     public function forward()
     {
         Log::debug('CarePlan: Ready to forward');
-        
+
         $this->load(
             [
                 'patient.primaryPractice.settings',
                 'patient.patientInfo.location',
             ]
         );
-        
+
         $channels = $this->notificationChannels();
-        
+
         if (empty($channels)) {
             $patientId = $this->patient->id;
             $practice  = $this->patient->primaryPractice->name;
             Log::error(
                 "CarePlan: Will not be forwarded because primary practice[${practice}] for patient[${patientId}] does not have any enabled channels."
             );
-            
+
             return;
         }
-        
+
         $location = $this->patient->patientInfo->location;
         if (null == $location) {
             $patientId = $this->patient->id;
             Log::error(
                 "CarePlan: Will not be forwarded because patient[${patientId}] does not have a preferred contact location."
             );
-            
+
             return;
         }
-        
+
         $location->notify(new CarePlanProviderApproved($this, $channels));
     }
-    
+
     public static function getNumberOfCareplansPendingApproval(User $user)
     {
         $pendingApprovals = 0;
-        
+
         if ($user->hasRole(
             [
                 'administrator',
@@ -217,10 +219,10 @@ class CarePlan extends BaseModel implements PdfReport
                                         ->count();
             }
         }
-        
+
         return $pendingApprovals;
     }
-    
+
     /**
      * Get the name of the provider who approved this care plan.
      *
@@ -229,17 +231,17 @@ class CarePlan extends BaseModel implements PdfReport
     public function getProviderApproverNameAttribute()
     {
         $approver = $this->providerApproverUser;
-        
+
         return $approver
             ? $approver->getFullName()
             : '';
     }
-    
+
     public function isProviderApproved()
     {
         return CarePlan::PROVIDER_APPROVED == $this->status;
     }
-    
+
     /**
      * Get the URL to view the CarePlan.
      *
@@ -254,27 +256,27 @@ class CarePlan extends BaseModel implements PdfReport
             ]
         );
     }
-    
+
     /**
      * @return array
      */
     public function notificationChannels()
     {
         $channels = ['database'];
-        
+
         $cpmSettings = $this->patient->primaryPractice->cpmSettings();
-        
+
         if ($cpmSettings->efax_pdf_careplan) {
             $channels[] = FaxChannel::class;
         }
-        
+
         if ($cpmSettings->dm_pdf_careplan) {
             $channels[] = DirectMailChannel::class;
         }
-        
+
         return $channels;
     }
-    
+
     /**
      * Returns the notifications that included this resource as an attachment.
      *
@@ -285,12 +287,12 @@ class CarePlan extends BaseModel implements PdfReport
         return $this->morphMany(\CircleLinkHealth\Core\Entities\DatabaseNotification::class, 'attachment')
                     ->orderBy('created_at', 'desc');
     }
-    
+
     public function patient()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    
+
     /**
      * Get all the PDF CarePlans attached to this CarePlan.
      */
@@ -298,12 +300,12 @@ class CarePlan extends BaseModel implements PdfReport
     {
         return $this->morphMany(Pdf::class, 'pdfable');
     }
-    
+
     public function providerApproverUser()
     {
         return $this->belongsTo(User::class, 'provider_approver_id', 'id');
     }
-    
+
     public function safe()
     {
         return [
@@ -314,7 +316,7 @@ class CarePlan extends BaseModel implements PdfReport
             'type'    => $this->type,
         ];
     }
-    
+
     /**
      * Create a PDF of this resource and return the path to it.
      *
@@ -331,18 +333,18 @@ class CarePlan extends BaseModel implements PdfReport
         if (isUnitTestingEnv()) {
             return public_path('assets/pdf/sample-note.pdf');
         }
-        
+
         $pdfService      = app(PdfService::class);
         $reportFormatter = app(ReportFormatter::class);
         $careplanService = app(CareplanService::class);
-        
+
         $careplan = $reportFormatter->formatDataForViewPrintCareplanReport($this->patient);
         $careplan = $careplan[$this->patient->id];
-        
+
         if (empty($careplan)) {
             throw new \Exception("Could not get CarePlan info for CarePlan with ID: {$this->id}");
         }
-        
+
         return $pdfService->createPdfFromView(
             'wpUsers.patient.multiview',
             [
@@ -357,7 +359,7 @@ class CarePlan extends BaseModel implements PdfReport
             Constants::SNAPPY_CLH_MAIL_VENDOR_SETTINGS
         );
     }
-    
+
     /**
      * Validate that the recently created CarePlan has all the data CLH needs to provide services to a patient.
      *
@@ -378,9 +380,9 @@ class CarePlan extends BaseModel implements PdfReport
                 //            'ccdInsurancePolicies',
             ]
         );
-        
+
         $data = [
-            'conditions' => $patient->ccdProblems,
+            'conditions'      => $patient->ccdProblems,
             //before enabling insurance validation, we have to store all insurance info in CPM
             //            'insurances' => $patient->ccdInsurancePolicies,
             'phoneNumber'     => optional($patient->phoneNumbers->first())->number,
@@ -389,11 +391,11 @@ class CarePlan extends BaseModel implements PdfReport
             'name'            => $patient->getFullName(),
             'billingProvider' => optional($patient->billingProviderUser())->id,
         ];
-        
+
         return Validator::make(
             $data,
             [
-                'conditions'      => [new HasAtLeast2CcmOr1BhiProblems()],
+                'conditions'      => [new HasEnoughProblems($patient)],
                 'phoneNumber'     => 'required|phone:AUTO,US',
                 'dob'             => 'required|date',
                 'mrn'             => ['required', new HasValidNbiMrn($patient)],

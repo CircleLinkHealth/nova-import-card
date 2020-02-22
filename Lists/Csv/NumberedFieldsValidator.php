@@ -57,7 +57,8 @@ class NumberedFieldsValidator extends BaseValidator
         }
 
         $rules['problem_1'] = 'required|filled|same:problem_1';
-        $rules['problem_2'] = 'required|filled|same:problem_2';
+        //if pcm or bhi, only one problem is needed.
+        //$rules['problem_2'] = 'required|filled|same:problem_2';
 
         $this->validator = \Validator::make($toValidate, $rules);
 
