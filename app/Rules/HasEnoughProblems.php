@@ -6,18 +6,16 @@
 
 namespace App\Rules;
 
+use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Validation\Rule;
 
-/**
- * DEPRECATED
- *
- * Replaced with {@link HasEnoughProblems}
- *
- * Class HasAtLeast2CcmOr1BhiProblems
- * @package App\Rules
- */
-class HasAtLeast2CcmOr1BhiProblems implements Rule
+class HasEnoughProblems implements Rule
 {
+
+    /** @var User $patient */
+    private $patient;
+
     /**
      * Create a new rule instance.
      */
@@ -32,7 +30,7 @@ class HasAtLeast2CcmOr1BhiProblems implements Rule
      */
     public function message()
     {
-        return 'The Care Plan must have two CPM problems, or one BHI problem.';
+        return 'The Care Plan must have two CPM problems for CCM, one if practice has PCM (G2065) enabled or one BHI problem.';
     }
 
     /**
@@ -52,6 +50,10 @@ class HasAtLeast2CcmOr1BhiProblems implements Rule
 
         $cpmProblems = $value->count();
         $bhiProblems = $value->where('cpmProblem.is_behavioral', true)->count();
+
+        if ($cpmProblems === 1) {
+            return $this->patient->primaryPractice->hasServiceCode(ChargeableService::PCM);
+        }
 
         return $cpmProblems >= 2 || $bhiProblems >= 1;
     }

@@ -33,7 +33,7 @@ class PatientSummaryEloquentRepository
 
     public function approveIfShouldApprove(User $patient, PatientMonthlySummary $summary)
     {
-        $isBHI = $summary->hasServiceCode('CPT 99484');
+        $isBHI = $summary->hasServiceCode(ChargeableService::BHI);
 
         if (( ! $this->lacksProblems($summary) && ! $isBHI) || ($isBHI && $summary->hasAtLeastOneBhiProblem())) {
             if ( ! $summary->approved && ! $summary->rejected && $this->shouldApprove($patient, $summary)) {
