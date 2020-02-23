@@ -3,7 +3,7 @@
         <div class="scrollable">
             <div class="col-md-12 active">
                 <input type="text"
-                       class="text-field margin-bottom-10"
+                       class="phone-field"
                        v-model="formattedPhoneValue"
                        @keyup="checkNumber"
                        :disabled="readOnly"/>
@@ -75,5 +75,31 @@
 </script>
 
 <style scoped>
+    .btn-primary {
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
 
+    .btn-primary.disabled {
+        opacity: 50%;
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
+
+    .phone-field {
+        border: none;
+        border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+        background-color: transparent;
+        outline: 0;
+        width: 300px;
+        height: 30px;
+    }
+
+
+    @media (max-width: 490px) {
+        .phone-field {
+            padding-left: 9px;
+            width: 325px;
+        }
+    }
 </style>

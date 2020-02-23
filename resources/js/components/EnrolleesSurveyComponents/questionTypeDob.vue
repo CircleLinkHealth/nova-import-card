@@ -67,5 +67,31 @@
 </script>
 
 <style scoped>
+    .btn-primary {
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
 
+    .btn-primary.disabled {
+        opacity: 50%;
+        background-color: #50b2e2;
+        border-color: #4aa5d2;
+    }
+
+    .date-field {
+        border: none;
+        border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+        background-color: transparent;
+        outline: 0;
+        width: 300px;
+        height: 30px;
+    }
+
+
+    @media (max-width: 490px) {
+        .date-field {
+            padding-left: 9px;
+            width: 325px;
+        }
+    }
 </style>
