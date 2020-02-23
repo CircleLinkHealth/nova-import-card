@@ -22,6 +22,10 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
      * @var User
      */
     protected $patientUser;
+    /**
+     * @var PasswordlessLoginToken|\Illuminate\Database\Eloquent\Model
+     */
+    private $passwordlessLoginToken;
     
     /**
      * Create a new notification instance.
@@ -32,11 +36,11 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
     {
         $this->patientUser = $patientUser;
     }
-
+    
     public function directMailBody($notifiable): string
     {
         $identifier = $this->patientUser->carePlan->id;
-
+        
         return "Dear {$notifiable->getFullName()},
             \n
             Please review attached Care Plan for {$this->patientUser->getFullName()}.
@@ -50,12 +54,12 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
             CircleLink Team
 ";
     }
-
+    
     public function directMailSubject($notifiable): string
     {
         return "{$this->patientUser->getFullName()}'s CCM Care Plan to approve!";
     }
-
+    
     /**
      * Get the array representation of the notification.
      *
@@ -90,7 +94,7 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
             ->setFilePath($this->patientUser->carePlan->toPdf())
             ->setFileName("{$this->patientUser->getFullName()}'s CCM Care Plan.pdf");
     }
-
+    
     /**
      * Get the notification's delivery channels.
      *
@@ -110,13 +114,20 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
      */
     public function passwordlessLoginLink($notifiable)
     {
-        $token = PasswordlessLoginToken::create(
-            [
-                'user_id' => $notifiable->id,
-                'token'   => sha1(str_random(15).time()),
-            ]
-        );
-
-        return URL::temporarySignedRoute('login.token.validate', now()->addWeeks(2), [$token->token]);
+        return URL::temporarySignedRoute('login.token.validate', now()->addWeeks(2), [$this->token($notifiable)->token]);
+    }
+    
+    public function token($notifiable)
+    {
+        if ( ! $this->passwordlessLoginToken) {
+            $this->passwordlessLoginToken = PasswordlessLoginToken::create(
+                [
+                    'user_id' => $notifiable->id,
+                    'token'   => sha1(str_random(15).time()),
+                ]
+            );
+        }
+        
+        return $this->passwordlessLoginToken;
     }
 }

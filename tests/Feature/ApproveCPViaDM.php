@@ -6,9 +6,6 @@
 
 namespace Tests\Feature;
 
-use App\Call;
-use App\Contracts\DirectMail;
-use App\Contracts\DirectMailableNotification;
 use App\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
 use App\Listeners\ChangeOrApproveCareplanResponseListener;
@@ -19,7 +16,6 @@ use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
-use Event;
 use Tests\CustomerTestCase;
 
 class ApproveCPViaDM extends CustomerTestCase
@@ -46,7 +42,7 @@ class ApproveCPViaDM extends CustomerTestCase
         Notification::assertSentTo(
             $this->provider(),
             SendCarePlanForDirectMailApprovalNotification::class,
-            function (DirectMailableNotification $notification, $channels, $notifiable) use ($patient) {
+            function (SendCarePlanForDirectMailApprovalNotification $notification, $channels, $notifiable) use ($patient) {
                 $this->assertContains(DirectMailChannel::class, $channels);
                 $this->assertStringContainsString(
                     '#approve'.$patient->carePlan->id,
@@ -56,6 +52,10 @@ class ApproveCPViaDM extends CustomerTestCase
                     '#change'.$patient->carePlan->id,
                     $notification->directMailBody($notifiable)
                 );
+                $this->assertDatabaseHas('passwordless_login_tokens', [
+                    'user_id' => $this->provider()->id,
+                    'token' => $notification->token($this->provider())->token,
+                ]);
                 
                 return true;
             }
@@ -79,6 +79,11 @@ class ApproveCPViaDM extends CustomerTestCase
         
         $notification = new SendCarePlanForDirectMailApprovalNotification($this->patient());
         $this->provider()->notify($notification);
+    
+        $this->assertDatabaseHas('passwordless_login_tokens', [
+            'user_id' => $this->provider()->id,
+            'token' => $notification->token($this->provider())->token,
+        ]);
         
         $this->assertDatabaseHas(
             (new DirectMailMessage())->getTable(),
@@ -138,6 +143,11 @@ class ApproveCPViaDM extends CustomerTestCase
         $response = $this->get($link)->assertStatus(302);
         
         $this->assertEquals($this->provider()->id, auth()->id());
+        
+        $this->assertDatabaseMissing('passwordless_login_tokens', [
+            'user_id' => $this->provider()->id,
+            'token' => $notification->token($this->provider())->token,
+        ]);
     }
     
     public function test_extracting_approval_or_rejection_codes()
@@ -191,12 +201,7 @@ class ApproveCPViaDM extends CustomerTestCase
         );
     }
     
-    public function test_care_plan_is_approved_when_task_is_recolved()
-    {
-    
-    }
-    
-    public function test_login_link_only_works_once()
+    public function test_care_plan_is_approved_when_task_is_resolved()
     {
     
     }

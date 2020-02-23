@@ -7,6 +7,7 @@
 namespace App\Traits;
 
 use App\PasswordlessLoginToken;
+use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -42,13 +43,16 @@ trait PasswordLessAuth
      *
      * @param string $token
      *
-     * @return void
+     * @return bool
      */
     protected function attemptPasswordlessLogin($token, Request $request)
     {
-        $user = PasswordlessLoginToken::userFromToken($token);
-        if (is_object($user)) {
-            return $this->guard()->login($user);
+        $token = PasswordlessLoginToken::with('user')->whereToken($token)->first();
+        if ($token->user instanceof User) {
+            $token->delete();
+            return $this->guard()->login($token->user);
         }
+        
+        return false;
     }
 }
