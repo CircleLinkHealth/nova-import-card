@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Call;
 use App\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
+use App\Note;
 use App\Notifications\CarePlanDMApprovalConfirmation;
 use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
@@ -43,13 +44,14 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
      *
      * @return bool
      */
-    private function shouldBail(string $sender):bool
+    private function shouldBail(string $sender): bool
     {
         return ! str_contains($sender, '@upg.ssdirect.aprima.com');
     }
     
     /**
-     * Returns the CarePlan ID the provider requested changes for, or null if the provider did not request changes, or the CarePlan ID was not found.
+     * Returns the CarePlan ID the provider requested changes for, or null if the provider did not request changes, or
+     * the CarePlan ID was not found.
      *
      * @param string $body
      *
@@ -111,18 +113,26 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
     {
         $careplanId = $this->getCareplanIdToChange($directMailMessage->body);
         if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId)) {
-            $cp = $this->getCarePlan($careplanId);
+            $cp   = $this->getCarePlan($careplanId);
             $task = Call::create(
                 [
-                    'type'    => 'task',
-                    'sub_type'    => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
-                    'service'        => 'phone',
-                    'status'         => 'scheduled',
+                    'type'            => 'task',
+                    'sub_type'        => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
+                    'service'         => 'phone',
+                    'status'          => 'scheduled',
                     'asap'            => true,
-                    'attempt_note'   => $directMailMessage->body,
-                    'scheduler'      => $cp->patient->billingProviderUser()->id,
-                    'inbound_cpm_id' => $cp->user_id,
+                    'attempt_note'    => $directMailMessage->body,
+                    'scheduler'       => $cp->patient->billingProviderUser()->id,
+                    'inbound_cpm_id'  => $cp->user_id,
                     'outbound_cpm_id' => $cp->patient->patientInfo->getNurse(),
+                ]
+            );
+            $note = Note::create(
+                [
+                    'patient_id' => $cp->user_id,
+                    'author_id'  => $cp->patient->billingProviderUser()->id,
+                    'type'       => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
+                    'body'       => $directMailMessage->body,
                 ]
             );
             
@@ -141,7 +151,9 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
      */
     private function getCarePlan(int $careplanId)
     {
-        return CarePlan::has('patient.billingProvider')->has('patient.patientInfo')->with(['patient.billingProvider', 'patient.patientInfo'])->findOrFail($careplanId);
+        return CarePlan::has('patient.billingProvider')->has('patient.patientInfo')->with(
+            ['patient.billingProvider', 'patient.patientInfo']
+        )->findOrFail($careplanId);
     }
     
     /**
@@ -158,6 +170,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
             $cp = $this->getCarePlan($careplanId);
             event(new CarePlanWasApproved($cp->patient, $cp->patient->billingProviderUser()));
             $cp->patient->billingProviderUser()->notify(new CarePlanDMApprovalConfirmation($cp->patient));
+            
             return true;
         }
         

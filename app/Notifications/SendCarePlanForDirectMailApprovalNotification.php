@@ -114,18 +114,27 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
      */
     public function passwordlessLoginLink($notifiable)
     {
-        return URL::temporarySignedRoute('login.token.validate', now()->addWeeks(2), [$this->token($notifiable)->token]);
+        return URL::route('login.token.validate', [$this->token($notifiable)->token]);
     }
     
     public function token($notifiable)
     {
         if ( ! $this->passwordlessLoginToken) {
-            $this->passwordlessLoginToken = PasswordlessLoginToken::create(
-                [
-                    'user_id' => $notifiable->id,
-                    'token'   => sha1(str_random(15).time()),
-                ]
-            );
+            do {
+                $saved = false;
+                $token = str_random(6);
+                
+                if ( ! PasswordlessLoginToken::where('token', $token)->exists()) {
+                    $this->passwordlessLoginToken = PasswordlessLoginToken::create(
+                        [
+                            'user_id'   => $notifiable->id,
+                            'token'     => $token,
+                        ]
+                    );
+                    
+                    $saved = true;
+                }
+            } while ( ! $saved);
         }
         
         return $this->passwordlessLoginToken;

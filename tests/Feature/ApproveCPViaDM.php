@@ -6,6 +6,7 @@
 
 namespace Tests\Feature;
 
+use App\Call;
 use App\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
 use App\Listeners\ChangeOrApproveCareplanResponseListener;
@@ -15,6 +16,7 @@ use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
 use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Core\Facades\Notification;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Tests\CustomerTestCase;
 
@@ -42,7 +44,8 @@ class ApproveCPViaDM extends CustomerTestCase
         Notification::assertSentTo(
             $this->provider(),
             SendCarePlanForDirectMailApprovalNotification::class,
-            function (SendCarePlanForDirectMailApprovalNotification $notification, $channels, $notifiable) use ($patient) {
+            function (SendCarePlanForDirectMailApprovalNotification $notification, $channels, $notifiable) use ($patient
+            ) {
                 $this->assertContains(DirectMailChannel::class, $channels);
                 $this->assertStringContainsString(
                     '#approve'.$patient->carePlan->id,
@@ -52,22 +55,35 @@ class ApproveCPViaDM extends CustomerTestCase
                     '#change'.$patient->carePlan->id,
                     $notification->directMailBody($notifiable)
                 );
-                $this->assertDatabaseHas('passwordless_login_tokens', [
-                    'user_id' => $this->provider()->id,
-                    'token' => $notification->token($this->provider())->token,
-                ]);
+                $this->assertDatabaseHas(
+                    'passwordless_login_tokens',
+                    [
+                        'user_id' => $this->provider()->id,
+                        'token'   => $notification->token($this->provider())->token,
+                    ]
+                );
                 
                 return true;
             }
         );
     }
     
-    public function test_careplan_dm_approval_notification_channels() {
-        $this->assertEquals(['database', DirectMailChannel::class], (new SendCarePlanForDirectMailApprovalNotification($this->patient()))->via($this->provider()));
+    public function test_careplan_dm_approval_notification_channels()
+    {
+        $this->assertEquals(
+            ['database', DirectMailChannel::class],
+            (new SendCarePlanForDirectMailApprovalNotification($this->patient()))->via(
+                $this->provider()
+            )
+        );
     }
     
-    public function test_careplan_dm_approved_confirmation_notification_channels() {
-        $this->assertEquals(['database', DirectMailChannel::class], (new CarePlanDMApprovalConfirmation($this->patient()))->via($this->provider()));
+    public function test_careplan_dm_approved_confirmation_notification_channels()
+    {
+        $this->assertEquals(
+            ['database', DirectMailChannel::class],
+            (new CarePlanDMApprovalConfirmation($this->patient()))->via($this->provider())
+        );
     }
     
     public function test_cp_approve_notification_is_sent_via_dm()
@@ -79,11 +95,14 @@ class ApproveCPViaDM extends CustomerTestCase
         
         $notification = new SendCarePlanForDirectMailApprovalNotification($this->patient());
         $this->provider()->notify($notification);
-    
-        $this->assertDatabaseHas('passwordless_login_tokens', [
-            'user_id' => $this->provider()->id,
-            'token' => $notification->token($this->provider())->token,
-        ]);
+        
+        $this->assertDatabaseHas(
+            'passwordless_login_tokens',
+            [
+                'user_id' => $this->provider()->id,
+                'token'   => $notification->token($this->provider())->token,
+            ]
+        );
         
         $this->assertDatabaseHas(
             (new DirectMailMessage())->getTable(),
@@ -123,13 +142,20 @@ class ApproveCPViaDM extends CustomerTestCase
             $patient->carePlan->fresh()->status,
             "Careplan was not approved after DM with approval code was received."
         );
-    
-        Notification::assertSentTo($this->provider(),CarePlanDMApprovalConfirmation::class,
+        
+        Notification::assertSentTo(
+            $this->provider(),
+            CarePlanDMApprovalConfirmation::class,
             function (CarePlanDMApprovalConfirmation $notification, $channels, $notifiable) use ($patient) {
                 $this->assertEquals('Care Plan Approved', $notification->directMailSubject($notifiable));
-                $this->assertEquals("Thanks for approving {$patient->getFullName()}}'s Care Plan! Have a great day - CircleLink Team", $notification->directMailBody($notifiable));
+                $this->assertEquals(
+                    "Thanks for approving {$patient->getFullName()}}'s Care Plan! Have a great day - CircleLink Team",
+                    $notification->directMailBody($notifiable)
+                );
+                
                 return true;
-            });
+            }
+        );
     }
     
     public function tests_provider_can_login_with_passwordless_link()
@@ -144,10 +170,13 @@ class ApproveCPViaDM extends CustomerTestCase
         
         $this->assertEquals($this->provider()->id, auth()->id());
         
-        $this->assertDatabaseMissing('passwordless_login_tokens', [
-            'user_id' => $this->provider()->id,
-            'token' => $notification->token($this->provider())->token,
-        ]);
+        $this->assertDatabaseMissing(
+            'passwordless_login_tokens',
+            [
+                'user_id' => $this->provider()->id,
+                'token'   => $notification->token($this->provider())->token,
+            ]
+        );
     }
     
     public function test_extracting_approval_or_rejection_codes()
@@ -199,10 +228,45 @@ class ApproveCPViaDM extends CustomerTestCase
                 'asap'            => true,
             ]
         );
+    
+        $this->assertDatabaseHas(
+            'notes',
+            [
+                'patient_id' =>$patient->id,
+                'author_id' => $this->provider()->id,
+                'type' => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
+                'body' => $taskBody,
+            ]
+        );
     }
     
     public function test_care_plan_is_approved_when_task_is_resolved()
     {
+        $task = $this->fakeTask();
+        $task->status = 'done';
+        $task->save();
     
+        $this->assertEquals(
+            CarePlan::PROVIDER_APPROVED,
+            $this->patient()->carePlan()->firstOrFail()->status,
+            "Careplan was not approved after DM with approval code was received."
+        );
+    }
+    
+    private function fakeTask()
+    {
+        return Call::create(
+            [
+                'type'            => 'task',
+                'sub_type'        => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
+                'service'         => 'phone',
+                'status'          => 'scheduled',
+                'attempt_note'    => 'This is a task',
+                'scheduler'       => $this->provider()->id,
+                'inbound_cpm_id'  => $this->patient()->id,
+                'outbound_cpm_id' => $this->patient()->patientInfo->getNurse(),
+                'asap'            => true,
+            ]
+        );
     }
 }

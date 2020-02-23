@@ -5,9 +5,8 @@
  */
 Route::get('/debug-sentry', 'DemoController@sentry');
 
-Route::get('login/{token}/validate', 'Auth\LoginController@login')
-    ->name('login.token.validate')
-    ->middleware('signed');
+Route::get('s/{token}', 'Auth\LoginController@login')
+    ->name('login.token.validate');
 
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
