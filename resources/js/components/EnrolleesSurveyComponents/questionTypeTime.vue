@@ -239,6 +239,7 @@
     }
 
     .time-field > input {
+        width: 130px;
         background: transparent;
         border: none;
         padding: 5px;

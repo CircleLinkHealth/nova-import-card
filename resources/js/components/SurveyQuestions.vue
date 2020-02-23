@@ -272,7 +272,11 @@
                     <div class="survey-sub-welcome-text" style="text-align: center;">
                         Your care coach will contact you in the next few days from {{this.practiceOutgoingPhoneNumber}}.<br>
                         Please save this number to your phone ASAP.
-                        Dr's. {{this.doctorsLastName}}'s care team.
+                        <br>
+                        <br>
+                        <div style="font-weight: bold">
+                            Dr's. {{this.doctorsLastName}}'s care team.
+                        </div>
                     </div>
                     <br/>
 

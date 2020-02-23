@@ -57,7 +57,7 @@
 
         methods: {
             handleAnswer() {
-                const answer = this.phoneValue;
+                const answer = this.phoneValue !== '' ? this.phoneValue : this.formattedPhoneValue;
                 this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer, this.isLastQuestion);
             },
 
@@ -71,6 +71,12 @@
                 }
             }
         },
+
+        created() {
+            if(this.nonAwvPatients.preferredContactNumber !== []){
+                this.formattedPhoneValue = this.nonAwvPatients.preferredContactNumber[0];
+            }
+        }
     }
 </script>
 
