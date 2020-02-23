@@ -9,6 +9,25 @@ namespace App;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\PasswordlessLoginToken
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property string $token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \CircleLinkHealth\Customer\Entities\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PasswordlessLoginToken newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PasswordlessLoginToken newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PasswordlessLoginToken query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PasswordlessLoginToken whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PasswordlessLoginToken whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PasswordlessLoginToken whereToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PasswordlessLoginToken whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PasswordlessLoginToken whereUserId($value)
+ * @mixin \Eloquent
+ */
 class PasswordlessLoginToken extends Model
 {
     /**

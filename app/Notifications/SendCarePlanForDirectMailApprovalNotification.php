@@ -43,7 +43,7 @@ class SendCarePlanForDirectMailApprovalNotification extends Notification impleme
             \n
             To approve, please respond to this message with \"#approve$identifier\".
             \n
-            To make changes, respond to this message with \"#change$identifier\" on the first line of your message, and your changes in plain text below. Or, copy/paste \"{$this->passwordlessLoginLink($notifiable)}\" into a web browser and adjust the care plan there, then click the \"Approve and View Next\" button in top-right.
+            To make changes, respond to this message with \"#change$identifier\" on the first line of your message, and your changes in plain text below. Or, copy/paste single-use URL/Link \"{$this->passwordlessLoginLink($notifiable)}\" into a web browser and adjust the care plan there, then click the \"Approve and View Next\" button in top-right.
             \n
             Thank you,
             \n
