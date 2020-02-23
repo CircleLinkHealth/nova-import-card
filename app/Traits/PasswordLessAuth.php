@@ -8,7 +8,6 @@ namespace App\Traits;
 
 use App\PasswordlessLoginToken;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
