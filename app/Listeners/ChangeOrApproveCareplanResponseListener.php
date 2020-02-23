@@ -111,9 +111,10 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
         $careplanId = $this->getCareplanIdToChange($directMailMessage->body);
         if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId)) {
             $cp = $this->getCarePlan($careplanId);
-            Call::create(
+            $task = Call::create(
                 [
-                    'type'           => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
+                    'type'    => 'task',
+                    'sub_type'    => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
                     'service'        => 'phone',
                     'status'         => 'scheduled',
                     'asap'            => true,
