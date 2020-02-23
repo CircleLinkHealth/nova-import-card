@@ -10,6 +10,7 @@ use App\Call;
 use App\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
 use App\Listeners\ChangeOrApproveCareplanResponseListener;
+use App\Note;
 use App\Notifications\CarePlanDMApprovalConfirmation;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
@@ -213,6 +214,15 @@ class ApproveCPViaDM extends CustomerTestCase
         );
         
         event(new DirectMailMessageReceived($directMail));
+    
+        $note = Note::where(
+            [
+                ['patient_id','=',$patient->id],
+                ['author_id','=', $this->provider()->id],
+                ['type','=', SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE],
+                ['body','=', $taskBody],
+            ]
+        )->firstOrFail();
         
         $this->assertDatabaseHas(
             'calls',
@@ -226,22 +236,16 @@ class ApproveCPViaDM extends CustomerTestCase
                 'inbound_cpm_id'  => $patient->id,
                 'outbound_cpm_id' => $patient->patientInfo->getNurse(),
                 'asap'            => true,
-            ]
-        );
-    
-        $this->assertDatabaseHas(
-            'notes',
-            [
-                'patient_id' =>$patient->id,
-                'author_id' => $this->provider()->id,
-                'type' => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
-                'body' => $taskBody,
+                'note_id' => $note->id,
             ]
         );
     }
     
     public function test_care_plan_is_approved_when_task_is_resolved()
     {
+        $this->patient()->setCarePlanStatus(CarePlan::QA_APPROVED);
+        $this->assertEquals(CarePlan::QA_APPROVED, $this->patient()->carePlan->status);
+        
         $task = $this->fakeTask();
         $task->status = 'done';
         $task->save();
@@ -255,6 +259,15 @@ class ApproveCPViaDM extends CustomerTestCase
     
     private function fakeTask()
     {
+        $note = Note::create(
+            [
+                'patient_id' => $this->patient()->id,
+                'author_id'  => $this->provider()->id,
+                'type'       => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
+                'body'       => 'Instructions from provider',
+            ]
+        );
+        
         return Call::create(
             [
                 'type'            => 'task',
@@ -266,6 +279,7 @@ class ApproveCPViaDM extends CustomerTestCase
                 'inbound_cpm_id'  => $this->patient()->id,
                 'outbound_cpm_id' => $this->patient()->patientInfo->getNurse(),
                 'asap'            => true,
+                'note_id' => $note->id
             ]
         );
     }

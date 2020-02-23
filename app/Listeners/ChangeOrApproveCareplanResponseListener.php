@@ -114,8 +114,18 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
         $careplanId = $this->getCareplanIdToChange($directMailMessage->body);
         if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId)) {
             $cp   = $this->getCarePlan($careplanId);
+            $note = Note::create(
+                [
+                    'patient_id' => $cp->user_id,
+                    'author_id'  => $cp->patient->billingProviderUser()->id,
+                    'type'       => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
+                    'body'       => $directMailMessage->body,
+                ]
+            );
+            
             $task = Call::create(
                 [
+                    'note_id'         => $note->id,
                     'type'            => 'task',
                     'sub_type'        => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
                     'service'         => 'phone',
@@ -125,14 +135,6 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
                     'scheduler'       => $cp->patient->billingProviderUser()->id,
                     'inbound_cpm_id'  => $cp->user_id,
                     'outbound_cpm_id' => $cp->patient->patientInfo->getNurse(),
-                ]
-            );
-            $note = Note::create(
-                [
-                    'patient_id' => $cp->user_id,
-                    'author_id'  => $cp->patient->billingProviderUser()->id,
-                    'type'       => SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE,
-                    'body'       => $directMailMessage->body,
                 ]
             );
             
