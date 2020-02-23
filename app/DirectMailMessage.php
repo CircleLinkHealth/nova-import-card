@@ -56,14 +56,11 @@ class DirectMailMessage extends Model implements HasMedia
 
     const STATUS_SUCCESS = 'success';
     protected $fillable  = [
-        //We get this from PhiMail API
         'message_id',
         'from',
         'to',
         'subject',
-        //The body of the message
         'body',
-        //The number of attachments
         'num_attachments',
         'error_text',
         'status',

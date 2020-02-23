@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Call;
 use App\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
+use App\Notifications\CarePlanDMApprovalConfirmation;
 use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Entities\CarePerson;
@@ -156,7 +157,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
         if ($careplanId && $this->actionIsAuthorized($directMailMessage->from, $careplanId)) {
             $cp = $this->getCarePlan($careplanId);
             event(new CarePlanWasApproved($cp->patient, $cp->patient->billingProviderUser()));
-            
+            $cp->patient->billingProviderUser()->notify(new CarePlanDMApprovalConfirmation($cp->patient));
             return true;
         }
         

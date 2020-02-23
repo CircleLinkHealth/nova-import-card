@@ -12,6 +12,7 @@ use App\Contracts\DirectMailableNotification;
 use App\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
 use App\Listeners\ChangeOrApproveCareplanResponseListener;
+use App\Notifications\CarePlanDMApprovalConfirmation;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
 use App\Services\Calls\SchedulerService;
@@ -61,6 +62,14 @@ class ApproveCPViaDM extends CustomerTestCase
         );
     }
     
+    public function test_careplan_dm_approval_notification_channels() {
+        $this->assertEquals(['database', DirectMailChannel::class], (new SendCarePlanForDirectMailApprovalNotification($this->patient()))->via($this->provider()));
+    }
+    
+    public function test_careplan_dm_approved_confirmation_notification_channels() {
+        $this->assertEquals(['database', DirectMailChannel::class], (new CarePlanDMApprovalConfirmation($this->patient()))->via($this->provider()));
+    }
+    
     public function test_cp_approve_notification_is_sent_via_dm()
     {
         $this->patient()->carePlan->status = CarePlan::QA_APPROVED;
@@ -86,6 +95,7 @@ class ApproveCPViaDM extends CustomerTestCase
     
     public function test_provider_can_approve_careplan_with_valid_dm_response()
     {
+        Notification::fake();
         $patient = $this->patient();
         $patient->setCarePlanStatus(CarePlan::QA_APPROVED);
         $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
@@ -106,8 +116,15 @@ class ApproveCPViaDM extends CustomerTestCase
         $this->assertEquals(
             CarePlan::PROVIDER_APPROVED,
             $patient->carePlan->fresh()->status,
-            "Careplan was not approved after DM with approval code was removed"
+            "Careplan was not approved after DM with approval code was received."
         );
+    
+        Notification::assertSentTo($this->provider(),CarePlanDMApprovalConfirmation::class,
+            function (CarePlanDMApprovalConfirmation $notification, $channels, $notifiable) use ($patient) {
+                $this->assertEquals('Care Plan Approved', $notification->directMailSubject($notifiable));
+                $this->assertEquals("Thanks for approving {$patient->getFullName()}}'s Care Plan! Have a great day - CircleLink Team", $notification->directMailBody($notifiable));
+                return true;
+            });
     }
     
     public function tests_provider_can_login_with_passwordless_link()
@@ -172,5 +189,15 @@ class ApproveCPViaDM extends CustomerTestCase
                 'asap'            => true,
             ]
         );
+    }
+    
+    public function test_care_plan_is_approved_when_task_is_recolved()
+    {
+    
+    }
+    
+    public function test_login_link_only_works_once()
+    {
+    
     }
 }
