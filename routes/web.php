@@ -3,6 +3,7 @@
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
+Route::get('/debug-sentry', 'DemoController@sentry');
 
 Route::get('login/{token}/validate', 'Auth\LoginController@login')
     ->name('login.token.validate')
