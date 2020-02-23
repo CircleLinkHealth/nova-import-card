@@ -117,7 +117,7 @@
 
     export default {
         name: "questionTypeText",
-        props: ['question', 'nonAwvPatients','isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
+        props: ['question', 'isActive', 'isSubQuestion', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
         components: {mdbBtn, mdbIcon},
 
         data() {

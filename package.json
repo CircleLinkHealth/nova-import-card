@@ -23,7 +23,7 @@
         "typeface-poppins": "0.0.72",
         "vue-progressbar": "^0.7.5",
         "vue-select": "^3.1.0",
-        "vue-tables-2": "^1.4.70"
+        "vue-tables-2": "^1.4.70",
     },
     "devDependencies": {
         "@vue/cli-service": "^4.0.5",

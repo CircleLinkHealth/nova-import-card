@@ -45,8 +45,9 @@
                 <div class="card-body">
                     <img :src="welcomeIcon"
                          class="welcome-icon" alt="welcome icon">
-                    <div class="survey-main-title">
-                        <label id="sub-title">{{welcomeTitle}}</label>
+                    <div class="survey-main-title"> <!--Should move the if isEnrollees to function-->
+                        <label v-if="!isEnrollees" id="sub-title">{{welcomeTitle}}</label>
+                        <label v-else>Enrollment Survey</label>
                     </div>
                     <div v-if="isHra" class="survey-sub-welcome-text">Welcome to your
                         Annual Wellness Visit (AWV) Questionnaire! Understanding your health is of upmost importance to
@@ -60,9 +61,11 @@
                         reps
                         will also reach out shortly. Thanks!
                     </div>
-                    <div v-else-if="isEnrollees" class="survey-sub-welcome-text">
-                        Almost done! Just need some information.<br>
-                        Ask what to show here
+                    <div v-else-if="isEnrollees"
+                         class="survey-sub-welcome-text"
+                         style="text-align: center;">
+                        Dear {{this.surveyData.last_name}},<br>
+                        Almost done! Just need some information.
                     </div>
                     <div v-else class="survey-sub-welcome-text">
                         Here is the form to fill out {{patientName}}'s Vitals. Once completed, a PPP will be
@@ -108,7 +111,6 @@
                         <div class="question-answer-type">
                             <question-type-text
                                 :question="question"
-                                :nonAwvPatients="nonAwvPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :on-done-func="postAnswerAndGoToNext"
@@ -174,7 +176,6 @@
 
                             <question-type-date
                                 :question="question"
-                                :nonAwvPatients="nonAwvPatients"
                                 :is-active="currentQuestionIndex === index"
                                 :is-subquestion="isSubQuestion(question)"
                                 :style-horizontal="false"
@@ -185,6 +186,61 @@
                                 :read-only="readOnlyMode"
                                 v-if="question.type.type === 'date'">
                             </question-type-date>
+
+                            <!--ENROLLEES SURVEY-->
+                            <question-type-dob
+                                :question="question"
+                                :non-awv-patients="nonAwvPatients"
+                                :is-active="currentQuestionIndex === index"
+                                :is-subquestion="isSubQuestion(question)"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'dob'">
+                            </question-type-dob>
+
+                            <question-type-phone-number
+                                :question="question"
+                                :non-awv-patients="nonAwvPatients"
+                                :is-active="currentQuestionIndex === index"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'phone'">
+                            </question-type-phone-number>
+
+                            <question-type-time
+                                :question="question"
+                                :non-awv-patients="nonAwvPatients"
+                                :is-active="currentQuestionIndex === index"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'time'">
+                            </question-type-time>
+
+                            <question-type-address
+                                :question="question"
+                                :non-awv-patients="nonAwvPatients"
+                                :is-active="currentQuestionIndex === index"
+                                :style-horizontal="false"
+                                :get-all-questions-func="getAllQuestions"
+                                :on-done-func="postAnswerAndGoToNext"
+                                :is-last-question="isLastQuestion(question)"
+                                :waiting="waiting"
+                                :read-only="readOnlyMode"
+                                v-if="question.type.type === 'address'">
+                            </question-type-address>
+                            <!-- ENROLLEES SURVEY END-->
                         </div>
                     </div>
                     <div class="error" v-if="error">
@@ -203,7 +259,37 @@
                 <!-- add an empty div, so we can animate scroll up even if we are on last question -->
                 <div v-if="!readOnlyMode" style="height: 600px"></div>
             </template>
+            <template v-else-if="isEnrollees">
+                <div class="card-body">
+                    <div class="welcome-icon-container">
+                        <img src="../../images/doctors.png"
+                             class="welcome-icon" alt="welcome icon">
+                    </div>
 
+                    <div class="survey-main-title">
+                        <label>Thank for signing up!</label>
+                    </div>
+                    <div class="survey-sub-welcome-text" style="text-align: center;">
+                        Your care coach will contact you in the next few days from {{this.practiceOutgoingPhoneNumber}}.<br>
+                        Please save this number to your phone ASAP.
+                        Dr's. {{this.doctorsLastName}}'s care team.
+                    </div>
+                    <br/>
+
+                    <div class="btn-start-container">
+                        <mdb-btn color="primary" class="btn-start" @click="logout">
+                            Logout
+                        </mdb-btn>
+
+                        <form id="logout-form" action="/logout" method="POST" style="display: none;">
+                        </form>
+                    </div>
+
+                    <div class="by-circlelink">
+                        ⚡️ by CircleLink Health
+                    </div>
+                </div>
+            </template>
             <!-- Survey Completed - should only be shown in Vitals Survey -->
             <template v-else>
                 <div class="card-body">
@@ -327,6 +413,11 @@
     import questionTypeDate from "./questionTypeDate";
     import callAssistance from "./callAssistance";
     import questionTypeMultiSelect from "./questionTypeMultiSelect";
+    import questionTypeDob from "./EnrolleesSurveyComponents/questionTypeDob";
+    import questionTypePhoneNumber from "./EnrolleesSurveyComponents/questionTypePhoneNumber";
+    import questionTypeTime from "./EnrolleesSurveyComponents/questionTypeTime";
+    import questionTypeAddress from "./EnrolleesSurveyComponents/questionTypeAddress";
+
     import $ from "jquery";
 
     export default {
@@ -346,6 +437,10 @@
             'question-type-date': questionTypeDate,
             'call-assistance': callAssistance,
             'question-type-muti-select': questionTypeMultiSelect,
+            'question-type-dob': questionTypeDob,
+            'question-type-phone-number': questionTypePhoneNumber,
+            'question-type-time': questionTypeTime,
+            'question-type-address': questionTypeAddress,
         },
 
         data() {
@@ -387,11 +482,11 @@
                 readOnlyMode: false,
 
                 //    RE-ENROLLMENT USERS DATA
-                nonAwvPatients:{
+                nonAwvPatients: {
                     dob: [],
-                    address: [],
-                    patientEmail: [],
-                    preferredContactNumber:[],
+                    address: `${this.surveyData.address}, ${this.surveyData.city}, ${this.surveyData.zip}`,
+                    patientEmail: this.surveyData.email,
+                    preferredContactNumber: [],
                     isSurveyOnlyRole: false,
                 }
                 //
@@ -1115,14 +1210,14 @@
                         const data = response.data.data;
 
                         const dob = data.dob;
-                        const address = data.address;
-                        const patientEmail = data.patientEmail;
+                        // const address = data.address;
+                        // const patientEmail = data.patientEmail;
                         const preferredContactNumber = data.preferredContactNumber;
                         const isSurveyOnlyRole = data.isSurveyOnlyRole;
 
                         this.nonAwvPatients.dob.push(dob);
-                        this.nonAwvPatients.address.push(address);
-                        this.nonAwvPatients.patientEmail.push(patientEmail);
+                        // this.nonAwvPatients.address.push(address);
+                        // this.nonAwvPatients.patientEmail.push(patientEmail);
                         this.nonAwvPatients.preferredContactNumber.push(preferredContactNumber);
                         this.nonAwvPatients.isSurveyOnlyRole = isSurveyOnlyRole;
 

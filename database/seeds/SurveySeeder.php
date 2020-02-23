@@ -1832,6 +1832,14 @@ class SurveySeeder extends Seeder
                 'order' => 1,
                 'question_body' => 'Please update or confirm your date of birth',
                 'question_type' => QuestionType::DATE,
+                'conditions' => [
+                    'is_auto_generated' => true,
+                    'generated_from' => [
+                        [
+                            'key' => 'dob',
+                        ],
+                    ],
+                ],
             ],
             [
                 'identifier' => EnrolleesSurveyIdentifier::PREFERRED_NUMBER,
@@ -1940,6 +1948,11 @@ class SurveySeeder extends Seeder
                 'order' => 7,
                 'question_body' => 'Please confirm you have read the letter',
                 'question_type' => QuestionType::CHECKBOX,
+                'question_type_answers' => [
+                    [
+                        'type_answer_body' => 'Confirm' //@todo: haven't tested this
+                    ],
+                ],
             ],
         ]);
     }

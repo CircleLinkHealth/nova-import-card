@@ -1,0 +1,79 @@
+<template>
+    <div class="scroll-container">
+        <div class="scrollable">
+            <div class="col-md-12 active">
+                <input type="text"
+                       class="text-field margin-bottom-10"
+                       v-model="formattedPhoneValue"
+                       @keyup="checkNumber"
+                       :disabled="readOnly"/>
+            </div>
+
+            <br>
+
+            <!--next button-->
+            <div :class="isLastQuestion ? 'text-center' : 'text-left'">
+                <mdbBtn v-show="!readOnly && isActive"
+                        color="primary"
+                        class="next-btn"
+                        name="number"
+                        id="number"
+                        :disabled="!(isOptional || hasTypedInNumber)"
+                        @click="handleAnswer()">
+                    {{isLastQuestion ? 'Complete' : 'Next'}}
+                    <mdb-icon v-show="waiting" icon="spinner" :spin="true"/>
+                </mdbBtn>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    import {mdbBtn, mdbIcon} from "mdbvue";
+
+    export default {
+        name: "questionTypePhoneNumber",
+        props: ['question', 'nonAwvPatients', 'isActive', 'onDoneFunc', 'isLastQuestion', 'waiting', 'readOnly'],
+        components: {mdbBtn, mdbIcon},
+
+        data() {
+            return {
+                phoneValue: '',
+                formattedPhoneValue: '',
+                phoneNumberIsUsValid: false,
+                preventNextIteration: false,
+                showNextButton: false,
+                singleTitle: undefined,
+                placeholderForSingleQuestion: [],
+                isOptional: false
+            }
+        },
+
+        computed: {
+            hasTypedInNumber() {
+                return this.formattedPhoneValue.length === 12;
+            },
+        },
+
+        methods: {
+            handleAnswer() {
+                const answer = this.phoneValue;
+                this.onDoneFunc(this.question.id, this.questionTypeAnswerId, answer, this.isLastQuestion);
+            },
+
+            checkNumber(event) {
+                if (this.formattedPhoneValue !== ''
+                    && ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].includes(event.key)) {
+                    this.phoneValue = this.formattedPhoneValue.replace(/-/g, '').match(/(\d{1,10})/g)[0];
+                    this.formattedPhoneValue = this.phoneValue.replace(/(\d{1,3})(\d{1,3})(\d{1,4})/g, '$1-$2-$3');
+                } else {
+                    this.formattedPhoneValue = '';
+                }
+            }
+        },
+    }
+</script>
+
+<style scoped>
+
+</style>
