@@ -3,6 +3,8 @@
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
+Route::get('/debug-sentry', 'DemoController@sentry');
+Route::get('/debug-sentry-log', 'DemoController@sentryLog');
 
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
