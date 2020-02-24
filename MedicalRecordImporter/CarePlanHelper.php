@@ -790,7 +790,7 @@ class CarePlanHelper
             ? $cpmProblems[$problemImport->cpm_problem_id]
             : null;
 
-        return optional($problemImport)->instruction();
+        return optional($cpmProblem)->instruction();
     }
 
     private function createInstructionFromUPG0506(ProblemImport $problemImport): ?CpmInstruction
