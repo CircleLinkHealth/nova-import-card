@@ -21,6 +21,8 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
      */
     protected $ccda;
 
+
+
     /**
      * Create a new job instance.
      *
@@ -42,9 +44,23 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
             return;
         }
 
+        if ($this->attempts() > 24){
+            AppConfig::create([
+                'config_key' => 'decorator_job_tries_inside_if',
+                'config_value' => $this->attempts() ?: 'none'
+            ]);
+//            sendSlackMessage('#general', 'something');
+            return;
+        }
+
+        AppConfig::create([
+            'config_key' => 'decorator_job_tries',
+            'config_value' => $this->attempts() ?: 'none'
+        ]);
+
         if ( ! $this->ccda->hasUPG0506PdfCareplanMedia()->exists()) {
 
-            $this->release(60);
+            $this->release(2);
             return;
         }
 
