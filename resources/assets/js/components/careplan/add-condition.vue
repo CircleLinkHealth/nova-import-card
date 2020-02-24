@@ -7,8 +7,8 @@
                 </label>
             </div>
             <div class="col-sm-12 top-10">
-                <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name"
-                            :value="newProblem.name" :limit="15"
+                <v-complete class="v-complete" placeholder="Enter a Condition" :required="true" v-model="newProblem.name"
+                            :value="newProblem.name" :limit="99"
                             :suggestions="cpmProblemsForAutoComplete"
                             :class="{ error: patientHasSelectedProblem }" :threshold="0.8"
                             @input="resolveIcd10Code">
@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="col-sm-12 top-20" v-if="newProblem.is_monitored">
-                <input type="text" class="form-control" v-model="newProblem.icd10"
+                <input type="text" :required="codeIsRequired" class="form-control" v-model="newProblem.icd10"
                        placeholder="ICD10 Code"/>
             </div>
             <div class="col-sm-12 text-right top-20">
@@ -54,7 +54,8 @@
             'patient-id': String,
             'problems': Array,
             'shouldSelectIsMonitored':  Boolean,
-            'cpmProblems': Array
+            'cpmProblems': Array,
+            'codeIsRequired': Boolean
         },
         mixins: [
             CareplanMixin,
@@ -100,6 +101,10 @@
             },
             pId(){
                 return this.patient_id ? this.patient_id : this.patientId;
+            },
+            isNotesPage() {
+                //if patient id prop has been passed in, then this is for the notes pages, else, approve billable patients page
+                return !!this.patientId
             }
         },
         methods: {
@@ -149,5 +154,8 @@
 </script>
 
 <style>
-
+    .v-complete ul {
+        max-height: 200px!important;
+        overflow: scroll;
+    }
 </style>
