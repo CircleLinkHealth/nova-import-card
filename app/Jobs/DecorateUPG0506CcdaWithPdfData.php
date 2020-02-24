@@ -44,23 +44,21 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
             return;
         }
 
-        if ($this->attempts() > 24){
-            AppConfig::create([
-                'config_key' => 'decorator_job_tries_inside_if',
-                'config_value' => $this->attempts() ?: 'none'
-            ]);
-//            sendSlackMessage('#general', 'something');
-            return;
-        }
-
-        AppConfig::create([
-            'config_key' => 'decorator_job_tries',
-            'config_value' => $this->attempts() ?: 'none'
-        ]);
-
         if ( ! $this->ccda->hasUPG0506PdfCareplanMedia()->exists()) {
 
-            $this->release(2);
+            if ($this->attempts() == 24){
+
+                $messageLink = route('direct-mail.show', [$this->ccda->direct_mail_message_id]);
+
+                //notify channel that we have not received a pdf for this ccd
+                sendSlackMessage('#ccd-file-status', "Something went wrong with UPG G0506 flow. 
+                \n We have not received a PDF Care Plan via EMR Direct for CCD with id: {$this->ccda->id}. 
+                \n Click here to see the message where the CCD was included {$messageLink}.");
+
+                return;
+            }
+
+            $this->release(60);
             return;
         }
 
@@ -74,7 +72,6 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
                          ->where('model_id', $this->ccda->id)
                          ->where('model_type', Ccda::class)->first();
 
-        //need to find this using mrn
         $pdfMedia = Media::where('custom_properties->is_pdf', 'true')
                          ->where('custom_properties->is_upg0506',
                              'true')
