@@ -21,7 +21,7 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
      */
     protected $ccda;
 
-
+    public $tries = 24;
 
     /**
      * Create a new job instance.
