@@ -6,9 +6,9 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Notifications\NotificationStrategies\SendsNotification;
 use App\Http\Controllers\Controller;
 use App\Jobs\SendSingleNotification;
+use App\Notifications\NotificationStrategies\SendsNotification;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Media;
 use CircleLinkHealth\Customer\Entities\PatientAWVSurveyInstanceStatus;
@@ -48,8 +48,8 @@ class PatientCareDocumentsController extends Controller
     {
         $patientAWVStatuses = PatientAWVSurveyInstanceStatus::where('patient_id', $patientId)
             ->when( ! $showPast, function ($query) {
-                $query->where('year', Carbon::now()->year);
-            })
+                                                                $query->where('year', Carbon::now()->year);
+                                                            })
             ->get();
 
         $files = Media::where('collection_name', 'patient-care-documents')
@@ -58,19 +58,19 @@ class PatientCareDocumentsController extends Controller
             ->get()
             ->sortByDesc('created_at')
             ->mapToGroups(function ($item, $key) {
-                $docType = $item->getCustomProperty('doc_type');
+                          $docType = $item->getCustomProperty('doc_type');
 
-                return [$docType => $item];
-            })
+                          return [$docType => $item];
+                      })
             ->reject(function ($value, $key) {
-                return ! $key;
-            })
+                          return ! $key;
+                      })
             //get the latest file from each category
             ->unless('true' == $showPast, function ($files) {
-                return $files->map(function ($typeGroup) {
-                    return collect([$typeGroup->first()]);
-                });
-            });
+                          return $files->map(function ($typeGroup) {
+                              return collect([$typeGroup->first()]);
+                          });
+                      });
 
         return response()->json([
             'files'              => $files->toArray(),
@@ -144,7 +144,7 @@ class PatientCareDocumentsController extends Controller
             }
             $patient->addMedia($file)
                 ->withCustomProperties(['doc_type' => $request->doc_type])
-                ->toMediaCollection('patient-care-documents');
+                ->toMediaCollection('patient-email-attachments');
         }
 
         return response()->json([]);
@@ -188,10 +188,13 @@ class PatientCareDocumentsController extends Controller
                 $validationRules = [];
         }
 
-        return Validator::make([
-            'input' => $input,
-        ], [
-            'input' => $validationRules,
-        ]);
+        return Validator::make(
+            [
+                'input' => $input,
+            ],
+            [
+                'input' => $validationRules,
+            ]
+        );
     }
 }

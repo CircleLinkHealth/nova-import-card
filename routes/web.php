@@ -502,6 +502,29 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download.pdf.careplan',
     ])->middleware('permission:careplan-pdf.read')->middleware('doNotCacheResponse');
 
+    Route::group([
+        'middleware' => [],
+        'prefix'     => 'patient-email/{patient_id}',
+    ], function () {
+        Route::post(
+            '/upload-attachment',
+            'API\PatientEmailController@uploadAttachment'
+        );
+
+        Route::post(
+            '/validate-body',
+            [
+                'uses' => 'API\PatientEmailController@validateEmailBody',
+                'as'   => 'patient-email.validate',
+            ]
+        );
+
+        Route::post(
+            '/delete-attachment',
+            'API\PatientEmailController@deleteAttachment'
+        );
+    });
+
     Route::post(
         'care-docs/{patient_id}',
         'API\PatientCareDocumentsController@uploadCareDocuments'
