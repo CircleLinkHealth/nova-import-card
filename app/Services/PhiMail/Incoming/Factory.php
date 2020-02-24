@@ -1,0 +1,80 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: michalis
+ * Date: 2/16/20
+ * Time: 11:06 PM
+ */
+
+namespace App\Services\PhiMail\Incoming;
+
+use App\DirectMailMessage;
+use App\Services\PhiMail\Incoming\Handlers\Pdf;
+use App\Services\PhiMail\Incoming\Handlers\Plain;
+use App\Services\PhiMail\Incoming\Handlers\Unknown;
+use App\Services\PhiMail\Incoming\Handlers\XML;
+use App\Services\PhiMail\ShowResult;
+
+class Factory
+{
+    /**
+     * We support attachments if their MIME Type contains any of the following wildcards.
+     *
+     * Example: text/pdf, application/pdf
+     *
+     */
+    const SUPPORTED_MIME_TYPE_WILDCARDS = [
+        'plain',
+        'xml',
+        'pdf',
+    ];
+    
+    /**
+     * Call this method if the message contains attachments that are not in SUPPORTED_MIME_TYPE_WILDCARDS
+     */
+    const UNKNOWN_MIME_HANDLER_METHOD_NAME = 'handleUnknownMimeType';
+    
+    /**
+     * Handles the message's attachments.
+     *
+     * @param DirectMailMessage $dm
+     * @param ShowResult $showRes
+     *
+     * @return
+     */
+    public static function create(DirectMailMessage &$dm, ShowResult $showRes)
+    {
+        $static = new static();
+        
+        return $static->{$static->getHandlerMethodName($showRes->mimeType)}($dm, $showRes->data);
+    }
+    
+    private function handleUnknownMimeType(DirectMailMessage &$dm, string $attachmentData) {
+        return new Unknown($dm, $attachmentData);
+    }
+    
+    private function handlePdfMimeType(DirectMailMessage &$dm, string $attachmentData) {
+        return new Pdf($dm, $attachmentData);
+    }
+    
+    private function handleXmlMimeType(DirectMailMessage &$dm, string $attachmentData)
+    {
+        return new XML($dm, $attachmentData);
+    }
+    
+    private function handlePlainMimeType(DirectMailMessage &$dm, string $attachmentData)
+    {
+        return new Plain($dm, $attachmentData);
+    }
+    
+    private function getHandlerMethodName(string $mimeType)
+    {
+        foreach (self::SUPPORTED_MIME_TYPE_WILDCARDS as $supportedMime) {
+            if (str_contains($mimeType, $supportedMime)) {
+                return 'handle'.camel_case($supportedMime).'MimeType';
+            }
+        }
+        
+        return self::UNKNOWN_MIME_HANDLER_METHOD_NAME;
+    }
+}

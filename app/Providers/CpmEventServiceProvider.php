@@ -6,11 +6,14 @@
 
 namespace App\Providers;
 
+use App\Events\CallIsReadyForAttestedProblemsAttachment;
 use App\Events\CarePlanWasApproved;
 use App\Events\NoteFinalSaved;
 use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
+use App\Listeners\AttachAttestedProblemsToCall;
+use App\Listeners\AttachUPG0506CarePlanToPatientUser;
 use App\Listeners\CheckBeforeSendMessageListener;
 use App\Listeners\CreateAndHandlePdfReport;
 use App\Listeners\ForwardNote;
@@ -19,8 +22,14 @@ use App\Listeners\LogSuccessfulLogin;
 use App\Listeners\LogSuccessfulLogout;
 use App\Listeners\PatientContactWindowUpdated;
 use App\Listeners\UpdateCarePlanStatus;
+use App\Listeners\UPG0506CcdaImporterListener;
 use App\Listeners\UserLoggedOut;
+use App\Services\PhiMail\Events\DirectMailMessageReceived;
+use App\Listeners\NotifySlackChannel;
+use App\Listeners\UPG0506DirectMailListener;
 use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
+use App\Events\PatientUserCreated;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
@@ -65,9 +74,19 @@ class CpmEventServiceProvider extends ServiceProvider
         PatientContactWindowUpdatedEvent::class => [
             PatientContactWindowUpdated::class,
         ],
-        'App\Events\CallIsReadyForAttestedProblemsAttachment' => [
-            'App\Listeners\AttachAttestedProblemsToCall',
+        CallIsReadyForAttestedProblemsAttachment::class => [
+            AttachAttestedProblemsToCall::class,
         ],
+        DirectMailMessageReceived::class => [
+            UPG0506DirectMailListener::class,
+            NotifySlackChannel::class,
+        ],
+        CcdaImported::class => [
+            UPG0506CcdaImporterListener::class
+        ],
+        PatientUserCreated::class => [
+            AttachUPG0506CarePlanToPatientUser::class
+        ]
     ];
 
     /**

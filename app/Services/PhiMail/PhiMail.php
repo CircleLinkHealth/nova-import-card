@@ -8,6 +8,7 @@ namespace App\Services\PhiMail;
 
 use App\Contracts\DirectMail;
 use App\DirectMailMessage;
+use App\Services\PhiMail\Events\DirectMailMessageReceived;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -164,6 +165,7 @@ class PhiMail implements DirectMail
      * @param string $certPath
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \Exception
      */
     private function fetchKeyIfNotExists(string $certFileName, string $certPath)
     {
@@ -240,27 +242,6 @@ class PhiMail implements DirectMail
     }
     
     /**
-     * This is to help notify us of the status of CCDs we receive.
-     *
-     * @param DirectMailMessage $dm
-     */
-    private function notifyAdmins(
-        DirectMailMessage $dm
-    ) {
-        if (app()->environment('local')) {
-            return;
-        }
-
-        $link        = route('import.ccd.remix');
-        $messageLink = route('direct-mail.show', [$dm->id]);
-
-        sendSlackMessage(
-            '#ccd-file-status',
-            "We received a message from EMR Direct. \n Click here to see the message {$messageLink}. \n If a CCD was included in the message, it has been imported. Click here {$link} to QA and Import."
-        );
-    }
-    
-    /**
      * @param CheckResult $message
      *
      * @throws \Exception
@@ -305,13 +286,7 @@ class PhiMail implements DirectMail
         }
         
         $this->connector->acknowledgeMessage();
-    
-        if ($message->numAttachments > 0) {
-            $this->notifyAdmins($dm);
         
-            $message = "Checked EMR Direct Mailbox. There where {$message->numAttachments} attachment(s). \n";
-        
-            sendSlackMessage('#background-tasks', $message);
-        }
+        event(new DirectMailMessageReceived($dm));
     }
 }

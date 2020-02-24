@@ -23,13 +23,6 @@ interface PracticeDataExportInterface
     const EXPIRES_IN_DAYS = 2;
     
     /**
-     * Get the filename.
-     *
-     * @return string
-     */
-    public function filename(): string;
-    
-    /**
      * Practice whose data we are getting.
      *
      * @param int $practiceId
@@ -37,13 +30,6 @@ interface PracticeDataExportInterface
      * @return PracticeDataExportInterface
      */
     public function forPractice(int $practiceId): self;
-    
-    /**
-     * Get the fullpath.
-     *
-     * @return string
-     */
-    public function fullPath(): string;
     
     /**
      * Make user there is a store method.
@@ -90,10 +76,4 @@ interface PracticeDataExportInterface
      * @return \Illuminate\Filesystem\FilesystemAdapter
      */
     public function getTempStorage(): \Illuminate\Filesystem\FilesystemAdapter;
-    
-    /**
-     * The name of the Media Collection
-     * @return string
-     */
-    public function mediaCollectionName(): string;
 }

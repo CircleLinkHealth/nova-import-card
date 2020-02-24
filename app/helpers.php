@@ -1658,3 +1658,23 @@ if ( ! function_exists('isPatientCcmPlusBadgeEnabled')) {
         });
     }
 }
+
+if ( ! function_exists('upg0506IsEnabled')) {
+    /**
+     * Key: upg0506_is_enabled
+     * Default: false.
+     */
+    function upg0506IsEnabled(): bool
+    {
+        $key = 'upg0506_is_enabled';
+
+        return \Cache::remember($key, 2, function () use ($key) {
+            $val = AppConfig::pull($key, null);
+            if (null === $val) {
+                return setAppConfig($key, false) === 'true';
+            }
+            return $val === 'true';
+        });
+    }
+}
+
