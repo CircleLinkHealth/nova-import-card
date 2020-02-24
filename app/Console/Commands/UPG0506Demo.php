@@ -76,61 +76,40 @@ class UPG0506Demo extends Command
     private function clearTestData()
     {
         if (! isProductionEnv()){
-            $ccdas = Ccda::where('mrn', '334417')
-                         ->get();
+            try {
+                $ccdas = Ccda::where('mrn', '334417')
+                             ->get();
 
-            foreach ($ccdas as $ccda) {
-                $ccda->media()
-                     ->get()
-                     ->each(function ($media) {
-                         $media->delete();
-                     });
-
-                \DB::table('media')
-                   ->where('custom_properties->is_pdf', 'true')
-                   ->where('custom_properties->is_upg0506', 'true')
-                   ->where('custom_properties->care_plan->demographics->mrn_number', '334417')
-                   ->delete();
-
-                $dm = $ccda->directMessage()->first();
-
-                if ($dm) {
-                    $dm->media()
-                       ->get()
-                       ->each(function ($media) {
-                           $media->delete();
-                       });
-                    $dm->delete();
+                foreach ($ccdas as $ccda) {
+                    $this->clearCcdaData($ccda);
                 }
 
-                $ccda->importedMedicalRecord()->forceDelete();
+                $pdf = Media::where('custom_properties->is_upg0506', 'true')
+                            ->where('custom_properties->care_plan->demographics->mrn_number', '334417')
+                            ->first();
 
-                $patient = $ccda->getPatient();
-
-                if ($patient){
-                    $patient->patientSummaries()->delete();
-                    $patient->forceDelete();
+                if ($pdf){
+                    $pdf->delete();
                 }
 
-                $ccda->forceDelete();
-            }
-
-            $pdf = Media::where('custom_properties->is_upg0506', 'true')
-                        ->where('custom_properties->care_plan->demographics->mrn_number', '334417')
-                        ->first();
-
-            if ($pdf){
-                $pdf->delete();
+            }catch (\Exception $exception){
+                \Log::channel('logdna')->info('UPG0506 demo error on deleting test data', [
+                    'exception' => $exception->getMessage()
+                ]);
             }
         }
-
         User::whereFirstName('Barbara')
             ->whereLastName('Zznigro')
             ->get()
             ->each(function (User $u){
+                $u->ccdas()->get()->each(function($ccda){
+                    $this->clearCcdaData($ccda);
+                });
                 $u->patientSummaries()->delete();
                 $u->forceDelete();
             });
+
+
     }
 
     /**
@@ -151,5 +130,44 @@ class UPG0506Demo extends Command
                 'num_attachments' => collect([$this->option('ccd'), $this->option('pdf')])->filter()->count(),
             ]
         );
+    }
+
+
+    private function clearCcdaData($ccda){
+        if ($ccda){
+            $ccda->media()
+                 ->get()
+                 ->each(function ($media) {
+                     $media->delete();
+                 });
+
+            \DB::table('media')
+               ->where('custom_properties->is_pdf', 'true')
+               ->where('custom_properties->is_upg0506', 'true')
+               ->where('custom_properties->care_plan->demographics->mrn_number', '334417')
+               ->delete();
+
+            $dm = $ccda->directMessage()->first();
+
+            if ($dm) {
+                $dm->media()
+                   ->get()
+                   ->each(function ($media) {
+                       $media->delete();
+                   });
+                $dm->delete();
+            }
+
+            $ccda->importedMedicalRecord()->forceDelete();
+
+            $patient = $ccda->getPatient();
+
+            if ($patient){
+                $patient->patientSummaries()->delete();
+                $patient->forceDelete();
+            }
+
+            $ccda->forceDelete();
+        }
     }
 }
