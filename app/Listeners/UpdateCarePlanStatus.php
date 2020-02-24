@@ -70,12 +70,17 @@ class UpdateCarePlanStatus
             $user->carePlan->qa_approver_id = auth()->id();
             $user->carePlan->save();
 
-            if ((bool) $practiceSettings->auto_approve_careplans || $user->ccdas()->first()->hasUPG0506PdfCareplanMedia()->exists()) {
+            if ((bool) $practiceSettings->auto_approve_careplans || $user->patientIsUPG0506()) {
                 $user->carePlan->status               = CarePlan::PROVIDER_APPROVED;
                 $user->carePlan->provider_approver_id = optional($user->billingProviderUser())->id;
+
+                if ($user->patientIsUPG0506()) {
+                    $user->carePlan->provider_date = Carbon::now();
+                }
+
                 $user->carePlan->save();
 
-                if ((bool) $practiceSettings->auto_approve_careplans){
+                if ((bool) $practiceSettings->auto_approve_careplans) {
                     event(new PdfableCreated($user->carePlan));
                 }
             }
