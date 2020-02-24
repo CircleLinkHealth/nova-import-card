@@ -3,6 +3,8 @@
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
+Route::get('/debug-sentry', 'DemoController@sentry');
+Route::get('/debug-sentry-log', 'DemoController@sentryLog');
 
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
@@ -2321,3 +2323,10 @@ Route::post('nurses/nurse-calendar-data', [
     'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
+
+
+//Route::get('get-calendar-data', [
+//    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
+//    'as'   => 'care.center.work.schedule.getCalendarData',
+//]);
+

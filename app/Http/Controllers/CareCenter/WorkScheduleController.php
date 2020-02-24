@@ -65,6 +65,8 @@ class WorkScheduleController extends Controller
     {
         $startDate = Carbon::parse($request->input('start'))->toDateString();
         $endDate = Carbon::parse($request->input('end'))->toDateString();
+//        $startDate = Carbon::parse(now())->startOfMonth()->toDateString();
+//        $endDate = Carbon::parse($startDate)->endOfMonth()->toDateString();
         $today = Carbon::parse(now())->toDateString();
         $auth = auth()->user();
 
@@ -601,18 +603,4 @@ class WorkScheduleController extends Controller
         return redirect()->back();
     }
 
-//    public function updateDailyHours(Request $request, $id)
-//    {
-//        $workHours = WorkHours::find($id);
-//        $workHours->{$request->input('day')} = $request->input('workHours');
-//        $workHours->save();
-//
-//        return response()->json();
-//    }
-//
-//    protected function canAddNewWindow(Carbon $date)
-//    {
-//        return ($date->gt($this->nextWeekStart) && $this->today->dayOfWeek < 4)
-//            || $date->gt($this->nextWeekEnd);
-//    }
 }

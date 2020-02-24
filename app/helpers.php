@@ -57,7 +57,7 @@ if ( ! function_exists('getIpAddress')) {
             return trim(end($ipAddresses));
         }
 
-        return $_SERVER['REMOTE_ADDR'];
+        return $_SERVER['REMOTE_ADDR'] ?? null;
     }
 }
 
