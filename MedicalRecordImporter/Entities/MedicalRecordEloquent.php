@@ -14,6 +14,13 @@ namespace CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities;
  */
 
 use App\Console\Commands\OverwriteNBIImportedData;
+use App\Search\ProviderByName;
+use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
+use CircleLinkHealth\Customer\Entities\Patient;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Predictors\HistoricBillingProviderPredictor;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Predictors\HistoricLocationPredictor;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Predictors\HistoricPracticePredictor;
@@ -21,14 +28,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Allergies;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Demographics;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Insurance;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Medications;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\Problems;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
-use App\Search\ProviderByName;
-use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
-use CircleLinkHealth\Customer\Entities\Patient;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Problems;
 use Illuminate\Support\Collection;
 
 abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\BaseModel implements MedicalRecord
@@ -144,6 +144,8 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
             ->importProviders()
             ->raiseConcerns();
 
+        event(new CcdaImported($this));
+        
         return $this->importedMedicalRecord;
     }
 
