@@ -508,22 +508,25 @@ class Calls implements AthenaApiImplementation
 
         return $this->response($response);
     }
-
+    
     /**
      * Get problems for a patient.
      *
-     * @param $patientId
-     * @param $practiceId
-     * @param $departmentId
+     * @param int $patientId
+     * @param int $practiceId
+     * @param int $departmentId
      * @param bool $showDiagnosisInfo
+     * @param bool $showinactive
      *
      * @return mixed
+     * @throws \Exception
      */
-    public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true)
+    public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true, $showinactive = false)
     {
         $response = $this->api()->GET("${practiceId}/chart/${patientId}/problems", [
             'departmentid'      => $departmentId,
             'showdiagnosisinfo' => $showDiagnosisInfo,
+            'showinactive'      => $showinactive,
         ]);
 
         return $this->response($response);
