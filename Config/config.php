@@ -20,6 +20,7 @@ return [
      *
      */
     'store_query_exceptions_in_db' => env('STORE_QUERY_EXCEPTIONS_IN_DB', true),
-    
-    
+
+    'smart_cache_array_store_threshold_minutes' => env('SMART_CACHE_ARRAY_STORE_THRESHOLD_MINUTES', 2)
+
 ];

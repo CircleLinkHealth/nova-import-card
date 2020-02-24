@@ -1,0 +1,57 @@
+<?php
+
+namespace CircleLinkHealth\Core;
+
+use Closure;
+use Illuminate\Cache\CacheManager as CacheManager;
+
+/**
+ * @mixin \Illuminate\Contracts\Cache\Repository
+ */
+class SmartCacheManager extends CacheManager
+{
+    /**
+     * Create a new Cache manager instance.
+     *
+     * @param \Illuminate\Foundation\Application $app
+     *
+     * @return void
+     */
+    public function __construct($app)
+    {
+        $this->app = $app;
+    }
+
+    /**
+     * Get an item from the cache, or execute the given Closure and store the result.
+     *
+     * @param string $key
+     * @param \DateTimeInterface|\DateInterval|float|int $minutes
+     * @param \Closure $callback
+     *
+     * @return mixed
+     */
+    public function remember($key, $minutes, Closure $callback)
+    {
+        $thresholdMinutes = $this->getArrayStoreThreshold();
+        if ($minutes <= $thresholdMinutes) {
+            return \Cache::store('array')->remember($key, $minutes, $callback);
+        }
+
+        return parent::remember($key, $minutes, $callback);
+    }
+
+    /**
+     * Get threshold number of minutes where we always
+     * cache in array store.
+     *
+     * Default: 2 minutes
+     *
+     * @return int
+     */
+    private function getArrayStoreThreshold(): int
+    {
+        return config('core.smart_cache_array_store_threshold_minutes') ?? 2;
+    }
+
+}
