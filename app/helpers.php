@@ -1661,7 +1661,7 @@ if ( ! function_exists('isPatientCcmPlusBadgeEnabled')) {
 
 if ( ! function_exists('upg0506IsEnabled')) {
     /**
-     * Key: enable_patient_ccm_plus_badge
+     * Key: upg0506_is_enabled
      * Default: false.
      */
     function upg0506IsEnabled(): bool
@@ -1671,7 +1671,7 @@ if ( ! function_exists('upg0506IsEnabled')) {
         return \Cache::remember($key, 2, function () use ($key) {
             $val = AppConfig::pull($key, null);
             if (null === $val) {
-                return setAppConfig($key, false);
+                return setAppConfig($key, false) === 'true';
             }
             return $val === 'true';
         });
