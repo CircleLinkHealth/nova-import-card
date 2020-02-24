@@ -1673,8 +1673,7 @@ if ( ! function_exists('upg0506IsEnabled')) {
             if (null === $val) {
                 return setAppConfig($key, false);
             }
-
-            return $val;
+            return $val === 'true';
         });
     }
 }
