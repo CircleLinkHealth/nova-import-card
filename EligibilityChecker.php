@@ -571,6 +571,7 @@ class EligibilityChecker
         
         $ccmProbCount = count($qualifyingCcmProblems);
         $bhiProbCount = count($qualifyingBhiProblems);
+        $pcmProbCount = count($pcmProblems);
         
         if ($this->eligibilityJob) {
             $this->eligibilityJob->bhi_problem_id   = $qualifyingBhiProblems[0] ?? null;
@@ -582,11 +583,11 @@ class EligibilityChecker
             }
         }
         
-        if ($ccmProbCount < 2 && 0 == $bhiProbCount) {
+        if ($ccmProbCount < 2 && 0 === $bhiProbCount && 0 === $pcmProbCount) {
             $this->setEligibilityJobStatus(
                 3,
                 [
-                    'problems'              => 'Patient has less than 2 ccm conditions',
+                    'problems'              => 'Patient has less than 2 CCM conditions, and 0 BHI or PCM conditions',
                     'qualifyingCcmProblems' => $qualifyingCcmProblems,
                     'qualifyingBhiProblems' => $qualifyingBhiProblems,
                 ],
@@ -598,7 +599,7 @@ class EligibilityChecker
         }
         
         if ($ccmProbCount < 2 && $bhiProbCount > 0) {
-            if ( ! $this->practice->hasServiceCode('CPT 99484')) {
+            if ( ! $this->practice->hasServiceCode('CPT 99484') && (0 === $pcmProbCount || ! $this->practice->hasServiceCode('G2065'))) {
                 $this->setEligibilityJobStatus(
                     3,
                     ['problems' => 'Patient is BHI eligible, but practice does not support BHI. Patient has less than 2 ccm conditions.'],
@@ -608,6 +609,10 @@ class EligibilityChecker
                 
                 return false;
             }
+        }
+    
+        if ($ccmProbCount < 2 && ($bhiProbCount === 0 || ! $this->practice->hasServiceCode('CPT 99484')) && (0 === $pcmProbCount || ! $this->practice->hasServiceCode('G2065'))) {
+            return false;
         }
         
         $eligibilityJobData['ccm_condition_1'] = $qualifyingCcmProblems[0];
