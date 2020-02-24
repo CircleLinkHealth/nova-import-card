@@ -49,19 +49,21 @@ class ImporterController extends Controller
                 if ( ! $mr ) {
                     return false;
                 }
-    
-                $isUpg0506Incomplete = false;
-    
-                if ($mr instanceof Ccda) {
-                    $isUpg0506Incomplete = Ccda::whereHas('media', function ($q) {
-                        $q->where('custom_properties->is_upg0506_complete', '!=','true');
-                    })->whereHas('directMessage', function ($q) {
-                        $q->where('from', 'like', "%@upg.ssdirect.aprima.com");
-                    })->where('id', $mr->id)->exists();
-                }
-    
-                if ($isUpg0506Incomplete) {
-                    return false;
+
+                if (upg0506IsEnabled()){
+                    $isUpg0506Incomplete = false;
+
+                    if ($mr instanceof Ccda) {
+                        $isUpg0506Incomplete = Ccda::whereHas('media', function ($q) {
+                            $q->where('custom_properties->is_upg0506_complete', '!=','true');
+                        })->whereHas('directMessage', function ($q) {
+                            $q->where('from', 'like', "%@upg.ssdirect.aprima.com");
+                        })->where('id', $mr->id)->exists();
+                    }
+
+                    if ($isUpg0506Incomplete) {
+                        return false;
+                    }
                 }
 
                 if ( ! $summary->billing_provider_id) {

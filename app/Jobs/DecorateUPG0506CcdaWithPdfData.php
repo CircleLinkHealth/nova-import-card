@@ -40,6 +40,10 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
      */
     public function handle()
     {
+        if (! upg0506IsEnabled()){
+            return;
+        }
+
         if (! $this->ccda->hasUPG0506Media()){
             return;
         }

@@ -48,7 +48,7 @@ class UPG0506DirectMailListener implements ShouldQueue
 
     private function shouldBail(string $sender)
     {
-        return ! str_contains($sender, '@upg.ssdirect.aprima.com');
+        return ! str_contains($sender, '@upg.ssdirect.aprima.com') || ! upg0506IsEnabled();
     }
 
     private function hasG0506Pdf(int $dmId): bool
