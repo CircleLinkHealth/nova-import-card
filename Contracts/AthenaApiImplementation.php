@@ -246,7 +246,7 @@ interface AthenaApiImplementation
         $workphone = null,
         $departmentId = null
     );
-
+    
     /**
      * Get problems for a patient.
      *
@@ -255,9 +255,11 @@ interface AthenaApiImplementation
      * @param $departmentId
      * @param bool $showDiagnosisInfo
      *
+     * @param bool $showinactive
+     *
      * @return mixed
      */
-    public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true);
+    public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true, $showinactive = false);
 
     /**
      * Get the practice's custom fields.
