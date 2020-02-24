@@ -192,12 +192,12 @@
     }
 
     .image.volume-half {
-        background: url({{asset('/images/volume-half@3x.png')}}) no-repeat;
+        background: url({{asset('/images/volume-half.svg')}}) no-repeat;
         margin-top: 4px;
     }
 
     .image.thought-bubble {
-        background: url({{asset('/images/thought-bubble@3x.png')}}) no-repeat;
+        background: url({{asset('/images/thought-bubble.svg')}}) no-repeat;
     }
 
     .image.raised-hand {

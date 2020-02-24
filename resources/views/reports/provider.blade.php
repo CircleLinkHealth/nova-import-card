@@ -79,7 +79,7 @@
 
             <div class="recommendations-area">
                 @if(! empty($reportData['allergy_history']))
-                The patient has reported allergies to the following:
+                    The patient has reported allergies to the following:
                     @foreach($reportData['allergy_history'] as $allergy)
                         {{$allergy}}{{$loop->last ? '.' : ', '}}
                     @endforeach
@@ -432,14 +432,21 @@
             <br/>
 
             <div class="recommendations-area">
-                The patient {{$reportData['advanced_care_planning']['has_attorney']}} a Medical Power of Attorney.
-                The patient @if($reportData['advanced_care_planning']['living_will'] === 'yes') has a living
-                will&nbsp;/&nbsp;advance
-                directive.
-                A copy of the patient's advance
-                directive {{$reportData['advanced_care_planning']['existing_copy'] === 'yes'}}
-                available on file at the moment.
-                @else does not have a living will&nbsp;/&nbsp;advance directive. @endif
+                @if (strcasecmp($reportData['advanced_care_planning']['has_attorney'], 'yes') === 0)
+                    The patient has a Medical Power of Attorney.
+                @else
+                    The patient does not have a Medical Power of Attorney.
+                @endif
+                @if(strcasecmp($reportData['advanced_care_planning']['living_will'], 'yes') === 0)
+                    The patient has a living will&nbsp;/&nbsp;advance directive.
+                    @if(strcasecmp($reportData['advanced_care_planning']['existing_copy'], 'yes') === 0)
+                        A copy of the patient's advance directive is available on file at the moment.
+                    @else
+                        A copy of the patient's advance directive is not available on file at the moment.
+                    @endif
+                @else
+                    The patient does not have a living will&nbsp;/&nbsp;advance directive.
+                @endif
             </div>
         </div>
 

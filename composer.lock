@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ff5989077e4050f895a301b31983d310",
+    "content-hash": "f189a3bff9f885f0cf9c131929c72b36",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -404,11 +404,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.4.5",
+            "version": "v1.4.6",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "592fb6680ef8f8e1178d98e7ccafb5c55f43cb3b"
+                "reference": "db3f262c3be07ea7cf298de77ed154b4c81ed6c8"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -437,7 +437,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-20T20:36:33+00:00"
+            "time": "2020-02-24T09:15:44+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
