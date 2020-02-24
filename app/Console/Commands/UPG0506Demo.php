@@ -81,39 +81,7 @@ class UPG0506Demo extends Command
                              ->get();
 
                 foreach ($ccdas as $ccda) {
-                    $ccda->media()
-                         ->get()
-                         ->each(function ($media) {
-                             $media->delete();
-                         });
-
-                    \DB::table('media')
-                       ->where('custom_properties->is_pdf', 'true')
-                       ->where('custom_properties->is_upg0506', 'true')
-                       ->where('custom_properties->care_plan->demographics->mrn_number', '334417')
-                       ->delete();
-
-                    $dm = $ccda->directMessage()->first();
-
-                    if ($dm) {
-                        $dm->media()
-                           ->get()
-                           ->each(function ($media) {
-                               $media->delete();
-                           });
-                        $dm->delete();
-                    }
-
-                    $ccda->importedMedicalRecord()->forceDelete();
-
-                    $patient = $ccda->getPatient();
-
-                    if ($patient){
-                        $patient->patientSummaries()->delete();
-                        $patient->forceDelete();
-                    }
-
-                    $ccda->forceDelete();
+                    $this->clearCcdaData($ccda);
                 }
 
                 $pdf = Media::where('custom_properties->is_upg0506', 'true')
@@ -134,6 +102,9 @@ class UPG0506Demo extends Command
             ->whereLastName('Zznigro')
             ->get()
             ->each(function (User $u){
+                $u->ccdas()->get()->each(function($ccda){
+                    $this->clearCcdaData($ccda);
+                });
                 $u->patientSummaries()->delete();
                 $u->forceDelete();
             });
@@ -159,5 +130,44 @@ class UPG0506Demo extends Command
                 'num_attachments' => collect([$this->option('ccd'), $this->option('pdf')])->filter()->count(),
             ]
         );
+    }
+
+
+    private function clearCcdaData($ccda){
+        if ($ccda){
+            $ccda->media()
+                 ->get()
+                 ->each(function ($media) {
+                     $media->delete();
+                 });
+
+            \DB::table('media')
+               ->where('custom_properties->is_pdf', 'true')
+               ->where('custom_properties->is_upg0506', 'true')
+               ->where('custom_properties->care_plan->demographics->mrn_number', '334417')
+               ->delete();
+
+            $dm = $ccda->directMessage()->first();
+
+            if ($dm) {
+                $dm->media()
+                   ->get()
+                   ->each(function ($media) {
+                       $media->delete();
+                   });
+                $dm->delete();
+            }
+
+            $ccda->importedMedicalRecord()->forceDelete();
+
+            $patient = $ccda->getPatient();
+
+            if ($patient){
+                $patient->patientSummaries()->delete();
+                $patient->forceDelete();
+            }
+
+            $ccda->forceDelete();
+        }
     }
 }
