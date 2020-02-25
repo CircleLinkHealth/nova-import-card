@@ -8,9 +8,9 @@ namespace App\Services\AthenaAPI;
 
 use App\Entities\CcdaRequest;
 use App\Jobs\ImportCcda;
-use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class CreateAndPostPdfCareplan
 {
@@ -32,7 +32,7 @@ class CreateAndPostPdfCareplan
 
         $departments = $this->api->getDepartmentIds($practiceId);
 
-        if ( ! array_key_exists('departments', $departments)) {
+        if ( ! is_array($departments) || ! array_key_exists('departments', $departments)) {
             return false;
         }
 

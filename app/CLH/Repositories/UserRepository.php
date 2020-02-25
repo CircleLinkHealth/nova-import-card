@@ -7,9 +7,8 @@
 namespace App\CLH\Repositories;
 
 use App\CareAmbassador;
-use App\CarePlan;
-use App\Services\GoogleDrive;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -19,9 +18,12 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\ProviderInfo;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
+use CircleLinkHealth\Customer\Tasks\ClearUserCache;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use CircleLinkHealth\TwoFA\Entities\AuthyUser;
 use Config;
 use Illuminate\Cache\TaggableStore;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Storage;
@@ -72,6 +74,12 @@ class UserRepository
     ) {
         $user = $user->createNewUser($params->get('email'), $params->get('password'));
 
+        if ( ! $user || is_null($user->id)) {
+            \Log::channel('logdna')->error('User has not been created.', [
+                'email_exists_in_parameters' => ! is_null($params->get('email')),
+            ]);
+        }
+
         $this->saveOrUpdatePasswordsHistory($user, $params);
 
         // set registration date field on users
@@ -83,17 +91,22 @@ class UserRepository
         // roles
         $this->saveOrUpdateRoles($user, $params);
 
+        if ( ! empty($params->get('roles')) && 0 == $user->roles()->count()) {
+            \Log::channel('logdna')->error('User roles have not been attached.', [
+                'user_id' => $user->id,
+            ]);
+        }
         // phone numbers
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
         // participant info
-        if ($user->hasRole('participant')) {
+        if ($user->isParticipant()) {
             $this->saveOrUpdatePatientInfo($user, $params);
             $this->saveOrUpdatePatientMonthlySummary($user);
         }
 
         // provider info
-        if ($user->hasRole('provider')) {
+        if ($user->isProvider()) {
             $this->saveOrUpdateProviderInfo($user, $params);
         }
 
@@ -140,7 +153,7 @@ class UserRepository
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
         // participant info
-        if ($user->hasRole('participant')) {
+        if ($user->isParticipant()) {
             $this->saveOrUpdatePatientInfo($user, $params);
         }
 
@@ -150,7 +163,7 @@ class UserRepository
         }
 
         // provider info
-        if ($user->hasRole('provider')) {
+        if ($user->isProvider()) {
             $this->saveOrUpdateProviderInfo($user, $params);
         }
 
@@ -325,9 +338,6 @@ class UserRepository
      * We could implement a change password page and we could use this method
      * to also populate password history.
      * https://www.5balloons.info/setting-up-change-password-with-laravel-authentication/.
-     *
-     * @param \CircleLinkHealth\Customer\Entities\User $user
-     * @param ParameterBag                             $params
      */
     public function saveOrUpdatePasswordsHistory(
         User $user,
@@ -387,10 +397,25 @@ class UserRepository
             ) {
                 continue 1;
             }
+
+            if ('ccm_status' == $key) {
+                $ccmStatus = $params->get($key);
+                if (Patient::WITHDRAWN == $ccmStatus && $user->onFirstCall()) {
+                    $ccmStatus = Patient::WITHDRAWN_1ST_CALL;
+                }
+                $user->patientInfo->ccm_status = $ccmStatus;
+                continue;
+            }
+
             if ($params->get($key)) {
                 $user->patientInfo->$key = $params->get($key);
             }
         }
+
+        if ($params->has('is_awv')) {
+            $user->patientInfo->is_awv = $params->get('is_awv');
+        }
+
         $user->patientInfo->save();
     }
 
@@ -497,7 +522,7 @@ class UserRepository
         $this->clearRolesCache($user);
 
         // add patient info
-        if ($user->hasRole('participant') && ! $user->patientInfo) {
+        if ($user->isParticipant() && ! $user->patientInfo) {
             $patientInfo          = new Patient();
             $patientInfo->user_id = $user->id;
             $patientInfo->save();
@@ -505,7 +530,7 @@ class UserRepository
         }
 
         // add provider info
-        if ($user->hasRole('provider') && ! $user->providerInfo) {
+        if ($user->isProvider() && ! $user->providerInfo) {
             $providerInfo          = new ProviderInfo();
             $providerInfo->user_id = $user->id;
             $providerInfo->save();
@@ -540,13 +565,10 @@ class UserRepository
             $user->email = $params->get('email');
         }
 
-        if ($params->get('access_disabled')) {
-            $user->access_disabled = $params->get('access_disabled');
-        } else {
-            $user->access_disabled = 0; // 0 = good, 1 = disabled
-        }
+        $user->access_disabled = $params->get('access_disabled', false);
 
-        $user->auto_attach_programs = $params->get('auto_attach_programs');
+        $user->auto_attach_programs = $params->has('auto_attach_programs');
+
         if ($params->get('first_name')) {
             $user->setFirstName($params->get('first_name'));
         }
@@ -576,7 +598,7 @@ class UserRepository
         }
         $user->save();
     }
-
+    
     /**
      * Clear Cerberus roles cache for User.
      *
@@ -584,10 +606,7 @@ class UserRepository
      */
     private function clearRolesCache(User $user)
     {
-        $cacheKey = 'cerberus_roles_for_user_'.$user->id;
-        if (\Cache::getStore() instanceof TaggableStore) {
-            $forgotten = \Cache::tags(Config::get('cerberus.role_user_site_table'))->forget($cacheKey);
-        }
+        ClearUserCache::roles($user);
     }
 
     private function forceEnable2fa(AuthyUser $authyUser)

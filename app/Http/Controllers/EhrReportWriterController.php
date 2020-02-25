@@ -8,11 +8,11 @@ namespace App\Http\Controllers;
 
 use App\CLH\Repositories\UserRepository;
 use App\Notifications\EhrReportWriterNotification;
-use App\Services\CCD\ProcessEligibilityService;
-use App\Services\GoogleDrive;
-use App\Traits\ValidatesEligibility;
+use CircleLinkHealth\Core\GoogleDrive;
 use CircleLinkHealth\Customer\Entities\EhrReportWriterInfo;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\ProcessEligibilityService;
+use CircleLinkHealth\Eligibility\ValidatesEligibility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Storage;
@@ -92,8 +92,6 @@ class EhrReportWriterController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function notifyReportWriter(Request $request)
@@ -135,9 +133,6 @@ class EhrReportWriterController extends Controller
     }
 
     /**
-     * @param Request                   $request
-     * @param ProcessEligibilityService $service
-     *
      * @return $this
      */
     public function submitFile(Request $request, ProcessEligibilityService $service)
@@ -204,15 +199,17 @@ class EhrReportWriterController extends Controller
             }
         }
         if (empty($messages)) {
-            $messages['success'][] = 'Thanks! CLH will review the file and get back to you. This may take a few business days.';
+            if (auth()->user()->isAdmin()) {
+                $messages['success'][] = link_to_route('eligibility.batch.show', 'Click here to view Batch',[$batch->id]);
+            } else {
+                $messages['success'][] = 'Thanks! CLH will review the file and get back to you. This may take a few business days.';
+            }
         }
 
         return redirect()->back()->withErrors($messages);
     }
 
     /**
-     * @param Request $request
-     *
      * @return $this
      */
     public function validateJson(Request $request)
@@ -262,8 +259,6 @@ class EhrReportWriterController extends Controller
     }
 
     /**
-     * @param EhrReportWriterInfo $info
-     *
      * @return \Illuminate\Support\Collection
      */
     private function getUnprocessedFilesFromGoogleFolder(EhrReportWriterInfo $info)

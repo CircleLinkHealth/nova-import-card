@@ -4,8 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use App\Models\MedicalRecords\Ccda;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Database\Seeder;
 
 class CcdaImporterPredictionSeeder extends Seeder

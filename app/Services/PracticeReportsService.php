@@ -7,9 +7,9 @@
 namespace App\Services;
 
 use App\Billing\Practices\PracticeInvoiceGenerator;
-use App\Exports\FromArray;
 use App\ValueObjects\QuickBooksRow;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -19,9 +19,6 @@ use Spatie\MediaLibrary\Exceptions\InvalidConversion;
 class PracticeReportsService
 {
     /**
-     * @param array  $practices
-     * @param Carbon $date
-     *
      * @throws InvalidConversion
      * @throws FileCannotBeAdded
      *
@@ -51,16 +48,21 @@ class PracticeReportsService
     /**
      * @param $practices
      * @param $format
-     * @param Carbon $date
      *
      * @return mixed
      */
     public function getQuickbooksReport($practices, $format, Carbon $date)
     {
         $data = [];
+        
+        $saasAccount = null;
 
         foreach ($practices as $practiceId) {
-            $practice = Practice::find($practiceId);
+            $practice = Practice::with(['settings', 'chargeableServices', 'saasAccount'])->find($practiceId);
+            
+            if (!$saasAccount) {
+                $saasAccount = $practice->saasAccount;
+            }
 
             if ('practice' == $practice->cpmSettings()->bill_to || empty($practice->cpmSettings()->bill_to)) {
                 $chargeableServices = $this->getChargeableServices($practice);
@@ -92,7 +94,7 @@ class PracticeReportsService
             return false;
         }
 
-        return $this->makeQuickbookReport($data, $format, $date);
+        return $this->makeQuickbookReport($data, $format, $date, $saasAccount);
     }
 
     /**
@@ -102,10 +104,12 @@ class PracticeReportsService
      */
     private function getChargeableServices($chargeable)
     {
-        $chargeableServices = $chargeable->chargeableServices()->get();
+        $chargeable->loadMissing('chargeableServices');
+
+        $chargeableServices = $chargeable->chargeableServices;
 
         //defaults to CPT 99490 if practice doesnt have a chargeableService, until further notice
-        if ( ! $chargeableServices) {
+        if ($chargeableServices->isEmpty()) {
             $chargeableServices = ChargeableService::where('id', 1)->get();
         }
 
@@ -115,24 +119,18 @@ class PracticeReportsService
     /**
      * @param $rows
      * @param $format
-     * @param Carbon $date
      *
      * @return mixed
      */
-    private function makeQuickbookReport($rows, $format, Carbon $date)
+    private function makeQuickbookReport($rows, $format, Carbon $date, $saasAccount)
     {
         return (new FromArray("Billable Patients Report - ${date}.$format", $rows))->storeAndAttachMediaTo(
-            auth()->user()
-                ->saasAccount,
+            $saasAccount,
             "quickbooks_report_for_{$date->toDateString()}"
         );
     }
 
     /**
-     * @param Practice          $practice
-     * @param Carbon            $date
-     * @param ChargeableService $chargeableService
-     *
      * @throws \Exception
      * @throws \Waavi\UrlShortener\InvalidResponseException
      *
@@ -197,10 +195,10 @@ class PracticeReportsService
                 : $chargeableService->description,
             'LineUnitPrice' => (string) '$'.' '.$lineUnitPrice,
             'Msg'           => 'Send Check Payments to:
-CircleLink Health Inc. 
-C/O I2BF Ventures
-304 Park Avenue South, 9th FLoor
-New York, NY 10010
+CircleLink Health Inc.
+1178 Broadway
+3rd floor #1265
+New York, NY 10001
 
 ACH Payments: JPMorgan Chase Bank 
 Routing Number (ABA): 02110361 

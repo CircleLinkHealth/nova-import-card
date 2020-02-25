@@ -14,7 +14,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Raygun\PsrLogger\RaygunLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -129,7 +128,6 @@ class CallController extends Controller
      * This handler is only used by nurses, so calls scheduled from here
      * have is_manual = true.
      *
-     * @param Request $request
      * @param $patientId
      *
      * @return \Illuminate\Http\RedirectResponse
@@ -148,12 +146,7 @@ class CallController extends Controller
         ]);
 
         if ($validation->fails()) {
-            /** @var RaygunLogger $raygunLogger */
-            $raygunLogger = app('raygun.logger');
-            if ($raygunLogger) {
-                //request will be sent to raygun
-                $raygunLogger->error('Could not schedule call for patient');
-            }
+            \Log::channel('logdna')->error('Could not schedule call for patient:'.$patientId);
 
             return redirect()
                 ->route('patient.note.index', [
@@ -343,7 +336,6 @@ class CallController extends Controller
      * Software-Only role cannot change clh nurse to in-house nurse
      * CPM-660.
      *
-     * @param Call $call
      * @param $newCareCoachUserId
      *
      * @return bool
@@ -558,7 +550,6 @@ class CallController extends Controller
     }
 
     /**
-     * @param User $user
      * @param $input
      *
      * @return Call

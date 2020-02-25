@@ -7,8 +7,7 @@
 namespace App\Importer\Loggers\Problem;
 
 use App\Contracts\Importer\MedicalRecord\Section\Logger;
-use App\Services\Eligibility\Entities\Problem;
-use Illuminate\Support\Str;
+use CircleLinkHealth\Eligibility\Entities\Problem;
 
 class CommaDelimitedListProblemLogger implements Logger
 {
@@ -30,6 +29,6 @@ class CommaDelimitedListProblemLogger implements Logger
 
     public function shouldHandle($problems): bool
     {
-        return is_string($problems) && ! Str::startsWith($problems, ['[', '{']);
+        return is_string($problems) && ! starts_with($problems, ['[', '{']);
     }
 }

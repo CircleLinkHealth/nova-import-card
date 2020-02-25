@@ -10,12 +10,17 @@ use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Events\NoteFinalSaved;
 use App\Http\Requests\NotesReport;
+use App\Jobs\SendSingleNotification;
 use App\Note;
 use App\Repositories\PatientWriteRepository;
+use App\Rules\PatientEmailAttachments;
+use App\Rules\PatientEmailDoesNotContainPhi;
 use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
+use App\Services\CPM\CpmProblemService;
 use App\Services\NoteService;
+use App\Services\PatientCustomEmail;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
@@ -28,6 +33,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Validator;
 
 class NotesController extends Controller
 {
@@ -132,16 +138,16 @@ class NotesController extends Controller
                 ->where('inbound_cpm_id', '=', $patientId)
                 ->where('outbound_cpm_id', '=', $author_id)
                 ->select(
-                    [
-                        'id',
-                        'type',
-                        'sub_type',
-                        'attempt_note',
-                        'scheduled_date',
-                        'window_start',
-                        'window_end',
-                    ]
-                )
+                                           [
+                                               'id',
+                                               'type',
+                                               'sub_type',
+                                               'attempt_note',
+                                               'scheduled_date',
+                                               'window_start',
+                                               'window_end',
+                                           ]
+                                       )
                 ->get();
         }
 
@@ -194,6 +200,7 @@ class NotesController extends Controller
             'patientWithdrawnReason' => $patientWithdrawnReason,
             'note'                   => $existingNote,
             'call'                   => $existingCall,
+            'cpmProblems'            => (new CpmProblemService())->all(),
         ];
 
         return view('wpUsers.patient.note.create', $view_data);
@@ -232,7 +239,9 @@ class NotesController extends Controller
     ) {
         $date = Carbon::now()->subMonth(2);
         if (true == $showAll) {
-            $date = 0;
+            //earliest day possible
+            //works with both mysql and pgsql
+            $date = '1900-01-01';
         }
 
         $patient = User::with(
@@ -241,7 +250,7 @@ class NotesController extends Controller
                     $q->where('logged_from', '=', 'manual_input')
                         ->where('performed_at', '>=', $date)
                         ->with('meta')
-                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type, lv_activities.id'))
                         ->orderBy('performed_at', 'desc');
                 },
                 'appointments' => function ($q) use ($date) {
@@ -342,16 +351,31 @@ class NotesController extends Controller
     }
 
     public function send(
-        Request $input,
+        SafeRequest $request,
         $patientId,
         $noteId
     ) {
+        $input                  = $request->allSafe();
+        $shouldSendPatientEmail = isset($input['email-patient']);
+        $shouldNotifyCareTeam   = isset($input['notify_careteam']);
+        $shouldNotifySupport    = isset($input['notify_circlelink_support']);
+
         $note = Note::where('patient_id', $input['patient_id'])
             ->findOrFail($input['noteId']);
 
-        $note->forward($input['notify_careteam'], $input['notify_circlelink_support']);
+        $patient = User::findOrFail($patientId);
 
-        return redirect()->route('patient.note.index', [$noteId]);
+        $note->forward($shouldNotifyCareTeam, $shouldNotifySupport);
+        if ($shouldSendPatientEmail) {
+            Validator::make($input, [
+                'patient-email-body' => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
+                'attachments'        => ['sometimes', new PatientEmailAttachments()],
+            ])->validate();
+
+            $this->sendPatientEmail($input, $patient, $note);
+        }
+
+        return redirect()->route('patient.note.index', [$patientId, $noteId]);
     }
 
     public function show(
@@ -414,6 +438,7 @@ class NotesController extends Controller
             'notifies_text'      => $patient->getNotifiesText(),
             'note_channels_text' => $patient->getNoteChannelsText(),
             'author'             => $author,
+            'patientEmails'      => $this->service->getNoteEmails($note),
         ];
 
         return view('wpUsers.patient.note.view', $view_data);
@@ -431,8 +456,6 @@ class NotesController extends Controller
      * Also: in some conditions call will be stored for other roles as well.
      * They are never redirected to Schedule Next Call page.
      *
-     * @param SafeRequest      $request
-     * @param SchedulerService $schedulerService
      * @param $patientId
      *
      * @return \Illuminate\Http\RedirectResponse
@@ -461,11 +484,29 @@ class NotesController extends Controller
 
         $patient = User::findOrFail($patientId);
 
+        // validating attested problems by nurse. Checking existence since we are about to attach them below
+        $request->validate([
+            'attested_problems.ccd_problem_id' => 'exists:ccd_problems',
+        ]);
+        $attestedProblems = isset($input['attested_problems'])
+            ? $input['attested_problems']
+            : null;
+
         $editingNoteId = ! empty($input['noteId'])
             ? $input['noteId']
             : null;
 
         $input['status'] = 'complete';
+
+        $shouldSendPatientEmail = isset($input['email-patient']);
+
+        if ($shouldSendPatientEmail) {
+            Validator::make($input, [
+                'email-subject'      => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
+                'patient-email-body' => ['sometimes', new PatientEmailDoesNotContainPhi($patient)],
+                'attachments'        => ['sometimes', new PatientEmailAttachments()],
+            ])->validate();
+        }
 
         //Performed By field is removed from the form (per CPM-1172)
         $input['author_id'] = auth()->id();
@@ -500,6 +541,10 @@ class NotesController extends Controller
             'forceNotify'    => false,
         ]));
 
+        if ($shouldSendPatientEmail) {
+            $this->sendPatientEmail($input, $patient, $note);
+        }
+
         $info = $this->updatePatientInfo($patient, $input);
         $this->updatePatientCallWindows($info, $input);
 
@@ -532,16 +577,19 @@ class NotesController extends Controller
                                 ->withInput();
                         }
 
-                        $call->status = $input['call_status'];
+                        //'reached' | 'not-reached'
+                        $callStatus = $input['call_status'];
+                        $schedulerService->updateCallWithNote($note, $call, $callStatus, $attestedProblems);
 
                         //Updates when the patient was successfully contacted last
                         //use $note->created_at, in case we are editing a note
                         $info->last_successful_contact_time = $note->performed_at->format('Y-m-d H:i:s');
-
-                        //took this from below :)
-                        if (auth()->user()->hasRole('provider')) {
-                            $this->patientRepo->updateCallLogs($patient->patientInfo, true, true, $note->performed_at);
-                        }
+                        $this->patientRepo->updateCallLogs(
+                            $patient->patientInfo,
+                            Call::REACHED === $call->status,
+                            true,
+                            $note->performed_at
+                        );
                     } else {
                         $call->status = 'done';
                     }
@@ -561,7 +609,7 @@ class NotesController extends Controller
             }
         } else {
             if (Auth::user()->isCareCoach()) {
-                $is_withdrawn = 'withdrawn' == $info->ccm_status;
+                $is_withdrawn = in_array($info->ccm_status, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL]);
 
                 if ( ! $is_phone_session && $is_withdrawn) {
                     return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
@@ -595,10 +643,10 @@ class NotesController extends Controller
                         $prediction = $schedulerService->updateTodaysCallAndPredictNext(
                             $patient,
                             $note->id,
-                            $call_status
+                            $call_status,
+                            $attestedProblems
                         );
                     }
-
                     // add last contact time regardless of if success
                     $info->last_contact_time = $note->performed_at->format('Y-m-d H:i:s');
                     $info->save();
@@ -628,7 +676,7 @@ class NotesController extends Controller
             //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
             if ( ! $noteIsAlreadyComplete && $is_phone_session) {
                 if (isset($input['call_status']) && 'reached' == $input['call_status']) {
-                    if (auth()->user()->hasRole('provider')) {
+                    if (auth()->user()->isProvider()) {
                         $this->service->storeCallForNote(
                             $note,
                             'reached',
@@ -790,6 +838,32 @@ class NotesController extends Controller
             ->all();
     }
 
+    private function sendPatientEmail($input, $patient, $note)
+    {
+        $address = $patient->email;
+
+        if (isset($input['custom-patient-email'])) {
+            $address = $input['custom-patient-email'];
+
+            if (isset($input['default-patient-email'])) {
+                $patient->email = $input['custom-patient-email'];
+                $patient->save();
+            }
+        }
+
+        SendSingleNotification::dispatch(new PatientCustomEmail(
+            $patient,
+            auth()->user()->id,
+            $input['patient-email-body'],
+            $address,
+            isset($input['attachments'])
+                ? $input['attachments']
+                : [],
+            $note->id,
+            $input['email-subject']
+        ));
+    }
+
 //    /**
 //     * @param $senderId
 //     *
@@ -808,11 +882,11 @@ class NotesController extends Controller
     {
         return Practice::whereId($patient->program_id)
             ->where(
-                function ($q) {
-                    $q->where('name', '=', 'phoenix-heart')
-                        ->orWhere('name', '=', 'demo');
-                }
-            )
+                           function ($q) {
+                               $q->where('name', '=', 'phoenix-heart')
+                                   ->orWhere('name', '=', 'demo');
+                           }
+                       )
             ->exists();
     }
 
@@ -836,11 +910,16 @@ class NotesController extends Controller
 
         if (isset($input['ccm_status']) && in_array(
             $input['ccm_status'],
-            [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED]
+            [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL]
         )) {
-            $info->ccm_status = $input['ccm_status'];
+            $inputCcmStatus = $input['ccm_status'];
+            if (Patient::WITHDRAWN === $inputCcmStatus && $patient->onFirstCall(isset($input['welcome_call']) || isset($input['other_call']))) {
+                $inputCcmStatus = Patient::WITHDRAWN_1ST_CALL;
+            }
 
-            if ('withdrawn' == $input['ccm_status']) {
+            $info->ccm_status = $inputCcmStatus;
+
+            if (in_array($inputCcmStatus, [Patient::WITHDRAWN, Patient::WITHDRAWN_1ST_CALL])) {
                 $withdrawnReason = $input['withdrawn_reason'];
                 if ('Other' == $withdrawnReason) {
                     $withdrawnReason = $input['withdrawn_reason_other'];

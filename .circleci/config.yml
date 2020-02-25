@@ -18,11 +18,35 @@ jobs:
     #
     - image: redis:2.8.19
 
+    - image: circleci/mysql:5.7
+      environment:
+        MYSQL_ROOT_PASSWORD: rootpw
+        MYSQL_DATABASE: cpm_tests
+        MYSQL_USER: mysqluser
+        MYSQL_PASSWORD: secret
+
     steps:
     - checkout
 
+    - run:
+        # Our primary container isn't MYSQL so run a sleep command until it's ready.
+        name: Waiting for MySQL to be ready
+        command: |
+          for i in `seq 1 10`;
+          do
+            nc -z 127.0.0.1 3306 && echo Success && exit 0
+            echo -n .
+            sleep 1
+          done
+          echo Failed waiting for MySQL && exit 1
+
     - run: sudo apt update && sudo apt install zlib1g-dev libsqlite3-dev libpng-dev
-    - run: sudo docker-php-ext-install zip pcntl exif bcmath gd
+    - run: sudo docker-php-ext-install zip pcntl exif bcmath gd pdo_mysql
+    - run: sudo pecl install -o -f redis && sudo docker-php-ext-enable redis
+
+
+    - run: cp .env.testing .env
+    - run: php artisan key:generate
 
     # Download and cache dependencies
 
@@ -30,9 +54,9 @@ jobs:
     - restore_cache:
         keys:
         # "composer.lock" can be used if it is committed to the repo
-        - v1-dependencies-{{ checksum "composer.json" }}
+        - composer-v1-{{ checksum "composer.lock" }}
         # fallback to using the latest cache if no exact match is found
-        - v1-dependencies-
+        - composer-v1-
 
     - run: composer install -n --prefer-dist
 
@@ -45,11 +69,11 @@ jobs:
 
     - restore_cache:
         keys:
-        - node-v3-{{ checksum "package.json" }}
+        - node-v3-{{ checksum "package-lock.json" }}
         - node-v3-
     - run: npm install
     - save_cache:
-        key: node-v3-{{ checksum "package.json" }}
+        key: node-v3-{{ checksum "package-lock.json" }}
         paths:
         - node_modules
         - ~/.yarn
@@ -57,15 +81,12 @@ jobs:
     - run: npm run bower_install
     - run: npm run dev
 
-    # prepare the database
-    - run: cp .env.testing .env
-
-      # run tests with paratest
-    - run: composer unit-test
-    - store_test_results:
-        path: tests/_output
-    - store_artifacts:
-        path: tests/_output
+      # run tests
+    - run: composer test
+#    - store_test_results:
+#        path: tests/_output
+#    - store_artifacts:
+#        path: tests/_output
 #    - run:
 #        name: Add a version to the build
 #        command: |

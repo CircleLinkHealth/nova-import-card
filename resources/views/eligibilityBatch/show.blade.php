@@ -55,12 +55,12 @@
                             @endif
 
                             <div class="pull-left" style="padding-left: 2%;">
-                                <a href="{{route('eligibility.download.eligible', [$batch->id])}}"
-                                   class="btn btn-default">Download Eligible Patients CSV</a>
+                                <a href="{{route('eligibility.download.csv.eligible', [$batch->id])}}"
+                                   class="btn btn-success">Download Eligible Patients CSV</a>
                             </div>
                         @endif
 
-                        @if ($batch->type == App\EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
+                        @if ($batch->type == CircleLinkHealth\Eligibility\Entities\EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
                             <div class="pull-left" style="padding-left: 2%;">
                                 <a href="{{route('get.eligibility.reprocess', [$batch->id])}}"
                                    class="btn btn-danger">Reprocess</a>
@@ -70,7 +70,13 @@
                                 <a href="{{route('eligibility.download.csv.patient.list', [$batch->id])}}"
                                    class="btn btn-info">All patients CSV</a>
                             </div>
-                        @endif
+                        @else
+                                <div class="pull-left" style="padding-left: 2%;">
+                                    <a href="{{route('eligibility.download.all', [$batch->id])}}"
+                                       class="btn btn-default">Download All Patients CSV</a>
+                                </div>
+                            @endif
+
                         @if(optional($initiatorUser)->hasRole('ehr-report-writer'))
                             <div class="pull-right" style="padding-left: 2%;">
                                 <button class="btn btn-primary" onclick="notifyReportWriter()">Notify Report Writer
@@ -91,14 +97,6 @@
                                 @empty
                                     <p>No stats found</p>
                                 @endforelse
-                            @else
-                                Eligible: <span id="eligible">{{ $eligible }}</span>
-                                <br>
-                                Ineligible: <span id="ineligible">{{ $ineligible }}</span>
-                                <br>
-                                Duplicates: <span id="duplicates">{{ $duplicates }}</span>
-                                <br>
-                                Not processed: <span id="unprocessed">{{ $unprocessed }}</span>
                             @endif
                         </div>
 

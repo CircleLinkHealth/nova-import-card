@@ -37,5 +37,6 @@ class VerifyCsrfToken extends Middleware
         '/admin/reports/monthly-billing/v2/counts',
         'api/v2.1/pagetimer',
         'api/v2.1/time/patients',
+        'webhooks/on-sent-fax',
     ];
 }

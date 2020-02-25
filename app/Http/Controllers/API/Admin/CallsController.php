@@ -13,7 +13,6 @@ use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
 use App\Http\Resources\UserResource;
 use App\Services\Calls\ManagementService;
-use App\Services\CallService;
 use App\Services\NoteService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
@@ -23,15 +22,13 @@ use Illuminate\Support\Str;
 
 class CallsController extends ApiController
 {
-    private $callService;
     private $noteService;
     private $service;
 
-    public function __construct(ManagementService $service, NoteService $noteService, CallService $callService)
+    public function __construct(ManagementService $service, NoteService $noteService)
     {
         $this->service     = $service;
         $this->noteService = $noteService;
-        $this->callService = $callService;
     }
 
     /**
@@ -155,7 +152,7 @@ class CallsController extends ApiController
             $ids = [$ids];
         }
 
-        $this->callService->repo()->model()->whereIn('id', $ids)
+        Call::whereIn('id', $ids)
             ->delete();
 
         return response()->json($ids);
@@ -163,6 +160,6 @@ class CallsController extends ApiController
 
     public function show($id)
     {
-        return $this->json($this->callService->repo()->call($id));
+        return $this->json(Call::findOrFail($id));
     }
 }

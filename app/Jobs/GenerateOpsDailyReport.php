@@ -6,6 +6,7 @@
 
 namespace App\Jobs;
 
+use App\Charts\OpsChart;
 use App\Services\OpsDashboardService;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -42,8 +43,6 @@ class GenerateOpsDailyReport implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param Carbon|null $date
      */
     public function __construct(Carbon $date = null)
     {
@@ -85,33 +84,16 @@ class GenerateOpsDailyReport implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @param OpsDashboardService $opsDashboardService
      */
     public function handle(OpsDashboardService $opsDashboardService)
     {
         ini_set('memory_limit', '512M');
 
+        $demoPracticeIds = Practice::whereIsDemo(1)->pluck('id')->toArray();
+
         $practices = Practice::select(['id', 'display_name'])
             ->activeBillable()
-            ->with([
-                'patients' => function ($p) {
-                    $p->with([
-                        'patientSummaries' => function ($s) {
-                            $s->where('month_year', $this->date->copy()->startOfMonth());
-                        },
-                        'patientInfo.revisionHistory' => function ($r) {
-                            $r->where('key', 'ccm_status')
-                                ->where(
-                                    'created_at',
-                                    '>=',
-                                    $this->fromDate
-                                );
-                        },
-                    ]);
-                },
-            ])
-            ->whereHas('patients.patientInfo')
+            ->opsDashboardQuery($this->date->copy()->startOfMonth(), $this->fromDate)
             ->get()
             ->sortBy('display_name');
 
@@ -148,6 +130,8 @@ class GenerateOpsDailyReport implements ShouldQueue
             ->first()
             ->addMedia($path)
             ->toMediaCollection("ops-daily-report-{$this->date->toDateString()}.json");
+
+        \Cache::forget(OpsChart::ADMIN_CHART_CACHE_KEY);
 
         if (isProductionEnv()) {
             sendSlackMessage(

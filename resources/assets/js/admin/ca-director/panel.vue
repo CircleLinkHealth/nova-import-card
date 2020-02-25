@@ -131,7 +131,7 @@
                     perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
-                    filterable: ['hideStatus', 'hideAssigned', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count'],
+                    filterable: ['hideStatus', 'hideAssigned', 'mrn', 'lang', 'first_name', 'last_name', 'care_ambassador_name', 'status', 'requested_callback', 'eligibility_job_id', 'medical_record_id', 'practice_name', 'provider_name', 'primary_insurance', 'secondary_insurance', 'tertiary_insurance', 'attempt_count'],
                     sortable: ['first_name', 'last_name', 'practice_name', 'provider_name', 'primary_insurance', 'status', 'created_at', 'state', 'city', 'care_ambassador_name', 'attempt_count', 'requested_callback'],
                 },
             }

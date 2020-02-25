@@ -28,7 +28,7 @@ class PracticeController extends Controller
             ->pluck('name', 'id')
             ->all();
 
-        return view('saas.admin.practice.create', compact(['locations', 'errors', 'messages']));
+        return view('saas.admin.practice.create', compact(['locations', 'messages']));
     }
 
     /**
@@ -140,8 +140,7 @@ class PracticeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int                      $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */

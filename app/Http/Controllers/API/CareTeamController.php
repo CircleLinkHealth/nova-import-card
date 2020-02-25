@@ -6,7 +6,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\CLH\Helpers\StringManipulation;
+use CircleLinkHealth\Core\StringManipulation;
 use App\Http\Controllers\Controller;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -140,7 +140,7 @@ class CareTeamController extends Controller
                 if ($member->user->practice($patient->primaryPractice->id) && ! in_array(
                     $member->type,
                     [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-                                      )) {
+                )) {
                     $formattedType = $member->user->practiceOrGlobalRole()->display_name.' (Internal)';
                 }
 
@@ -255,11 +255,8 @@ class CareTeamController extends Controller
 
         $patient = User::find($patientId);
 
-        $carePerson = CarePerson::find($request['id']);
-
-        $providerUser = User::updateOrCreate([
-            'id' => $input['user']['id'],
-        ], [
+        $userId   = $input['user']['id'];
+        $userArgs = [
             'first_name' => $input['user']['first_name'],
             'last_name'  => $input['user']['last_name'],
             'suffix'     => $input['user']['suffix'] && 'non-clinical' == $input['user']['suffix']
@@ -271,7 +268,15 @@ class CareTeamController extends Controller
             'state'    => $input['user']['state'],
             'zip'      => $input['user']['zip'],
             'email'    => $input['user']['email'],
-        ]);
+        ];
+
+        if (is_numeric($userId)) {
+            $providerUser = User::updateOrCreate([
+                'id' => $userId,
+            ], $userArgs);
+        } else {
+            $providerUser = User::create($userArgs);
+        }
 
         $type = Str::snake($input['formatted_type']);
 
@@ -314,7 +319,7 @@ class CareTeamController extends Controller
         if ($providerUser->practice($patient->primaryPractice->id) && ! in_array(
             $type,
             [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR]
-            )) {
+        )) {
             $type = $providerUser->practiceOrGlobalRole()->display_name.' (Internal)';
         }
 
@@ -329,35 +334,42 @@ class CareTeamController extends Controller
         if (isset($input['user']['phone_numbers'][0])) {
             $phone = $input['user']['phone_numbers'][0];
 
-            if (isset($phone['id'])) {
-                $phone = PhoneNumber::where('id', '=', $phone['id'])
-                    ->update([
-                        'number' => (new StringManipulation())->formatPhoneNumber($phone['number']),
+            if ( ! empty($phone['number'])) {
+                if (isset($phone['id'])) {
+                    $phone = PhoneNumber::where('id', '=', $phone['id'])
+                        ->update([
+                            'number' => (new StringManipulation())->formatPhoneNumber($phone['number']),
+                        ]);
+                } else {
+                    $phone = PhoneNumber::updateOrCreate([
+                        'user_id' => $providerUser->id,
+                        'type'    => 'work',
+                        'number'  => (new StringManipulation())->formatPhoneNumber($phone['number']),
                     ]);
-            } else {
-                $phone = PhoneNumber::updateOrCreate([
-                    'user_id' => $providerUser->id,
-                    'type'    => 'work',
-                    'number'  => (new StringManipulation())->formatPhoneNumber($phone['number']),
-                ]);
+                }
             }
         }
 
         if (isset($input['user']['provider_info'])) {
             $providerInfo = $input['user']['provider_info'];
 
-            $args = [];
+            $newProviderInfoArgs            = [];
+            $newProviderInfoArgs['user_id'] = $providerUser->id;
             if (array_key_exists('suffix', $input['user'])) {
-                $args['is_clinical'] = 'non-clinical' != $input['user']['suffix'];
+                $newProviderInfoArgs['is_clinical'] = 'non-clinical' != $input['user']['suffix'];
             }
             if (array_key_exists('specialty', $providerInfo)) {
-                $args['specialty'] = $providerInfo['specialty'];
+                $newProviderInfoArgs['specialty'] = $providerInfo['specialty'];
             }
 
-            $provider = ProviderInfo::updateOrCreate([
-                'id'      => $providerInfo['id'] ?? null,
-                'user_id' => $providerUser->id,
-            ], $args);
+            if (is_numeric($providerInfo['id'] ?? null)) {
+                $provider = ProviderInfo::updateOrCreate([
+                    'id'      => $providerInfo['id'],
+                    'user_id' => $providerUser->id,
+                ], $newProviderInfoArgs);
+            } else {
+                $provider = ProviderInfo::create($newProviderInfoArgs);
+            }
         }
 
         if (isset($input['user']['primary_practice'])) {
@@ -397,9 +409,6 @@ class CareTeamController extends Controller
     }
 
     /**
-     * @param string $type
-     * @param User   $patient
-     *
      * @throws \InvalidArgumentException
      *
      * @return \Illuminate\Support\Collection

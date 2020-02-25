@@ -36,7 +36,6 @@
     export default {
         name: "pusher-notifications",
         components: {
-            // 'pusher-see-all-notifications': PusherSeeAllNotifications,
             'loader': LoaderComponent,
         },
         props: [
@@ -78,18 +77,16 @@
         },
         methods: {
             show(notification) {
-                const senderName = notification.data.sender_name;
                 const notificationSubject = notification.data.subject;
-                const patientName = notification.data.patient_name;
                 const notificationElapsedTime = notification.elapsed_time;
-
-                return `<strong>${senderName}</strong> ${notificationSubject}<strong> ${patientName}</strong>
-                        <span style="float: right;padding-top: 4%; color: #90949c">${notificationElapsedTime}</span>`;
+                //@todo: use normal classes in html here
+                return `${notificationSubject}<br>
+                        <span style="float: right; color: #90949c">${notificationElapsedTime}</span>`;
 
             },
 
             redirectAndMarkAsRead(notification) {
-                axios.post(`/redirect-mark-read/${notification.data.receiver_id}/${notification.data.attachment_id}`)
+                axios.post(`/redirect-mark-read/${notification.id}`)
                     .then(response => {
                             this.redirectTo(notification);
                         }
@@ -142,7 +139,7 @@
         position: absolute;
         top: 50px;
         width: 430px;
-        z-index: 1;
+        z-index: 100;
         max-height: 702%;
         word-spacing: 5px;
         padding-bottom: unset;

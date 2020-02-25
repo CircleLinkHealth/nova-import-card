@@ -6,22 +6,21 @@
 
 namespace App\Importer\Loggers\Csv;
 
-use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
-use App\Importer\Models\ItemLogs\AllergyLog;
-use App\Importer\Models\ItemLogs\InsuranceLog;
-use App\Importer\Models\ItemLogs\MedicationLog;
-use App\Importer\Models\ItemLogs\ProblemLog;
-use App\Importer\Models\ItemLogs\ProviderLog;
-use App\Models\MedicalRecords\TabularMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
+use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartAllergy;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartMedication;
-use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
+use CircleLinkHealth\Eligibility\Entities\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use Illuminate\Support\Str;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
+use CircleLinkHealth\SharedModels\Entities\AllergyLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
 
 class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 {
@@ -36,8 +35,6 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Allergies Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
     {
@@ -83,8 +80,6 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Insurance Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logInsuranceSection(): MedicalRecordLogger
     {
@@ -105,8 +100,6 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Medications Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
     {
@@ -151,8 +144,6 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Problems Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
     {
@@ -169,10 +160,10 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
                 continue;
             }
 
-            if (Str::contains($problem->code, ['-'])) {
+            if (str_contains($problem->code, ['-'])) {
                 $pos         = strpos($problem->code, '-') + 1;
                 $problemCode = mb_substr($problem->code, $pos);
-            } elseif (Str::contains($problem->code, ['ICD'])) {
+            } elseif (str_contains($problem->code, ['ICD'])) {
                 $pos         = strpos($problem, 'ICD') + 3;
                 $problemCode = mb_substr($problem->code, $pos);
             } else {
@@ -210,8 +201,6 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Providers Section.
-     *
-     * @return MedicalRecordLogger
      */
     public function logProvidersSection(): MedicalRecordLogger
     {

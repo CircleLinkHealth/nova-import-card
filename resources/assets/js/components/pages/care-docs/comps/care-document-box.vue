@@ -6,12 +6,14 @@
         <div class="panel-body">
             <div class="col-md-12  panel-section" style="margin-top: 20px">
                 <div v-if="doc" class="">
-                    <button class="btn btn-success  col-md-6 btn-m">Available</button>
+                    <button class="btn btn-success btn-static disabled col-md-6 btn-m">Available</button>
                 </div>
                 <div class="" v-else>
-                    <button class="btn col-md-6 btn-default btn-m">Unavailable</button></div>
-                <div class="col-md-6">
-                    <a  v-bind:class="{'isDisabled': !doc}" style="float: right" :href="viewApi()" target="_blank">View</a>
+                    <button class="btn col-md-6 btn-default btn-static disabled btn-m">Unavailable</button>
+                </div>
+                <div v-if="doc" class="col-md-6">
+                    <a class="blue-link" v-bind:class="{'isDisabled': !doc}" style="float: right; padding-top: 7px"
+                       :href="viewApi()" target="_blank">View</a>
                 </div>
             </div>
             <div>
@@ -19,22 +21,25 @@
                     {{this.docDate}}
                 </div>
             </div>
-            <div class="col-md-12  panel-section"  style="margin-top: 15px">
-                <p><strong>Send document via:</strong></p>
+            <div class="col-md-12  panel-section" style="margin-top: 15px">
+                <p><span class="strong-custom">Send document via:</span></p>
             </div>
             <div class="col-md-12  panel-section" style="margin-top: 9px">
-                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc}"  @click="openSendModal('direct')">
+                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc, 'disabled': !doc}"
+                        @click="openSendModal('direct')">
                     DIRECT
                 </button>
-                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc}"  @click="openSendModal('fax')">
+                <button class="col-md-4 btn btn-method btn-width-60 btn-xs" v-bind:class="{'isDisabled': !doc, 'disabled': !doc}"
+                        @click="openSendModal('fax')">
                     Fax
                 </button>
-                <button title="(Secure Link)"class="col-md-4 btn btn-method btn-width-60  btn-xs" v-bind:class="{'isDisabled': !doc}" @click="openSendModal('email')">
+                <button title="(Secure Link)" class="col-md-4 btn btn-method btn-width-60  btn-xs"
+                        v-bind:class="{'isDisabled': !doc, 'disabled': !doc}" @click="openSendModal('email')">
                     Email
                 </button>
             </div>
-            <div class="col-md-12 panel-section">
-                <a  v-bind:class="{'isDisabled': !doc}" :href="downloadApi()">Download</a>
+            <div class="col-md-12 panel-section" style="margin-top: 10px">
+                <a class="blue-link" v-bind:class="{'isDisabled': !doc, 'disabled': !doc}" :href="downloadApi()">Download</a>
             </div>
         </div>
         <modal v-show="showSendModal" name="send-care-doc" class="modal-send-care-doc" :no-title="true"
@@ -46,7 +51,7 @@
             <template slot="body">
                 <div class="col-md-12 form-group">
                     <div class="col-md-10 row">
-                        <p><strong>Enter {{this.inputName}}:</strong></p>
+                        <p><span class="strong-custom">Enter {{this.inputName}}:</span></p>
                     </div>
                     <div class="col-md-2 row">
                         <loader style="text-align: center" v-if="loading"/>
@@ -62,7 +67,8 @@
                 </div>
                 <div class="col-md-12 form-group">
                     <div class="col-md-12 row">
-                        <button type="submit"  @click="sendCareDocument()" class="btn btn-primary btn-large">Send</button>
+                        <button type="submit" @click="sendCareDocument()" class="btn btn-primary btn-large">Send
+                        </button>
                     </div>
                 </div>
 
@@ -109,17 +115,17 @@
                 type: Object,
                 required: false
             },
-            patient: {
-                type: Object,
+            patientId: {
+                type: String,
                 required: true
             }
         },
         computed: {
-            docDate () {
-                if (! this.doc){
+            docDate() {
+                if (!this.doc) {
                     return null;
                 }
-                var date = new Date (this.doc.created_at);
+                var date = new Date(this.doc.created_at);
                 var year = date.getFullYear();
                 var month = (1 + date.getMonth()).toString();
                 month = month.length > 1 ? month : '0' + month;
@@ -133,25 +139,25 @@
         },
         methods: {
             viewApi() {
-                if (! this.doc){
+                if (!this.doc) {
                     return null;
                 }
                 const query = {
                     file: this.doc
                 };
-                return rootUrl('/view-care-document/' + this.patient.id + '/' + this.doc.id);
+                return rootUrl('/view-care-document/' + this.patientId + '/' + this.doc.id);
             },
             downloadApi() {
-                if (! this.doc){
+                if (!this.doc) {
                     return null;
                 }
                 const query = {
                     file: this.doc
                 };
-                return rootUrl('/download-care-document/' + this.patient.id + '/' + this.doc.id);
+                return rootUrl('/download-care-document/' + this.patientId + '/' + this.doc.id);
             },
             openSendModal(channel) {
-                if (! this.doc){
+                if (!this.doc) {
                     return null;
                 }
                 switch (channel) {
@@ -174,30 +180,29 @@
                 this.channel = channel
                 this.showSendModal = true
             },
-            sendCareDocument(){
+            sendCareDocument() {
                 this.loading = true;
 
                 return this.axios
-                    .post(rootUrl('/send-care-doc/' + this.patient.id + '/' + this.doc.id + '/' + this.channel + '/' + this.addressOrFax))
+                    .post(rootUrl('/send-care-doc/' + this.patientId + '/' + this.doc.id + '/' + this.channel + '/' + this.addressOrFax))
                     .then(response => {
                         this.loading = false;
-                        this.showSendModal = false;
-                        console.log(response);
+                        this.closeSendModal();
                     })
                     .catch(err => {
                         this.loading = false;
                         let errors = err.response.data ? err.response.data : [];
-                        this.errors =  errors;
+                        this.errors = errors;
                         this.bannerType = 'danger';
                         this.bannerText = errors;
                         this.showBanner = true;
                     });
             },
-            closeSendModal(){
+            closeSendModal() {
                 // document.getElementById("addressOrFax").value = '';
                 this.showSendModal = false;
                 this.addressOrFax = '';
-                this.errors =  '';
+                this.errors = '';
                 this.bannerType = '';
                 this.bannerText = '';
                 this.showBanner = false;
@@ -220,10 +225,10 @@
         border-radius: 5px;
     }
 
-    .panel-primary>.panel-heading {
+    .panel-primary > .panel-heading {
         background-color: #5cc0dd;
-        border-color:  #5cc0dd;
-        font-family: Roboto;
+        border-color: #5cc0dd;
+        font-family: Roboto, serif;
         padding-left: 20px;
     }
 
@@ -235,31 +240,24 @@
 
     .panel-body {
         padding: 5px;
-        font-family: Roboto;
+        font-family: Roboto, serif;
     }
 
-    .panel-section{
+    .panel-section {
         margin-bottom: 10px;
 
     }
 
-    .btn-method{
+    .btn-method {
         border-color: #5cc0dd;
         max-height: 30px;
         margin: 2px;
     }
 
-    .btn-width-60{
+    .btn-width-60 {
         width: 65px;
         min-width: 65px !important;
         height: 30px;
-    }
-
-    .isDisabled {
-        color: currentColor;
-        cursor: not-allowed;
-        opacity: 0.5;
-        text-decoration: none;
     }
 
     .modal-send-care-doc .loader {
@@ -289,6 +287,6 @@
     }
 
     .shadow {
-        box-shadow:         1px 1px 1px 1px #ccc;
+        box-shadow: 1px 1px 1px 1px #ccc;
     }
 </style>

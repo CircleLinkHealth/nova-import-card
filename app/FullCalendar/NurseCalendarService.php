@@ -1,0 +1,400 @@
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\FullCalendar;
+
+use App\Traits\ValidatesWorkScheduleCalendar;
+use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\Nurse;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Customer\Entities\WorkHours;
+use Illuminate\Database\Eloquent\Collection;
+
+class NurseCalendarService
+{
+    use ValidatesWorkScheduleCalendar;
+
+    const END = 'end';
+    const START = 'start';
+    const TITLE = 'title';
+    const SATURDAY = 6;
+    const SUNDAY = 0;
+    const COMPANY_HOLIDAY = 'companyHoliday';
+
+    /**
+     * @param $nurseInfoId
+     * @param $workScheduleData
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function createRecurringEvents($nurseInfoId, $workScheduleData)
+    {
+        $repeatFrequency = null === $workScheduleData['repeat_freq'] ? 'weekly' : $workScheduleData['repeat_freq'];
+        $defaultRepeatDate = Carbon::parse($workScheduleData['date'])->copy()->addMonths(1)->toDateString();
+        $repeatEventUntil = null === $workScheduleData['until'] ? $defaultRepeatDate : $workScheduleData['until'];
+        $rangeToRepeat = $this->getWeeksOrDaysToRepeat($workScheduleData['date'], $repeatEventUntil, $repeatFrequency);
+        $excludeWeekends = !empty($workScheduleData['excludeWkds']) ? $workScheduleData['excludeWkds'] : false;
+        $validatedDefault = 'not_checked';
+        $nurse = Nurse::findOrFail($nurseInfoId);
+
+        $holidays = $nurse->upcomingHolidaysFrom(Carbon::parse($workScheduleData['date']));
+        //        Using $holidayDates to avoid creating work-windows on days-off
+        $holidayDates = $holidays->map(function ($holiday) {
+            return Carbon::parse($holiday->date)->toDateString();
+        })->toArray();
+
+        $recurringDates = $this->createRecurringDates($rangeToRepeat, $workScheduleData['date'], $repeatFrequency, $holidayDates, $excludeWeekends);
+        return $this->createWindowData($recurringDates, $nurseInfoId, $workScheduleData, $validatedDefault, $repeatFrequency, $repeatEventUntil);
+    }
+
+    /**
+     * @param $eventDate
+     * @param $repeatUntil
+     * @param $repeatFrequency
+     *
+     * @return int
+     */
+    public function getWeeksOrDaysToRepeat($eventDate, $repeatUntil, $repeatFrequency)
+    {
+        return 'daily' !== $repeatFrequency
+            ? Carbon::parse($eventDate)->diffInWeeks($repeatUntil)
+            : Carbon::parse($eventDate)->diffInDays($repeatUntil);
+    }
+
+    /**
+     * @param $diffRange
+     * @param $eventDate
+     * @param $repeatFrequency
+     * @param $holidayDates
+     *
+     * @param $excludeWeekends
+     * @return array|\Illuminate\Support\Collection
+     */
+    public function createRecurringDates($diffRange, $eventDate, $repeatFrequency, $holidayDates, $excludeWeekends)
+    {
+        $defaultRecurringDates = collect();
+
+        if ('weekly' === $repeatFrequency) {
+            for ($i = 0; $i <= $diffRange; ++$i) {
+                $defaultRecurringDate = Carbon::parse($eventDate)->copy()->addWeek($i)->toDateString();
+                //do NOT create workEvents over days-off.
+                if ($excludeWeekends) {
+                    if (!in_array($defaultRecurringDate, $holidayDates) && $this->checkIfIsNotWeekend($defaultRecurringDate)) {
+                        $defaultRecurringDates[] = $defaultRecurringDate;
+                    }
+                } else {
+                    if (!in_array($defaultRecurringDate, $holidayDates)) {
+                        $defaultRecurringDates[] = $defaultRecurringDate;
+                    }
+                }
+            }
+        }
+
+        if ('daily' === $repeatFrequency) {
+            for ($i = 0; $i <= $diffRange; ++$i) {
+                $defaultRecurringDate = Carbon::parse($eventDate)->copy()->addDay($i)->toDateString();
+                //do NOT create workEvents over days-off and weekends
+                if ($excludeWeekends) {
+                    if (!in_array($defaultRecurringDate, $holidayDates) && $this->checkIfIsNotWeekend($defaultRecurringDate)) {
+                        $defaultRecurringDates[] = $defaultRecurringDate;
+                    }
+                } else {
+                    if (!in_array($defaultRecurringDate, $holidayDates)) {
+                        $defaultRecurringDates[] = $defaultRecurringDate;
+                    }
+                }
+            }
+        }
+
+        return $defaultRecurringDates;
+    }
+
+    /**
+     * @param $defaultRecurringDates
+     * @param $window
+     * @param $eventDate
+     * @param $validatedDefault
+     * @param $defaultRepeatFreq
+     * @param $repeatEventByDefaultUntil
+     * @param mixed $nurseInfoId
+     * @param mixed $windowTimeStart
+     * @param mixed $windowTimeEnd
+     * @param mixed $workScheduleData
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function createWindowData(
+        $defaultRecurringDates,
+        $nurseInfoId,
+        $workScheduleData,
+        $validatedDefault,
+        $defaultRepeatFreq,
+        $repeatEventByDefaultUntil
+    )
+    {
+        return collect($defaultRecurringDates)->map(function ($date) use (
+            $nurseInfoId,
+            $workScheduleData,
+            $validatedDefault,
+            $defaultRepeatFreq,
+            $repeatEventByDefaultUntil
+        ) {
+            $newWindowDayOfWeek = Carbon::parse($date)->dayOfWeek;
+
+            return [
+                'nurse_info_id' => $nurseInfoId,
+                'date' => $date,
+                'day_of_week' => carbonToClhDayOfWeek($newWindowDayOfWeek),
+                'window_time_start' => $workScheduleData['window_time_start'],
+                'window_time_end' => $workScheduleData['window_time_end'],
+                'validated' => $validatedDefault,
+                'repeat_frequency' => $defaultRepeatFreq,
+                'repeat_start' => Carbon::parse($workScheduleData['date'])->toDateString(),
+                'until' => $repeatEventByDefaultUntil,
+                'created_at' => Carbon::parse(now())->toDateTimeString(),
+                'updated_at' => Carbon::parse(now())->toDateTimeString(),
+            ];
+        });
+    }
+
+    /**
+     * @return array
+     */
+    public function getAuthData()
+    {
+        $auth = auth()->user();
+
+        if ($auth->isAdmin()) {
+            return [
+                'role' => 'admin',
+            ];
+        }
+
+        if ($auth->isCareCoach()) {
+            return [
+                'role' => 'nurse',
+                'nurseInfoId' => $auth->nurseInfo->id,
+            ];
+        }
+    }
+
+    /**
+     * @param $events
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getCollidingDates($events)
+    {
+        return collect($events)->map(function ($event) {
+            return Carbon::parse($event['date'])->toDateString();
+        });
+    }
+
+    /**
+     * @param Collection $nurses
+     *
+     * @return Collection|\Illuminate\Support\Collection
+     *
+     * note for antoni: Im sending dropdown data in a different collection cause i need all active nurses (no just the working RNs)
+     */
+    public function getDataForDropdown($nurses)
+    {
+        return $nurses->map(function ($nurse) {
+            return [
+                'nurseId' => $nurse->nurseInfo->id,
+                'label' => $nurse->display_name,
+            ];
+        });
+    }
+
+    /**
+     * @param $recurringEventsToSave
+     * @param mixed $updateCollisions
+     *
+     * @return array
+     */
+    public function getEventsToAskConfirmation($recurringEventsToSave, $updateCollisions)
+    {
+        $askForConfirmationEvents = [];
+        foreach ($recurringEventsToSave as $event) {
+            $windowsExists = !$updateCollisions ? $this->windowsExistsValidator($event) : false;
+
+            if ($windowsExists) {
+                $askForConfirmationEvents[] = $windowsExists;
+            }
+        }
+
+        return $askForConfirmationEvents;
+    }
+
+    /**
+     * @param $nurses
+     * @param $startDate
+     * @param $endDate
+     *
+     * @return Collection|\Illuminate\Support\Collection
+     */
+    public function getHolidays($nurses, $startDate, $endDate)
+    {
+        return $nurses->map(function ($nurse) use ($startDate, $endDate) {
+            $holidays = $nurse->nurseInfo->nurseHolidaysWithCompanyHolidays($startDate, $endDate);
+
+            return $this->prepareHolidaysData($holidays, $nurse, $startDate, $endDate);
+        })->flatten(1);
+    }
+
+    public function prepareHolidaysData($holidays, $nurse, $startDate, $endDate)
+    {
+        return collect($holidays)
+            ->where('date', '>=', $startDate)
+            ->where('date', '<=', $endDate)
+            ->map(function ($holiday) use ($nurse) {
+                $holidayDate = Carbon::parse($holiday['date'])->toDateString();
+                $holidayDateInDayOfWeek = Carbon::parse($holidayDate)->dayOfWeek;
+                $holidayInHumanLang = clhDayOfWeekToDayName($holidayDateInDayOfWeek);
+                $eventType = 'holiday';
+//                If it does not have an id, it is a company holiday
+                if (array_key_exists('eventType', $holiday) && $holiday['eventType'] === self::COMPANY_HOLIDAY) {
+                    $eventType = self::COMPANY_HOLIDAY;
+                }
+
+                $title = $eventType === 'holiday'
+                    ? "$nurse->display_name day-off"
+                    : $holiday['holiday_name'];
+
+                return collect(
+                    [
+                        self::TITLE => $title,
+                        self::START => $holidayDate,
+                        'allDay' => true,
+                        'color' => '#f5c431',
+                        'data' => [
+                            'holidayId' => $holiday['id'],
+                            'nurseId' => $nurse->nurseInfo->id,
+                            'name' => $nurse->display_name,
+                            'date' => $holidayDate,
+                            'day' => $holidayInHumanLang,
+                            'eventType' => $eventType,
+                        ],
+                    ]
+                );
+            });
+    }
+
+    public function getNursesWithSchedule()
+    {
+        $workScheduleData = [];
+        User::ofType('care-center')
+            ->with('nurseInfo.windows', 'nurseInfo.holidays')
+            ->whereHas('nurseInfo', function ($q) {
+                $q->where('status', 'active');
+            })
+            ->chunk(100, function ($nurses) use (&$workScheduleData) {
+                $workScheduleData[] = $nurses;
+            });
+
+        return $workScheduleData[0];
+    }
+
+    /**
+     * @param Collection $nurses
+     * @param mixed $startDate
+     * @param mixed $endDate
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function prepareCalendarDataForAllActiveNurses($nurses, $startDate, $endDate)
+    {
+        return $nurses->map(function ($nurse) use ($startDate, $endDate) {
+            $windows = $this->getWindows($nurse, $startDate, $endDate);
+
+            return $this->prepareWorkDataForEachNurse($windows, $nurse);
+        })->flatten(1);
+    }
+
+    /**
+     * @param $nurse
+     * @param mixed $startDate
+     * @param mixed $endDate
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getWindows($nurse, $startDate, $endDate)
+    {
+        return $nurse->nurseInfo->windows->where('date', '>=', $startDate)
+            ->where('date', '<=', $endDate);
+    }
+
+    /**
+     * @param $windows
+     * @param $nurse
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function prepareWorkDataForEachNurse($windows, $nurse)
+    {
+        return collect($windows)
+            ->where('repeat_frequency', '!=', null)
+            ->chunk(20)
+            ->flatten()
+            ->transform(function ($window) use ($nurse) {
+                $dayInHumanLang = clhDayOfWeekToDayName($window->day_of_week);
+                $windowDate = Carbon::parse($window->date)->toDateString();
+                $workWeekStart = Carbon::parse($windowDate)->startOfWeek()->toDateString();
+                $workHoursForDay = WorkHours::where(
+                    [
+                        ['workhourable_id', $nurse->nurseInfo->id],
+                        ['work_week_start', $workWeekStart],
+                    ]
+                )->pluck($dayInHumanLang)->first();
+
+                $windowStartForView = Carbon::parse($window->window_time_start)->format('H:i');
+                $windowEndForView = Carbon::parse($window->window_time_end)->format('H:i');
+                $hoursAbrev = 'h';
+                $color = '#5bc0ded6';
+
+                if ('not_worked' === $window->validated) {
+                    $color = '#FB627A';
+                }
+
+                if ('worked' === $window->validated) {
+                    $color = '#bcdfc1';
+                }
+
+                $title = auth()->user()->isAdmin() ?
+                    "$nurse->display_name ({$workHoursForDay}$hoursAbrev)
+                        {$windowStartForView}-{$windowEndForView}" :
+                    "({$workHoursForDay}$hoursAbrev)
+                        {$windowStartForView}-{$windowEndForView}";
+
+                return collect(
+                    [
+                        self::TITLE => $title,
+                        self::START => "{$windowDate}T{$window->window_time_start}",
+                        self::END => "{$windowDate}T{$window->window_time_end}",
+                        'color' => $color,
+                        'textColor' => '#fff',
+                        'repeat_frequency' => $window->repeat_frequency,
+                        'repeat_start' => $window->repeat_start,
+                        'until' => $window->until,
+                        'allDay' => true,
+                        'data' => [
+                            'nurseId' => $nurse->nurseInfo->id,
+                            'windowId' => $window->id,
+                            'name' => "$nurse->display_name",
+                            'day' => $dayInHumanLang,
+                            'date' => $windowDate,
+                            'start' => $window->window_time_start,
+                            'end' => $window->window_time_end,
+                            'workHours' => $workHoursForDay,
+                            'eventType' => 'workDay',
+                            'clhDayOfWeek' => $window->day_of_week,
+                        ],
+                    ]
+                );
+            });
+    }
+}

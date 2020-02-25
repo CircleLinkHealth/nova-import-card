@@ -20,8 +20,8 @@
                             <div class="col-sm-8 top-20">
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <datepicker class="form-control pad-0" :class="{ error: !newAppointment.isPending() }" format="MM-dd-yyyy"
-                                            v-model="newAppointment.date" :disabledDates="{ to: today }" placeholder="MM-DD-YYYY" required></datepicker>
+                                        <datepicker input-class="form-control" class="form-control pad-0" :class="{ error: !newAppointment.isPending() }" format="MM-dd-yyyy"
+                                                    v-model="newAppointment.date" :disabledDates="{ to: today }" placeholder="MM-DD-YYYY" required></datepicker>
                                     </div>
                                     <div class="col-sm-6">
                                         <input type="time" class="form-control" :class="{ error: !newAppointment.isPending() }" v-model="newAppointment.time" required />
@@ -48,7 +48,7 @@
                     <h4>Upcoming Appointments</h4>
                     <ol class="list-group" v-for="(appointment, index) in futureAppointments" :key="appointment.id">
                         <li class="list-group-item pointer" @click="select(appointment)"
-                        :class="{ selected: selectedAppointment && selectedAppointment.id === appointment.id, disabled: (selectedAppointment && selectedAppointment.id === appointment.id)  && loaders.removeAppointment }">
+                            :class="{ selected: selectedAppointment && selectedAppointment.id === appointment.id, disabled: (selectedAppointment && selectedAppointment.id === appointment.id)  && loaders.removeAppointment }">
                             <appointment :appointment="appointment"></appointment>
                             <loader v-if="loaders.removeAppointment"></loader>
                             <input type="button" class="btn btn-danger absolute delete" value="x" @click="removeAppointment(index)" />
@@ -59,14 +59,14 @@
                     <h4>Past Appointments</h4>
                     <ol class="list-group" v-for="(appointment, index) in pastAppointments" :key="appointment.id">
                         <li class="list-group-item pointer" @click="select(appointment)"
-                        :class="{ selected: selectedAppointment && selectedAppointment.id === appointment.id, disabled: (selectedAppointment && selectedAppointment.id === appointment.id)  && loaders.removeAppointment }">
+                            :class="{ selected: selectedAppointment && selectedAppointment.id === appointment.id, disabled: (selectedAppointment && selectedAppointment.id === appointment.id)  && loaders.removeAppointment }">
                             <appointment :appointment="appointment"></appointment>
                         </li>
                     </ol>
                 </div>
                 <div class="col-sm-12" :class="{ 'appointment-container': pagination.pages().length > 20 }">
                     <div class="btn-group" :class="{ 'appointment-buttons': pagination.pages() > 20 }" role="group" aria-label="Appointments">
-                        <button class="btn btn-secondary appointment-button" :class="{ selected: pagination.selected(index) }" 
+                        <button class="btn btn-secondary appointment-button" :class="{ selected: pagination.selected(index) }"
                                 v-for="(page, index) in pagination.pages()" :key="index" @click="pagination.select(index)">
                             {{page}}
                         </button>
@@ -126,7 +126,6 @@
                     comment: null,
                     isPending: () => (moment(this.newAppointmentDate + ' ' + this.newAppointment.time).toDate() > new Date())
                 },
-                // today: moment().add(-1, 'days').toDate(),
                 today: moment().toDate(),
                 selectedAppointment: null,
                 loaders: {
@@ -165,7 +164,6 @@
                 if (this.selectedAppointment && this.selectedAppointment.isPending() && confirm('Are you sure you want to remove this appointment?')) {
                     this.loaders.removeAppointment = true
                     return this.axios.delete(rootUrl(`api/patients/${this.patientId}/appointments/${this.selectedAppointment.id}`)).then(response => {
-                        console.log('appointments-modal:remove', response.data)
                         Event.$emit('appointments:remove', this.selectedAppointment.id)
                         this.loaders.removeAppointment = false
                     }).catch(err => {
@@ -180,7 +178,6 @@
                 this.newAppointment.date = this.newAppointmentDate
                 this.loaders.addAppointment = true
                 return this.axios.post(rootUrl(`api/patients/${this.patientId}/appointments`), this.newAppointment).then(response => {
-                    console.log('appointments-modal:add', response.data)
                     Event.$emit('appointments:add', response.data)
                     this.loaders.addAppointment = false
                     this.reset()
@@ -199,7 +196,6 @@
                 this.newAppointment.provider = this.providers[0]
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/providers`)).then(response => {
                     this.providers = this.providers.concat(response.data.map(provider => ({ label: (provider.name || '').trim(), value: provider.id })).sort((a, b) => a.label > b.label ? 1 : -1))
-                    console.log('appointments-modal:get-providers', this.providers)
                     this.loaders.getProviders = false
                 }).catch(err => {
                     console.error('appointments-modal:get-providers', err)

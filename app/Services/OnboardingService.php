@@ -6,7 +6,7 @@
 
 namespace App\Services;
 
-use App\CLH\Helpers\StringManipulation;
+use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
@@ -16,20 +16,19 @@ use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 use Validator;
 
 class OnboardingService
 {
     /**
-     * @var StringManipulation
+     * @var \CircleLinkHealth\Core\StringManipulation
      */
     protected $stringManipulation;
 
     /**
      * OnboardingService constructor.
-     *
-     * @param StringManipulation $stringManipulation
      */
     public function __construct(StringManipulation $stringManipulation)
     {
@@ -38,8 +37,6 @@ class OnboardingService
 
     /**
      * Gets existing locations, and outputs them on window.cpm.
-     *
-     * @param \CircleLinkHealth\Customer\Entities\Practice $primaryPractice
      */
     public function getExistingLocations(Practice $primaryPractice)
     {
@@ -89,8 +86,6 @@ class OnboardingService
 
     /**
      * Gets existing staff, and outputs them on window.cpm.
-     *
-     * @param \CircleLinkHealth\Customer\Entities\Practice $primaryPractice
      */
     public function getExistingStaff(Practice $primaryPractice)
     {
@@ -110,7 +105,7 @@ class OnboardingService
             ->whereHas('practices', function ($q) use (
                                  $primaryPractice
                              ) {
-                $q->where('id', '=', $primaryPractice->id);
+                $q->where('practices.id', '=', $primaryPractice->id);
             })
             ->get()
             ->sortBy('first_name')
@@ -145,12 +140,12 @@ class OnboardingService
                     'name',
                     '=',
                     User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER
-                                                               )
+                )
                 ->orHaving(
                     'name',
                     '=',
                     User::FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER
-                                                               )
+                )
                 ->first()
                                                           ?? null;
 
@@ -164,7 +159,7 @@ class OnboardingService
                 'phone_type'      => array_search(
                     $phone->type ?? '',
                     PhoneNumber::getTypes()
-                                                         ) ?? '',
+                ) ?? '',
                 'isComplete'         => false,
                 'validated'          => false,
                 'sendBillingReports' => $permissions->pivot->send_billing_reports ?? false,
@@ -488,17 +483,20 @@ class OnboardingService
                     );
                 }
 
+                Cache::forget($user->getCpmRolesCacheKey());
 //                $user->notify(new StaffInvite($implementationLead, $primaryPractice));
             } catch (\Exception $e) {
                 \Log::alert($e);
                 if ($e instanceof QueryException) {
+                    //                    @todo:heroku query to see if it exists, then attach
+
                     $errorCode = $e->errorInfo[1];
                     if (1062 == $errorCode) {
                         //do nothing
                         //we don't actually want to terminate the program if we detect duplicates
                         //we just don't wanna add the row again
                     }
-                } elseif ($e instanceof ValidatorException) {
+                } elseif ($e instanceof ValidationException) {
                     $errors[] = [
                         'index'    => $index,
                         'messages' => $e->getMessageBag()->getMessages(),

@@ -6,8 +6,10 @@
 
 namespace App\Jobs;
 
-use App\Models\MedicalRecords\Ccda;
-use App\Models\MedicalRecords\ImportedMedicalRecord;
+use App\Notifications\CcdaImportedNotification;
+use App\User;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -20,14 +22,33 @@ class ImportCcda implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    private $ccda;
 
     /**
-     * Create a new job instance.
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
      */
-    public function __construct(Ccda $ccda)
+    public $timeout = 120;
+    /**
+     * @var bool
+     */
+    protected $notifyUploaderUser;
+    
+    /**
+     * @var \CircleLinkHealth\SharedModels\Entities\Ccda
+     */
+    private $ccda;
+    
+    /**
+     * Create a new job instance.
+     *
+     * @param Ccda $ccda
+     * @param bool $notifyUploaderUser
+     */
+    public function __construct(Ccda $ccda, bool $notifyUploaderUser = false)
     {
         $this->ccda = $ccda;
+        $this->notifyUploaderUser = $notifyUploaderUser;
     }
 
     /**
@@ -44,7 +65,26 @@ class ImportCcda implements ShouldQueue
                         'status'   => Ccda::QA,
                         'imported' => true,
                     ]
-                          );
+                );
+            
+            $this->sendCcdaUploadedNotification();
         }
+    }
+
+    /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array
+     */
+    public function tags()
+    {
+        return ['import', 'ccda:'.$this->ccda->id];
+    }
+    
+    private function sendCcdaUploadedNotification()
+    {
+        if (!$this->notifyUploaderUser) return;
+        
+        User::findOrFail($this->ccda->user_id)->notify(new CcdaImportedNotification($this->ccda));
     }
 }

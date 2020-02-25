@@ -7,10 +7,7 @@
 namespace App\Services\PhiMail;
 
 use App\DirectMailMessage;
-use App\Jobs\ImportCcda;
-use App\Models\MedicalRecords\Ccda;
-use Carbon\Carbon;
-use Illuminate\Support\Str;
+use App\Services\PhiMail\Incoming\Factory as IncomingMessageHandlerFactory;
 
 /**
  * Handle an incoming message from EMR Direct Mail API.
@@ -38,33 +35,11 @@ class IncomingMessageHandler
             ]
         );
     }
-
-    /**
-     * Handles the message's attachments.
-     *
-     * @param DirectMailMessage $dm
-     * @param ShowResult        $showRes
-     */
-    public function handleMessageAttachment(DirectMailMessage &$dm, ShowResult $showRes)
-    {
-        if (Str::contains($showRes->mimeType, 'plain')) {
-            $dm->body = $showRes->data;
-            $dm->save();
-        } elseif (Str::contains($showRes->mimeType, 'xml') && false !== stripos($showRes->data, '<ClinicalDocument')) {
-            $this->storeAndImportCcd($showRes, $dm);
-        } else {
-            $path = storage_path('dm_id_'.$dm->id.'_attachment_'.Carbon::now()->toAtomString());
-            file_put_contents($path, $showRes->data);
-            $dm->addMedia($path)
-                ->toMediaCollection("dm_{$dm->id}_attachments");
-        }
-    }
-
+    
     /**
      * Store the subject of the message.
      *
      * @param $dm
-     * @param ShowResult $showRes
      */
     public function storeMessageSubject(&$dm, ShowResult $showRes)
     {
@@ -77,27 +52,15 @@ class IncomingMessageHandler
             }
         }
     }
-
+    
     /**
-     * Stores and imports a CCDA.
-     *
-     * @param $attachment
      * @param DirectMailMessage $dm
+     * @param ShowResult $showRes
+     *
+     * @return mixed
      */
-    private function storeAndImportCcd(
-        $attachment,
-        DirectMailMessage $dm
-    ) {
-        $ccda = Ccda::create(
-            [
-                'direct_mail_message_id' => $dm->id,
-                'user_id'                => null,
-                'vendor_id'              => 1,
-                'xml'                    => $attachment->data,
-                'source'                 => Ccda::EMR_DIRECT,
-            ]
-        );
-
-        ImportCcda::dispatch($ccda)->onQueue('low');
+    public function handleMessageAttachment(DirectMailMessage $dm, ShowResult $showRes)
+    {
+        return IncomingMessageHandlerFactory::create($dm, $showRes);
     }
 }

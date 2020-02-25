@@ -40,6 +40,8 @@
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
 
     <style>
+        body {
+            font-family: Roboto, sans-serif;}
         .table-striped > tbody > tr:nth-child(odd) > td,
         .table-striped > tbody > tr:nth-child(odd) > th {
             /* background-color: #eee; */
@@ -62,7 +64,7 @@
 <body>
 <div id="app">
 
-    @if ( ! Auth::guest() && Cerberus::hasPermission('admin-access'))
+    @if (  ! Auth::guest() && Cerberus::hasPermission('admin-access') )
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -82,7 +84,6 @@
 
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        @if ( ! Auth::guest())
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -95,9 +96,7 @@
                                             Observations</a></li>
                                 </ul>
                             </li>
-                        @endif
 
-                        @if ( ! Auth::guest())
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -114,9 +113,7 @@
                                     <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
                                 </ul>
                             </li>
-                        @endif
 
-                        @if ( ! Auth::guest())
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -132,7 +129,6 @@
 
                                 </ul>
                             </li>
-                        @endif
 
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
@@ -174,6 +170,9 @@
 
                                 <li>
                                     <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
+                                </li>
+                                <li>
+                                    <a href="{{route('OpsDashboard.index.chart')}}">Ops Chart</a>
                                 </li>
                                 <li><a href="{{ route('admin.reports.nurse.metrics') }}">
                                         Nurse Performance Report</a></li>
@@ -313,7 +312,6 @@
     @include('partials.footer')
     @yield('content')
 </div>
-
 
 @if (Agent::isIE())
     <!-- Script for polyfilling Promises on IE9 and 10 -->

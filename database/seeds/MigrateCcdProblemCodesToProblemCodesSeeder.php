@@ -4,9 +4,8 @@
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
-use Illuminate\Support\Str;
-use App\Models\CCD\Problem;
-use App\Models\ProblemCode;
+use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 use Illuminate\Database\Seeder;
 
 class MigrateCcdProblemCodesToProblemCodesSeeder extends Seeder
@@ -14,17 +13,17 @@ class MigrateCcdProblemCodesToProblemCodesSeeder extends Seeder
     public function getCodeSystemName(Problem $problem)
     {
         if ('2.16.840.1.113883.6.96' == $problem->code_system
-            || Str::contains(strtolower($problem->code_system_name), ['snomed'])) {
+            || str_contains(strtolower($problem->code_system_name), ['snomed'])) {
             return 'SNOMED CT';
         }
 
         if ('2.16.840.1.113883.6.103' == $problem->code_system
-            || Str::contains(strtolower($problem->code_system_name), ['9'])) {
+            || str_contains(strtolower($problem->code_system_name), ['9'])) {
             return 'ICD-9';
         }
 
         if ('2.16.840.1.113883.6.3' == $problem->code_system
-            || Str::contains(strtolower($problem->code_system_name), ['10'])) {
+            || str_contains(strtolower($problem->code_system_name), ['10'])) {
             return 'ICD-10';
         }
 
