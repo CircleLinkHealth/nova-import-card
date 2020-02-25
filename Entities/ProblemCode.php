@@ -64,19 +64,19 @@ class ProblemCode extends \CircleLinkHealth\Core\Entities\BaseModel
     public function isIcd10()
     {
         return '2.16.840.1.113883.6.3'                                                                    == $this->code_system_oid
-            || str_contains(strtolower($this->code_system_name), ['10']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::ICD10_NAME];
+            || Illuminate\Support\Str::contains(strtolower($this->code_system_name), ['10']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::ICD10_NAME];
     }
 
     public function isIcd9()
     {
         return '2.16.840.1.113883.6.103'                                                                 == $this->code_system_oid
-            || str_contains(strtolower($this->code_system_name), ['9']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::ICD9_NAME];
+            || Illuminate\Support\Str::contains(strtolower($this->code_system_name), ['9']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::ICD9_NAME];
     }
 
     public function isSnomed()
     {
         return '2.16.840.1.113883.6.96'                                                                       == $this->code_system_oid
-            || str_contains(strtolower($this->code_system_name), ['snomed']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::SNOMED_NAME];
+            || Illuminate\Support\Str::contains(strtolower($this->code_system_name), ['snomed']) || $this->problem_code_system_id == \App\Constants::CODE_SYSTEM_NAME_ID_MAP[\App\Constants::SNOMED_NAME];
     }
 
     public function problem()
