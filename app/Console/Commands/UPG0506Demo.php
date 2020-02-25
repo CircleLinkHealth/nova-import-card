@@ -130,22 +130,27 @@ class UPG0506Demo extends Command
                 if ($pdf) {
                     $pdf->delete();
                 }
-            } catch (\Exception $exception) {
+
+                User::whereFirstName('Barbara')
+                    ->whereLastName('Zznigro')
+                    ->get()
+                    ->each(function (User $u){
+                        $u->ccdas()->get()->each(function($ccda){
+                            $this->clearCcdaData($ccda);
+                        });
+
+                        $u->carePlanAssessment()->delete();
+                        $u->patientSummaries()->delete();
+                        $u->forceDelete();
+                    });
+
+            }catch (\Exception $exception){
                 \Log::channel('logdna')->info('UPG0506 demo error on deleting test data', [
-                    'exception' => $exception->getMessage(),
+                    'exception' => $exception->getMessage()
                 ]);
             }
         }
-        User::whereFirstName('Barbara')
-            ->whereLastName('Zznigro')
-            ->get()
-            ->each(function (User $u) {
-                $u->ccdas()->get()->each(function ($ccda) {
-                    $this->clearCcdaData($ccda);
-                });
-                $u->patientSummaries()->delete();
-                $u->forceDelete();
-            });
+
     }
 
     /**
