@@ -20,7 +20,7 @@ class EnrolleeFamilyTest extends TestCase
     protected $enrollee;
     protected $suggestedFamilyMembers;
 
-    public function setUp()
+    protected function setUp():void
     {
         parent::setUp();
         $this->practice = factory(Practice::class)->create();
