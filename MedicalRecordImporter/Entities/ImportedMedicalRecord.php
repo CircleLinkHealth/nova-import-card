@@ -21,6 +21,7 @@ use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
 /**
  * CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord.
@@ -76,6 +77,12 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
 {
     use MedicalRecordIdAndTypeTrait;
     use SoftDeletes;
+
+
+    /**
+     * For 'type' column, for G0506.
+     */
+    const COMPREHENSIVE_ASSESSMENT_TYPE = 'comprehensive_assessment';
 
     /**
      * An option in validation_checks.

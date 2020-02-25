@@ -7,29 +7,32 @@
 namespace CircleLinkHealth\Eligibility\MedicalRecordImporter;
 
 use CircleLinkHealth\Core\Entities\AppConfig;
-use CircleLinkHealth\SharedModels\Entities\CarePlan;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\BloodPressure;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\Weight;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\ProblemsToMonitor;
 use CircleLinkHealth\Core\StringManipulation;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
-use CircleLinkHealth\SharedModels\Entities\Allergy;
-use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
-use CircleLinkHealth\SharedModels\Entities\Medication;
-use CircleLinkHealth\SharedModels\Entities\Problem;
-use CircleLinkHealth\SharedModels\Entities\CpmMisc;
-use CircleLinkHealth\SharedModels\Entities\CpmProblem;
-use CircleLinkHealth\SharedModels\Entities\Ccda;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
-use CircleLinkHealth\Eligibility\Entities\PatientData as NbiPatientData;
-use CircleLinkHealth\SharedModels\Entities\ProblemCode;
-use CircleLinkHealth\Eligibility\NBISupplementaryDataNotFound;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\PhoneNumber;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Entities\PatientData as NbiPatientData;
+use App\Events\PatientUserCreated;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\BloodPressure;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\ProblemsToMonitor;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\StorageStrategies\Weight;
+use CircleLinkHealth\Eligibility\NBISupplementaryDataNotFound;
+use CircleLinkHealth\SharedModels\Entities\Allergy;
+use CircleLinkHealth\SharedModels\Entities\CarePlan;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
+use CircleLinkHealth\SharedModels\Entities\CpmInstruction;
+use CircleLinkHealth\SharedModels\Entities\CpmMisc;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
+use CircleLinkHealth\SharedModels\Entities\Medication;
+use CircleLinkHealth\SharedModels\Entities\Problem;
+use CircleLinkHealth\SharedModels\Entities\ProblemCode;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rule;
 
@@ -52,6 +55,14 @@ class CarePlanHelper
      */
     private $enrollee;
     private $str;
+    /**
+     * @var Contracts\MedicalRecord|null
+     */
+    private $mr;
+    /**
+     * @var boolean|null
+     */
+    private $hasUPG0506Instructions;
 
     public function __construct(
         User $user,
@@ -63,6 +74,7 @@ class CarePlanHelper
         $this->probs = $importedMedicalRecord->problems()->get();
         $this->user  = $user;
         $this->imr   = $importedMedicalRecord;
+        $this->mr    = $importedMedicalRecord->medicalRecord();
         $this->str   = new StringManipulation();
     }
 
@@ -81,7 +93,7 @@ class CarePlanHelper
                 'care_plan_template_id' => $this->user->service()->firstOrDefaultCarePlan(
                     $this->user
                 )->care_plan_template_id,
-                'status' => 'draft',
+                'status'                => 'draft',
             ]
         );
 
@@ -168,7 +180,7 @@ class CarePlanHelper
         }
 
         $misc = CpmMisc::whereName(CpmMisc::ALLERGIES)
-            ->first();
+                       ->first();
 
         $this->user->cpmMiscs()->attach(optional($misc)->id);
 
@@ -240,17 +252,17 @@ class CarePlanHelper
     public function storeImportedValues()
     {
         $this->createNewCarePlan()
-            ->storeAllergies()
-            ->storeProblemsList()
-            ->storeMedications()
-            ->storeBillingProvider()
-            ->storeLocation()
-            ->storePractice()
-            ->storePatientInfo()
-            ->storeContactWindows()
-            ->storePhones()
-            ->storeInsurance()
-            ->storeVitals();
+             ->storeAllergies()
+             ->storeProblemsList()
+             ->storeMedications()
+             ->storeBillingProvider()
+             ->storeLocation()
+             ->storePractice()
+             ->storePatientInfo()
+             ->storeContactWindows()
+             ->storePhones()
+             ->storeInsurance()
+             ->storeVitals();
 
         // Populate display_name on User
         $this->user->display_name = "{$this->user->first_name} {$this->user->last_name}";
@@ -258,7 +270,9 @@ class CarePlanHelper
         $this->user->save();
 
         $this->handleEnrollees()
-            ->updateTrainingFeatures();
+             ->updateTrainingFeatures();
+
+        event(new PatientUserCreated($this->user));
 
         return $this->carePlan;
     }
@@ -331,7 +345,7 @@ class CarePlanHelper
         }
 
         $misc = CpmMisc::whereName(CpmMisc::MEDICATION_LIST)
-            ->first();
+                       ->first();
 
         $this->user->cpmMiscs()->attach(optional($misc)->id);
         $this->user->cpmMedicationGroups()->sync(array_filter($medicationGroups));
@@ -352,9 +366,9 @@ class CarePlanHelper
 
         if (self::NBI_PRACTICE_NAME == $primaryPractice->name) {
             $dataFromPractice = NbiPatientData::where('first_name', 'like', "{$this->user->first_name}%")
-                ->where('last_name', $this->user->last_name)
-                ->where('dob', $this->dem->dob)
-                ->first();
+                                              ->where('last_name', $this->user->last_name)
+                                              ->where('dob', $this->dem->dob)
+                                              ->first();
 
             if ( ! $dataFromPractice) {
                 sendNbiPatientMrnWarning($this->user->id);
@@ -363,7 +377,7 @@ class CarePlanHelper
 
                 foreach ($recipients as $recipient) {
                     Notification::route('mail', $recipient->config_value)
-                        ->notify(new NBISupplementaryDataNotFound($this->user));
+                                ->notify(new NBISupplementaryDataNotFound($this->user));
                 }
             }
 
@@ -425,9 +439,9 @@ class CarePlanHelper
                 $number = $this->str->formatPhoneNumberE164($homeNumber);
 
                 $makePrimary = 0 == strcasecmp(
-                    $primaryPhone,
-                    PhoneNumber::HOME
-                ) || $primaryPhone == $number || ! $primaryPhone;
+                        $primaryPhone,
+                        PhoneNumber::HOME
+                    ) || $primaryPhone == $number || ! $primaryPhone;
 
                 $homePhone = PhoneNumber::create(
                     [
@@ -455,9 +469,9 @@ class CarePlanHelper
                 $number = $this->str->formatPhoneNumberE164($mobileNumber);
 
                 $makePrimary = 0 == strcasecmp($primaryPhone, PhoneNumber::MOBILE) || 0 == strcasecmp(
-                    $primaryPhone,
-                    'cell'
-                ) || $primaryPhone == $number || ! $primaryPhone;
+                        $primaryPhone,
+                        'cell'
+                    ) || $primaryPhone == $number || ! $primaryPhone;
 
                 $mobilePhone = PhoneNumber::create(
                     [
@@ -518,9 +532,9 @@ class CarePlanHelper
 
                 foreach (
                     [
-                        PhoneNumber::HOME => $homePhone,
+                        PhoneNumber::HOME   => $homePhone,
                         PhoneNumber::MOBILE => $mobilePhone,
-                        PhoneNumber::WORK => $workPhone,
+                        PhoneNumber::WORK   => $workPhone,
                     ] as $type => $phone
                 ) {
                     if ( ! $phone) {
@@ -570,23 +584,19 @@ class CarePlanHelper
             return $this;
         }
 
-        $cpmProblems = CpmProblem::get()->keyBy('id');
-
+        /** @var ProblemImport $problem */
         foreach ($this->probs as $problem) {
-            $cpmProblem = $problem->cpm_problem_id
-                ? $cpmProblems[$problem->cpm_problem_id]
-                : null;
-            $defaultInstruction = optional($cpmProblem)->instruction();
+            $instruction = $this->getInstruction($problem);
 
             $ccdProblem = Problem::create(
                 [
-                    'is_monitored'       => (bool) $problem->cpm_problem_id,
+                    'is_monitored'       => (bool)$problem->cpm_problem_id,
                     'problem_import_id'  => $problem->id,
                     'ccd_problem_log_id' => $problem->ccd_problem_log_id,
                     'name'               => $problem->name,
                     'cpm_problem_id'     => $problem->cpm_problem_id,
                     'patient_id'         => $this->user->id,
-                    'cpm_instruction_id' => $defaultInstruction->id ?? null,
+                    'cpm_instruction_id' => optional($instruction)->id ?? null,
                 ]
             );
 
@@ -609,7 +619,7 @@ class CarePlanHelper
         }
 
         $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
-            ->first();
+                       ->first();
 
         $this->user->cpmMiscs()->attach(optional($misc)->id);
 
@@ -658,17 +668,15 @@ class CarePlanHelper
             return $this;
         }
 
-        $ccda = $this->imr->medicalRecord();
-
-        if ( ! $ccda) {
+        if ( ! $this->mr) {
             return $this;
         }
 
         //doing this here to not break View CCDA button
-        $ccda->patient_id = $this->user->id;
-        $ccda->save();
+        $this->mr->patient_id = $this->user->id;
+        $this->mr->save();
 
-        $decodedCcda = $ccda->bluebuttonJson();
+        $decodedCcda = $this->mr->bluebuttonJson();
 
         //Weight
         $weightParseAndStore = new Weight($this->user->program_id, $this->user);
@@ -713,13 +721,12 @@ class CarePlanHelper
     private function updateTrainingFeatures()
     {
         $this
-            ->imr
-            ->medicalRecord()
+            ->mr
             ->document
             ->each(
                 function ($documentLog) {
-                    $documentLog->practice_id = $this->imr->practice_id;
-                    $documentLog->location_id = $this->imr->location_id;
+                    $documentLog->practice_id         = $this->imr->practice_id;
+                    $documentLog->location_id         = $this->imr->location_id;
                     $documentLog->billing_provider_id = $this->imr->billing_provider_id;
 
                     $documentLog->save();
@@ -727,13 +734,12 @@ class CarePlanHelper
             );
 
         $this
-            ->imr
-            ->medicalRecord()
+            ->mr
             ->providers
             ->each(
                 function ($providerLog) {
-                    $providerLog->practice_id = $this->imr->practice_id;
-                    $providerLog->location_id = $this->imr->location_id;
+                    $providerLog->practice_id         = $this->imr->practice_id;
+                    $providerLog->location_id         = $this->imr->location_id;
                     $providerLog->billing_provider_id = $this->imr->billing_provider_id;
 
                     $providerLog->save();
@@ -741,8 +747,7 @@ class CarePlanHelper
             );
 
         $mr = $this
-            ->imr
-            ->medicalRecord();
+            ->mr;
 
         if ($mr) {
             $mr->practice_id         = $this->imr->practice_id;
@@ -765,5 +770,54 @@ class CarePlanHelper
         );
 
         return $validator->passes();
+    }
+
+    private function getInstruction(ProblemImport $problemImport)
+    {
+        if (is_null($this->hasUPG0506Instructions)) {
+            $this->hasUPG0506Instructions = $this->mr->hasUPG0506PdfCareplanMedia()->exists();
+        }
+
+        if (true === $this->hasUPG0506Instructions) {
+            return $this->createInstructionFromUPG0506($problemImport);
+        }
+
+        $cpmProblems = \Cache::remember('all_cpm_problems_keyed_by_id', 2, function () {
+            return CpmProblem::get()->keyBy('id');
+        });
+
+        $cpmProblem = $problemImport->cpm_problem_id
+            ? $cpmProblems[$problemImport->cpm_problem_id]
+            : null;
+
+        return optional($cpmProblem)->instruction();
+    }
+
+    private function createInstructionFromUPG0506(ProblemImport $problemImport): ?CpmInstruction
+    {
+        $pdfMedia = $this->mr->getUPG0506PdfCareplanMedia();
+
+        if (! $pdfMedia){
+            return null;
+        }
+
+        $customProperties = json_decode($pdfMedia->custom_properties);
+
+        if (! isset($customProperties->care_plan)){
+            return null;
+        }
+
+        $matchingProblem = collect($customProperties->care_plan->instructions)
+            ->where('name', $problemImport->name)
+            ->first();
+
+
+        if (! $matchingProblem){
+            return null;
+        }
+
+        return CpmInstruction::create([
+            'name' => $matchingProblem->instructions,
+        ]);
     }
 }
