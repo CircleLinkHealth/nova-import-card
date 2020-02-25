@@ -60,7 +60,8 @@
                 this.$refs['attest-call-conditions-modal'].visible = true;
             });
 
-            if (this.patientId && !this.ccdProblems) {
+            //if in approve billable patients page, we get problems from the billing component
+            if (this.isNotesPage) {
                 this.getPatientBillableProblems();
             }
 
