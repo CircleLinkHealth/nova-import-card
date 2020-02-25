@@ -2,10 +2,6 @@
 
 namespace CircleLinkHealth\Eligibility\Console;
 
-use CircleLinkHealth\Eligibility\Decorators\AddCareTeamFromAthenaToEligibilityJob;
-use CircleLinkHealth\Eligibility\Decorators\AddDemographicsFromAthenaToEligibilityJob;
-use CircleLinkHealth\Eligibility\Decorators\AddInsuranceFromAthenaToEligibilityJob;
-use CircleLinkHealth\Eligibility\Decorators\AddPcmChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Jobs\ProcessCommonwealthPatientForPcm;
 use Illuminate\Console\Command;
