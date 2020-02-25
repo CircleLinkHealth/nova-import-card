@@ -8,7 +8,7 @@ namespace CircleLinkHealth\Eligibility\Adapters;
 
 use CircleLinkHealth\Eligibility\Contracts\EligibilityCheckAdapter;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
-use CircleLinkHealth\Eligibility\Decorators\AddInsuranceFromAthenaToEligibilityJob;
+use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
@@ -21,26 +21,18 @@ class AddInsurancesFromAthena implements EligibilityCheckAdapter
      */
     protected $adapter;
     /**
-     * @var Ccda
-     */
-    protected $ccda;
-    /**
-     * @var TargetPatient
-     */
-    protected $targetPatient;
-    /**
      * @var Collection
      */
     private $insuranceCollection;
-
+    
     /**
      * AddInsurancesFromAthena constructor.
+     *
+     * @param EligibilityCheckAdapter $adapter
      */
-    public function __construct(EligibilityCheckAdapter $adapter, TargetPatient $targetPatient, Ccda $ccda)
+    public function __construct(EligibilityCheckAdapter $adapter)
     {
         $this->adapter       = $adapter;
-        $this->targetPatient = $targetPatient;
-        $this->ccda          = $ccda;
     }
 
     /**
@@ -48,9 +40,7 @@ class AddInsurancesFromAthena implements EligibilityCheckAdapter
      */
     public function adaptToEligibilityJob(): EligibilityJob
     {
-        $base = $this->adapter->adaptToEligibilityJob();
-
-        return app(AddInsuranceFromAthenaToEligibilityJob::class)->addInsurancesFromAthena($base, $this->targetPatient, $this->ccda);
+        return app(InsuranceFromAthena::class)->decorate($this->adapter->adaptToEligibilityJob());
     }
 
     public function getInsuranceCollection(): ?Collection

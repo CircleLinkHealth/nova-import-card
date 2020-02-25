@@ -9,15 +9,16 @@
 namespace CircleLinkHealth\Eligibility\Decorators;
 
 
+use CircleLinkHealth\Eligibility\Contracts\MedicalRecordDecorator;
 use CircleLinkHealth\Eligibility\EligibilityChecker;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\Entities\Problem;
 use Illuminate\Support\Facades\Cache;
 
-class AddPcmChargeableServices
+class PcmChargeableServices implements MedicalRecordDecorator
 {
-    public function addPcm(EligibilityJob $eligibilityJob): EligibilityJob
+    public function decorate(EligibilityJob $eligibilityJob): EligibilityJob
     {
         $data = $eligibilityJob->data;
         $pcmProblems = [];
