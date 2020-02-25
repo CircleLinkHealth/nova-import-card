@@ -69,7 +69,7 @@ class NursePaymentAlgoTest extends TestCase
     /** @var User $provider */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp():void
     {
         parent::setUp();
         (new \ChargeableServiceSeeder())->run();

@@ -26,7 +26,7 @@ class AutomateCallSchedulingTest extends TestCase
     /** @var SchedulerService $schedulerService */
     protected $schedulerService;
 
-    protected function setUp()
+    protected function setUp():void
     {
         parent::setUp();
         $this->schedulerService = $this->app->make(SchedulerService::class);

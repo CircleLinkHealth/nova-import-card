@@ -138,7 +138,7 @@ class OnboardingTest extends TestCase
 //        $this->call('POST', route('post.onboarding.store.locations'), []);
 //    }
 //
-//    protected function setUp()
+//    protected function setUp():void
 //    {
 //        parent::setUp();
 //        $this->faker = Factory::create();

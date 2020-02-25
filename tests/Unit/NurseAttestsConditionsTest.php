@@ -30,7 +30,7 @@ class NurseAttestsConditionsTest extends DuskTestCase
     protected $practice;
     protected $provider;
 
-    protected function setUp()
+    protected function setUp():void
     {
         parent::setUp();
 
