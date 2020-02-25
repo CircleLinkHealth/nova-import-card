@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b3b1e772be7fa9ba76284b119a7303b4",
+    "content-hash": "9f455ac29ccd1340b849d657d6067ab7",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -926,11 +926,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v1.7.4",
+            "version": "v1.7.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "980089e9596a75f3027d0a84fdfdeec125efa375"
+                "reference": "80d11cf8ff9ddf35ccab2cb61be285a229fbdf44"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -955,7 +955,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-24T21:12:14+00:00"
+            "time": "2020-02-25T00:50:56+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -8025,16 +8025,16 @@
         },
         {
             "name": "sentry/sentry-laravel",
-            "version": "1.6.1",
+            "version": "1.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-laravel.git",
-                "reference": "6ccb88d2ef9e6c71ebdedadb59910843c47399e1"
+                "reference": "7debcb2f1ad080dff33dd1433d86ab45a3f5c01e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/6ccb88d2ef9e6c71ebdedadb59910843c47399e1",
-                "reference": "6ccb88d2ef9e6c71ebdedadb59910843c47399e1",
+                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/7debcb2f1ad080dff33dd1433d86ab45a3f5c01e",
+                "reference": "7debcb2f1ad080dff33dd1433d86ab45a3f5c01e",
                 "shasum": ""
             },
             "require": {
@@ -8090,7 +8090,7 @@
                 "logging",
                 "sentry"
             ],
-            "time": "2020-01-23T22:19:01+00:00"
+            "time": "2020-02-14T12:29:38+00:00"
         },
         {
             "name": "setasign/fpdf",
