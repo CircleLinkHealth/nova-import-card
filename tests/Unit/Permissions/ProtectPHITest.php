@@ -6,12 +6,12 @@
 
 namespace Tests\Unit;
 
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use Mockery as m;
 use Tests\TestCase;
 
@@ -152,6 +152,16 @@ class ProtectPHITest extends TestCase
             if (in_array($phi, ['MD', 'AL'])) {
                 //this is the suffix and state of the logged in user generated for admins too by default
                 //remember that logged in User can see their own PHI field values.
+                continue;
+            }
+
+            //even if logged in user has no access to PHI, their own name will be displayed on top nav-bar
+            //sometimes with faker data, a first or last name happens to be the same with the patient's and the tests fail.
+            //this is the easiest way to resolve this. We could also check patient names upon seeding the data but that would slow down the test suite
+            if (in_array($phi, [
+                $this->admin->first_name,
+                $this->admin->last_name,
+            ])) {
                 continue;
             }
             $response->assertDontSee($phi);

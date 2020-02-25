@@ -13,10 +13,6 @@ class PcmProblemByNameOrCode extends BaseScoutSearch
 {
     /**
      * The eloquent query for performing the search.
-     *
-     * @param string $term
-     *
-     * @return Builder
      */
     public function query(string $term): Builder
     {

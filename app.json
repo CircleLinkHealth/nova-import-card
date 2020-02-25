@@ -16,6 +16,9 @@
     },
     {
       "url": "https://github.com/chap/wkhtmltopdf-heroku-18-buildpack"
+    },
+    {
+      "url": "https://github.com/carwow/heroku-buildpack-pdftotext.git"
     }
   ],
   "environments": {
@@ -87,7 +90,7 @@
         "BROADCAST_DRIVER": "log",
         "CACHE_DRIVER": "array",
         "SESSION_DRIVER": "array",
-        "QUEUE_DRIVER": "sync",
+        "QUEUE_CONNECTION": "sync",
         "SCOUT_DRIVER": "null"
       }
     }

@@ -41,7 +41,7 @@ return [
     'channels' => [
         'stack' => [
             'driver'            => 'stack',
-            'channels'          => ['single', 'logdna'],
+            'channels'          => ['sentry', 'stderr'],
             'ignore_exceptions' => false,
         ],
 
@@ -88,10 +88,6 @@ return [
             'formatter' => LogdnaFormatter::class,
         ],
 
-        'sentry' => [
-            'driver' => 'sentry',
-        ],
-
         'stderr' => [
             'driver'    => 'monolog',
             'handler'   => StreamHandler::class,
@@ -109,6 +105,15 @@ return [
         'errorlog' => [
             'driver' => 'errorlog',
             'level'  => 'debug',
+        ],
+
+        'sentry' => [
+            'driver' => 'sentry',
+            // The minimum monolog logging level at which this handler will be triggered
+            // For example: `\Monolog\Logger::ERROR`
+            'level' => \Monolog\Logger::ERROR,
+            // Whether the messages that are handled can bubble up the stack or not
+            'bubble' => true,
         ],
     ],
 ];

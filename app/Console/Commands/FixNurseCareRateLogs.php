@@ -16,18 +16,17 @@ use Illuminate\Support\Facades\DB;
 class FixNurseCareRateLogs extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'nursecareratelogs:fix {fromMonth}';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Set patient_user_id and is_successful_call in nurse_care_rate_logs in case there are inconsistencies';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'nursecareratelogs:fix {fromMonth}';
 
     /**
      * Create a new command instance.
@@ -52,28 +51,28 @@ class FixNurseCareRateLogs extends Command
         $chunk = 50;
 
         DB::table('nurse_care_rate_logs')
-          ->where('created_at', '>=', $month)
-          ->orderBy('created_at')
-          ->chunk($chunk, function (\Illuminate\Support\Collection $list) use ($chunk, &$count) {
-              $list->each(function ($record) use ($chunk, &$count) {
-                  $activityId = $record->activity_id;
-                  $activity   = DB::table('lv_activities')->find($activityId);
-                  if ( ! $activity) {
-                      return;
-                  }
+            ->where('created_at', '>=', $month)
+            ->orderBy('created_at')
+            ->chunk($chunk, function (\Illuminate\Support\Collection $list) use ($chunk, &$count) {
+                $list->each(function ($record) use ($chunk, &$count) {
+                    $activityId = $record->activity_id;
+                    $activity = DB::table('lv_activities')->find($activityId);
+                    if ( ! $activity) {
+                        return;
+                    }
 
-                  $isSuccessfulCall = $this->isActivityForSuccessfulCall($activity);
+                    $isSuccessfulCall = $this->isActivityForSuccessfulCall($activity);
 
-                  DB::table('nurse_care_rate_logs')
-                    ->where('id', '=', $record->id)
-                    ->update([
-                        'patient_user_id'    => $activity->patient_id,
-                        'is_successful_call' => $isSuccessfulCall,
-                    ]);
-              });
-              $count += $chunk;
-              $this->info("Processed $count records");
-          });
+                    DB::table('nurse_care_rate_logs')
+                        ->where('id', '=', $record->id)
+                        ->update([
+                            'patient_user_id'    => $activity->patient_id,
+                            'is_successful_call' => $isSuccessfulCall,
+                        ]);
+                });
+                $count += $chunk;
+                $this->info("Processed $count records");
+            });
 
         $this->info('Done.');
     }
@@ -90,16 +89,16 @@ class FixNurseCareRateLogs extends Command
                 $performedAt->copy()->startOfDay(),
                 $performedAt->copy()->endOfDay(),
             ])
-            ->where('status', '=', Note::STATUS_COMPLETE)
-            ->where('author_id', '=', $activity->logger_id)
-            ->where('patient_id', '=', $activity->patient_id)
-            ->pluck('id');
+                ->where('status', '=', Note::STATUS_COMPLETE)
+                ->where('author_id', '=', $activity->logger_id)
+                ->where('patient_id', '=', $activity->patient_id)
+                ->pluck('id');
 
         $hasSuccessfulCall = false;
         if ( ! empty($noteIds)) {
             $hasSuccessfulCall = Call::whereIn('note_id', $noteIds)
-                                     ->where('status', '=', Call::REACHED)
-                                     ->count() > 0;
+                ->where('status', '=', Call::REACHED)
+                ->count() > 0;
         }
 
         return $hasSuccessfulCall;

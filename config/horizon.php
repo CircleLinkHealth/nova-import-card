@@ -15,7 +15,7 @@ return [
     | application. Otherwise, this value will serve as the subdomain.
     |
     */
-    
+
     'domain' => null,
 
     /*
@@ -30,7 +30,7 @@ return [
    */
 
     'path' => 'horizon',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Horizon Redis Connection
@@ -115,47 +115,47 @@ return [
     'environments' => [
         'local' => [
             'supervisor-1' => [
-                'connection'    => 'redis',
-                'queue'         => ['high', 'default', 'low'],
-                'balance'       => 'auto',
-                'minProcesses' => 5,
-                'maxProcesses' => 20,
-                'tries'         => 3,
-                'timeout'       => 300,
-            ]
+                'connection'   => 'redis',
+                'queue'        => ['high', 'default', 'low'],
+                'balance'      => 'auto',
+                'minProcesses' => 1,
+                'maxProcesses' => 1,
+                'tries'        => 3,
+                'timeout'      => 300,
+            ],
         ],
         'review' => [
             'supervisor-1' => [
-                'connection'    => 'redis',
-                'queue'         => ['high', 'default', 'low'],
-                'balance'       => 'auto',
-                'minProcesses' => 5,
-                'maxProcesses' => 20,
-                'tries'         => 3,
-                'timeout'       => 300,
-            ]
+                'connection'   => 'redis',
+                'queue'        => ['high', 'default', 'low'],
+                'balance'      => 'auto',
+                'minProcesses' => 1,
+                'maxProcesses' => 1,
+                'tries'        => 3,
+                'timeout'      => 300,
+            ],
         ],
         'staging' => [
             'supervisor-1' => [
-                'connection'    => 'redis',
-                'queue'         => ['high', 'default', 'low'],
-                'balance'       => 'auto',
-                'minProcesses' => 5,
-                'maxProcesses' => 20,
-                'tries'         => 3,
-                'timeout'       => 300,
-            ]
+                'connection'   => 'redis',
+                'queue'        => ['high', 'default', 'low'],
+                'balance'      => 'auto',
+                'minProcesses' => 1,
+                'maxProcesses' => 2,
+                'tries'        => 3,
+                'timeout'      => 300,
+            ],
         ],
         'production_v3' => [
             'supervisor-1' => [
-                'connection'    => 'redis',
-                'queue'         => ['high', 'default', 'low'],
-                'balance'       => 'auto',
+                'connection'   => 'redis',
+                'queue'        => ['high', 'default', 'low'],
+                'balance'      => 'auto',
                 'minProcesses' => 5,
                 'maxProcesses' => 10,
-                'tries'         => 3,
-                'timeout'       => 300,
-            ]
+                'tries'        => 3,
+                'timeout'      => 300,
+            ],
         ],
     ],
 ];

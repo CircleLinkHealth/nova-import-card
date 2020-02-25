@@ -3,7 +3,9 @@
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
+
 Route::get('/debug-sentry', 'DemoController@sentry');
+Route::get('/debug-sentry-log', 'DemoController@sentryLog');
 
 Route::post('webhooks/on-sent-fax', [
     'uses' => 'PhaxioWebhookController@onFaxSent',
@@ -86,6 +88,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('cbt/test-patients', [
         'uses' => 'Patient\PatientController@storeCBTTestPatient',
         'as'   => 'create-test-patients',
+    ]);
+
+    Route::get('upg0506/{type}', [
+        'uses' => 'Admin\DashboardController@upg0506',
+        'as'   => 'upg0506.demo',
     ]);
 
     Route::get('impersonate/leave', [
@@ -495,6 +502,29 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'API\PatientCarePlanController@downloadPdf',
         'as'   => 'download.pdf.careplan',
     ])->middleware('permission:careplan-pdf.read')->middleware('doNotCacheResponse');
+
+    Route::group([
+        'middleware' => [],
+        'prefix'     => 'patient-email/{patient_id}',
+    ], function () {
+        Route::post(
+            '/upload-attachment',
+            'API\PatientEmailController@uploadAttachment'
+        );
+
+        Route::post(
+            '/validate-body',
+            [
+                'uses' => 'API\PatientEmailController@validateEmailBody',
+                'as'   => 'patient-email.validate',
+            ]
+        );
+
+        Route::post(
+            '/delete-attachment',
+            'API\PatientEmailController@deleteAttachment'
+        );
+    });
 
     Route::post(
         'care-docs/{patient_id}',
@@ -2299,3 +2329,8 @@ Route::post('nurses/nurse-calendar-data', [
     'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
+
+//Route::get('get-calendar-data', [
+//    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
+//    'as'   => 'care.center.work.schedule.getCalendarData',
+//]);

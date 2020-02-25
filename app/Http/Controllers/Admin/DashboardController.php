@@ -92,4 +92,15 @@ class DashboardController extends Controller
 
         return view('admin.testplan', compact(['patient']));
     }
+
+    public function upg0506($type)
+    {
+        if (isProductionEnv()) {
+            return redirect()->back();
+        }
+
+        Artisan::call('demo:upg0506', ["--{$type}" => true]);
+
+        return redirect()->back()->with(['upg0506-command-success' => 'Command ran successfully']);
+    }
 }
