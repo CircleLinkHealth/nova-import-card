@@ -14,7 +14,6 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Raygun\PsrLogger\RaygunLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

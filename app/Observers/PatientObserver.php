@@ -83,7 +83,7 @@ class PatientObserver
         
         $note = $patient->user->notes()->create(
             [
-                'author_id' => 948,
+                'author_id' => isProductionEnv() ? 948 : 1,
                 'body' => "Patient consented on {$patient->consent_date}",
                 'type' => 'Patient Consented',
                 'performed_at' => Carbon::now()->toDateTimeString(),

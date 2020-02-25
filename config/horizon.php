@@ -118,8 +118,8 @@ return [
                 'connection'    => 'redis',
                 'queue'         => ['high', 'default', 'low'],
                 'balance'       => 'auto',
-                'minProcesses' => 5,
-                'maxProcesses' => 20,
+                'minProcesses' => 1,
+                'maxProcesses' => 1,
                 'tries'         => 3,
                 'timeout'       => 300,
             ]
@@ -129,8 +129,8 @@ return [
                 'connection'    => 'redis',
                 'queue'         => ['high', 'default', 'low'],
                 'balance'       => 'auto',
-                'minProcesses' => 5,
-                'maxProcesses' => 20,
+                'minProcesses' => 1,
+                'maxProcesses' => 1,
                 'tries'         => 3,
                 'timeout'       => 300,
             ]
@@ -140,8 +140,8 @@ return [
                 'connection'    => 'redis',
                 'queue'         => ['high', 'default', 'low'],
                 'balance'       => 'auto',
-                'minProcesses' => 5,
-                'maxProcesses' => 20,
+                'minProcesses' => 1,
+                'maxProcesses' => 2,
                 'tries'         => 3,
                 'timeout'       => 300,
             ]

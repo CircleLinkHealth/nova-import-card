@@ -82,7 +82,7 @@ class CcdaImportedNotification extends Notification implements ShouldBroadcast, 
     {
         return route('import.ccd.remix');
     }
-    
+
     /**
      * Get the array representation of the notification.
      *

@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Jobs\ImportCcda;
+use App\Listeners\UPG0506CcdaImporterListener;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
@@ -40,11 +41,29 @@ class ImporterController extends Controller
             ->with('location')
             ->with('billingProvider')
             ->get()
+            //where not in UPG + G0506
+            //where media. where id = upg, custom_properties->mrn = imr.mrn, finished_processing()
             ->transform(function (ImportedMedicalRecord $summary) {
                 $mr = $summary->medicalRecord();
 
-                if ( ! $mr) {
+                if ( ! $mr ) {
                     return false;
+                }
+
+                if (upg0506IsEnabled()){
+                    $isUpg0506Incomplete = false;
+
+                    if ($mr instanceof Ccda) {
+                        $isUpg0506Incomplete = Ccda::whereHas('media', function ($q) {
+                            $q->where('custom_properties->is_upg0506_complete', '!=','true');
+                        })->whereHas('directMessage', function ($q) {
+                            $q->where('from', 'like', "%@upg.ssdirect.aprima.com");
+                        })->where('id', $mr->id)->exists();
+                    }
+
+                    if ($isUpg0506Incomplete) {
+                        return false;
+                    }
                 }
 
                 if ( ! $summary->billing_provider_id) {
