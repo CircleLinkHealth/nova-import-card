@@ -22,7 +22,7 @@ class NumberedAllergyFields
                 break;
             }
 
-            if ( ! empty($patient["allergy_${i}"]) && ! str_contains(
+            if ( ! empty($patient["allergy_${i}"]) && ! Illuminate\Support\Str::contains(
                 strtolower($patient["allergy_${i}"]),
                 ['#n/a', 'no known']
             )) {

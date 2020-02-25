@@ -424,7 +424,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
     {
         return $this->insurances->reject(
             function ($i) {
-                return ! str_contains(strtolower($i->name.$i->type), 'medicare');
+                return ! Illuminate\Support\Str::contains(strtolower($i->name.$i->type), 'medicare');
             }
         )
             ->count() >= 1;

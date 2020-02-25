@@ -346,7 +346,7 @@ class ProcessEligibilityService
                 $cloudDirName = $file['dirname'];
 
                 foreach ($localDisk->allFiles($unzipDir) as $path) {
-                    if (str_contains($path, 'xml')) {
+                    if (Illuminate\Support\Str::contains($path, 'xml')) {
                         $now = Carbon::now()->toAtomString();
                         $randomStr = str_random();
 

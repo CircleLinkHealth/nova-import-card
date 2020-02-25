@@ -516,7 +516,7 @@ class EligibilityChecker
                     }
                     //Reject if patientData is on dialysis
                     //https://circlelinkhealth.atlassian.net/browse/CPM-954
-                    if (str_contains($p->getName(), ['End stage renal disease'])) {
+                    if (Illuminate\Support\Str::contains($p->getName(), ['End stage renal disease'])) {
                         $this->ineligibleOnDialysis($eligibilityJobData);
                         
                         return false;
@@ -528,7 +528,7 @@ class EligibilityChecker
                                 continue;
                             }
                             
-                            if (str_contains(strtolower($p->getName()), strtolower($keyword))
+                            if (Illuminate\Support\Str::contains(strtolower($p->getName()), strtolower($keyword))
                                 && ! in_array($problem->id, $qualifyingCcmProblemsCpmIdStack)
                             ) {
                                 $code = SnomedToCpmIcdMap::where('icd_9_code', '!=', '')
@@ -1042,7 +1042,7 @@ class EligibilityChecker
                         case 0:
                             $this->eligibilityJob->primary_insurance = $insurance['type'];
                             
-                            if (str_contains(strtolower($insurance['type']), 'medicare')
+                            if (Illuminate\Support\Str::contains(strtolower($insurance['type']), 'medicare')
                             ) {
                                 $isEligible = true;
                             }
@@ -1051,7 +1051,7 @@ class EligibilityChecker
                         case 1:
                             $this->eligibilityJob->secondary_insurance = $insurance['type'];
                             
-                            if (str_contains(strtolower($insurance['type']), 'medicare')
+                            if (Illuminate\Support\Str::contains(strtolower($insurance['type']), 'medicare')
                             ) {
                                 $isEligible = true;
                             }
@@ -1060,7 +1060,7 @@ class EligibilityChecker
                         case 2:
                             $this->eligibilityJob->tertiary_insurance = $insurance['type'];
                             
-                            if (str_contains(strtolower($insurance['type']), 'medicare')
+                            if (Illuminate\Support\Str::contains(strtolower($insurance['type']), 'medicare')
                             ) {
                                 $isEligible = true;
                             }
@@ -1078,7 +1078,7 @@ class EligibilityChecker
                 if (0 === $i) {
                     $this->eligibilityJob->primary_insurance = $insurance['insuranceplanname'].'('.$insurance['insurancetype'].')' ?? '';
                     
-                    if (str_contains(strtolower($this->eligibilityJob->primary_insurance), 'medicare')
+                    if (Illuminate\Support\Str::contains(strtolower($this->eligibilityJob->primary_insurance), 'medicare')
                     ) {
                         $isEligible = true;
                     }
@@ -1086,7 +1086,7 @@ class EligibilityChecker
                 if (1 === $i) {
                     $this->eligibilityJob->secondary_insurance = $insurance['insuranceplanname'].'('.$insurance['insurancetype'].')' ?? '';
                     
-                    if (str_contains(strtolower($this->eligibilityJob->secondary_insurance), 'medicare')
+                    if (Illuminate\Support\Str::contains(strtolower($this->eligibilityJob->secondary_insurance), 'medicare')
                     ) {
                         $isEligible = true;
                     }
@@ -1094,7 +1094,7 @@ class EligibilityChecker
                 if (2 === $i) {
                     $this->eligibilityJob->tertiary_insurance = $insurance['insuranceplanname'].'('.$insurance['insurancetype'].')' ?? '';
                     
-                    if (str_contains(strtolower($this->eligibilityJob->tertiary_insurance), 'medicare')
+                    if (Illuminate\Support\Str::contains(strtolower($this->eligibilityJob->tertiary_insurance), 'medicare')
                     ) {
                         $isEligible = true;
                     }
@@ -1125,19 +1125,19 @@ class EligibilityChecker
         $tertiary  = strtolower($record['tertiary_insurance'] ?? null);
         
         //Change none to an empty string
-        if (str_contains($primary, 'none') || empty($primary)) {
+        if (Illuminate\Support\Str::contains($primary, 'none') || empty($primary)) {
             $primary = null;
         }
-        if (str_contains($secondary, ['none', 'no secondary plan']) || empty($secondary)) {
+        if (Illuminate\Support\Str::contains($secondary, ['none', 'no secondary plan']) || empty($secondary)) {
             $secondary = null;
         }
-        if (str_contains($tertiary, ['none', 'no tertiary plan']) || empty($tertiary)) {
+        if (Illuminate\Support\Str::contains($tertiary, ['none', 'no tertiary plan']) || empty($tertiary)) {
             $tertiary = null;
         }
         
         $isEligible = false;
         
-        if (str_contains(strtolower($primary), 'medicare')) {
+        if (Illuminate\Support\Str::contains(strtolower($primary), 'medicare')) {
             $isEligible = true;
         }
         
