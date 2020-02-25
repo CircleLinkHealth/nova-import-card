@@ -7,6 +7,7 @@
 namespace CircleLinkHealth\NurseInvoices;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Customer\Entities\ChargeableService;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
@@ -14,6 +15,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class VariablePayCalculator
 {
@@ -21,6 +23,7 @@ class VariablePayCalculator
     const MONTHLY_TIME_TARGET_2X_IN_SECONDS = 2400;
     const MONTHLY_TIME_TARGET_3X_IN_SECONDS = 3600;
     const MONTHLY_TIME_TARGET_IN_SECONDS = 1200;
+    const MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM = 1800;
 
     /**
      * @var Carbon
@@ -43,13 +46,6 @@ class VariablePayCalculator
      * @var Collection|null
      */
     private $nurseCareRateLogs;
-
-    /**
-     * Cache variable, checks if practice has G2058 code enabled.
-     *
-     * @var array|null
-     */
-    private $practiceCcmPlusEnabled = [];
 
     public function __construct(array $nurseInfoIds, Carbon $startDate, Carbon $endDate)
     {
@@ -78,6 +74,7 @@ class VariablePayCalculator
         $totalPay           = 0.0;
         $visits             = [];
         $bhiVisits          = [];
+        $pcmVisits          = [];
         $ccmPlusAlgoEnabled = $this->isNewNursePayAlgoEnabled();
         $visitFeeBased      = $ccmPlusAlgoEnabled && $this->isNewNursePayAltAlgoEnabledForUser($nurseUserId);
 
@@ -85,6 +82,7 @@ class VariablePayCalculator
             &$totalPay,
             &$visits,
             &$bhiVisits,
+            &$pcmVisits,
             $nurseUserId,
             $nurseInfo,
             $ccmPlusAlgoEnabled,
@@ -115,9 +113,13 @@ class VariablePayCalculator
             if ( ! empty($patientPayCalculation->bhiVisits)) {
                 $bhiVisits[$patientUserId] = $patientPayCalculation->bhiVisits;
             }
+
+            if ( ! empty($patientPayCalculation->pcmVisits)) {
+                $pcmVisits[$patientUserId] = $patientPayCalculation->pcmVisits;
+            }
         });
 
-        return new CalculationResult($ccmPlusAlgoEnabled, $visitFeeBased, $visits, $bhiVisits, $totalPay);
+        return new CalculationResult($ccmPlusAlgoEnabled, $visitFeeBased, $visits, $bhiVisits, $pcmVisits, $totalPay);
     }
 
     public function getForNurses()
@@ -139,15 +141,12 @@ class VariablePayCalculator
         return $this->nurseCareRateLogs;
     }
 
-    private function getEntryForRange($ranges, $index, $nurseInfoId, $newDuration, $successfulCall, $isBehavioral)
+    private function getEntryForRange($ranges, $index, $nurseInfoId, $newDuration, $successfulCall)
     {
-        $type  = $isBehavioral
-            ? 'bhi'
-            : 'ccm';
         $range = $ranges[$index];
         $prev  = null;
         if (array_key_exists($nurseInfoId, $range)) {
-            $prev = $ranges[$index][$nurseInfoId][$type];
+            $prev = $ranges[$index][$nurseInfoId];
         }
 
         $duration          = $newDuration;
@@ -160,22 +159,10 @@ class VariablePayCalculator
             $duration += $prev['duration'];
         }
 
-        $result = [
+        return [
             'duration'            => $duration,
             'has_successful_call' => $hasSuccessfulCall,
         ];
-
-        if ($isBehavioral) {
-            return [
-                'bhi' => $result,
-                'ccm' => $ranges[$index][$nurseInfoId]['ccm'] ?? ['duration' => 0, 'has_successful_call' => 0],
-            ];
-        } else {
-            return [
-                'bhi' => $ranges[$index][$nurseInfoId]['bhi'] ?? ['duration' => 0, 'has_successful_call' => 0],
-                'ccm' => $result,
-            ];
-        }
     }
 
     /**
@@ -191,16 +178,16 @@ class VariablePayCalculator
      * @param $nurseInfoId
      * @param $range
      * @param bool $isBehavioral
+     * @param bool $isPcm
      *
      * @return float
      */
-    private function getNurseTimePercentageAllocationInRange($nurseInfoId, $range, bool $isBehavioral): float
-    {
-        $elqRange = collect($range)->map(function ($r) use ($isBehavioral) {
-            return $isBehavioral
-                ? $r['bhi']
-                : $r['ccm'];
-        });
+    private function getNurseTimePercentageAllocationInRange(
+        $nurseInfoId,
+        $range,
+        bool $isPcm
+    ): float {
+        $elqRange = collect($range);
 
         //only 1 RN, pay the full VF, regardless of calls
         if (1 === $elqRange->count()) {
@@ -216,7 +203,11 @@ class VariablePayCalculator
         //none of them had successful calls
         //or all RNs had successful calls, split the VF proportionally
         if ($filtered->isEmpty() || $elqRange->count() === $filtered->count()) {
-            return $elqRange[$nurseInfoId]['duration'] / self::MONTHLY_TIME_TARGET_IN_SECONDS;
+            $target = $isPcm
+                ? self::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM
+                : self::MONTHLY_TIME_TARGET_IN_SECONDS;
+
+            return $elqRange[$nurseInfoId]['duration'] / $target;
         }
 
         if ( ! $filtered->has($nurseInfoId)) {
@@ -268,15 +259,23 @@ class VariablePayCalculator
 
         /** @var PatientMonthlySummary $patientSummary */
         $patientSummary = $patient->patientSummaryForMonth($this->startDate);
-        if (!$patientSummary) {
+        if ( ! $patientSummary) {
             $month = $this->startDate->toDateString();
             throw new \Exception("Could not find patient summary for user $patientUserId and month $month");
         }
 
         $practiceHasCcmPlus = $this->practiceHasCcmPlusCode($patient->primaryPractice);
-        $totalCcm       = $patientSummary->ccm_time;
-        $totalBhi       = $patientSummary->bhi_time;
-        $ranges         = $this->separateTimeAccruedInRanges($patientCareRateLogs);
+
+        //PCM payment is always Visit Fee based
+        $patientIsPcm = $patient->isPcm();
+        if ( ! $visitFeeBased && $patientIsPcm) {
+            $visitFeeBased = true;
+        }
+
+        $totalCcm = $patientSummary->ccm_time;
+        $totalBhi = $patientSummary->bhi_time;
+        $ranges   = $this->separateTimeAccruedInRanges($patientCareRateLogs);
+
         if ($visitFeeBased) {
             return $this->getPayForPatientWithCcmPlusAltAlgo(
                 $nurseInfo,
@@ -284,7 +283,8 @@ class VariablePayCalculator
                 $totalCcm,
                 $totalBhi,
                 $ranges,
-                $practiceHasCcmPlus
+                $practiceHasCcmPlus,
+                $patientIsPcm
             );
         } else {
             return $this->getPayForPatientWithCcmPlusAlgo(
@@ -329,59 +329,68 @@ class VariablePayCalculator
 
         $nurseInfoId = $nurseInfo->id;
 
-        $rangesForNurseOnly = collect($ranges)->map(function ($r) use ($nurseInfoId) {
-            return array_key_exists($nurseInfoId, $r)
-                ? $r[$nurseInfoId]
-                : [];
-        });
+        $rangesForNurseOnly = collect($ranges)
+            ->map(function ($r) use ($nurseInfoId) {
+                return collect($r)
+                    ->map(function ($rangeType) use ($nurseInfoId) {
+                        return array_key_exists($nurseInfoId, $rangeType)
+                            ? $rangeType[$nurseInfoId]
+                            : [];
+                    })
+                    ->filter();
+            })
+            ->filter();
 
-        $hasSuccessfulCall = $rangesForNurseOnly
+        /** @var Collection $ccmRanges */
+        $ccmRanges = $rangesForNurseOnly['ccm'];
+        /** @var Collection $pcmRanges */
+        $pcmRanges = $rangesForNurseOnly['pcm'];
+        /** @var Collection $bhiRanges */
+        $bhiRanges = $rangesForNurseOnly['bhi'];
+
+        $hasSuccessfulCall = $ccmRanges
             ->filter(function ($f) {
-                if (array_key_exists('ccm', $f)) {
-                    $val = $f['ccm'];
-
-                    if ($val['has_successful_call']) {
-                        return true;
-                    }
-                }
-
-                if (array_key_exists('bhi', $f)) {
-                    $val = $f['bhi'];
-
-                    if ($val['has_successful_call']) {
-                        return true;
-                    }
-                }
-
-                return false;
+                return $f['has_successful_call'];
             })
             ->isNotEmpty();
+        if ( ! $hasSuccessfulCall) {
+            $hasSuccessfulCall = $bhiRanges
+                ->filter(function ($f) {
+                    return $f['has_successful_call'];
+                })->isNotEmpty();
+        }
+        if ( ! $hasSuccessfulCall) {
+            $hasSuccessfulCall = $pcmRanges
+                ->filter(function ($f) {
+                    return $f['has_successful_call'];
+                })
+                ->isNotEmpty();
+        }
 
-        foreach ($rangesForNurseOnly as $key => $value) {
-
-            if (0 === sizeof($value)) {
-                continue;
-            }
-
-            $ccmInRange = $value['ccm'];
-            $ccmPay     = $this->getVariableRatePayForRange($nurseInfo, $key, $ccmInRange, $hasSuccessfulCall,
-                $practiceHasCcmPlus, $totalCcm, false);
-            if ($ccmPay) {
-                if ($ccmPay['rate'] === $nurseInfo->low_rate) {
-                    $lowRates[] = $ccmPay['pay'];
-                } else {
-                    $highRates[] = $ccmPay['pay'];
+        foreach ($rangesForNurseOnly as $rangeType) {
+            foreach ($rangeType as $key => $value) {
+                if (0 === sizeof($value)) {
+                    continue;
                 }
-            }
 
-            $bhiInRange = $value['bhi'];
-            $bhiPay     = $this->getVariableRatePayForRange($nurseInfo, $key, $bhiInRange, $hasSuccessfulCall,
-                $practiceHasCcmPlus, $totalBhi, true);
-            if ($bhiPay) {
-                if ($bhiPay['rate'] === $nurseInfo->low_rate) {
-                    $lowRates[] = $bhiPay['pay'];
-                } else {
-                    $highRates[] = $bhiPay['pay'];
+                if ($key === 'pcm') {
+                    //pcm not supported for this algo
+                    continue;
+                }
+
+                $isBehavioral = $key === 'bhi';
+                $time         = $isBehavioral
+                    ? $totalBhi
+                    : $totalCcm;
+
+                $pay = $this->getVariableRatePayForRange($nurseInfo, $key, $value, $hasSuccessfulCall,
+                    $practiceHasCcmPlus, $time, $isBehavioral);
+                if ($pay) {
+                    if ($pay['rate'] === $nurseInfo->low_rate) {
+                        $lowRates[] = $pay['pay'];
+                    } else {
+                        $highRates[] = $pay['pay'];
+                    }
                 }
             }
         }
@@ -438,8 +447,9 @@ class VariablePayCalculator
      * @param $patientId
      * @param $totalCcm
      * @param $totalBhi
-     * @param $ranges
+     * @param $rangesPerType
      * @param bool $practiceHasCcmPlus
+     * @param bool $isPcmBillable
      *
      * @return PatientPayCalculationResult
      */
@@ -448,55 +458,64 @@ class VariablePayCalculator
         $patientId,
         $totalCcm,
         $totalBhi,
-        $ranges,
-        $practiceHasCcmPlus = false
+        $rangesPerType,
+        bool $practiceHasCcmPlus = false,
+        bool $isPcmBillable = false
     ) {
         $visits    = [];
         $bhiVisits = [];
+        $pcmVisits = [];
 
-        $patientHasAtLeastOneSuccessfulCall = collect($ranges)->filter(function ($f) {
-            return collect($f)->filter(function ($f2) {
-
-                if (array_key_exists('ccm', $f2)) {
-                    if ($f2['ccm']['has_successful_call']) {
-                        return true;
-                    }
-                }
-
-                if (array_key_exists('bhi', $f2)) {
-                    if ($f2['bhi']['has_successful_call']) {
-                        return true;
-                    }
-                }
-
-                return false;
-            })->isNotEmpty();
-        })->isNotEmpty();
+        $patientHasAtLeastOneSuccessfulCall = collect($rangesPerType)
+            ->filter(function ($f) {
+                //$f => ccm, bhi, pc,
+                return collect($f)
+                    ->filter(function ($f2) {
+                        //$f2 => nurse info id
+                        return collect($f2)
+                            ->filter(function ($f3) {
+                                //$f3 => ['has_successful_call', 'duration']
+                                return $f3['has_successful_call'];
+                            })
+                            ->isNotEmpty();
+                    })
+                    ->isNotEmpty();
+            })
+            ->isNotEmpty();
 
         if ( ! $patientHasAtLeastOneSuccessfulCall) {
-            return PatientPayCalculationResult::withVisits($visits, $bhiVisits);
+            return PatientPayCalculationResult::withVisits($visits, $bhiVisits, $pcmVisits);
         }
 
         // CPM-1997
         // If only 1 billable event, the RN(s) with successful call(s) split VF proportionally,
         // any other RNs spending time without a successful call get 0%.
         $noOfBillableEvents = 0;
-        if ($totalCcm >= self::MONTHLY_TIME_TARGET_IN_SECONDS) {
-            $noOfBillableEvents++;
+
+        if ($isPcmBillable) {
+            if ($totalCcm >= self::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM) {
+                $noOfBillableEvents++;
+            }
+        } else {
+            if ($totalCcm >= self::MONTHLY_TIME_TARGET_IN_SECONDS) {
+                $noOfBillableEvents++;
+            }
+            if ($practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS) {
+                $noOfBillableEvents++;
+            }
+            if ($practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS) {
+                $noOfBillableEvents++;
+            }
         }
-        if ($practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS) {
-            $noOfBillableEvents++;
-        }
-        if ($practiceHasCcmPlus && $totalCcm >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS) {
-            $noOfBillableEvents++;
-        }
+
         $isBhiBillable = $totalBhi >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
         if ($isBhiBillable) {
             $noOfBillableEvents++;
         }
 
         if ($noOfBillableEvents === 1) {
-            $pay = $this->getVisitFeePayForOneBillableEvent($nurseInfo, $patientId, $ranges, $isBhiBillable);
+            $pay = $this->getVisitFeePayForOneBillableEvent($nurseInfo, $patientId, $rangesPerType, $isBhiBillable,
+                $isPcmBillable);
             if ( ! $isBhiBillable) {
                 $visits[0] = $pay;
             } else {
@@ -504,38 +523,60 @@ class VariablePayCalculator
             }
         } else {
             //if total ccm is greater than the range, then we can pay that range
-            foreach ($ranges as $key => $value) {
+            foreach ($rangesPerType as $rangeType => $ranges) {
 
-                $ccmPay = $this->getVisitFeePayForRange($nurseInfo, $key, $value, $practiceHasCcmPlus, $totalCcm,
-                    false);
-                if ($ccmPay) {
-                    $visits[$key] = $ccmPay;
-                }
+                $isBehavioral = $rangeType === 'bhi';
+                $time         = $isBehavioral
+                    ? $totalBhi
+                    : $totalCcm;
 
-                $bhiPay = $this->getVisitFeePayForRange($nurseInfo, $key, $value, $practiceHasCcmPlus, $totalBhi,
-                    true);
-                if ($bhiPay) {
-                    $bhiVisits[$key] = $bhiPay;
+                foreach ($ranges as $key => $range) {
+
+                    if (empty($range)) {
+                        continue;
+                    }
+
+                    $pay = $this->getVisitFeePayForRange($nurseInfo, $key, $range, $practiceHasCcmPlus, $time,
+                        $isBehavioral, $isPcmBillable);
+
+                    if ($pay) {
+                        if ($isBehavioral) {
+                            $bhiVisits[$key] = $pay;
+                        } else if ($isPcmBillable) {
+                            $pcmVisits[$key] = $pay;
+                        } else {
+                            $visits[$key] = $pay;
+                        }
+                    }
                 }
             }
         }
 
-        return PatientPayCalculationResult::withVisits($visits, $bhiVisits);
+        return PatientPayCalculationResult::withVisits($visits, $bhiVisits, $pcmVisits);
     }
 
-    private function getVisitFeePayForOneBillableEvent(Nurse $nurseInfo, $patientId, $ranges, $isBehavioral)
-    {
-        $elqRange = collect($ranges)->map(function ($r) use ($isBehavioral) {
-            return collect($r)->map(function ($r2) use ($isBehavioral) {
-                return $isBehavioral
-                    ? $r2['bhi']
-                    : $r2['ccm'];
-            });
-        });
+    private
+    function getVisitFeePayForOneBillableEvent(
+        Nurse $nurseInfo,
+        $patientId,
+        $ranges,
+        $isBehavioral,
+        $isPcm
+    ) {
+        $elqRange = $isBehavioral
+            ? $ranges['bhi']
+            : ($isPcm
+                ? $ranges['pcm']
+                : $ranges['ccm']);
+        $elqRange = collect($elqRange);
 
         // calculate time for each nurse that has a successful call
         $nurseTimes = collect();
-        $elqRange->each(function (Collection $f) use ($nurseTimes) {
+        $elqRange->each(function ($f) use ($nurseTimes) {
+
+            /** @var Collection $f */
+            $f = collect($f);
+
             return $f->each(function ($f2, $key) use ($nurseTimes) {
                 $current = $nurseTimes->get($key, ['duration' => 0, 'has_successful_call' => false]);
                 $nurseTimes->put($key, [
@@ -569,34 +610,43 @@ class VariablePayCalculator
             return 0;
         }
 
-        $nurseTime = $nurseTimes->get($nurseInfo->id, ['duration' => 0, 'has_successful_call' => false])['duration'];
+        $nurseTime = $nurseTimes->get($nurseInfo->id,
+            ['duration' => 0, 'has_successful_call' => false])['duration'];
 
         return ($nurseTime / $sumOfAllTime) * $nurseInfo->visit_fee;
     }
 
-    private function getVisitFeePayForRange(
+    private
+    function getVisitFeePayForRange(
         Nurse $nurseInfo,
         $rangeKey,
         $range,
         bool $practiceHasCcmPlus,
         $totalTime,
-        bool $isBehavioral
+        bool $isBehavioral,
+        bool $isPcm
     ) {
         $rate = 0.0;
 
         switch ($rangeKey) {
             case 0:
-                if ($totalTime >= self::MONTHLY_TIME_TARGET_IN_SECONDS) {
-                    $rate = $nurseInfo->visit_fee;
+                if ($isPcm) {
+                    if ($totalTime >= self::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM) {
+                        $rate = $nurseInfo->visit_fee;
+                    }
+                } else {
+                    if ($totalTime >= self::MONTHLY_TIME_TARGET_IN_SECONDS) {
+                        $rate = $nurseInfo->visit_fee;
+                    }
                 }
                 break;
             case 1:
-                if ( ! $isBehavioral && $practiceHasCcmPlus && $totalTime >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS) {
+                if ( ! ($isPcm || $isBehavioral) && $practiceHasCcmPlus && $totalTime >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS) {
                     $rate = $nurseInfo->visit_fee_2;
                 }
                 break;
             case 2:
-                if ( ! $isBehavioral && $practiceHasCcmPlus && $totalTime >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS) {
+                if ( ! ($isPcm || $isBehavioral) && $practiceHasCcmPlus && $totalTime >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS) {
                     $rate = $nurseInfo->visit_fee_3;
                 }
                 break;
@@ -609,7 +659,7 @@ class VariablePayCalculator
         }
 
         $nurseCcmPercentageInRange = $this->getNurseTimePercentageAllocationInRange($nurseInfo->id, $range,
-            $isBehavioral);
+            $isPcm);
         if (0 === $nurseCcmPercentageInRange) {
             return null;
         }
@@ -623,7 +673,8 @@ class VariablePayCalculator
      *
      * @return PatientPayCalculationResult
      */
-    private function getPayForPatientWithDefaultAlgo(
+    private
+    function getPayForPatientWithDefaultAlgo(
         Nurse $nurseInfo,
         Collection $patientCareRateLogs
     ) {
@@ -645,13 +696,16 @@ class VariablePayCalculator
         return PatientPayCalculationResult::withHighLowRates($highRates, $lowRates);
     }
 
-    private function isNewNursePayAlgoEnabled()
+    private
+    function isNewNursePayAlgoEnabled()
     {
         return NurseCcmPlusConfig::enabledForAll();
     }
 
-    private function isNewNursePayAltAlgoEnabledForUser($nurseUserId)
-    {
+    private
+    function isNewNursePayAltAlgoEnabledForUser(
+        $nurseUserId
+    ) {
         if (NurseCcmPlusConfig::altAlgoEnabledForAll()) {
             return true;
         }
@@ -664,54 +718,95 @@ class VariablePayCalculator
         return false;
     }
 
-    private function practiceHasCcmPlusCode(Practice $practice)
-    {
-        if (array_key_exists($practice->id, $this->practiceCcmPlusEnabled)) {
-            return $this->practiceCcmPlusEnabled[$practice->id];
-        }
-        $this->practiceCcmPlusEnabled[$practice->id] = $practice->hasCCMPlusServiceCode();
-
-        return $this->practiceCcmPlusEnabled[$practice->id];
+    private
+    function practiceHasCcmPlusCode(
+        Practice $practice
+    ) {
+        return Cache::store('array')->rememberForever("ccm_plus_$practice->id", function () use ($practice) {
+            return $practice->hasCCMPlusServiceCode();
+        });
     }
 
-    private function separateTimeAccruedInRanges(Collection $patientCareRateLogs)
-    {
+    private
+    function practiceHasPcmPlusCode(
+        Practice $practice
+    ) {
+        return Cache::store('array')->rememberForever("pcm_$practice->id", function () use ($practice) {
+            return $practice->hasServiceCode(ChargeableService::PCM);
+        });
+    }
+
+    private
+    function separateTimeAccruedInRanges(
+        Collection $patientCareRateLogs,
+        bool $isPcm = false
+    ) {
         /**
+         * CCM (ccm plus)
          * 0 => 0-20
          * 1 => 20-40
          * 2 => 40-60
          * 3 => 60+.
          */
-        $ranges = [
+        $ccmRanges = [
             0 => [],
             1 => [],
             2 => [],
             3 => [],
         ];
 
-        $patientCareRateLogs->each(function ($e) use (&$ranges) {
-            $nurseInfoId     = $e['nurse_id'];
-            $isSuccssfulCall = $e['is_successful_call'];
-            $isBehavioral    = $e['is_behavioral'];
-            $duration        = $e['increment'];
-            $totalTimeBefore = $e['time_before'];
-            $totalTimeAfter  = $totalTimeBefore + $duration;
+        /**
+         * BHI
+         * 0 => 0-20
+         * 1 => 20+
+         */
+        $bhiRanges = [
+            0 => [],
+            1 => [],
+        ];
 
+        /**
+         * PCM
+         * 0 => 0-30
+         * 1 => 30+
+         */
+        $pcmRanges = [
+            0 => [],
+            1 => [],
+        ];
+
+
+        $patientCareRateLogs->each(function ($e) use (&$ccmRanges, &$pcmRanges, &$bhiRanges, $isPcm) {
+            $nurseInfoId      = $e['nurse_id'];
+            $isSuccessfulCall = $e['is_successful_call'];
+            $isBehavioral     = $e['is_behavioral'];
+            $duration         = $e['increment'];
+            $totalTimeBefore  = $e['time_before'];
+            $totalTimeAfter   = $totalTimeBefore + $duration;
+
+            //ccm + bhi
             $add_to_accrued_towards_20 = 0;
             $add_to_accrued_after_20   = 0;
             $add_to_accrued_after_40   = 0;
             $add_to_accrued_after_60   = 0;
 
+            //pcm
+            $add_to_accrued_towards_30 = 0;
+            $add_to_accrued_after_30   = 0;
+
             //patient was above target before storing activity
             $was_above_20 = $totalTimeBefore >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
+            $was_above_30 = $totalTimeBefore >= self::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM;
             $was_above_40 = $totalTimeBefore >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
             $was_above_60 = $totalTimeBefore >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS;
 
             //patient went above target after activity
             $is_above_20 = $totalTimeAfter >= self::MONTHLY_TIME_TARGET_IN_SECONDS;
+            $is_above_30 = $totalTimeAfter >= self::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM;
             $is_above_40 = $totalTimeAfter >= self::MONTHLY_TIME_TARGET_2X_IN_SECONDS;
             $is_above_60 = $totalTimeAfter >= self::MONTHLY_TIME_TARGET_3X_IN_SECONDS;
 
+            //ccm + bhi
             if ($was_above_60) {
                 $add_to_accrued_after_60 = $duration;
             } elseif ($was_above_40) {
@@ -737,52 +832,100 @@ class VariablePayCalculator
                 }
             }
 
-            if ($add_to_accrued_towards_20) {
-                $ranges[0][$nurseInfoId] = $this->getEntryForRange(
-                    $ranges,
+            if ( ! $isBehavioral && $isPcm) {
+                if ($was_above_30) {
+                    $add_to_accrued_after_30 = $duration;
+                } else {
+                    if ($is_above_30) {
+                        $add_to_accrued_after_30   = $totalTimeAfter - self::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM;
+                        $add_to_accrued_towards_30 = self::MONTHLY_TIME_TARGET_IN_SECONDS_FOR_PCM - $totalTimeBefore;
+                    } else {
+                        $add_to_accrued_towards_30 = $duration;
+                    }
+                }
+            }
+
+            $var = 'ccmRanges';
+            if ($isBehavioral) {
+                $var = 'bhiRanges';
+            } else if ($isPcm) {
+                $var = 'pcmRanges';
+            }
+
+            // we can have ccm only, pcm only, bhi only
+            // ccm + bhi, pcm + bhi, but we cannot have ccm + pcm
+            if (($isPcm && $isBehavioral || ! $isPcm) && $add_to_accrued_towards_20) {
+                ${$var}[0][$nurseInfoId] = $this->getEntryForRange(
+                    ${$var},
                     0,
                     $nurseInfoId,
                     $add_to_accrued_towards_20,
-                    $isSuccssfulCall,
-                    $isBehavioral
+                    $isSuccessfulCall
                 );
             }
 
-            if ($add_to_accrued_after_20) {
-                $ranges[1][$nurseInfoId] = $this->getEntryForRange(
-                    $ranges,
+            if (($isPcm && $isBehavioral || ! $isPcm) && $add_to_accrued_after_20) {
+                ${$var}[1][$nurseInfoId] = $this->getEntryForRange(
+                    ${$var},
                     1,
                     $nurseInfoId,
                     $add_to_accrued_after_20,
-                    $isSuccssfulCall,
-                    $isBehavioral
+                    $isSuccessfulCall
                 );
             }
 
-            if ($add_to_accrued_after_40) {
-                $ranges[2][$nurseInfoId] = $this->getEntryForRange(
-                    $ranges,
-                    2,
+            if (($isPcm && $isBehavioral || ! $isPcm) && $add_to_accrued_after_40) {
+                $index                        = $isBehavioral
+                    ? 1
+                    : 2;
+                ${$var}[$index][$nurseInfoId] = $this->getEntryForRange(
+                    ${$var},
+                    $index,
                     $nurseInfoId,
                     $add_to_accrued_after_40,
-                    $isSuccssfulCall,
-                    $isBehavioral
+                    $isSuccessfulCall
                 );
             }
 
-            if ($add_to_accrued_after_60) {
-                $ranges[3][$nurseInfoId] = $this->getEntryForRange(
-                    $ranges,
-                    3,
+            if (($isPcm && $isBehavioral || ! $isPcm) && $add_to_accrued_after_60) {
+                $index                        = $isBehavioral
+                    ? 1
+                    : 3;
+                ${$var}[$index][$nurseInfoId] = $this->getEntryForRange(
+                    ${$var},
+                    $index,
                     $nurseInfoId,
                     $add_to_accrued_after_60,
-                    $isSuccssfulCall,
-                    $isBehavioral
+                    $isSuccessfulCall
+                );
+            }
+
+            if ($isPcm && ! $isBehavioral && $add_to_accrued_towards_30) {
+                ${$var}[0][$nurseInfoId] = $this->getEntryForRange(
+                    ${$var},
+                    0,
+                    $nurseInfoId,
+                    $add_to_accrued_towards_30,
+                    $isSuccessfulCall
+                );
+            }
+
+            if ($isPcm && ! $isBehavioral && $add_to_accrued_after_30) {
+                ${$var}[1][$nurseInfoId] = $this->getEntryForRange(
+                    ${$var},
+                    1,
+                    $nurseInfoId,
+                    $add_to_accrued_after_30,
+                    $isSuccessfulCall
                 );
             }
         });
 
-        return $ranges;
+        return [
+            'ccm' => $ccmRanges,
+            'bhi' => $bhiRanges,
+            'pcm' => $pcmRanges,
+        ];
     }
 }
 
@@ -800,6 +943,9 @@ class CalculationResult
     /** @var array $bhiVisits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay] */
     public $bhiVisits;
 
+    /** @var array $pcmVisits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay] */
+    public $pcmVisits;
+
     /** @var int Indicates number of visits in case {@link $altAlgoEnabled} is true */
     public $visitsCount;
 
@@ -811,17 +957,20 @@ class CalculationResult
         bool $altAlgoEnabled,
         array $visits,
         array $bhiVisits,
+        array $pcmVisits,
         float $totalPay
     ) {
         $this->ccmPlusAlgoEnabled = $ccmPlusAlgoEnabled;
         $this->altAlgoEnabled     = $altAlgoEnabled;
         $this->visits             = $visits;
         $this->bhiVisits          = $bhiVisits;
+        $this->pcmVisits          = $pcmVisits;
 
         // 1. Flatten list of visits -> so list of visits per patient changes to list of visits
         // 2. Filter out entries with 0 -> visits that resulted in 0 compensation; probably cz of ccm time but no call, but call from other care coach
         $this->visitsCount = collect($visits)->flatten()->filter()->count();
         $this->visitsCount += collect($bhiVisits)->flatten()->filter()->count();
+        $this->visitsCount += collect($pcmVisits)->flatten()->filter()->count();
 
         $this->totalPay = $totalPay;
     }
@@ -835,6 +984,9 @@ class PatientPayCalculationResult
 
     /** @var array In case of visit fee payment, [range(key), payment(value)] */
     public $bhiVisits;
+
+    /** @var array In case of visit fee payment, [range(key), payment(value)] */
+    public $pcmVisits;
 
     /** @var array In case of variable pay payment, array of high rate payments */
     public $highRates;
@@ -850,16 +1002,17 @@ class PatientPayCalculationResult
      *
      * @param array $visits
      */
-    public function __construct()
+    private function __construct()
     {
 
     }
 
-    public static function withVisits(array $visits, array $bhiVisits)
+    public static function withVisits(array $visits, array $bhiVisits, array $pcmVisits)
     {
         $instance            = new self();
         $instance->visits    = $visits;
         $instance->bhiVisits = $bhiVisits;
+        $instance->pcmVisits = $pcmVisits;
         $instance->pay       = collect($visits)->sum() + collect($bhiVisits)->sum();
 
         return $instance;
