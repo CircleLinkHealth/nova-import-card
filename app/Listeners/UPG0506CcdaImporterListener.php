@@ -33,11 +33,12 @@ class UPG0506CcdaImporterListener
      */
     public function handle(CcdaImported $event)
     {
-        if ($this->shouldBail($event->ccda)) {
+        $ccda = Ccda::findOrFail($event->ccdaId);
+        if ($this->shouldBail($ccda)) {
             return;
         }
 
-        Media::where('model_type', Ccda::class)->where('model_id', $event->ccda->id)->chunkById(
+        Media::where('model_type', Ccda::class)->where('model_id', $ccda->id)->chunkById(
             10,
             function ($medias) {
                 $medias->each(
