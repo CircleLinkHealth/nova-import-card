@@ -114,11 +114,11 @@
             },
             problemsToAttest() {
 
-                let problemsToAttest = (this.problems ? this.problems : []).filter(function (p) {
+                let problemsToAttest = (this.problems || []).filter(function (p) {
                     return !!p.code;
                 });
                 //do not show BHI problems when on Approve Billable Patients Page
-                return this.isNotesPage ? problemsToAttest : problemsToAttest.filter(function (p) {
+                return this.isNotesPage ? problemsToAttest : (problemsToAttest || []).filter(function (p) {
                     return !p.is_behavioral;
                 });
             },
