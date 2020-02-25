@@ -173,7 +173,7 @@
     "pusher/pusher-php-server": "^4.0",
     "seld/jsonlint": "^1.7",
     "setasign/fpdi-fpdf": "^2.2",
-    "sentry/sentry-laravel": "1.6.1",
+    "sentry/sentry-laravel": "1.6.2",
     "sparclex/nova-import-card": "^2.0",
     "spatie/laravel-medialibrary": "^7.0.0",
     "spatie/laravel-view-models": "^1.1",
