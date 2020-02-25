@@ -18,18 +18,18 @@ class CcdaImported
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     /**
-     * @var Ccda
+     * @var int
      */
-    public $ccda;
+    public $ccdaId;
     
     /**
      * CcdaImported constructor.
      *
-     * @param Ccda $ccda
+     * @param int $ccdaId
      */
-    public function __construct(Ccda $ccda)
+    public function __construct(int $ccdaId)
     {
-        $this->ccda = $ccda;
+        $this->ccdaId = $ccdaId;
     }
     
     /**
