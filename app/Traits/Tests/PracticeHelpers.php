@@ -10,13 +10,13 @@ use CircleLinkHealth\Customer\Entities\Practice;
 
 trait PracticeHelpers
 {
-    private function setupPractice(
+    private function setupExistingPractice(
+        Practice $practice,
         bool $addCcmService = false,
         bool $addCcmPlusServices = false,
         bool $addBhiService = false,
         bool $addPcmService = false
-    ): Practice {
-        $practice       = factory(Practice::class)->create();
+    ) {
         $this->location = Location::firstOrCreate([
             'practice_id' => $practice->id,
         ]);
@@ -48,5 +48,17 @@ trait PracticeHelpers
         $practice->chargeableServices()->sync($sync);
 
         return $practice;
+    }
+
+    private function setupPractice(
+        bool $addCcmService = false,
+        bool $addCcmPlusServices = false,
+        bool $addBhiService = false,
+        bool $addPcmService = false
+    ): Practice {
+        $practice = factory(Practice::class)->create();
+
+        return $this->setupExistingPractice($practice, $addCcmService, $addCcmPlusServices, $addBhiService,
+            $addPcmService);
     }
 }
