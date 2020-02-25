@@ -308,7 +308,7 @@ class NoteService
 
                     $a['url'] = $media->getUrl();
                     $a['file_name'] = $media->file_name;
-                    $a['is_image'] = str_contains($media->mime_type, 'image')
+                    $a['is_image'] = Illuminate\Support\Str::contains($media->mime_type, 'image')
                         ?: false;
 
                     $email['attachments'][] = $a;

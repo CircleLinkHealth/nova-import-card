@@ -35,10 +35,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Addendum query()
+ *
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count

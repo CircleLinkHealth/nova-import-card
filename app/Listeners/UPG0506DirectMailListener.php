@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Listeners;
 
 use App\DirectMailMessage;
@@ -25,13 +29,12 @@ class UPG0506DirectMailListener implements ShouldQueue
      */
     public function __construct()
     {
-        //
     }
 
     /**
      * Handle the event.
      *
-     * @param  object $event
+     * @param object $event
      *
      * @return void
      */
@@ -46,9 +49,9 @@ class UPG0506DirectMailListener implements ShouldQueue
         }
     }
 
-    private function shouldBail(string $sender)
+    private function getG0506Pdf(int $dmId): ?Media
     {
-        return ! str_contains($sender, '@upg.ssdirect.aprima.com') || ! upg0506IsEnabled();
+        return $this->mediaAttachmentCollectionQuery($dmId)->first();
     }
 
     private function hasG0506Pdf(int $dmId): bool
@@ -58,13 +61,10 @@ class UPG0506DirectMailListener implements ShouldQueue
 
     private function mediaAttachmentCollectionQuery(int $dmId)
     {
-        return $this->mediaQuery(DirectMailMessage::class, $dmId)->where('collection_name',
-            Pdf::mediaCollectionNameFactory($dmId));
-    }
-
-    private function getG0506Pdf(int $dmId): ? Media
-    {
-        return $this->mediaAttachmentCollectionQuery($dmId)->first();
+        return $this->mediaQuery(DirectMailMessage::class, $dmId)->where(
+            'collection_name',
+            Pdf::mediaCollectionNameFactory($dmId)
+        );
     }
 
     private function mediaQuery(string $modelType, int $modelId)
@@ -75,7 +75,6 @@ class UPG0506DirectMailListener implements ShouldQueue
     private function parseAndUpdatePdfMedia(int $dmId)
     {
         $pdf = $this->getG0506Pdf($dmId);
-
 
         $filePath = storage_path($pdf->file_name);
         file_put_contents($filePath, $pdf->getFile());
@@ -95,5 +94,10 @@ class UPG0506DirectMailListener implements ShouldQueue
         }
 
         unlink($filePath);
+    }
+
+    private function shouldBail(string $sender)
+    {
+        return ! Illuminate\Support\Str::contains($sender, '@upg.ssdirect.aprima.com') || ! upg0506IsEnabled();
     }
 }

@@ -1,56 +1,49 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\UPG\ValueObjects;
 
-
 class PdfCarePlan
 {
-    protected $providers;
-
     protected $chargeableServices;
 
     protected $data;
+    protected $providers;
 
     public function __construct($data)
     {
         $this->data = $data;
     }
 
-    /**
-     * Data need some processing after being parsed from pdf
-     */
-    private function preProcessData()
+    public function toArray()
     {
-        $this->data = [
-            'first_name'          => isset($this->data['first_name'])
-                ? $this->data['first_name']
-                : 'N/A',
-            'last_name'           => isset($this->data['last_name'])
-                ? $this->data['last_name']
-                : 'N/A',
-            //throw exception if mrn does not exist?
-            'patient_id'                 => isset($this->data['mrn'])
-                ? $this->data['mrn']
-                : 'N/A',
-            'date_of_birth'                 => isset($this->data['dob'])
-                ? $this->data['dob']
-                : 'N/A',
-            'gender'                 => isset($this->data['sex'])
-                ? $this->data['sex']
-                : 'N/A',
-            'visit_date'          => isset($this->data['visit_date'])
-                ? $this->data['visit_date']
-                : 'N/A',
-            'address'             => $this->getAddresses(),
-            'phones'              => $this->getPhones(),
-            //with instructions
-            'problems'            => $this->getProblemsWithInstructions(),
-            'chargeable_services' => $this->getChargeableServices(),
-            'provider'            => $this->getProvider(),
+        $this->preProcessData();
+
+        return [
+            'type'         => 'upg0506-pdf-care-plan',
+            'document'     => $this->fillDocumentSection(),
+            'allergies'    => [],
+            'demographics' => $this->fillDemographicsSection(),
+            'medications'  => [],
+            'payers'       => [
+            ],
+            'problems' => $this->fillProblemsSection(),
+            'vitals'   => [],
+            //add problems with instructions array. Template ['name' => problem name, 'value' => instruction]
+            'instructions'        => $this->data['problems'],
+            'chargeable_services' => $this->data['chargeable_services'],
+            'is_g0506'            => Illuminate\Support\Str::contains(collect($this->data['chargeable_services'])->transform(function ($cs) {
+                return isset($cs['subject']) ? $cs['subject'] : '';
+            })->filter()->implode(' '), 'G0506') ? 'true' : 'false',
         ];
+    }
+
+    public function toJson()
+    {
+        return json_encode($this->toArray());
     }
 
     private function fillDemographicsSection()
@@ -144,28 +137,100 @@ class PdfCarePlan
         ];
     }
 
-    public function toArray()
+    private function fillDocumentSection()
     {
-        $this->preProcessData();
-
         return [
-            'type'         => 'upg0506-pdf-care-plan',
-            'document'     => $this->fillDocumentSection(),
-            'allergies'    => [],
-            'demographics' => $this->fillDemographicsSection(),
-            'medications'  => [],
-            'payers'       => [
+            'custodian' => [
+                'name' => isset($this->data['provider']['full_name']) ? $this->data['provider']['full_name'] : '',
             ],
-            'problems'     => $this->fillProblemsSection(),
-            'vitals'       => [],
-            //add problems with instructions array. Template ['name' => problem name, 'value' => instruction]
-            'instructions' => $this->data['problems'],
-            'chargeable_services' => $this->data['chargeable_services'],
-            'is_g0506' => str_contains(collect($this->data['chargeable_services'])->transform(function ($cs) {
-                return isset($cs['subject']) ? $cs['subject'] : '';
-            })->filter()->implode(' '), 'G0506') ? 'true': 'false'
+            'date'   => '',
+            'title'  => '',
+            'author' => [
+                'npi'  => '',
+                'name' => [
+                    'prefix' => null,
+                    'given'  => [],
+                    'family' => null,
+                    'suffix' => null,
+                ],
+                'address' => [
+                    'street' => [
+                        0 => '',
+                    ],
+                    'city'    => '',
+                    'state'   => '',
+                    'zip'     => '',
+                    'country' => '',
+                ],
+                'phones' => [
+                    0 => [
+                        'type'   => '',
+                        'number' => '',
+                    ],
+                ],
+            ],
+            'documentation_of' => [
+                0 => [
+                    'provider_id' => null,
+                    'name'        => [
+                        'prefix' => null,
+                        'given'  => [
+                            0 => isset($this->data['provider']['full_name']) ? $this->data['provider']['full_name'] : '',
+                        ],
+                        'family' => '',
+                        'suffix' => '',
+                    ],
+                    'phones' => [
+                        0 => [
+                            'type'   => '',
+                            'number' => '',
+                        ],
+                    ],
+                    'address' => [
+                        'street' => [
+                            0 => '',
+                        ],
+                        'city'    => '',
+                        'state'   => '',
+                        'zip'     => '',
+                        'country' => '',
+                    ],
+                ],
+            ],
+            'legal_authenticator' => [
+                'date'            => null,
+                'ids'             => [],
+                'assigned_person' => [
+                    'prefix' => null,
+                    'given'  => [],
+                    'family' => null,
+                    'suffix' => null,
+                ],
+                'representedOrganization' => [
+                    'ids'     => [],
+                    'name'    => null,
+                    'phones'  => [],
+                    'address' => [
+                        'street'  => [],
+                        'city'    => null,
+                        'state'   => null,
+                        'zip'     => null,
+                        'country' => null,
+                    ],
+                ],
+            ],
+            'location' => [
+                'name'    => null,
+                'address' => [
+                    'street'  => [],
+                    'city'    => null,
+                    'state'   => null,
+                    'zip'     => null,
+                    'country' => null,
+                ],
+                'encounter_date' => null,
+            ],
         ];
-
     }
 
     private function fillProblemsSection()
@@ -205,107 +270,6 @@ class PdfCarePlan
             ->toArray();
     }
 
-    private function fillDocumentSection()
-    {
-        return [
-            'custodian'           => [
-                'name' => isset($this->data['provider']['full_name']) ? $this->data['provider']['full_name'] : '',
-            ],
-            'date'                => '',
-            'title'               => '',
-            'author'              => [
-                'npi'     => '',
-                'name'    => [
-                    'prefix' => null,
-                    'given'  => [],
-                    'family' => null,
-                    'suffix' => null,
-                ],
-                'address' => [
-                    'street'  => [
-                        0 => '',
-                    ],
-                    'city'    => '',
-                    'state'   => '',
-                    'zip'     => '',
-                    'country' => '',
-                ],
-                'phones'  => [
-                    0 => [
-                        'type'   => '',
-                        'number' => '',
-                    ],
-                ],
-            ],
-            'documentation_of'    => [
-                0 => [
-                    'provider_id' => null,
-                    'name'        => [
-                        'prefix' => null,
-                        'given'  => [
-                            0 => isset($this->data['provider']['full_name']) ? $this->data['provider']['full_name'] : '',
-                        ],
-                        'family' => '',
-                        'suffix' => '',
-                    ],
-                    'phones'      => [
-                        0 => [
-                            'type'   => '',
-                            'number' => '',
-                        ],
-                    ],
-                    'address'     => [
-                        'street'  => [
-                            0 => '',
-                        ],
-                        'city'    => '',
-                        'state'   => '',
-                        'zip'     => '',
-                        'country' => '',
-                    ],
-                ],
-            ],
-            'legal_authenticator' => [
-                'date'                    => null,
-                'ids'                     => [],
-                'assigned_person'         => [
-                    'prefix' => null,
-                    'given'  => [],
-                    'family' => null,
-                    'suffix' => null,
-                ],
-                'representedOrganization' => [
-                    'ids'     => [],
-                    'name'    => null,
-                    'phones'  => [],
-                    'address' => [
-                        'street'  => [],
-                        'city'    => null,
-                        'state'   => null,
-                        'zip'     => null,
-                        'country' => null,
-                    ],
-                ],
-            ],
-            'location'            => [
-                'name'           => null,
-                'address'        => [
-                    'street'  => [],
-                    'city'    => null,
-                    'state'   => null,
-                    'zip'     => null,
-                    'country' => null,
-                ],
-                'encounter_date' => null,
-            ],
-        ];
-    }
-
-    public function toJson()
-    {
-        return json_encode($this->toArray());
-    }
-
     private function getAddresses()
     {
         //categorize state, zip?
@@ -314,12 +278,55 @@ class PdfCarePlan
             : 'N/A';
     }
 
+    private function getChargeableServices()
+    {
+        $chargeableServices = [];
+
+        if (isset($this->data['chargeable_services'])) {
+            $currentChargeableService = [];
+            foreach ($this->data['chargeable_services'] as $string) {
+                if (strlen($string) === strlen(trim($string))) {
+                    if (isset($currentChargeableService['title'])) {
+                        $chargeableServices[]     = $currentChargeableService;
+                        $currentChargeableService = [];
+                    }
+
+                    if (Illuminate\Support\Str::contains(collect($chargeableServices)->transform(function ($cs) {
+                        return isset($cs['provider']) ? $cs['provider'] : 'N/A';
+                    })->implode(' '), explode(' ', $string))) {
+                        $this->providers['primary'] = $string;
+                        continue;
+                    }
+                    $currentChargeableService['title'] = $string;
+                } else {
+                    $array = explode(':', $string);
+
+                    if (2 == count($array)) {
+                        $key   = snake_case(strtolower(trim($array[0])));
+                        $value = trim($array[1]);
+
+                        if ('subject' == $key) {
+                            $currentChargeableService['is_g0506'] = Illuminate\Support\Str::contains(strtolower($value), 'g0506');
+                        }
+
+                        $currentChargeableService[$key] = $value;
+                    }
+                }
+            }
+            $chargeableServices[] = $currentChargeableService;
+
+            return $this->chargeableServices = collect($chargeableServices)->filter()->toArray();
+        }
+
+        return [];
+    }
+
     private function getPhones()
     {
         $types = [
             [
-                'key' => 'primary_phone',
-                'search' => 'Primary:'
+                'key'    => 'primary_phone',
+                'search' => 'Primary:',
             ],
             [
                 'key'    => 'home_phone',
@@ -339,18 +346,14 @@ class PdfCarePlan
         //format and categorize phones
         if (isset($this->data['phones'])) {
             foreach ($this->data['phones'] as $string) {
-
-                foreach ($types as $type){
-                    if (! isset($phones[$type['key']]) || empty($phones[$type['key']])){
+                foreach ($types as $type) {
+                    if ( ! isset($phones[$type['key']]) || empty($phones[$type['key']])) {
                         $phones[$type['key']] = null;
-                        if (str_contains($string, $type['search'])) {
+                        if (Illuminate\Support\Str::contains($string, $type['search'])) {
                             $phones[$type['key']] = trim(str_replace($type['search'], ' ', $string));
                         }
                     }
-
                 }
-
-
             }
 
             return $phones;
@@ -373,7 +376,7 @@ class PdfCarePlan
                     }
 
                     $problemsWithInstructions[] = [
-                        'name' => $problemName,
+                        'name'         => $problemName,
                         'instructions' => isset($instructionsString)
                             ? $instructionsString
                             : 'N/A',
@@ -410,10 +413,10 @@ class PdfCarePlan
                         ? $primaryProvider[2]
                         : null;
 
-                    $fullName = $provider['first_name'] . ' ' . $provider['last_name'];
+                    $fullName = $provider['first_name'].' '.$provider['last_name'];
 
                     $provider['full_name'] = $provider['suffix']
-                        ? $fullName . ' ' . $provider['suffix']
+                        ? $fullName.' '.$provider['suffix']
                         : $fullName;
                 }
             }
@@ -422,46 +425,37 @@ class PdfCarePlan
         return $provider;
     }
 
-    private function getChargeableServices()
+    /**
+     * Data need some processing after being parsed from pdf.
+     */
+    private function preProcessData()
     {
-        $chargeableServices = [];
-
-        if (isset($this->data['chargeable_services'])) {
-            $currentChargeableService = [];
-            foreach ($this->data['chargeable_services'] as $string) {
-                if (strlen($string) === strlen(trim($string))) {
-                    if (isset($currentChargeableService['title'])) {
-                        $chargeableServices[]     = $currentChargeableService;
-                        $currentChargeableService = [];
-                    }
-
-                    if (str_contains(collect($chargeableServices)->transform(function ($cs) {
-                        return isset($cs['provider']) ? $cs['provider'] : 'N/A';
-                    })->implode(' '), explode(' ', $string))) {
-                        $this->providers['primary'] = $string;
-                        continue;
-                    }
-                    $currentChargeableService['title'] = $string;
-                } else {
-                    $array = explode(':', $string);
-
-                    if (count($array) == 2) {
-                        $key   = snake_case(strtolower(trim($array[0])));
-                        $value = trim($array[1]);
-
-                        if ($key == 'subject') {
-                            $currentChargeableService['is_g0506'] = str_contains(strtolower($value), 'g0506');
-                        }
-
-                        $currentChargeableService[$key] = $value;
-                    }
-                }
-            }
-            $chargeableServices[] = $currentChargeableService;
-
-            return $this->chargeableServices = collect($chargeableServices)->filter()->toArray();
-        }
-
-        return [];
+        $this->data = [
+            'first_name' => isset($this->data['first_name'])
+                ? $this->data['first_name']
+                : 'N/A',
+            'last_name' => isset($this->data['last_name'])
+                ? $this->data['last_name']
+                : 'N/A',
+            //throw exception if mrn does not exist?
+            'patient_id' => isset($this->data['mrn'])
+                ? $this->data['mrn']
+                : 'N/A',
+            'date_of_birth' => isset($this->data['dob'])
+                ? $this->data['dob']
+                : 'N/A',
+            'gender' => isset($this->data['sex'])
+                ? $this->data['sex']
+                : 'N/A',
+            'visit_date' => isset($this->data['visit_date'])
+                ? $this->data['visit_date']
+                : 'N/A',
+            'address' => $this->getAddresses(),
+            'phones'  => $this->getPhones(),
+            //with instructions
+            'problems'            => $this->getProblemsWithInstructions(),
+            'chargeable_services' => $this->getChargeableServices(),
+            'provider'            => $this->getProvider(),
+        ];
     }
 }

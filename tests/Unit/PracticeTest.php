@@ -29,7 +29,7 @@ class PracticeTest extends TestCase
         $this->assertCount(3, $array);
 
         foreach ($array as $item) {
-            $this->assertFalse(str_contains($item, [' ']));
+            $this->assertFalse(Illuminate\Support\Str::contains($item, [' ']));
         }
     }
 }

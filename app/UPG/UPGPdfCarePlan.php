@@ -1,34 +1,32 @@
 <?php
+
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\UPG;
 
-
 use App\UPG\ValueObjects\PdfCarePlan;
 use Carbon\Carbon;
 use setasign\Fpdi\Fpdi;
 use Spatie\PdfToText\Pdf;
 
-
 class UPGPdfCarePlan
 {
-    protected $fileName;
-
-    protected $processedFileName;
-
-    protected $string;
+    protected $array;
 
     protected $carePlan = [];
 
     protected $checkpoints;
 
-    protected $currentCheckpoint = 0;
-
     protected $count = 0;
 
-    protected $array;
+    protected $currentCheckpoint = 0;
+    protected $fileName;
+
+    protected $processedFileName;
+
+    protected $string;
 
     public function __construct($fileName)
     {
@@ -36,8 +34,15 @@ class UPGPdfCarePlan
         $this->checkpoints = $this->setCheckpoints();
     }
 
+    public function read()
+    {
+        return $this
+            ->getText()
+            ->parseString();
+    }
+
     /**
-     * Checkpoints are sections of the pdf. The system will read each string of the pdf and perform operations depending on which section (marked by a checkpoint) is reading
+     * Checkpoints are sections of the pdf. The system will read each string of the pdf and perform operations depending on which section (marked by a checkpoint) is reading.
      *
      * @return array
      */
@@ -48,7 +53,7 @@ class UPGPdfCarePlan
                 'search'   => 'First Name:',
                 'key'      => 'first_name',
                 'callback' => function ($string) {
-                    if (! empty($string)){
+                    if ( ! empty($string)) {
                         $this->carePlan['first_name'] = ucwords(strtolower($string));
                     }
                 },
@@ -57,7 +62,7 @@ class UPGPdfCarePlan
                 'search'   => 'Last Name:',
                 'key'      => 'last_name',
                 'callback' => function ($string) {
-                    if (! empty($string)) {
+                    if ( ! empty($string)) {
                         $this->carePlan['last_name'] = ucwords(strtolower($string));
                     }
                 },
@@ -66,7 +71,7 @@ class UPGPdfCarePlan
                 'search'   => 'Visit Date:',
                 'key'      => 'visit_date',
                 'callback' => function ($string) {
-                    if (! empty($string)) {
+                    if ( ! empty($string)) {
                         $this->carePlan['visit_date'] = Carbon::parse($string);
                     }
                 },
@@ -75,7 +80,7 @@ class UPGPdfCarePlan
                 'search'   => 'Medical Record #:',
                 'key'      => 'mrn',
                 'callback' => function ($string) {
-                    if (! empty($string)) {
+                    if ( ! empty($string)) {
                         $this->carePlan['mrn'] = $string;
                     }
                 },
@@ -88,19 +93,19 @@ class UPGPdfCarePlan
                 'search'   => 'Date of Birth:',
                 'key'      => 'dob',
                 'callback' => function ($string) {
-                    if (! empty($string)) {
+                    if ( ! empty($string)) {
                         $this->carePlan['dob'] = Carbon::parse($string);
                     }
                 },
             ],
             [
-                'search' => 'Sex:',
-                'key'    => 'sex',
-                'callback' => function($string){
-                    if (! empty($string)) {
+                'search'   => 'Sex:',
+                'key'      => 'sex',
+                'callback' => function ($string) {
+                    if ( ! empty($string)) {
                         $this->carePlan['sex'] = strtolower($string);
                     }
-                }
+                },
             ],
             [
                 'search' => 'Phones:',
@@ -115,8 +120,9 @@ class UPGPdfCarePlan
                 'key'      => 'instructions',
                 'callback' => function ($string) {
                     //Usually actual instructions exist below a string containing recommendations and/or care plan, and the name of the condition is above that
-                    if (str_contains(strtolower($string), 'recommendations:') || str_contains(strtolower($string), 'care plan')){
-                        $this->carePlan['instructions'][]= ['problem_name' => $this->array[$this->count - 1]];
+                    if (Illuminate\Support\Str::contains(strtolower($string), 'recommendations:') || Illuminate\Support\Str::contains(strtolower($string), 'care plan')) {
+                        $this->carePlan['instructions'][] = ['problem_name' => $this->array[$this->count - 1]];
+
                         return;
                     }
                     //exclude everything before tha actual listing of the instructions
@@ -125,7 +131,7 @@ class UPGPdfCarePlan
                         return;
                     }
                     //skip the line where the name if the condition is listed
-                    if (in_array($string, $this->carePlan['problems'])){
+                    if (in_array($string, $this->carePlan['problems'])) {
                         return;
                     }
                     //store string in the latest instruction
@@ -139,13 +145,6 @@ class UPGPdfCarePlan
         ];
     }
 
-    public function read()
-    {
-        return $this
-            ->getText()
-            ->parseString();
-    }
-
     private function getText()
     {
         $pdf = new Fpdi();
@@ -155,7 +154,7 @@ class UPGPdfCarePlan
         //Create a croped version of each page of the pdf, in order to exclude header and footer
         $pdf->AddPage();
 
-        for ($n = 1; $n <= $pageCount; $n++) {
+        for ($n = 1; $n <= $pageCount; ++$n) {
             $tplId = $pdf->importPage($n);
 
             //crop pdf
@@ -163,15 +162,17 @@ class UPGPdfCarePlan
             $pdf->AddPage();
         }
 
-        $this->processedFileName = preg_replace('/\\.[^.\\s]{3,4}$/', '', $this->fileName . '_processed.pdf');
+        $this->processedFileName = preg_replace('/\\.[^.\\s]{3,4}$/', '', $this->fileName.'_processed.pdf');
 
         //save cropped pdf
         $pdf->Output(storage_path($this->processedFileName), 'F');
 
-
         //read cropped pdf
-        $this->string = Pdf::getText(storage_path($this->processedFileName), config('pdftotext.path'),
-            ['layout', 'nopgbrk']);
+        $this->string = Pdf::getText(
+            storage_path($this->processedFileName),
+            config('pdftotext.path'),
+            ['layout', 'nopgbrk']
+        );
 
         return $this;
     }
@@ -181,16 +182,14 @@ class UPGPdfCarePlan
         $this->array = collect(preg_split("/[\n]/", $this->string))->values()->all();
 
         while ($this->count < count($this->array)) {
-
             $checkpoint = $this->checkpoints[$this->currentCheckpoint];
 
             $search = $checkpoint['search'];
 
-
             $string = $this->array[$this->count];
 
             //if the search term exists in the string remove it. If nothing is left after that, get next string
-            if (str_contains($string, $search)) {
+            if (Illuminate\Support\Str::contains($string, $search)) {
                 $string = trim(str_replace($search, ' ', $string));
             }
 
@@ -198,20 +197,20 @@ class UPGPdfCarePlan
             if (isset($checkpoint['callback']) && ! empty($checkpoint['callback'])) {
                 $checkpoint['callback']($string);
             } else {
-                if (! empty($string)){
+                if ( ! empty($string)) {
                     $this->carePlan[$checkpoint['key']][] = $string;
                 }
             }
 
             //check next string, to see if we have reached the next checkpoint
             $nextCheckpoint = $this->currentCheckpoint + 1;
-            if (isset($this->array[$this->count + 1]) && isset($this->checkpoints[$nextCheckpoint])) {
-                if (str_contains($this->array[$this->count + 1], $this->checkpoints[$nextCheckpoint]['search'])) {
+            if (isset($this->array[$this->count + 1], $this->checkpoints[$nextCheckpoint])) {
+                if (Illuminate\Support\Str::contains($this->array[$this->count + 1], $this->checkpoints[$nextCheckpoint]['search'])) {
                     $this->currentCheckpoint = $nextCheckpoint;
                 }
             }
 
-            $this->count++;
+            ++$this->count;
         }
 
         //delete processed file

@@ -80,10 +80,13 @@ use CircleLinkHealth\SharedModels\Entities\Problem;
  * @property int $asap
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAsap($value)
+ *
  * @property int|null                                                                                                        $revision_history_count
  * @property \CircleLinkHealth\Core\Entities\DatabaseNotification[]|\Illuminate\Notifications\DatabaseNotificationCollection $notifications
  * @property int|null                                                                                                        $notifications_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call calledLastThreeMonths()
+ *
  * @property \App\Models\CCD\Problem[]|\Illuminate\Database\Eloquent\Collection $attestedProblems
  * @property int|null                                                           $attested_problems_count
  */

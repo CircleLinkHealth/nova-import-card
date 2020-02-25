@@ -6,19 +6,19 @@
 
 namespace App\Importer\Loggers\Csv;
 
+use App\Search\ProviderByName;
+use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Entities\Problem as ProblemEntity;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
-use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
-use App\Search\ProviderByName;
-use CircleLinkHealth\Eligibility\Entities\Problem as ProblemEntity;
-use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemCodeLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use CircleLinkHealth\SharedModels\Entities\AllergyLog;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
+use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {
@@ -281,7 +281,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
         $delimiter = ' ';
 
-        if (str_contains($this->medicalRecord->provider_name, ',')) {
+        if (Illuminate\Support\Str::contains($this->medicalRecord->provider_name, ',')) {
             $delimiter = ',';
         }
 

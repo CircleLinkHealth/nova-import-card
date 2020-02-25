@@ -6,21 +6,21 @@
 
 namespace App\Importer\Loggers\Csv;
 
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
-use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartAllergy;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartMedication;
-use CircleLinkHealth\Eligibility\Entities\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
-use CircleLinkHealth\SharedModels\Entities\AllergyLog;
+use CircleLinkHealth\Eligibility\Entities\PhoenixHeartName;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
+use CircleLinkHealth\SharedModels\Entities\AllergyLog;
+use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
 
 class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 {
@@ -160,10 +160,10 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
                 continue;
             }
 
-            if (str_contains($problem->code, ['-'])) {
+            if (Illuminate\Support\Str::contains($problem->code, ['-'])) {
                 $pos         = strpos($problem->code, '-') + 1;
                 $problemCode = mb_substr($problem->code, $pos);
-            } elseif (str_contains($problem->code, ['ICD'])) {
+            } elseif (Illuminate\Support\Str::contains($problem->code, ['ICD'])) {
                 $pos         = strpos($problem, 'ICD') + 3;
                 $problemCode = mb_substr($problem->code, $pos);
             } else {

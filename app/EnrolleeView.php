@@ -132,10 +132,15 @@ use CircleLinkHealth\Core\Filters\Filterable;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereProviderPronunciation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereProviderSex($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereRequestedCallback($value)
+ *
  * @property mixed|null $agent_details
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereAgentDetails($value)
+ *
  * @property int|null $family_enrollee_id
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EnrolleeView whereFamilyEnrolleeId($value)
+ *
  * @property \CircleLinkHealth\Revisionable\Entities\Revision[]|\Illuminate\Database\Eloquent\Collection $revisionHistory
  * @property int|null                                                                                    $revision_history_count
  */
