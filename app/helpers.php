@@ -53,9 +53,9 @@ if ( ! function_exists('getIpAddress')) {
     function getIpAddress()
     {
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ipAddresses = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-
-            return trim(end($ipAddresses));
+            if ($ipAddress = trim(end(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])))) {
+                return $ipAddress;
+            }
         }
 
         return $_SERVER['REMOTE_ADDR'] ?? null;
