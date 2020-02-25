@@ -144,6 +144,8 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
             ->importProviders()
             ->raiseConcerns();
 
+        event(new CcdaImported($this->getId()));
+        
         return $this->importedMedicalRecord;
     }
 
