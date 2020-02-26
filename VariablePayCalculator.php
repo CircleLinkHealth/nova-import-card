@@ -72,17 +72,17 @@ class VariablePayCalculator
         });
 
         $totalPay           = 0.0;
-        $visits             = [];
-        $bhiVisits          = [];
-        $pcmVisits          = [];
+        $visits             = collect();
+        $bhiVisits          = collect();
+        $pcmVisits          = collect();
         $ccmPlusAlgoEnabled = $this->isNewNursePayAlgoEnabled();
         $visitFeeBased      = $ccmPlusAlgoEnabled && $this->isNewNursePayAltAlgoEnabledForUser($nurseUserId);
 
         $perPatient->each(function (Collection $patientCareRateLogs) use (
             &$totalPay,
-            &$visits,
-            &$bhiVisits,
-            &$pcmVisits,
+            $visits,
+            $bhiVisits,
+            $pcmVisits,
             $nurseUserId,
             $nurseInfo,
             $ccmPlusAlgoEnabled,
@@ -107,19 +107,20 @@ class VariablePayCalculator
 
             $totalPay += $patientPayCalculation->pay;
             if ( ! empty($patientPayCalculation->visits)) {
-                $visits[$patientUserId] = $patientPayCalculation->visits;
+                $visits->put($patientUserId, $patientPayCalculation->visits);
             }
 
             if ( ! empty($patientPayCalculation->bhiVisits)) {
-                $bhiVisits[$patientUserId] = $patientPayCalculation->bhiVisits;
+                $bhiVisits->put($patientUserId, $patientPayCalculation->bhiVisits);
             }
 
             if ( ! empty($patientPayCalculation->pcmVisits)) {
-                $pcmVisits[$patientUserId] = $patientPayCalculation->pcmVisits;
+                $pcmVisits->put($patientUserId, $patientPayCalculation->pcmVisits);
             }
         });
 
-        return new CalculationResult($ccmPlusAlgoEnabled, $visitFeeBased, $visits, $bhiVisits, $pcmVisits, $totalPay);
+        return new CalculationResult($ccmPlusAlgoEnabled, $visitFeeBased, $visits, $bhiVisits, $pcmVisits,
+            $totalPay);
     }
 
     public function getForNurses()
@@ -141,7 +142,7 @@ class VariablePayCalculator
         return $this->nurseCareRateLogs;
     }
 
-    private function getEntryForRange($ranges, $index, $nurseInfoId, $newDuration, $successfulCall)
+    private function getEntryForRange($ranges, $index, $nurseInfoId, $newDuration, $successfulCall, $logDate)
     {
         $range = $ranges[$index];
         $prev  = null;
@@ -162,6 +163,7 @@ class VariablePayCalculator
         return [
             'duration'            => $duration,
             'has_successful_call' => $hasSuccessfulCall,
+            'last_log_date'       => $logDate,
         ];
     }
 
@@ -277,7 +279,7 @@ class VariablePayCalculator
         $ranges   = $this->separateTimeAccruedInRanges($patientCareRateLogs);
 
         if ($visitFeeBased) {
-            return $this->getPayForPatientWithCcmPlusAltAlgo(
+            return $this->getPayForPatientWithVisitFeeAlgo(
                 $nurseInfo,
                 $patientUserId,
                 $totalCcm,
@@ -287,7 +289,7 @@ class VariablePayCalculator
                 $patientIsPcm
             );
         } else {
-            return $this->getPayForPatientWithCcmPlusAlgo(
+            return $this->getPayForPatientWithVariableRateAlgo(
                 $nurseInfo,
                 $totalCcm,
                 $totalBhi,
@@ -317,15 +319,15 @@ class VariablePayCalculator
      *
      * @return PatientPayCalculationResult
      */
-    private function getPayForPatientWithCcmPlusAlgo(
+    private function getPayForPatientWithVariableRateAlgo(
         Nurse $nurseInfo,
         $totalCcm,
         $totalBhi,
         $ranges,
         $practiceHasCcmPlus = false
     ) {
-        $highRates = [];
-        $lowRates  = [];
+        $highRates = collect();
+        $lowRates  = collect();
 
         $nurseInfoId = $nurseInfo->id;
 
@@ -387,9 +389,9 @@ class VariablePayCalculator
                     $practiceHasCcmPlus, $time, $isBehavioral);
                 if ($pay) {
                     if ($pay['rate'] === $nurseInfo->low_rate) {
-                        $lowRates[] = $pay['pay'];
+                        $lowRates->push($pay['pay']);
                     } else {
-                        $highRates[] = $pay['pay'];
+                        $highRates->push($pay['pay']);
                     }
                 }
             }
@@ -453,7 +455,7 @@ class VariablePayCalculator
      *
      * @return PatientPayCalculationResult
      */
-    private function getPayForPatientWithCcmPlusAltAlgo(
+    private function getPayForPatientWithVisitFeeAlgo(
         Nurse $nurseInfo,
         $patientId,
         $totalCcm,
@@ -462,9 +464,9 @@ class VariablePayCalculator
         bool $practiceHasCcmPlus = false,
         bool $isPcmBillable = false
     ) {
-        $visits    = [];
-        $bhiVisits = [];
-        $pcmVisits = [];
+        $visits    = collect();
+        $bhiVisits = collect();
+        $pcmVisits = collect();
 
         $patientHasAtLeastOneSuccessfulCall = collect($rangesPerType)
             ->filter(function ($f) {
@@ -513,13 +515,23 @@ class VariablePayCalculator
             $noOfBillableEvents++;
         }
 
+        $var = $isBhiBillable
+            ? 'bhiVisits'
+            : ($isPcmBillable
+                ? 'pcmVisits'
+                : 'visits');
+
         if ($noOfBillableEvents === 1) {
-            $pay = $this->getVisitFeePayForOneBillableEvent($nurseInfo, $patientId, $rangesPerType, $isBhiBillable,
+            $pay  = $this->getVisitFeePayForOneBillableEvent($nurseInfo, $patientId, $rangesPerType, $isBhiBillable,
                 $isPcmBillable);
-            if ( ! $isBhiBillable) {
-                $visits[0] = $pay;
-            } else {
-                $bhiVisits[0] = $pay;
+            $date = $pay['last_log_date'];
+
+            if ($date) {
+                $visitsForDate = ${$var}->get($date, ['fee' => 0, 'count' => 0]);
+                ${$var}->put($date, [
+                    'fee'   => $visitsForDate['fee'] + $pay['fee'],
+                    'count' => $visitsForDate['count'] + $pay['count'],
+                ]);
             }
         } else {
             //if total ccm is greater than the range, then we can pay that range
@@ -536,17 +548,16 @@ class VariablePayCalculator
                         continue;
                     }
 
-                    $pay = $this->getVisitFeePayForRange($nurseInfo, $key, $range, $practiceHasCcmPlus, $time,
+                    $pay  = $this->getVisitFeePayForRange($nurseInfo, $key, $range, $practiceHasCcmPlus, $time,
                         $isBehavioral, $isPcmBillable);
+                    $date = $pay['last_log_date'];
 
-                    if ($pay) {
-                        if ($isBehavioral) {
-                            $bhiVisits[$key] = $pay;
-                        } else if ($isPcmBillable) {
-                            $pcmVisits[$key] = $pay;
-                        } else {
-                            $visits[$key] = $pay;
-                        }
+                    if ($date) {
+                        $visitsForDate = ${$var}->get($date, ['fee' => 0, 'count' => 0]);
+                        ${$var}->put($date, [
+                            'fee'   => $visitsForDate['fee'] + $pay['fee'],
+                            'count' => $visitsForDate['count'] + $pay['count'],
+                        ]);
                     }
                 }
             }
@@ -555,8 +566,7 @@ class VariablePayCalculator
         return PatientPayCalculationResult::withVisits($visits, $bhiVisits, $pcmVisits);
     }
 
-    private
-    function getVisitFeePayForOneBillableEvent(
+    private function getVisitFeePayForOneBillableEvent(
         Nurse $nurseInfo,
         $patientId,
         $ranges,
@@ -575,13 +585,17 @@ class VariablePayCalculator
         $elqRange->each(function ($f) use ($nurseTimes) {
 
             /** @var Collection $f */
-            $f = collect($f);
+            if ( ! is_a($f, Collection::class)) {
+                $f = collect($f);
+            }
+
 
             return $f->each(function ($f2, $key) use ($nurseTimes) {
                 $current = $nurseTimes->get($key, ['duration' => 0, 'has_successful_call' => false]);
                 $nurseTimes->put($key, [
                     'duration'            => $current['duration'] + $f2['duration'],
                     'has_successful_call' => $current['has_successful_call'] || $f2['has_successful_call'],
+                    'last_log_date'       => $f2['last_log_date'],
                 ]);
             });
         });
@@ -607,17 +621,27 @@ class VariablePayCalculator
                 "Warning: Will not pay care coach [$nurseUserId] for time tracked on patient [$patientId] because I could not find successful call in billable event [$billableEvent]"
             );
 
-            return 0;
+            return [
+                'last_log_date' => null,
+                'fee'           => 0,
+                'count'         => 0,
+            ];
         }
 
-        $nurseTime = $nurseTimes->get($nurseInfo->id,
-            ['duration' => 0, 'has_successful_call' => false])['duration'];
+        $nurseEntry = $nurseTimes->get($nurseInfo->id,
+            ['duration' => 0, 'has_successful_call' => false]);
 
-        return ($nurseTime / $sumOfAllTime) * $nurseInfo->visit_fee;
+        $nurseTime = $nurseEntry['duration'];
+        $count     = ($nurseTime / $sumOfAllTime);
+
+        return [
+            'last_log_date' => $nurseEntry['last_log_date'] ?? null,
+            'fee'           => $count * $nurseInfo->visit_fee,
+            'count'         => $count,
+        ];
     }
 
-    private
-    function getVisitFeePayForRange(
+    private function getVisitFeePayForRange(
         Nurse $nurseInfo,
         $rangeKey,
         $range,
@@ -664,7 +688,13 @@ class VariablePayCalculator
             return null;
         }
 
-        return $nurseCcmPercentageInRange * $rate;
+        $logDate = optional($range[$nurseInfo->id])['last_log_date'];
+
+        return [
+            'last_log_date' => $logDate,
+            'fee'           => $nurseCcmPercentageInRange * $rate,
+            'count'         => $nurseCcmPercentageInRange,
+        ];
     }
 
     /**
@@ -673,8 +703,7 @@ class VariablePayCalculator
      *
      * @return PatientPayCalculationResult
      */
-    private
-    function getPayForPatientWithDefaultAlgo(
+    private function getPayForPatientWithDefaultAlgo(
         Nurse $nurseInfo,
         Collection $patientCareRateLogs
     ) {
@@ -690,20 +719,18 @@ class VariablePayCalculator
             ->sum('increment');
         $afterCCm = $afterCCm / self::HOUR_IN_SECONDS;
 
-        $highRates = [$towardsCCm * $nurseInfo->high_rate];
-        $lowRates  = [$afterCCm * $nurseInfo->low_rate];
+        $highRates = collect([$towardsCCm * $nurseInfo->high_rate]);
+        $lowRates  = collect([$afterCCm * $nurseInfo->low_rate]);
 
         return PatientPayCalculationResult::withHighLowRates($highRates, $lowRates);
     }
 
-    private
-    function isNewNursePayAlgoEnabled()
+    private function isNewNursePayAlgoEnabled()
     {
         return NurseCcmPlusConfig::enabledForAll();
     }
 
-    private
-    function isNewNursePayAltAlgoEnabledForUser(
+    private function isNewNursePayAltAlgoEnabledForUser(
         $nurseUserId
     ) {
         if (NurseCcmPlusConfig::altAlgoEnabledForAll()) {
@@ -718,8 +745,7 @@ class VariablePayCalculator
         return false;
     }
 
-    private
-    function practiceHasCcmPlusCode(
+    private function practiceHasCcmPlusCode(
         Practice $practice
     ) {
         return Cache::store('array')->rememberForever("ccm_plus_$practice->id", function () use ($practice) {
@@ -727,8 +753,7 @@ class VariablePayCalculator
         });
     }
 
-    private
-    function practiceHasPcmPlusCode(
+    private function practiceHasPcmPlusCode(
         Practice $practice
     ) {
         return Cache::store('array')->rememberForever("pcm_$practice->id", function () use ($practice) {
@@ -736,8 +761,7 @@ class VariablePayCalculator
         });
     }
 
-    private
-    function separateTimeAccruedInRanges(
+    private function separateTimeAccruedInRanges(
         Collection $patientCareRateLogs,
         bool $isPcm = false
     ) {
@@ -783,6 +807,8 @@ class VariablePayCalculator
             $duration         = $e['increment'];
             $totalTimeBefore  = $e['time_before'];
             $totalTimeAfter   = $totalTimeBefore + $duration;
+
+            $logDate = $e['created_at']->toDateString();
 
             //ccm + bhi
             $add_to_accrued_towards_20 = 0;
@@ -860,7 +886,8 @@ class VariablePayCalculator
                     0,
                     $nurseInfoId,
                     $add_to_accrued_towards_20,
-                    $isSuccessfulCall
+                    $isSuccessfulCall,
+                    $logDate
                 );
             }
 
@@ -870,7 +897,8 @@ class VariablePayCalculator
                     1,
                     $nurseInfoId,
                     $add_to_accrued_after_20,
-                    $isSuccessfulCall
+                    $isSuccessfulCall,
+                    $logDate
                 );
             }
 
@@ -883,7 +911,8 @@ class VariablePayCalculator
                     $index,
                     $nurseInfoId,
                     $add_to_accrued_after_40,
-                    $isSuccessfulCall
+                    $isSuccessfulCall,
+                    $logDate
                 );
             }
 
@@ -896,7 +925,8 @@ class VariablePayCalculator
                     $index,
                     $nurseInfoId,
                     $add_to_accrued_after_60,
-                    $isSuccessfulCall
+                    $isSuccessfulCall,
+                    $logDate
                 );
             }
 
@@ -906,7 +936,8 @@ class VariablePayCalculator
                     0,
                     $nurseInfoId,
                     $add_to_accrued_towards_30,
-                    $isSuccessfulCall
+                    $isSuccessfulCall,
+                    $logDate
                 );
             }
 
@@ -916,7 +947,8 @@ class VariablePayCalculator
                     1,
                     $nurseInfoId,
                     $add_to_accrued_after_30,
-                    $isSuccessfulCall
+                    $isSuccessfulCall,
+                    $logDate
                 );
             }
         });
@@ -937,13 +969,13 @@ class CalculationResult
     /** @var bool Option 1 (alt algo - visit fee based if true, Option 2 otherwise */
     public $altAlgoEnabled;
 
-    /** @var array $visits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay] */
+    /** @var Collection $visits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay] */
     public $visits;
 
-    /** @var array $bhiVisits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay] */
+    /** @var Collection $bhiVisits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay] */
     public $bhiVisits;
 
-    /** @var array $pcmVisits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay] */
+    /** @var Collection $pcmVisits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay] */
     public $pcmVisits;
 
     /** @var int Indicates number of visits in case {@link $altAlgoEnabled} is true */
@@ -955,9 +987,9 @@ class CalculationResult
     public function __construct(
         bool $ccmPlusAlgoEnabled,
         bool $altAlgoEnabled,
-        array $visits,
-        array $bhiVisits,
-        array $pcmVisits,
+        Collection $visits,
+        Collection $bhiVisits,
+        Collection $pcmVisits,
         float $totalPay
     ) {
         $this->ccmPlusAlgoEnabled = $ccmPlusAlgoEnabled;
@@ -966,11 +998,19 @@ class CalculationResult
         $this->bhiVisits          = $bhiVisits;
         $this->pcmVisits          = $pcmVisits;
 
-        // 1. Flatten list of visits -> so list of visits per patient changes to list of visits
-        // 2. Filter out entries with 0 -> visits that resulted in 0 compensation; probably cz of ccm time but no call, but call from other care coach
-        $this->visitsCount = collect($visits)->flatten()->filter()->count();
-        $this->visitsCount += collect($bhiVisits)->flatten()->filter()->count();
-        $this->visitsCount += collect($pcmVisits)->flatten()->filter()->count();
+        $this->visitsCount = collect([$visits, $bhiVisits, $pcmVisits])
+            ->sum(function (Collection $coll) {
+                return $coll->sum(function ($perPatient) {
+
+                    if ( ! is_a($perPatient, Collection::class)) {
+                        $perPatient = collect($perPatient);
+                    }
+
+                    return $perPatient->sum(function ($perDay) {
+                        return $perDay['count'];
+                    });
+                });
+            });
 
         $this->totalPay = $totalPay;
     }
@@ -979,19 +1019,19 @@ class CalculationResult
 class PatientPayCalculationResult
 {
 
-    /** @var array In case of visit fee payment, [range(key), payment(value)] */
+    /** @var Collection In case of visit fee payment, [range(key), payment(value)] */
     public $visits;
 
-    /** @var array In case of visit fee payment, [range(key), payment(value)] */
+    /** @var Collection In case of visit fee payment, [range(key), payment(value)] */
     public $bhiVisits;
 
-    /** @var array In case of visit fee payment, [range(key), payment(value)] */
+    /** @var Collection In case of visit fee payment, [range(key), payment(value)] */
     public $pcmVisits;
 
-    /** @var array In case of variable pay payment, array of high rate payments */
+    /** @var Collection In case of variable pay payment, array of high rate payments */
     public $highRates;
 
-    /** @var array In case of variable pay payment, array of low rate payments */
+    /** @var Collection In case of variable pay payment, array of low rate payments */
     public $lowRates;
 
     /** @var float */
@@ -1000,30 +1040,38 @@ class PatientPayCalculationResult
     /**
      * PatientPayCalculationResult constructor.
      *
-     * @param array $visits
      */
     private function __construct()
     {
 
     }
 
-    public static function withVisits(array $visits, array $bhiVisits, array $pcmVisits)
-    {
+    public static function withVisits(
+        Collection $visits,
+        Collection $bhiVisits,
+        Collection $pcmVisits
+    ) {
         $instance            = new self();
         $instance->visits    = $visits;
         $instance->bhiVisits = $bhiVisits;
         $instance->pcmVisits = $pcmVisits;
-        $instance->pay       = collect($visits)->sum() + collect($bhiVisits)->sum();
+
+        $instance->pay = collect([$visits, $bhiVisits, $pcmVisits])
+            ->sum(function (Collection $coll) {
+                return $coll->sum(function ($item) {
+                    return $item['fee'];
+                });
+            });
 
         return $instance;
     }
 
-    public static function withHighLowRates($highRates, $lowRates)
+    public static function withHighLowRates(Collection $highRates, Collection $lowRates)
     {
         $instance            = new self();
         $instance->highRates = $highRates;
         $instance->lowRates  = $lowRates;
-        $instance->pay       = collect($highRates)->sum() + collect($lowRates)->sum();
+        $instance->pay       = $highRates->sum() + $lowRates->sum();
 
         return $instance;
     }
