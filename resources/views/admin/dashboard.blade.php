@@ -101,7 +101,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Demo UPG G0506 Flow</div>
                     <div class="panel-body">
-                        @if(upg0506IsEnabled())
+                        @if(! upg0506IsEnabled())
                             <span><span style="color: red">&#33;</span>&nbsp;Feature is disabled!</span>
                         @endif
                         <ul>
