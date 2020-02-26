@@ -2085,10 +2085,12 @@ class NursePaymentAlgoTest extends TestCase
         $invoice1Data    = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
                                        ->orderBy('month_year', 'desc')
                                        ->first()->invoice_data;
+        $visitsCount     = $invoice1Data['visitsCount'];
         $fixedRatePay    = $invoice1Data['fixedRatePay'];
         $variableRatePay = $invoice1Data['variableRatePay'];
         $pay             = $invoice1Data['baseSalary'];
 
+        self::assertEquals(0, $visitsCount);
         self::assertEquals(10.00, $fixedRatePay);
         self::assertEquals(0.00, $variableRatePay);
         self::assertEquals(10.00, $pay);
@@ -2096,10 +2098,12 @@ class NursePaymentAlgoTest extends TestCase
         $invoice2Data    = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
                                        ->orderBy('month_year', 'desc')
                                        ->first()->invoice_data;
+        $visitsCount     = $invoice2Data['visitsCount'];
         $fixedRatePay    = $invoice2Data['fixedRatePay'];
         $variableRatePay = $invoice2Data['variableRatePay'];
         $pay             = $invoice2Data['baseSalary'];
 
+        self::assertEquals(0.29, $visitsCount);
         self::assertEquals(10.00, $fixedRatePay);
         self::assertEquals(3.57, $variableRatePay);
         self::assertEquals(10.00, $pay);
@@ -2107,10 +2111,12 @@ class NursePaymentAlgoTest extends TestCase
         $invoice3Data    = NurseInvoice::where('nurse_info_id', $nurse3->nurseInfo->id)
                                        ->orderBy('month_year', 'desc')
                                        ->first()->invoice_data;
+        $visitsCount     = $invoice3Data['visitsCount'];
         $fixedRatePay    = $invoice3Data['fixedRatePay'];
         $variableRatePay = $invoice3Data['variableRatePay'];
         $pay             = $invoice3Data['baseSalary'];
 
+        self::assertEquals(0.71, $visitsCount);
         self::assertEquals(10.00, $fixedRatePay);
         self::assertEquals(8.93, $variableRatePay);
         self::assertEquals(10.00, $pay);
