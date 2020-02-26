@@ -12,7 +12,7 @@ use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\Problems;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Problems;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Bus\Queueable;

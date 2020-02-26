@@ -145,6 +145,15 @@ class EnrolleeFilters extends QueryFilters
         return $this->builder->where('provider_name', 'like', '%'.$name.'%');
     }
 
+    public function requested_callback($dateString)
+    {
+        if (empty($date)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('requested_callback', 'like', '%'.$dateString.'%');
+    }
+
     public function secondary_insurance($insurance)
     {
         if (empty($insurance)) {
@@ -170,13 +179,5 @@ class EnrolleeFilters extends QueryFilters
         }
 
         return $this->builder->where('tertiary_insurance', 'like', '%'.$insurance.'%');
-    }
-
-    public function requested_callback($dateString){
-        if (empty($date)) {
-            return $this->builder;
-        }
-
-        return $this->builder->where('requested_callback', 'like', '%'.$dateString.'%');
     }
 }

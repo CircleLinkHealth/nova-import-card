@@ -32,7 +32,10 @@ class SafeRequest extends Request
 
         $result = [];
         foreach ($all as $key => $value) {
-            if (is_array($value)) {
+            //if input is Trix value we need some tags
+            if (in_array($key, Constants::TRIX_FIELDS)) {
+                $result[$key] = stripNonTrixTags($value);
+            } elseif (is_array($value)) {
                 foreach ($value as $subKey => $subValue) {
                     if (is_array($subValue)) {
                         foreach ($subValue as $k => $v) {

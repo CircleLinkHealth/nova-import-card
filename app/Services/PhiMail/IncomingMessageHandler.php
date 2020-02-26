@@ -7,9 +7,7 @@
 namespace App\Services\PhiMail;
 
 use App\DirectMailMessage;
-use App\Jobs\ImportCcda;
-use Carbon\Carbon;
-use CircleLinkHealth\SharedModels\Entities\Ccda;
+use App\Services\PhiMail\Incoming\Factory as IncomingMessageHandlerFactory;
 
 /**
  * Handle an incoming message from EMR Direct Mail API.
@@ -37,21 +35,11 @@ class IncomingMessageHandler
     }
 
     /**
-     * Handles the message's attachments.
+     * @return mixed
      */
-    public function handleMessageAttachment(DirectMailMessage &$dm, ShowResult $showRes)
+    public function handleMessageAttachment(DirectMailMessage $dm, ShowResult $showRes)
     {
-        if (str_contains($showRes->mimeType, 'plain')) {
-            $dm->body = $showRes->data;
-            $dm->save();
-        } elseif (str_contains($showRes->mimeType, 'xml') && false !== stripos($showRes->data, '<ClinicalDocument')) {
-            $this->storeAndImportCcd($showRes, $dm);
-        } else {
-            $path = storage_path('dm_id_'.$dm->id.'_attachment_'.Carbon::now()->toAtomString());
-            file_put_contents($path, $showRes->data);
-            $dm->addMedia($path)
-                ->toMediaCollection("dm_{$dm->id}_attachments");
-        }
+        return IncomingMessageHandlerFactory::create($dm, $showRes);
     }
 
     /**
@@ -69,26 +57,5 @@ class IncomingMessageHandler
                 $dm->save();
             }
         }
-    }
-
-    /**
-     * Stores and imports a CCDA.
-     *
-     * @param $attachment
-     */
-    private function storeAndImportCcd(
-        $attachment,
-        DirectMailMessage $dm
-    ) {
-        $ccda = Ccda::create(
-            [
-                'direct_mail_message_id' => $dm->id,
-                'user_id'                => null,
-                'xml'                    => $attachment->data,
-                'source'                 => Ccda::EMR_DIRECT,
-            ]
-        );
-
-        ImportCcda::dispatch($ccda)->onQueue('low');
     }
 }

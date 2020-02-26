@@ -47,6 +47,8 @@ class Constants
     const NOVA_GROUP_NBI          = 'NBI';
     const NOVA_GROUP_PRACTICES    = 'Practices';
 
+    const PATIENT_PHI_RELATIONSHIPS = ['patientInfo'];
+
     const PRACTICE_STAFF_ROLE_NAMES     = ['provider', 'office_admin', 'med_assistant', 'registered-nurse', 'specialist'];
     const SAAS_INTERNAL_USER_ROLE_NAMES = ['saas-admin', 'care-center'];
 
@@ -60,9 +62,11 @@ class Constants
         'margin-bottom'      => '15',
         'margin-right'       => '0.75',
     ];
-    const SNOMED          = 'snomed_code';
-    const SNOMED_NAME     = 'SNOMED CT';
-    const VIEWING_PATIENT = 'viewing-patient';
+    const SNOMED                     = 'snomed_code';
+    const SNOMED_NAME                = 'SNOMED CT';
+    const TRIX_ALLOWABLE_TAGS_STRING = '<div><strong><h1><em><del><blockquote><pre><br><ul><ol><li><span><a>';
+    const TRIX_FIELDS                = ['patient-email-body'];
+    const VIEWING_PATIENT            = 'viewing-patient';
 
     public static function athenaEhrId()
     {

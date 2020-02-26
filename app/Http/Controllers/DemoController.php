@@ -18,8 +18,8 @@ class DemoController extends Controller
     {
         $number  = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
         $faxTest = $fax->createFaxFor($number)
-                       ->setOption('file', [public_path('assets/pdf/sample-note.pdf')])
-                       ->send();
+            ->setOption('file', [public_path('assets/pdf/sample-note.pdf')])
+            ->send();
         dd($faxTest);
     }
 
@@ -41,6 +41,7 @@ class DemoController extends Controller
     public function sentryLog()
     {
         Log::error('Log that should reach both stderr and Sentry!');
+
         return response([]);
     }
 }

@@ -60,7 +60,8 @@
                 this.$refs['attest-call-conditions-modal'].visible = true;
             });
 
-            if (this.patientId && !this.ccdProblems) {
+            //if in approve billable patients page, we get problems from the billing component
+            if (this.isNotesPage) {
                 this.getPatientBillableProblems();
             }
 
@@ -114,11 +115,11 @@
             },
             problemsToAttest() {
 
-                let problemsToAttest = this.problems.filter(function (p) {
+                let problemsToAttest = (this.problems || []).filter(function (p) {
                     return !!p.code;
                 });
                 //do not show BHI problems when on Approve Billable Patients Page
-                return this.isNotesPage ? problemsToAttest : problemsToAttest.filter(function (p) {
+                return this.isNotesPage ? problemsToAttest : (problemsToAttest || []).filter(function (p) {
                     return !p.is_behavioral;
                 });
             },
