@@ -47,7 +47,7 @@ $style = [
     'email-footer'      => 'width: auto; max-width: 570px; margin: 0 auto; padding: 0; text-align: center;',
     'email-footer_cell' => 'color: #AEAEAE; padding: 35px; text-align: center;',
     // Logo ----------------------------------
-    'logo' => 'width: 197px; padding-top: 10px;',
+    'logo' => 'width: 197px;',
 
     // Body ------------------------------
 
@@ -90,16 +90,10 @@ $style = [
 
                             <!-- Logo -->
                             <tr>
-                                <td style="background: white;">
+                                <td>
                                     <img src="{{asset('img/logos/LogoHorizontal_Color.svg')}}"
                                          alt="{{config('app.name')}}"
                                          style="{{ $style['logo'] }}">
-                                </td>
-                            </tr>
-
-                            <!-- Border Under Logo -->
-                            <tr>
-                                <td>
                                     <hr style="border-color: #edeff247">
                                 </td>
                             </tr>
@@ -133,7 +127,7 @@ $style = [
                                             <tr>
                                                 <td style="padding-left: 32px;">
                                                     <img style="{{$style['circular-square']}}"
-                                                         alt="image here mate"
+                                                         alt="Profile image"
                                                          src="https://cdn2.iconfinder.com/data/icons/solid-glyphs-volume-2/256/user-unisex-512.png"/>
                                                 </td>
                                                 <td style="{{$style['card-data']}}">
