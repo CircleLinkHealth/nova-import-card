@@ -45,6 +45,16 @@ class ArrayProblemLogger implements Logger
                 continue;
             }
             
+            if (1 === count($p) && array_key_exists('name', $p)) {
+                $results[] = Problem::create(
+                    [
+                        'name' => $p['name'],
+                    ]
+                );
+                
+                continue;
+            }
+            
             $results[] = Problem::create(
                 [
                     'code'             => $p['code'],
@@ -82,7 +92,7 @@ class ArrayProblemLogger implements Logger
             )) {
                 return true;
             }
-    
+            
             if (array_keys_exist(
                 [
                     'code',
@@ -92,7 +102,7 @@ class ArrayProblemLogger implements Logger
             )) {
                 return true;
             }
-    
+            
             if (array_key_exists(
                 'name',
                 $prob
