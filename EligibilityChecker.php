@@ -405,13 +405,8 @@ class EligibilityChecker
                 'problems'
             );
         }
-        
-        $qualifyingCcmProblems = [];
-        
-        //the cpm_problem_id for qualifying problems
-        $qualifyingCcmProblemsCpmIdStack = [];
-        
-        $eligibleBhiProblemIds = [];
+    
+        $qualifyingCcmProblems = $qualifyingCcmProblemsCpmIdStack = $pcmProblems = $eligibleBhiProblemIds = [];
         
         if ( ! (is_array($problems) || is_a($problems, Collection::class))) {
             $problems = [$problems];
