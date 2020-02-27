@@ -55,14 +55,16 @@ class ArrayProblemLogger implements Logger
                 continue;
             }
             
-            $results[] = Problem::create(
-                [
-                    'code'             => $p['code'],
-                    'name'             => $p['name'],
-                    'code_system_name' => $p['code_type'],
-                    'start'            => $p['start_date'],
-                ]
-            );
+            if ( ! empty($p['name']) || ! empty($p['code'])) {
+                $results[] = Problem::create(
+                    [
+                        'code'             => $p['code'],
+                        'name'             => $p['name'],
+                        'code_system_name' => $p['code_type'],
+                        'start'            => $p['start_date'],
+                    ]
+                );
+            }
         }
         
         return $results;
