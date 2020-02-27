@@ -7,8 +7,10 @@ use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\Eligibility\Jobs\FetchEncountersFromAthena;
 use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use Illuminate\Console\Command;
+use Illuminate\Validation\Rule;
 
 class FixAthenaBatchAddLastEncounter extends Command
 {
@@ -51,6 +53,8 @@ class FixAthenaBatchAddLastEncounter extends Command
     {
         ini_set('memory_limit', '2000M');
         
+        $this->validateArguments();
+        
         TargetPatient::whereBatchId($this->argument('batch_id'))->with(['eligibilityJob', 'batch'])->has(
             'eligibilityJob'
         )->chunk(
@@ -73,12 +77,10 @@ class FixAthenaBatchAddLastEncounter extends Command
      *
      * @throws \Exception
      */
-    private function processEncounters(TargetPatient $targetPatient) {
-        $data               = $targetPatient->eligibilityJob->data;
-        $data['encounters'] = $this->api->getEncounters(
-            $targetPatient->ehr_patient_id,
-            $targetPatient->ehr_practice_id,
-            $targetPatient->ehr_department_id,
+    private function processEncounters(TargetPatient $targetPatient)
+    {
+        FetchEncountersFromAthena::dispatch(
+            $targetPatient,
             $this->hasArgument('start_date')
                 ? $this->argument('start_date')
                 : null,
@@ -86,29 +88,38 @@ class FixAthenaBatchAddLastEncounter extends Command
                 ? $this->argument('end_date')
                 : null
         );
-    
-        $lastEncounter = $this->carbon(
-            collect($data['encounters']['encounters'])->sortByDesc(
-                'appointmentstartdate'
-            )->pluck('appointmentstartdate')->first()
-        );
-    
-        if ($lastEncounter instanceof Carbon) {
-            $data['last_encounter'] = $lastEncounter->toDateString();
-            $targetPatient->eligibilityJob->last_encounter = $lastEncounter;
-        }
-    
-        $targetPatient->eligibilityJob->data = $data;
-    
-        if ($targetPatient->eligibilityJob->isDirty()) {
-            $targetPatient->eligibilityJob->save();
-        }
     }
     
-    private function carbon($lastEncounter)
+    private function validateArguments()
     {
-        if ($this->isValidDate($lastEncounter)) {
-            return Carbon::createFromFormat(Carbon::ATOM, $lastEncounter);
+        $validator = \Validator::make(
+            [
+                'batch_id'   => $this->argument('batch_id'),
+                'start_date' => $this->hasArgument('start_date')
+                    ? $this->argument('start_date')
+                    : null,
+                'end_date'   => $this->hasArgument('end_date')
+                    ? $this->argument('end_date')
+                    : null,
+            ],
+            [
+                'batch_id' => [
+                    'required',
+                    Rule::exists('eligibility_batches', 'id'),
+                ],
+                'start_date' => [
+                    'date',
+                    'nullable',
+                ],
+                'end_date' => [
+                    'date',
+                    'nullable',
+                ],
+            ]
+        );
+        
+        if ($validator->fails()) {
+            throw new \Exception(json_encode($validator->errors()->all()));
         }
     }
 }
