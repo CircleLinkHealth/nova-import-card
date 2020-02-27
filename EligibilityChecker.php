@@ -405,13 +405,8 @@ class EligibilityChecker
                 'problems'
             );
         }
-        
-        $qualifyingCcmProblems = [];
-        
-        //the cpm_problem_id for qualifying problems
-        $qualifyingCcmProblemsCpmIdStack = [];
-        
-        $eligibleBhiProblemIds = [];
+    
+        $qualifyingCcmProblems = $qualifyingCcmProblemsCpmIdStack = $pcmProblems = $eligibleBhiProblemIds = [];
         
         if ( ! (is_array($problems) || is_a($problems, Collection::class))) {
             $problems = [$problems];
@@ -615,10 +610,10 @@ class EligibilityChecker
             return false;
         }
         
-        $eligibilityJobData['ccm_condition_1'] = $qualifyingCcmProblems[0];
+        $eligibilityJobData['ccm_condition_1'] = $qualifyingCcmProblems[0] ?? null;
         $eligibilityJobData['ccm_condition_2'] = $qualifyingCcmProblems[1] ?? null;
         
-        $eligibilityJobData['cpm_problem_1'] = $qualifyingCcmProblemsCpmIdStack[0];
+        $eligibilityJobData['cpm_problem_1'] = $qualifyingCcmProblemsCpmIdStack[0] ?? null;
         $eligibilityJobData['cpm_problem_2'] = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
         
         $this->eligibilityJob->data = $eligibilityJobData;
