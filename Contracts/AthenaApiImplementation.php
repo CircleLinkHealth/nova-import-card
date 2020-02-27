@@ -6,6 +6,7 @@
 
 namespace CircleLinkHealth\Eligibility\Contracts;
 
+use App\Services\AthenaAPI\Calls;
 use App\Services\AthenaAPI\Connection;
 use App\ValueObjects\Athena\Patient;
 use App\ValueObjects\Athena\Problem;
@@ -257,7 +258,7 @@ interface AthenaApiImplementation
      *
      * @return mixed
      */
-    public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true);
+    public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true, $showinactive = false);
 
     /**
      * Get the practice's custom fields.
@@ -314,4 +315,16 @@ interface AthenaApiImplementation
      * @return mixed
      */
     public function getProvider($practiceId, $providerId);
+    
+    /**
+     * Get a patient's medical history
+     *
+     * @param int $patientId
+     * @param int $practiceId
+     * @param int $departmentId
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getMedicalHistory(int $patientId, int $practiceId, int $departmentId);
 }
