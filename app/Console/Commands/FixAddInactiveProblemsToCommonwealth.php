@@ -49,7 +49,7 @@ class FixAddInactiveProblemsToCommonwealth extends Command
     {
         ini_set('memory_limit', '2000M');
         
-        TargetPatient::wherePracticeId(232)->with(['eligibilityJob', 'batch'])->chunk(
+        TargetPatient::wherePracticeId(232)->with(['eligibilityJob', 'batch'])->whereDoesntHave('eligibilityJob', function ($q) {$q->where('outcome', EligibilityJob::ELIGIBLE);})->chunk(
             500,
             function ($targetPatients) {
                 $targetPatients->each(
