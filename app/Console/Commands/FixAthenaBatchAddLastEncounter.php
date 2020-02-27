@@ -3,12 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Traits\ValidatesDates;
-use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
-use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Jobs\FetchEncountersFromAthena;
-use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use Illuminate\Console\Command;
 use Illuminate\Validation\Rule;
 
