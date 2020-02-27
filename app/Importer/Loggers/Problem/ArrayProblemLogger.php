@@ -58,10 +58,10 @@ class ArrayProblemLogger implements Logger
             if ( ! empty($p['name']) || ! empty($p['code'])) {
                 $results[] = Problem::create(
                     [
-                        'code'             => $p['code'],
-                        'name'             => $p['name'],
-                        'code_system_name' => $p['code_type'],
-                        'start'            => $p['start_date'],
+                        'code'             => $p['code'] ?? null,
+                        'name'             => $p['name'] ?? null,
+                        'code_system_name' => $p['code_type'] ?? null,
+                        'start'            => $p['start_date'] ?? null,
                     ]
                 );
             }
