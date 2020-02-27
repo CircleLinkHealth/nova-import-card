@@ -15,7 +15,7 @@ class FixAddInactiveProblemsToCommonwealth extends Command
      *
      * @var string
      */
-    protected $signature = 'commonwealth:addmedicalhistory {batchId}';
+    protected $signature = 'batch:addmedicalhistory {batchId}';
     
     /**
      * The console command description.

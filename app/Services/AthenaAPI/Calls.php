@@ -6,6 +6,7 @@
 
 namespace App\Services\AthenaAPI;
 
+use App\Traits\ValidatesDates;
 use App\ValueObjects\Athena\Patient;
 use App\ValueObjects\Athena\Problem;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiConnection;
@@ -13,6 +14,8 @@ use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 
 class Calls implements AthenaApiImplementation
 {
+    use ValidatesDates;
+    
     /**
      * @var Connection
      */
@@ -246,13 +249,14 @@ class Calls implements AthenaApiImplementation
      * @param $practiceId
      * @param $startDate
      * @param $endDate
-     * @param bool $showInsurance
-     * @param int $limit
      * @param int $departmentId
      * @param mixed $offset
+     * @param bool $showInsurance
+     * @param int $limit
      * @param mixed $showCancelled
      *
      * @return mixed
+     * @throws \Exception
      */
     public function getBookedAppointments(
         $practiceId,
@@ -578,6 +582,43 @@ class Calls implements AthenaApiImplementation
                 'patientid'    => $patientId,
                 'practiceid'   => $practiceId,
             ]
+        );
+        
+        return $this->response($response);
+    }
+    
+    /**
+     * Get a patient's medical history
+     *
+     * @param int $patientId
+     * @param int $practiceId
+     * @param int $departmentId
+     *
+     * @param string $startDate
+     * @param string $endDate
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getEncounters(int $patientId, int $practiceId, int $departmentId, string $startDate = null, string $endDate = null)
+    {
+        $args = [
+            'departmentid' => $departmentId,
+            'patientid'    => $patientId,
+            'practiceid'   => $practiceId,
+        ];
+        
+        if ($this->isValidDate($startDate)) {
+            $args['startdate'] = $startDate;
+        }
+    
+        if ($this->isValidDate($endDate)) {
+            $args['enddate'] = $endDate;
+        }
+        
+        $response = $this->api()->GET(
+            "${practiceId}/chart/${patientId}/encounters",
+            $args
         );
         
         return $this->response($response);
