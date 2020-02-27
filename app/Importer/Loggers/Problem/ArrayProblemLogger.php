@@ -71,7 +71,7 @@ class ArrayProblemLogger implements Logger
                 return false;
             }
             
-            if ( ! array_keys_exist(
+            if (array_keys_exist(
                 [
                     'code',
                     'name',
@@ -80,20 +80,27 @@ class ArrayProblemLogger implements Logger
                 ],
                 $prob
             )) {
-                if (array_keys_exist(
-                    [
-                        'code',
-                        'code_type',
-                    ],
-                    $prob
-                )) {
-                    return true;
-                }
-                
-                return false;
+                return true;
+            }
+    
+            if (array_keys_exist(
+                [
+                    'code',
+                    'code_type',
+                ],
+                $prob
+            )) {
+                return true;
+            }
+    
+            if (array_key_exists(
+                'name',
+                $prob
+            )) {
+                return true;
             }
         }
         
-        return true;
+        return false;
     }
 }
