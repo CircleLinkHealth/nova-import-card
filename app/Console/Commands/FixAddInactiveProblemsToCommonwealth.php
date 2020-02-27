@@ -75,6 +75,7 @@ class FixAddInactiveProblemsToCommonwealth extends Command
                             }
                         );
                         $targetPatient->eligibilityJob->data = $data;
+                        if ($targetPatient->eligibilityJob->outcome !== EligibilityJob::ELIGIBLE)
                         $targetPatient->eligibilityJob->status = EligibilityJob::STATUSES['not_started'];
                         $targetPatient->eligibilityJob->save();
                         ProcessSinglePatientEligibility::dispatch($targetPatient->eligibilityJob, $targetPatient->eligibilityJob->batch, $targetPatient->eligibilityJob->batch->practice);
