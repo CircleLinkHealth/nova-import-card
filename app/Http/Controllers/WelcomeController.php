@@ -32,14 +32,18 @@ class WelcomeController extends Controller
     /**
      * Show the application welcome screen to the user.
      *
+     * Addin practice Id for patient login.
+     *
+     * @param null $practiceId
+     *
      * @throws \Exception
      *
      * @return Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $practiceId = null)
     {
         if ( ! auth()->check()) {
-            return \App::call('App\Http\Controllers\Auth\LoginController@showLoginForm');
+            return \App::call('App\Http\Controllers\Auth\LoginController@showLoginForm', ['practiceId' => $practiceId]);
         }
 
         $user = auth()->user();

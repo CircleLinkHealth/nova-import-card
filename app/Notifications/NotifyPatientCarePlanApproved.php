@@ -45,7 +45,7 @@ class NotifyPatientCarePlanApproved extends Notification
     {
         return CarePlan::PROVIDER_APPROVED != $this->carePlan->status
             ? url('auth/password/reset')
-            : url('/');
+            : url("/{$this->carePlan->patient->program_id}");
     }
 
     /**
