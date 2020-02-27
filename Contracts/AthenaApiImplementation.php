@@ -327,4 +327,25 @@ interface AthenaApiImplementation
      * @throws \Exception
      */
     public function getMedicalHistory(int $patientId, int $practiceId, int $departmentId);
+    
+    /**
+     * Get a patient's medical history
+     *
+     * @param int $patientId
+     * @param int $practiceId
+     * @param int $departmentId
+     *
+     * @param string $startDate
+     * @param string $endDate
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getEncounters(
+        int $patientId,
+        int $practiceId,
+        int $departmentId,
+        string $startDate = null,
+        string $endDate = null
+    );
 }
