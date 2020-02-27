@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use CircleLinkHealth\Eligibility\Jobs\ProcessSinglePatientEligibility;
 use Illuminate\Console\Command;
 
 class FixAddInactiveProblemsToCommonwealth extends Command
@@ -74,7 +75,7 @@ class FixAddInactiveProblemsToCommonwealth extends Command
                         );
                         $targetPatient->eligibilityJob->data = $data;
                         $targetPatient->eligibilityJob->save();
-                        $targetPatient->eligibilityJob->process();
+                        ProcessSinglePatientEligibility::dispatch($targetPatient->eligibilityJob, $targetPatient->eligibilityJob->batch, $targetPatient->eligibilityJob->batch->practice);
                     }
                 );
             }
