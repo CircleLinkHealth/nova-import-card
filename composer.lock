@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "543708612d3f64f76d2fd921f6da9cde",
+    "content-hash": "d094d2568d75cb8ca9d02150f3e8cef6",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -854,11 +854,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.4.1",
+            "version": "dev-CPM-2033_pcm",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "c82632218ccfb69a8e22abe15b3ed8397fbb5fa7"
+                "reference": "c78a4298d1e6a92223754bcb55cc96214cf3b337"
             },
             "type": "laravel-module",
             "extra": {
@@ -880,15 +880,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-13T04:05:40+00:00"
+            "time": "2020-02-21T09:22:27+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.8.9",
+            "version": "dev-CPM-2033_pcm",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "572beac4944742c45ee80c05819be9258608427f"
+                "reference": "5d83042f008d1275ffbc7387507a2a5b04e5689b"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -922,7 +922,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-24T21:22:16+00:00"
+            "time": "2020-02-25T21:04:22+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -1028,11 +1028,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.3.0",
+            "version": "dev-CPM-2032_CPM-2034_CPM-2054_visit_counts_on_invoice_and_pcm",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "2172c3a79a47bf89a60fbc25d15153755eeb5efd"
+                "reference": "e03a1d2b8f007d29fe6fb79cede3f1687eb1b281"
             },
             "type": "laravel-module",
             "extra": {
@@ -1055,7 +1055,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-19T13:29:48+00:00"
+            "time": "2020-02-26T11:05:47+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1171,11 +1171,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.1.7",
+            "version": "dev-CPM-2033_pcm",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "2293bb353e7e76f577cb603e6f3f964338dd25d4"
+                "reference": "fb946161ba03abfa5cc35e7e02e9ad24c4851bbb"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1189,7 +1189,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-24T21:20:58+00:00"
+            "time": "2020-02-22T07:47:40+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -14656,6 +14656,10 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
+        "circlelinkhealth/cpm-migrations-module": 20,
+        "circlelinkhealth/customer-module": 20,
+        "circlelinkhealth/nurseinvoices-module": 20,
+        "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
