@@ -34,6 +34,22 @@
                     "size": "performance-s"
                 }
             }
+        },
+        "staging": {
+            "formation": {
+                "web": {
+                    "quantity": 1,
+                    "size": "hobby"
+                },
+                "worker": {
+                    "quantity": 1,
+                    "size": "hobby"
+                },
+                "scheduler": {
+                    "quantity": 1,
+                    "size": "hobby"
+                }
+            }
         }
     }
 }
