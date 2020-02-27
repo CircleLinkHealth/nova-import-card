@@ -36,11 +36,12 @@ class CreatePCMListForCommonWealth extends Command
             function ($q) {
                 $q->where('practice_id', self::PRACTICE_ID);
             }
-        )->with(['targetPatient.ccda'])->chunkById(
-            100,
+        )->chunkById(
+            500,
             function ($jobs) {
                 $jobs->each(
                     function ($job) {
+                        $this->warn("Processing eligibilityJob:$job->id");
                         ProcessCommonwealthPatientForPcm::dispatch($this->resetPcm($job));
                     }
                 );
