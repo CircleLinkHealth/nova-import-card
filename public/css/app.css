@@ -27810,12 +27810,6 @@ a.navbar-title:hover {
   right: 30px;
 }
 
-@media (min-width: 414px) {
-  .survey-container {
-    margin-left: 1em;
-  }
-}
-
 @media (max-width: 996px) {
   .questions-title {
     font-size: 100%;
@@ -27912,6 +27906,15 @@ a.navbar-title:hover {
     overflow: hidden;
   }
 
+  .main-container.welcome {
+    overflow: auto;
+  }
+
+  .main-container.welcome .survey-container {
+    overflow-y: auto;
+    height: 100%;
+  }
+
   .question-answer-type {
     width: 330px;
   }
@@ -27946,7 +27949,6 @@ a.navbar-title:hover {
   }
 
   .by-circlelink {
-    margin-right: 28px;
     font-size: 14px;
   }
 

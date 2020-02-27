@@ -1,5 +1,5 @@
 <template>
-    <div class="container main-container">
+    <div class="container main-container" :class="stage">
 
         <div class="top-buttons" v-if="adminMode">
             <mdb-row class="no-gutters">
@@ -33,7 +33,7 @@
 
         <!--Survey welcome note-->
         <div class="survey-container"
-             :class="{ max: stage === 'complete', 'read-only': readOnlyMode, 'with-top-buttons': stage !== 'welcome' }">
+             :class="{ max: stage === 'complete', 'read-only': readOnlyMode, 'with-top-buttons': adminMode && stage !== 'welcome' }">
             <template v-if="stage === 'welcome'">
                 <div v-show="isHra" class="practice-title">
                     <label id="title">
@@ -240,7 +240,7 @@
             </call-assistance>
         </div>
 
-        <div class="bottom-navbar container no-padding" :class="stage === 'complete' ? 'hidden' : ''">
+        <div class="bottom-navbar container no-padding" :class="(stage === 'complete' || stage === 'welcome') ? 'hidden' : ''">
             <!-- justify-content-end -->
             <div class="row no-gutters">
                 <div class="col-3 col-sm-4 col-md-3 col-lg-2 text-center">
