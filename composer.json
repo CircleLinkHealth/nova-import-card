@@ -66,6 +66,7 @@
         "ext-pdo": "*",
         "ext-redis": "*",
         "ext-simplexml": "*",
+        "appstract/laravel-opcache": "^2",
         "barryvdh/laravel-cors": "^0.11.3",
         "barryvdh/laravel-snappy": "^0.4.5",
         "circlelinkhealth/core-module": "1.4.6",
