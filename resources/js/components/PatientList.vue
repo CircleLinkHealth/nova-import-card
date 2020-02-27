@@ -184,7 +184,9 @@
             },
 
             shouldDropUp(props) {
-                const diff = this.$refs.table.count - props.index;
+                const table = this.$refs.table;
+                const count = table.data.length;
+                const diff = count - props.index;
                 return diff < 2;
             },
 
