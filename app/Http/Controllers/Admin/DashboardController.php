@@ -95,12 +95,14 @@ class DashboardController extends Controller
 
     public function upg0506($type)
     {
-        if (isProductionEnv()) {
-            return redirect()->back();
-        }
-
         Artisan::call('demo:upg0506', ["--{$type}" => true]);
 
-        return redirect()->back()->with(['upg0506-command-success' => 'Command ran successfully']);
+        if ('delete' == $type) {
+            $message = 'Test data deleted successfully!';
+        } else {
+            $message = "Command to simulate receiving {$type} ran successfully!";
+        }
+
+        return redirect()->back()->with(['upg0506-command-success' => $message]);
     }
 }
