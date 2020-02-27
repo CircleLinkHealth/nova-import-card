@@ -14,7 +14,7 @@ class FixAddInactiveProblemsToCommonwealth extends Command
      * @var string
      */
     protected $signature = 'commonwealth:addmedicalhistory';
-
+    
     /**
      * The console command description.
      *
@@ -37,7 +37,7 @@ class FixAddInactiveProblemsToCommonwealth extends Command
         $this->api = $api;
     }
     
-
+    
     /**
      * Execute the console command.
      *
@@ -46,21 +46,38 @@ class FixAddInactiveProblemsToCommonwealth extends Command
     public function handle()
     {
         ini_set('memory_limit', '2000M');
-    
-        TargetPatient::wherePracticeId(232)->with(['eligibilityJob', 'batch'])->chunk(500, function ($targetPatients){
-            $targetPatients->each(function ($targetPatient){
-                $data = $targetPatient->eligibilityJob->data;
-                if (!$data['medical_history'])
-                $data['medical_history'] = $this->api->getMedicalHistory($targetPatient->ehr_patient_id, $targetPatient->ehr_practice_id, $targetPatient->ehr_department_id);
-                $problemNames = collect($data['medical_history']['questions'])->where('answer', 'Y')->pluck('question')->each(function ($problemName) use (&$data){
-                    $data['problems'][] = [
-                        'name' => $problemName,
-                    ];
-                });
-                $targetPatient->eligibilityJob->data = $data;
-                $targetPatient->eligibilityJob->save();
-                $targetPatient->eligibilityJob->process();
-            });
-        });
+        
+        TargetPatient::wherePracticeId(232)->with(['eligibilityJob', 'batch'])->chunk(
+            500,
+            function ($targetPatients) {
+                $targetPatients->each(
+                    function ($targetPatient) {
+                        $data = $targetPatient->eligibilityJob->data;
+                        if ( ! array_key_exists('medical_history', $data)) {
+                            $data['medical_history'] = $this->api->getMedicalHistory(
+                                $targetPatient->ehr_patient_id,
+                                $targetPatient->ehr_practice_id,
+                                $targetPatient->ehr_department_id
+                            );
+                        }
+                        $problemNames = collect($data['medical_history']['questions'])->where(
+                            'answer',
+                            'Y'
+                        )->pluck(
+                            'question'
+                        )->each(
+                            function ($problemName) use (&$data) {
+                                $data['problems'][] = [
+                                    'name' => $problemName,
+                                ];
+                            }
+                        );
+                        $targetPatient->eligibilityJob->data = $data;
+                        $targetPatient->eligibilityJob->save();
+                        $targetPatient->eligibilityJob->process();
+                    }
+                );
+            }
+        );
     }
 }
