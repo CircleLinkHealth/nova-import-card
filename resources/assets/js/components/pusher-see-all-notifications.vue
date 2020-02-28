@@ -25,9 +25,9 @@
                 <li v-for="(page, index) in paginationTriggers">
                     <button style="padding: 10px; margin:5px;" type="button"
                             class="btn btn-light"
-                            :class="{'pages': page === currentPage}"
+                            :class="{'pages': roundUp(page) === currentPage}"
                             @click="goToPage(page)">
-                        {{page}}
+                        {{roundUp(page)}}
                     </button>
                 </li>
 
@@ -120,6 +120,10 @@
         },
 
         methods: {
+            roundUp(page){
+            return Math.ceil(page);
+            },
+
             setCurrentPage(page) {
                 this.currentPage = page;
                 if (page < 1) {
@@ -132,8 +136,9 @@
             },
 
             goToPage(page) {
-                this.setCurrentPage(page);
-                this.getResults(page);
+                const val = this.roundUp(page);
+                this.setCurrentPage(val);
+                this.getResults(val);
             },
 
             nextPage() {
