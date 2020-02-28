@@ -6,7 +6,7 @@
 
 namespace CircleLinkHealth\SharedModels;
 
-use App\Constants;
+use CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem;
 
 trait HasProblemCodes
 {
@@ -16,17 +16,17 @@ trait HasProblemCodes
 
         $icd9 = $this->icd9Codes->first();
         if ($icd9) {
-            $map[Constants::ICD9] = $icd9->code;
+            $map[ProblemCodeSystem::ICD9] = $icd9->code;
         }
 
         $icd10 = $this->icd10Codes->first();
         if ($icd10) {
-            $map[Constants::ICD10] = $icd10->code;
+            $map[ProblemCodeSystem::ICD10] = $icd10->code;
         }
 
         $snomed = $this->snomedCodes->first();
         if ($snomed) {
-            $map[Constants::SNOMED] = $snomed->code;
+            $map[ProblemCodeSystem::SNOMED] = $snomed->code;
         }
 
         return $map;
@@ -35,18 +35,24 @@ trait HasProblemCodes
     public function icd10Codes()
     {
         return $this->codes()
-            ->where('problem_code_system_id', '=', '2');
+            ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::ICD10_NAME));
     }
 
     public function icd9Codes()
     {
         return $this->codes()
-            ->where('problem_code_system_id', '=', '1');
+            ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::ICD9_NAME));
     }
 
     public function snomedCodes()
     {
         return $this->codes()
-            ->where('problem_code_system_id', '=', '3');
+            ->where('problem_code_system_id', '=', $this->getProblemCodeTypeId(ProblemCodeSystem::SNOMED_NAME));
+    }
+    
+    public function getProblemCodeTypeId(string $codeType) {
+        return \Cache::remember(sha1("HasProblemCodes:$codeType"), 2, function () use ($codeType){
+            return optional(ProblemCodeSystem::whereName($codeType)->first())->id;
+        });
     }
 }
