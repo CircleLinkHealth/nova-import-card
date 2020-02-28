@@ -128,7 +128,7 @@
     "circlelinkhealth/core-module": "1.4.7",
     "circlelinkhealth/cpm-migrations-module": "dev-CPM-2033_pcm",
     "circlelinkhealth/customer-module": "dev-CPM-2033_pcm",
-    "circlelinkhealth/eligibility-module": "1.8.0",
+    "circlelinkhealth/eligibility-module": "dev-CPM-2033_pcm",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
     "circlelinkhealth/nurseinvoices-module": "dev-CPM-2032_CPM-2034_CPM-2054_visit_counts_on_invoice_and_pcm",
