@@ -95,6 +95,7 @@ class NotifyPatientCarePlanApproved extends Notification
     {
         return [
             'channels' => $this->channels,
+            'notifiable_email' => $notifiable->email,
 
             'body'    => $this->getBody(),
             'subject' => $this->getSubject(),
