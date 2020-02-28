@@ -102,7 +102,7 @@ class UpdatePppTasksCodes extends Migration
             ],
             [
                 'sub_title'           => 'Advanced Care Planning/NLWAD',
-                'qualitative_trigger' => ' No living will/advance directive',
+                'qualitative_trigger' => 'No living will/advance directive',
                 'task_body'           => 'Living wills and other advance directives are written, legal instructions regarding your preferences for medical care if you are unable to make decisions for yourself. Advance directives guide choices for doctors and caregivers if you\'re terminally ill, seriously injured, in a coma, in the late stages of dementia or near the end of life. By planning ahead, you can get the medical care you want, avoid unnecessary suffering and relieve caregivers of decision-making burdens during moments of crisis or grief. You also help reduce confusion or disagreement about the choices you would want people to make on your behalf. Advance directives aren\'t just for older adults. Unexpected end-of-life situations can happen at any age, so it\'s important for all adults to prepare these documents. Talk to your doctor about taking steps to:',
                 'recommendation_body' => ['Set up a living will/advance directive'],
                 'report_table_data'   => [
