@@ -32,14 +32,14 @@ use Laravel\Scout\Searchable;
 class PcmProblem extends Model
 {
     use Searchable;
-    
+
     protected $fillable = [
         'practice_id',
         'code_type',
         'code',
         'description',
     ];
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -47,7 +47,7 @@ class PcmProblem extends Model
     {
         return $this->belongsTo(Practice::class);
     }
-    
+
     /**
      * Get Scout index name for the model.
      *
@@ -57,7 +57,7 @@ class PcmProblem extends Model
     {
         return 'pcm_problems_index';
     }
-    
+
     /**
      * Get the indexable data array for the model.
      *
@@ -72,7 +72,7 @@ class PcmProblem extends Model
             'description' => $this->description,
         ];
     }
-    
+
     /**
      * Get the value used to index the model.
      *
