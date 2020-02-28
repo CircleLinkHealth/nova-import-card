@@ -54,25 +54,25 @@ class FixNurseCareRateLogs extends Command
             ->where('created_at', '>=', $month)
             ->orderBy('created_at')
             ->chunk($chunk, function (\Illuminate\Support\Collection $list) use ($chunk, &$count) {
-              $list->each(function ($record) use ($chunk, &$count) {
-                  $activityId = $record->activity_id;
-                  $activity = DB::table('lv_activities')->find($activityId);
-                  if ( ! $activity) {
-                      return;
-                  }
+                $list->each(function ($record) use ($chunk, &$count) {
+                    $activityId = $record->activity_id;
+                    $activity = DB::table('lv_activities')->find($activityId);
+                    if ( ! $activity) {
+                        return;
+                    }
 
-                  $isSuccessfulCall = $this->isActivityForSuccessfulCall($activity);
+                    $isSuccessfulCall = $this->isActivityForSuccessfulCall($activity);
 
-                  DB::table('nurse_care_rate_logs')
-                      ->where('id', '=', $record->id)
-                      ->update([
-                          'patient_user_id'    => $activity->patient_id,
-                          'is_successful_call' => $isSuccessfulCall,
-                      ]);
-              });
-              $count += $chunk;
-              $this->info("Processed $count records");
-          });
+                    DB::table('nurse_care_rate_logs')
+                        ->where('id', '=', $record->id)
+                        ->update([
+                            'patient_user_id'    => $activity->patient_id,
+                            'is_successful_call' => $isSuccessfulCall,
+                        ]);
+                });
+                $count += $chunk;
+                $this->info("Processed $count records");
+            });
 
         $this->info('Done.');
     }

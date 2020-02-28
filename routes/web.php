@@ -3,7 +3,9 @@
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
+
 Route::get('/debug-sentry', 'DemoController@sentry');
+Route::get('/debug-sentry-log', 'DemoController@sentryLog');
 
 Route::get('s/{token}', 'Auth\LoginController@login')
     ->name('login.token.validate');
@@ -503,6 +505,29 @@ Route::group(['middleware' => 'auth'], function () {
         'uses' => 'API\PatientCarePlanController@downloadPdf',
         'as'   => 'download.pdf.careplan',
     ])->middleware('permission:careplan-pdf.read')->middleware('doNotCacheResponse');
+
+    Route::group([
+        'middleware' => [],
+        'prefix'     => 'patient-email/{patient_id}',
+    ], function () {
+        Route::post(
+            '/upload-attachment',
+            'API\PatientEmailController@uploadAttachment'
+        );
+
+        Route::post(
+            '/validate-body',
+            [
+                'uses' => 'API\PatientEmailController@validateEmailBody',
+                'as'   => 'patient-email.validate',
+            ]
+        );
+
+        Route::post(
+            '/delete-attachment',
+            'API\PatientEmailController@deleteAttachment'
+        );
+    });
 
     Route::post(
         'care-docs/{patient_id}',
@@ -2225,6 +2250,11 @@ Route::get('see-all-notifications', [
     'as'   => 'notifications.seeAll',
 ])->middleware('permission:provider.read,note.read');
 
+Route::get('all-notifications-pages/{page}', [
+    'uses' => 'NotificationController@seeAllNotificationsPaginated',
+    'as'   => 'notifications.all.paginated',
+])->middleware('permission:provider.read,note.read');
+
 Route::get('nurses/holidays', [
     'uses' => 'CareCenter\WorkScheduleController@getHolidays',
     'as'   => 'get.admin.nurse.schedules.holidays',
@@ -2307,3 +2337,8 @@ Route::post('nurses/nurse-calendar-data', [
     'uses' => 'CareCenter\WorkScheduleController@getSelectedNurseCalendarData',
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
+
+//Route::get('get-calendar-data', [
+//    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
+//    'as'   => 'care.center.work.schedule.getCalendarData',
+//]);

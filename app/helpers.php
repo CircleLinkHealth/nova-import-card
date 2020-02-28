@@ -182,11 +182,11 @@ if ( ! function_exists('activeNurseNames')) {
                     },
                 ]
             )->whereHas(
-                       'nurseInfo',
-                       function ($q) {
-                           $q->where('is_demo', '!=', true);
-                       }
-                   )->where('user_status', 1)
+                'nurseInfo',
+                function ($q) {
+                    $q->where('is_demo', '!=', true);
+                }
+            )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -819,7 +819,20 @@ if ( ! function_exists('defaultCarePlanTemplate')) {
         return CarePlanTemplate::findOrFail(AppConfig::pull('default_care_plan_template_id'));
     }
 }
+if ( ! function_exists('authUserCanSendPatientEmail')) {
+    /**
+     * Toggles patient email for auth user.
+     */
+    function authUserCanSendPatientEmail(): bool
+    {
+        $key = 'enable_patient_email_for_user';
 
+        return \Cache::remember($key, 2, function () use ($key) {
+            return AppConfig::where('config_key', $key)
+                ->where('config_value', auth()->user()->id)->exists();
+        });
+    }
+}
 if ( ! function_exists('setAppConfig')) {
     /**
      * Save an AppConfig key, value and then return it.
@@ -1575,7 +1588,6 @@ if ( ! function_exists('getModelFromTable')) {
         return false;
     }
 }
-
 if ( ! function_exists('measureTime')) {
     function measureTime($desc, $func)
     {
@@ -1590,6 +1602,18 @@ if ( ! function_exists('measureTime')) {
         echo "$desc: $secInt seconds | Start: $startTime | End: $endTime\n";
 
         return $result;
+    }
+}
+
+if ( ! function_exists('stripNonTrixTags')) {
+    /**
+     * @param string
+     *
+     * @return string
+     */
+    function stripNonTrixTags(string $trixString)
+    {
+        return strip_tags($trixString, Constants::TRIX_ALLOWABLE_TAGS_STRING);
     }
 }
 
@@ -1631,6 +1655,26 @@ if ( ! function_exists('isPatientCcmPlusBadgeEnabled')) {
             }
 
             return $val;
+        });
+    }
+}
+
+if ( ! function_exists('upg0506IsEnabled')) {
+    /**
+     * Key: upg0506_is_enabled
+     * Default: false.
+     */
+    function upg0506IsEnabled(): bool
+    {
+        $key = 'upg0506_is_enabled';
+
+        return \Cache::remember($key, 2, function () use ($key) {
+            $val = AppConfig::pull($key, null);
+            if (null === $val) {
+                return 'true' === setAppConfig($key, false);
+            }
+
+            return 'true' === $val;
         });
     }
 }

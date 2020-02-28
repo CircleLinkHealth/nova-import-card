@@ -67,10 +67,10 @@ abstract class BaseScoutSearch implements ScoutSearch
     {
         return \Cache::tags($this->tags())
             ->remember(
-                         self::key($term),
-                         $this->duration(),
-                         $fn
-                     );
+                self::key($term),
+                $this->duration(),
+                $fn
+            );
     }
 
     /**

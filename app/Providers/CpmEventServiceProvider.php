@@ -11,6 +11,7 @@ use App\Events\CarePlanWasApproved;
 use App\Events\CarePlanWasProviderApproved;
 use App\Events\CarePlanWasQAApproved;
 use App\Events\NoteFinalSaved;
+use App\Events\PatientUserCreated;
 use App\Events\PdfableCreated;
 use App\Events\UpdateUserLoginInfo;
 use App\Events\UpdateUserSessionInfo;
@@ -27,17 +28,16 @@ use App\Listeners\LogFailedNotification;
 use App\Listeners\LogSuccessfulLogin;
 use App\Listeners\LogSuccessfulLogout;
 use App\Listeners\NotifyPatientOfCarePlanApproval;
+use App\Listeners\NotifySlackChannel;
 use App\Listeners\PatientContactWindowUpdated;
 use App\Listeners\SendCarePlanForDMProviderApproval;
 use App\Listeners\UpdateCarePlanStatus;
 use App\Listeners\UPG0506CcdaImporterListener;
+use App\Listeners\UPG0506DirectMailListener;
 use App\Listeners\UPG0506Handler;
 use App\Listeners\UserLoggedOut;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
-use App\Listeners\NotifySlackChannel;
-use App\Listeners\UPG0506DirectMailListener;
 use CircleLinkHealth\Customer\Events\PatientContactWindowUpdatedEvent;
-use App\Events\PatientUserCreated;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Auth\Events\Login;
@@ -89,10 +89,10 @@ class CpmEventServiceProvider extends ServiceProvider
             NotifySlackChannel::class,
         ],
         CcdaImported::class => [
-            UPG0506CcdaImporterListener::class
+            UPG0506CcdaImporterListener::class,
         ],
         PatientUserCreated::class => [
-            AttachUPG0506CarePlanToPatientUser::class
+            AttachUPG0506CarePlanToPatientUser::class,
         ],
         CarePlanWasApproved::class => [
             UpdateCarePlanStatus::class,
@@ -106,7 +106,7 @@ class CpmEventServiceProvider extends ServiceProvider
         ],
         CarePlanWasProviderApproved::class => [
             ForwardApprovedCarePlanToPractice::class,
-        ]
+        ],
     ];
 
     /**

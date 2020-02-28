@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Events;
 
 use CircleLinkHealth\Customer\Entities\User;
@@ -10,7 +14,9 @@ use Illuminate\Queue\SerializesModels;
 
 class PatientUserCreated
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
     /**
      * @var User
      */
@@ -18,8 +24,6 @@ class PatientUserCreated
 
     /**
      * Create a new event instance.
-     *
-     * @param User $user
      */
     public function __construct(User $user)
     {
@@ -29,7 +33,7 @@ class PatientUserCreated
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return array|\Illuminate\Broadcasting\Channel
      */
     public function broadcastOn()
     {

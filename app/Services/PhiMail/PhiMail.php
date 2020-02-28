@@ -63,18 +63,18 @@ class PhiMail implements DirectMail
             $this->handleException($e);
         }
     }
-    
+
     /**
      * @param $outboundRecipient
      * @param $binaryAttachmentFilePath
      * @param $binaryAttachmentFileName
-     * @param null $ccdaAttachmentPath
-     * @param User|null $patient
+     * @param null       $ccdaAttachmentPath
      * @param mixed|null $body
      * @param mixed|null $subject
      *
-     * @return bool|SendResult[]
      * @throws \Exception
+     *
+     * @return bool|SendResult[]
      */
     public function send(
         $outboundRecipient,
@@ -159,11 +159,8 @@ class PhiMail implements DirectMail
 
         return $srList ?? false;
     }
-    
+
     /**
-     * @param string $certFileName
-     * @param string $certPath
-     *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @throws \Exception
      */
@@ -206,6 +203,51 @@ class PhiMail implements DirectMail
     /**
      * @throws \Exception
      */
+    private function handleInvalidMail(CheckResult $message)
+    {
+        if ('failed' == $message->statusCode) {
+            Log::error(
+                "DirectMail Message Fail. Message ID: `$message->messageId`. Logged from:".__METHOD__.':'.__LINE__
+            );
+        }
+
+        $this->connector->acknowledgeStatus();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function handleValidMail(CheckResult $message)
+    {
+        $dm = $this
+            ->incomingMessageHandler
+            ->createNewDirectMessage($message);
+
+        for ($i = 0; $i <= $message->numAttachments; ++$i) {
+            // Get content for part i of the current message.
+            $showRes = $this->connector->show($i);
+
+            $this
+                ->incomingMessageHandler
+                ->handleMessageAttachment($dm, $showRes);
+
+            // Store the list of attachments and associated info. This info is only
+            // included with message part 0.
+            if (0 == $i) {
+                $this
+                    ->incomingMessageHandler
+                    ->storeMessageSubject($dm, $showRes);
+            }
+        }
+
+        $this->connector->acknowledgeMessage();
+
+        event(new DirectMailMessageReceived($dm));
+    }
+
+    /**
+     * @throws \Exception
+     */
     private function initPhiMailConnection()
     {
         $phiMailUser        = config('services.emr-direct.user');
@@ -239,54 +281,5 @@ class PhiMail implements DirectMail
 
         $this->connector = new PhiMailConnector($phiMailServer, $phiMailPort);
         $this->connector->authenticateUser($phiMailUser, $phiMailPass);
-    }
-    
-    /**
-     * @param CheckResult $message
-     *
-     * @throws \Exception
-     */
-    private function handleInvalidMail(CheckResult $message)
-    {
-        if ('failed' == $message->statusCode) {
-            Log::error(
-                "DirectMail Message Fail. Message ID: `$message->messageId`. Logged from:".__METHOD__.':'.__LINE__
-            );
-        }
-    
-        $this->connector->acknowledgeStatus();
-    }
-    
-    /**
-     * @param CheckResult $message
-     *
-     * @throws \Exception
-     */
-    private function handleValidMail(CheckResult $message)
-    {
-        $dm = $this
-            ->incomingMessageHandler
-            ->createNewDirectMessage($message);
-    
-        for ($i = 0; $i <= $message->numAttachments; ++$i) {
-            // Get content for part i of the current message.
-            $showRes = $this->connector->show($i);
-        
-            $this
-                ->incomingMessageHandler
-                ->handleMessageAttachment($dm, $showRes);
-        
-            // Store the list of attachments and associated info. This info is only
-            // included with message part 0.
-            if (0 == $i) {
-                $this
-                    ->incomingMessageHandler
-                    ->storeMessageSubject($dm, $showRes);
-            }
-        }
-        
-        $this->connector->acknowledgeMessage();
-        
-        event(new DirectMailMessageReceived($dm));
     }
 }

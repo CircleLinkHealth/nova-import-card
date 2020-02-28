@@ -125,9 +125,9 @@
     "circlelinkhealth/ccda-parser-processor-php-module": "1.0",
     "circlelinkhealth/cerberus-gatekeeper-module": "3.0.6",
     "circlelinkhealth/clh-import-card-extended": "*",
-    "circlelinkhealth/core-module": "1.4.5",
+    "circlelinkhealth/core-module": "1.4.7",
     "circlelinkhealth/cpm-migrations-module": "dev-CPM-1840_cp_dm_approval",
-    "circlelinkhealth/customer-module": "1.8.8",
+    "circlelinkhealth/customer-module": "1.8.9",
     "circlelinkhealth/eligibility-module": "dev-CPM-1840_cp_dm_approval",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
@@ -172,8 +172,8 @@
     "propaganistas/laravel-phone": "^3.0",
     "pusher/pusher-php-server": "^4.0",
     "seld/jsonlint": "^1.7",
-    "sentry/sentry-laravel": "1.6.1",
     "setasign/fpdi-fpdf": "^2.2",
+    "sentry/sentry-laravel": "^1.7.0",
     "sparclex/nova-import-card": "^2.0",
     "spatie/laravel-medialibrary": "^7.0.0",
     "spatie/laravel-view-models": "^1.1",
@@ -256,6 +256,9 @@
     ],
     "test": [
       "php artisan --env=testing test:prepare-test_suite-db",
+      "php artisan --env=testing migrate:fresh",
+      "php artisan --env=testing migrate:views",
+      "php artisan --env=testing db:seed --class=TestSuiteSeeder",
       "./vendor/phpunit/phpunit/phpunit --testsuite=Feature,Unit --stop-on-failure --colors --testdox"
     ],
     "clear": [

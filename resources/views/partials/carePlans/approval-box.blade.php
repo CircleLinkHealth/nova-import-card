@@ -8,7 +8,7 @@
     @elseif($patient->carePlan->provider_approver_id && $patient->carePlan->provider_date)
         <div class="col-xs-12">
             <div class="pull-right print-row text-right">
-                {{ $patient->getCcmStatus() == 'patient_rejected' ? 'Rejected' : 'Approved' }}
+                {{ $patient->getCcmStatus() == 'patient_rejected' ? 'Rejected' : ($patient->patientIsUPG0506() ? 'Created' : 'Approved') }}
                 on {{$patient->carePlan->provider_date->format('m/d/Y')}}
                 at {{$patient->carePlan->provider_date->setTimezone($patient->timezone ?? 'America/New_York')->format('g:i A T')}}
                 by {{ $patient->getCcmStatus() == 'patient_rejected' ? \CircleLinkHealth\Customer\Entities\User::withTrashed()->find($patient->carePlan->user_id)->display_name : \CircleLinkHealth\Customer\Entities\User::withTrashed()->find($patient->carePlan->provider_approver_id)->display_name}}

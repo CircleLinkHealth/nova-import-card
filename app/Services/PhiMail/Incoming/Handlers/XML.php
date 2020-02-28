@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 2/16/20
- * Time: 11:16 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\PhiMail\Incoming\Handlers;
-
 
 use App\DirectMailMessage;
 use App\Jobs\DecorateUPG0506CcdaWithPdfData;
@@ -16,23 +13,23 @@ use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class XML extends BaseHandler
 {
+    public function handle()
+    {
+        if (false === stripos($this->attachmentData, '<ClinicalDocument')) {
+            return;
+        }
+        $this->storeAndImportCcd($this->attachmentData, $this->dm);
+    }
+
     public static function mediaCollectionNameFactory()
     {
         return Ccda::CCD_MEDIA_COLLECTION_NAME;
     }
-    
-    public function handle()
-    {
-        if (false === stripos($this->attachmentData, '<ClinicalDocument')) return;
-    
-        $this->storeAndImportCcd($this->attachmentData, $this->dm);
-    }
-    
+
     /**
      * Stores and imports a CCDA.
      *
      * @param $attachment
-     * @param DirectMailMessage $dm
      */
     private function storeAndImportCcd(
         string $attachment,
@@ -46,9 +43,9 @@ class XML extends BaseHandler
                 'source'                 => Ccda::EMR_DIRECT,
             ]
         );
-        
+
         ImportCcda::withChain([
-            new DecorateUPG0506CcdaWithPdfData($ccda)
+            new DecorateUPG0506CcdaWithPdfData($ccda),
         ])->dispatch($ccda)->onQueue('low');
     }
 }

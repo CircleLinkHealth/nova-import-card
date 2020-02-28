@@ -9,6 +9,7 @@ import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "./store";
 import {ClientTable} from 'vue-tables-2'
+import "vue-trix"
 import EventBus from './admin/time-tracker/comps/event-bus'
 import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
 
@@ -80,11 +81,12 @@ const CcdUploader = () => import(/* webpackChunkName: "chunk-ccd-uploader" */ '.
 const CcdViewer = () => import(/* webpackChunkName: "chunk-ccd-viewer" */ './components/importer/ccd-viewer');
 const CallMgmtAppV2 = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app-v2')
 const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/NurseScheduleCalendar');
-const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/CalendarLoader');
+const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/FullScreenLoader');
 const DisputeNurseInvoice = () => import(/* webpackChunkName: "chunk-nurse" */ './../../../Modules/Nurseinvoices/Resources/assets/js/components/dispute-invoice')
 const NurseInvoiceDailyDispute = () => import(/* webpackChunkName: "chunk-nurse" */ './../../../Modules/Nurseinvoices/Resources/assets/js/components/nurseInvoiceDailyDispute');
 const PusherNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-notifications')
 const PusherSeeAllNotifications = () => import(/* webpackChunkName: "chunk-pusher-notifications" */ './components/pusher-see-all-notifications')
+const SendEmailToPatientComponent = () => import('./components/send-email-to-patient')
 const AttestCallConditionsModalComponent = () => import(/* webpackChunkName: "chunk-attest-call-conditions" */  './components/attest-call-conditions.modal');
 
 
@@ -96,6 +98,7 @@ Vue.component('createAppointmentsAddCarePerson', CreateAppointmentsAddCarePerson
 Vue.component('createCarePerson', CreateCarePerson);
 Vue.component('updateCarePerson', UpdateCarePerson);
 Vue.component('select2', Select2Component);
+Vue.component('send-email-to-patient', SendEmailToPatientComponent);
 Vue.component('fab', FabComponent);
 Vue.component('openModal', OpenModalComponent);
 Vue.component('notifications', NotificationsComponent);
@@ -140,7 +143,6 @@ Vue.component('nurse-schedule-calendar', NurseScheduleCalendar);
 Vue.component('calendar-loader', CalendarLoader);
 Vue.component('pusher-notifications', PusherNotifications);
 Vue.component('pusher-see-all-notifications', PusherSeeAllNotifications);
-
 
 const App = new Vue({
     el: '#app',
