@@ -62,7 +62,7 @@
                 currentPage: 1,
                 totalPages: '',
                 totalNotifications: '',
-                visiblePagesCount: 5,
+                visiblePagesCount: 10,
                 loader:false,
             }
         },
