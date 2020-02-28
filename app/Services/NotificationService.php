@@ -15,7 +15,7 @@ use Illuminate\Support\Collection;
 
 class NotificationService
 {
-    const NOTIFICATION_PER_PAGE = 8;
+    const NOTIFICATION_PER_PAGE_DEFAULT = 5;
 
     /**
      * @param $notification
@@ -66,12 +66,13 @@ class NotificationService
     /**
      * @param $page
      *
+     * @param $notificationsPerPage
      * @return Collection
      */
-    public function getPaginatedNotifications($page)
+    public function getPaginatedNotifications($page, $notificationsPerPage)
     {
         $user              = auth()->user();
-        $userNotifications = $this->getUserNotifications($user)->forPage($page, self::NOTIFICATION_PER_PAGE);
+        $userNotifications = $this->getUserNotifications($user)->forPage($page, $notificationsPerPage);
 
         return $this->prepareNotifications($userNotifications);
     }

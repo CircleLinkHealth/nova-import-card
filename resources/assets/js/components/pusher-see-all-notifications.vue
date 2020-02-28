@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <full-screen-loader v-show="loader"></full-screen-loader>
+        <full-screen-loader v-show="loader" class="half-screen-loader"></full-screen-loader>
         <div class="title"><h2>YOUR NOTIFICATIONS</h2></div>
         <ul class="list-group list-group-flush notifications">
             <li v-for="notification in notifications.notifications" :key="notification.id">
@@ -38,6 +38,13 @@
                         @click="nextPage">
                     Next
                 </button>
+
+                <vue-select class="page-dropdown"
+                            :options="dropdownOptions"
+                            @input="submitDropdownValue"
+                            v-model="selectedResultsPerPage">
+                </vue-select>
+
             </ul>
         </nav>
 
@@ -45,13 +52,19 @@
 </template>
 
 <script>
-    // import VueSelect from 'vue-select';
+
+    const visiblePagesLimit = 10;
+    const defaultDropdown = {
+        label: 'Show 5 /page',
+        value: 5
+    };
+    import VueSelect from 'vue-select';
     import FullScreenLoader from "../admin/NursesWorkSchedules/FullScreenLoader";
 
     export default {
         name: "pusher-see-all-notifications",
         components: {
-            // 'vue-select': VueSelect,
+            'vue-select': VueSelect,
             FullScreenLoader,
         },
         props: [],
@@ -62,52 +75,78 @@
                 currentPage: 1,
                 totalPages: '',
                 totalNotifications: '',
-                visiblePagesCount: 10,
-                loader:false,
+                visiblePagesCount: '',
+                loader: false,
+                selectedResultsPerPage: defaultDropdown,
+                dropdownOptions: [
+                    defaultDropdown,
+                    {
+                        label: 'Show 10 /page',
+                        value: 10
+                    },
+                    {
+                        label: 'Show 15 /page',
+                        value: 15
+                    },
+                    {
+                        label: 'Show 20 /page',
+                        value: 20
+                    },
+                    {
+                        label: 'Show 30 /page',
+                        value: 30
+                    },
+                    {
+                        label: 'Show 40 /page',
+                        value: 40
+                    },
+                ],
             }
         },
 
         computed: {
             paginationTriggers() {
-                const currentPage = this.currentPage;
-                const totalPages = this.totalPages;
-                const visiblePagesCount = this.visiblePagesCount;
-                const visiblePagesThreshold = (visiblePagesCount - 1) / 2;
-                const pagintationTriggersArray = Array(this.visiblePagesCount - 1).fill(0);
+                if (this.visiblePagesCount !== '') {
+                    const currentPage = this.currentPage;
+                    const totalPages = this.totalPages;
+                    const visiblePagesCount = this.visiblePagesCount;
+                    const visiblePagesThreshold = (visiblePagesCount - 1) / 2;
+                    const pagintationTriggersArray = Array(visiblePagesCount - 1).fill(0);
 
-                //Scenario 1: The selected page number is smaller than half of the list width
-                if (currentPage <= visiblePagesThreshold + 1) {
-                    pagintationTriggersArray[0] = 1;
-                    const pagintationTriggers = pagintationTriggersArray.map(
-                        (paginationTrigger, index) => {
-                            return pagintationTriggersArray[0] + index
-                        }
-                    );
-                    pagintationTriggers.push(totalPages);
-                    return pagintationTriggers
-                }
-
-                //Scenario 2: The selected page number is bigger than half of the list width counting from the end of the list
-                if (currentPage >= totalPages - visiblePagesThreshold + 1) {
-                    const pagintationTriggers = pagintationTriggersArray.map(
-                        (paginationTrigger, index) => {
-                            return totalPages - index
-                        }
-                    );
-                    pagintationTriggers.reverse().unshift(1);
-                    return pagintationTriggers
-                }
-
-                // Scenario 3: All other cases
-                pagintationTriggersArray[0] = currentPage - visiblePagesThreshold + 1;
-                const pagintationTriggers = pagintationTriggersArray.map(
-                    (paginationTrigger, index) => {
-                        return pagintationTriggersArray[0] + index;
+                    //Scenario 1: The selected page number is smaller than half of the list width
+                    if (currentPage <= visiblePagesThreshold + 1) {
+                        pagintationTriggersArray[0] = 1;
+                        const pagintationTriggers = pagintationTriggersArray.map(
+                            (paginationTrigger, index) => {
+                                return pagintationTriggersArray[0] + index
+                            }
+                        );
+                        pagintationTriggers.push(totalPages);
+                        return pagintationTriggers
                     }
-                );
-                pagintationTriggers.unshift(1);
-                pagintationTriggers[pagintationTriggers.length - 1] = totalPages;
-                return pagintationTriggers
+
+                    //Scenario 2: The selected page number is bigger than half of the list width counting from the end of the list
+                    if (currentPage >= totalPages - visiblePagesThreshold + 1) {
+                        const pagintationTriggers = pagintationTriggersArray.map(
+                            (paginationTrigger, index) => {
+                                return totalPages - index
+                            }
+                        );
+                        pagintationTriggers.reverse().unshift(1);
+                        return pagintationTriggers
+                    }
+
+                    // Scenario 3: All other cases
+                    pagintationTriggersArray[0] = currentPage - visiblePagesThreshold + 1;
+                    const pagintationTriggers = pagintationTriggersArray.map(
+                        (paginationTrigger, index) => {
+                            return pagintationTriggersArray[0] + index;
+                        }
+                    );
+                    pagintationTriggers.unshift(1);
+                    pagintationTriggers[pagintationTriggers.length - 1] = totalPages;
+                    return pagintationTriggers
+                }
             },
 
             disableNextButton() {
@@ -120,8 +159,14 @@
         },
 
         methods: {
-            roundUp(page){
-            return Math.ceil(page);
+            submitDropdownValue(value) {
+                const page = 1;
+                this.currentPage = page;
+                this.getResults(page);
+            },
+
+            roundUp(page) {
+                return Math.ceil(page);
             },
 
             setCurrentPage(page) {
@@ -153,12 +198,19 @@
                 this.getResults(prevPage);
             },
 
+            calculateVisiblePages() {
+                return this.totalPages > visiblePagesLimit ? visiblePagesLimit : this.totalPages;
+            },
+
             getResults(page) {
+                debugger;
                 this.loader = true;
-                axios.get(`all-notifications-pages/${page}`).then(response => {
+                const resultsPerPage = this.selectedResultsPerPage.value;
+                axios.get(`all-notifications-pages/${page}/${resultsPerPage}`).then(response => {
                     this.notifications = response.data;
                     this.totalPages = response.data.totalPages;
                     this.totalNotifications = response.data.totalNotifications;
+                    this.visiblePagesCount = this.calculateVisiblePages();
                     this.loader = false;
                 }).catch((error) => {
                     console.log(error);
@@ -237,6 +289,7 @@
     }
 
     .btn {
+        height: 50px;
         outline: none;
         padding: 10px;
     }
@@ -248,4 +301,23 @@
         opacity: 0.7;
     }
 
+    .pagination {
+        display: inline-flex;
+    }
+
+    .page-dropdown {
+        padding-left: 30px;
+        padding-top: 10px
+    }
+
+    #cover-spin {
+        background-color: unset;
+    }
+
+    #cover-spin::after {
+        border-right-color: #47bdab;
+        border-bottom-color: #47bdab;
+        border-left-color: #47bdab;
+        border-top-color: transparent;
+    }
 </style>
