@@ -48,7 +48,7 @@ const CpmMedicationGroupsMapsSettings = () => import(/* webpackChunkName: "chunk
 const NotificationsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/shared/notifications/notifications')
 const LoaderComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/loader')
 const NurseScheduleCalendar = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/NurseScheduleCalendar');
-const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/CalendarLoader');
+const CalendarLoader = () => import(/* webpackChunkName: "chunk-admin" */ './admin/NursesWorkSchedules/FullScreenLoader');
 
 
 Vue.use(ClientTable, {}, false)
