@@ -31,13 +31,13 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        $notifications                = $this->service->getDropdownNotifications();
-        $allUnreadNotificationsCount  = $this->service->getDropdownNotificationsCount();
+        $notifications = $this->service->getDropdownNotifications();
+        $allUnreadNotificationsCount = $this->service->getDropdownNotificationsCount();
         $notificationsWithElapsedTime = $this->service->prepareNotifications($notifications);
 
         return response()->json([
             'notifications' => $notificationsWithElapsedTime,
-            'totalCount'    => $allUnreadNotificationsCount,
+            'totalCount' => $allUnreadNotificationsCount,
         ]);
     }
 
@@ -64,16 +64,16 @@ class NotificationController extends Controller
      */
     public function seeAllNotificationsPaginated($page)
     {
-        $notifications        = $this->service->getPaginatedNotifications($page);
-        $totalNotifications   = $this->service->countUserNotifications();
+        $notifications = $this->service->getPaginatedNotifications($page);
+        $totalNotifications = $this->service->countUserNotifications();
         $notificationsPerPage = NotificationService::NOTIFICATION_PER_PAGE;
-        $totalPages           = intval(round($totalNotifications / $notificationsPerPage));
+        $totalPages = intval(round($totalNotifications / $notificationsPerPage));
 
         return response()->json([
-            'success'            => true,
-            'notifications'      => $notifications,
+            'success' => true,
+            'notifications' => $notifications,
             'totalNotifications' => $totalNotifications,
-            'totalPages'         => $totalPages,
+            'totalPages' => $totalPages,
         ], 200);
     }
 
@@ -84,7 +84,7 @@ class NotificationController extends Controller
      */
     public function showPusherNotification($id)
     {
-        $notification    = $this->service->getPusherNotificationData($id);
+        $notification = $this->service->getPusherNotificationData($id);
         $createdDateTime = $this->service->notificationCreatedAt($notification);
         $this->service->addElapsedTime($notification, $createdDateTime);
 

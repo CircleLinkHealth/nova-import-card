@@ -45,6 +45,8 @@
 </template>
 
 <script>
+
+    const visiblePagesLimit = 10;
     // import VueSelect from 'vue-select';
     import FullScreenLoader from "../admin/NursesWorkSchedules/FullScreenLoader";
 
@@ -62,52 +64,54 @@
                 currentPage: 1,
                 totalPages: '',
                 totalNotifications: '',
-                visiblePagesCount: 10,
-                loader:false,
+                visiblePagesCount: '',
+                loader: false,
             }
         },
 
         computed: {
             paginationTriggers() {
-                const currentPage = this.currentPage;
-                const totalPages = this.totalPages;
-                const visiblePagesCount = this.visiblePagesCount;
-                const visiblePagesThreshold = (visiblePagesCount - 1) / 2;
-                const pagintationTriggersArray = Array(this.visiblePagesCount - 1).fill(0);
+              if (this.visiblePagesCount !== ''){
+                  const currentPage = this.currentPage;
+                  const totalPages = this.totalPages;
+                  const visiblePagesCount = this.visiblePagesCount;
+                  const visiblePagesThreshold = (visiblePagesCount - 1) / 2;
+                  const pagintationTriggersArray = Array(visiblePagesCount - 1).fill(0);
 
-                //Scenario 1: The selected page number is smaller than half of the list width
-                if (currentPage <= visiblePagesThreshold + 1) {
-                    pagintationTriggersArray[0] = 1;
-                    const pagintationTriggers = pagintationTriggersArray.map(
-                        (paginationTrigger, index) => {
-                            return pagintationTriggersArray[0] + index
-                        }
-                    );
-                    pagintationTriggers.push(totalPages);
-                    return pagintationTriggers
-                }
+                  //Scenario 1: The selected page number is smaller than half of the list width
+                  if (currentPage <= visiblePagesThreshold + 1) {
+                      pagintationTriggersArray[0] = 1;
+                      const pagintationTriggers = pagintationTriggersArray.map(
+                          (paginationTrigger, index) => {
+                              return pagintationTriggersArray[0] + index
+                          }
+                      );
+                      pagintationTriggers.push(totalPages);
+                      return pagintationTriggers
+                  }
 
-                //Scenario 2: The selected page number is bigger than half of the list width counting from the end of the list
-                if (currentPage >= totalPages - visiblePagesThreshold + 1) {
-                    const pagintationTriggers = pagintationTriggersArray.map(
-                        (paginationTrigger, index) => {
-                            return totalPages - index
-                        }
-                    );
-                    pagintationTriggers.reverse().unshift(1);
-                    return pagintationTriggers
-                }
+                  //Scenario 2: The selected page number is bigger than half of the list width counting from the end of the list
+                  if (currentPage >= totalPages - visiblePagesThreshold + 1) {
+                      const pagintationTriggers = pagintationTriggersArray.map(
+                          (paginationTrigger, index) => {
+                              return totalPages - index
+                          }
+                      );
+                      pagintationTriggers.reverse().unshift(1);
+                      return pagintationTriggers
+                  }
 
-                // Scenario 3: All other cases
-                pagintationTriggersArray[0] = currentPage - visiblePagesThreshold + 1;
-                const pagintationTriggers = pagintationTriggersArray.map(
-                    (paginationTrigger, index) => {
-                        return pagintationTriggersArray[0] + index;
-                    }
-                );
-                pagintationTriggers.unshift(1);
-                pagintationTriggers[pagintationTriggers.length - 1] = totalPages;
-                return pagintationTriggers
+                  // Scenario 3: All other cases
+                  pagintationTriggersArray[0] = currentPage - visiblePagesThreshold + 1;
+                  const pagintationTriggers = pagintationTriggersArray.map(
+                      (paginationTrigger, index) => {
+                          return pagintationTriggersArray[0] + index;
+                      }
+                  );
+                  pagintationTriggers.unshift(1);
+                  pagintationTriggers[pagintationTriggers.length - 1] = totalPages;
+                  return pagintationTriggers
+              }
             },
 
             disableNextButton() {
@@ -120,8 +124,8 @@
         },
 
         methods: {
-            roundUp(page){
-            return Math.ceil(page);
+            roundUp(page) {
+                return Math.ceil(page);
             },
 
             setCurrentPage(page) {
@@ -153,12 +157,17 @@
                 this.getResults(prevPage);
             },
 
+            calculateVisiblePages() {
+               return this.totalPages > visiblePagesLimit ? visiblePagesLimit : this.totalPages;
+            },
+
             getResults(page) {
                 this.loader = true;
                 axios.get(`all-notifications-pages/${page}`).then(response => {
                     this.notifications = response.data;
                     this.totalPages = response.data.totalPages;
                     this.totalNotifications = response.data.totalNotifications;
+                    this.visiblePagesCount = this.calculateVisiblePages();
                     this.loader = false;
                 }).catch((error) => {
                     console.log(error);
