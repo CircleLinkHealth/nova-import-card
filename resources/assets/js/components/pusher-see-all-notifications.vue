@@ -100,10 +100,6 @@
                         label: 'Show 40 /page',
                         value: 40
                     },
-                    {
-                        label: '200 per page',
-                        value: 150
-                    }
                 ],
             }
         },
