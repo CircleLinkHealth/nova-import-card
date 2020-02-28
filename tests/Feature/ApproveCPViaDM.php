@@ -285,7 +285,7 @@ class ApproveCPViaDM extends CustomerTestCase
                 'attempt_note'    => 'This is a task',
                 'scheduler'       => $this->provider()->id,
                 'inbound_cpm_id'  => $this->patient()->id,
-                'outbound_cpm_id' => $this->patient()->patientInfo->getNurse(),
+                'outbound_cpm_id' => $this->patient()->patientInfo->getNurse()->id,
                 'asap'            => true,
                 'note_id'         => $note->id,
             ]
