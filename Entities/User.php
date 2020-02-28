@@ -2163,7 +2163,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function isPcm()
     {
-        return false;
+        return $this->whereHas('ccdProblems', function ($q){
+            $q->where(function ($q){
+                $q->whereHas('codes', function ($q) {
+                    $q->whereIn('code', function ($q) {
+                        $q->select('code')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
+                    });
+                });
+            })->orWhere(function ($q){
+                $q->whereIn('name', function ($q) {
+                    $q->select('description')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
+                });
+            });
+        })->exists();
     }
 
     /**
