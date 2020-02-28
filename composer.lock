@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d6f51aa2ad055a0e750d93b7289f39bc",
+    "content-hash": "1812aeab86ba9251204fa45dbee3fc22",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
