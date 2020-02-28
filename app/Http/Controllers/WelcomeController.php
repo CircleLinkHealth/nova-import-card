@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ManagesPatientCookies;
 use Illuminate\Http\Request;
 
 class WelcomeController extends Controller
@@ -20,6 +21,8 @@ class WelcomeController extends Controller
     | controllers, you are free to modify or remove it as you desire.
     |
     */
+
+    use ManagesPatientCookies;
 
     /**
      * Create a new controller instance.
@@ -40,10 +43,12 @@ class WelcomeController extends Controller
      *
      * @return Response
      */
-    public function index(Request $request, $practiceId = null)
+    public function index(Request $request)
     {
+        $this->checkPracticeNameCookie($request);
+
         if ( ! auth()->check()) {
-            return \App::call('App\Http\Controllers\Auth\LoginController@showLoginForm', ['practiceId' => $practiceId]);
+            return redirect(route('login'));
         }
 
         $user = auth()->user();

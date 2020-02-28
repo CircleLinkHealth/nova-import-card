@@ -7,8 +7,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Traits\ManagesPatientCookies;
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\Practice;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -18,6 +18,9 @@ use Jenssegers\Agent\Agent;
 
 class LoginController extends Controller
 {
+    use AuthenticatesUsers {
+        login as traitLogin;
+    }
     /*
     |--------------------------------------------------------------------------
     | Login Controller
@@ -28,10 +31,7 @@ class LoginController extends Controller
     | to conveniently provide its functionality to your applications.
     |
     */
-
-    use AuthenticatesUsers {
-        login as traitLogin;
-    }
+    use ManagesPatientCookies;
 
     const MIN_PASSWORD_CHANGE_IN_DAYS = 180;
 
@@ -120,22 +120,14 @@ class LoginController extends Controller
      *
      * In case a patient User tries to log in, need id to show Practice Name instead of CLH logo.
      *
-     * @param null $practiceId
-     *
      * @return $this|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showLoginForm($practiceId = null)
+    public function showLoginForm(Request $request)
     {
+        $this->checkPracticeNameCookie($request);
+
         if (auth()->check()) {
             return redirect('/');
-        }
-
-        $practice = Practice::find($practiceId);
-
-        if ($practiceId && ! $practice) {
-            \Log::channel('logdna')->info('Invalid Practice ID on login page.', [
-                'practice_id' => $practiceId,
-            ]);
         }
 
         $agent = new Agent();
@@ -144,19 +136,10 @@ class LoginController extends Controller
             $message = "You are using an outdated version of {$agent->browser()}. Please update to a newer version.";
 
             return view('auth.login')
-                ->with([
-                    'practiceName' => $practice
-                        ? $practice->display_name
-                        : null,
-                ])
                 ->withErrors(['outdated-browser' => [$message]]);
         }
 
-        return view('auth.login')->with([
-            'practiceName' => $practice
-                ? $practice->display_name
-                : null,
-        ]);
+        return response()->view('auth.login');
     }
 
     /**

@@ -62,8 +62,10 @@
                             <div class="col-lg-12"
                                  style="background-color: white;margin: 0 0px 10px 0px;border-top: #50b2e1 3px solid;">
                                 <div class="col-lg-10 col-lg-offset-1" style="text-align: center">
-                                    @if(isset($practiceName) && ! empty($practiceName))
-                                        <h2 class="auth-pages-title">{{$practiceName}}</h2>
+                                    @if(\Illuminate\Support\Facades\Cookie::has('practice_name_as_logo'))
+                                        <h2 class="auth-pages-title">{{\Illuminate\Support\Facades\Cookie::get('practice_name_as_logo')}}</h2>
+                                    @elseif(isset($_COOKIE['practice_name_as_logo']))
+                                        <h2 class="auth-pages-title">{{$_COOKIE['practice_name_as_logo']}}</h2>
                                     @else
                                         <img class="img-responsive" src="{{ mix('img/logos/LogoHorizontal_Color.svg') }}"
                                              alt="CarePlan Manager">
