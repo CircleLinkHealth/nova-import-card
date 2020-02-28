@@ -48,7 +48,8 @@ Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 Route::get('/', 'WelcomeController@index', [
     'as' => 'index',
 ]);
-Route::get('home', 'WelcomeController@index', [
+Route::get('home', [
+    'uses' => 'WelcomeController@index',
     'as' => 'home',
 ]);
 
