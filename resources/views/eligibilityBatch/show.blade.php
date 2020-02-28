@@ -88,6 +88,9 @@
                         <br><br>
 
                             <div class="row">
+                                @if (CircleLinkHealth\Eligibility\Entities\EligibilityBatch::ATHENA_API == $batch->type)
+                                    <div class="col-md-12">ELIGIBLES ARE PATIENTS W/ OFFICE VISIT IN LAST 12 MONTHS SINCE BATCH START DATE</div>
+                                @endif
                         <div class="col-md-4">
                             <h4>Counts</h4>
 

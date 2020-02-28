@@ -14,64 +14,76 @@ class ArrayProblemLogger implements Logger
     public function handle($problems): array
     {
         $results = [];
-        
+
         foreach ($problems as $p) {
             if ( ! is_array($p)) {
                 continue;
             }
-            
+
             if ( ! array_keys_exist(
+                [
+                    'code',
+                    'name',
+                    'code_type',
+                    'start_date',
+                ],
+                $p
+            ) && array_keys_exist(
                     [
                         'code',
-                        'name',
                         'code_type',
-                        'start_date',
                     ],
                     $p
-                ) && array_keys_exist(
-                     [
-                         'code',
-                         'code_type',
-                     ],
-                     $p
-                 )) {
+                )) {
                 $results[] = Problem::create(
                     [
                         'code'             => $p['code'],
                         'code_system_name' => $p['code_type'],
                     ]
                 );
-                
+
                 continue;
             }
-            
-            $results[] = Problem::create(
-                [
-                    'code'             => $p['code'],
-                    'name'             => $p['name'],
-                    'code_system_name' => $p['code_type'],
-                    'start'            => $p['start_date'],
-                ]
-            );
+
+            if (1 === count($p) && array_key_exists('name', $p)) {
+                $results[] = Problem::create(
+                    [
+                        'name' => $p['name'],
+                    ]
+                );
+
+                continue;
+            }
+
+            if ( ! empty($p['name']) || ! empty($p['code'])) {
+                $results[] = Problem::create(
+                    [
+                        'code'             => $p['code'] ?? null,
+                        'name'             => $p['name'] ?? null,
+                        'code_system_name' => $p['code_type'] ?? null,
+                        'start'            => $p['start_date'] ?? null,
+                    ]
+                );
+            }
         }
-        
+
         return $results;
     }
-    
+
     public function shouldHandle($problems)
     {
         if ( ! is_array($problems)) {
             return false;
         }
-        
+
         foreach ($problems as $prob) {
             if ( ! is_array($prob)) {
                 \Log::error('NOT AN ARRAY:'.json_encode($problems));
-                
+
                 return false;
             }
-            
-            if ( ! array_keys_exist(
+
+            if (array_keys_exist(
                 [
                     'code',
                     'name',
@@ -80,20 +92,27 @@ class ArrayProblemLogger implements Logger
                 ],
                 $prob
             )) {
-                if (array_keys_exist(
-                    [
-                        'code',
-                        'code_type',
-                    ],
-                    $prob
-                )) {
-                    return true;
-                }
-                
-                return false;
+                return true;
+            }
+
+            if (array_keys_exist(
+                [
+                    'code',
+                    'code_type',
+                ],
+                $prob
+            )) {
+                return true;
+            }
+
+            if (array_key_exists(
+                'name',
+                $prob
+            )) {
+                return true;
             }
         }
-        
-        return true;
+
+        return false;
     }
 }
