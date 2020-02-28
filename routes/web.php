@@ -2247,6 +2247,11 @@ Route::get('see-all-notifications', [
     'as'   => 'notifications.seeAll',
 ])->middleware('permission:provider.read,note.read');
 
+Route::get('all-notifications-pages/{page}', [
+    'uses' => 'NotificationController@seeAllNotificationsPaginated',
+    'as'   => 'notifications.all.paginated',
+])->middleware('permission:provider.read,note.read');
+
 Route::get('nurses/holidays', [
     'uses' => 'CareCenter\WorkScheduleController@getHolidays',
     'as'   => 'get.admin.nurse.schedules.holidays',
