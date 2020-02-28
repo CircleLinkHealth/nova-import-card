@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9ba19b60983575402fd1e46602e4feb4",
+    "content-hash": "da95358779e5eed068af8af03f46bbab",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -926,11 +926,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "dev-CPM-2078_addathenalastencounter",
+            "version": "v1.8.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "1bb76214dbe9e44024dd84bcd4f8c7f4dbdbd6a9"
+                "reference": "c8617cfb762fded644e7f49583f1c4f802fb3110"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -955,7 +955,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-28T00:38:49+00:00"
+            "time": "2020-02-28T01:40:57+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -8025,20 +8025,20 @@
         },
         {
             "name": "sentry/sentry-laravel",
-            "version": "1.6.2",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-laravel.git",
-                "reference": "7debcb2f1ad080dff33dd1433d86ab45a3f5c01e"
+                "reference": "72684758f15aae4562149460b70fea81e9a06a25"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/7debcb2f1ad080dff33dd1433d86ab45a3f5c01e",
-                "reference": "7debcb2f1ad080dff33dd1433d86ab45a3f5c01e",
+                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/72684758f15aae4562149460b70fea81e9a06a25",
+                "reference": "72684758f15aae4562149460b70fea81e9a06a25",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "5.0 - 5.8 | ^6.0",
+                "illuminate/support": "5.0 - 5.8 | ^6.0 | ^7.0",
                 "php": "^7.1",
                 "sentry/sdk": "^2.1"
             },
@@ -8090,7 +8090,7 @@
                 "logging",
                 "sentry"
             ],
-            "time": "2020-02-14T12:29:38+00:00"
+            "time": "2020-02-26T09:01:08+00:00"
         },
         {
             "name": "setasign/fpdf",
@@ -14656,7 +14656,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/eligibility-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
