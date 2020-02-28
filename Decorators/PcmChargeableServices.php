@@ -43,6 +43,7 @@ class PcmChargeableServices implements MedicalRecordDecorator
         }
     
         $this->addPcmCodeAndProblems($data, $pcmProblems);
+        $eligibilityJob->data = $data;
         
         if ($eligibilityJob->isDirty()) {
             $eligibilityJob->save();
