@@ -54,9 +54,27 @@ class NotificationController extends Controller
      */
     public function seeAllNotifications()
     {
-        $notifications = $this->service->getAllUserNotifications();
+        return view('notifications.seeAllNotifications');
+    }
 
-        return view('notifications.seeAllNotifications', compact('notifications'));
+    /**
+     * @param $page
+     *
+     * @return JsonResponse
+     */
+    public function seeAllNotificationsPaginated($page)
+    {
+        $notifications        = $this->service->getPaginatedNotifications($page);
+        $totalNotifications   = $this->service->countUserNotifications();
+        $notificationsPerPage = NotificationService::NOTIFICATION_PER_PAGE;
+        $totalPages           = intval(round($totalNotifications / $notificationsPerPage));
+
+        return response()->json([
+            'success'            => true,
+            'notifications'      => $notifications,
+            'totalNotifications' => $totalNotifications,
+            'totalPages'         => $totalPages,
+        ], 200);
     }
 
     /**

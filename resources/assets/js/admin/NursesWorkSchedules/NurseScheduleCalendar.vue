@@ -252,7 +252,7 @@
     import VueSelect from 'vue-select';
     import {mapActions} from 'vuex';
     import {addNotification} from '../../../../../resources/assets/js/store/actions.js';
-    import CalendarLoader from './CalendarLoader';
+    import CalendarLoader from './FullScreenLoader';
     import axios from "../../bootstrap-axios";
 
     let self;
