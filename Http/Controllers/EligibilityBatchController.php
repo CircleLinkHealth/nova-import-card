@@ -362,42 +362,44 @@ class EligibilityBatchController extends Controller
 
             Enrollee::select([
                 'enrollees.id as eligible_patient_id',
-                'eligibility_job_id',
-                'cpm_problem_1',
-                'cpm_problem_2',
-                'medical_record_type',
-                'medical_record_id',
-                'mrn',
-                'first_name',
-                'last_name',
-                'address',
-                'address_2',
-                'city',
-                'state',
-                'zip',
-                'primary_phone',
-                'other_phone',
-                'home_phone',
-                'cell_phone',
-                'email',
-                'dob',
-                'lang',
-                'preferred_days',
-                'preferred_window',
-                'primary_insurance',
-                'secondary_insurance',
-                'tertiary_insurance',
-                'last_encounter',
-                'referring_provider_name',
-                'problems',
+                'enrollees.eligibility_job_id',
+                'enrollees.cpm_problem_1',
+                'enrollees.cpm_problem_2',
+                'enrollees.medical_record_type',
+                'enrollees.medical_record_id',
+                'enrollees.mrn',
+                'enrollees.first_name',
+                'enrollees.last_name',
+                'enrollees.address',
+                'enrollees.address_2',
+                'enrollees.city',
+                'enrollees.state',
+                'enrollees.zip',
+                'enrollees.primary_phone',
+                'enrollees.other_phone',
+                'enrollees.home_phone',
+                'enrollees.cell_phone',
+                'enrollees.email',
+                'enrollees.dob',
+                'enrollees.lang',
+                'enrollees.preferred_days',
+                'enrollees.preferred_window',
+                'enrollees.primary_insurance',
+                'enrollees.secondary_insurance',
+                'enrollees.tertiary_insurance',
+                'enrollees.last_encounter',
+                'enrollees.referring_provider_name',
+                'enrollees.problems',
                 'p1.name as ccm_condition_1',
                 'p2.name as ccm_condition_2',
+                'pbhi.name as bhi_condition',
             ])
                 ->leftJoin('cpm_problems as p1', 'p1.id', '=', 'enrollees.cpm_problem_1')
                 ->leftJoin('cpm_problems as p2', 'p2.id', '=', 'enrollees.cpm_problem_2')
-                ->whereBatchId($batch->id)
+                ->leftJoin('eligibility_jobs', 'eligibility_jobs.id', '=', 'enrollees.eligibility_job_id')
+                ->leftJoin('cpm_problems as pbhi', 'pbhi.id', '=', 'eligibility_jobs.bhi_problem_id')
+                ->where('enrollees.batch_id', $batch->id)
                 ->whereNull('user_id')
-                ->with('eligibilityJob')
                 ->chunk(500, function ($enrollees) use ($handle, &$firstIteration) {
                     foreach ($enrollees as $enrollee) {
                         $data = [
@@ -434,6 +436,7 @@ class EligibilityBatchController extends Controller
                             'referring_provider_name' => $enrollee->referring_provider_name,
                             'ccm_condition_1'         => $enrollee->ccm_condition_1,
                             'ccm_condition_2'         => $enrollee->ccm_condition_2,
+                            'bhi_condition'           => $enrollee->bhi_condition,
                             'problems'                => $enrollee->problems,
                         ];
 
