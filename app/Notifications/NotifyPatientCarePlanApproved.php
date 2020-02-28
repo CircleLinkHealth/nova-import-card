@@ -112,7 +112,6 @@ class NotifyPatientCarePlanApproved extends Notification
      */
     public function toMail($notifiable)
     {
-        //todo: validate email before sending?
         $practice = $this->carePlan->patient->primaryPractice;
 
         return (new MailMessage())
