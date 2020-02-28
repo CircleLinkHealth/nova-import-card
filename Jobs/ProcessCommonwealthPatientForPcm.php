@@ -43,19 +43,8 @@ class ProcessCommonwealthPatientForPcm implements ShouldQueue
      * @throws \Exception
      */
     public function handle(
-        DemographicsFromAthena $addDemographicsFromAthenaToEligibilityJob,
-        CareTeamFromAthena $addCareTeamFromAthenaToEligibilityJob,
-        InsuranceFromAthena $addInsuranceFromAthenaToEligibilityJob,
         PcmChargeableServices $addPcmChargeableServices
     ) {
-        $addPcmChargeableServices->decorate(
-            $addInsuranceFromAthenaToEligibilityJob->decorate(
-                $addDemographicsFromAthenaToEligibilityJob->decorate(
-                    $addCareTeamFromAthenaToEligibilityJob->decorate(
-                        $this->eligibilityJob
-                    )
-                )
-            )
-        )->save();
+        $addPcmChargeableServices->decorate($this->eligibilityJob)->save();
     }
 }
