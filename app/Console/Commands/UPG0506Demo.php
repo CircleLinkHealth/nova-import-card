@@ -79,13 +79,13 @@ class UPG0506Demo extends Command
             $ccda->media()
                 ->get()
                 ->each(function ($media) {
-                     $media->delete();
-                 });
+                    $media->delete();
+                });
 
             \DB::table('media')
                 ->where('custom_properties->is_pdf', 'true')
                 ->where('custom_properties->is_upg0506', 'true')
-                ->where('custom_properties->care_plan->demographics->mrn_number', '334417')
+                ->where('custom_properties->care_plan->demographics->name->family', 'Zznigro')
                 ->delete();
 
             $dm = $ccda->directMessage()->first();
@@ -94,8 +94,8 @@ class UPG0506Demo extends Command
                 $dm->media()
                     ->get()
                     ->each(function ($media) {
-                       $media->delete();
-                   });
+                        $media->delete();
+                    });
                 $dm->delete();
             }
 
@@ -134,8 +134,8 @@ class UPG0506Demo extends Command
                 User::whereFirstName('Barbara')
                     ->whereLastName('Zznigro')
                     ->get()
-                    ->each(function (User $u){
-                        $u->ccdas()->get()->each(function($ccda){
+                    ->each(function (User $u) {
+                        $u->ccdas()->get()->each(function ($ccda) {
                             $this->clearCcdaData($ccda);
                         });
 
@@ -143,14 +143,12 @@ class UPG0506Demo extends Command
                         $u->patientSummaries()->delete();
                         $u->forceDelete();
                     });
-
-            }catch (\Exception $exception){
+            } catch (\Exception $exception) {
                 \Log::channel('logdna')->info('UPG0506 demo error on deleting test data', [
-                    'exception' => $exception->getMessage()
+                    'exception' => $exception->getMessage(),
                 ]);
             }
         }
-
     }
 
     /**
