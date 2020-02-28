@@ -110,6 +110,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  */
 class Ccda extends MedicalRecordEloquent implements HasMedia
 {
+    const CCD_MEDIA_COLLECTION_NAME = 'ccd';
+    
     use BelongsToPatientUser;
     use HasMediaTrait;
     use SoftDeletes;
@@ -161,7 +163,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
             return json_decode($this->json);
         }
 
-        if ( ! $this->id || ! $this->hasMedia('ccd')) {
+        if ( ! $this->id || ! $this->hasMedia(self::CCD_MEDIA_COLLECTION_NAME)) {
             return false;
         }
 
@@ -211,7 +213,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         }
 
         \Storage::disk('storage')->put($filename, $xml);
-        $ccda->addMedia(storage_path($filename))->toMediaCollection('ccd');
+        $ccda->addMedia(storage_path($filename))->toMediaCollection(self::CCD_MEDIA_COLLECTION_NAME);
 
         return $ccda;
     }
@@ -228,7 +230,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
     public function directMessage()
     {
-        return $this->belongsTo(DirectMailMessage::class);
+        return $this->belongsTo(DirectMailMessage::class, 'direct_mail_message_id');
     }
 
     public function getDocumentCustodian(): string
@@ -251,7 +253,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
     /**
      * Get the User to whom this record belongs to, if one exists.
      */
-    public function getPatient(): User
+    public function getPatient() :? User
     {
         return $this->patient;
     }
@@ -284,6 +286,30 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
         return $query->select(array_diff(array_merge($defaultColumns, $this->fillable), (array) $value));
     }
+    
+    public function scopeHasUPG0506Media($query)
+    {
+        return $query->whereHas('media', function ($q) {
+            $q->where('custom_properties->is_ccda', 'true')->where('custom_properties->is_upg0506', 'true');
+        });
+    }
+    
+    public function scopeHasUPG0506PdfCareplanMedia($query)
+    {
+        return $query->whereExists(function ($query) {
+            $query->select('id')
+                  ->from('media')
+                  ->where('custom_properties->is_pdf', 'true')->where('custom_properties->is_upg0506', 'true')->where('custom_properties->care_plan->demographics->mrn_number', (string)$this->mrn);
+        });
+    }
+
+    public function getUPG0506PdfCareplanMedia(){
+        return \DB::table('media')
+           ->where('custom_properties->is_pdf', 'true')
+           ->where('custom_properties->is_upg0506', 'true')
+           ->where('custom_properties->care_plan->demographics->mrn_number', (string)$this->mrn)
+           ->first();
+    }
 
     public function storeCcd($xml)
     {
@@ -292,7 +318,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         }
 
         \Storage::disk('storage')->put("ccda-{$this->id}.xml", $xml);
-        $this->addMedia(storage_path("ccda-{$this->id}.xml"))->toMediaCollection('ccd');
+        $this->addMedia(storage_path("ccda-{$this->id}.xml"))->toMediaCollection(self::CCD_MEDIA_COLLECTION_NAME);
 
         return $this;
     }
@@ -307,7 +333,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
 
     protected function parseToJson()
     {
-        $xmlMedia = $this->getMedia('ccd')->first();
+        $xmlMedia = $this->getMedia(self::CCD_MEDIA_COLLECTION_NAME)->first();
         $xml      = $xmlMedia->getFile();
         if ( (! is_string($xml)) || (strlen($xml) < 1) || (false === stripos($xml, '<ClinicalDocument'))) {
             $this->json   = null;
@@ -340,8 +366,11 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         }
 
         $json = $this->getParsedJson();
+        
+        $decoded = json_decode($json);
 
         $this->json = $json;
+        $this->mrn = optional($decoded->demographics)->mrn_number;
         $this->save();
     }
 
@@ -353,5 +382,19 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
     private function getParsedJson()
     {
         return optional(DB::table(config('ccda-parser.db_table'))->where('ccda_id', '=', $this->id)->first())->result;
+    }
+    
+    /**
+     * Checks the procedues section of the CCDA for codes
+     *
+     * @param string $code
+     *
+     * @return bool
+     */
+    public function hasProcedureCode(string $code):bool
+    {
+        return collect(
+            $this->bluebuttonJson()->procedures
+        )->pluck('code')->contains($code);
     }
 }

@@ -197,7 +197,7 @@ class TabularMedicalRecord extends MedicalRecordEloquent
     /**
      * Get the User to whom this record belongs to, if one exists.
      */
-    public function getPatient(): User
+    public function getPatient():? User
     {
         // TODO: Implement show() method.
     }
