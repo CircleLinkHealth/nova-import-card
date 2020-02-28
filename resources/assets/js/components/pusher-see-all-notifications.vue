@@ -1,35 +1,166 @@
 <template>
     <div class="container">
+        <full-screen-loader v-show="loader"></full-screen-loader>
         <div class="title"><h2>YOUR NOTIFICATIONS</h2></div>
-        <div class="list-group list-group-flush notifications">
-            <div v-for="notification in notifications">
+        <ul class="list-group list-group-flush notifications">
+            <li v-for="notification in notifications.notifications" :key="notification.id">
                 <a class="list-group-item list-group-item-action"
                    :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
                    @click="redirectAndMarkAsRead(notification)"
                    v-html="showAll(notification)">
                 </a>
-            </div>
-        </div>
+            </li>
+        </ul>
+
+        <nav class="pagination">
+            <ul :data="notifications" class="pagination">
+                <button type="button"
+                        class="btn btn-primary"
+                        :disabled="disablePrevButton"
+                        :class="{disable: disablePrevButton}"
+                        @click="prevPage">
+                    Prev
+                </button>
+
+                <li v-for="(page, index) in paginationTriggers">
+                    <button style="padding: 10px; margin:5px;" type="button"
+                            class="btn btn-light"
+                            :class="{'pages': page === currentPage}"
+                            @click="goToPage(page)">
+                        {{page}}
+                    </button>
+                </li>
+
+                <button type="button"
+                        class="btn btn-primary"
+                        :disabled="disableNextButton"
+                        :class="{disable: disableNextButton}"
+                        @click="nextPage">
+                    Next
+                </button>
+            </ul>
+        </nav>
+
     </div>
 </template>
 
 <script>
+    // import VueSelect from 'vue-select';
+    import FullScreenLoader from "../admin/NursesWorkSchedules/FullScreenLoader";
+
     export default {
         name: "pusher-see-all-notifications",
         components: {
-
+            // 'vue-select': VueSelect,
+            FullScreenLoader,
         },
-        props: [
-            'notifications'
-        ],
+        props: [],
 
         data() {
             return {
-
+                notifications: {},
+                currentPage: 1,
+                totalPages: '',
+                totalNotifications: '',
+                visiblePagesCount: 5,
+                loader:false,
             }
         },
-        // @todo: im using the same methods as pusher-notifications.vue
+
+        computed: {
+            paginationTriggers() {
+                const currentPage = this.currentPage;
+                const totalPages = this.totalPages;
+                const visiblePagesCount = this.visiblePagesCount;
+                const visiblePagesThreshold = (visiblePagesCount - 1) / 2;
+                const pagintationTriggersArray = Array(this.visiblePagesCount - 1).fill(0);
+
+                //Scenario 1: The selected page number is smaller than half of the list width
+                if (currentPage <= visiblePagesThreshold + 1) {
+                    pagintationTriggersArray[0] = 1;
+                    const pagintationTriggers = pagintationTriggersArray.map(
+                        (paginationTrigger, index) => {
+                            return pagintationTriggersArray[0] + index
+                        }
+                    );
+                    pagintationTriggers.push(totalPages);
+                    return pagintationTriggers
+                }
+
+                //Scenario 2: The selected page number is bigger than half of the list width counting from the end of the list
+                if (currentPage >= totalPages - visiblePagesThreshold + 1) {
+                    const pagintationTriggers = pagintationTriggersArray.map(
+                        (paginationTrigger, index) => {
+                            return totalPages - index
+                        }
+                    );
+                    pagintationTriggers.reverse().unshift(1);
+                    return pagintationTriggers
+                }
+
+                // Scenario 3: All other cases
+                pagintationTriggersArray[0] = currentPage - visiblePagesThreshold + 1;
+                const pagintationTriggers = pagintationTriggersArray.map(
+                    (paginationTrigger, index) => {
+                        return pagintationTriggersArray[0] + index;
+                    }
+                );
+                pagintationTriggers.unshift(1);
+                pagintationTriggers[pagintationTriggers.length - 1] = totalPages;
+                return pagintationTriggers
+            },
+
+            disableNextButton() {
+                return this.currentPage === this.totalPages;
+            },
+
+            disablePrevButton() {
+                return this.currentPage === 1;
+            }
+        },
+
         methods: {
+            setCurrentPage(page) {
+                this.currentPage = page;
+                if (page < 1) {
+                    this.currentPage = 1;
+                } else if (page > this.totalPages) {
+                    this.currentPage = this.totalPages;
+                } else {
+                    this.currentPage = page;
+                }
+            },
+
+            goToPage(page) {
+                this.setCurrentPage(page);
+                this.getResults(page);
+            },
+
+            nextPage() {
+                const nextPage = this.currentPage + 1;
+                this.setCurrentPage(nextPage);
+                this.getResults(nextPage);
+            },
+
+            prevPage() {
+                const prevPage = this.currentPage - 1;
+                this.setCurrentPage(prevPage);
+                this.getResults(prevPage);
+            },
+
+            getResults(page) {
+                this.loader = true;
+                axios.get(`all-notifications-pages/${page}`).then(response => {
+                    this.notifications = response.data;
+                    this.totalPages = response.data.totalPages;
+                    this.totalNotifications = response.data.totalNotifications;
+                    this.loader = false;
+                }).catch((error) => {
+                    console.log(error);
+                });
+            },
+
+
             showAll(notification) { //this is the same function as in pusher-notifications.vue, it should be  extracted
                 const getNotificationSubject = notification.data.subject;
                 const getNotificationElapsedTime = notification.elapsed_time;
@@ -49,7 +180,17 @@
             redirectTo(notification) {
                 window.location.href = notification.data.redirect_link;
             },
+        },
+
+        mounted() {
+            const page = 1;
+            this.getResults(page);
+        },
+
+        created() {
+
         }
+
     }
 </script>
 
@@ -82,6 +223,24 @@
 
     .greyOut {
         opacity: 0.6;
+    }
+
+    .pages {
+        font-size: 25px;
+        font-weight: bolder;
+        color: #4eb1e2
+    }
+
+    .btn {
+        outline: none;
+        padding: 10px;
+    }
+
+    .disable {
+        background-color: #f4f6f6;
+        color: #d5dbdb;
+        cursor: default;
+        opacity: 0.7;
     }
 
 </style>
