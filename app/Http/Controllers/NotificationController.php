@@ -31,13 +31,13 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        $notifications                = $this->service->getDropdownNotifications();
-        $allUnreadNotificationsCount  = $this->service->getDropdownNotificationsCount();
+        $notifications = $this->service->getDropdownNotifications();
+        $allUnreadNotificationsCount = $this->service->getDropdownNotificationsCount();
         $notificationsWithElapsedTime = $this->service->prepareNotifications($notifications);
 
         return response()->json([
             'notifications' => $notificationsWithElapsedTime,
-            'totalCount'    => $allUnreadNotificationsCount,
+            'totalCount' => $allUnreadNotificationsCount,
         ]);
     }
 
@@ -60,20 +60,25 @@ class NotificationController extends Controller
     /**
      * @param $page
      *
+     * @param $resultsPerPage
      * @return JsonResponse
      */
-    public function seeAllNotificationsPaginated($page)
+    public function seeAllNotificationsPaginated($page, $resultsPerPage)
     {
-        $notifications        = $this->service->getPaginatedNotifications($page);
-        $totalNotifications   = $this->service->countUserNotifications();
-        $notificationsPerPage = NotificationService::NOTIFICATION_PER_PAGE;
-        $totalPages           = intval(round($totalNotifications / $notificationsPerPage));
+        $notificationsPerPage = !empty($resultsPerPage)
+            ? $resultsPerPage
+            : NotificationService::NOTIFICATION_PER_PAGE_DEFAULT;
+
+        $notifications = $this->service->getPaginatedNotifications($page, $notificationsPerPage);
+        $totalNotifications = $this->service->countUserNotifications();
+
+        $totalPages = intval(ceil($totalNotifications / $notificationsPerPage));
 
         return response()->json([
-            'success'            => true,
-            'notifications'      => $notifications,
+            'success' => true,
+            'notifications' => $notifications,
             'totalNotifications' => $totalNotifications,
-            'totalPages'         => $totalPages,
+            'totalPages' => $totalPages,
         ], 200);
     }
 
@@ -84,7 +89,7 @@ class NotificationController extends Controller
      */
     public function showPusherNotification($id)
     {
-        $notification    = $this->service->getPusherNotificationData($id);
+        $notification = $this->service->getPusherNotificationData($id);
         $createdDateTime = $this->service->notificationCreatedAt($notification);
         $this->service->addElapsedTime($notification, $createdDateTime);
 
