@@ -3100,6 +3100,24 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
     }
 
+    public function patientIsUPG0506() : bool
+    {
+        if (! $this->patientInfo || ! $this->isParticipant()){
+            return false;
+        }
+
+        $ccda = $this->ccdas->first();
+        if (! $ccda){
+            return false;
+        }
+
+        if (! $ccda->hasUPG0506PdfCareplanMedia()->exists()){
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Get Scout index name for the model.
      *
