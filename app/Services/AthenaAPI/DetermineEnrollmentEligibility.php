@@ -6,10 +6,11 @@
 
 namespace App\Services\AthenaAPI;
 
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Jobs\Athena\GetAppointmentsForDepartment;
+use CircleLinkHealth\Eligibility\ValueObjects\ProblemsCollection;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 
@@ -101,13 +102,13 @@ class DetermineEnrollmentEligibility
      * @param $practiceId
      * @param $departmentId
      *
-     * @return Problems
+     * @return ProblemsCollection
      */
     public function getPatientProblems($patientId, $practiceId, $departmentId)
     {
         $problemsResponse = $this->api->getPatientProblems($patientId, $practiceId, $departmentId);
 
-        $problems = new Problems();
+        $problems = new ProblemsCollection();
         $problems->setProblems($problemsResponse['problems']);
 
         return $problems;
