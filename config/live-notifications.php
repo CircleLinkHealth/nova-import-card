@@ -15,5 +15,7 @@ return [
     'classes' => [
         App\Notifications\AddendumCreated::class,
         App\Notifications\CallCreated::class,
+        App\Notifications\CcdaImportedNotification::class,
+        App\Notifications\InvoicesCreatedNotification::class,
     ],
 ];

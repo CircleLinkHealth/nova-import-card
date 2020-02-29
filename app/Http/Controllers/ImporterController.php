@@ -7,15 +7,11 @@
 namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use App\Jobs\ImportCcda;
-use App\Jobs\ImportCsvPatientList;
-use Carbon\Carbon;
+use App\Listeners\UPG0506CcdaImporterListener;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class ImporterController extends Controller
@@ -45,11 +41,29 @@ class ImporterController extends Controller
             ->with('location')
             ->with('billingProvider')
             ->get()
+            //where not in UPG + G0506
+            //where media. where id = upg, custom_properties->mrn = imr.mrn, finished_processing()
             ->transform(function (ImportedMedicalRecord $summary) {
                 $mr = $summary->medicalRecord();
 
                 if ( ! $mr) {
                     return false;
+                }
+
+                if (upg0506IsEnabled()) {
+                    $isUpg0506Incomplete = false;
+
+                    if ($mr instanceof Ccda) {
+                        $isUpg0506Incomplete = Ccda::whereHas('media', function ($q) {
+                            $q->where('custom_properties->is_upg0506_complete', '!=', 'true');
+                        })->whereHas('directMessage', function ($q) {
+                            $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
+                        })->where('id', $mr->id)->exists();
+                    }
+
+                    if ($isUpg0506Incomplete) {
+                        return false;
+                    }
                 }
 
                 if ( ! $summary->billing_provider_id) {
@@ -79,7 +93,7 @@ class ImporterController extends Controller
                 });
 
                 $summary['flag'] = false;
-                
+
                 if ($providers->count() > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
                     $summary['flag'] = true;
                 }
@@ -91,63 +105,28 @@ class ImporterController extends Controller
             ->values();
     }
 
-    public function getTrainingResults($imrId)
-    {
-        $importedMedicalRecord = ImportedMedicalRecord::find($imrId);
-
-        if ( ! $importedMedicalRecord) {
-            return 'Could not find an Imported Medical Record with this ID';
-        }
-
-        $ccda = $importedMedicalRecord->medicalRecord();
-
-        if ( ! $ccda) {
-            return 'Could not find the CCDA for this Imported Medical Record.';
-        }
-        //gather the features for review
-        $document  = $ccda->document->first();
-        $providers = $ccda->providers()->where('ml_ignore', '=', false)->get();
-
-        $predictedLocationId        = $importedMedicalRecord->location_id;
-        $predictedPracticeId        = $importedMedicalRecord->practice_id;
-        $predictedBillingProviderId = $importedMedicalRecord->billing_provider_id;
-
-        return view('importer.show-training-findings', array_merge([
-            'predictedBillingProviderId' => $predictedBillingProviderId,
-            'predictedLocationId'        => $predictedLocationId,
-            'predictedPracticeId'        => $predictedPracticeId,
-            'medicalRecordId'            => $ccda->id,
-        ], compact([
-            'document',
-            'providers',
-            'importedMedicalRecord',
-        ])));
-    }
-
     public function handleCcdFilesUpload(Request $request)
     {
         if ( ! $request->hasFile('file')) {
             return response()->json('No file found', 400);
         }
 
-        $records = new Collection();
+        //example: http://cpm.clh.test/ccd-importer?source=importer_awv
+        $source = $this->getSource($request);
 
         foreach ($request->file('file') as $file) {
-            \Log::info('Begin processing CCD '.Carbon::now()->toDateTimeString());
+            \Log::channel('logdna')->warning("reading file $file");
+
             $xml = file_get_contents($file);
 
             $ccda = Ccda::create([
-                'user_id'   => auth()->user()->id,
-                'vendor_id' => 1,
-                'xml'       => $xml,
-                'source'    => Ccda::IMPORTER,
+                'user_id' => auth()->user()->id,
+                'xml'     => $xml,
+                'source'  => $source ?? Ccda::IMPORTER,
             ]);
 
-            $records->push($ccda->import());
-            \Log::info('End processing CCD '.Carbon::now()->toDateTimeString());
+            ImportCcda::dispatch($ccda, true);
         }
-
-        return $records;
     }
 
     /**
@@ -182,109 +161,6 @@ class ImporterController extends Controller
         return view('CCDUploader.uploader-remix');
     }
 
-    public function storeTrainingFeatures(Request $request)
-    {
-        if ($request->filled('documentId')) {
-            DocumentLog::whereId($request->input('documentId'))
-                ->update([
-                    'ml_ignore' => true,
-                ]);
-        }
-
-        if ($request->filled('providerIds')) {
-            ProviderLog::whereIn('id', $request->input('providerIds'))
-                ->update([
-                    'ml_ignore' => true,
-                ]);
-        }
-
-        $practiceId        = $request->input('practiceId');
-        $locationId        = $request->input('locationId');
-        $billingProviderId = $request->input('billingProviderId');
-
-        $ids[] = $request->input('imported_medical_record_id');
-
-        if ($request->filled('imported_medical_record_ids')) {
-            $ids = $request->input('imported_medical_record_ids');
-        }
-
-        $records = new Collection();
-
-        foreach ($ids as $mrId) {
-            $imr                      = ImportedMedicalRecord::find($mrId);
-            $imr->practice_id         = $practiceId;
-            $imr->location_id         = $locationId;
-            $imr->billing_provider_id = $billingProviderId;
-            $imr->save();
-
-            //save the features on the medical record, document and provider logs
-            $mr                      = app($imr->medical_record_type)->find($imr->medical_record_id);
-            $mr->practice_id         = $practiceId;
-            $mr->location_id         = $locationId;
-            $mr->billing_provider_id = $billingProviderId;
-            $mr->save();
-
-            $docs = DocumentLog::where('medical_record_type', '=', $imr->medical_record_type)
-                ->where('medical_record_id', '=', $imr->medical_record_id)
-                ->update([
-                    'practice_id'         => $practiceId,
-                    'location_id'         => $locationId,
-                    'billing_provider_id' => $billingProviderId,
-                ]);
-
-            $provs = ProviderLog::where('medical_record_type', '=', $imr->medical_record_type)
-                ->where('medical_record_id', '=', $imr->medical_record_id)
-                ->update([
-                    'practice_id'         => $practiceId,
-                    'location_id'         => $locationId,
-                    'billing_provider_id' => $billingProviderId,
-                ]);
-
-            $records->push($imr);
-        }
-
-        if ($request->has('json')) {
-            return response()->json($records);
-        }
-
-        return redirect()->route('view.files.ready.to.import');
-    }
-
-    //Train the Importing Algo
-    public function train(Request $request)
-    {
-        if ( ! $request->hasFile('medical_records')) {
-            return 'Please upload a CCDA';
-        }
-
-        foreach ($request->allFiles()['medical_records'] as $file) {
-            if ('csv' == $file->getClientOriginalExtension()) {
-                ImportCsvPatientList::dispatch(
-                    parseCsvToArray($file),
-                    $file->getClientOriginalName()
-                )->onQueue('low');
-
-                $link = link_to_route(
-                    'import.ccd.remix',
-                    'Click here to view imported CCDs (refresh ...a lot).'
-                );
-
-                return "The CSV list is being processed. ${link}";
-            } //assume XML CCDA
-
-            $ccda = Ccda::create([
-                'user_id'   => auth()->user()->id,
-                'vendor_id' => 1,
-                'xml'       => file_get_contents($file),
-                'source'    => Ccda::IMPORTER,
-            ]);
-
-            ImportCcda::dispatch($ccda)->onQueue('low');
-        }
-
-        return redirect()->route('import.ccd.remix');
-    }
-
     /**
      * Receives XML files, saves them in DB, and returns them JSON Encoded.
      *
@@ -310,12 +186,41 @@ class ImporterController extends Controller
      */
     public function uploadRecords(Request $request)
     {
-        $records = $this::handleCcdFilesUpload($request);
+        $this::handleCcdFilesUpload($request);
 
         if ( ! $request->has('json')) {
             return redirect()->route('import.ccd.remix');
         }
 
-        return response()->json($records);
+        return response()->json([]);
+    }
+
+    /**
+     * The source of the importer can be submitted through
+     * the url. In this case we are checking if available through
+     * HTTP_REFERRER (previous url)
+     * i.e http://cpm.clh.test/ccd-importer?source=importer_awv.
+     *
+     * @return mixed|null
+     */
+    private function getSource(Request $request)
+    {
+        if ($request->has('source')) {
+            return $request->input('source');
+        }
+
+        if (empty($_SERVER['HTTP_REFERER'])) {
+            return null;
+        }
+
+        $url   = $_SERVER['HTTP_REFERER'];
+        $parts = parse_url($url);
+        if (empty($parts['query'])) {
+            return null;
+        }
+
+        parse_str($parts['query'], $query);
+
+        return $query['source'] ?? null;
     }
 }

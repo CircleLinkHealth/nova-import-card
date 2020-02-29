@@ -7,11 +7,13 @@
 namespace App\Http\Controllers\Enrollment;
 
 use App\CareAmbassadorLog;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Http\Controllers\Controller;
-use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
+use App\Services\Enrollment\AttachEnrolleeFamilyMembers;
+use App\Services\Enrollment\EnrolleeCallQueue;
 use App\TrixField;
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use Illuminate\Http\Request;
 
 class EnrollmentCenterController extends Controller
@@ -21,6 +23,8 @@ class EnrollmentCenterController extends Controller
         $careAmbassador = auth()->user()->careAmbassador;
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
+
+        AttachEnrolleeFamilyMembers::attach($request);
 
         //update report for care ambassador:
         $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
@@ -89,7 +93,18 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
+        $queue = explode(',', $request->input('queue'));
+        $queue = collect(array_merge(
+            $queue,
+            explode(',', $request->input('confirmed_family_members'))
+        ))->unique()->toArray();
+        if ( ! empty($queue) && in_array($enrollee->id, $queue)) {
+            unset($queue[array_search($enrollee->id, $queue)]);
+        }
+
         ImportConsentedEnrollees::dispatch([$enrollee->id], $enrollee->batch);
+
+        EnrolleeCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
 
         return redirect()->route('enrollment-center.dashboard');
     }
@@ -98,56 +113,12 @@ class EnrollmentCenterController extends Controller
     {
         $careAmbassador = auth()->user()->careAmbassador;
 
-        if ( ! $careAmbassador) {
-            return view('errors.403', [
-                'message'   => 'You need to be a Care Ambassador to acccess this page.',
-                'hideLinks' => true,
-            ]);
-        }
-
-        //if logged in ambassador is spanish, pick up a spanish patient
-        if ($careAmbassador->speaks_spanish) {
-            $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
-                ->toCall()
-                ->where('lang', 'ES')
-                ->orderBy('attempt_count')
-                ->with(['practice.enrollmentTips', 'provider.providerInfo'])
-                ->first();
-
-            //if no spanish, get a EN user.
-            if (null == $enrollee) {
-                $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
-                    ->toCall()
-                    ->orderBy('attempt_count')
-                    ->with(['practice.enrollmentTips', 'provider.providerInfo'])
-                    ->first();
-            }
-        } else { // auth ambassador doesn't speak ES, get a regular user.
-            $enrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
-                ->toCall()
-                ->orderBy('attempt_count')
-                ->with(['practice.enrollmentTips', 'provider.providerInfo'])
-                ->first();
-        }
-
-        $engagedEnrollee = Enrollee::where('care_ambassador_user_id', $careAmbassador->user_id)
-            ->where('status', '=', Enrollee::ENGAGED)
-            ->orderBy('attempt_count')
-            ->with(['practice.enrollmentTips', 'provider.providerInfo'])
-            ->first();
-
-        if ($engagedEnrollee) {
-            $enrollee = $engagedEnrollee;
-        }
+        $enrollee = EnrolleeCallQueue::getNext($careAmbassador);
 
         if (null == $enrollee) {
             //no calls available
             return view('enrollment-ui.no-available-calls');
         }
-
-        //mark as engaged to prevent double dipping
-        $enrollee->status = Enrollee::ENGAGED;
-        $enrollee->save();
 
         return view(
             'enrollment-ui.dashboard',
@@ -161,14 +132,14 @@ class EnrollmentCenterController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function rejected(Request $request)
     {
         $enrollee       = Enrollee::find($request->input('enrollee_id'));
         $careAmbassador = auth()->user()->careAmbassador;
+
+        AttachEnrolleeFamilyMembers::attach($request);
 
         //soft_rejected or rejected
         $status = $request->input('status', Enrollee::REJECTED);
@@ -202,6 +173,8 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->save();
 
+        EnrolleeCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
+
         return redirect()->route('enrollment-center.dashboard');
     }
 
@@ -214,6 +187,8 @@ class EnrollmentCenterController extends Controller
     {
         $enrollee       = Enrollee::find($request->input('enrollee_id'));
         $careAmbassador = auth()->user()->careAmbassador;
+
+        AttachEnrolleeFamilyMembers::attach($request);
 
         //update report for care ambassador:
         $report                       = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
@@ -244,6 +219,8 @@ class EnrollmentCenterController extends Controller
         $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');
 
         $enrollee->save();
+
+        EnrolleeCallQueue::update($careAmbassador, $enrollee, $request->input('confirmed_family_members'));
 
         return redirect()->route('enrollment-center.dashboard');
     }

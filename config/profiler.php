@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'enabled' => env('PROFILER_ENABLED', true),
+    'enabled' => env('PROFILER_ENABLED', false),
 
     /*
     |--------------------------------------------------------------------------

@@ -6,8 +6,6 @@
 
 namespace Tests\Unit;
 
-use App\Console\Commands\CreateCallsReportForPractice;
-use App\Console\Commands\CreatePatientProblemsReportForPractice;
 use App\Exports\PracticeReports\PatientProblemsReport;
 use App\Exports\PracticeReports\PracticeCallsReport;
 use App\Notifications\SendSignedUrlToDownloadPracticeReport;
@@ -32,7 +30,6 @@ class PracticeReportTest extends TestCase
      */
     public function consoleCommandSendsNotification()
     {
-        //setup
         $userId     = 1;
         $practiceId = 10;
         $mock       = \Mockery::mock($this->reportClass);
@@ -142,19 +139,5 @@ class PracticeReportTest extends TestCase
             ->forUser($user->id)
             ->createMedia()
             ->notifyUser();
-
-//        $this->actingAs($user2)->call('get', $report->getSignedLink())
-//            //assert
-//             ->assertStatus(403);
-    }
-
-    public function test_patient_problems_report_class()
-    {
-        $this->makeAssertionsForReportClass(PatientProblemsReport::class, CreatePatientProblemsReportForPractice::class);
-    }
-
-    public function test_practice_calls_report_class()
-    {
-        $this->makeAssertionsForReportClass(PracticeCallsReport::class, CreateCallsReportForPractice::class);
     }
 }

@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Charts\OpsChart;
 use App\Jobs\GenerateOpsDashboardCSVReport;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\Services\OpsDashboardService;
@@ -22,9 +23,6 @@ class OpsDashboardController extends Controller
 
     /**
      * OpsDashboardController constructor.
-     *
-     * @param OpsDashboardService                   $service
-     * @param OpsDashboardPatientEloquentRepository $repo
      */
     public function __construct(
         OpsDashboardService $service,
@@ -310,8 +308,6 @@ class OpsDashboardController extends Controller
      * Gets Patient Counts for table: CarePlan Manager Patient Totals,
      * for today, for specific day.
      *
-     * @param Request $request
-     *
      * @throws \Exception
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -376,6 +372,11 @@ class OpsDashboardController extends Controller
         $report = $this->service->getExcelReport($fromDate, $toDate, $status, $practiceId);
 
         return $this->downloadMedia($report);
+    }
+
+    public function opsGraph()
+    {
+        return view('charts.ops')->with('chart', OpsChart::clhGrowthChart());
     }
 
     private function paginatePatients($patients)

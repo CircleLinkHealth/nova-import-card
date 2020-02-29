@@ -15,9 +15,11 @@ use App\Http\Middleware\CheckPatientUserData;
 use App\Http\Middleware\CheckWebSocketServer;
 use App\Http\Middleware\DummyPlaceholder;
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\EnrollmentCenter;
 use App\Http\Middleware\LogoutIfAccessDisabled;
 use App\Http\Middleware\PatientProgramSecurity;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\SentryContext;
 use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\VerifyCsrfToken;
 use CircleLinkHealth\TwoFA\Http\Middleware\AuthyMiddleware;
@@ -47,6 +49,7 @@ class Kernel extends HttpKernel
         CheckForMaintenanceMode::class,
         TrustProxies::class,
         FrameGuard::class,
+        SentryContext::class,
     ];
 
     /**
@@ -104,5 +107,6 @@ class Kernel extends HttpKernel
         'doNotCacheResponse'     => DummyPlaceholder::class,
         'cacheResponse'          => DummyPlaceholder::class,
         'checkPatientUserData'   => CheckPatientUserData::class,
+        'enrollmentCenter'       => EnrollmentCenter::class
     ];
 }

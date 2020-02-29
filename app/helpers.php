@@ -43,6 +43,24 @@ if ( ! function_exists('sanitize_array_keys')) {
     }
 }
 
+if ( ! function_exists('getIpAddress')) {
+    /**
+     * Get the IP address. This also works with Heroku, where we are behind a load balancer.
+     *
+     * @return string
+     */
+    function getIpAddress()
+    {
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ipAddresses = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+
+            return trim(end($ipAddresses));
+        }
+
+        return $_SERVER['REMOTE_ADDR'] ?? null;
+    }
+}
+
 if ( ! function_exists('abort_if_str_contains_unsafe_characters')) {
     function abort_if_str_contains_unsafe_characters(string $string)
     {
@@ -99,7 +117,7 @@ if ( ! function_exists('parseIds')) {
             return explode(',', $value);
         }
 
-        return array_filter((array)$value);
+        return array_filter((array) $value);
     }
 }
 
@@ -157,19 +175,19 @@ if ( ! function_exists('activeNurseNames')) {
     function activeNurseNames()
     {
         return User::ofType('care-center')
-                   ->with(
-                       [
-                           'nurseInfo' => function ($q) {
-                               $q->where('is_demo', '!=', true);
-                           },
-                       ]
-                   )->whereHas(
-                'nurseInfo',
-                function ($q) {
-                    $q->where('is_demo', '!=', true);
-                }
-            )->where('user_status', 1)
-                   ->pluck('display_name', 'id');
+            ->with(
+                [
+                    'nurseInfo' => function ($q) {
+                        $q->where('is_demo', '!=', true);
+                    },
+                ]
+            )->whereHas(
+                       'nurseInfo',
+                       function ($q) {
+                           $q->where('is_demo', '!=', true);
+                       }
+                   )->where('user_status', 1)
+            ->pluck('display_name', 'id');
     }
 }
 
@@ -177,9 +195,9 @@ if ( ! function_exists('sendSlackMessage')) {
     /**
      * Sends a message to Slack.
      *
-     * @param string $to - slack channel (should start with '#')
+     * @param string $to      - slack channel (should start with '#')
      * @param string $message
-     * @param bool $force - in case you really want the message to go to slack (testing | debugging)
+     * @param bool   $force   - in case you really want the message to go to slack (testing | debugging)
      */
     function sendSlackMessage($to, $message, $force = false)
     {
@@ -212,7 +230,7 @@ if ( ! function_exists('formatPhoneNumber')) {
         }
 
         if (10 === strlen($sanitized)) {
-            return substr($sanitized, 0, 3) . '-' . substr($sanitized, 3, 3) . '-' . substr($sanitized, 6, 4);
+            return substr($sanitized, 0, 3).'-'.substr($sanitized, 3, 3).'-'.substr($sanitized, 6, 4);
         }
 
         return null;
@@ -242,7 +260,7 @@ if ( ! function_exists('formatPhoneNumberE164')) {
             $sanitized = substr($sanitized, -10);
         }
 
-        return '+' . $countryCode . $sanitized;
+        return '+'.$countryCode.$sanitized;
     }
 }
 
@@ -265,7 +283,7 @@ if ( ! function_exists('extractNumbers')) {
 if ( ! function_exists('detectDelimiter')) {
     /**
      * @param bool|resource $csvFileHandle The handle of a file opened with fopen
-     * @param int $length
+     * @param int           $length
      *
      * @return false|int|string
      */
@@ -293,12 +311,12 @@ if ( ! function_exists('parseCsvToArray')) {
      * Parses a CSV file into an array.
      *
      * @param $file
-     * @param int $length
+     * @param int  $length
      * @param null $delimiter
      *
-     * @return array
      * @throws CsvFieldNotFoundException
      *
+     * @return array
      */
     function parseCsvToArray($file, $length = 0, $delimiter = null)
     {
@@ -348,10 +366,10 @@ if ( ! function_exists('iterateCsv')) {
      * Parses a CSV file into an array.
      *
      * @param $file
-     * @param int $length
-     * @param null $delimiter
-     * @param null $callback
-     * @param bool $firstRowContainsColumnHeaders
+     * @param int   $length
+     * @param null  $delimiter
+     * @param null  $callback
+     * @param bool  $firstRowContainsColumnHeaders
      * @param mixed $logAndReturnAllActivity
      *
      * @return array
@@ -428,7 +446,7 @@ if ( ! function_exists('secondsToHHMM')) {
         $getHours = sprintf('%02d', floor($seconds / 3600));
         $getMins  = sprintf('%02d', floor(($seconds - ($getHours * 3600)) / 60));
 
-        return $getHours . ':' . $getMins;
+        return $getHours.':'.$getMins;
     }
 }
 
@@ -436,9 +454,9 @@ if ( ! function_exists('secondsToMMSS')) {
     function secondsToMMSS($seconds)
     {
         $minutes = sprintf('%02d', floor($seconds / 60));
-        $seconds = sprintf(':%02d', (int)$seconds % 60);
+        $seconds = sprintf(':%02d', (int) $seconds % 60);
 
-        return $minutes . $seconds;
+        return $minutes.$seconds;
     }
 }
 
@@ -692,9 +710,9 @@ if ( ! function_exists('windowToTimestamps')) {
      * @param $startTimestamp
      * @param $endTimestamp
      * @param string $timezone
-     * @param mixed $date
-     * @param mixed $start
-     * @param mixed $end
+     * @param mixed  $date
+     * @param mixed  $start
+     * @param mixed  $end
      *
      * @return array
      */
@@ -801,14 +819,27 @@ if ( ! function_exists('defaultCarePlanTemplate')) {
         return CarePlanTemplate::findOrFail(AppConfig::pull('default_care_plan_template_id'));
     }
 }
+if ( ! function_exists('authUserCanSendPatientEmail')) {
+    /**
+     * Toggles patient email for auth user.
+     */
+    function authUserCanSendPatientEmail(): bool
+    {
+        $key = 'enable_patient_email_for_user';
 
+        return \Cache::remember($key, 2, function () use ($key) {
+            return AppConfig::where('config_key', $key)
+                ->where('config_value', auth()->user()->id)->exists();
+        });
+    }
+}
 if ( ! function_exists('setAppConfig')) {
     /**
      * Save an AppConfig key, value and then return it.
      *
      * @param mixed $value
      *
-     * @return \CircleLinkHealth\SharedModels\Entities\CarePlanTemplate
+     * @return mixed
      */
     function setAppConfig(string $key, $value)
     {
@@ -848,10 +879,10 @@ if ( ! function_exists('linkToDownloadFile')) {
      * @param $path
      * @param mixed $absolute
      *
-     * @return string
+     * @throws Exception
      * @throws Exception
      *
-     * @throws Exception
+     * @return string
      */
     function linkToDownloadFile($path, $absolute = false)
     {
@@ -876,9 +907,9 @@ if ( ! function_exists('linkToCachedView')) {
      * @param $viewHashKey
      * @param mixed $absolute
      *
-     * @return string
      * @throws Exception
      *
+     * @return string
      */
     function linkToCachedView($viewHashKey, $absolute = false)
     {
@@ -1015,40 +1046,40 @@ if ( ! function_exists('validProblemName')) {
     function validProblemName($name)
     {
         return ! str_contains(
-                strtolower($name),
-                [
-                    'screening',
-                    'history',
-                    'scan',
-                    'immunization',
-                    'immunisation',
-                    'injection',
-                    'vaccine',
-                    'vaccination',
-                    'vaccin',
-                    'screen',
-                    'follow up',
-                    'followup',
-                    'labs',
-                    'f/u',
-                    'mo fu',
-                    'fu on',
-                    'fu from',
-                    'm fu',
-                    'counsel',
-                    'adverse effect drug',
-                    'counseling',
-                    'new pt',
-                    'hx',
-                    'prediabetes',
-                    'check',
-                ]
-            ) && ! in_array(
-                strtolower($name),
-                [
-                    'fu',
-                ]
-            );
+            strtolower($name),
+            [
+                'screening',
+                'history',
+                'scan',
+                'immunization',
+                'immunisation',
+                'injection',
+                'vaccine',
+                'vaccination',
+                'vaccin',
+                'screen',
+                'follow up',
+                'followup',
+                'labs',
+                'f/u',
+                'mo fu',
+                'fu on',
+                'fu from',
+                'm fu',
+                'counsel',
+                'adverse effect drug',
+                'counseling',
+                'new pt',
+                'hx',
+                'prediabetes',
+                'check',
+            ]
+        ) && ! in_array(
+            strtolower($name),
+            [
+                'fu',
+            ]
+        );
     }
 }
 
@@ -1095,9 +1126,9 @@ if ( ! function_exists('shortenUrl')) {
      *
      * @param $url
      *
-     * @return string
      * @throws \Waavi\UrlShortener\InvalidResponseException
      *
+     * @return string
      */
     function shortenUrl($url)
     {
@@ -1112,14 +1143,14 @@ if ( ! function_exists('validateYYYYMMDDDateString')) {
      * @param $date
      * @param mixed $throwException
      *
-     * @return bool
+     * @throws Exception
      * @throws Exception
      *
-     * @throws Exception
+     * @return bool
      */
     function validateYYYYMMDDDateString($date, $throwException = true)
     {
-        $isValid = (bool)preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $date);
+        $isValid = (bool) preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $date);
 
         if ( ! $isValid && $throwException) {
             throw new \Exception('Invalid Date');
@@ -1141,7 +1172,7 @@ if ( ! function_exists('cast')) {
      * incompatable classes.
      *
      * @param object $object the object to cast
-     * @param string $class the class to cast the object into
+     * @param string $class  the class to cast the object into
      *
      * @return object
      */
@@ -1244,8 +1275,8 @@ if ( ! function_exists('getGoogleDirectoryByName')) {
         $clh = collect(Storage::drive('google')->listContents('/', true));
 
         $directory = $clh->where('type', '=', 'dir')
-                         ->where('filename', '=', $name)
-                         ->first();
+            ->where('filename', '=', $name)
+            ->first();
         if ( ! $directory) {
             return null;
         }
@@ -1265,11 +1296,11 @@ if ( ! function_exists('format_bytes')) {
                 ? log($bytes)
                 : 0) / log(1024)
         );
-        $pow   = min($pow, count($units) - 1);
+        $pow = min($pow, count($units) - 1);
 
         $bytes /= (1 << (10 * $pow));
 
-        return round($bytes, $precision) . ' ' . $units[$pow];
+        return round($bytes, $precision).' '.$units[$pow];
     }
 }
 
@@ -1277,9 +1308,9 @@ if ( ! function_exists('array_keys_exist')) {
     /**
      * Returns TRUE if the given keys are all set in the array. Each key can be any value possible for an array index.
      *
-     * @param string[] $keys keys to check
-     * @param array $array an array with keys to check
-     * @param mixed $missing reference to a variable that that contains the missing keys
+     * @param string[] $keys    keys to check
+     * @param array    $array   an array with keys to check
+     * @param mixed    $missing reference to a variable that that contains the missing keys
      *
      * @return bool true if all given keys exist in the given array, false if not
      *
@@ -1309,7 +1340,7 @@ if ( ! function_exists('is_falsey')) {
 if ( ! function_exists('isAllowedToSee2FA')) {
     function isAllowedToSee2FA(User $user = null)
     {
-        return (bool)config('auth.two_fa_enabled') && optional($user ?? auth()->user())->isAdmin();
+        return (bool) config('auth.two_fa_enabled') && optional($user ?? auth()->user())->isAdmin();
     }
 }
 
@@ -1349,7 +1380,7 @@ if ( ! function_exists('tryDropForeignKey')) {
 
             $errorCode = $e->errorInfo[1];
             if (1091 == $errorCode) {
-                Log::debug("Key `${key}` does not exist. Nothing to delete." . __FILE__);
+                Log::debug("Key `${key}` does not exist. Nothing to delete.".__FILE__);
             }
 
             return false;
@@ -1520,6 +1551,28 @@ if ( ! function_exists('sendNbiPatientMrnWarning')) {
     }
 }
 
+if ( ! function_exists('createWeekMap')) {
+    /**
+     * Date parameter is the date the user saved the event for. Take that to startOfWeek and create the dates of that week?
+     *
+     * @param mixed $date
+     *
+     * @return array
+     */
+    function createWeekMap($date)
+    {
+        return [
+            1 => Carbon::parse($date)->startOfWeek()->toDateString(),
+            2 => Carbon::parse($date)->startOfWeek()->addDay(1)->toDateString(),
+            3 => Carbon::parse($date)->startOfWeek()->addDay(2)->toDateString(),
+            4 => Carbon::parse($date)->startOfWeek()->addDay(3)->toDateString(),
+            5 => Carbon::parse($date)->startOfWeek()->addDay(4)->toDateString(),
+            6 => Carbon::parse($date)->startOfWeek()->addDay(5)->toDateString(),
+            7 => Carbon::parse($date)->startOfWeek()->addDay(6)->toDateString(),
+        ];
+    }
+}
+
 if ( ! function_exists('getModelFromTable')) {
     function getModelFromTable($table)
     {
@@ -1535,7 +1588,6 @@ if ( ! function_exists('getModelFromTable')) {
         return false;
     }
 }
-
 if ( ! function_exists('measureTime')) {
     function measureTime($desc, $func)
     {
@@ -1547,8 +1599,98 @@ if ( ! function_exists('measureTime')) {
         $endTime = Carbon::now()->toTimeString();
         $sec     = microtime(true) - $start;
         $secInt  = intval($sec);
-        print "$desc: $secInt seconds | Start: $startTime | End: $endTime\n";
+        echo "$desc: $secInt seconds | Start: $startTime | End: $endTime\n";
 
         return $result;
+    }
+}
+
+if ( ! function_exists('stripNonTrixTags')) {
+    /**
+     * @param string
+     *
+     * @return string
+     */
+    function stripNonTrixTags(string $trixString)
+    {
+        return strip_tags($trixString, Constants::TRIX_ALLOWABLE_TAGS_STRING);
+    }
+}
+
+if ( ! function_exists('convertValidatorMessagesToString')) {
+    /**
+     * Formats Validator messages to return string.
+     *
+     * @param \Illuminate\Validation\Validator $validator
+     */
+    function convertValidatorMessagesToString(Illuminate\Validation\Validator $validator): string
+    {
+        return implode(
+            '\n',
+            collect($validator->getMessageBag()->toArray())->transform(
+                function ($item, $key) {
+                    $errors = implode(', ', $item);
+                    $key = ucfirst($key);
+
+                    return "{$key}: $errors";
+                }
+            )->toArray()
+        );
+    }
+}
+
+if ( ! function_exists('isPatientCcmPlusBadgeEnabled')) {
+    /**
+     * Key: enable_patient_ccm_plus_badge
+     * Default: false.
+     */
+    function isPatientCcmPlusBadgeEnabled(): bool
+    {
+        $key = 'enable_patient_ccm_plus_badge';
+
+        return \Cache::remember($key, 2, function () use ($key) {
+            $val = AppConfig::pull($key, null);
+            if (null === $val) {
+                return setAppConfig($key, false);
+            }
+
+            return $val;
+        });
+    }
+}
+
+if ( ! function_exists('upg0506IsEnabled')) {
+    /**
+     * Key: upg0506_is_enabled
+     * Default: false.
+     */
+    function upg0506IsEnabled(): bool
+    {
+        $key = 'upg0506_is_enabled';
+
+        return \Cache::remember($key, 2, function () use ($key) {
+            $val = AppConfig::pull($key, null);
+            if (null === $val) {
+                return 'true' === setAppConfig($key, false);
+            }
+
+            return 'true' === $val;
+        });
+    }
+}
+
+if ( ! function_exists('patientLoginIsEnabledForPractice')) {
+    /**
+     * Key: enable_patient_login_for_practice
+     * Default: false.
+     */
+    function patientLoginIsEnabledForPractice($practiceId): bool
+    {
+        $key = 'enable_patient_login_for_practice';
+
+        return \Cache::remember($key, 2, function () use ($key, $practiceId) {
+            return AppConfig::where('config_key', $key)
+                            ->where('config_value', $practiceId)->exists();
+        });
     }
 }

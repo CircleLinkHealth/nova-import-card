@@ -9,6 +9,7 @@
               integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
               crossorigin="anonymous">
         <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
         <style>
 
             .modal-body {
@@ -85,6 +86,10 @@
           action="{{route('patient.note.store', ['patientId' => $patient->id, 'noteId' => !empty($note) ? $note->id : null])}}"
           class="form-horizontal">
         <div class="row" style="margin-top:30px;">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
+                @include('errors.errors')
+            </div>
+
             <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1"
                  style="border-bottom: 3px solid #50b2e2;">
                 <div class="row">
@@ -141,13 +146,13 @@
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 col-xs-12"
                          style=" border:0 solid #50b2e2;padding: 10px 35px;">
 
-                        <div class="col-md-6" style="padding-top: 10px">
+                        <div class="col-md-6" style="padding-top: 10px;">
 
                             <!-- Note Type -->
                             <div class="form-block col-md-12">
                                 <div class="row">
                                     <div class="new-note-item">
-                                        <div class="form-group" style="margin-bottom: 10px">
+                                        <div class="form-group" style="margin-bottom: 25px">
                                             <div class="col-sm-12">
                                                 <label class="label-margin" for="activityKey">
                                                     Note Topic
@@ -175,10 +180,10 @@
                             </div>
 
                             <!-- Performance Time -->
-                            <div class="form-block col-md-12">
+                            <div class="form-block col-md-12" style="margin-bottom: 25px">
                                 <div class="row">
                                     <div class="new-note-item">
-                                        <div class="form-group" style="margin-bottom: 10px">
+                                        <div class="form-group" style="margin-bottom: 25px">
                                             <div class="col-sm-12">
                                                 <label class="label-margin" for="performed_at">
                                                     When (Patient Local Time):
@@ -197,66 +202,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
-                            <!-- Send Note To: -->
-                            <div class="form-block col-md-12 no-padding-right">
-                                <div class="row">
-                                    <div class="new-note-item">
-                                        <div class="form-group" style="margin-bottom: 10px">
-                                            <div class="col-sm-12 no-padding-right">
-                                                <label>Send Note To:</label>
-                                            </div>
-                                            <div class="col-sm-12 no-padding-left no-padding-right"
-                                                 style="padding-top: 8px">
-                                                <div class="col-sm-6 no-padding-right">
-                                                    <input type="checkbox" id="notify-circlelink-support"
-                                                           name="notify_circlelink_support" value="1">
-                                                    <label for="notify-circlelink-support"><span> </span>{{$patient->primaryPractice->saasAccountName()}}
-                                                        Support</label>
-                                                </div>
-                                                <div class="col-sm-6 no-padding-right">
-                                                    @empty($note_channels_text)
-                                                        <b>This Practice has <em>Forwarded Note Notifications</em>
-                                                            turned off. Please notify CirleLink support.</b>
-                                                    @else
-                                                        @empty($notifies_text)
-                                                            <p style="color: red;">
-                                                                No provider selected to receive email alerts. Use
-                                                                the add ("+" sign) or edit (pencil) icons in
-                                                                the
-                                                                <strong>{{link_to_route('patient.careplan.print', '"Care Team"', ['patientId' => $patient->id])}}</strong>
-                                                                section of
-                                                                the {{link_to_route('patient.careplan.print', 'View CarePlan', ['patientId' => $patient->id])}}
-                                                                page to
-                                                                add or edit providers to receive email alerts.
-                                                            </p>
-                                                        @else
-
-                                                            <input type="checkbox" id="notify-careteam"
-                                                                   name="notify_careteam"
-                                                                   @empty($note_channels_text) disabled="disabled"
-                                                                   @endempty value="1">
-                                                            <label for="notify-careteam"
-                                                                   style="display: inline-block;"><span></span>Provider/CareTeam
-
-                                                            </label>
-                                                            <div class="label"
-                                                                 data-tooltip="Notifies: {{ $notifies_text }} via {{ $note_channels_text }}">
-                                                                <i class="fas fa-exclamation-circle fa-lg"
-                                                                   style="color:#50b2e2"></i>
-                                                            </div>
-                                                        @endempty
-                                                    @endempty
-
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
 
                         <div class="col-md-6" style="padding-top: 10px">
@@ -495,8 +440,92 @@
                                 </div>
                             </div>
                         </div>
+
+
+
+                        <div class="col-md-12">
+
+                            <!-- Send Note To: -->
+                            <div class="form-block col-md-12 no-padding-right">
+                                <div class="row">
+                                    <div class="new-note-item">
+                                        <div class="form-group" style="margin-bottom: 10px">
+                                            <div class="col-sm-12 no-padding-right">
+                                                <label>Send Note To:</label>
+                                            </div>
+                                            <div class="col-sm-12 no-padding-left no-padding-right"
+                                                 style="padding-top: 8px">
+                                                <div class="col-sm-4 no-padding-right">
+                                                    <input type="checkbox" id="notify-circlelink-support"
+                                                           name="notify_circlelink_support" value="1">
+                                                    <label for="notify-circlelink-support"><span> </span>{{$patient->primaryPractice->saasAccountName()}}
+                                                        Support</label>
+                                                </div>
+                                                <div class="col-sm-4 no-padding-right">
+                                                    @empty($note_channels_text)
+                                                        <b>This Practice has <em>Forwarded Note Notifications</em>
+                                                            turned off. Please notify CirleLink support.</b>
+                                                    @else
+                                                        @empty($notifies_text)
+                                                            <p style="color: red;">
+                                                                No provider selected to receive email alerts. Use
+                                                                the add ("+" sign) or edit (pencil) icons in
+                                                                the
+                                                                <strong>{{link_to_route('patient.careplan.print', '"Care Team"', ['patientId' => $patient->id])}}</strong>
+                                                                section of
+                                                                the {{link_to_route('patient.careplan.print', 'View CarePlan', ['patientId' => $patient->id])}}
+                                                                page to
+                                                                add or edit providers to receive email alerts.
+                                                            </p>
+                                                        @else
+
+                                                            <input type="checkbox" id="notify-careteam"
+                                                                   name="notify_careteam"
+                                                                   @empty($note_channels_text) disabled="disabled"
+                                                                   @endempty value="1">
+                                                            <label id="notify-careteam-label" for="notify-careteam"
+                                                                   style="display: inline-block;"><span id="notify-careteam-span"></span>Provider/CareTeam
+
+                                                            </label>
+                                                            <div class="label"
+                                                                 data-tooltip="Notifies: {{ $notifies_text }} via {{ $note_channels_text }}">
+                                                                <i class="fas fa-exclamation-circle fa-lg"
+                                                                   style="color:#50b2e2"></i>
+                                                            </div>
+                                                        @endempty
+                                                    @endempty
+
+                                                </div>
+                                                <div class="col-md-4">
+                                                    @if(authUserCanSendPatientEmail())
+                                                    <!-- Email Patient Checkbox -->
+                                                    <div class="form-block col-md-12" style="margin-bottom: 10px">
+                                                        <input type="checkbox" id="email-patient"
+                                                               name="email-patient" value="1">
+                                                        <label for="email-patient"><span> </span>Email Patient</label>
+                                                    </div>
+                                                        @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                         <div class="form-block col-md-12">
                             <div class="row col-md-12">
+
+                                <!-- Compose Patient Mail: -->
+                                <div class="new-note-item">
+                                    <div class="form-group">
+                                        <div id="email-patient-div" class="col-md-12" style="display: none;">
+                                                <send-email-to-patient
+                                                        :patient="{{$patient}}"
+                                                ></send-email-to-patient>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <!-- Enter CareTeam -->
                                 <div class="form-block col-md-12">
@@ -559,6 +588,7 @@
             </div>
         </div>
         </div>
+
     </form>
 
     <!-- Modal - CPM-182 -->
@@ -611,7 +641,10 @@
     @push('scripts')
         <script>
 
-
+            var careplan = @json([
+            'allCpmProblems' => $cpmProblems
+            ]);
+            const userIsCareCoach = @json(auth()->user()->isCareCoach());
             const userIsCCMCountable = @json(auth()->user()->isCCMCountable());
             const taskTypeToTopicMap = @json($task_types_to_topics);
             const noteTypesMap = @json($note_types);
@@ -627,6 +660,7 @@
             //CPM-91 and CPM-437 double submitting notes
             let submitted = false;
             let form;
+            let shouldValidateEmailBody = true;
 
             const waitForEl = function (selector, callback) {
                 if (!$(selector).length) {
@@ -640,7 +674,26 @@
                 }
             };
 
+            let formAttachments;
             $(document).ready(function () {
+
+                //Once nurse has attested call conditions add as form inputs and submit form
+                App.$on('call-conditions-attested', (data) => {
+                    conditionsAttested = true;
+
+                    let i = 0;
+                    data.attested_problems.map(function (condition) {
+                        $("<input>")
+                            .attr("id", "attested_problems")
+                            .attr("type", "hidden")
+                            .attr("name", "attested_problems["+i+"][ccd_problem_id]").val(condition).appendTo(form);
+                        i++;
+                    });
+                    confirmSubmitForm();
+                });
+
+                let callIsSuccess = false;
+                let conditionsAttested = false;
 
                 if (medications && medications.length) {
                     waitForEl('#note', () => {
@@ -659,6 +712,10 @@
                         }
                     });
                 }
+
+                App.$on('file-upload', (attachments) => {
+                    formAttachments = attachments;
+                });
 
                 //CPM-182: Show a confirmation box if user spend time creating the note
                 //but did not register a phone session
@@ -831,6 +888,8 @@
                 tcmEl.prop('checked', @json(!empty($note) && $note->isTCM));
                 tcmEl.trigger('change');
 
+                const validateEmailBodyUrl = '{{route('patient-email.validate', ['patient_id' => $patient->id])}}';
+
                 $('#newNote').submit(function (e) {
                     e.preventDefault();
                     form = this;
@@ -841,11 +900,38 @@
                         return;
                     }
 
+
+                    //prevent sent if send patient email is check and email body is empty
+                    if($("[id='email-patient']").prop("checked") == true && shouldValidateEmailBody){
+
+
+                        if ($("[id='patient-email-body-input']").val() == 0){
+                            alert("Please fill out the patient email!");
+                            return;
+                        }else{
+                           return validateEmailBody()
+                        }
+                    }
+                    //append patient email attachments on form if the exist
+                    if (formAttachments){
+                        let i = 0;
+                        formAttachments.map(function (attachment) {
+                            $("<input>")
+                                .attr("type", "hidden")
+                                .attr("name", "attachments["+i+"][media_id]").val(attachment.media_id).appendTo(form);
+                            $("<input>")
+                                .attr("type", "hidden")
+                                .attr("name", "attachments["+i+"][path]").val(attachment.path).appendTo(form);
+                            i++;
+                        });
+                    }
+
+
                     const isAssociatedWithTask = $('#task').is(':checked');
                     const callHasTask = $('.tasks-radio').is(':checked');
 
                     const isPhoneSession = $('#phone').is(':checked');
-                    let callIsSuccess = false;
+
                     let callHasStatus = false;
                     if (userIsCCMCountable) {
                         //radio buttons
@@ -909,16 +995,22 @@
 
                 $(document).on("click", "#confirm-task-completed-submit", function (event) {
                     $('#task_status').val("done");
+                    $('#confirm-task-completed').modal('hide');
                     confirmSubmitForm();
                 });
 
                 $(document).on("click", "#confirm-task-not-completed-submit", function (event) {
                     $('#task_status').val("not_done");
+                    $('#confirm-task-completed').modal('hide');
                     confirmSubmitForm();
                 });
 
                 function confirmSubmitForm() {
 
+                    if (!conditionsAttested && callIsSuccess && userIsCareCoach){
+                        App.$emit('show-attest-call-conditions-modal');
+                        return;
+                    }
                     if (isSavingDraft) {
                         setTimeout(() => confirmSubmitForm(), 500);
                         return;
@@ -950,7 +1042,30 @@
                 function showTaskCompletedModal() {
                     $('#confirm-task-completed').modal('show');
                 }
+
+                const validateEmailBody = async () => {
+                    return await window.axios
+                        .post(validateEmailBodyUrl, {
+                            //validate subject as well
+                            patient_email_subject: $("[id='email-subject']").val(),
+                            patient_email_body : $("[id='patient-email-body-input']").val()
+                        })
+                        .then((response) => {
+                            if (response.data.status == 400){
+                                App.$emit('patient-email-body-errors', response.data.messages);
+                                return false;
+                            }
+                            shouldValidateEmailBody = false;
+                            return $('#newNote').submit();
+                        })
+                        .catch(err => {
+                            App.$emit('patient-email-body-errors', err);
+                            return false
+                        });
+                };
+
             });
+
 
             /*
             //no need since we have auto save now
@@ -997,6 +1112,7 @@
                     @endif
 
             const saveDraftUrl = '{{route('patient.note.store.draft', ['patientId' => $patient->id])}}';
+
             const saveDraft = () => {
 
                 const fullBody = $('#note').val();

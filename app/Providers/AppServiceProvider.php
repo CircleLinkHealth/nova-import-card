@@ -8,6 +8,10 @@ namespace App\Providers;
 
 use App\Contracts\ReportFormatter;
 use App\Formatters\WebixFormatter;
+use App\Notifications\NotificationStrategies\SendsNotification;
+use App\Services\AWV\DirectPatientDocument;
+use App\Services\AWV\EmailPatientDocument;
+use App\Services\AWV\FaxPatientDocument;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -151,6 +155,25 @@ class AppServiceProvider extends ServiceProvider
                 CreateAndSeedTestSuiteDB::class,
             ]);
         }
+
+        $this->app->bind(
+            SendsNotification::class,
+            function ($app, $args) {
+                switch ($args['channel']) {
+                    case 'email':
+                        return new EmailPatientDocument($args['patient'], $args['media'], $args['input']);
+                        break;
+                    case 'direct':
+                        return new DirectPatientDocument($args['patient'], $args['media'], $args['input']);
+                        break;
+                    case 'fax':
+                        return new FaxPatientDocument($args['patient'], $args['media'], $args['input']);
+                        break;
+                    default:
+                        throw new \Exception('Channel Supplied from Patient AWV Care Docs Page is invalid.');
+                }
+            }
+        );
 
         $this->app->bind(
             ReportFormatter::class,

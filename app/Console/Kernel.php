@@ -6,10 +6,13 @@
 
 namespace App\Console;
 
-use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
+use App\Console\Commands\CreateLastMonthBillablePatientsReport;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
+use App\Console\Commands\CheckForMissingLogoutsAndInsert;
+use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
+use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
@@ -86,9 +89,8 @@ class Kernel extends ConsoleKernel
 
         //family calls will be scheduled in RescheduleMissedCalls
         //$schedule->command(SyncFamilialCalls::class)->dailyAt('00:30')->onOneServer();
-
-        //Removes All Scheduled Calls for patients that are withdrawn
-        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes()->withoutOverlapping()->onOneServer();
+        
+        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyMinute()->withoutOverlapping()->onOneServer();
 
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
             ->weeklyOn(1, '10:00')->onOneServer();
@@ -120,10 +122,10 @@ class Kernel extends ConsoleKernel
             ->cron('1 0 1 * *')->onOneServer();
 
         //Run at 12:45am every 1st of month
-        $schedule->command(AttachBillableProblemsToLastMonthSummary::class, ['--reset-actor' => true])
+        $schedule->command(CreateLastMonthBillablePatientsReport::class, ['--reset-actor' => true])
             ->cron('45 0 1 * *')->onOneServer();
 
-        $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
+        $schedule->command(CreateLastMonthBillablePatientsReport::class)
             ->dailyAt('00:25')->onOneServer();
 
 //        $schedule->command(
@@ -170,6 +172,9 @@ class Kernel extends ConsoleKernel
 //                 ->withoutOverlapping()->onOneServer();
 
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:03')->onOneServer();
+        $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
+
+        $schedule->command(CheckForMissingLogoutsAndInsert::class)->dailyAt('04:00')->onOneServer();
 
         $schedule->command(OverwriteNBIImportedData::class)->everyThirtyMinutes()->onOneServer();
 
@@ -177,14 +182,13 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(GenerateMonthlyInvoicesForNonDemoNurses::class)->dailyAt('00:10')->onOneServer();
         $schedule->command(SendMonthlyNurseInvoiceFAN::class)->monthlyOn(1, '08:30')->onOneServer();
-
         $schedule->command(SendMonthlyNurseInvoiceLAN::class)->everyMinute()->when(function () {
             return SendMonthlyNurseInvoiceLAN::shouldSend();
         })->onOneServer();
-
         $schedule->command(SendResolveInvoiceDisputeReminder::class)->dailyAt('08:35')->skip(function () {
             return SendResolveInvoiceDisputeReminder::shouldSkip();
         })->onOneServer();
         //        $schedule->command(SendCareCoachApprovedMonthlyInvoices::class)->dailyAt('8:30')->onOneServer();
+        $schedule->command(CheckForYesterdaysActivitiesAndUpdateContactWindows::class)->dailyAt('00:10')->onOneServer();
     }
 }

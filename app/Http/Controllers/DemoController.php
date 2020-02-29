@@ -6,10 +6,11 @@
 
 namespace App\Http\Controllers;
 
-use CircleLinkHealth\Core\StringManipulation;
 use App\Contracts\DirectMail;
 use App\Contracts\Efax;
+use CircleLinkHealth\Core\StringManipulation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DemoController extends Controller
 {
@@ -17,11 +18,11 @@ class DemoController extends Controller
     {
         $number  = (new StringManipulation())->formatPhoneNumberE164($request->input('fax_number'));
         $faxTest = $fax->createFaxFor($number)
-                       ->setOption('file', [public_path('assets/pdf/sample-note.pdf')])
-                       ->send();
+            ->setOption('file', [public_path('assets/pdf/sample-note.pdf')])
+            ->send();
         dd($faxTest);
     }
-    
+
     public function sendSampleEMRNote(Request $request, DirectMail $dm)
     {
         $test = $dm->send(
@@ -30,5 +31,17 @@ class DemoController extends Controller
             'sample-note.pdf'
         );
         dd($test);
+    }
+
+    public function sentry()
+    {
+        throw new \Exception('My first Sentry error!');
+    }
+
+    public function sentryLog()
+    {
+        Log::error('Log that should reach both stderr and Sentry!');
+
+        return response([]);
     }
 }

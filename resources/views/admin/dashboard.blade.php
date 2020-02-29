@@ -52,16 +52,6 @@
 
             <div class="col-md-4">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Train Medical Record Importing Algorithm</div>
-
-                    <div class="panel-body">
-                        @include('partials.importerTrainer')
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="panel panel-default">
                     <div class="panel-heading">Pull Eligible Patients from Athena</div>
                     <div class="panel-body">
                         <form action="{{ route('pull.athena.enrollees') }}" method="post" enctype="multipart/form-data">
@@ -95,9 +85,7 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">Send Sample note via Direct Mail</div>
@@ -110,8 +98,29 @@
                         </form>
                     </div>
                 </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Demo UPG G0506 Flow</div>
+                    <div class="panel-body">
+                        @if(! upg0506IsEnabled())
+                            <span><span style="color: red">&#33;</span>&nbsp;Feature is disabled!</span>
+                        @endif
+                        <ul>
+                            <li> <strong>Both</strong> CCD and PDF must be received for the patient to be ready for import.</li>
+                            <li> If CCD is sent first, <strong>wait</strong> ~1 minute before visiting ccd-importer page.</li>
+                            <li> Open <a href="{{route('import.ccd.remix')}}">CCD Importer Page</a>. Patient "Barbara Zznigro" should be ready to be imported.</li>
+                            <li> You can delete <strong>all created test data</strong> at any time.</li>
+                        </ul>
+                        @if (\Session::has('upg0506-command-success'))
+                            <div class="alert alert-success">
+                                <span>{!! \Session::get('upg0506-command-success') !!}</span>
+                            </div>
+                        @endif
+                        <a class="btn btn-m btn-primary" href="{{route('upg0506.demo', ['type'=>'pdf'])}}" @if(! upg0506IsEnabled()) disabled @endif>Send PDF</a>
+                        <a class="btn btn-m btn-info" href="{{route('upg0506.demo', ['type'=> 'ccd'])}}" @if(! upg0506IsEnabled()) disabled @endif>Send CCD</a>
+                        <a class="btn btn-m btn-danger" href="{{route('upg0506.demo', ['type' => 'delete'])}}" @if(! upg0506IsEnabled()) disabled @endif>Delete Test Patient Data</a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 @endsection
