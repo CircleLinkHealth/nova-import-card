@@ -97,7 +97,7 @@ class NBIPatientData implements ToCollection, WithChunkReading, WithValidation, 
                     $date = $this->validateDob($row['dob']);
 
                     if ( ! $date) {
-                        throw new \Exception('Invalid date.');
+                        throw new \Exception("Invalid date {$row['dob']}");
                     }
 
                     $dobs->push(['dateString' => $date->toDateString()]);
@@ -131,8 +131,6 @@ class NBIPatientData implements ToCollection, WithChunkReading, WithValidation, 
             'provider'            => $this->nullOrValue($row['provider']),
             'secondary_insurance' => $this->nullOrValue($row['secondary_insurance']),
         ];
-
-        //change date if you should
 
         if ( ! empty($args['mrn']) && ! empty($args['first_name']) && ! empty($args['last_name'])) {
             return PatientData::updateOrCreate(
