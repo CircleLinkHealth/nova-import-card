@@ -51,5 +51,12 @@ class NurseInvoicesDeferredBindingsServiceProvider extends ServiceProvider
                 ]
             );
         }
+        else {
+            $this->commands(
+                [
+                    GenerateMonthlyInvoicesForNonDemoNurses::class,
+                ]
+            );
+        }
     }
 }
