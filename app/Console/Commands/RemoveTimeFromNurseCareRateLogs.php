@@ -78,10 +78,9 @@ class RemoveTimeFromNurseCareRateLogs extends Command
         $entriesToSave = collect();
         $entriesToSave->push($careRateLog);
 
-        NurseCareRateLog::whereNurseId($careRateLog->nurse_id)
-                        ->where('patient_user_id', '=', $careRateLog->patient_user_id)
-                        ->where('created_at', '>', $careRateLog->created_at)
+        NurseCareRateLog::where('patient_user_id', '=', $careRateLog->patient_user_id)
                         ->where('created_at', '<=', $careRateLog->created_at->copy()->endOfMonth())
+                        ->where('time_before', '>', $careRateLog->time_before)
                         ->orderBy('time_before', 'asc')
                         ->chunk(50, function ($items) use ($entriesToSave, $decrementBy) {
                             $items->each(function (NurseCareRateLog $item) use ($entriesToSave, $decrementBy) {
