@@ -101,7 +101,7 @@ class NBIPatientData extends Resource
             Date::make('dob')
                 ->sortable()
                 ->format('MM/DD/YYYY')
-                ->rules('required', new NBIPatientDobRule),
+                ->rules('required'),
             Text::make('provider')
                 ->sortable(),
             Text::make('primary_insurance')
