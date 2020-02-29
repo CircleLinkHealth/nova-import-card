@@ -17,6 +17,15 @@ class CpmBiometricsTableSeeder extends Seeder
      */
     public function run()
     {
+        /*
+         * Disabled because it was throwing exception:
+            In Connection.php line 664:
+              [Illuminate\Database\QueryException (23000)]
+              SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1'
+               for key 'cpt_id_cpm_bmtrc_id_unique' (SQL: insert into `care_plan_template
+              s_cpm_biometrics` (`care_plan_template_id`, `cpm_biometric_id`, `created_at
+              `, `updated_at`) values (1, 1, 2020-02-29 03:31:33, 2020-02-29 03:31:33))
+
         $carePlanTemplates = CarePlanTemplate::get();
         foreach (
             [
@@ -38,5 +47,6 @@ class CpmBiometricsTableSeeder extends Seeder
                 $cpt->cpmBiometrics()->attach($b);
             });
         }
+        */
     }
 }
