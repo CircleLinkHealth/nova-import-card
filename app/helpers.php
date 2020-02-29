@@ -182,11 +182,11 @@ if ( ! function_exists('activeNurseNames')) {
                     },
                 ]
             )->whereHas(
-                       'nurseInfo',
-                       function ($q) {
-                           $q->where('is_demo', '!=', true);
-                       }
-                   )->where('user_status', 1)
+                'nurseInfo',
+                function ($q) {
+                    $q->where('is_demo', '!=', true);
+                }
+            )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -1675,6 +1675,24 @@ if ( ! function_exists('upg0506IsEnabled')) {
             }
 
             return 'true' === $val;
+        });
+    }
+}
+
+if ( ! function_exists('patientLoginIsEnabledForPractice')) {
+    /**
+     * Key: enable_patient_login_for_practice
+     * Default: false.
+     *
+     * @param mixed $practiceId
+     */
+    function patientLoginIsEnabledForPractice($practiceId): bool
+    {
+        $key = 'enable_patient_login_for_practice';
+
+        return \Cache::remember($key, 2, function () use ($key, $practiceId) {
+            return AppConfig::where('config_key', $key)
+                ->where('config_value', $practiceId)->exists();
         });
     }
 }
