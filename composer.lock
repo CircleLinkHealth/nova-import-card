@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d8753c3851af4179dfbbdbb07d3e1477",
+    "content-hash": "620d2ee7e7f96f3860a9f6720f7db10e",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -945,11 +945,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.4.1",
+            "version": "v1.4.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "c82632218ccfb69a8e22abe15b3ed8397fbb5fa7"
+                "reference": "095c562fa029338c08ff85bc39ddb7498172bda2"
             },
             "type": "laravel-module",
             "extra": {
@@ -971,7 +971,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-13T04:05:40+00:00"
+            "time": "2020-02-29T08:05:27+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1119,11 +1119,11 @@
         },
         {
             "name": "circlelinkhealth/nurseinvoices-module",
-            "version": "v1.3.0",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/nurse-invoices-module.git",
-                "reference": "2172c3a79a47bf89a60fbc25d15153755eeb5efd"
+                "reference": "09516b67df53ea3f5af7716ea0841cacb756768a"
             },
             "type": "laravel-module",
             "extra": {
@@ -1146,7 +1146,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-19T13:29:48+00:00"
+            "time": "2020-02-29T08:03:53+00:00"
         },
         {
             "name": "circlelinkhealth/patientapi-module",
@@ -1317,11 +1317,11 @@
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "v1.1.7",
+            "version": "v1.1.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "bbe14732a1be01d761e895760f9f25376c8b0e84"
+                "reference": "e8df27ecf467fa58da56cb4d126f5772c566578b"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1346,7 +1346,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-23T16:42:13+00:00"
+            "time": "2020-02-29T08:02:00+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
