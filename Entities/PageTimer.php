@@ -87,6 +87,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class PageTimer extends \CircleLinkHealth\Core\Entities\BaseModel
 {
+    use \Laravel\Nova\Actions\Actionable;
     use DateScopesTrait;
     use SoftDeletes;
 
