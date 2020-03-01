@@ -40,6 +40,7 @@
                         Next
                     </button>
                     <vue-select class="page-dropdown"
+                                :clearable="false"
                                 :options="dropdownOptions"
                                 @input="submitDropdownValue"
                                 v-model="selectedResultsPerPage">
