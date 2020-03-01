@@ -39,7 +39,6 @@
                             @click="nextPage">
                         Next
                     </button>
-
                     <vue-select class="page-dropdown"
                                 :options="dropdownOptions"
                                 @input="submitDropdownValue"
