@@ -1,53 +1,57 @@
 <template>
     <div class="container">
-        <full-screen-loader v-show="loader" class="half-screen-loader"></full-screen-loader>
-        <div class="title"><h2>YOUR NOTIFICATIONS</h2></div>
-        <ul class="list-group list-group-flush notifications">
-            <li v-for="notification in notifications.notifications" :key="notification.id">
-                <a class="list-group-item list-group-item-action"
-                   :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
-                   @click="redirectAndMarkAsRead(notification)"
-                   v-html="showAll(notification)">
-                </a>
-            </li>
-        </ul>
-
-        <nav class="pagination">
-            <ul :data="notifications" class="pagination">
-                <button type="button"
-                        class="btn btn-primary"
-                        :disabled="disablePrevButton"
-                        :class="{disable: disablePrevButton}"
-                        @click="prevPage">
-                    Prev
-                </button>
-
-                <li v-for="(page, index) in paginationTriggers">
-                    <button style="padding: 10px; margin:5px;" type="button"
-                            class="btn btn-light"
-                            :class="{'pages': roundUp(page) === currentPage}"
-                            @click="goToPage(page)">
-                        {{roundUp(page)}}
-                    </button>
+        <div v-if="totalNotifications !== 0">
+            <full-screen-loader v-show="loader" class="half-screen-loader"></full-screen-loader>
+            <div class="title"><h2>YOUR NOTIFICATIONS</h2></div>
+            <ul class="list-group list-group-flush notifications">
+                <li v-for="notification in notifications.notifications" :key="notification.id">
+                    <a class="list-group-item list-group-item-action"
+                       :class="{greyOut: notification.read_at !== undefined && notification.read_at !== null}"
+                       @click="redirectAndMarkAsRead(notification)"
+                       v-html="showAll(notification)">
+                    </a>
                 </li>
-
-                <button type="button"
-                        class="btn btn-primary"
-                        :disabled="disableNextButton"
-                        :class="{disable: disableNextButton}"
-                        @click="nextPage">
-                    Next
-                </button>
-
-                <vue-select class="page-dropdown"
-                            :options="dropdownOptions"
-                            @input="submitDropdownValue"
-                            v-model="selectedResultsPerPage">
-                </vue-select>
-
             </ul>
-        </nav>
 
+            <nav class="pagination">
+                <ul class="pagination">
+                    <button type="button"
+                            class="btn btn-primary"
+                            :disabled="disablePrevButton"
+                            :class="{disable: disablePrevButton}"
+                            @click="prevPage">
+                        Prev
+                    </button>
+
+                    <li v-for="(page, index) in paginationTriggers">
+                        <button style="padding: 10px; margin:5px;" type="button"
+                                class="btn btn-light"
+                                :class="{'pages': roundUp(page) === currentPage}"
+                                @click="goToPage(page)">
+                            {{roundUp(page)}}
+                        </button>
+                    </li>
+
+                    <button type="button"
+                            class="btn btn-primary"
+                            :disabled="disableNextButton"
+                            :class="{disable: disableNextButton}"
+                            @click="nextPage">
+                        Next
+                    </button>
+
+                    <vue-select class="page-dropdown"
+                                :options="dropdownOptions"
+                                @input="submitDropdownValue"
+                                v-model="selectedResultsPerPage">
+                    </vue-select>
+
+                </ul>
+            </nav>
+        </div>
+        <div v-else>
+            <div class="title"><h3>You dont have any notifications at this moment</h3></div>
+        </div>
     </div>
 </template>
 
@@ -106,7 +110,7 @@
 
         computed: {
             paginationTriggers() {
-                if (this.visiblePagesCount !== '') {
+                if (this.visiblePagesCount !== '' && this.visiblePagesCount !== 0) {
                     const currentPage = this.currentPage;
                     const totalPages = this.totalPages;
                     const visiblePagesCount = this.visiblePagesCount;
@@ -147,6 +151,8 @@
                     pagintationTriggers[pagintationTriggers.length - 1] = totalPages;
                     return pagintationTriggers
                 }
+                // If no notifications then just return 1 page.
+                return 1;
             },
 
             disableNextButton() {
@@ -203,7 +209,6 @@
             },
 
             getResults(page) {
-                debugger;
                 this.loader = true;
                 const resultsPerPage = this.selectedResultsPerPage.value;
                 axios.get(`all-notifications-pages/${page}/${resultsPerPage}`).then(response => {
