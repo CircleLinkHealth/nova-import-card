@@ -117,6 +117,11 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
         'duplicate_id',
         'validation_checks',
     ];
+    
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'patient_id');
+    }
 
     public function allergies()
     {
