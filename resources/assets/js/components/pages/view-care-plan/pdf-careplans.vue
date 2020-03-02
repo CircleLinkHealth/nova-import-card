@@ -50,7 +50,7 @@
                 e.preventDefault();
                 const form = this;
 
-                if (self.patientHasBothTypesOfDiabetes) {
+                if (self.patientHasBothTypesOfDiabetes && self.patientCarePlan.status === 'draft') {
                     $(":input").each(function() {
                         if ($(this).attr('name') === "confirm_diabetes_conditions") {
                             form.submit();

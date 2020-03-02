@@ -15,6 +15,8 @@ use Illuminate\Support\Collection;
 
 class NotificationService
 {
+    const NOTIFICATION_PER_PAGE_DEFAULT = 5;
+
     /**
      * @param $notification
      * @param $createdDateTime
@@ -27,14 +29,15 @@ class NotificationService
     }
 
     /**
-     * @return Collection
+     * @param $notification
+     *
+     * @return mixed
      */
-    public function getAllUserNotifications()
+    public function countUserNotifications()
     {
-        $user              = auth()->user();
-        $userNotifications = $user->notifications()->liveNotification()->get();
-        //@todo: pagination needed
-        return $this->prepareNotifications($userNotifications);
+        $user = auth()->user();
+
+        return $this->getUserNotifications($user)->count();
     }
 
     /**
@@ -61,6 +64,20 @@ class NotificationService
     }
 
     /**
+     * @param $page
+     * @param $notificationsPerPage
+     *
+     * @return Collection
+     */
+    public function getPaginatedNotifications($page, $notificationsPerPage)
+    {
+        $user              = auth()->user();
+        $userNotifications = $this->getUserNotifications($user)->forPage($page, $notificationsPerPage);
+
+        return $this->prepareNotifications($userNotifications);
+    }
+
+    /**
      * @param $patientId
      *
      * @return mixed|string
@@ -78,6 +95,18 @@ class NotificationService
     public function getPusherNotificationData($id)
     {
         return DatabaseNotification::findOrFail($id);
+    }
+
+    /**
+     * @param $user
+     *
+     * @return mixed
+     */
+    public function getUserNotifications($user)
+    {
+        return $user->notifications()
+            ->liveNotification()
+            ->get();
     }
 
     /**
