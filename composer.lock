@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3201149a5974ad0dff52a8432f875a64",
+    "content-hash": "0a09d95c65832e5cf320b6ea8e955fd2",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1171,11 +1171,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "v1.1.7",
+            "version": "v1.1.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "2293bb353e7e76f577cb603e6f3f964338dd25d4"
+                "reference": "3614ebbd394d283dde771f9182e342b0fa9c7a7f"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1189,7 +1189,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-24T21:20:58+00:00"
+            "time": "2020-03-02T20:29:44+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
