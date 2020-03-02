@@ -441,6 +441,7 @@ class EligibilityBatchController extends Controller
                         'p1.name as ccm_condition_1',
                         'p2.name as ccm_condition_2',
                         'pbhi.name as bhi_condition',
+                        'eligibility_jobs.data as jsonMedicalRecord',
                     ]
                 )
                         ->leftJoin('cpm_problems as p1', 'p1.id', '=', 'enrollees.cpm_problem_1')
@@ -468,7 +469,7 @@ class EligibilityBatchController extends Controller
                                         'mrn'                           => $enrollee->mrn,
                                         'first_name'                    => $enrollee->first_name,
                                         'last_name'                     => $enrollee->last_name,
-                                        'location'                      => $enrollee->data['department_name'] ?? '',
+                                        'location'                      => json_decode($enrollee->jsonMedicalRecord, true)['department_name'] ?? '',
                                         'address'                       => $enrollee->address,
                                         'address_2'                     => $enrollee->address_2,
                                         'city'                          => $enrollee->city,
