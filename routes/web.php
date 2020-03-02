@@ -50,7 +50,7 @@ Route::get('/', 'WelcomeController@index', [
 ]);
 Route::get('home', [
     'uses' => 'WelcomeController@index',
-    'as' => 'home',
+    'as'   => 'home',
 ]);
 
 Route::get('login', 'Auth\LoginController@showLoginForm', ['as' => 'login'])->middleware('doNotCacheResponse');

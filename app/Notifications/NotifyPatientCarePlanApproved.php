@@ -94,7 +94,7 @@ class NotifyPatientCarePlanApproved extends Notification
     public function toArray($notifiable)
     {
         return [
-            'channels' => $this->channels,
+            'channels'         => $this->channels,
             'notifiable_email' => $notifiable->email,
 
             'body'    => $this->getBody(),

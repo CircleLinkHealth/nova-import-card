@@ -29,12 +29,12 @@ class ArrayProblemLogger implements Logger
                 ],
                 $p
             ) && array_keys_exist(
-                    [
-                        'code',
-                        'code_type',
-                    ],
-                    $p
-                )) {
+                [
+                    'code',
+                    'code_type',
+                ],
+                $p
+            )) {
                 $results[] = Problem::create(
                     [
                         'code'             => $p['code'],

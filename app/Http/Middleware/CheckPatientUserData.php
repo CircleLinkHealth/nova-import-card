@@ -28,7 +28,7 @@ class CheckPatientUserData
             return redirect('login')->withErrors(['This page can be accessed only by patients.']);
         }
 
-        if (! patientLoginIsEnabledForPractice($loggedUser->program_id)){
+        if ( ! patientLoginIsEnabledForPractice($loggedUser->program_id)) {
             auth()->logout();
 
             return redirect('login')->withErrors(['This feature has not been enabled by your Provider yet.']);
@@ -37,7 +37,7 @@ class CheckPatientUserData
         if ( ! $loggedUser->carePlan) {
             \Log::channel('sentry')->error("Care Plan for patient user with id: {$loggedUser->id} not found");
             \Log::error("Care Plan for patient user with id: {$loggedUser->id} not found");
-            
+
             auth()->logout();
 
             return redirect('login')->withErrors(['careplan-error' => "[402] There was an error retrieving your Care Plan and we are investigating the issue. <br> If the problem persists, please contact CircleLink Health Support at <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>."]);
