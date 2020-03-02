@@ -7,9 +7,6 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Sections\Medications;
 use Illuminate\Console\Command;
 
 class AddPracticesToSearchDriver extends Command
@@ -42,12 +39,6 @@ class AddPracticesToSearchDriver extends Command
      */
     public function handle()
     {
-        ImportedMedicalRecord::wherePracticeId(228)->with('patient')->has('patient')->chunkById(50, function ($imrs){
-            foreach ($imrs as $imr) {
-                $this->warn("fixing patient:{$imr->patient->id}");
-                $m = (new Medications($imr->medical_record_id, $imr->medical_record_type, $imr))->import($imr->medical_record_id, $imr->medical_record_type, $imr);
-                (new CarePlanHelper($imr->patient, $imr))->storeMedications();
-            }
-        });
+        Practice::activeBillable()->searchable();
     }
 }
