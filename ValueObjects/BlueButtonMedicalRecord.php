@@ -132,11 +132,11 @@ class BlueButtonMedicalRecord
                 ],
                 1 => [
                     'type'   => 'primary_phone',
-                    'number' => $this->data['primary_phone'],
+                    'number' => $this->data['primary_phone'] ?? '',
                 ],
                 2 => [
                     'type'   => 'mobile',
-                    'number' => $this->data['cell_phone'],
+                    'number' => $this->data['cell_phone'] ?? '',
                 ],
             ],
             'email'      => null,

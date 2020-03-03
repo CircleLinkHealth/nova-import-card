@@ -156,7 +156,7 @@ interface AthenaApiImplementation
     public function getDemographics($patientId, $practiceId);
 
     /**
-     * Get all department ids for a practice.
+     * Get all departments for a practice.
      *
      * @param $practiceId
      * @param bool $showAllDepartments
@@ -165,7 +165,7 @@ interface AthenaApiImplementation
      *
      * @return mixed
      */
-    public function getDepartmentIds($practiceId, $showAllDepartments = true);
+    public function getDepartments($practiceId, $showAllDepartments = true);
 
     public function getDepartmentInfo($practiceId, $departmentId, $providerList = false);
 
