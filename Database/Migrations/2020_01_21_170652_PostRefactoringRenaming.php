@@ -41,7 +41,7 @@ class PostRefactoringRenaming extends Migration
                         'new' => 'CircleLinkHealth\Core\Entities\AppConfig',
                     ],
                     [
-                        'old' => 'App\CarePlan',
+                        'old' => 'CircleLinkHealth\SharedModels\Entities\CarePlan',
                         'new' => 'CircleLinkHealth\SharedModels\Entities\CarePlan',
                     ],
                     [
