@@ -14,6 +14,7 @@ use Illuminate\Http\Resources\Json\Resource;
 class ApprovableBillablePatient extends Resource
 {
     const ATTACH_DEFAULT_PROBLEMS_FOR_MONTH = '2020-03-01';
+    const BHI_SERVICE_CODE = 'CPT 99484';
 
     public function allCcdProblems(User $patient)
     {
@@ -76,7 +77,7 @@ class ApprovableBillablePatient extends Resource
 
         $attestedBhiProblems = [];
         //get Bhi attested Problems
-        if ($this->hasServiceCode('CPT 99484')) {
+        if ($this->hasServiceCode(self::BHI_SERVICE_CODE)) {
             if ($shouldAttachDefaultProblems && $attestedProblems->where('cpmProblem.is_behavioral', '=', true)->count() == 0) {
                 $bhiProblem = $this->billableBhiProblems()->first();
                 $attestedBhiProblems = collect([
