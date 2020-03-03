@@ -51,11 +51,18 @@ class ApprovableBillablePatient extends Resource
             $status = $this->patient->patientInfo->ccm_status;
         }
 
-        $attestedProblems = $this->attestedProblems->filter(function ($p){
-            return !! $p->icd10Code();
-        });
+
 
         $shouldAttachDefaultProblems = Carbon::parse($this->month_year)->lte(Carbon::parse(self::ATTACH_DEFAULT_PROBLEMS_FOR_MONTH));
+
+        //remove problems that have no icd10 codes due to bug, for months that this has happened. Wrap in if to minimize performance loss for other months
+        if ($shouldAttachDefaultProblems){
+            $attestedProblems = $this->attestedProblems->filter(function ($p){
+                return !! $p->icd10Code();
+            });
+        }else{
+            $attestedProblems = $this->attestedProblems;
+        }
 
         //get Ccm attested problems
         if ($shouldAttachDefaultProblems && $attestedProblems->where('cpmProblem.is_behavioral', '=', false)->count() == 0) {
