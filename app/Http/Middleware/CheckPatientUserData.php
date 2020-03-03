@@ -28,6 +28,12 @@ class CheckPatientUserData
             return redirect('login')->withErrors(['This page can be accessed only by patients.']);
         }
 
+        if ( ! patientLoginIsEnabledForPractice($loggedUser->program_id)) {
+            auth()->logout();
+
+            return redirect('login')->withErrors(['This feature has not been enabled by your Provider yet.']);
+        }
+
         if ( ! $loggedUser->carePlan) {
             \Log::channel('sentry')->error("Care Plan for patient user with id: {$loggedUser->id} not found");
             \Log::error("Care Plan for patient user with id: {$loggedUser->id} not found");

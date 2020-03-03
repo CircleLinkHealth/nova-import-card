@@ -29,7 +29,7 @@ class CreateAndPostPdfCareplan
         $start = $startDate->format('m/d/Y');
         $end   = $endDate->format('m/d/Y');
 
-        $departments = $this->api->getDepartmentIds($practiceId);
+        $departments = $this->api->getDepartments($practiceId);
 
         if ( ! is_array($departments) || ! array_key_exists('departments', $departments)) {
             return false;

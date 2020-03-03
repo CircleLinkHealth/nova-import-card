@@ -30,9 +30,9 @@ trait CreatesTestSuiteDB
         collect(
             [
                 ['mysql:createdb', $dbName],
-//                ['migrate:fresh'],
-//                ['migrate:views'],
-//                ['db:seed', '--class=TestSuiteSeeder'],
+                //                ['migrate:fresh'],
+                //                ['migrate:views'],
+                //                ['db:seed', '--class=TestSuiteSeeder'],
             ]
         )->each(
             function ($command) use ($isLocal) {

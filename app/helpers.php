@@ -1678,3 +1678,21 @@ if ( ! function_exists('upg0506IsEnabled')) {
         });
     }
 }
+
+if ( ! function_exists('patientLoginIsEnabledForPractice')) {
+    /**
+     * Key: enable_patient_login_for_practice
+     * Default: false.
+     *
+     * @param mixed $practiceId
+     */
+    function patientLoginIsEnabledForPractice($practiceId): bool
+    {
+        $key = 'enable_patient_login_for_practice';
+
+        return \Cache::remember($key, 2, function () use ($key, $practiceId) {
+            return AppConfig::where('config_key', $key)
+                ->where('config_value', $practiceId)->exists();
+        });
+    }
+}
