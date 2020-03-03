@@ -370,7 +370,7 @@ class Calls implements AthenaApiImplementation
      *
      * @return mixed
      */
-    public function getDepartmentIds($practiceId, $showAllDepartments = true)
+    public function getDepartments($practiceId, $showAllDepartments = true)
     {
         $this->api()->setPracticeId($practiceId);
 

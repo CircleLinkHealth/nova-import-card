@@ -618,6 +618,7 @@ class ReportsController extends Controller
                     },
                 ]
             )
+            ->has('primaryPractice')
             ->whereHas(
                 'patientSummaries',
                 function ($q) use ($time) {
