@@ -22,10 +22,6 @@
                             <div class="calendar-date" style="padding-left: 2%; padding-top: 1%;">
                                 @include('admin.reports.nursesPerformanceForm')
                             </div>
-                            {{--We need less white space + start and end date are already dispalyed in placeholder and table row--}}
-                            {{--                            <div class="dates">--}}
-                            {{--                                {{$startDate->format('l F jS')}} - {{$endDate->format('l F jS Y')}}--}}
-                            {{--                            </div>--}}
 
                             <div class="panel-body">
                                 <table class="table table-hover" id="nurse_metrics" style="width: 100%">
