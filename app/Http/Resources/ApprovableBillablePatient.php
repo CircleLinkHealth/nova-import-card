@@ -44,14 +44,10 @@ class ApprovableBillablePatient extends Resource
             'patient' => $this->patient->id,
         ]);
 
-        $bhiProblemCode = 'N/A';
 
+        $attestedBhiProblems = [];
         if ($this->hasServiceCode('CPT 99484')) {
-            $bhiProblem = $this->billableBhiProblems()->first();
-
-            if ($bhiProblem) {
-                $bhiProblemCode = $bhiProblem->pivot->icd_10_code ?? null;
-            }
+            $attestedBhiProblems = $this->attestedProblems->where('cpmProblem.is_behavioral', '=', true)->pluck('id');
         }
 
         $status = $this->closed_ccm_status;
@@ -65,9 +61,8 @@ class ApprovableBillablePatient extends Resource
                 optional($this->billableProblem2)->id,
             ])->filter()->toArray();
         } else {
-            $attestedProblems = $this->attestedProblems->where('cpmProblem.is_behavioral', '=', false)->pluck('id');
+            $attestedCcmProblems = $this->attestedProblems->where('cpmProblem.is_behavioral', '=', false)->pluck('id');
         }
-
 
         return [
             'id'                     => $this->patient->id,
@@ -92,9 +87,9 @@ class ApprovableBillablePatient extends Resource
             'report_id'              => $this->id,
             'actor_id'               => $this->actor_id,
             'qa'                     => $this->needs_qa || ( ! $this->approved && ! $this->rejected),
-            'attested_problems'      => $attestedProblems,
+            'attested_ccm_problems'  => $attestedCcmProblems,
             'chargeable_services'    => ChargeableService::collection($this->whenLoaded('chargeableServices')),
-            'bhi_problem_code'       => $bhiProblemCode,
+            'attested_bhi_problems'  => $attestedBhiProblems,
         ];
     }
 }
