@@ -120,6 +120,8 @@ class CarePlan extends BaseModel implements PdfReport
 
     public function alertPatientAboutApproval()
     {
+        if (! patientLoginIsEnabledForPractice($this->patient->program_id)) return;
+        
         $this->patient->notify(new NotifyPatientCarePlanApproved($this));
     }
 
