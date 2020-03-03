@@ -191,11 +191,13 @@ class VariablePayCalculator
     ): float {
         $elqRange = collect($range);
 
+        if ( ! $elqRange->has($nurseInfoId)) {
+            return 0;
+        }
+
         //only 1 RN, pay the full VF, regardless of calls
         if (1 === $elqRange->count()) {
-            return $elqRange->has($nurseInfoId)
-                ? 1
-                : 0;
+            return 1;
         }
 
         $filtered = $elqRange->filter(function ($f) {
