@@ -2122,6 +2122,57 @@ class NursePaymentAlgoTest extends TestCase
         self::assertEquals(10.00, $pay);
     }
 
+    public function test_visits_count_as_a_floating_number()
+    {
+        $practice = $this->setupPractice(true);
+        $nurse1   = $this->getNurse($practice->id, true, 1, true, 12.50);
+        $nurse2   = $this->getNurse($practice->id, true, 1, true, 12.50);
+        $patient1  = $this->setupPatient($practice, false, false);
+        $patient2  = $this->setupPatient($practice, false, false);
+
+        $this->addTime($nurse1, $patient1, 20, true, 1);
+        $this->addTime($nurse1, $patient2, 10, true, 1);
+        $this->addTime($nurse2, $patient2, 10, true, 1);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse1->id, $nurse2->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoice1Data    = NurseInvoice::where('nurse_info_id', $nurse1->nurseInfo->id)
+                                       ->orderBy('month_year', 'desc')
+                                       ->first()->invoice_data;
+        $visitsCount     = $invoice1Data['visitsCount'];
+        $fixedRatePay    = $invoice1Data['fixedRatePay'];
+        $variableRatePay = $invoice1Data['variableRatePay'];
+        $pay             = $invoice1Data['baseSalary'];
+
+        self::assertEquals(1.5, $visitsCount);
+        self::assertEquals(0.5, $fixedRatePay);
+        self::assertEquals(18.75, $variableRatePay);
+        self::assertEquals(18.75, $pay);
+
+        $invoice2Data    = NurseInvoice::where('nurse_info_id', $nurse2->nurseInfo->id)
+                                       ->orderBy('month_year', 'desc')
+                                       ->first()->invoice_data;
+        $visitsCount     = $invoice2Data['visitsCount'];
+        $fixedRatePay    = $invoice2Data['fixedRatePay'];
+        $variableRatePay = $invoice2Data['variableRatePay'];
+        $pay             = $invoice2Data['baseSalary'];
+
+        self::assertEquals(0.5, $visitsCount);
+        self::assertEquals(0.5, $fixedRatePay);
+        self::assertEquals(6.25, $variableRatePay);
+        self::assertEquals(6.25, $pay);
+    }
+
     private function getNurse(
         $practiceId,
         bool $variableRate = true,

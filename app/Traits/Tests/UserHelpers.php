@@ -278,6 +278,9 @@ trait UserHelpers
                             : ',') . $nurse->id,
                 ]
             );
+
+            //hack for SmartCacheManager
+            \Cache::store('array')->clear();
         }
 
         return $nurse;
