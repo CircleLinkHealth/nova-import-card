@@ -35,7 +35,7 @@ class PdfCarePlan
             //add problems with instructions array. Template ['name' => problem name, 'value' => instruction]
             'instructions'        => $this->data['problems'],
             'chargeable_services' => $this->data['chargeable_services'],
-            'is_g0506'            => str_contains(collect($this->data['chargeable_services'])->transform(function ($cs) {
+            'is_g0506'            => Illuminate\Support\Str::contains(collect($this->data['chargeable_services'])->transform(function ($cs) {
                 return isset($cs['subject']) ? $cs['subject'] : '';
             })->filter()->implode(' '), 'G0506') ? 'true' : 'false',
         ];
@@ -306,7 +306,7 @@ class PdfCarePlan
                         $value = trim($array[1]);
 
                         if ('subject' == $key) {
-                            $currentChargeableService['is_g0506'] = str_contains(strtolower($value), 'g0506');
+                            $currentChargeableService['is_g0506'] = Illuminate\Support\Str::contains(strtolower($value), 'g0506');
                         }
 
                         $currentChargeableService[$key] = $value;
