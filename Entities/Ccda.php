@@ -107,6 +107,8 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null                                          $providers_count
  * @property int|null                                          $revision_history_count
  * @property \CircleLinkHealth\Eligibility\Entities\TargetPatient                                $targetPatient
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda hasUPG0506Media()
+ * @method static \Illuminate\Database\Eloquent\Builder|\CircleLinkHealth\SharedModels\Entities\Ccda hasUPG0506PdfCareplanMedia()
  */
 class Ccda extends MedicalRecordEloquent implements HasMedia
 {
@@ -253,7 +255,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
     /**
      * Get the User to whom this record belongs to, if one exists.
      */
-    public function getPatient() :? User
+    public function getPatient() :?User
     {
         return $this->patient;
     }
