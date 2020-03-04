@@ -2150,6 +2150,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function isCcm()
     {
+        return $this->ccmNoOfMonitoredProblems() >= 1;
+    }
+
+    private function ccmNoOfMonitoredProblems() {
         return $this->ccdProblems()
                     ->where('is_monitored', 1)
                     ->whereHas(
@@ -2158,11 +2162,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                             return $cpm->where('is_behavioral', 0);
                         }
                     )
-                    ->exists();
+                    ->count();
     }
 
     public function isPcm()
     {
+        if ($this->ccmNoOfMonitoredProblems() >= 2) {
+            return false;
+        }
+
         return $this->whereHas('ccdProblems', function ($q){
             $q->where(function ($q){
                 $q->whereHas('codes', function ($q) {
