@@ -65,8 +65,8 @@ class NotificationService
 
     /**
      * @param $page
-     *
      * @param $notificationsPerPage
+     *
      * @return Collection
      */
     public function getPaginatedNotifications($page, $notificationsPerPage)
