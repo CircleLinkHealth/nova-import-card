@@ -42,7 +42,7 @@
                 var columnForBorder = 1;
                 var columnsForTextFormating = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
-                function setExcelExportHref (startDate, endDate) {
+                function setExcelExportHref(startDate, endDate) {
                     var href = $('.excel-export').attr('data-href') + '?start_date=' + startDate + '&end_date=' + endDate
                     $('.excel-export').attr('href', href)
                     return href
@@ -70,7 +70,39 @@
                             );
                         }
 
-                        if ( data['Hrs Deficit or Surplus'] < 0) {
+                        // Define WORK HOURS text color
+                        const workHrsPercentage = ((data['Actual Hrs Worked'] / data['Committed Hrs']) * 100);
+
+                        // Green if hours worked is >=95% of committed.
+                        if (workHrsPercentage >= 95) {
+                            $('td:eq(6)', row).css(
+                                {
+                                    'color': '#32C132',
+                                }
+                            );
+                        }
+
+                        // Yellow if hours worked is 85% - 94% of committed.
+                        if (workHrsPercentage >= 85 && x <= 94) {
+                            $('td:eq(6)', row).css(
+                                {
+                                    'color': '#ffcf10',
+                                }
+                            );
+                        }
+
+                        // Red if hours worked is <84% of committed.
+                        if (workHrsPercentage <= 84) {
+                            $('td:eq(6)', row).css(
+                                {
+                                    'color': '#ff6c29',
+                                }
+                            );
+                        }
+
+                        // Define WORK HOURS text color - end
+
+                        if (data['Hrs Deficit or Surplus'] < 0) {
                             $('td:eq(13)', row).css('color', '#FA5353');
                         } else {
                             $('td:eq(13)', row).css('color', '#32C132');
@@ -182,6 +214,6 @@
     }
 
     .table.dataTable.no-footer {
-         border-bottom: unset;
+        border-bottom: unset;
     }
 </style>
