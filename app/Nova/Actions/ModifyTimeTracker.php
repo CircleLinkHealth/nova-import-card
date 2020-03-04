@@ -5,6 +5,7 @@ namespace App\Nova\Actions;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\NurseCareRateLog;
 use CircleLinkHealth\TimeTracking\Entities\PageTimer;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -44,7 +45,6 @@ class ModifyTimeTracker extends Action implements ShouldQueue
             return;
         }
 
-        $msg = '';
         foreach ($models as $model) {
             /** @var PageTimer $timeRecord */
             $timeRecord = $model;
@@ -60,68 +60,13 @@ class ModifyTimeTracker extends Action implements ShouldQueue
                 return;
             }
 
-            $entriesToSave = collect();
+            try {
+                $this->modifyRecords($timeRecord, $duration);
+            } catch (Exception $e) {
+                $this->markAsFailed($timeRecord, $e->getMessage());
 
-            //lv_page_timer table
-            $timeRecord->duration = $duration;
-            $entriesToSave->push($timeRecord);
-
-            if ($timeRecord->activity) {
-                //lv_activities table
-                $timeRecord->activity->duration = $duration;
-                $entriesToSave->push($timeRecord->activity);
-
-                /** @var NurseCareRateLog $careRateLog */
-                $careRateLog = NurseCareRateLog::whereActivityId($timeRecord->activity->id)
-                                               ->where('ccm_type', '=', 'accrued_after_ccm')
-                                               ->first();
-
-                if ( ! $careRateLog) {
-                    $this->markAsFailed($timeRecord,
-                        "Cannot modify activity. Please choose a different one. [no accrued_after_ccm]");
-
-                    return;
-                }
-
-                if ($duration > $careRateLog->increment) {
-                    $this->markAsFailed($timeRecord,
-                        "Cannot modify activity. Please lower duration to at least $careRateLog->increment. [duration > care rate log]");
-
-                    return;
-                }
-
-                //save pending entries
-                $entriesToSave->each(function (Model $item) {
-                    $item->save();
-                });
-
-                //adjust nurse care rate logs
-                \Artisan::call('nursecareratelogs:remove-time', [
-                    'fromId'      => $careRateLog->id,
-                    'newDuration' => $duration,
-                ]);
-
-                //recalculate ccm/bhi time for patient (patient_monthly_summaries table)
-                $startTime = Carbon::parse($timeRecord->start_time);
-                \Artisan::call('ccm_time:recalculate', [
-                    'dateString' => $startTime->toDateString(),
-                    'userIds'    => $timeRecord->patient_id,
-                ]);
-
-                //re-generate invoice for nurse
-                \Artisan::call('nurseinvoices:create', [
-                    'month'   => $startTime->copy()->startOfMonth()->toDateString(),
-                    'userIds' => $timeRecord->provider_id,
-                ]);
-
+                return;
             }
-        }
-
-        if ( ! empty($msg)) {
-            $this->markAsFailed($models->first(),
-                "Was not able to modify duration for entries: $msg");
-
-            return;
         }
 
         $this->markAsFinished($models->first());
@@ -137,5 +82,69 @@ class ModifyTimeTracker extends Action implements ShouldQueue
         return [
             Number::make('Duration (seconds)', 'duration'),
         ];
+    }
+
+    /**
+     * @param PageTimer $timeRecord
+     * @param int $duration
+     *
+     * @throws Exception
+     */
+    private function modifyRecords(PageTimer $timeRecord, int $duration)
+    {
+        //lv_page_timer table
+        $timeRecord->duration = $duration;
+
+        //if there is no activity associate, there is nothing else to do
+        if ( ! $timeRecord->activity) {
+            $timeRecord->save();
+
+            return;
+        }
+
+        $entriesToSave = collect();
+        $entriesToSave->push($timeRecord);
+
+        //lv_activities table
+        $timeRecord->activity->duration = $duration;
+        $entriesToSave->push($timeRecord->activity);
+
+        /** @var NurseCareRateLog $careRateLog */
+        $careRateLog = NurseCareRateLog::whereActivityId($timeRecord->activity->id)
+                                       ->where('ccm_type', '=', 'accrued_after_ccm')
+                                       ->first();
+
+        //some more validation here, simply because the current implementation supports simple use cases
+        if ( ! $careRateLog) {
+            throw new Exception("Cannot modify activity. Please choose a different one. [no accrued_after_ccm]");
+        }
+
+        if ($duration > $careRateLog->increment) {
+            throw new Exception("Cannot modify activity. Please lower duration to at least $careRateLog->increment. [duration > care rate log]");
+        }
+
+        //now, that all validation passes, save pending entries
+        $entriesToSave->each(function (Model $item) {
+            $item->save();
+        });
+
+        //adjust nurse care rate logs
+        \Artisan::call('nursecareratelogs:remove-time', [
+            'fromId'      => $careRateLog->id,
+            'newDuration' => $duration,
+        ]);
+
+        //recalculate ccm/bhi time for patient (patient_monthly_summaries table)
+        $startTime = Carbon::parse($timeRecord->start_time);
+        \Artisan::call('ccm_time:recalculate', [
+            'dateString' => $startTime->toDateString(),
+            'userIds'    => $timeRecord->patient_id,
+        ]);
+
+        //re-generate invoice for nurse
+        \Artisan::call('nurseinvoices:create', [
+            'month'   => $startTime->copy()->startOfMonth()->toDateString(),
+            'userIds' => $timeRecord->provider_id,
+        ]);
     }
 }
