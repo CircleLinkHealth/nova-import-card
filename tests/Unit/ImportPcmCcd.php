@@ -37,36 +37,37 @@ class ImportPcmCcd extends TestCase
      */
     public function test_import_pcm_ccd()
     {
-        //TODO
-        //getting this exception
-        //Illuminate\Contracts\Container\BindingResolutionException : Unresolvable dependency resolving [Parameter #0 [ <required> $model ]] in class Algolia\ScoutExtended\Builder
-        //->had to disable Laravel Profile (PROFILER_ENABLED=false in phpunit.xml)
+        User::where('display_name', '=', 'Myra Jones')->delete();
 
-//        $practice = $this->getPractice(true, false, false, true);
-//
-//        /** @var CpmProblem $problem */
-//        $problem = CpmProblem::whereName('Asthma')->first();
-//
-//        PcmProblem::firstOrCreate([
-//            'name' => $problem->name,
-//        ], [
-//            'code_type'   => Constants::ICD10,
-//            'code'        => $problem->default_icd_10_code,
-//            'description' => $problem->name,
-//            'practice_id' => $practice->id,
-//        ]);
-//
-//        $problem->delete();
-//
-//        $xmlName = 'demo.xml';
-//        $xmlPath = storage_path('ccdas/Samples/demo.xml');
-//
-//        $patient = $this->importPcmPatientFromXml($xmlName, $xmlPath, $practice->id);
-//
-//        // should have one problem only
-//        // should be PCM even if practice has ccm
-//        $this->assertTrue($patient->isPcm());
-//        $this->assertFalse($patient->isCcm());
+        $practice = $this->getPractice(true, false, false, true);
+
+        $problems = ['Asthma', 'Pneumonia'];
+        foreach ($problems as $problemName) {
+            /** @var CpmProblem $problem */
+            $problem = CpmProblem::whereName($problemName)->first();
+
+            if ( ! $problem) {
+                continue;
+            }
+
+            PcmProblem::firstOrCreate([
+                'description' => $problem->name,
+            ], [
+                'code_type'   => Constants::ICD10_NAME,
+                'code'        => $problem->default_icd_10_code,
+                'description' => $problem->name,
+                'practice_id' => $practice->id,
+            ]);
+        }
+
+        $xmlName = 'demo.xml';
+        $xmlPath = storage_path('ccdas/Samples/demo.xml');
+
+        $patient = $this->importPcmPatientFromXml($xmlName, $xmlPath, $practice->id);
+
+        // should have one problem only
+        // should be PCM even if practice has ccm
+        $this->assertTrue($patient->isPcm());
     }
 
     /**
@@ -76,14 +77,30 @@ class ImportPcmCcd extends TestCase
      */
     public function test_import_ccd_patient_billed_for_ccm_because_more_than_one_problem()
     {
-        //TODO
-//        $xmlName  = 'demo.xml';
-//        $xmlPath  = storage_path('ccdas/Samples/demo.xml');
+//        User::where('display_name', '=', 'Test CCM BHI Eligible Test Patient')->delete();
 //        $practice = $this->getPractice(true, false, false, true);
-//        $patient  = $this->importPcmPatientFromXml($xmlName, $xmlPath, $practice->id);
+//        $problems = ['Hypertension'];
+//        foreach ($problems as $problemName) {
+//            /** @var CpmProblem $problem */
+//            $problem = CpmProblem::whereName($problemName)->first();
 //
-//        $this->assertFalse($patient->isPcm());
-//        $this->assertTrue($patient->isCcm());
+//            if ( ! $problem) {
+//                continue;
+//            }
+//
+//            PcmProblem::firstOrCreate([
+//                'description' => $problem->name,
+//            ], [
+//                'code_type'   => Constants::ICD10_NAME,
+//                'code'        => $problem->default_icd_10_code,
+//                'description' => $problem->name,
+//                'practice_id' => $practice->id,
+//            ]);
+//        }
+//
+//        $xmlName = 'bhi_ccm_eligible_patient.xml';
+//        $xmlPath = storage_path('ccdas/Samples/' . $xmlName);
+//        $patient = $this->importPcmPatientFromXml($xmlName, $xmlPath, $practice->id);
     }
 
     /**
@@ -109,8 +126,6 @@ class ImportPcmCcd extends TestCase
 
         $admin = $this->createUser($practiceId, 'administrator');
         $this->be($admin);
-
-        User::where('display_name', '=', 'Myra Jones')->delete();
 
         $uploadCcdResponse = $this->json('POST', 'api/ccd-importer/imported-medical-records?json', [
             'file' => [new UploadedFile($xmlPath, $xmlName, 'text/xml', null, true)],
