@@ -9,6 +9,7 @@ use App\Note;
 use App\Notifications\CarePlanDMApprovalConfirmation;
 use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
+use App\AppConfig\DMDomainForAutoApproval;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
@@ -46,7 +47,7 @@ class ChangeOrApproveCareplanResponseListener implements ShouldQueue
      */
     private function shouldBail(string $sender): bool
     {
-        return ! str_contains($sender, '@upg.ssdirect.aprima.com');
+        return ! DMDomainForAutoApproval::isEnabledForDomain($sender);
     }
     
     /**

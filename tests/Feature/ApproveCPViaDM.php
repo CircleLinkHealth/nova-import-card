@@ -6,6 +6,7 @@
 
 namespace Tests\Feature;
 
+use App\AppConfig\DMDomainForAutoApproval;
 use App\Call;
 use App\DirectMailMessage;
 use App\Events\CarePlanWasApproved;
@@ -16,6 +17,7 @@ use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\SendCarePlanForDirectMailApprovalNotification;
 use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Facades\Notification;
 use CircleLinkHealth\Customer\Entities\PatientNurse;
 use CircleLinkHealth\Customer\Entities\User;
@@ -24,6 +26,8 @@ use Tests\CustomerTestCase;
 
 class ApproveCPViaDM extends CustomerTestCase
 {
+    const TEST_DM_DOMAIN = '@test.directproject.net';
+    
     public function directMailSubject($patient): string
     {
         return "{$patient->getFullName()}'s CCM Care Plan to approve!";
@@ -76,7 +80,7 @@ class ApproveCPViaDM extends CustomerTestCase
         $this->patient()->carePlan->status = CarePlan::QA_APPROVED;
         $this->patient()->carePlan->save();
 
-        $this->provider()->emr_direct_address = 'circlelinkhealth@test.directproject.net';
+        $this->provider()->emr_direct_address = 'circlelinkhealth'.self::TEST_DM_DOMAIN;
 
         $notification = new SendCarePlanForDirectMailApprovalNotification($this->patient());
         $this->provider()->notify($notification);
@@ -93,7 +97,7 @@ class ApproveCPViaDM extends CustomerTestCase
             (new DirectMailMessage())->getTable(),
             [
                 'from'       => config('services.emr-direct.user'),
-                'to'         => 'circlelinkhealth@test.directproject.net',
+                'to'         => 'circlelinkhealth'.self::TEST_DM_DOMAIN,
                 'subject'    => $this->directMailSubject($this->patient()),
                 'status'     => DirectMailMessage::STATUS_SUCCESS,
                 'direction'  => DirectMailMessage::DIRECTION_SENT,
@@ -118,6 +122,8 @@ class ApproveCPViaDM extends CustomerTestCase
 
     public function test_it_sends_careplan_approval_dm_upon_qa_approval()
     {
+        $this->enableFeatureFlag($this->practice()->id);
+        
         Notification::fake();
         $this->actingAs($this->administrator());
 
@@ -159,13 +165,15 @@ class ApproveCPViaDM extends CustomerTestCase
 
     public function test_provider_can_approve_careplan_with_valid_dm_response()
     {
+        $this->enableFeatureFlag($this->practice()->id);
+    
         Notification::fake();
         $patient = $this->patient();
         $patient->setCarePlanStatus(CarePlan::QA_APPROVED);
         $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
         $patient->setBillingProviderId($this->provider()->id);
 
-        $this->provider()->emr_direct_address = 'drtest@upg.ssdirect.aprima.com'.str_random(5);
+        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.str_random(5);
 
         $approvalCode = "#approve{$patient->carePlan->id}";
         $directMail   = factory(DirectMailMessage::class)->create(
@@ -200,12 +208,14 @@ class ApproveCPViaDM extends CustomerTestCase
 
     public function test_provider_can_create_task_with_valid_dm_response()
     {
+        $this->enableFeatureFlag($this->practice()->id);
+    
         $patient = $this->patient();
         $patient->setCarePlanStatus(CarePlan::QA_APPROVED);
         $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
         $patient->setBillingProviderId($this->provider()->id);
 
-        $this->provider()->emr_direct_address = 'drtest@upg.ssdirect.aprima.com'.str_random(5);
+        $this->provider()->emr_direct_address = 'drtest'.self::TEST_DM_DOMAIN.str_random(5);
 
         $changeCode = "#change{$patient->carePlan->id}";
         $taskBody   = "Please make the following changes for this patient $changeCode";
@@ -290,5 +300,13 @@ class ApproveCPViaDM extends CustomerTestCase
                 'note_id'         => $note->id,
             ]
         );
+    }
+    
+    private function enableFeatureFlag(int $practiceId)
+    {
+        AppConfig::create([
+            'config_key' => DMDomainForAutoApproval::FLAG_NAME,
+            'config_value' => $practiceId.self::TEST_DM_DOMAIN,
+                          ]);
     }
 }
