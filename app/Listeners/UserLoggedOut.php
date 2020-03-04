@@ -15,7 +15,7 @@ use Illuminate\Queue\InteractsWithQueue;
 class UserLoggedOut implements ShouldQueue
 {
     use InteractsWithQueue;
-    
+
     /**
      * Create the event listener.
      */

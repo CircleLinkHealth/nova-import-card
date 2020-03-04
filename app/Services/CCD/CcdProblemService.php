@@ -125,13 +125,15 @@ class CcdProblemService
             ->where('cpm_problem_id', '!=', $diabetes->id)
             ->map(function ($p) use ($shouldShowDefaultInstructions) {
                 return $this->setupProblem($p, $shouldShowDefaultInstructions);
-            });
+            })
+            ->filter()
+            ->values();
     }
 
     public function getPatientProblemsValues($userId)
     {
         return $this->getPatientProblems($userId)
-                    ->values();
+            ->values();
     }
 
     public function problem($id)

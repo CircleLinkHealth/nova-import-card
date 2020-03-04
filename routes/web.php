@@ -3,6 +3,7 @@
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
+
 Route::get('/debug-sentry', 'DemoController@sentry');
 Route::get('/debug-sentry-log', 'DemoController@sentryLog');
 
@@ -47,11 +48,12 @@ Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 Route::get('/', 'WelcomeController@index', [
     'as' => 'index',
 ]);
-Route::get('home', 'WelcomeController@index', [
-    'as' => 'home',
+Route::get('home', [
+    'uses' => 'WelcomeController@index',
+    'as'   => 'home',
 ]);
 
-Route::get('login', 'Auth\LoginController@showLoginForm')->middleware('doNotCacheResponse');
+Route::get('login', 'Auth\LoginController@showLoginForm', ['as' => 'login'])->middleware('doNotCacheResponse');
 Route::post('browser-check', [
     'uses' => 'Auth\LoginController@storeBrowserCompatibilityCheckPreference',
     'as'   => 'store.browser.compatibility.check.preference',
@@ -2246,6 +2248,11 @@ Route::get('see-all-notifications', [
     'as'   => 'notifications.seeAll',
 ])->middleware('permission:provider.read,note.read');
 
+Route::get('all-notifications-pages/{page}/{resultsPerPage}', [
+    'uses' => 'NotificationController@seeAllNotificationsPaginated',
+    'as'   => 'notifications.all.paginated',
+])->middleware('permission:provider.read,note.read');
+
 Route::get('nurses/holidays', [
     'uses' => 'CareCenter\WorkScheduleController@getHolidays',
     'as'   => 'get.admin.nurse.schedules.holidays',
@@ -2329,9 +2336,7 @@ Route::post('nurses/nurse-calendar-data', [
     'as'   => 'get.nurse.schedules.selectedNurseCalendar',
 ])->middleware('permission:nurse.read');
 
-
 //Route::get('get-calendar-data', [
 //    'uses' => 'CareCenter\WorkScheduleController@calendarEvents',
 //    'as'   => 'care.center.work.schedule.getCalendarData',
 //]);
-

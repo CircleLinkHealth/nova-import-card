@@ -7,7 +7,6 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\ReportFormatter;
-use CircleLinkHealth\Core\Exports\FromArray;
 use App\Http\Requests\GetUnder20MinutesReport;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanAssessmentService;
@@ -18,6 +17,7 @@ use App\Services\PrintPausedPatientLettersService;
 use App\Services\ReportsService;
 use App\ValueObjects\PatientCareplanRelations;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exports\FromArray;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
@@ -618,6 +618,7 @@ class ReportsController extends Controller
                     },
                 ]
             )
+            ->has('primaryPractice')
             ->whereHas(
                 'patientSummaries',
                 function ($q) use ($time) {

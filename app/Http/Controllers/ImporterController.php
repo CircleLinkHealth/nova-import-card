@@ -46,18 +46,18 @@ class ImporterController extends Controller
             ->transform(function (ImportedMedicalRecord $summary) {
                 $mr = $summary->medicalRecord();
 
-                if ( ! $mr ) {
+                if ( ! $mr) {
                     return false;
                 }
 
-                if (upg0506IsEnabled()){
+                if (upg0506IsEnabled()) {
                     $isUpg0506Incomplete = false;
 
                     if ($mr instanceof Ccda) {
                         $isUpg0506Incomplete = Ccda::whereHas('media', function ($q) {
-                            $q->where('custom_properties->is_upg0506_complete', '!=','true');
+                            $q->where('custom_properties->is_upg0506_complete', '!=', 'true');
                         })->whereHas('directMessage', function ($q) {
-                            $q->where('from', 'like', "%@upg.ssdirect.aprima.com");
+                            $q->where('from', 'like', '%@upg.ssdirect.aprima.com');
                         })->where('id', $mr->id)->exists();
                     }
 
@@ -93,7 +93,7 @@ class ImporterController extends Controller
                 });
 
                 $summary['flag'] = false;
-                
+
                 if ($providers->count() > 1 || ! $mr->location_id || ! $mr->location_id || ! $mr->billing_provider_id) {
                     $summary['flag'] = true;
                 }
@@ -116,13 +116,13 @@ class ImporterController extends Controller
 
         foreach ($request->file('file') as $file) {
             \Log::channel('logdna')->warning("reading file $file");
-    
+
             $xml = file_get_contents($file);
 
             $ccda = Ccda::create([
-                'user_id'   => auth()->user()->id,
-                'xml'       => $xml,
-                'source'    => $source ?? Ccda::IMPORTER,
+                'user_id' => auth()->user()->id,
+                'xml'     => $xml,
+                'source'  => $source ?? Ccda::IMPORTER,
             ]);
 
             ImportCcda::dispatch($ccda, true);

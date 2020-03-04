@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\DirectMailMessage;
@@ -15,18 +19,19 @@ use Illuminate\Queue\SerializesModels;
 
 class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public $tries = 24;
     /**
      * @var Ccda
      */
     protected $ccda;
 
-    public $tries = 24;
-
     /**
      * Create a new job instance.
-     *
-     * @param Ccda $ccda
      */
     public function __construct(Ccda $ccda)
     {
@@ -40,18 +45,16 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
      */
     public function handle()
     {
-        if (! upg0506IsEnabled()){
+        if ( ! upg0506IsEnabled()) {
             return;
         }
 
-        if (! $this->ccda->hasUPG0506Media()){
+        if ( ! $this->ccda->hasUPG0506Media()) {
             return;
         }
 
         if ( ! $this->ccda->hasUPG0506PdfCareplanMedia()->exists()) {
-
-            if ($this->attempts() == 24){
-
+            if (24 == $this->attempts()) {
                 $messageLink = route('direct-mail.show', [$this->ccda->direct_mail_message_id]);
 
                 //notify channel that we have not received a pdf for this ccd
@@ -63,6 +66,7 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
             }
 
             $this->release(60);
+
             return;
         }
 
@@ -72,15 +76,17 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
     private function markUPG0506FlowAsDone()
     {
         $ccdMedia = Media::where('custom_properties->is_ccda', 'true')
-                         ->where('custom_properties->is_upg0506', 'true')
-                         ->where('model_id', $this->ccda->id)
-                         ->where('model_type', Ccda::class)->first();
+            ->where('custom_properties->is_upg0506', 'true')
+            ->where('model_id', $this->ccda->id)
+            ->where('model_type', Ccda::class)->first();
 
         $pdfMedia = Media::where('custom_properties->is_pdf', 'true')
-                         ->where('custom_properties->is_upg0506',
-                             'true')
-                         ->where('custom_properties->care_plan->demographics->mrn_number', (string)$this->ccda->mrn)
-                         ->where('model_type', DirectMailMessage::class)->first();
+            ->where(
+                'custom_properties->is_upg0506',
+                'true'
+            )
+            ->where('custom_properties->care_plan->demographics->mrn_number', (string) $this->ccda->mrn)
+            ->where('model_type', DirectMailMessage::class)->first();
 
         $ccdData                        = $ccdMedia->custom_properties;
         $pdfData                        = $pdfMedia->custom_properties;

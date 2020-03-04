@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Feature;
 
 use App\UPG\UPGPdfCarePlan;
@@ -11,7 +15,6 @@ class UpgPdfReadTest extends TestCase
 {
     protected $testFileName = 'files-for-demos/upg0506/upg0506-care-plan.pdf';
 
-
     /**
      * A basic feature test example.
      *
@@ -22,7 +25,6 @@ class UpgPdfReadTest extends TestCase
         $carePlan = (new UPGPdfCarePlan($this->testFileName))->read();
 
         $this->assertTrue(is_a($carePlan, PdfCarePlan::class));
-
 
         $carePlan = $carePlan->toArray();
 

@@ -6,10 +6,11 @@
 
 namespace App\Services\AthenaAPI;
 
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Jobs\Athena\GetAppointmentsForDepartment;
+use CircleLinkHealth\Eligibility\ValueObjects\ProblemsCollection;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 
@@ -57,8 +58,8 @@ class DetermineEnrollmentEligibility
         $offset = false,
         $batchId = null
     ) {
-        $departments = \Cache::tags(['athena_api', "ehr_practice_id:$ehrPracticeId"])->remember("athena_api:$ehrPracticeId:department_ids", 300, function () use ($ehrPracticeId) {
-            return $this->api->getDepartmentIds($ehrPracticeId);
+        $departments = \Cache::tags(['athena_api', "ehr_practice_id:$ehrPracticeId"])->remember("athena_api:$ehrPracticeId:department_ids", 5, function () use ($ehrPracticeId) {
+            return $this->api->getDepartments($ehrPracticeId);
         });
 
         if ( ! is_countable($departments)) {
@@ -101,13 +102,13 @@ class DetermineEnrollmentEligibility
      * @param $practiceId
      * @param $departmentId
      *
-     * @return Problems
+     * @return ProblemsCollection
      */
     public function getPatientProblems($patientId, $practiceId, $departmentId)
     {
         $problemsResponse = $this->api->getPatientProblems($patientId, $practiceId, $departmentId);
 
-        $problems = new Problems();
+        $problems = new ProblemsCollection();
         $problems->setProblems($problemsResponse['problems']);
 
         return $problems;

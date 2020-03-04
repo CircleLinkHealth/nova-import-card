@@ -7,13 +7,13 @@
 namespace App\Http\Controllers\Enrollment;
 
 use App\CareAmbassadorLog;
-use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use App\Http\Controllers\Controller;
-use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use App\Services\Enrollment\AttachEnrolleeFamilyMembers;
 use App\Services\Enrollment\EnrolleeCallQueue;
 use App\TrixField;
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Jobs\ImportConsentedEnrollees;
 use Illuminate\Http\Request;
 
 class EnrollmentCenterController extends Controller
@@ -94,8 +94,10 @@ class EnrollmentCenterController extends Controller
         $enrollee->save();
 
         $queue = explode(',', $request->input('queue'));
-        $queue = collect(array_merge($queue,
-            explode(',', $request->input('confirmed_family_members'))))->unique()->toArray();
+        $queue = collect(array_merge(
+            $queue,
+            explode(',', $request->input('confirmed_family_members'))
+        ))->unique()->toArray();
         if ( ! empty($queue) && in_array($enrollee->id, $queue)) {
             unset($queue[array_search($enrollee->id, $queue)]);
         }
@@ -222,5 +224,4 @@ class EnrollmentCenterController extends Controller
 
         return redirect()->route('enrollment-center.dashboard');
     }
-
 }

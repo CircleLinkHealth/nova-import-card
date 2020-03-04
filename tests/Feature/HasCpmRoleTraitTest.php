@@ -1,12 +1,16 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Feature;
 
 use CircleLinkHealth\Customer\Entities\Role;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Tests\CustomerTestCase;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class HasCpmRoleTraitTest extends CustomerTestCase
 {
@@ -20,10 +24,10 @@ class HasCpmRoleTraitTest extends CustomerTestCase
         $patient = $this->patient();
         $this->assertTrue($patient->hasRole('participant'));
         $this->assertTrue($patient->isParticipant());
-        
+
         $roleIds = Role::getIdsFromNames(['provider']);
         $this->assertNotEmpty($roleIds);
-        
+
         $patient->roles()->sync($roleIds);
         $this->assertFalse($patient->hasRole('participant'));
         $this->assertFalse($patient->isParticipant());

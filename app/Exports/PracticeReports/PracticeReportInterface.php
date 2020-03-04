@@ -49,22 +49,8 @@ abstract class PracticeReportInterface implements FromQuery, WithMapping, Practi
      */
     protected $user;
 
-    /**
-     * @return string
-     */
     abstract public function filename(): string;
-    
-    /**
-     * The name of the Media Collection
-     * @return string
-     */
-    abstract public function mediaCollectionName(): string;
 
-    /**
-     * @param int $practiceId
-     *
-     * @return PracticeDataExportInterface
-     */
     public function forPractice(int $practiceId): PracticeDataExportInterface
     {
         if ( ! $this->practice) {
@@ -75,9 +61,6 @@ abstract class PracticeReportInterface implements FromQuery, WithMapping, Practi
     }
 
     /**
-     * @param int $userId
-     *
-     * @return PracticeDataExportInterface
      * @throws \Exception
      */
     public function forUser(int $userId): PracticeDataExportInterface
@@ -92,9 +75,6 @@ abstract class PracticeReportInterface implements FromQuery, WithMapping, Practi
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function fullPath(): string
     {
         if ( ! $this->fullPath) {
@@ -104,37 +84,27 @@ abstract class PracticeReportInterface implements FromQuery, WithMapping, Practi
         return $this->fullPath;
     }
 
-    /**
-     * @return string
-     */
     public function getSignedLink(): string
     {
         return $this->signedLink;
     }
 
-    /**
-     * @return \Illuminate\Filesystem\FilesystemAdapter
-     */
     public function getTempStorage(): \Illuminate\Filesystem\FilesystemAdapter
     {
         return \Storage::disk(self::STORE_TEMP_REPORT_ON_DISK);
     }
 
-    /**
-     * @return array
-     */
     abstract public function headings(): array;
 
     /**
      * @param mixed $row
-     *
-     * @return array
      */
     abstract public function map($row): array;
 
     /**
-     * @return Builder
+     * The name of the Media Collection.
      */
-    abstract public function query(): Builder;
+    abstract public function mediaCollectionName(): string;
 
+    abstract public function query(): Builder;
 }

@@ -1,13 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 2/16/20
- * Time: 11:21 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\PhiMail\Incoming\Handlers;
-
 
 class Plain extends BaseHandler
 {

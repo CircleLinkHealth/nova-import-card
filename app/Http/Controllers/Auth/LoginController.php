@@ -7,6 +7,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Traits\ManagesPatientCookies;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -18,6 +19,9 @@ use Jenssegers\Agent\Agent;
 
 class LoginController extends Controller
 {
+    use AuthenticatesUsers {
+        login as traitLogin;
+    }
     /*
     |--------------------------------------------------------------------------
     | Login Controller
@@ -28,10 +32,7 @@ class LoginController extends Controller
     | to conveniently provide its functionality to your applications.
     |
     */
-
-    use AuthenticatesUsers {
-        login as traitLogin;
-    }
+    use ManagesPatientCookies;
 
     const MIN_PASSWORD_CHANGE_IN_DAYS = 180;
 
@@ -60,8 +61,6 @@ class LoginController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @param Request $request
      */
     public function __construct(Request $request)
     {
@@ -70,8 +69,6 @@ class LoginController extends Controller
 
     /**
      * Logout due to inactivity.
-     *
-     * @param Request $request
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -91,8 +88,6 @@ class LoginController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @throws ValidationException
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
@@ -124,10 +119,14 @@ class LoginController extends Controller
     /**
      * Overrides laravel method.
      *
+     * In case a patient User tries to log in, need id to show Practice Name instead of CLH logo.
+     *
      * @return $this|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
+        $this->checkPracticeNameCookie($request);
+
         if (auth()->check()) {
             return redirect('/');
         }
@@ -137,10 +136,11 @@ class LoginController extends Controller
         if ( ! $this->validateBrowserVersion($agent) && ! optional(session('errors'))->has('invalid-browser-force-switch')) {
             $message = "You are using an outdated version of {$agent->browser()}. Please update to a newer version.";
 
-            return view('auth.login')->withErrors(['outdated-browser' => [$message]]);
+            return view('auth.login')
+                ->withErrors(['outdated-browser' => [$message]]);
         }
 
-        return view('auth.login');
+        return response()->view('auth.login');
     }
 
     /**
@@ -154,9 +154,6 @@ class LoginController extends Controller
     }
 
     /**
-     * @param array $agentVersion
-     * @param array $browserVersion
-     *
      * @return bool
      */
     protected function checkVersion(array $agentVersion, array $browserVersion)
@@ -175,9 +172,6 @@ class LoginController extends Controller
         return true;
     }
 
-    /**
-     * @return Collection
-     */
     protected function getBrowsers(): Collection
     {
         return \Cache::remember('supported-browsers', 1800, function () {
@@ -222,9 +216,6 @@ class LoginController extends Controller
             ->withErrors($messages);
     }
 
-    /**
-     * @param Request $request
-     */
     protected function storeBrowserCompatibilityCheckPreference(Request $request)
     {
         if ( ! auth()->check() || auth()->user()->isCareCoach()) {
@@ -240,8 +231,6 @@ class LoginController extends Controller
 
     /**
      * Determine whether log in input is email or username, and do the needful to authenticate.
-     *
-     * @param Request $request
      *
      * @return bool
      */
@@ -283,8 +272,7 @@ class LoginController extends Controller
     }
 
     /**
-     * @param Agent $agent
-     * @param bool  $isCLH
+     * @param bool $isCLH
      *
      * @return bool
      */

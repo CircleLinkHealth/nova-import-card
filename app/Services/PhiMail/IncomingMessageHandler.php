@@ -19,8 +19,6 @@ class IncomingMessageHandler
     /**
      * Creates a new Direct Message.
      *
-     * @param CheckResult $message
-     *
      * @return DirectMailMessage
      */
     public function createNewDirectMessage(CheckResult $message)
@@ -35,7 +33,15 @@ class IncomingMessageHandler
             ]
         );
     }
-    
+
+    /**
+     * @return mixed
+     */
+    public function handleMessageAttachment(DirectMailMessage $dm, ShowResult $showRes)
+    {
+        return IncomingMessageHandlerFactory::create($dm, $showRes);
+    }
+
     /**
      * Store the subject of the message.
      *
@@ -51,16 +57,5 @@ class IncomingMessageHandler
                 $dm->save();
             }
         }
-    }
-    
-    /**
-     * @param DirectMailMessage $dm
-     * @param ShowResult $showRes
-     *
-     * @return mixed
-     */
-    public function handleMessageAttachment(DirectMailMessage $dm, ShowResult $showRes)
-    {
-        return IncomingMessageHandlerFactory::create($dm, $showRes);
     }
 }

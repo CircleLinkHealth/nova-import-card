@@ -598,11 +598,9 @@ class UserRepository
         }
         $user->save();
     }
-    
+
     /**
      * Clear Cerberus roles cache for User.
-     *
-     * @param User $user
      */
     private function clearRolesCache(User $user)
     {

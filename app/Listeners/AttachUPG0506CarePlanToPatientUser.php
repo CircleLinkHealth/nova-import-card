@@ -1,20 +1,18 @@
 <?php
-/**
+
+/*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Listeners;
 
-
 use App\Events\PatientUserCreated;
 
 class AttachUPG0506CarePlanToPatientUser
 {
-
     /**
      * Handle a job failure.
      *
-     * @param PatientUserCreated $event
      * @param \Exception $exception
      *
      * @return void
@@ -32,12 +30,11 @@ class AttachUPG0506CarePlanToPatientUser
     /**
      * Handle the event.
      *
-     * @param PatientUserCreated $event
-     *
-     * @return void
      * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\DiskDoesNotExist
      * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileDoesNotExist
      * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileIsTooBig
+     *
+     * @return void
      */
     public function handle(PatientUserCreated $event)
     {
@@ -52,8 +49,8 @@ class AttachUPG0506CarePlanToPatientUser
             file_put_contents($filePath, $pdfMedia->getFile());
 
             $user->addMedia($filePath)
-                 ->withCustomProperties(['doc_type' => 'G0506 - PDF Care Plan'])
-                 ->toMediaCollection('patient-care-documents');
+                ->withCustomProperties(['doc_type' => 'G0506 - PDF Care Plan'])
+                ->toMediaCollection('patient-care-documents');
         }
     }
 }

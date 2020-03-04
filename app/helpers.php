@@ -177,17 +177,17 @@ if ( ! function_exists('activeNurseNames')) {
     {
         return User::ofType('care-center')
             ->with(
-                       [
-                           'nurseInfo' => function ($q) {
-                               $q->where('is_demo', '!=', true);
-                           },
-                       ]
-                   )->whereHas(
-                       'nurseInfo',
-                       function ($q) {
-                           $q->where('is_demo', '!=', true);
-                       }
-                   )->where('user_status', 1)
+                [
+                    'nurseInfo' => function ($q) {
+                        $q->where('is_demo', '!=', true);
+                    },
+                ]
+            )->whereHas(
+                'nurseInfo',
+                function ($q) {
+                    $q->where('is_demo', '!=', true);
+                }
+            )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -1076,11 +1076,11 @@ if ( ! function_exists('validProblemName')) {
                 'check',
             ]
         ) && ! in_array(
-                strtolower($name),
-                [
-                    'fu',
-                ]
-            );
+            strtolower($name),
+            [
+                'fu',
+            ]
+        );
     }
 }
 
@@ -1672,10 +1672,28 @@ if ( ! function_exists('upg0506IsEnabled')) {
         return \Cache::remember($key, 2, function () use ($key) {
             $val = AppConfig::pull($key, null);
             if (null === $val) {
-                return setAppConfig($key, false) === 'true';
+                return 'true' === setAppConfig($key, false);
             }
-            return $val === 'true';
+
+            return 'true' === $val;
         });
     }
 }
 
+if ( ! function_exists('patientLoginIsEnabledForPractice')) {
+    /**
+     * Key: enable_patient_login_for_practice
+     * Default: false.
+     *
+     * @param mixed $practiceId
+     */
+    function patientLoginIsEnabledForPractice($practiceId): bool
+    {
+        $key = 'enable_patient_login_for_practice';
+
+        return \Cache::remember($key, 2, function () use ($key, $practiceId) {
+            return AppConfig::where('config_key', $key)
+                ->where('config_value', $practiceId)->exists();
+        });
+    }
+}
