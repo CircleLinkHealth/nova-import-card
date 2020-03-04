@@ -13,12 +13,25 @@ pull_request_rules:
         method: merge
         strict: smart
 
-  - name: automatic merge on CI success, 2 Dev reviews, and QA approval
+  - name: automatic merge on CI success, 2 Dev reviews
     conditions:
       - status-success=continuous-integration/heroku
       - "#approved-reviews-by>=1"
       - "#changes-requested-reviews-by=0"
       - label!=wip
+      - head!=master
+      - base=development
+    actions:
+      merge:
+        method: merge
+        strict: smart
+
+  - name: automatic merge on CI success, 2 Dev reviews, and QA Approval
+    conditions:
+      - status-success=continuous-integration/heroku
+      - "#approved-reviews-by>=1"
+      - "#changes-requested-reviews-by=0"
+      - label=needsQAapproval
       - head!=master
       - base=development
       - approved-reviews-by=NektariosX01
