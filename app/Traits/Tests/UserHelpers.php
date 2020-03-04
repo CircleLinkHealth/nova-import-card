@@ -308,7 +308,7 @@ trait UserHelpers
         }
         else {
             $ccdProblems = $patient->ccdProblems()->createMany([
-                ['name' => 'test' . str_random(5)],
+                ['name' => 'test' . str_random(5), 'is_monitored' => 1],
                 ['name' => 'test' . str_random(5)],
                 ['name' => 'test' . str_random(5)],
             ]);

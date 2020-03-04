@@ -14,6 +14,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\PcmProblem;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
+use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -23,11 +24,6 @@ class ImportPcmCcd extends TestCase
 {
     use UserHelpers;
     use PracticeHelpers;
-
-    protected function setUp()
-    {
-        parent::setUp();
-    }
 
     /**
      * Import ccd with only one problem from practice that has PCM enabled.
@@ -70,56 +66,6 @@ class ImportPcmCcd extends TestCase
         $this->assertTrue($patient->isPcm());
     }
 
-    /**
-     * Import ccd with 2 problems from practice that has both CCM and PCM enabled.
-     *
-     * @return void
-     */
-    public function test_import_ccd_patient_billed_for_ccm_because_more_than_one_problem()
-    {
-//        User::where('display_name', '=', 'Test CCM BHI Eligible Test Patient')->delete();
-//        $practice = $this->getPractice(true, false, false, true);
-//        $problems = ['Hypertension'];
-//        foreach ($problems as $problemName) {
-//            /** @var CpmProblem $problem */
-//            $problem = CpmProblem::whereName($problemName)->first();
-//
-//            if ( ! $problem) {
-//                continue;
-//            }
-//
-//            PcmProblem::firstOrCreate([
-//                'description' => $problem->name,
-//            ], [
-//                'code_type'   => Constants::ICD10_NAME,
-//                'code'        => $problem->default_icd_10_code,
-//                'description' => $problem->name,
-//                'practice_id' => $practice->id,
-//            ]);
-//        }
-//
-//        $xmlName = 'bhi_ccm_eligible_patient.xml';
-//        $xmlPath = storage_path('ccdas/Samples/' . $xmlName);
-//        $patient = $this->importPcmPatientFromXml($xmlName, $xmlPath, $practice->id);
-    }
-
-    /**
-     * Import ccd with 2 problems from practice that has only PCM enabled.
-     *
-     * @return void
-     */
-    public function test_import_ccd_patient_billed_for_pcm()
-    {
-        //TODO
-//        $xmlName  = 'demo.xml';
-//        $xmlPath  = storage_path('ccdas/Samples/demo.xml');
-//        $practice = $this->getPractice(false, false, false, true);
-//        $patient  = $this->importPcmPatientFromXml($xmlName, $xmlPath, $practice->id);
-//
-//        $this->assertTrue($patient->isPcm());
-//        $this->assertFalse($patient->isCcm());
-    }
-
     private function importPcmPatientFromXml($xmlName, $xmlPath, $practiceId): User
     {
         Config::set('ccda-parser.store_results_in_db', false);
@@ -139,7 +85,9 @@ class ImportPcmCcd extends TestCase
         $ccdaId = $result['ccdas'][0];
 
         /** @var ImportedMedicalRecord $imr */
-        $imr = ImportedMedicalRecord::where('medical_record_id', '=', $ccdaId)->first();
+        $imr = ImportedMedicalRecord::where('medical_record_id', '=', $ccdaId)
+                                    ->where('medical_record_type', '=', Ccda::class)
+                                    ->first();
         $this->assertNotNull($imr);;
 
         $confirmCcdResponse = $this->json('POST', 'api/ccd-importer/records/confirm', [
