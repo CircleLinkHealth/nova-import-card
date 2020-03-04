@@ -47,7 +47,42 @@ class NursePcmPaymentAlgoTest extends TestCase
      * @throws \Exception
      */
     public function test_pcm_hourly_rate_algo() {
-        //TODO
+        $practice = $this->setupPractice(true, false, false, true);
+        $nurse   = $this->getNurse($practice->id, true, 17, true, 13);
+        $patient1  = $this->setupPatient($practice, false, true);
+        $patient2  = $this->setupPatient($practice, false, true);
+
+        $this->addTime($nurse, $patient1, 20, true, 1);
+        $this->addTime($nurse, $patient1, 20, true, 1);
+        $this->addTime($nurse, $patient1, 20, true, 1);
+
+        $this->addTime($nurse, $patient2, 20, true, 1);
+        $this->addTime($nurse, $patient2, 15, true, 1);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoice1Data    = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+                                       ->orderBy('month_year', 'desc')
+                                       ->first()->invoice_data;
+        $visitsCount     = $invoice1Data['visitsCount'];
+        $fixedRatePay    = $invoice1Data['fixedRatePay'];
+        $variableRatePay = $invoice1Data['variableRatePay'];
+        $pay             = $invoice1Data['baseSalary'];
+
+        self::assertEquals(2, $visitsCount);
+        self::assertEquals(34, $fixedRatePay);
+        self::assertEquals(26, $variableRatePay);
+        self::assertEquals(34, $pay);
     }
 
     /**
@@ -65,26 +100,45 @@ class NursePcmPaymentAlgoTest extends TestCase
      * @throws \Exception
      */
     public function test_pcm_ccm_plus_alt_algo() {
-        //TODO
-    }
+        $practice = $this->setupPractice(true, false, false, true);
+        $nurse   = $this->getNurse($practice->id, true, 17, true, 13);
+        $patient1  = $this->setupPatient($practice, false, true);
+        $patient2  = $this->setupPatient($practice, false, true);
+        $patient3  = $this->setupPatient($practice, false, true);
 
-    /**
-     * - CCM Plus algo (new algo)
-     * - Hourly Rate = $17
-     * - Visit Fee = $13
-     *
-     * - Patient 1 -> PCM: 35 minutes
-     * -           -> BHI: 23 minutes
-     * - Patient 2 -> PCM: 35 minutes
+        $this->addTime($nurse, $patient1, 20, true, 1);
+        $this->addTime($nurse, $patient1, 10, true, 1);
 
-     * - Total CPM time = 93 minutes (2 patients - visits)
-     *
-     * Result: $39 (3 visits)
-     *
-     * @throws \Exception
-     */
-    public function test_pcm_and_bhi_ccm_plus_alt_algo() {
-        //TODO
+        $this->addTime($nurse, $patient2, 20, true, 1);
+        $this->addTime($nurse, $patient2, 15, true, 1);
+
+        $this->addTime($nurse, $patient3, 20, true, 1);
+        $this->addTime($nurse, $patient3, 15, true, 1);
+
+        $start = Carbon::now()->startOfMonth();
+        $end   = Carbon::now()->endOfMonth();
+
+        (new CreateNurseInvoices(
+            $start,
+            $end,
+            [$nurse->id],
+            false,
+            null,
+            true
+        ))->handle();
+
+        $invoice1Data    = NurseInvoice::where('nurse_info_id', $nurse->nurseInfo->id)
+                                       ->orderBy('month_year', 'desc')
+                                       ->first()->invoice_data;
+        $visitsCount     = $invoice1Data['visitsCount'];
+        $fixedRatePay    = $invoice1Data['fixedRatePay'];
+        $variableRatePay = $invoice1Data['variableRatePay'];
+        $pay             = $invoice1Data['baseSalary'];
+
+        self::assertEquals(3, $visitsCount);
+        self::assertEquals(34, $fixedRatePay);
+        self::assertEquals(39, $variableRatePay);
+        self::assertEquals(39, $pay);
     }
 
     private function getNurse(
