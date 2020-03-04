@@ -69,12 +69,6 @@ class NursePaymentAlgoTest extends TestCase
     /** @var User $provider */
     protected $provider;
 
-    protected function setUp()
-    {
-        parent::setUp();
-        config(['QUEUE_CONNECTION' => 'sync']);
-    }
-
     /**
      * - Hourly Rate = 10$
      * - High Rate = $30
