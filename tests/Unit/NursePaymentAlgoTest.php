@@ -72,7 +72,7 @@ class NursePaymentAlgoTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        (new \ChargeableServiceSeeder())->run();
+        config(['QUEUE_CONNECTION' => 'sync']);
     }
 
     /**
