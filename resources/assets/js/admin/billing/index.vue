@@ -148,7 +148,13 @@
                 <template slot="CCM Problem Code(s)" slot-scope="props">
                     <div class="ccm-problem-codes">
                         <span class="blue pointer" style="overflow-wrap: break-word"
-                              @click="showCcmModal(props.row)">{{attestedProblemCodes(props.row) || '&lt;Edit&gt;'}}</span>
+                              @click="showCcmModal(props.row)">{{attestedCcmProblemCodes(props.row) || '&lt;Edit&gt;'}}</span>
+                    </div>
+                </template>
+                <template slot="BHI Problem Code(s)" slot-scope="props">
+                    <div class="ccm-problem-codes">
+                        <span style="overflow-wrap: break-word"
+                              >{{attestedBhiProblemCodes(props.row) || 'N/A'}}</span>
                     </div>
                 </template>
                 <template slot="chargeable_services" slot-scope="props">
@@ -248,7 +254,7 @@
                     'CCM Mins',
                     'BHI Mins',
                     'CCM Problem Code(s)',
-                    'BHI Problem Code',
+                    'BHI Problem Code(s)',
                     '#Successful Calls',
                     'approved',
                     'rejected',
@@ -408,8 +414,8 @@
                             Status: patient.status,
                             'CCM Mins': timeDisplay(patient.ccm_time),
                             'BHI Mins': timeDisplay(patient.bhi_time),
-                            attested_problems: patient.attested_problems,
-                            'BHI Problem Code': patient.bhi_problem_code,
+                            attested_ccm_problems: patient.attested_ccm_problems,
+                            attested_bhi_problems: patient.attested_bhi_problems,
                             '#Successful Calls': patient.no_of_successful_calls,
                             chargeable_services: (patient.chargeable_services || []).map(item => item.id),
                             promises: {
@@ -548,7 +554,8 @@
                         }, {}),
                         data: this.tableData.map(row => (Object.assign({}, row, {
                             chargeable_services: row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code),
-                            'CCM Problem Code(s)': this.attestedProblemCodes(row)
+                            'CCM Problem Code(s)': this.attestedCcmProblemCodes(row),
+                            'BHI Problem Code(s)': this.attestedBhiProblemCodes(row)
                         })))
                     }
                 ])
@@ -573,9 +580,18 @@
                     console.error('billable:open-month', err)
                 })
             },
-            attestedProblemCodes(patient) {
+            attestedCcmProblemCodes(patient) {
                 return patient.problems.filter(function (p) {
-                    return patient.attested_problems.includes(p.id) && !!p.code;
+                    return patient.attested_ccm_problems.includes(p.id) && !!p.code;
+                })
+                    .map(function (p) {
+                        return p.code;
+                    })
+                    .join(", ");
+            },
+            attestedBhiProblemCodes(patient) {
+                return patient.problems.filter(function (p) {
+                    return patient.attested_bhi_problems.includes(p.id) && !!p.code;
                 })
                     .map(function (p) {
                         return p.code;
@@ -644,7 +660,7 @@
                 }).then(response => {
                     this.tableData.filter(function (p) {
                         return String(p.id) === String(data.patient_id);
-                    })[0].attested_problems = response.data.attested_problems;
+                    })[0].attested_ccm_problems = response.data.attested_problems;
                     App.$emit('modal-attest-call-conditions:hide');
                 }).catch(err => {
                     console.error(err)
