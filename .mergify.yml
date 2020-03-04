@@ -1,19 +1,18 @@
 pull_request_rules:
-  - name: merge a branch into master
-    conditions:
-      - status-success=continuous-integration/heroku
-      - "#approved-reviews-by>=1"
-      - label!=wip
-      - base=master
-      - approved-reviews-by=NektariosX01
-      - approved-reviews-by=michalisantoniou6
-      - approved-reviews-by=subzero10
-    actions:
-      merge:
-        method: merge
-        strict: smart
+- name: merge a branch into master
+  conditions:
+    - status-success=continuous-integration/heroku
+    - "#approved-reviews-by>=1"
+    - label!=wip
+    - base=master
+    - approved-reviews-by=NektariosX01
+    - approved-reviews-by=michalisantoniou6
+    - approved-reviews-by=subzero10
+  actions:
+    merge:
+      method: merge
+      strict: smart
 
-pull_request_rules:
 - name: automatic merge on CI success, 2 Dev reviews, and QA approval
   conditions:
   - status-success=continuous-integration/heroku
@@ -28,28 +27,25 @@ pull_request_rules:
       method: merge
       strict: smart
 
-pull_request_rules:
-  - name: automatic merge on CI success, and approval from michalisantoniou6
-    conditions:
-      - status-success=continuous-integration/heroku
-      - label=fastlane
-      - approved-reviews-by=michalisantoniou6
-    actions:
-      merge:
-        method: merge
-        strict: smart
+- name: automatic merge on CI success, and approval from michalisantoniou6
+  conditions:
+    - status-success=continuous-integration/heroku
+    - label=fastlane
+    - approved-reviews-by=michalisantoniou6
+  actions:
+    merge:
+      method: merge
+      strict: smart
 
-
-pull_request_rules:
-  - name: automatic merge on CI success, and approval from subzero10
-    conditions:
-      - status-success=continuous-integration/heroku
-      - label=fastlane
-      - approved-reviews-by=subzero10
-    actions:
-      merge:
-        method: merge
-        strict: smart
+- name: automatic merge on CI success, and approval from subzero10
+  conditions:
+    - status-success=continuous-integration/heroku
+    - label=fastlane
+    - approved-reviews-by=subzero10
+  actions:
+    merge:
+      method: merge
+      strict: smart
 
 - name: delete head branch after merge
   conditions:
