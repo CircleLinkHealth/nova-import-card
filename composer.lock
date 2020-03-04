@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "19ae2169179939adfa794dabe0763be1",
+    "content-hash": "608e9ef90b7ed3a3e3e087d8ea8e177c",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -854,11 +854,11 @@
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "dev-CPM-1840_cp_dm_approval",
+            "version": "v1.4.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "762c0cebe71f79b0dbc6fa45558471584e156518"
+                "reference": "73eff186701dca862be358e714319695448cf3be"
             },
             "type": "laravel-module",
             "extra": {
@@ -880,7 +880,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-28T06:49:04+00:00"
+            "time": "2020-03-02T21:13:15+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
@@ -1171,11 +1171,11 @@
         },
         {
             "name": "circlelinkhealth/shared-models-module",
-            "version": "dev-CPM-1840_cp_dm_approval",
+            "version": "v1.1.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "6d471c66fec2dbc8efa32014ca6363b4e52970a7"
+                "reference": "3614ebbd394d283dde771f9182e342b0fa9c7a7f"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1189,7 +1189,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-04T05:47:20+00:00"
+            "time": "2020-03-02T20:29:44+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
@@ -1402,22 +1402,22 @@
         },
         {
             "name": "consoletvs/charts",
-            "version": "6.5.3",
+            "version": "6.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ConsoleTVs/Charts.git",
-                "reference": "a4a8a71c438a00b95ea74a080ce5bf8916c60918"
+                "reference": "524257b5d525666385bd2e91b06e376994a7b683"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ConsoleTVs/Charts/zipball/a4a8a71c438a00b95ea74a080ce5bf8916c60918",
-                "reference": "a4a8a71c438a00b95ea74a080ce5bf8916c60918",
+                "url": "https://api.github.com/repos/ConsoleTVs/Charts/zipball/524257b5d525666385bd2e91b06e376994a7b683",
+                "reference": "524257b5d525666385bd2e91b06e376994a7b683",
                 "shasum": ""
             },
             "require": {
                 "balping/json-raw-encoder": "^1.0",
-                "illuminate/console": "^5.0|^6.0",
-                "illuminate/support": "^5.0|^6.0",
+                "illuminate/console": "^5.0|^6.0|^7.0",
+                "illuminate/support": "^5.0|^6.0|^7.0",
                 "php": ">=7.0"
             },
             "type": "library",
@@ -1444,7 +1444,7 @@
                 }
             ],
             "description": "The laravel charting package",
-            "time": "2019-09-03T16:50:50+00:00"
+            "time": "2020-03-03T23:16:14+00:00"
         },
         {
             "name": "daltcore/lara-pdf-merger",
@@ -14655,8 +14655,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/cpm-migrations-module": 20,
-        "circlelinkhealth/shared-models-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
