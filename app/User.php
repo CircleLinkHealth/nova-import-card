@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -87,5 +88,28 @@ class User extends \CircleLinkHealth\Customer\Entities\User
     public function personalizedPreventionPlan()
     {
         return $this->hasMany(PersonalizedPreventionPlan::class, 'user_id');
+    }
+
+    public function awvAppointments()
+    {
+        return $this->hasMany(AwvAppointment::class, 'user_id');
+    }
+
+    /**
+     * @return AwvAppointment|null
+     */
+    public function latestAwvAppointment()
+    {
+        return $this->awvAppointments()
+                    ->orderBy('appointment', 'desc')
+                    ->first();
+    }
+
+    public function addAppointment(Carbon $date, $type = 'awv')
+    {
+        $this->awvAppointments()->create([
+            'type'        => 'awv',
+            'appointment' => $date,
+        ]);
     }
 }

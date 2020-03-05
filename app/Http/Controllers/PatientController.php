@@ -45,8 +45,8 @@ class PatientController extends Controller
     public function store(StorePatientRequest $request, SurveyInvitationLinksService $service)
     {
         $providerUserId = $this->getPatientProvider($request);
-        $result  = $this->createPatient($request, $service);
-        $patientUserId = $result['user_id'];
+        $result         = $this->createPatient($request, $service);
+        $patientUserId  = $result['user_id'];
 
         CarePerson::updateOrCreate([
             'user_id'        => $patientUserId,

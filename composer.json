@@ -69,7 +69,7 @@
         "appstract/laravel-opcache": "^2",
         "barryvdh/laravel-cors": "^0.11.3",
         "barryvdh/laravel-snappy": "^0.4.5",
-        "circlelinkhealth/core-module": "1.4.6",
+        "circlelinkhealth/core-module": "dev-core_logic_for_projects",
         "circlelinkhealth/cpm-migrations-module": "1.4.2",
         "circlelinkhealth/customer-module": "1.8.8",
         "circlelinkhealth/revisionable-module": "^1.4",
@@ -141,6 +141,12 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
+        "test-not-working-at-the-moment": [
+            "php artisan --env=testing test:prepare-test_suite-db",
+            "php artisan --env=testing migrate:fresh",
+            "php artisan --env=testing migrate:views",
+            "./vendor/phpunit/phpunit/phpunit --testsuite=Feature,Unit --stop-on-failure --colors --testdox"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
