@@ -17,6 +17,15 @@ class PatientListFilters extends QueryFilters
         parent::__construct($request);
     }
 
+    public function mrn($value)
+    {
+        if (empty($value)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('mrn', 'like', '%' . $value . '%');
+    }
+
     public function patient_name($name)
     {
         if (empty($name)) {
