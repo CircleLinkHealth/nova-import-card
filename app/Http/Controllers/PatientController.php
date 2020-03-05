@@ -191,6 +191,12 @@ class PatientController extends Controller
                 'birth_date'      => Carbon::parse($input['dob']),
                 'is_awv'          => true,
             ]);
+
+            if ( ! empty($input['appointment'])) {
+                $appointment = Carbon::parse($input['appointment']);
+                $user->addAppointment($appointment);
+            }
+
         } else {
             $isClinical = $input['suffix'] === 'non-clinical';
             ProviderInfo::updateOrCreate([
