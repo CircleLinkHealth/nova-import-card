@@ -4,6 +4,8 @@
         <th>Assigned Calls</th>
         <th>Actual Calls</th>
         <th>Successful Calls</th>
+        <th>Avg CCM Time Per Successful Patient</th>
+        <th>Avg Completion Time Per Patient</th>
         <th>Unsuccessful Calls</th>
         <th>Hours Worked</th>
         <th>Hours Committed</th>
@@ -14,6 +16,7 @@
         <th>Committed Hours for Rest of Month</th>
         <th>Surplus or Deficit</th>
         <th>Case Load</th>
+        <th>Incomplete Patients</th>
         <th>Case Completion</th>
 </tr>
 

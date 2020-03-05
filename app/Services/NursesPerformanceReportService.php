@@ -6,8 +6,9 @@
 
 namespace App\Services;
 
-use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
+use App\Traits\NursePerformanceCalculations;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Exceptions\FileNotFoundException;
 use CircleLinkHealth\Customer\Entities\CompanyHoliday;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
@@ -20,6 +21,8 @@ use Illuminate\Support\Facades\DB;
 
 class NursesPerformanceReportService
 {
+    use NursePerformanceCalculations;
+
     const LAST_COMMITTED_DAYS_TO_GO_BACK = 10;
     const MAX_COMMITTED_DAYS_TO_GO_BACK  = 30;
 
@@ -172,6 +175,11 @@ class NursesPerformanceReportService
             $date
         );
 
+        //newer metrics cpm-2085
+        $data['avgCCMTimePerPatient'] = $this->estAvgCCMTimePerMonth($date, $patientsForMonth);
+        $data['avgCompletionTime']    = $this->getAvgCompletionTime($nurse, $date, $patientsForMonth);
+        $data['incompletePatients']   = $this->getIncompletePatientsCount($patientsForMonth);
+
         //only for EmailRNDailyReport
         $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
 
@@ -215,8 +223,8 @@ class NursesPerformanceReportService
                 round(
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                            $this->unsuccessfulCallsMultiplier
-                        ) * $data['unsuccessful'])
+                                $this->unsuccessfulCallsMultiplier
+                            ) * $data['unsuccessful'])
                     ) / $data['actualHours'])
                 )
             )
@@ -414,19 +422,6 @@ class NursesPerformanceReportService
         return round((float) ($noOfDays * $this->avgHoursWorkedLast10Sessions), 2);
     }
 
-    /**
-     * @param $nurse
-     * @param $date
-     *
-     * @return mixed
-     */
-    public function getTotalMonthSystemTimeSeconds($nurse, $date)
-    {
-        return PageTimer::where('provider_id', $nurse->id)
-            ->createdInMonth($date, 'start_time')
-            ->sum('billable_duration');
-    }
-
     public function getTotalSecondsInSystemSince(User $nurse, Carbon $date)
     {
         //
@@ -459,12 +454,12 @@ class NursesPerformanceReportService
 
         return \DB::table('calls')
             ->select(
-                  //avoid duplicate patients so the total count of patients is accurate
-                      \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
-                      //we check null entries (in case there is no summary for the date's month)
-                      \DB::raw(
-                          'if (GREATEST(pms.ccm_time, pms.bhi_time) is null, 0, GREATEST(pms.ccm_time, pms.bhi_time)/60) as patient_time'
-                      ),
+            //avoid duplicate patients so the total count of patients is accurate
+                \DB::raw('DISTINCT inbound_cpm_id as patient_id'),
+                //we check null entries (in case there is no summary for the date's month)
+                \DB::raw(
+                    'if (GREATEST(pms.ccm_time, pms.bhi_time) is null, 0, GREATEST(pms.ccm_time, pms.bhi_time)/60) as patient_time'
+                ),
                 \DB::raw(
                     "if (GREATEST(pms.ccm_time, pms.bhi_time) is null, {$this->timeGoal}, ({$this->timeGoal} - (GREATEST(pms.ccm_time, pms.bhi_time)/60))) as patient_time_left"
                 ),
@@ -541,6 +536,9 @@ AND patient_info.ccm_status = 'enrolled'"
                                     'caseLoadNeededToComplete'       => 0,
                                     'hoursCommittedRestOfMonth'      => 0,
                                     'surplusShortfallHours'          => 0,
+                                    'avgCCMTimePerPatient'           => 0,
+                                    'avgCompletionTime'              => 0,
+                                    'incompletePatients'             => 0,
                                 ];
                             }
                         }
@@ -571,6 +569,9 @@ AND patient_info.ccm_status = 'enrolled'"
                 'projectedHoursLeftInMonth' => number_format($reportPerDay->sum('projectedHoursLeftInMonth'), '2'),
                 'hoursCommittedRestOfMonth' => $reportPerDay->sum('hoursCommittedRestOfMonth'),
                 'surplusShortfallHours'     => $reportPerDay->sum('surplusShortfallHours'),
+                'avgCCMTimePerPatient'      => $reportPerDay->sum('avgCCMTimePerPatient'),
+                'avgCompletionTime'         => $reportPerDay->sum('avgCompletionTime'),
+                'incompletePatients'        => $reportPerDay->sum('incompletePatients'),
             ];
         }
 
@@ -616,6 +617,8 @@ AND patient_info.ccm_status = 'enrolled'"
      * / total # of patients assigned to Care Coach.
      *
      * @param mixed $patients
+     *
+     * @return false|float|int
      */
     public function percentageCaseLoadComplete($patients)
     {
@@ -659,6 +662,9 @@ AND patient_info.ccm_status = 'enrolled'"
                     'surplusShortfallHours'          => $totalsForDay['surplusShortfallHours'] ?? 'N/A',
                     'uniquePatientsAssignedForMonth' => $totalsForDay['uniquePatientsAssignedForMonth'] ?? 'N/A',
                     'caseLoadComplete'               => $totalsForDay['caseLoadComplete'] ?? 'N/A',
+                    'avgCCMTimePerPatient'           => $totalsForDay['avgCCMTimePerPatient'] ?? 'N/A',
+                    'avgCompletionTime'              => $totalsForDay['avgCompletionTime'] ?? 'N/A',
+                    'incompletePatients'             => $totalsForDay['incompletePatients'] ?? 'N/A',
                 ],
             ];
         })->toArray();
@@ -688,8 +694,8 @@ AND patient_info.ccm_status = 'enrolled'"
     /**
      * @param $day
      *
-     * @throws \Exception
      * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
+     * @throws \Exception
      *
      * @return mixed
      */

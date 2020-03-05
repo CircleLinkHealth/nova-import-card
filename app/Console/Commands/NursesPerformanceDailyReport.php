@@ -43,6 +43,8 @@ class NursesPerformanceDailyReport extends Command
      */
     public function handle()
     {
+        ini_set('memory_limit', '-1');
+
         $date = $this->argument('forDate') ?? null;
 
         if ($date) {
@@ -62,9 +64,9 @@ class NursesPerformanceDailyReport extends Command
         if ( ! $saved) {
             if (isProductionEnv()) {
                 sendSlackMessage(
-                '#carecoach_ops',
-                "Nurses And States dashboard report {$date->toDateString()} could not be created. \n"
-            );
+                    '#carecoach_ops',
+                    "Nurses And States dashboard report {$date->toDateString()} could not be created. \n"
+                );
             }
 
             $this->info('Nurses And States dashboard report could not be uploaded to S3');

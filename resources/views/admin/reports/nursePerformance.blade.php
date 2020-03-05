@@ -83,7 +83,7 @@
                         }
 
                         // Yellow if hours worked is 85% - 94% of committed.
-                        if (workHrsPercentage >= 85 && x <= 94) {
+                        if (workHrsPercentage >= 85 && workHrsPercentage <= 94) {
                             $('td:eq(6)', row).css(
                                 {
                                     'color': '#ffcf10',
@@ -154,6 +154,8 @@
                             {data: 'Assigned Calls', name: 'Assigned Calls'},
                             {data: 'Actual Calls', name: 'Actual Calls'},
                             {data: 'Successful Calls', name: 'Successful Calls'},
+                            {data: 'Avg CCM Time Per Successful Patient', name: 'Avg CCM Time Per Successful Patient'},
+                            {data: 'Avg Completion Time Per Patient', name: 'Avg Completion Time Per Patient'},
                             {data: 'Unsuccessful Calls', name: 'Unsuccessful Calls'},
                             {data: 'Actual Hrs Worked', name: 'Actual Hrs Worked'},
                             {data: 'Committed Hrs', name: 'Committed Hrs'},
@@ -164,6 +166,7 @@
                             {data: 'Hrs Committed Rest of Month', name: 'Hrs Committed Rest of Month'},
                             {data: 'Hrs Deficit or Surplus', name: 'Hrs Deficit or Surplus'},
                             {data: 'Case Load', name: 'Case Load'},
+                            {data: 'Incomplete Patients', name: 'Incomplete Patients'},
                             {data: '% Case Load Complete', name: '% Case Load Complete'},
                         ],
                 });
