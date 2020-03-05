@@ -72,6 +72,7 @@ use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
  * @property int|null $medications_count
  * @property int|null $problems_count
  * @property int|null $revision_history_count
+ * @property-read \CircleLinkHealth\Customer\Entities\User|null $patient
  */
 class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel implements ImportedMedicalRecordInterface
 {
