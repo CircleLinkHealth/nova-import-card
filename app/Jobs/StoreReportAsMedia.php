@@ -15,6 +15,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Spatie\MediaLibrary\Helpers\RemoteFile;
 use Spatie\MediaLibrary\Models\Media;
 
 class StoreReportAsMedia implements ShouldQueue
@@ -83,7 +84,7 @@ class StoreReportAsMedia implements ShouldQueue
      */
     private function createMedia(): Media
     {
-        return Practice::findOrFail($this->practiceId)->addMedia($this->fullPath())->toMediaCollection(
+        return Practice::findOrFail($this->practiceId)->addMedia(new RemoteFile($this->filename, $this->filesystemName))->toMediaCollection(
             $this->mediaCollectionName
         );
     }
