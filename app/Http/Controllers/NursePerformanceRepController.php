@@ -226,14 +226,14 @@ class NursePerformanceRepController extends Controller
                     'Assigned Calls' => $reportPerDay['scheduledCalls']
                         ?: '0',
                     'Actual Calls' => $reportPerDay['actualCalls']
-                        ?: '0',
+                        ?: '0', // this completed calls in UI
                     'Successful Calls' => $reportPerDay['successful']
+                        ?: '0',
+                    'Unsuccessful Calls' => $reportPerDay['unsuccessful']
                         ?: '0',
                     'Avg CCM Time Per Successful Patient' => $reportPerDay['avgCCMTimePerPatient']
                         ?: '0',
                     'Avg Completion Time Per Patient' => $reportPerDay['avgCompletionTime']
-                        ?: '0',
-                    'Unsuccessful Calls' => $reportPerDay['unsuccessful']
                         ?: '0',
                     'Actual Hrs Worked' => $reportPerDay['actualHours']
                         ?: '0',
@@ -253,7 +253,7 @@ class NursePerformanceRepController extends Controller
                         ?: '0',
                     'Case Load' => $this->caseLoad($reportPerDay)
                         ?: '0',
-                    'Incomplete patients' => $reportPerDay['incompletePatients']
+                    'Incomplete Patients' => $reportPerDay['incompletePatients']
                         ?: '0',
                     '% Case Load Complete' => $this->caseLoadComplete($reportPerDay)
                         ?: '0.00',

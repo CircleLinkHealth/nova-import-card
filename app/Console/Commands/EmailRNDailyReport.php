@@ -44,8 +44,8 @@ class EmailRNDailyReport extends Command
     /**
      * Execute the console command.
      *
-     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
      * @throws \Exception
+     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
      *
      * @return mixed
      */
@@ -95,7 +95,6 @@ class EmailRNDailyReport extends Command
                     foreach ($nurses as $nurse) {
                         $this->warn("Processing $nurse->id");
                         $reportDataForNurse = $report->where('nurse_id', $nurse->id)->first();
-
                         //In case something goes wrong with nurses and states report, or transitioning to new metrics issues
                         if ( ! $reportDataForNurse || ! $this->validateReportData($reportDataForNurse)) {
                             \Log::error("Invalid/missing report for nurse with id: {$nurse->id} and date {$date->toDateString()}");
@@ -161,10 +160,24 @@ class EmailRNDailyReport extends Command
                             'nextUpcomingWindowLabel'      => $reportDataForNurse['nextUpcomingWindowLabel'],
                             'totalHours'                   => $reportDataForNurse['totalHours'],
                             'windowStart'                  => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A T')
+                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
                                 : null,
                             'windowEnd' => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A T')
+                                ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A')
+                                : null,
+
+                            //                            For new daily Report mail
+                            'callsCompleted'        => $reportDataForNurse['actualCalls'],
+                            'successfulCalls'       => $reportDataForNurse['successful'],
+                            'completedPatients'     => $reportDataForNurse['completedPatients'],
+                            'incompletePatients'    => $reportDataForNurse['incompletePatients'],
+                            'avgCCMTimePerPatient'  => $reportDataForNurse['avgCCMTimePerPatient'],
+                            'avgCompletionTime'     => $reportDataForNurse['avgCompletionTime'],
+                            'nextUpcomingWindowDay' => $nextUpcomingWindow
+                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('l')
+                                : null,
+                            'nextUpcomingWindowMonth' => $nextUpcomingWindow
+                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('F d')
                                 : null,
                         ];
 

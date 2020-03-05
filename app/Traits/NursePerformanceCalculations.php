@@ -28,7 +28,17 @@ trait NursePerformanceCalculations
         $totalCCMtimeOnCompletedPatients        = 0 === $this->queryPatientMonthlySum($date, $patientsForMonth)->sum('ccm_time') ? 1
             : $this->queryPatientMonthlySum($date, $patientsForMonth)->sum('ccm_time');
 
-        return ($totalAmountOfCompletedPatientsPerMonth / $totalCCMtimeOnCompletedPatients) * 100;
+        return round((float) (($totalAmountOfCompletedPatientsPerMonth / $totalCCMtimeOnCompletedPatients) * 100), 2);
+    }
+
+    public function estHoursToCompleteCaseLoadMonth(User $nurse, Carbon $date, $patientsForMonth)
+    {
+        $avgCompletionPerPatient = $this->getAvgCompletionTime($nurse, $date, $patientsForMonth);
+        $incompletePatientsCount = $this->getIncompletePatientsCount($patientsForMonth);
+
+        return round(($avgCompletionPerPatient * $incompletePatientsCount) / 60, 1);
+        //        This is the old calculation
+//        return round($patients->where('patient_time', '<', 20)->sum('patient_time_left') / 60, 1);
     }
 
     public function getAvgCompletionTime(User $nurse, Carbon $date, $patientsForMonth)

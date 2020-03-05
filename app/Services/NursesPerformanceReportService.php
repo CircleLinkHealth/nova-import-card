@@ -94,23 +94,6 @@ class NursesPerformanceReportService
     }
 
     /**
-     *(25 - average of CCM minutes for assigned patients with under 20 minutes of CCM time)
-     * X # of assigned patients under 20 minutes / 60.
-     *
-     * OR
-     *
-     * time left for time-goal for patients under 20 minutes
-     *
-     * @param mixed $patients
-     *
-     * @return float
-     */
-    public function estHoursToCompleteCaseLoadMonth($patients)
-    {
-        return round($patients->where('patient_time', '<', 20)->sum('patient_time_left') / 60, 1);
-    }
-
-    /**
      * @param $nurse
      * @param $date
      * @param $data
@@ -165,10 +148,11 @@ class NursesPerformanceReportService
         ];
 
         //new metrics
-        $data['completionRate']            = $this->getCompletionRate($data);
-        $data['efficiencyIndex']           = $this->getEfficiencyIndex($data);
-        $data['caseLoadComplete']          = $this->percentageCaseLoadComplete($patientsForMonth);
-        $data['caseLoadNeededToComplete']  = $this->estHoursToCompleteCaseLoadMonth($patientsForMonth);
+        $data['completionRate']   = $this->getCompletionRate($data);
+        $data['efficiencyIndex']  = $this->getEfficiencyIndex($data);
+        $data['caseLoadComplete'] = $this->percentageCaseLoadComplete($patientsForMonth);
+//        $data['caseLoadNeededToComplete']  = $this->estHoursToCompleteCaseLoadMonth($patientsForMonth);
+        $data['caseLoadNeededToComplete']  = $this->estHoursToCompleteCaseLoadMonth($nurse, $date, $patientsForMonth);
         $data['hoursCommittedRestOfMonth'] = $this->getHoursCommittedRestOfMonth(
             $nurse,
             $nurse->nurseInfo->upcomingHolidaysFrom($date),
@@ -182,6 +166,8 @@ class NursesPerformanceReportService
 
         //only for EmailRNDailyReport
         $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
+        //only for EmailRNDailyReport new version
+        $data['completedPatients'] = $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
 
         if ($nextUpcomingWindow) {
             $carbonDate              = Carbon::parse($nextUpcomingWindow->date);
@@ -670,6 +656,23 @@ AND patient_info.ccm_status = 'enrolled'"
         })->toArray();
     }
 
+//    /**
+//     *(25 - average of CCM minutes for assigned patients with under 20 minutes of CCM time)
+//     * X # of assigned patients under 20 minutes / 60.
+//     *
+//     * OR
+//     *
+//     * time left for time-goal for patients under 20 minutes
+//     *
+//     * @param mixed $patients
+//     *
+//     * @return float
+//     */
+//    public function estHoursToCompleteCaseLoadMonth($patients)
+//    {
+//        return round($patients->where('patient_time', '<', 20)->sum('patient_time_left') / 60, 1);
+//    }
+
     public function setReportSettings()
     {
         $settings = DB::table('report_settings')->get();
@@ -694,8 +697,8 @@ AND patient_info.ccm_status = 'enrolled'"
     /**
      * @param $day
      *
-     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
      * @throws \Exception
+     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
      *
      * @return mixed
      */
