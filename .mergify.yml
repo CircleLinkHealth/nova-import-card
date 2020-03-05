@@ -44,7 +44,7 @@ pull_request_rules:
     conditions:
       - status-success=continuous-integration/heroku
       - label=fastlane
-      - approved-reviews-by=michalisantoniou6
+      - author=michalisantoniou6
     actions:
       merge:
         method: merge
@@ -54,7 +54,7 @@ pull_request_rules:
     conditions:
       - status-success=continuous-integration/heroku
       - label=fastlane
-      - approved-reviews-by=subzero10
+      - author=subzero10
     actions:
       merge:
         method: merge
