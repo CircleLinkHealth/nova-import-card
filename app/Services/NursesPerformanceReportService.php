@@ -131,14 +131,14 @@ class NursesPerformanceReportService
             $date
         );
 
-        //newer metrics cpm-2085
+        // V-3 metrics cpm-2085
         $data['avgCCMTimePerPatient'] = $this->estAvgCCMTimePerMonth($date, $patientsForMonth);
         $data['avgCompletionTime']    = $this->getAvgCompletionTime($nurse, $date, $patientsForMonth);
         $data['incompletePatients']   = $this->getIncompletePatientsCount($patientsForMonth);
 
         //only for EmailRNDailyReport
         $nextUpcomingWindow = $nurse->nurseInfo->firstWindowAfter(Carbon::now());
-        //only for EmailRNDailyReport new version
+        //only for EmailRNDailyReport v 2
         $data['completedPatients'] = $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
 
         if ($nextUpcomingWindow) {

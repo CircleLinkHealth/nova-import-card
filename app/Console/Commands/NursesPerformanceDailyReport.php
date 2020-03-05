@@ -47,8 +47,6 @@ class NursesPerformanceDailyReport extends Command
      */
     public function handle()
     {
-//        ini_set('memory_limit', '-1');
-
         $date = $this->argument('forDate') ?? null;
 
         if ($date) {
