@@ -255,7 +255,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
     /**
      * Get the User to whom this record belongs to, if one exists.
      */
-    public function getPatient() :? User
+    public function getPatient() :?User
     {
         return $this->patient;
     }
