@@ -126,6 +126,7 @@ class NursesPerformanceReportService
      * @param $date
      *
      * Sets up data needed by both Nurse and States Dashboard and EmailRNDailyReport
+     * @return Collection
      */
     public function getDataForNurse(User $nurse, Carbon $date, int $totalSystemTime): Collection
     {
