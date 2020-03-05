@@ -43,6 +43,14 @@ class SmartCacheManager extends CacheManager
         return parent::remember($key, $minutes, $callback);
     }
 
+    public function clear()
+    {
+        //make sure array store is cleared
+        $this->store('array')->clear();
+
+        return parent::clear();
+    }
+
     /**
      * Get threshold number of minutes where we always
      * cache in array store.
