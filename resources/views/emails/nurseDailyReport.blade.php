@@ -10,7 +10,7 @@
         <li>{{$actualHours}} Hours Worked out of {{$committedHours}} Hours Committed</li>
         <li>Total calls completed: {{$callsCompleted}}</li>
         <li>Total successful calls: {{$successfulCalls}}</li>
-        <li>Total visits completed: __ (To be Linked to invoice page in CPM)</li>
+{{--        <li>Total visits completed: __ (To be Linked to invoice page in CPM)</li>--}}
     </ul>
     <p>&nbsp;</p>
     <ol start="2">
