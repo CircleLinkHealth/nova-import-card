@@ -2228,6 +2228,7 @@ class NursePaymentAlgoTest extends TestCase
                             : ',') . $nurse->id,
                 ]
             );
+            \Cache::clear();
         }
 
         return $nurse;
