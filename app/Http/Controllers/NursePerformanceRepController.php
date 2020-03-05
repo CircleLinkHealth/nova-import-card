@@ -221,7 +221,7 @@ class NursePerformanceRepController extends Controller
         foreach ($nurses as $name => $report) {
             foreach ($report as $day => $reportPerDay) {
                 $nurseDailyData[$n] = [
-                    'Day'            => Carbon::parse($day)->copy()->format('jS D'),
+                    'Day'            => Carbon::parse($day)->copy()->format('j'),
                     'Name'           => $reportPerDay['nurse_full_name'],
                     'Assigned Calls' => $reportPerDay['scheduledCalls']
                         ?: '0',

@@ -1,6 +1,6 @@
 <tr>
         <th>Nurse name</th>
-        <th>Day</th>
+        <th>Day of Month</th>
         <th>Assigned Calls</th>
         <th>Calls Completed</th>
         <th>Successful Calls</th>

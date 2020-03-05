@@ -39,11 +39,15 @@ class NursesPerformanceDailyReport extends Command
     /**
      * Execute the console command.
      *
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\DiskDoesNotExist
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileDoesNotExist
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileIsTooBig
+     *
      * @return mixed
      */
     public function handle()
     {
-        ini_set('memory_limit', '-1');
+//        ini_set('memory_limit', '-1');
 
         $date = $this->argument('forDate') ?? null;
 
