@@ -236,8 +236,8 @@ trait RevisionableTrait
                 'new_value'         => $this->{self::CREATED_AT},
                 'user_id'           => $this->getSystemUserId(),
                 'ip'                => $this->getUserIpAddress(),
-                'created_at'        => new \DateTime(),
-                'updated_at'        => new \DateTime(),
+                'created_at'        => now(),
+                'updated_at'        => now(),
             ];
             
             StoreRevisions::dispatch($revision);
@@ -261,8 +261,8 @@ trait RevisionableTrait
                 'new_value'         => $this->{$this->getDeletedAtColumn()},
                 'user_id'           => $this->getSystemUserId(),
                 'ip'                => $this->getUserIpAddress(),
-                'created_at'        => new \DateTime(),
-                'updated_at'        => new \DateTime(),
+                'created_at'        => now(),
+                'updated_at'        => now(),
             ];
             
             StoreRevisions::dispatch($revision);
@@ -302,8 +302,8 @@ trait RevisionableTrait
                     'new_value'         => $this->updatedData[$key],
                     'user_id'           => $this->getSystemUserId(),
                     'ip'                => $this->getUserIpAddress(),
-                    'created_at'        => new \DateTime(),
-                    'updated_at'        => new \DateTime(),
+                    'created_at'        => now(),
+                    'updated_at'        => now(),
                 ];
             }
 
