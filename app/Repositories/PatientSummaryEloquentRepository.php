@@ -381,7 +381,7 @@ class PatientSummaryEloquentRepository
                              || $this->lacksProblems($summary)
                              || $this->lacksProblemCodes($summary)
                              || 0 == $summary->no_of_successful_calls
-                             || in_array($summary->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
+                             || in_array($summary->patient->patientInfo->ccm_status, ['withdrawn', 'withdrawn_1st_call', 'paused']);
 
         if (
             ($summary->rejected || $summary->approved) && $summary->actor_id
