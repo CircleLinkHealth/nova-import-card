@@ -127,7 +127,7 @@
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/core-module": "1.4.5",
     "circlelinkhealth/cpm-migrations-module": "1.4.1",
-    "circlelinkhealth/customer-module": "1.8.9",
+    "circlelinkhealth/customer-module": "1.9.0",
     "circlelinkhealth/eligibility-module": "dev-master-into-dev",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
@@ -256,6 +256,9 @@
     ],
     "test": [
       "php artisan --env=testing test:prepare-test_suite-db",
+      "php artisan --env=testing migrate:fresh",
+      "php artisan --env=testing migrate:views",
+      "php artisan --env=testing db:seed --class=TestSuiteSeeder",
       "./vendor/phpunit/phpunit/phpunit --testsuite=Feature,Unit --stop-on-failure --colors --testdox"
     ],
     "clear": [
