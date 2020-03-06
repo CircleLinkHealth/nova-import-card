@@ -7,8 +7,9 @@
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Http\Resources\Json\Resource;
 
 class ApprovableBillablePatient extends Resource
@@ -49,24 +50,23 @@ class ApprovableBillablePatient extends Resource
 
         $status = $this->closed_ccm_status;
         if (null == $status) {
-            $status = $this->patient->patientInfo->ccm_status;
+            $status = $this->patient->patientInfo->getCcmStatusForMonth(Carbon::parse($this->month_year));
         }
-
-
 
         $shouldAttachDefaultProblems = Carbon::parse($this->month_year)->lte(Carbon::parse(self::ATTACH_DEFAULT_PROBLEMS_FOR_MONTH));
 
         //remove problems that have no icd10 codes due to bug, for months that this has happened. Wrap in if to minimize performance loss for other months
-        if ($shouldAttachDefaultProblems){
-            $attestedProblems = $this->attestedProblems->filter(function ($p){
-                return !! $p->icd10Code();
+        if ($shouldAttachDefaultProblems) {
+            $attestedProblems = $this->attestedProblems->filter(function ($p) {
+                return ! ! $p->icd10Code();
             });
-        }else{
+        } else {
             $attestedProblems = $this->attestedProblems;
         }
 
         //get Ccm attested problems
-        if ($shouldAttachDefaultProblems && $attestedProblems->where('cpmProblem.is_behavioral', '=', false)->count() == 0) {
+        if ($shouldAttachDefaultProblems && $attestedProblems->where('cpmProblem.is_behavioral', '=',
+                false)->count() == 0) {
             $attestedCcmProblems = collect([
                 optional($this->billableProblem1)->id,
                 optional($this->billableProblem2)->id,
@@ -78,10 +78,13 @@ class ApprovableBillablePatient extends Resource
         $attestedBhiProblems = [];
         //get Bhi attested Problems
         if ($this->hasServiceCode(self::BHI_SERVICE_CODE)) {
-            if ($shouldAttachDefaultProblems && $attestedProblems->where('cpmProblem.is_behavioral', '=', true)->count() == 0) {
-                $bhiProblem = $this->billableBhiProblems()->first();
+            if ($shouldAttachDefaultProblems && $attestedProblems->where('cpmProblem.is_behavioral', '=',
+                    true)->count() == 0) {
+                $bhiProblem          = $this->billableBhiProblems()->first();
                 $attestedBhiProblems = collect([
-                    $bhiProblem ? $bhiProblem->id : null
+                    $bhiProblem
+                        ? $bhiProblem->id
+                        : null,
                 ])->filter()->toArray();
             } else {
                 $attestedBhiProblems = $attestedProblems->where('cpmProblem.is_behavioral', '=', true)->pluck('id');
