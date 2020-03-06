@@ -48,7 +48,7 @@
         <ul>
             <li>For more accuracy, enter your schedule for the entire month. Otherwise, the system estimates based off the current week's hours</li>
         </ul>
-        <li>Surplus or deficit for the remainder of month: {{$surplusShortfallHours}} hr Surplus/Deficit</li>
+        <li>Surplus or deficit for the remainder of month: <a style="color:{{$deficitTextColor}}">{{$surplusShortfallHours}}</a> hr {{$deficitOrSurplusText}}</li>
         <ul>
             <li><a style="color: green">Surplus</a> indicates you are doing well for the month and are on pace to successfully complete your caseload</li>
             <li><a style="color: red">Deficit</a> indicates you are behind in completing your caseload and need to make up hours or reach out for assistance in completing your caseload</li>

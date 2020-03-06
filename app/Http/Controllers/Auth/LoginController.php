@@ -109,7 +109,7 @@ class LoginController extends Controller
             $days = LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
 
             return redirect('auth/password/reset')
-                ->withErrors(['old-password' => "You password has not been changed for the last ${days} days. Please reset it to continue."]);
+                ->withErrors(['old-password' => "Your password has not been changed for the last ${days} days. Please reset it to continue."]);
         }
 
         return $loginResponse;
