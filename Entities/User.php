@@ -2283,15 +2283,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany('App\Observation', 'user_id', 'id');
     }
 
-    public function onFirstCall($isNoteCreatePageAndSuccessfullCall = false): bool
+    public function onFirstCall(): bool
     {
-        $onFirstCall = 1;
-        if ($isNoteCreatePageAndSuccessfullCall) {
-            $onFirstCall = 0;
-        }
-
         return $this->inboundCalls()
-                    ->where('status', 'reached')->count() <= $onFirstCall;
+                    ->where('status', 'reached')->count() == 0;
     }
 
     /**
