@@ -40,9 +40,6 @@ class NurseDailyReport extends Mailable
 
     /**
      * Create a new message instance.
-     *
-     * @param User  $nurse
-     * @param array $data
      */
     public function __construct(User $nurse, array $data, Carbon $date)
     {
@@ -65,6 +62,6 @@ class NurseDailyReport extends Mailable
             ->with(['date' => $this->date])
             ->to($this->nurse->email)
             ->from('notifications@careplanmanager.com', 'CircleLink Health')
-            ->subject("CircleLink Daily Time Report for ({$this->date->format('m/d/Y')})");
+            ->subject("CLH Care Coach Daily Performance Report - ({$this->date->format('m/d/Y')})");
     }
 }
