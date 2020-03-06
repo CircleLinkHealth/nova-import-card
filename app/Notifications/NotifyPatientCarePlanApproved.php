@@ -7,10 +7,10 @@
 namespace App\Notifications;
 
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
-use Illuminate\Auth\Passwords\PasswordBrokerManager;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Password;
 
 class NotifyPatientCarePlanApproved extends Notification
 {
@@ -18,11 +18,13 @@ class NotifyPatientCarePlanApproved extends Notification
 
     private $carePlan;
 
+    private $channels = ['database'];
+
     private $patient;
 
     private $practice;
 
-    private $channels = ['database'];
+    private $token;
 
     /**
      * This notification is sent to the patient both when Careplan is QA approved by CLH, and when it's Provider
@@ -32,14 +34,12 @@ class NotifyPatientCarePlanApproved extends Notification
 
     /**
      * Create a new notification instance.
-     *
-     * @param CarePlan $carePlan
-     * @param array $channels
      */
     public function __construct(CarePlan $carePlan, array $channels = ['mail'])
     {
         $this->channels = array_merge($channels, $this->channels);
         $this->carePlan = $carePlan;
+        $this->token    = Password::broker('patient_users')->createToken($carePlan->patient);
     }
 
     public function getActionText()
@@ -113,20 +113,21 @@ class NotifyPatientCarePlanApproved extends Notification
      *
      * @param mixed $notifiable
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
      * @throws \Exception
+     *
+     * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
         $this->patient = $this->carePlan->patient;
 
-        if (! $this->patient){
+        if ( ! $this->patient) {
             throw new \Exception("Care Plan with id {$this->carePlan->id}, does not belong to patient user.");
         }
 
         $this->practice = $this->patient->primaryPractice;
 
-        if (! $this->practice){
+        if ( ! $this->practice) {
             throw new \Exception("Patient with id {$this->patient}, does not belong to a practice.");
         }
 
@@ -157,8 +158,11 @@ class NotifyPatientCarePlanApproved extends Notification
 
     private function resetUrl()
     {
-        return route('password.request', [
+        return route('password.reset', [
+            'token'       => $this->token,
             'practice_id' => $this->practice->id,
+            'email'       => $this->patient->email,
+            'lock_email'  => true,
         ]);
     }
 }

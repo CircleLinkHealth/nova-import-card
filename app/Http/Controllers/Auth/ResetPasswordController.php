@@ -85,6 +85,7 @@ class ResetPasswordController extends Controller
 
         $resetResponse = $this->traitReset($request);
 
+        $resetResponse->setTargetUrl(route('password.request'));
         //won't even reach here if traitReset fails (throws exception)
         if ( ! ($resetResponse->isClientError() || $resetResponse->isServerError()) && $current_password) {
             $this->saveOldPasswordInHistory($current_password);
@@ -104,9 +105,16 @@ class ResetPasswordController extends Controller
      */
     public function showResetForm(Request $request, $token = null)
     {
+        if (auth()->check()) {
+            auth()->logout();
+        }
         $this->checkPracticeNameCookie($request);
 
-        return response()->view('auth.passwords.reset', ['token' => $token, 'email' => $request->email]);
+        return response()->view('auth.passwords.reset', [
+            'token'      => $token,
+            'email'      => $request->email,
+            'lock_email' => $request->lock_email,
+        ]);
     }
 
     protected function rules()

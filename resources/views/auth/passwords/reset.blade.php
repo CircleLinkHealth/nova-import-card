@@ -11,7 +11,7 @@
         <div class="form-group">
             <label class="col-sm-12">Email</label>
             <div class="col-sm-12">
-                <input type="email" class="form-control" name="email" value="{{ old('email') }}">
+                <input type="email" class="form-control" @if(! empty($lock_email)) disabled @endif name="email" value="{{ old('email') ?: ($email ?: null) }}">
             </div>
         </div>
 
