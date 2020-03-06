@@ -199,8 +199,8 @@ class Revisionable extends Eloquent
                 'old_value'         => null,
                 'new_value'         => $this->{self::CREATED_AT},
                 'user_id'           => $this->getSystemUserId(),
-                'created_at'        => new \DateTime(),
-                'updated_at'        => new \DateTime(),
+                'created_at'        => now(),
+                'updated_at'        => now(),
             ];
     
             StoreRevisions::dispatch($revisions);
@@ -222,8 +222,8 @@ class Revisionable extends Eloquent
                 'old_value'         => null,
                 'new_value'         => $this->{$this->getDeletedAtColumn()},
                 'user_id'           => $this->getSystemUserId(),
-                'created_at'        => new \DateTime(),
-                'updated_at'        => new \DateTime(),
+                'created_at'        => now(),
+                'updated_at'        => now(),
             ];
             StoreRevisions::dispatch($revisions);
         }
@@ -250,8 +250,8 @@ class Revisionable extends Eloquent
                     'old_value'         => array_get($this->originalData, $key),
                     'new_value'         => $this->updatedData[$key],
                     'user_id'           => $this->getSystemUserId(),
-                    'created_at'        => new \DateTime(),
-                    'updated_at'        => new \DateTime(),
+                    'created_at'        => now(),
+                    'updated_at'        => now(),
                 ];
             }
 
