@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\NurseInvoices\Traits\DryRunnable;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Input\InputArgument;
 
 class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
 {
@@ -16,7 +17,7 @@ class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
      *
      * @var string
      */
-    protected $signature = 'pms:set-closed-status {date? : the month we are counting for in format YYYY-MM-DD}';
+    protected $name = 'pms:set-closed-status';
     
     /**
      * The console command description.
@@ -36,15 +37,16 @@ class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
      */
     public function handle()
     {
-        $argument = $this->argument('date') ?? null;
+        $argument = $this->argument('month') ?? null;
         
         $date = $argument
             ? Carbon::parse($argument)->startOfMonth()
-            : Carbon::now()->startOfMonth();
+            : Carbon::now()->subMonth()->startOfMonth();
         
         PatientMonthlySummary::orderBy('id')
                              ->whereMonthYear($date->toDateString())
                              ->with('patient.patientInfo')
+                             ->has('patient.patientInfo')
                              ->chunk(
                                  500,
                                  function ($summaries) use ($date) {
@@ -68,5 +70,16 @@ class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
                                  }
                              );
         $this->info("{$this->changedCount} patient summaries changed.");
+    }
+    
+    public function arguments()
+    {
+        return [
+            [
+                'month',
+                InputArgument::REQUIRED,
+                'Month to set statuses for in "Y-m-d": format. Defaults to previous month.',
+            ],
+        ];
     }
 }
