@@ -48,11 +48,12 @@ Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 Route::get('/', 'WelcomeController@index', [
     'as' => 'index',
 ]);
-Route::get('home', 'WelcomeController@index', [
-    'as' => 'home',
+Route::get('home', [
+    'uses' => 'WelcomeController@index',
+    'as'   => 'home',
 ]);
 
-Route::get('login', 'Auth\LoginController@showLoginForm')->middleware('doNotCacheResponse');
+Route::get('login', 'Auth\LoginController@showLoginForm', ['as' => 'login'])->middleware('doNotCacheResponse');
 Route::post('browser-check', [
     'uses' => 'Auth\LoginController@storeBrowserCompatibilityCheckPreference',
     'as'   => 'store.browser.compatibility.check.preference',
@@ -2245,6 +2246,11 @@ Route::get('/redirect-mark-done/{callId}', [
 Route::get('see-all-notifications', [
     'uses' => 'NotificationController@seeAllNotifications',
     'as'   => 'notifications.seeAll',
+])->middleware('permission:provider.read,note.read');
+
+Route::get('all-notifications-pages/{page}/{resultsPerPage}', [
+    'uses' => 'NotificationController@seeAllNotificationsPaginated',
+    'as'   => 'notifications.all.paginated',
 ])->middleware('permission:provider.read,note.read');
 
 Route::get('nurses/holidays', [

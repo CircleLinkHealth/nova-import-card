@@ -22,10 +22,6 @@
                             <div class="calendar-date" style="padding-left: 2%; padding-top: 1%;">
                                 @include('admin.reports.nursesPerformanceForm')
                             </div>
-                            {{--We need less white space + start and end date are already dispalyed in placeholder and table row--}}
-                            {{--                            <div class="dates">--}}
-                            {{--                                {{$startDate->format('l F jS')}} - {{$endDate->format('l F jS Y')}}--}}
-                            {{--                            </div>--}}
 
                             <div class="panel-body">
                                 <table class="table table-hover" id="nurse_metrics" style="width: 100%">
@@ -46,7 +42,7 @@
                 var columnForBorder = 1;
                 var columnsForTextFormating = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
-                function setExcelExportHref (startDate, endDate) {
+                function setExcelExportHref(startDate, endDate) {
                     var href = $('.excel-export').attr('data-href') + '?start_date=' + startDate + '&end_date=' + endDate
                     $('.excel-export').attr('href', href)
                     return href
@@ -74,7 +70,39 @@
                             );
                         }
 
-                        if ( data['Hrs Deficit or Surplus'] < 0) {
+                        // Define WORK HOURS text color
+                        const workHrsPercentage = ((data['Actual Hrs Worked'] / data['Committed Hrs']) * 100);
+
+                        // Green if hours worked is >=95% of committed.
+                        if (workHrsPercentage >= 95) {
+                            $('td:eq(6)', row).css(
+                                {
+                                    'color': '#32C132',
+                                }
+                            );
+                        }
+
+                        // Yellow if hours worked is 85% - 94% of committed.
+                        if (workHrsPercentage >= 85 && workHrsPercentage <= 94) {
+                            $('td:eq(6)', row).css(
+                                {
+                                    'color': '#ffcf10',
+                                }
+                            );
+                        }
+
+                        // Red if hours worked is <84% of committed.
+                        if (workHrsPercentage <= 84) {
+                            $('td:eq(6)', row).css(
+                                {
+                                    'color': '#ff6c29',
+                                }
+                            );
+                        }
+
+                        // Define WORK HOURS text color - end
+
+                        if (data['Hrs Deficit or Surplus'] < 0) {
                             $('td:eq(13)', row).css('color', '#FA5353');
                         } else {
                             $('td:eq(13)', row).css('color', '#32C132');
@@ -127,15 +155,18 @@
                             {data: 'Actual Calls', name: 'Actual Calls'},
                             {data: 'Successful Calls', name: 'Successful Calls'},
                             {data: 'Unsuccessful Calls', name: 'Unsuccessful Calls'},
+                            {data: 'Avg CCM Time Per Successful Patient', name: 'Avg CCM Time Per Successful Patient'},
+                            {data: 'Avg Completion Time Per Patient', name: 'Avg Completion Time Per Patient'},
+                            {data: 'Est. Hrs to Complete Case Load', name: 'Est. Hrs to Complete Case Load'},
                             {data: 'Actual Hrs Worked', name: 'Actual Hrs Worked'},
                             {data: 'Committed Hrs', name: 'Committed Hrs'},
                             {data: 'Attendance/Calls Completion Rate', name: 'Attendance/Calls Completion Rate'},
                             {data: 'Efficiency Index', name: 'Efficiency Index'},
-                            {data: 'Est. Hrs to Complete Case Load', name: 'Est. Hrs to Complete Case Load'},
                             {data: 'Projected Hrs. Left In Month', name: 'Projected Hrs. Left In Month'},
                             {data: 'Hrs Committed Rest of Month', name: 'Hrs Committed Rest of Month'},
                             {data: 'Hrs Deficit or Surplus', name: 'Hrs Deficit or Surplus'},
                             {data: 'Case Load', name: 'Case Load'},
+                            {data: 'Incomplete Patients', name: 'Incomplete Patients'},
                             {data: '% Case Load Complete', name: '% Case Load Complete'},
                         ],
                 });
@@ -186,6 +217,6 @@
     }
 
     .table.dataTable.no-footer {
-         border-bottom: unset;
+        border-bottom: unset;
     }
 </style>
