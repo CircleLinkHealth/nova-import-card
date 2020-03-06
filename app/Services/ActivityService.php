@@ -86,9 +86,16 @@ class ActivityService
                     'month_year' => $monthYear,
                 ]);
 
-                if (0 == $summary->no_of_calls || 0 == $summary->no_of_successful_calls) {
+                // this creates race conditions and inconsistencies:
+                // Note with successful call is saved - 1st successful call
+                // - this method is called from CallObserver.php
+                // - no_of_successful_calls is 0 at this point
+                // - syncCallCounts is called, which returns 1 (1 call with status reach)
+                // - NotesController@store calls PatientWriteRepository@updateCallLogs which increments no_of_successful_calls from 1 to 2
+                // - so 1 call, but db has 2
+                /*if (0 == $summary->no_of_calls || 0 == $summary->no_of_successful_calls) {
                     $summary = $this->patientSummaryEloquentRepository->syncCallCounts($summary);
-                }
+                }*/
 
                 $total_time_per_user[$id] += $ccmTime;
 
@@ -110,9 +117,10 @@ class ActivityService
                     'month_year' => $monthYear,
                 ]);
 
-                if (0 == $summary->no_of_calls || 0 == $summary->no_of_successful_calls) {
+                // see comment above
+                /*if (0 == $summary->no_of_calls || 0 == $summary->no_of_successful_calls) {
                     $summary = $this->patientSummaryEloquentRepository->syncCallCounts($summary);
-                }
+                }*/
 
                 $total_time_per_user[$id] += $bhiTime;
 
