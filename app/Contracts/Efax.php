@@ -9,24 +9,26 @@ namespace App\Contracts;
 interface Efax
 {
     public function createFaxFor(string $number): Efax;
-
+    
     /**
      * Send a fax.
      *
      * https://www.phaxio.com/docs/api/v2.1/faxes/create_and_send_fax
      *
-     * @param string $to
+     * @param array $options
      *
      * @return mixed
      */
     public function send(
         array $options = []
     );
-
+    
     /**
      * Send a FaxableNotification Object via fax.
      *
      * @param $notifiable
+     *
+     * @param FaxableNotification $notification
      *
      * @return mixed
      */

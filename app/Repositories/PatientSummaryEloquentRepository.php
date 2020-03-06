@@ -9,6 +9,7 @@ namespace App\Repositories;
 use Cache;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
@@ -381,7 +382,7 @@ class PatientSummaryEloquentRepository
                              || $this->lacksProblems($summary)
                              || $this->lacksProblemCodes($summary)
                              || 0 == $summary->no_of_successful_calls
-                             || in_array($summary->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
+                             || in_array($summary->patient->patientInfo->getCcmStatusForMonth($summary->month_year), [Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL]);
 
         if (
             ($summary->rejected || $summary->approved) && $summary->actor_id
@@ -405,7 +406,7 @@ class PatientSummaryEloquentRepository
     {
         return ! $this->lacksProblems($summary)
                && $summary->no_of_successful_calls >= 1
-               && 'enrolled' == $patient->patientInfo->ccm_status
+               && 'enrolled' == $patient->patientInfo->getCcmStatusForMonth($summary->month_year)
                && 1 != $summary->rejected
                && $summary->billable_problem1
                && $summary->billable_problem1_code
