@@ -44,8 +44,8 @@ class EmailRNDailyReport extends Command
     /**
      * Execute the console command.
      *
-     * @throws \Exception
      * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
+     * @throws \Exception
      *
      * @return mixed
      */
@@ -105,13 +105,13 @@ class EmailRNDailyReport extends Command
 
                         $totalMonthSystemTimeSeconds = $reportDataForNurse['totalMonthSystemTimeSeconds'];
 
-                        if (0 == $systemTime) {
-                            continue;
-                        }
-
-                        if ($nurse->nurseInfo->hourly_rate < 1) {
-                            continue;
-                        }
+//                        if (0 == $systemTime) {
+//                            continue;
+//                        }
+//
+//                        if ($nurse->nurseInfo->hourly_rate < 1) {
+//                            continue;
+//                        }
 
                         $attendanceRate = 0 != $reportDataForNurse['committedHours']
                             ? (round(
@@ -139,6 +139,9 @@ class EmailRNDailyReport extends Command
                         );
 
                         $nextUpcomingWindow = $reportDataForNurse['nextUpcomingWindow'];
+                        $surplusShortfallHours = $reportDataForNurse['surplusShortfallHours'];
+                        $deficitTextColor = $surplusShortfallHours < 0 ? '#f44336' : '#009688';
+                        $deficitOrSurplusText = $surplusShortfallHours < 0 ? 'Deficit' : 'Surplus';
 
                         $data = [
                             'name'                         => $nurse->getFullName(),
@@ -151,7 +154,7 @@ class EmailRNDailyReport extends Command
                             'caseLoadComplete'             => $reportDataForNurse['caseLoadComplete'],
                             'caseLoadNeededToComplete'     => $reportDataForNurse['caseLoadNeededToComplete'],
                             'hoursCommittedRestOfMonth'    => $reportDataForNurse['hoursCommittedRestOfMonth'],
-                            'surplusShortfallHours'        => $reportDataForNurse['surplusShortfallHours'],
+                            'surplusShortfallHours'        => $surplusShortfallHours,
                             'projectedHoursLeftInMonth'    => $reportDataForNurse['projectedHoursLeftInMonth'],
                             'avgHoursWorkedLast10Sessions' => $reportDataForNurse['avgHoursWorkedLast10Sessions'],
                             'totalEarningsThisMonth'       => $totalEarningsThisMonth,
@@ -179,6 +182,9 @@ class EmailRNDailyReport extends Command
                             'nextUpcomingWindowMonth' => $nextUpcomingWindow
                                 ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('F d')
                                 : null,
+
+                            'deficitTextColor'     => $deficitTextColor,
+                            'deficitOrSurplusText' => $deficitOrSurplusText,
                         ];
 
                         $nurse->notify(new NurseDailyReport($data, $date));
