@@ -143,7 +143,7 @@ class ApprovableBillablePatient extends Resource
                             ->where('key', '=', 'ccm_status')
                             ->orderBy('id')
                             ->first();
-        if ($revision) {
+        if ($revision && $revision->old_value) {
             return $revision->old_value;
         }
 
