@@ -70,7 +70,7 @@ class CreatePracticeReport extends Command
     protected function getArguments()
     {
         return [
-            ['class', InputArgument::REQUIRED, 'The class name of the report to run'],
+            ['class', InputArgument::REQUIRED, 'The FQN class name of the report to run'],
             ['practice_id', InputArgument::REQUIRED, 'The practice ID.'],
             ['user_id', InputArgument::REQUIRED, 'The user ID who will have access to download this report.'],
         ];
