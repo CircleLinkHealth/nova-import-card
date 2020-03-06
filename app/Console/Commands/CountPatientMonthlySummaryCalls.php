@@ -58,8 +58,8 @@ class CountPatientMonthlySummaryCalls extends Command
         $argument = $this->argument('date') ?? null;
 
         $date = $argument
-            ? Carbon::parse($argument)
-            : Carbon::now();
+            ? Carbon::parse($argument)->startOfMonth()
+            : Carbon::now()->startOfMonth();
 
         PatientMonthlySummary::orderBy('id')
             ->whereMonthYear($date->toDateString())
