@@ -105,13 +105,13 @@ class EmailRNDailyReport extends Command
 
                         $totalMonthSystemTimeSeconds = $reportDataForNurse['totalMonthSystemTimeSeconds'];
 
-//                        if (0 == $systemTime) {
-//                            continue;
-//                        }
-//
-//                        if ($nurse->nurseInfo->hourly_rate < 1) {
-//                            continue;
-//                        }
+                        if (0 == $systemTime) {
+                            continue;
+                        }
+
+                        if ($nurse->nurseInfo->hourly_rate < 1) {
+                            continue;
+                        }
 
                         $attendanceRate = 0 != $reportDataForNurse['committedHours']
                             ? (round(
