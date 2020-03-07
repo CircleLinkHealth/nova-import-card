@@ -42,7 +42,7 @@ class ForgotPasswordController extends Controller
      */
     public function showLinkRequestForm(Request $request)
     {
-        if(auth()->check()){
+        if (auth()->check()) {
             auth()->logout();
         }
         $this->checkPracticeNameCookie($request);

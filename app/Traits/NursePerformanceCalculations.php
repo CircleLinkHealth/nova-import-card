@@ -106,8 +106,8 @@ trait NursePerformanceCalculations
                 round(
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                                $this->unsuccessfulCallsMultiplier
-                            ) * $data['unsuccessful'])
+                            $this->unsuccessfulCallsMultiplier
+                        ) * $data['unsuccessful'])
                     ) / $data['actualHours'])
                 )
             )

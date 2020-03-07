@@ -18,11 +18,11 @@ class NotifyPatientCarePlanApproved extends Notification
 
     private $carePlan;
 
+    private $channels = ['database'];
+
     private $patient;
 
     private $practice;
-
-    private $channels = ['database'];
 
     /**
      * This notification is sent to the patient both when Careplan is QA approved by CLH, and when it's Provider
@@ -32,9 +32,6 @@ class NotifyPatientCarePlanApproved extends Notification
 
     /**
      * Create a new notification instance.
-     *
-     * @param CarePlan $carePlan
-     * @param array $channels
      */
     public function __construct(CarePlan $carePlan, array $channels = ['mail'])
     {
@@ -113,20 +110,21 @@ class NotifyPatientCarePlanApproved extends Notification
      *
      * @param mixed $notifiable
      *
-     * @return \Illuminate\Notifications\Messages\MailMessage
      * @throws \Exception
+     *
+     * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
         $this->patient = $this->carePlan->patient;
 
-        if (! $this->patient){
+        if ( ! $this->patient) {
             throw new \Exception("Care Plan with id {$this->carePlan->id}, does not belong to patient user.");
         }
 
         $this->practice = $this->patient->primaryPractice;
 
-        if (! $this->practice){
+        if ( ! $this->practice) {
             throw new \Exception("Patient with id {$this->patient}, does not belong to a practice.");
         }
 
