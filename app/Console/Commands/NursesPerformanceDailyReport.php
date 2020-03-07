@@ -82,6 +82,6 @@ class NursesPerformanceDailyReport extends Command
             );
         }
 
-        $this->info('Daily Nurses Calls & Work hrs uploaded to S3');
+        $this->info("Daily Nurses Calls & Work hrs for {$date->toDateString()} uploaded to S3");
     }
 }
