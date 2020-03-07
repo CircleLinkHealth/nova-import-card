@@ -7,6 +7,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Traits\ManagesPatientCookies;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Customer\Entities\UserPasswordsHistory;
 use CircleLinkHealth\Customer\Rules\PasswordCharacters;
@@ -25,6 +26,7 @@ class ResetPasswordController extends Controller
     | explore this trait and override any methods you wish to tweak.
     |
     */
+    use ManagesPatientCookies;
 
     use ResetsPasswords {
         reset as traitReset;
@@ -51,8 +53,6 @@ class ResetPasswordController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function reset(Request $request)
@@ -93,6 +93,22 @@ class ResetPasswordController extends Controller
         return $resetResponse;
     }
 
+    /**
+     * Display the password reset view for the given token.
+     *
+     * If no token is present, display the link request form.
+     *
+     * @param string|null $token
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function showResetForm(Request $request, $token = null)
+    {
+        $this->checkPracticeNameCookie($request);
+
+        return response()->view('auth.passwords.reset', ['token' => $token, 'email' => $request->email]);
+    }
+
     protected function rules()
     {
         return [
@@ -110,8 +126,6 @@ class ResetPasswordController extends Controller
 
     /**
      * Get User model with passwordsHistory relation.
-     *
-     * @param string $email
      *
      * @return \CircleLinkHealth\Customer\Entities\User|null
      */

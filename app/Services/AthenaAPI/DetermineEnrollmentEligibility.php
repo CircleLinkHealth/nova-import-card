@@ -6,9 +6,9 @@
 
 namespace App\Services\AthenaAPI;
 
-use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
+use CircleLinkHealth\Eligibility\Entities\TargetPatient;
 use CircleLinkHealth\Eligibility\Jobs\Athena\GetAppointmentsForDepartment;
 use CircleLinkHealth\Eligibility\ValueObjects\ProblemsCollection;
 use Illuminate\Auth\Access\AuthorizationException;
