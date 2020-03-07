@@ -18,6 +18,20 @@ use Illuminate\Support\Str;
 
 class UPG0506Demo extends Command
 {
+
+    /**
+     * These are the test data found in test ccd and pdf located in storage/files-for-demos/upg0506
+     */
+    const TEST_MRN = '334417';
+    /**
+     *
+     */
+    const TEST_FIRST_NAME = 'Barbara';
+    /**
+     *
+     */
+    const TEST_LAST_NAME = 'Zznigro';
+
     /**
      * The console command description.
      *
@@ -85,7 +99,7 @@ class UPG0506Demo extends Command
             \DB::table('media')
                 ->where('custom_properties->is_pdf', 'true')
                 ->where('custom_properties->is_upg0506', 'true')
-                ->where('custom_properties->care_plan->demographics->name->family', 'Zznigro')
+                ->where('custom_properties->care_plan->demographics->name->family', self::TEST_LAST_NAME)
                 ->delete();
 
             $dm = $ccda->directMessage()->first();
@@ -114,44 +128,40 @@ class UPG0506Demo extends Command
 
     private function clearTestData()
     {
-        try {
-            //CLEAR CCDA DATA
-            $ccdas = Ccda::where('mrn', '334417')
-                ->whereHas('directMessage', function ($dm) {
-                        $dm->where('from', 'drraph@upg.ssdirect.aprima.com')
-                            ->where('body', 'This is a demo message.');
-                    })
-                ->get();
+        if ( ! isProductionEnv()) {
+            try {
+                $ccdas = Ccda::where('mrn', self::TEST_MRN)
+                    ->get();
 
-            foreach ($ccdas as $ccda) {
-                $this->clearCcdaData($ccda);
-            }
+                foreach ($ccdas as $ccda) {
+                    $this->clearCcdaData($ccda);
+                }
 
-            //CLEAR PDF MEDIA THAT MAY HAVE BEEN LEFT BEHIND
-            $pdf = Media::where('custom_properties->is_upg0506', 'true')
-                ->where('custom_properties->care_plan->demographics->mrn_number', '334417')
-                ->where('custom_properties->care_plan->demographics->name->family', 'Zznigro')
-                ->get();
+                $pdf = Media::where('custom_properties->is_upg0506', 'true')
+                    ->where('custom_properties->care_plan->demographics->mrn_number', self::TEST_MRN)
+                    ->first();
 
-            if ($pdf) {
-                $pdf->delete();
-            }
+                if ($pdf) {
+                    $pdf->delete();
+                }
 
-            //CLEAR CREATED USER DATA
-            User::whereFirstName('Barbara')
-                ->whereLastName('Zznigro')
-                ->get()
-                ->each(function (User $u) {
+                User::whereFirstName(self::TEST_FIRST_NAME)
+                    ->whereLastName(self::TEST_LAST_NAME)
+                    ->get()
+                    ->each(function (User $u) {
                         $u->ccdas()->get()->each(function ($ccda) {
                             $this->clearCcdaData($ccda);
                         });
+
+                        $u->carePlanAssessment()->delete();
                         $u->patientSummaries()->delete();
                         $u->forceDelete();
                     });
-        } catch (\Exception $exception) {
-            \Log::channel('logdna')->info('UPG0506 demo error on deleting test data', [
-                'exception' => $exception->getMessage(),
-            ]);
+            } catch (\Exception $exception) {
+                \Log::channel('logdna')->info('UPG0506 demo error on deleting test data', [
+                    'exception' => $exception->getMessage(),
+                ]);
+            }
         }
     }
 
