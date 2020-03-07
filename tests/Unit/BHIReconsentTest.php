@@ -45,7 +45,7 @@ class BHIReconsentTest extends TestCase
         );
 
         $this->assertTrue($bhiPatient->isLegacyBhiEligible());
-        $this->assertTrue($nurse->shouldShowBhiFlagFor($bhiPatient));
+        $this->assertTrue($nurse->fresh()->shouldShowBhiFlagFor($bhiPatient->fresh()));
 
         //store not now response as a nurse
         $response = $this->actingAs($nurse)->call('POST', route('legacy-bhi.store', [$bhiPatient->program_id, $bhiPatient->id]), [
