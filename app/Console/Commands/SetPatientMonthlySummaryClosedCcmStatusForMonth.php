@@ -17,7 +17,7 @@ class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
      *
      * @var string
      */
-    protected $name = 'pms:set-closed-status';
+    protected $name = 'pms:setClosedMonthStatus';
     
     /**
      * The console command description.
@@ -63,6 +63,7 @@ class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
                                                  if ( ! $this->isDryRun()) {
                                                      $summary->closed_ccm_status = $actualStatus;
                                                      $summary->save();
+                                                     $this->changedCount++;
                                                  }
                                              }
                                          }
@@ -72,7 +73,7 @@ class SetPatientMonthlySummaryClosedCcmStatusForMonth extends Command
         $this->info("{$this->changedCount} patient summaries changed.");
     }
     
-    public function arguments()
+    protected function getArguments()
     {
         return [
             [
