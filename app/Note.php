@@ -179,6 +179,10 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         if ($cpmSettings->email_note_was_forwarded) {
             $channelsForUsers[] = 'mail';
         }
+    
+        if ($force && empty($channelsForUsers)) {
+            $channelsForUsers[] = 'mail';
+        }
 
         // Notify Users
         $recipients->unique()
