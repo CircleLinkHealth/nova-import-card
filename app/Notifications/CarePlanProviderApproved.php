@@ -20,10 +20,14 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
     use Queueable;
     public $attachment;
 
-    public $carePlan;
-    public $channels = ['database'];
-    public $pathToPdf;
-
+    public  $carePlan;
+    public  $channels = ['database'];
+    public  $pathToPdf;
+    /**
+     * @var array
+     */
+    private $faxOptions = [];
+    
     /**
      * Create a new notification instance.
      *
@@ -200,4 +204,25 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
     {
         return $this->channels;
     }
+    
+    /**
+     * Add any specific options for eFax API here
+     *
+     * @return array
+     */
+    public function getFaxOptions(): array {
+        return $this->faxOptions;
+    }
+    
+    /**
+     * @param array $faxOptions
+     *
+     * @return CarePlanProviderApproved
+     */
+    public function setFaxOptions(array $faxOptions): CarePlanProviderApproved
+    {
+        $this->faxOptions = $faxOptions;
+        
+        return $this;
+}
 }
