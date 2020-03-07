@@ -85,7 +85,7 @@ class NursesPerformanceReportService
                     );
 
                     foreach ($nurses as $nurse) {
-                        $data[] = $this->getDataForNurse($nurse, $date, $aggregatedTime->totalSystemTime($nurse->id));
+                        $data[] = $this->getDataForNurse($nurse, $date->copy(), $aggregatedTime->totalSystemTime($nurse->id));
                     }
                 }
             );

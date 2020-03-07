@@ -45,8 +45,8 @@ trait NursePerformanceCalculations
 
     public function getAvgCompletionTime(User $nurse, Carbon $date, $patientsForMonth)
     {
-        $start = $date->startOfMonth()->toDateString();
-        $end   = $date->endOfMonth()->toDateString();
+        $start = $date->copy()->startOfMonth()->toDateString();
+        $end   = $date->copy()->endOfMonth()->toDateString();
 
         $totalCompletedPatientsForMonth = $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
 
@@ -200,8 +200,12 @@ trait NursePerformanceCalculations
 
         return $committedDays;
     }
-
+    
     /**
+     * @param Collection $nurseWindows
+     * @param Collection $upcomingHolidays
+     * @param Carbon $date
+     *
      * @return int
      */
     public function getNumberOfDaysCommittedRestOfMonth(
@@ -232,10 +236,13 @@ trait NursePerformanceCalculations
 
         return $noOfDays;
     }
-
+    
     /**
      * = (average hours worked per committed day during last 10 sessions that care coach committed to) * (number of
      * workdays that RN committed to left in month).
+     *
+     * @param User $nurse
+     * @param Carbon $date
      *
      * @return float|null
      */
@@ -409,7 +416,7 @@ AND patient_info.ccm_status = 'enrolled'"
                     ->where('patient_id', $patient->patient_id)
                     ->where('ccm_time', '>=', OpsDashboardService::TWENTY_MINUTES) // should i use > or >=?
 //                    ->where('no_of_successful_calls', '>=', 1)
-                    ->where('month_year', $date->startOfMonth())
+                    ->where('month_year', $date->copy()->startOfMonth())
                     ->first();
 
                 if ( ! empty($patientMonthlySum)) {
