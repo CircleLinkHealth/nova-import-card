@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7031b487b70d6868fb03c2d7e459e343",
+    "content-hash": "54e6dd45175b9deec2e1b7629b172b3d",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.28",
+            "version": "3.133.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5ef2118011e39504484d70ed738eb8ede7f69287"
+                "reference": "330a696c1f1de0267921f732602e55fb3ddfd550"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5ef2118011e39504484d70ed738eb8ede7f69287",
-                "reference": "5ef2118011e39504484d70ed738eb8ede7f69287",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/330a696c1f1de0267921f732602e55fb3ddfd550",
+                "reference": "330a696c1f1de0267921f732602e55fb3ddfd550",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-03-03T19:11:21+00:00"
+            "time": "2020-03-06T19:16:46+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -601,97 +601,6 @@
                 "wkhtmltopdf"
             ],
             "time": "2019-02-26T20:00:55+00:00"
-        },
-        {
-            "name": "brick/math",
-            "version": "0.8.14",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/brick/math.git",
-                "reference": "6f7a46b5c3d487b277f38fbd17df57d348cace8a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/6f7a46b5c3d487b277f38fbd17df57d348cace8a",
-                "reference": "6f7a46b5c3d487b277f38fbd17df57d348cace8a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1"
-            },
-            "require-dev": {
-                "php-coveralls/php-coveralls": "2.*",
-                "phpunit/phpunit": "7.*",
-                "vimeo/psalm": "3.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Brick\\Math\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Arbitrary-precision arithmetic library",
-            "keywords": [
-                "Arbitrary-precision",
-                "BigInteger",
-                "BigRational",
-                "arithmetic",
-                "bigdecimal",
-                "bignum",
-                "brick",
-                "math"
-            ],
-            "time": "2020-02-17T13:57:43+00:00"
-        },
-        {
-            "name": "brick/money",
-            "version": "0.4.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/brick/money.git",
-                "reference": "6f3d8caf21b2c2d3242455fda4a29b56ff4de3dd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/brick/money/zipball/6f3d8caf21b2c2d3242455fda4a29b56ff4de3dd",
-                "reference": "6f3d8caf21b2c2d3242455fda4a29b56ff4de3dd",
-                "shasum": ""
-            },
-            "require": {
-                "brick/math": "~0.7.3 || ~0.8.0",
-                "php": ">=7.1"
-            },
-            "require-dev": {
-                "brick/varexporter": "~0.2.1",
-                "ext-dom": "*",
-                "ext-pdo": "*",
-                "php-coveralls/php-coveralls": "2.*",
-                "phpunit/phpunit": "7.*"
-            },
-            "suggest": {
-                "ext-intl": "Required to format Money objects"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Brick\\Money\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Money and currency library",
-            "keywords": [
-                "brick",
-                "currency",
-                "money"
-            ],
-            "time": "2020-01-23T18:11:30+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -975,11 +884,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.8.9",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "572beac4944742c45ee80c05819be9258608427f"
+                "reference": "f7093adf9cde3f4e94af2400c64086f529610202"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -1013,15 +922,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-24T21:22:16+00:00"
+            "time": "2020-03-06T18:53:36+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v1.8.6",
+            "version": "v1.8.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "a567b010fcf2c25f21e074731b1a1fcd0850e74e"
+                "reference": "d026eae254f74968abebedd43f64c0a3878c3ff9"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1046,7 +955,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-02T23:02:00+00:00"
+            "time": "2020-03-04T04:28:47+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1215,11 +1124,11 @@
         },
         {
             "name": "circlelinkhealth/revisionable-module",
-            "version": "1.4.1",
+            "version": "v1.4.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/revisionable-module.git",
-                "reference": "552eefdf8a5a9b4f6e9fe07346e78e1f1a91ab6d"
+                "reference": "43c236f93491ae4815d389979663ff7165035bcd"
             },
             "require": {
                 "laravel/framework": "~5.7",
@@ -1258,7 +1167,7 @@
                 "model",
                 "revision"
             ],
-            "time": "2020-01-18T02:53:13+00:00"
+            "time": "2020-03-06T13:18:01+00:00"
         },
         {
             "name": "circlelinkhealth/shared-models-module",
@@ -1317,11 +1226,11 @@
         },
         {
             "name": "circlelinkhealth/timetracking-module",
-            "version": "v1.1.8",
+            "version": "v1.1.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-time-tracking.git",
-                "reference": "e8df27ecf467fa58da56cb4d126f5772c566578b"
+                "reference": "bbe14732a1be01d761e895760f9f25376c8b0e84"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1346,7 +1255,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-29T08:02:00+00:00"
+            "time": "2020-01-23T16:42:13+00:00"
         },
         {
             "name": "circlelinkhealth/twofa-module",
@@ -1493,22 +1402,22 @@
         },
         {
             "name": "consoletvs/charts",
-            "version": "6.5.3",
+            "version": "6.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ConsoleTVs/Charts.git",
-                "reference": "a4a8a71c438a00b95ea74a080ce5bf8916c60918"
+                "reference": "524257b5d525666385bd2e91b06e376994a7b683"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ConsoleTVs/Charts/zipball/a4a8a71c438a00b95ea74a080ce5bf8916c60918",
-                "reference": "a4a8a71c438a00b95ea74a080ce5bf8916c60918",
+                "url": "https://api.github.com/repos/ConsoleTVs/Charts/zipball/524257b5d525666385bd2e91b06e376994a7b683",
+                "reference": "524257b5d525666385bd2e91b06e376994a7b683",
                 "shasum": ""
             },
             "require": {
                 "balping/json-raw-encoder": "^1.0",
-                "illuminate/console": "^5.0|^6.0",
-                "illuminate/support": "^5.0|^6.0",
+                "illuminate/console": "^5.0|^6.0|^7.0",
+                "illuminate/support": "^5.0|^6.0|^7.0",
                 "php": ">=7.0"
             },
             "type": "library",
@@ -1535,7 +1444,7 @@
                 }
             ],
             "description": "The laravel charting package",
-            "time": "2019-09-03T16:50:50+00:00"
+            "time": "2020-03-03T23:16:14+00:00"
         },
         {
             "name": "daltcore/lara-pdf-merger",
@@ -3427,25 +3336,25 @@
         },
         {
             "name": "jenssegers/model",
-            "version": "v1.2.2",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jenssegers/model.git",
-                "reference": "44fb64d4dae0daee89eb62a4fcc40ef6cf7da370"
+                "reference": "3a70a5b155a690d0dc3a063e1878d4fd7b0b5b6d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jenssegers/model/zipball/44fb64d4dae0daee89eb62a4fcc40ef6cf7da370",
-                "reference": "44fb64d4dae0daee89eb62a4fcc40ef6cf7da370",
+                "url": "https://api.github.com/repos/jenssegers/model/zipball/3a70a5b155a690d0dc3a063e1878d4fd7b0b5b6d",
+                "reference": "3a70a5b155a690d0dc3a063e1878d4fd7b0b5b6d",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "^5.0|^6.0",
-                "illuminate/support": "^4.0|^5.0|^6.0"
+                "illuminate/contracts": "^5.0|^6.0|^7.0",
+                "illuminate/support": "^4.0|^5.0|^6.0|^7.0"
             },
             "require-dev": {
                 "php-coveralls/php-coveralls": "*",
-                "phpunit/phpunit": "^4.0|^5.0"
+                "phpunit/phpunit": "*"
             },
             "type": "library",
             "autoload": {
@@ -3470,7 +3379,7 @@
                 "laravel",
                 "model"
             ],
-            "time": "2019-10-04T10:46:28+00:00"
+            "time": "2020-03-05T17:17:42+00:00"
         },
         {
             "name": "jeremykenedy/slack",
@@ -3824,47 +3733,6 @@
                 "wkhtmltopdf"
             ],
             "time": "2020-01-20T08:30:30+00:00"
-        },
-        {
-            "name": "kreitje/nova-horizon-stats",
-            "version": "v0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/kreitje/nova-horizon-stats.git",
-                "reference": "22cc6ace3e4c1e111edb9dd5b7b819d6e2d9776c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/kreitje/nova-horizon-stats/zipball/22cc6ace3e4c1e111edb9dd5b7b819d6e2d9776c",
-                "reference": "22cc6ace3e4c1e111edb9dd5b7b819d6e2d9776c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Kreitje\\NovaHorizonStats\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Kreitje\\NovaHorizonStats\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A Laravel Nova card.",
-            "keywords": [
-                "laravel",
-                "nova"
-            ],
-            "time": "2018-08-25T13:27:43+00:00"
         },
         {
             "name": "kylekatarnls/update-helper",
@@ -4289,31 +4157,30 @@
         },
         {
             "name": "laravel/nova",
-            "version": "v2.12.0",
+            "version": "v2.0.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "46e5ebbb36e56de0a0b4d87b9db63b1083da3365"
+                "reference": "17cb7df77a2d25d5caa78ddefb12192742738ff0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-46e5ebbb36e56de0a0b4d87b9db63b1083da3365-zip-8fcd64.zip",
-                "reference": "46e5ebbb36e56de0a0b4d87b9db63b1083da3365",
-                "shasum": "ce6ec1192f55ccbc9ed02f880cd10c959b608aa2"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-17cb7df77a2d25d5caa78ddefb12192742738ff0-zip-fb1e0f.zip",
+                "reference": "17cb7df77a2d25d5caa78ddefb12192742738ff0",
+                "shasum": "22112bb27f3fbfd1fce277dd4812606e9579793a"
             },
             "require": {
-                "brick/money": "^0.4.2",
                 "cakephp/chronos": "^1.0",
                 "doctrine/dbal": "^2.9",
-                "illuminate/support": "^5.7.15 | 5.8.* | ^6.0",
+                "illuminate/support": "^5.7.15 | 5.8.*",
                 "moontoast/math": "^1.1",
                 "php": ">=7.1.0",
-                "spatie/once": "^1.1 | ^2.0",
-                "symfony/finder": "^4.0 | ^5.0",
-                "symfony/intl": "^4.0 | ^5.0"
+                "spatie/once": "^1.1",
+                "symfony/finder": "^4.0"
             },
             "require-dev": {
                 "mockery/mockery": "^1.0",
+                "orchestra/database": "3.7.* | 3.8.*",
                 "orchestra/testbench": "3.7.* | 3.8.*",
                 "phpunit/phpunit": "^7.0 | ^8.0",
                 "predis/predis": "^1.1"
@@ -4321,7 +4188,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.x-dev"
+                    "dev-master": "2.0-dev"
                 },
                 "laravel": {
                     "providers": [
@@ -4356,7 +4223,7 @@
                 "admin",
                 "laravel"
             ],
-            "time": "2020-03-03T13:27:49+00:00"
+            "time": "2019-06-25T20:54:20+00:00"
         },
         {
             "name": "laravel/passport",
@@ -5884,16 +5751,16 @@
         },
         {
             "name": "nao-pon/flysystem-google-drive",
-            "version": "1.1.11",
+            "version": "1.1.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nao-pon/flysystem-google-drive.git",
-                "reference": "b99f4f8c1a344937984082a00f5bb33075c8410d"
+                "reference": "f55cd5edc52f767bb612c615189e2b52e459721d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nao-pon/flysystem-google-drive/zipball/b99f4f8c1a344937984082a00f5bb33075c8410d",
-                "reference": "b99f4f8c1a344937984082a00f5bb33075c8410d",
+                "url": "https://api.github.com/repos/nao-pon/flysystem-google-drive/zipball/f55cd5edc52f767bb612c615189e2b52e459721d",
+                "reference": "f55cd5edc52f767bb612c615189e2b52e459721d",
                 "shasum": ""
             },
             "require": {
@@ -5929,7 +5796,7 @@
                 }
             ],
             "description": "Flysystem adapter for Google Drive",
-            "time": "2019-05-03T07:49:07+00:00"
+            "time": "2020-03-05T02:25:41+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -8073,16 +7940,16 @@
         },
         {
             "name": "sentry/sentry",
-            "version": "2.3.1",
+            "version": "2.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-php.git",
-                "reference": "6d736f8cefa989f6171e30e1d1bfa214f7f5ab58"
+                "reference": "b3e71feb32f1787b66a3b4fdb8686972e9c7ba94"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/6d736f8cefa989f6171e30e1d1bfa214f7f5ab58",
-                "reference": "6d736f8cefa989f6171e30e1d1bfa214f7f5ab58",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/b3e71feb32f1787b66a3b4fdb8686972e9c7ba94",
+                "reference": "b3e71feb32f1787b66a3b4fdb8686972e9c7ba94",
                 "shasum": ""
             },
             "require": {
@@ -8154,7 +8021,7 @@
                 "logging",
                 "sentry"
             ],
-            "time": "2020-01-23T09:40:22+00:00"
+            "time": "2020-03-06T09:24:53+00:00"
         },
         {
             "name": "sentry/sentry-laravel",
@@ -8662,24 +8529,24 @@
         },
         {
             "name": "spatie/once",
-            "version": "2.2.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/once.git",
-                "reference": "6d4a379546684043c225b9a96d8ced7b8a84b889"
+                "reference": "26b52e4571882c526d0bc017f354d997d263a98e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/once/zipball/6d4a379546684043c225b9a96d8ced7b8a84b889",
-                "reference": "6d4a379546684043c225b9a96d8ced7b8a84b889",
+                "url": "https://api.github.com/repos/spatie/once/zipball/26b52e4571882c526d0bc017f354d997d263a98e",
+                "reference": "26b52e4571882c526d0bc017f354d997d263a98e",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2"
+                "php": "^7.0"
             },
             "require-dev": {
-                "larapack/dd": "^1.1",
-                "phpunit/phpunit": "^8.0"
+                "illuminate/support": "~5.3.0",
+                "phpunit/phpunit": "5.*"
             },
             "type": "library",
             "autoload": {
@@ -8711,7 +8578,7 @@
                 "once",
                 "spatie"
             ],
-            "time": "2020-02-18T15:10:38+00:00"
+            "time": "2017-08-24T21:16:25+00:00"
         },
         {
             "name": "spatie/pdf-to-image",
@@ -9482,81 +9349,6 @@
             "time": "2020-02-29T10:31:38+00:00"
         },
         {
-            "name": "symfony/intl",
-            "version": "v5.0.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/intl.git",
-                "reference": "2d1fb70e6e1c455a123218bebf6287d025c5bac5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/intl/zipball/2d1fb70e6e1c455a123218bebf6287d025c5bac5",
-                "reference": "2d1fb70e6e1c455a123218bebf6287d025c5bac5",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2.5",
-                "symfony/polyfill-intl-icu": "~1.0"
-            },
-            "require-dev": {
-                "symfony/filesystem": "^4.4|^5.0"
-            },
-            "suggest": {
-                "ext-intl": "to use the component with locales other than \"en\""
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Intl\\": ""
-                },
-                "classmap": [
-                    "Resources/stubs"
-                ],
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bernhard Schussek",
-                    "email": "bschussek@gmail.com"
-                },
-                {
-                    "name": "Eriksen Costa",
-                    "email": "eriksen.costa@infranology.com.br"
-                },
-                {
-                    "name": "Igor Wiedler",
-                    "email": "igor@wiedler.ch"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "A PHP replacement layer for the C intl extension that includes additional data from the ICU library.",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "i18n",
-                "icu",
-                "internationalization",
-                "intl",
-                "l10n",
-                "localization"
-            ],
-            "time": "2020-02-04T09:41:09+00:00"
-        },
-        {
             "name": "symfony/mime",
             "version": "v5.0.5",
             "source": {
@@ -9783,64 +9575,6 @@
             "keywords": [
                 "compatibility",
                 "iconv",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "time": "2020-01-13T11:15:53+00:00"
-        },
-        {
-            "name": "symfony/polyfill-intl-icu",
-            "version": "v1.14.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-intl-icu.git",
-                "reference": "727b3bb5bfa7ca9eeb86416784cf1c08a6289b86"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-icu/zipball/727b3bb5bfa7ca9eeb86416784cf1c08a6289b86",
-                "reference": "727b3bb5bfa7ca9eeb86416784cf1c08a6289b86",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3",
-                "symfony/intl": "~2.3|~3.0|~4.0|~5.0"
-            },
-            "suggest": {
-                "ext-intl": "For best performance"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.14-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "bootstrap.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill for intl's ICU-related data and classes",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "icu",
-                "intl",
                 "polyfill",
                 "portable",
                 "shim"
@@ -10786,59 +10520,6 @@
                 "twilio"
             ],
             "time": "2017-03-13T22:00:13+00:00"
-        },
-        {
-            "name": "vink/nova-cache-card",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dannyvink/nova-cache-card.git",
-                "reference": "dd2a5225b5e698958c7e2d7e0753c398c91116a0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dannyvink/nova-cache-card/zipball/dd2a5225b5e698958c7e2d7e0753c398c91116a0",
-                "reference": "dd2a5225b5e698958c7e2d7e0753c398c91116a0",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/nova": "*",
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Vink\\NovaCacheCard\\CardServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Vink\\NovaCacheCard\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Danny Vink",
-                    "email": "danny@dannyvink.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Manage your application's cache from a handy Laravel Nova dashboard card.",
-            "homepage": "https://github.com/dannyvink/nova-cache-card",
-            "keywords": [
-                "cache",
-                "file",
-                "laravel",
-                "nova",
-                "redis"
-            ],
-            "time": "2019-02-16T21:11:08+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -11971,36 +11652,35 @@
         },
         {
             "name": "facebook/webdriver",
-            "version": "1.8.1",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/php-webdriver/php-webdriver.git",
-                "reference": "262ea0d209c292e0330be1041424887bbbffef04"
+                "url": "https://github.com/php-webdriver/php-webdriver-archive.git",
+                "reference": "e43de70f3c7166169d0f14a374505392734160e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-webdriver/php-webdriver/zipball/262ea0d209c292e0330be1041424887bbbffef04",
-                "reference": "262ea0d209c292e0330be1041424887bbbffef04",
+                "url": "https://api.github.com/repos/php-webdriver/php-webdriver-archive/zipball/e43de70f3c7166169d0f14a374505392734160e5",
+                "reference": "e43de70f3c7166169d0f14a374505392734160e5",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "ext-json": "*",
+                "ext-mbstring": "*",
                 "ext-zip": "*",
                 "php": "^5.6 || ~7.0",
-                "symfony/polyfill-mbstring": "^1.12",
-                "symfony/process": "^2.8 || ^3.1 || ^4.0 || ^5.0"
+                "symfony/process": "^2.8 || ^3.1 || ^4.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.0",
-                "jakub-onderka/php-parallel-lint": "^1.0",
+                "jakub-onderka/php-parallel-lint": "^0.9.2",
                 "php-coveralls/php-coveralls": "^2.0",
                 "php-mock/php-mock-phpunit": "^1.1",
                 "phpunit/phpunit": "^5.7",
                 "sebastian/environment": "^1.3.4 || ^2.0 || ^3.0",
-                "sminnee/phpunit-mock-objects": "^3.4",
-                "squizlabs/php_codesniffer": "^3.5",
-                "symfony/var-dumper": "^3.3 || ^4.0 || ^5.0"
+                "squizlabs/php_codesniffer": "^2.6",
+                "symfony/var-dumper": "^3.3 || ^4.0"
             },
             "suggest": {
                 "ext-SimpleXML": "For Firefox profile creation"
@@ -12008,32 +11688,28 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8.x-dev"
+                    "dev-community": "1.5-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
                     "Facebook\\WebDriver\\": "lib/"
-                },
-                "files": [
-                    "lib/Exception/TimeoutException.php"
-                ]
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "Apache-2.0"
             ],
-            "description": "A PHP client for Selenium WebDriver. Previously facebook/webdriver.",
-            "homepage": "https://github.com/php-webdriver/php-webdriver",
+            "description": "A PHP client for Selenium WebDriver",
+            "homepage": "https://github.com/facebook/php-webdriver",
             "keywords": [
-                "Chromedriver",
-                "geckodriver",
+                "facebook",
                 "php",
                 "selenium",
                 "webdriver"
             ],
             "abandoned": "php-webdriver/webdriver",
-            "time": "2020-02-17T08:14:38+00:00"
+            "time": "2019-06-13T08:02:18+00:00"
         },
         {
             "name": "filp/whoops",
@@ -12788,21 +12464,21 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/orangehill/iseed.git",
-                "reference": "fe8fbf51ab57bcc28282c6b1109e610c4a44fad9"
+                "reference": "454d4aa0eacedf02d7bcbb2633e363170d3db49b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orangehill/iseed/zipball/fe8fbf51ab57bcc28282c6b1109e610c4a44fad9",
-                "reference": "fe8fbf51ab57bcc28282c6b1109e610c4a44fad9",
+                "url": "https://api.github.com/repos/orangehill/iseed/zipball/454d4aa0eacedf02d7bcbb2633e363170d3db49b",
+                "reference": "454d4aa0eacedf02d7bcbb2633e363170d3db49b",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0",
+                "illuminate/support": "~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0",
                 "php": "^7.2"
             },
             "require-dev": {
-                "illuminate/filesystem": "~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0",
-                "laravel/framework": "~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0",
+                "illuminate/filesystem": "~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0",
+                "laravel/framework": "~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0",
                 "mockery/mockery": "^1.0.0",
                 "phpunit/phpunit": "^8.0"
             },
@@ -12839,7 +12515,7 @@
                 "laravel",
                 "seed"
             ],
-            "time": "2019-09-09T13:18:41+00:00"
+            "time": "2020-03-06T08:28:39+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -13147,16 +12823,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "v1.10.2",
+            "version": "v1.10.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "b4400efc9d206e83138e2bb97ed7f5b14b831cd9"
+                "reference": "451c3cd1418cf640de218914901e51b064abb093"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/b4400efc9d206e83138e2bb97ed7f5b14b831cd9",
-                "reference": "b4400efc9d206e83138e2bb97ed7f5b14b831cd9",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/451c3cd1418cf640de218914901e51b064abb093",
+                "reference": "451c3cd1418cf640de218914901e51b064abb093",
                 "shasum": ""
             },
             "require": {
@@ -13206,7 +12882,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2020-01-20T15:57:02+00:00"
+            "time": "2020-03-05T15:02:03+00:00"
         },
         {
             "name": "phpstan/phpstan",
