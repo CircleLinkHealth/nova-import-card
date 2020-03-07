@@ -268,9 +268,11 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 
         return $companyHolidays->merge($nurseHolidays)->unique();
     }
-
+    
     /**
      * Get company holidays from a date.
+     *
+     * @param Carbon $date
      *
      * @return Collection|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
@@ -345,11 +347,14 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         return $this->hasMany(NurseInvoice::class, 'nurse_info_id');
     }
-
+    
     /**
      * Returns true or false if the date passed is a holiday for this nurse.
      *
+     * @param Carbon $date
      * @param CompanyHoliday[]|null $companyHolidays
+     *
+     * @return bool
      */
     public function isOnHoliday(Carbon $date, $companyHolidays = null): bool
     {
