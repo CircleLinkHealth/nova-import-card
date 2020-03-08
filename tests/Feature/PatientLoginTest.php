@@ -55,9 +55,8 @@ class PatientLoginTest extends CustomerTestCase
     {
         Notification::fake();
 
-        //create care center that can QA approve careplans
-        $careCoach = $this->careCoach();
-        auth()->login($careCoach);
+        //Nurse QA approves patient Care pLAN
+        auth()->login($this->nurse);
 
         $carePlan = $this->patient->carePlan;
 
@@ -70,6 +69,8 @@ class PatientLoginTest extends CustomerTestCase
             'confirm_diabetes_conditions' => 1,
         ])->assertSessionHasNoErrors();
 
+        auth()->logout();
+
         //assert careplan has been QA approved
         $this->assertEquals($carePlan->fresh()->status, CarePlan::QA_APPROVED);
 
@@ -77,9 +78,91 @@ class PatientLoginTest extends CustomerTestCase
             $this->patient,
             NotifyPatientCarePlanApproved::class,
             function ($notification, $channels){
-                return $this->call('GET', $notification->resetUrl())
+                $this->call('GET', $notification->resetUrl())
                             ->assertOk()
-                    ->assertSee($this->patient->getPrimaryPracticeName());
+                    ->assertSeeText($this->patient->getPrimaryPracticeName());
+
+                $this->call('GET', url('/'))
+                    ->assertOk()
+                    ->assertSeeText($this->patient->getPrimaryPracticeName());
+
+                $mailData = $notification->toMail($this->patient)->toArray();
+                $this->assertEquals("Your Care Plan has been sent to your doctor for approval", $mailData['subject']);
+
+            }
+        );
+
+
+        //Nurse QA approves patient Care pLAN
+        auth()->login($this->nurse);
+
+        $carePlan = $this->patient->carePlan;
+
+        $this->assertEquals(CarePlan::DRAFT, $carePlan->status);
+
+        $this->call('POST', route('patient.careplan.approve', [
+            'patientId' => $this->patient->id,
+        ]), [
+            //in case patient has both types of diabetes
+            'confirm_diabetes_conditions' => 1,
+        ])->assertSessionHasNoErrors();
+
+        auth()->logout();
+
+        //assert careplan has been QA approved
+        $this->assertEquals($carePlan->fresh()->status, CarePlan::QA_APPROVED);
+
+        Notification::assertSentTo(
+            $this->patient,
+            NotifyPatientCarePlanApproved::class,
+            function ($notification, $channels){
+                $this->call('GET', $notification->resetUrl())
+                     ->assertOk()
+                     ->assertSee($this->patient->getPrimaryPracticeName());
+
+                $this->call('GET', route('home', [
+                    'practice_id' => $this->patient->program_id,
+                ]))
+                     ->assertOk()
+                     ->assertSee($this->patient->getPrimaryPracticeName());
+
+                $mailData = $notification->toMail($this->patient)->toArray();
+                $this->assertEquals("Your Care Plan has been sent to your doctor for approval", $mailData['subject']);
+
+            }
+        );
+
+
+        //Nurse QA approves patient Care pLAN
+        auth()->login($this->provider);
+
+
+        $this->call('POST', route('patient.careplan.approve', [
+            'patientId' => $this->patient->id,
+        ]))->assertSessionHasNoErrors();
+
+        auth()->logout();
+
+        //assert careplan has been QA approved
+        $this->assertEquals($carePlan->fresh()->status, CarePlan::PROVIDER_APPROVED);
+
+        Notification::assertSentTo(
+            $this->patient,
+            NotifyPatientCarePlanApproved::class,
+            function ($notification, $channels){
+                $this->call('GET', $notification->resetUrl())
+                     ->assertOk()
+                     ->assertSeeText($this->patient->getPrimaryPracticeName());
+
+                $this->call('GET', route('home', [
+                    'practice_id' => $this->patient->program_id,
+                ]))
+                     ->assertOk()
+                     ->assertSeeText($this->patient->getPrimaryPracticeName());
+
+                $mailData = $notification->toMail($this->patient)->toArray();
+                $this->assertEquals('Your CarePlan has just been approved', $mailData['subject']);
+
             }
         );
 
