@@ -18,7 +18,7 @@
                                v-model="attestedProblems">
                         <label :for="problem.id"><span> </span>{{problem.name}}</label><span v-if="problem.code">&nbsp;({{problem.code}})</span>
                     </div>
-                    <div class="col-sm-12 add-condition">
+                    <div v-if="! isBhiModal" class="col-sm-12 add-condition">
                         <button v-on:click="toggleAddCondition()" type="button" class="btn btn-info">
                             {{addConditionLabel}}
                         </button>
@@ -77,11 +77,12 @@
                 this.hideModal();
             })
 
-            Event.$on('modal-attest-call-conditions:show', (patient) => {
+            Event.$on('modal-attest-call-conditions:show', (patient, isBhiModal = false) => {
                 this.$refs['attest-call-conditions-modal'].visible = true;
                 this.patient_id = String(patient.id)
-                this.attestedProblems = (patient.attested_ccm_problems);
+                this.attestedProblems = (patient.bhi_attested_problems);
                 this.problems = patient.problems
+                this.isBhiModal = isBhiModal
             })
         },
         data() {
@@ -90,7 +91,8 @@
                 problems: [],
                 attestedProblems: [],
                 addCondition: false,
-                error: null
+                error: null,
+                isBhiModal: false,
             }
         },
         computed: {

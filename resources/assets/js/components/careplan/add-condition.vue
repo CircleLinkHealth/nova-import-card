@@ -55,7 +55,8 @@
             'problems': Array,
             'shouldSelectIsMonitored':  Boolean,
             'cpmProblems': Array,
-            'codeIsRequired': Boolean
+            'codeIsRequired': Boolean,
+            'bhiMode': Boolean,
         },
         mixins: [
             CareplanMixin,

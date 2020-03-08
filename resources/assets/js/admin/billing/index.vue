@@ -153,8 +153,8 @@
                 </template>
                 <template slot="BHI Problem Code(s)" slot-scope="props">
                     <div class="ccm-problem-codes">
-                        <span style="overflow-wrap: break-word"
-                              >{{attestedBhiProblemCodes(props.row) || 'N/A'}}</span>
+                        <span class="blue pointer" style="overflow-wrap: break-word"
+                              @click="showAttestBhiModal(props.row)">{{attestedBhiProblemCodes(props.row) || 'N/A'}}</span>
                     </div>
                 </template>
                 <template slot="chargeable_services" slot-scope="props">
@@ -526,7 +526,12 @@
 
             showProblemsModal(patient) {
                 const self = this;
-                Event.$emit('modal-attest-call-conditions:show', patient);
+                Event.$emit('modal-attest-call-conditions:show', patient, false);
+            },
+
+            showAttestBhiModal(patient){
+                const self = this;
+                Event.$emit('modal-attest-call-conditions:show', patient, true);
             },
 
             showErrorModal(id, name) {
