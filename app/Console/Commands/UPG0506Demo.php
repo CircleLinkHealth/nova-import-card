@@ -18,19 +18,14 @@ use Illuminate\Support\Str;
 
 class UPG0506Demo extends Command
 {
+    const TEST_FIRST_NAME = 'Barbara';
+
+    const TEST_LAST_NAME = 'Zznigro';
 
     /**
-     * These are the test data found in test ccd and pdf located in storage/files-for-demos/upg0506
+     * These are the test data found in test ccd and pdf located in storage/files-for-demos/upg0506.
      */
     const TEST_MRN = '334417';
-    /**
-     *
-     */
-    const TEST_FIRST_NAME = 'Barbara';
-    /**
-     *
-     */
-    const TEST_LAST_NAME = 'Zznigro';
 
     /**
      * The console command description.

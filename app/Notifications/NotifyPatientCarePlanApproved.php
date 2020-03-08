@@ -121,13 +121,13 @@ class NotifyPatientCarePlanApproved extends Notification
     {
         $this->patient = $this->carePlan->patient;
 
-        if ( ! $this->patient) {
+        if (! $this->patient){
             throw new \Exception("Care Plan with id {$this->carePlan->id}, does not belong to patient user.");
         }
 
         $this->practice = $this->patient->primaryPractice;
 
-        if ( ! $this->practice) {
+        if (! $this->practice){
             throw new \Exception("Patient with id {$this->patient}, does not belong to a practice.");
         }
 
