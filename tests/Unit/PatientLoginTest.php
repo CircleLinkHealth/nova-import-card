@@ -148,11 +148,15 @@ class PatientLoginTest extends CustomerTestCase
 
         auth()->login($this->patient);
 
-        $this->call('GET', route('home'))
-             ->assertRedirect(route('patient-user.careplan'))
-             ->assertSeeText('This Care Plan is pending Dr. approval');
+        $response = $this->call('GET', route('home'))
+                         ->assertRedirect(route('patient-user.careplan'))
+                         ->assertSeeText('This Care Plan is pending Dr. approval')
+                         ->assertSeeText($this->patient->first_name)
+                         ->assertSeeText($this->patient->last_name);
 
-
+        foreach ($this->patient->ccdProblems as $problem) {
+            $response->assertSee($problem->name);
+        }
     }
 
     /**
