@@ -68,7 +68,7 @@ class Constants
     const TRIX_FIELDS                = ['patient-email-body'];
     const VIEWING_PATIENT            = 'viewing-patient';
 
-    const THIRTY_DAYS_IN_MINUTES = '43200';
+    const THIRTY_DAYS_IN_MINUTES = 43200;
 
     public static function athenaEhrId()
     {
