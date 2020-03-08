@@ -112,8 +112,7 @@ return [
             'provider' => 'users',
             'email'    => 'emails.password',
             'table'    => 'lv_password_resets',
-            //30 days: 60 * 24 * 30
-            'expire' => 1,
+            'expire' => \App\Constants::THIRTY_DAYS_IN_MINUTES,
         ],
     ],
 
