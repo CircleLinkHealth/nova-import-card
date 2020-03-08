@@ -47,7 +47,9 @@ class ForgotPasswordController extends Controller
         }
         $this->checkPracticeNameCookie($request);
 
-        return view('auth.password');
+        return view('auth.password')->with([
+            'email' => $request->input('email'),
+        ]);
     }
 
     /**

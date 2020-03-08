@@ -193,8 +193,14 @@ $style = [
                                                                     style="color: #376a9c">{{$emailData['notifiableMail']}}
                                                                 .
                                                             </a>
-                                                            If you don't want to receive these emails from CircleLink
-                                                            <br>Health
+                                                            If you don't want to receive these emails from
+                                                            {{--For Patients--}}
+                                                            @if(isset($practiceName) && ! empty($practiceName))
+                                                                {{$practiceName}}<br>
+                                                            @else
+                                                                CircleLink
+                                                                <br>Health
+                                                            @endif
                                                             in the future, please <a href="{{$url}}"
                                                                                      style="color: #376a9c">unsubscribe.</a>
                                                         </p>
@@ -235,10 +241,15 @@ $style = [
                             <tr>
                                 <td style="{{ $fontFamily }} {{ $style['email-footer_cell'] }}">
                                     <p style="{{ $style['paragraph-sub'] }}">
-                                        &copy; {{ date('Y') }}
-                                        <a style="{{ $style['anchor'] }}" href="{{ url('/') }}" target="_blank">CircleLink
-                                            Health</a>.
-                                        All rights reserved.
+                                        {{--For Patients--}}
+                                        @if(isset($practiceName) && ! empty($practiceName))
+                                            <span style="{{ $style['anchor'] }}">{{$practiceName}}</span>
+                                            @else
+                                            &copy; {{ date('Y') }}
+                                            <a style="{{ $style['anchor'] }}" href="{{ url('/') }}" target="_blank">CircleLink
+                                                Health</a>.
+                                            All rights reserved.
+                                        @endif
                                     </p>
                                 </td>
                             </tr>
