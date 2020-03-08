@@ -126,6 +126,8 @@ class NotifyPatientCarePlanApproved extends Notification
             'body'    => $this->getBody(),
             'subject' => $this->getSubject(),
 
+            'reset_url' => $this->resetUrl(),
+
             'careplan_id' => $this->carePlan->id,
         ];
     }
@@ -141,8 +143,6 @@ class NotifyPatientCarePlanApproved extends Notification
      */
     public function toMail($notifiable)
     {
-        $this->notifiable = $notifiable;
-
         return (new MailMessage())
             ->from('noreply@circlelinkhealth.com', $this->notifiable->getPrimaryPracticeName())
             ->subject($this->getSubject())
@@ -165,6 +165,8 @@ class NotifyPatientCarePlanApproved extends Notification
      */
     public function via($notifiable)
     {
+        $this->notifiable = $notifiable;
+
         return $this->channels;
     }
 
@@ -174,7 +176,7 @@ class NotifyPatientCarePlanApproved extends Notification
      *
      * @return string
      */
-    private function resetUrl()
+    public function resetUrl()
     {
         return route('password.reset', [
             'token'       => $this->token,
