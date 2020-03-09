@@ -525,13 +525,19 @@
             },
 
             showProblemsModal(patient) {
-                const self = this;
-                Event.$emit('modal-attest-call-conditions:show', patient, false);
+                Event.$emit('modal-attest-call-conditions:show', {
+                    'patient': patient,
+                    'is_bhi': false
+                });
             },
 
             showAttestBhiModal(patient){
+                //todo: use show ProblemsModal function
                 const self = this;
-                Event.$emit('modal-attest-call-conditions:show', patient, true);
+                Event.$emit('modal-attest-call-conditions:show', {
+                    'patient': patient,
+                    'is_bhi': true
+                });
             },
 
             showErrorModal(id, name) {

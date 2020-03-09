@@ -6,27 +6,43 @@
                     Condition is already in care plan. Please add a new condition.
                 </label>
             </div>
-            <div class="col-sm-12 top-10">
-                <v-complete class="v-complete" placeholder="Enter a Condition" :required="true" v-model="newProblem.name"
+            <div v-if="isApproveBillablePage && isBhi">
+                <div class="col-sm-12 top-10">
+                    <v-select
+                            placeholder="Select a Problem"
+                            :required="true"
+                            label="name"
+                            v-model="newProblem.name"
+                            @input="resolveIcd10Code"
+                            :options="cpmProblemsForBHISelect">
+                    </v-select>
+                </div>
+            </div>
+            <div v-else>
+                <div class="col-sm-12 top-10">
+                    <v-complete
+                            class="v-complete" placeholder="Enter a Condition" :required="true"
+                            v-model="newProblem.name"
                             :value="newProblem.name" :limit="99"
                             :suggestions="cpmProblemsForAutoComplete"
                             :class="{ error: patientHasSelectedProblem }" :threshold="0.8"
                             @input="resolveIcd10Code">
-                </v-complete>
-            </div>
-            <div v-if="shouldSelectIsMonitored">
-                <div class="col-sm-6 font-14 top-20">
-                    <label><input type="radio" :value="true" v-model="newProblem.is_monitored"/> For Care
-                        Management</label>
+                    </v-complete>
                 </div>
-                <div class="col-sm-6 font-14 top-20">
-                    <label><input type="radio" :value="false" v-model="newProblem.is_monitored"/> Other
-                        Condition</label>
+                <div v-if="shouldSelectIsMonitored">
+                    <div class="col-sm-6 font-14 top-20">
+                        <label><input type="radio" :value="true" v-model="newProblem.is_monitored"/> For Care
+                            Management</label>
+                    </div>
+                    <div class="col-sm-6 font-14 top-20">
+                        <label><input type="radio" :value="false" v-model="newProblem.is_monitored"/> Other
+                            Condition</label>
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-12 top-20" v-if="newProblem.is_monitored">
-                <input type="text" :required="codeIsRequired" class="form-control" v-model="newProblem.icd10"
-                       placeholder="ICD10 Code"/>
+                <div class="col-sm-12 top-20" v-if="newProblem.is_monitored">
+                    <input type="text" :required="codeIsRequired" class="form-control" v-model="newProblem.icd10"
+                           placeholder="ICD10 Code"/>
+                </div>
             </div>
             <div class="col-sm-12 text-right top-20">
                 <loader v-if="loaders.addProblem"></loader>
@@ -53,10 +69,11 @@
         props: {
             'patient-id': String,
             'problems': Array,
-            'shouldSelectIsMonitored':  Boolean,
+            'shouldSelectIsMonitored': Boolean,
             'cpmProblems': Array,
             'codeIsRequired': Boolean,
-            'bhiMode': Boolean,
+            'isApproveBillablePage': Boolean,
+            'isBhi': Boolean
         },
         mixins: [
             CareplanMixin,
@@ -80,12 +97,26 @@
                     removeCode: null,
                     editCode: null
                 },
-                patient_id: null
+                patient_id: null,
+                is_approve_billable_page: false,
+                is_bhi: false,
             }
         },
         computed: {
+            cpmProblemsForBHISelect() {
+                return this.cpmProblemsForAutoComplete;
+            },
             cpmProblemsForAutoComplete() {
-                return this.cpmProbs.filter(p => p && p.name).reduce((pA, pB) => {
+                let probs = this.cpmProbs
+
+                let self = self ? self : this;
+                if (self.isApproveBillablePage) {
+                    probs = probs.filter(function (p) {
+                        return self.isBhi ? p.is_behavioral : !p.is_behavioral;
+                    })
+                }
+
+                return probs.filter(p => p && p.name).reduce((pA, pB) => {
                     return pA.concat([{
                         name: pB.name,
                         id: pB.id,
@@ -100,7 +131,7 @@
                 }, []).distinct(p => p.name)
                     .sort((a, b) => (+b.is_snomed) - (+a.is_snomed) || b.name.localeCompare(a.name));
             },
-            pId(){
+            pId() {
                 return this.patient_id ? this.patient_id : this.patientId;
             },
             isNotesPage() {
@@ -147,8 +178,10 @@
             },
         },
         mounted() {
-            Event.$on('modal-attest-call-conditions:show', (patient) => {
-                this.patient_id = String(patient.id)
+            self = this
+
+            Event.$on('modal-attest-call-conditions:show', (data) => {
+                self.patient_id = String(data.patient.id)
             })
         }
     }
@@ -156,7 +189,7 @@
 
 <style>
     .v-complete ul {
-        max-height: 200px!important;
+        max-height: 200px !important;
         overflow: scroll;
     }
 </style>

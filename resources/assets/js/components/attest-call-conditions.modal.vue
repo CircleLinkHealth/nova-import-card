@@ -18,13 +18,15 @@
                                v-model="attestedProblems">
                         <label :for="problem.id"><span> </span>{{problem.name}}</label><span v-if="problem.code">&nbsp;({{problem.code}})</span>
                     </div>
-                    <div v-if="! isBhiModal" class="col-sm-12 add-condition">
+                    <div class="col-sm-12 add-condition">
                         <button v-on:click="toggleAddCondition()" type="button" class="btn btn-info">
                             {{addConditionLabel}}
                         </button>
                         <div v-if="addCondition" style="padding-top: 20px">
                             <add-condition :cpm-problems="cpmProblems" :patient-id="pId"
-                                           :problems="problems" :code-is-required="true"></add-condition>
+                                           :problems="problems" :code-is-required="true"
+                                           :is-approve-billable-page="!isNotesPage"
+                            :is-bhi="isBhiModal"></add-condition>
                         </div>
                     </div>
                 </div>
@@ -43,6 +45,7 @@
     import AddCondition from './careplan/add-condition';
     import CareplanMixin from './careplan/mixins/careplan.mixin';
     import {Event} from 'vue-tables-2';
+    import VueSelect from 'vue-select';
 
     export default {
         name: "attest-call-conditions-modal",
@@ -50,12 +53,15 @@
         components: {
             'add-condition': AddCondition,
             'modal': Modal,
+            'v-select': VueSelect,
         },
         props: {
             'patientId': String,
             'cpmProblems': Array,
         },
         mounted() {
+            self = this;
+
             App.$on('show-attest-call-conditions-modal', () => {
                 this.$refs['attest-call-conditions-modal'].visible = true;
             });
@@ -77,12 +83,12 @@
                 this.hideModal();
             })
 
-            Event.$on('modal-attest-call-conditions:show', (patient, isBhiModal = false) => {
+            Event.$on('modal-attest-call-conditions:show', (data) => {
                 this.$refs['attest-call-conditions-modal'].visible = true;
-                this.patient_id = String(patient.id)
-                this.attestedProblems = (patient.bhi_attested_problems);
-                this.problems = patient.problems
-                this.isBhiModal = isBhiModal
+                this.patient_id = String(data.patient.id)
+                this.attestedProblems = data.is_bhi ? data.patient.attested_bhi_problems : data.patient.attested_ccm_problems;
+                this.problems = data.patient.problems
+                this.isBhiModal = data.is_bhi
             })
         },
         data() {
@@ -113,7 +119,7 @@
             },
             title() {
 
-                return this.isNotesPage ? 'Please select all conditions addressed in this call:' : 'Edit CCM Problem Codes';
+                return this.isNotesPage ? 'Please select all conditions addressed in this call:' : (this.isBhiModal ? 'Edit BHI Problem Codes' : 'Edit CCM Problem Codes');
             },
             problemsToAttest() {
 
@@ -122,12 +128,22 @@
                 });
                 //do not show BHI problems when on Approve Billable Patients Page
                 return this.isNotesPage ? problemsToAttest : (problemsToAttest || []).filter(function (p) {
-                    return !p.is_behavioral;
+                    return self.isBhiModal ? p.is_behavioral : !p.is_behavioral;
                 });
             },
             isNotesPage() {
                 //if patient id prop has been passed in, then this is for the notes pages, else, approve billable patients page
                 return !!this.patientId
+            },
+            bhiProblemsForSelect(){
+                return cpmProblems.filter(function (p){
+                    return p.is_behavioral;
+                }).map(function (p){
+                    return {
+                        label: p.name,
+                        value: p.id,
+                    };
+                });
             }
         },
         methods: {
