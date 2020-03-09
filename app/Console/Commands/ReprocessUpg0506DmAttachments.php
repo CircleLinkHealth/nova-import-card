@@ -5,11 +5,6 @@ namespace App\Console\Commands;
 use App\DirectMailMessage;
 use App\Jobs\DecorateUPG0506CcdaWithPdfData;
 use App\Services\PhiMail\Events\DirectMailMessageReceived;
-use App\Services\PhiMail\Incoming\Handlers\Pdf;
-use App\Services\PhiMail\Incoming\Handlers\XML;
-use App\Services\PhiMail\Incoming\IncomingDMMimeHandlerInterface;
-use CircleLinkHealth\Customer\Entities\Media;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Events\CcdaImported;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 
@@ -48,19 +43,20 @@ class ReprocessUpg0506DmAttachments extends Command
     {
         $dmIds = $this->argument('dmIds');
 
-        if (empty($dmIds)){
+        if (empty($dmIds)) {
             $this->warn('Please input Direct Mail id or ids.');
+
             return;
         }
 
-        foreach (explode(',', $dmIds) as $dmId){
+        foreach (explode(',', $dmIds) as $dmId) {
 
             $dm = DirectMailMessage::findOrFail($dmId);
 
             //get CCDAs associated with DM, if they exist and they are UPG0506 re-run the job (DecorateUPG0506CcdaWithPdfData) to look for the pdf every 1 minute
             //no need to re-import ccd at this point.
-            $dm->ccdas()->get()->each(function($ccda) {
-                if (Ccda::hasUPG0506Media()->whereId($ccda->id)->exists()){
+            $dm->ccdas()->get()->each(function ($ccda) {
+                if (Ccda::hasUPG0506Media()->whereId($ccda->id)->exists()) {
                     DecorateUPG0506CcdaWithPdfData::dispatch($ccda);
                 }
             });
