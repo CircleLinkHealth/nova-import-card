@@ -106,7 +106,7 @@
 
                     @include('partials.userheader')
 
-                    {{--If today is scheduled call day then just show banner--}}
+{{--                    If today is scheduled call day then just show banner--}}
                     @if(isset($patient)
                     && auth()->check()
                     && !isset($isPdf)
@@ -432,6 +432,16 @@
                                                                 recently)
                                                             </label>
                                                         </div>
+
+                                                        <div><input type="checkbox"
+                                                                    name="success_story"
+                                                                    value="true"
+                                                                    id="success_story"/>
+                                                            <label for="success_story">
+                                                                <span> </span>Patient Success Story
+                                                            </label>
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -586,7 +596,6 @@
                     </div>
                 </div>
             </div>
-        </div>
         </div>
 
     </form>
@@ -1143,7 +1152,8 @@
                         body: fullBody,
                         logger_id: $('#logger_id').val(),
                         programId: $('#programId').val(),
-                        task_status: $('#task_status').val()
+                        task_status: $('#task_status').val(),
+                        success_story: $('#success_story').is(":checked")
                     })
                     .then((response, status) => {
                         isSavingDraft = false;
