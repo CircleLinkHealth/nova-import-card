@@ -20,7 +20,7 @@ class ReprocessUpg0506DmAttachments extends Command
      *
      * @var string
      */
-    protected $signature = 'dm:reprocess-attachments {dmIds? : Comma separated direct mail IDs.}';
+    protected $signature = 'upg0506:reprocess-attachments {dmIds? : Comma separated direct mail IDs.}';
 
     /**
      * The console command description.
