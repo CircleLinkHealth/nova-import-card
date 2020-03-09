@@ -39,7 +39,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
     {
         $durationStr = $fields->get('duration', null);
         $duration    = intval($durationStr);
-        if ( ! $duration) {
+        if ( ! $duration || $duration < 1) {
             $this->markAsFailed($models->first(), "Need to supply a valid number for duration. Minimum 1.");
 
             return;
@@ -80,7 +80,7 @@ class ModifyTimeTracker extends Action implements ShouldQueue
     public function fields()
     {
         return [
-            Number::make('Duration (seconds)', 'duration'),
+            Number::make('Enter new duration (seconds)', 'duration'),
         ];
     }
 
