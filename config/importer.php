@@ -6,6 +6,7 @@
 
 return [
     'validators' => [
+        \App\Importer\Section\Validators\NameNotNull::class,
         \App\Importer\Section\Validators\ValidStatus::class,
         \App\Importer\Section\Validators\ValidEndDate::class,
         \App\Importer\Section\Validators\ValidStartDateNoEndDate::class,

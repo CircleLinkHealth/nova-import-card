@@ -65,6 +65,12 @@ class DirectMailMessage extends Model implements HasMedia
         'body',
         //The number of attachments
         'num_attachments',
+        'direction',
+        'status',
+    ];
+    
+    protected $attributes = [
+        'subject' => 'No Subject'
     ];
 
     public function ccdas()

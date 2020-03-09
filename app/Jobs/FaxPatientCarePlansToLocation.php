@@ -15,10 +15,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 class FaxPatientCarePlansToLocation implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
+    
     protected $pdfService;
     protected $patients;
     protected $location;
+    
     /**
      * Create a new job instance.
      *
@@ -26,11 +27,11 @@ class FaxPatientCarePlansToLocation implements ShouldQueue
      */
     public function __construct($patients, Location $location)
     {
-        $this->patients = $patients;
-        $this->location = $location;
+        $this->patients   = $patients;
+        $this->location   = $location;
         $this->pdfService = app(PdfService::class);
     }
-
+    
     /**
      * Execute the job.
      *
@@ -38,8 +39,16 @@ class FaxPatientCarePlansToLocation implements ShouldQueue
      */
     public function handle()
     {
-        foreach ($this->patients as $patient){
-            $this->location->notify(new CarePlanProviderApproved($patient->carePlan, [FaxChannel::class]));
+        foreach ($this->patients as $patient) {
+            $this->location->notify(
+                (new CarePlanProviderApproved($patient->carePlan, [FaxChannel::class]))
+                    ->setFaxOptions(
+                        [
+                            'batch_collision_avoidance' => true,
+                            'batch_delay'               => 60,
+                        ]
+                    )
+            );
         }
     }
 }

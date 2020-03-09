@@ -369,7 +369,7 @@ class Calls implements AthenaApiImplementation
      * @throws \Exception
      *
      */
-    public function getDepartmentIds($practiceId, $showAllDepartments = true)
+    public function getDepartments($practiceId, $showAllDepartments = true)
     {
         $this->api()->setPracticeId($practiceId);
         
