@@ -6,15 +6,18 @@
 
 namespace App\Nova\Importers;
 
+use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\Entities\PatientData;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\OnEachRow;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Row;
 
-class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, WithHeadingRow
+class NBIPatientData implements ToCollection, WithChunkReading, WithValidation, WithHeadingRow
 {
     use Importable;
 
@@ -50,7 +53,8 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
     public function nullOrValue($value)
     {
         return empty($value) || in_array($value, $this->nullValues())
-            ? null : $value;
+            ? null
+            : $value;
     }
 
     /**
@@ -79,10 +83,47 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
         return $this->rules;
     }
 
+    public function collection(Collection $rows)
+    {
+        $dobs = collect([]);
+
+        //DB transaction will revert once an exception is thrown.
+        DB::transaction(function () use ($rows, &$dobs) {
+            foreach ($rows as $row) {
+                $row = $row->toArray();
+
+                //accept null dobs
+                if ($row['dob']){
+                    $date = $this->validateDob($row['dob']);
+
+                    if ( ! $date) {
+                        throw new \Exception("Invalid date {$row['dob']}");
+                    }
+
+                    $dobs->push(['dateString' => $date->toDateString()]);
+
+                    if ($dobs->count() === 10){
+                        //check if Carbon is parsing dates all as the same date
+                        if($dobs->where('dateString', $date->toDateString())->count() === 10){
+                            throw new \Exception('Something went wrong while parsing patient dates of birth.');
+                        }
+                        //reset collection
+                        $dobs = collect([]);
+                    }
+
+                    $row['dob'] = $date;
+                }
+
+
+                $this->persistRow($row);
+            }
+        });
+    }
+
     private function persistRow(array $row)
     {
         $args = [
-            'dob'                 => $this->nullOrValue($row['dob']),
+            'dob'                 => optional($this->nullOrValue($row['dob']))->toDateString(),
             'first_name'          => $this->nullOrValue($row['first_name']),
             'last_name'           => $this->nullOrValue($row['last_name']),
             'mrn'                 => $this->nullOrValue($row['mrn']),
@@ -99,5 +140,62 @@ class NBIPatientData implements OnEachRow, WithChunkReading, WithValidation, Wit
                 $args
             );
         }
+    }
+
+    private function validateDob($dob)
+    {
+        if (! $dob){
+            return false;
+        }
+
+        try {
+            $date = Carbon::parse($dob);
+
+            if ($date->isToday()) {
+                return false;
+            }
+
+            return $this->correctCenturyIfNeeded($date);
+
+        } catch (\InvalidArgumentException $e) {
+
+            if (str_contains($dob, '/')) {
+                $delimiter = '/';
+            } elseif (str_contains($dob, '-')) {
+                $delimiter = '-';
+            }
+            $date = explode($delimiter, $dob);
+
+            if (count($date) < 3) {
+                throw new \Exception("Invalid date $dob");
+            }
+
+            $year = $date[2];
+
+            if (2 == strlen($year)) {
+                //if date is two digits we are assuming it's from the 1900s
+                $year = (int) $year + 1900;
+            }
+
+            return Carbon::createFromDate($year, $date[0], $date[1]);
+        }
+    }
+
+
+    /**
+     * Subtracts 100 years off date if it's after 1/1/2000.
+     *
+     * @return Carbon
+     */
+    private function correctCenturyIfNeeded(Carbon &$date)
+    {
+        //If a DOB is after 2000 it's because at some point the date incorrectly assumed to be in the 2000's, when it was actually in the 1900's. For example, this date 10/05/04.
+        $cutoffDate = Carbon::createFromDate(2000, 1, 1);
+
+        if ($date->gte($cutoffDate)) {
+            $date->subYears(100);
+        }
+
+        return $date;
     }
 }
