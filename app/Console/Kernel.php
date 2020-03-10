@@ -6,12 +6,12 @@
 
 namespace App\Console;
 
-use App\Console\Commands\CreateLastMonthBillablePatientsReport;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
-use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
+use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
+use App\Console\Commands\CreateLastMonthBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
@@ -46,7 +46,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        RunScheduler::class
+        RunScheduler::class,
     ];
 
     /**
@@ -88,7 +88,7 @@ class Kernel extends ConsoleKernel
 
         //family calls will be scheduled in RescheduleMissedCalls
         //$schedule->command(SyncFamilialCalls::class)->dailyAt('00:30')->onOneServer();
-        
+
         $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyMinute()->withoutOverlapping()->onOneServer();
 
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
