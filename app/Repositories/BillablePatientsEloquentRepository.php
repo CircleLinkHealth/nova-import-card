@@ -81,6 +81,7 @@ class BillablePatientsEloquentRepository
                                                                    'ccdProblems'     => function ($query) {
                                                                        $query->with(['icd10Codes', 'cpmProblem']);
                                                                    },
+                                                                   'billingProvider.user',
                                                                    'cpmProblems',
                                                                    'patientInfo',
                                                                    'primaryPractice',
