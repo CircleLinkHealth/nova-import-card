@@ -183,7 +183,7 @@ class ItemizedBillablePatientsReport
 
     private function getBhiAttestedConditions(PatientMonthlySummary $summary, bool $shouldAttachDefaultProblems)
     {
-        if ($summary->hasServiceCode(self::BHI_SERVICE_CODE)) {
+        if (! $summary->hasServiceCode(self::BHI_SERVICE_CODE)) {
             return 'N/A';
         }
 
