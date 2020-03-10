@@ -14,7 +14,7 @@ class PatientReportData
 {
     protected $awvDate;
 
-    protected $bhiCode;
+    protected $bhiCodes;
 
     protected $bhiTime;
 
@@ -45,7 +45,7 @@ class PatientReportData
     /**
      * @return mixed
      */
-    public function getBhiCode()
+    public function getBhiCodes()
     {
         return $this->bhiCode;
     }
@@ -131,11 +131,11 @@ class PatientReportData
     }
 
     /**
-     * @param mixed $bhiCode
+     * @param mixed $bhiCodes
      */
-    public function setBhiCode($bhiCode): void
+    public function setBhiCodes($bhiCodes): void
     {
-        $this->bhiCode = $bhiCode;
+        $this->bhiCode = $bhiCodes;
     }
 
     /**
