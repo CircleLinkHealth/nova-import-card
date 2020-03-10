@@ -198,45 +198,23 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         return $this->hasMany(NurseContactWindow::class, 'nurse_info_id', 'id');
     }
 
+    /**
+     * @param Carbon $date
+     * @return bool|\Illuminate\Database\Eloquent\Model|HasMany|\Illuminate\Database\Query\Builder|object|null
+     */
     public function firstWindowAfter(Carbon $date)
     {
-        $dayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
+        $nextWindow = $this->windows()
+            ->whereNotNull('repeat_frequency')
+            ->where('date', '>=', $date)
+            ->orderBy('date')
+            ->first();
 
-        $weeklySchedule = $this->weeklySchedule();
-
-        $result = null;
-
-        foreach ($weeklySchedule as $day => $windows) {
-            if ($day > $dayOfWeek) {
-                $result = $windows[0];
-                break;
-            }
-        }
-
-        if (!$result) {
-            $result = $weeklySchedule->first()[0];
-        }
-
-        if (!$result) {
+        if (!$nextWindow) {
             return false;
         }
 
-        $result->date = $date->next(clhToCarbonDayOfWeek($result->day_of_week));
-
-        return $result;
-    }
-
-    public function weeklySchedule()
-    {
-        $schedule = [];
-
-        foreach ($this->windows->sortBy('window_time_start') as $window) {
-            $schedule[$window->day_of_week][] = $window;
-        }
-
-        ksort($schedule);
-
-        return collect($schedule);
+        return $nextWindow;
     }
 
     public function getHolidaysThisWeekAttribute()
@@ -268,7 +246,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 
         return $companyHolidays->merge($nurseHolidays)->unique();
     }
-    
+
     /**
      * Get company holidays from a date.
      *
@@ -347,7 +325,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         return $this->hasMany(NurseInvoice::class, 'nurse_info_id');
     }
-    
+
     /**
      * Returns true or false if the date passed is a holiday for this nurse.
      *
