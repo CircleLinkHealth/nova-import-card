@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d39293355b91f216862b589e82ce9927",
+    "content-hash": "73948ba274a1fcffb1ec81c258600b55",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -884,11 +884,11 @@
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "dev-CPM-2103_fix_diabetes_Tx_importing",
+            "version": "v1.9.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "528f2eb45e921daae3bd5292e9aeab8715f02bb3"
+                "reference": "fbd920a477e52cba85d3bfc30214a6aa3e8c2cbb"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -922,7 +922,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-10T05:05:57+00:00"
+            "time": "2020-03-10T05:50:46+00:00"
         },
         {
             "name": "circlelinkhealth/eligibility-module",
@@ -14650,7 +14650,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "amnuts/opcache-gui": 20,
-        "circlelinkhealth/customer-module": 20,
         "daltcore/lara-pdf-merger": 20,
         "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
