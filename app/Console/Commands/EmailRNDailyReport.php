@@ -113,6 +113,7 @@ class EmailRNDailyReport extends Command
                             continue;
                         }
 
+
                         $attendanceRate = 0 != $reportDataForNurse['committedHours']
                             ? (round(
                                 (float) (($reportDataForNurse['actualHours'] / $reportDataForNurse['committedHours']) * 100),
