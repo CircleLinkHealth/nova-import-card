@@ -26,11 +26,11 @@ trait NursePerformanceCalculations
      */
     public function estAvgCCMTimePerMonth(Carbon $date, $patientsForMonth)
     {
-        $totalAmountOfCompletedPatientsPerMonth = $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
-        $totalCCMtimeOnCompletedPatients        = 0 === $this->queryPatientMonthlySum($date, $patientsForMonth)->sum('ccm_time') ? 1
-            : $this->queryPatientMonthlySum($date, $patientsForMonth)->sum('ccm_time');
+        $totalCCMtimeOnCompletedPatients        = $this->queryPatientMonthlySum($date, $patientsForMonth)->sum('ccm_time');
+        $totalAmountOfCompletedPatientsPerMonth = 0 === $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth) ? 1
+            : $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
 
-        return round((float) (($totalAmountOfCompletedPatientsPerMonth / $totalCCMtimeOnCompletedPatients) * 100), 2);
+        return round((float) ($totalCCMtimeOnCompletedPatients / $totalAmountOfCompletedPatientsPerMonth) / 60, '2');
     }
 
     public function estHoursToCompleteCaseLoadMonth(User $nurse, Carbon $date, $patientsForMonth)
@@ -48,18 +48,18 @@ trait NursePerformanceCalculations
         $start = $date->copy()->startOfMonth()->toDateString();
         $end   = $date->copy()->endOfMonth()->toDateString();
 
-        $totalCompletedPatientsForMonth = $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
-
         $totalCPMtimeForMonth = $nurse->pageTimersAsProvider()
             ->where('start_time', '>=', $start)
             ->where('start_time', '<=', $end)
             ->sum('billable_duration');
 
-        if (0 === $totalCPMtimeForMonth) {
-            $totalCPMtimeForMonth = 1;
+        $totalCompletedPatientsForMonth = $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
+
+        if (0 === $totalCompletedPatientsForMonth) {
+            $totalCompletedPatientsForMonth = 1;
         }
 
-        return ($totalCompletedPatientsForMonth / $totalCPMtimeForMonth) * 100;
+        return round(($totalCPMtimeForMonth / 60), 2) / $totalCompletedPatientsForMonth;
     }
 
     /**
@@ -106,8 +106,8 @@ trait NursePerformanceCalculations
                 round(
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                            $this->unsuccessfulCallsMultiplier
-                        ) * $data['unsuccessful'])
+                                $this->unsuccessfulCallsMultiplier
+                            ) * $data['unsuccessful'])
                     ) / $data['actualHours'])
                 )
             )
@@ -200,12 +200,8 @@ trait NursePerformanceCalculations
 
         return $committedDays;
     }
-    
+
     /**
-     * @param Collection $nurseWindows
-     * @param Collection $upcomingHolidays
-     * @param Carbon $date
-     *
      * @return int
      */
     public function getNumberOfDaysCommittedRestOfMonth(
@@ -236,13 +232,10 @@ trait NursePerformanceCalculations
 
         return $noOfDays;
     }
-    
+
     /**
      * = (average hours worked per committed day during last 10 sessions that care coach committed to) * (number of
      * workdays that RN committed to left in month).
-     *
-     * @param User $nurse
-     * @param Carbon $date
      *
      * @return float|null
      */
