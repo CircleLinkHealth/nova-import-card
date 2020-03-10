@@ -1,7 +1,7 @@
 let sentryClient = null;
-if (process.env.SENTRY_LARAVEL_DSN) {
+if (process.env.SENTRY_DSN) {
     const Sentry = require('@sentry/node');
-    Sentry.init({ dsn: process.env.SENTRY_LARAVEL_DSN });
+    Sentry.init({ dsn: process.env.SENTRY_DSN });
     sentryClient = Sentry;
 }
 
