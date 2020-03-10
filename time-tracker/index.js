@@ -1,7 +1,7 @@
 const {EventEmitter} = require('events')
 const {validateInfo} = require('./utils.fn')
 const TimeTrackerUser = require('./time-tracker.user')
-const raygunClient = require('../logger/raygun').getRaygun();
+const errorLogger = require('../logger').getErrorLogger();
 
 function TimeTracker($emitter = new EventEmitter()) {
     const users = {}
@@ -60,11 +60,10 @@ function TimeTracker($emitter = new EventEmitter()) {
 }
 
 function reportError(error, customData, request, onDone) {
-    if (raygunClient) {
-        raygunClient.send(error, customData, onDone ? onDone : function () {
+    if (errorLogger) {
+        errorLogger.report(error, customData, onDone ? onDone : function () {
         }, request);
-    }
-    else {
+    } else {
         console.error(error.message, customData);
     }
 }
