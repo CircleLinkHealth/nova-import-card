@@ -25,7 +25,15 @@ class FaxChannel
     public function send($notifiable, FaxableNotification $notification)
     {
         if ($notifiable->fax) {
-            $fax = $this->fax->createFaxFor($notifiable->fax)->sendNotification($notifiable, $notification);
+            $fax = $this->fax->createFaxFor($notifiable->fax);
+
+            if (method_exists($notification, 'getFaxOptions')) {
+                foreach ($notification->getFaxOptions() as $option => $value) {
+                    $fax->setOption($option, $value);
+                }
+            }
+
+            $fax->sendNotification($notifiable, $notification);
         }
     }
 }

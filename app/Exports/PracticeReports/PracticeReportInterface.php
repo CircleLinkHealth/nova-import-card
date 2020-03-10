@@ -13,6 +13,8 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -89,9 +91,9 @@ abstract class PracticeReportInterface implements FromQuery, WithMapping, Practi
         return $this->signedLink;
     }
 
-    public function getTempStorage(): \Illuminate\Filesystem\FilesystemAdapter
+    public function getTempStorage(): FilesystemAdapter
     {
-        return \Storage::disk(self::STORE_TEMP_REPORT_ON_DISK);
+        return Storage::disk(self::STORE_TEMP_REPORT_ON_DISK);
     }
 
     abstract public function headings(): array;
