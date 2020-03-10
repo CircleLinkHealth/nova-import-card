@@ -22,7 +22,7 @@ use Maatwebsite\Excel\Events\AfterImport;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Validator;
 
-class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueue, WithEvents
+class PracticeStaff extends ReportsErrorsToSlack implements WithChunkReading, ToModel, WithHeadingRow, ShouldQueue, WithEvents
 {
     use Importable;
     use RegistersEventListeners;
@@ -31,8 +31,6 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
 
     protected $fileName;
 
-    protected $importingErrors = [];
-
     protected $modelClass;
 
     protected $practice;
@@ -40,8 +38,6 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
     protected $repo;
 
     protected $resource;
-
-    protected $rowNumber = 2;
 
     protected $rules;
 
@@ -56,16 +52,28 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         $this->repo       = new UserRepository();
     }
 
-    public function __destruct()
+    /**
+     * The message that is displayed before each row error is listed.
+     *
+     * @return string
+     */
+    protected function getErrorMessageIntro(): string
     {
-        if ( ! empty($this->importingErrors)) {
-            $rowErrors = collect($this->importingErrors)->transform(function ($item, $key) {
-                return "Row: {$key} - Errors: {$item}. ";
-            })->implode('\n');
+        return "The following rows from queued job to import practice staff for practice '{$this->practice->display_name}', 
+            from file {$this->fileName} failed to import. See reasons below:";
+    }
 
-            sendSlackMessage('#background-tasks', "The following rows from queued job to import practice staff for practice '{$this->practice->display_name}', 
-            from file {$this->fileName} failed to import. See reasons below:\n {$rowErrors}");
-        }
+    protected function getImportingRules(): array
+    {
+        return [
+            'email'              => 'required|email',
+            'first_name'         => 'required',
+            'last_name'          => 'required',
+            'role'               => 'required',
+            'emr_direct_address' => 'nullable|email',
+            'phone_number'       => 'nullable|phone:us',
+            'phone_extension'    => 'nullable|digits_between:2,4',
+        ];
     }
 
     public static function afterImport(AfterImport $event)
@@ -90,12 +98,8 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
 
     public function model(array $row)
     {
-        $validator = $this->validateRow($row);
-
-        if ($validator->fails()) {
-            $this->importingErrors[$this->rowNumber] = implode(', ', $validator->messages()->keys());
+        if (! $this->validateRow($row)) {
             ++$this->rowNumber;
-
             return;
         }
 
@@ -226,19 +230,4 @@ class PracticeStaff implements WithChunkReading, ToModel, WithHeadingRow, Should
         return $this->repo->createNewUser($user, $bag);
     }
 
-    private function validateRow($row)
-    {
-        return Validator::make(
-            $row,
-            [
-                'email'              => 'required|email',
-                'first_name'         => 'required',
-                'last_name'          => 'required',
-                'role'               => 'required',
-                'emr_direct_address' => 'nullable|email',
-                'phone_number'       => 'nullable|phone:us',
-                'phone_extension'    => 'nullable|digits_between:2,4',
-            ]
-        );
-    }
 }
