@@ -122,9 +122,6 @@ class NoteService
         $note->did_medication_recon = isset($requestInput['medication_recon'])
             ? 'true' === $requestInput['medication_recon']
             : 0;
-        $note->success_story = isset($requestInput['success_story'])
-            ? 'true' === $requestInput['success_story']
-            : 0;
 
         if ($note->isDirty()) {
             $note->save();
