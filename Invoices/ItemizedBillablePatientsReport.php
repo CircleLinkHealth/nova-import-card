@@ -171,8 +171,8 @@ class ItemizedBillablePatientsReport
         if ($shouldAttachDefaultProblems && $summary->attestedProblems->where('cpmProblem.is_behavioral', '=',
                 false)->count() == 0) {
             return $this->formatProblemCodesForReport(collect([
-                optional($summary->billableProblem1),
-                optional($summary->billableProblem2),
+                $summary->billableProblem1,
+                $summary->billableProblem2,
             ])->filter());
         } else {
             return $this->getProblemCodesForReport($summary->attestedProblems, false);
