@@ -241,8 +241,6 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
             ->orderBy('date')
             ->get();
 
-
-
         foreach ($windows as $window) {
             $schedule[$window->day_of_week][] = $window;
         }
