@@ -6,18 +6,18 @@
 
 namespace App\Importer\Loggers\Ccda;
 
+use App\Search\ProviderByName;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecordLogger;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DemographicsLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\DocumentLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
-use App\Search\ProviderByName;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemCodeLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProviderLog;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Loggers\CcdToLogTranformer;
 use CircleLinkHealth\SharedModels\Entities\AllergyLog;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
-use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
 
 class CcdaSectionsLogger implements MedicalRecordLogger
 {
@@ -54,7 +54,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
         $allergies = $this->ccd->allergies;
 
         foreach ($allergies as $allergy) {
-            $saved = AllergyLog::create(
+            $saved = AllergyLog::updateOrCreate(
                 array_merge($this->transformer->allergy($allergy), $this->foreignKeys)
             );
         }
@@ -83,7 +83,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
     {
         $demographics = $this->ccd->demographics;
 
-        $saved = DemographicsLog::create(
+        $saved = DemographicsLog::updateOrCreate(
             array_merge($this->transformer->demographics($demographics), $this->foreignKeys)
         );
 
@@ -107,7 +107,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
             return $this;
         }
 
-        $saved = DocumentLog::create(
+        $saved = DocumentLog::updateOrCreate(
             array_merge($data, $this->foreignKeys)
         );
 
@@ -125,13 +125,12 @@ class CcdaSectionsLogger implements MedicalRecordLogger
                     continue;
                 }
 
-                $insurance = InsuranceLog::create(
+                $insurance = InsuranceLog::updateOrCreate(
                     array_merge(
                         $this->transformer->insurance($payer),
                         [
                             'medical_record_id'   => $this->ccdaId,
                             'medical_record_type' => Ccda::class,
-                            'approved'            => false,
                             'import'              => true,
                         ]
                     )
@@ -150,7 +149,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
         $medications = $this->ccd->medications;
 
         foreach ($medications as $med) {
-            $saved = MedicationLog::create(
+            $saved = MedicationLog::updateOrCreate(
                 array_merge($this->transformer->medication($med), $this->foreignKeys)
             );
         }
@@ -166,7 +165,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
         $problems = $this->ccd->problems;
 
         foreach ($problems as $prob) {
-            $problemLog = ProblemLog::create(
+            $problemLog = ProblemLog::updateOrCreate(
                 array_merge($this->transformer->problem($prob), $this->foreignKeys)
             );
 
@@ -178,7 +177,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
                 if ( ! $code['code']) {
                     continue;
                 }
-                ProblemCodeLog::create($code);
+                ProblemCodeLog::updateOrCreate($code);
             }
 
             $this->problemLogs[] = $problemLog;

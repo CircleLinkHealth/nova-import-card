@@ -6,12 +6,12 @@
 
 namespace App\Console;
 
-use App\Console\Commands\CreateLastMonthBillablePatientsReport;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
-use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
+use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
+use App\Console\Commands\CreateLastMonthBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
@@ -25,6 +25,7 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
+use App\Console\Commands\RunScheduler;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
 use CircleLinkHealth\Eligibility\Console\Athena\AutoPullEnrolleesFromAthena;
@@ -41,6 +42,13 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+    /**
+     * @var array
+     */
+    protected $commands = [
+        RunScheduler::class,
+    ];
+
     /**
      * Register the Closure based commands for the application.
      */
@@ -80,7 +88,7 @@ class Kernel extends ConsoleKernel
 
         //family calls will be scheduled in RescheduleMissedCalls
         //$schedule->command(SyncFamilialCalls::class)->dailyAt('00:30')->onOneServer();
-        
+
         $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyMinute()->withoutOverlapping()->onOneServer();
 
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
@@ -163,7 +171,6 @@ class Kernel extends ConsoleKernel
 //                 ->withoutOverlapping()->onOneServer();
 
         $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:03')->onOneServer();
-        $schedule->command(NursesPerformanceDailyReport::class)->dailyAt('00:05')->onOneServer();
 
         $schedule->command(CheckForMissingLogoutsAndInsert::class)->dailyAt('04:00')->onOneServer();
 

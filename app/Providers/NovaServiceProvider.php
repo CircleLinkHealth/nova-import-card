@@ -6,6 +6,7 @@
 
 namespace App\Providers;
 
+use App\Nova\Dashboards\ServerInsights;
 use App\Nova\Metrics\PatientsOverTargetBhiTime;
 use App\Nova\Metrics\PatientsOverTargetCcmTime;
 use Illuminate\Support\Facades\Gate;
@@ -24,7 +25,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         \Laravel\Nova\Fields\Field::macro('withModel', function ($model, $modelKey = null) {
             $this->withMeta([
                 'model'    => $model,
-                'modelKey' => $modelKey ?: 'id',
+                'modelKey' => $modelKey
+                    ?: 'id',
             ]);
 
             return $this;
@@ -52,6 +54,18 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function tools()
     {
         return [];
+    }
+
+    /**
+     * Get the extra dashboards that should be displayed on the Nova dashboard.
+     *
+     * @return array
+     */
+    protected function dashboards()
+    {
+        return [
+            new ServerInsights(),
+        ];
     }
 
     /**

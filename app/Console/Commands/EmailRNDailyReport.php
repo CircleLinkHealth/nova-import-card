@@ -95,10 +95,9 @@ class EmailRNDailyReport extends Command
                     foreach ($nurses as $nurse) {
                         $this->warn("Processing $nurse->id");
                         $reportDataForNurse = $report->where('nurse_id', $nurse->id)->first();
-
                         //In case something goes wrong with nurses and states report, or transitioning to new metrics issues
                         if ( ! $reportDataForNurse || ! $this->validateReportData($reportDataForNurse)) {
-                            \Log::error("Invalid/missing report for nurse with id: {$nurse->id} and date {$date->toDateString()}");
+                            \Log::channel('logdna')->error("Invalid/missing report for nurse with id: {$nurse->id} and date {$date->toDateString()}");
                             continue;
                         }
 
@@ -113,6 +112,7 @@ class EmailRNDailyReport extends Command
                         if ($nurse->nurseInfo->hourly_rate < 1) {
                             continue;
                         }
+
 
                         $attendanceRate = 0 != $reportDataForNurse['committedHours']
                             ? (round(
@@ -140,6 +140,9 @@ class EmailRNDailyReport extends Command
                         );
 
                         $nextUpcomingWindow = $reportDataForNurse['nextUpcomingWindow'];
+                        $surplusShortfallHours = $reportDataForNurse['surplusShortfallHours'];
+                        $deficitTextColor = $surplusShortfallHours < 0 ? '#f44336' : '#009688';
+                        $deficitOrSurplusText = $surplusShortfallHours < 0 ? 'Deficit' : 'Surplus';
 
                         $data = [
                             'name'                         => $nurse->getFullName(),
@@ -152,7 +155,7 @@ class EmailRNDailyReport extends Command
                             'caseLoadComplete'             => $reportDataForNurse['caseLoadComplete'],
                             'caseLoadNeededToComplete'     => $reportDataForNurse['caseLoadNeededToComplete'],
                             'hoursCommittedRestOfMonth'    => $reportDataForNurse['hoursCommittedRestOfMonth'],
-                            'surplusShortfallHours'        => $reportDataForNurse['surplusShortfallHours'],
+                            'surplusShortfallHours'        => $surplusShortfallHours,
                             'projectedHoursLeftInMonth'    => $reportDataForNurse['projectedHoursLeftInMonth'],
                             'avgHoursWorkedLast10Sessions' => $reportDataForNurse['avgHoursWorkedLast10Sessions'],
                             'totalEarningsThisMonth'       => $totalEarningsThisMonth,
@@ -161,11 +164,27 @@ class EmailRNDailyReport extends Command
                             'nextUpcomingWindowLabel'      => $reportDataForNurse['nextUpcomingWindowLabel'],
                             'totalHours'                   => $reportDataForNurse['totalHours'],
                             'windowStart'                  => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A T')
+                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
                                 : null,
                             'windowEnd' => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A T')
+                                ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A')
                                 : null,
+
+                            //                            For new daily Report mail
+                            'callsCompleted'        => $reportDataForNurse['actualCalls'],
+                            'successfulCalls'       => $reportDataForNurse['successful'],
+                            'completedPatients'     => $reportDataForNurse['completedPatients'],
+                            'incompletePatients'    => $reportDataForNurse['incompletePatients'],
+                            'avgCCMTimePerPatient'  => $reportDataForNurse['avgCCMTimePerPatient'],
+                            'avgCompletionTime'     => $reportDataForNurse['avgCompletionTime'],
+                            'nextUpcomingWindowDay' => $nextUpcomingWindow
+                                ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
+                                : null,
+                            'nextUpcomingWindowMonth' => $nextUpcomingWindow
+                                ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
+                                : null,
+                            'deficitTextColor'     => $deficitTextColor,
+                            'deficitOrSurplusText' => $deficitOrSurplusText,
                         ];
 
                         $nurse->notify(new NurseDailyReport($data, $date));

@@ -14,10 +14,8 @@ try {
 } catch (e) {
 }
 
-
 require('./bootstrap-axios');
 require('./logger-logdna').init();
 require('./pusher-echo').init();
-
 
 
