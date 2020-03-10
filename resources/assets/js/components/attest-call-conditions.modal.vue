@@ -123,6 +123,7 @@
             },
             problemsToAttest() {
 
+                self = self ? self : this;
                 let problemsToAttest = (this.problems || []).filter(function (p) {
                     return !!p.code;
                 });
