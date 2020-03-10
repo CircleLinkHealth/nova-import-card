@@ -206,9 +206,9 @@ class ItemizedBillablePatientsReport
 
     private function getProblemCodesForReport($problems){
         return $problems->isNotEmpty()
-            ? $problems->transform(function (Problem $problem) {
+            ? $problems->unique()->transform(function (Problem $problem) {
                 return $problem->icd10Code();
-            })->filter()->unique()->implode(', ')
+            })->filter()->implode(', ')
             : 'N/A';
     }
 }
