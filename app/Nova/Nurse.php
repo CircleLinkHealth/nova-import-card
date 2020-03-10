@@ -115,11 +115,13 @@ class Nurse extends Resource
             Number::make('Case Load Capacity', 'case_load_capacity'),
 
             Boolean::make('Is Active?', 'status')
-                   ->trueValue('active')
-                   ->falseValue('inactive'),
+                ->trueValue('active')
+                ->falseValue('inactive'),
 
             Boolean::make('Is Demo?', 'is_demo'),
-            Boolean::make('Variable Rate', 'is_variable_rate'),
+
+            //CPM-2131
+            Boolean::make('Fixed VF or Fixed Hourly', 'is_variable_rate'),
 
             Number::make('Hourly Rate (fixed rate)', 'hourly_rate')
                 ->step(0.01),
