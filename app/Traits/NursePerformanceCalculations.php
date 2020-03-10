@@ -27,8 +27,11 @@ trait NursePerformanceCalculations
     public function estAvgCCMTimePerMonth(Carbon $date, $patientsForMonth)
     {
         $totalCCMtimeOnCompletedPatients        = $this->queryPatientMonthlySum($date, $patientsForMonth)->sum('ccm_time');
-        $totalAmountOfCompletedPatientsPerMonth = 0 === $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth) ? 1
-            : $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
+        $totalAmountOfCompletedPatientsPerMonth = $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
+
+        if (0 === $totalAmountOfCompletedPatientsPerMonth) {
+            $totalAmountOfCompletedPatientsPerMonth = 1;
+        }
 
         return round((float) ($totalCCMtimeOnCompletedPatients / $totalAmountOfCompletedPatientsPerMonth) / 60, '2');
     }
@@ -106,8 +109,8 @@ trait NursePerformanceCalculations
                 round(
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                                $this->unsuccessfulCallsMultiplier
-                            ) * $data['unsuccessful'])
+                            $this->unsuccessfulCallsMultiplier
+                        ) * $data['unsuccessful'])
                     ) / $data['actualHours'])
                 )
             )
