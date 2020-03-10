@@ -410,7 +410,7 @@ class Practice extends BaseModel implements HasMedia
                                         ->where('month_year', $month->toDateString())
                                         ->where('approved', '=', true);
                                 },
-                                'billingProvider',
+                                'billingProvider.user',
                                 'patientInfo.location'
                             ]
                         )
