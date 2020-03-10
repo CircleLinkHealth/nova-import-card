@@ -12,6 +12,7 @@ use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\Problem;
+use Illuminate\Support\Collection;
 
 class ItemizedBillablePatientsReport
 {
@@ -169,16 +170,16 @@ class ItemizedBillablePatientsReport
 
         if ($shouldAttachDefaultProblems && $summary->attestedProblems->where('cpmProblem.is_behavioral', '=',
                 false)->count() == 0) {
-            $attestedProblems = collect([
+            return $this->formatProblemCodesForReport(collect([
                 optional($summary->billableProblem1),
                 optional($summary->billableProblem2),
-            ])->filter()->toArray();
+            ])->filter());
         } else {
-            $attestedProblems = $summary->attestedProblems->where('cpmProblem.is_behavioral', '=', false);
+            return $this->getProblemCodesForReport($summary->attestedProblems, false);
         }
 
 
-        return $this->getProblemCodesForReport($attestedProblems);
+
     }
 
     private function getBhiAttestedConditions(PatientMonthlySummary $summary, bool $shouldAttachDefaultProblems)
@@ -192,23 +193,27 @@ class ItemizedBillablePatientsReport
                 true)->count() == 0) {
             $bhiProblem = $summary->billableBhiProblems()->first();
 
-            $attestedBhiProblems = collect([
+            return $this->formatProblemCodesForReport(collect([
                 $bhiProblem
                     ?: null,
-            ])->filter()->toArray();
+            ])->filter());
         } else {
-            $attestedBhiProblems = $summary->attestedProblems->where('cpmProblem.is_behavioral',
-                '=', true);
+            return $this->getProblemCodesForReport($summary->attestedProblems, true);
         }
 
-        return $this->getProblemCodesForReport($attestedBhiProblems);
+
     }
 
-    private function getProblemCodesForReport($problems){
+    private function formatProblemCodesForReport(Collection $problems){
         return $problems->isNotEmpty()
             ? $problems->unique()->transform(function (Problem $problem) {
                 return $problem->icd10Code();
             })->filter()->implode(', ')
             : 'N/A';
+    }
+
+    private function getProblemCodesForReport(Collection $problems, $isBhi){
+        return $this->formatProblemCodesForReport($problems->where('cpmProblem.is_behavioral',
+            '=', $isBhi));
     }
 }
