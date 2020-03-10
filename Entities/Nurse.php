@@ -198,6 +198,10 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         return $this->hasMany(NurseContactWindow::class, 'nurse_info_id', 'id');
     }
 
+    /**
+     * @param Carbon $date
+     * @return bool|\Illuminate\Database\Eloquent\Model|HasMany|\Illuminate\Database\Query\Builder|object|null
+     */
     public function firstWindowAfter(Carbon $date)
     {
         $nextWindow = $this->windows()
@@ -211,32 +215,6 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
         }
 
         return $nextWindow;
-    }
-
-    /**
-     * @param Carbon $date
-     * @return Collection
-     */
-    public function weeklySchedule(Carbon $date)
-    {
-        $weekStarts = $date->startOfWeek()->toDateString();
-        $weekEnds = $date->endOfWeek()->toDateString();
-
-        $schedule = [];
-        $windows = $this->windows()
-            ->whereNotNull('repeat_frequency')
-            ->where('date', '>=', $weekStarts)
-            ->where('date', '<=', $weekEnds)
-            ->orderBy('date')
-            ->get();
-
-        foreach ($windows as $window) {
-            $schedule[$window->day_of_week][] = $window;
-        }
-
-        ksort($schedule);
-
-        return collect($schedule);
     }
 
     public function getHolidaysThisWeekAttribute()
