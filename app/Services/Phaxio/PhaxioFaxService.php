@@ -43,13 +43,11 @@ class PhaxioFaxService implements Efax
     {
         return $this->options;
     }
-    
+
     /**
      * Send a fax.
      *
      * https://www.phaxio.com/docs/api/v2.1/faxes/create_and_send_fax
-     *
-     * @param array $options
      *
      * @return mixed|Phaxio\Fax
      */

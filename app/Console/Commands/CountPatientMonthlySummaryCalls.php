@@ -39,8 +39,6 @@ class CountPatientMonthlySummaryCalls extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param CallRepository $callRepository
      */
     public function __construct(CallRepository $callRepository)
     {
@@ -70,7 +68,7 @@ class CountPatientMonthlySummaryCalls extends Command
                     $noOfSuccessfulCalls = $this->callRepository->numberOfSuccessfulCalls(
                         $pms->patient_id,
                         $date
-                                     );
+                    );
 
                     if ($noOfSuccessfulCalls != $pms->no_of_successful_calls) {
                         $this->comment("user_id:{$pms->patient_id} no_of_successful_calls changing from {$pms->no_of_successful_calls} to ${noOfSuccessfulCalls}");
