@@ -173,7 +173,8 @@
                 }
                 App.$emit('call-conditions-attested', {
                     attested_problems: this.attestedProblems,
-                    patient_id: this.pId
+                    patient_id: this.pId,
+                    is_bhi: this.isBhiModal
                 });
             },
             toggleAddCondition() {

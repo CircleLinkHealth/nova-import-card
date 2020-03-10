@@ -669,9 +669,16 @@
                     attested_problems: data.attested_problems,
                     date: this.selectedMonth
                 }).then(response => {
-                    this.tableData.filter(function (p) {
-                        return String(p.id) === String(data.patient_id);
-                    })[0].attested_ccm_problems = response.data.attested_problems;
+                    if (data.is_bhi){
+                        this.tableData.filter(function (p) {
+                            return String(p.id) === String(data.patient_id);
+                        })[0].attested_bhi_problems = response.data.attested_problems;
+                    }else{
+                        this.tableData.filter(function (p) {
+                            return String(p.id) === String(data.patient_id);
+                        })[0].attested_ccm_problems = response.data.attested_problems;
+                    }
+
                     App.$emit('modal-attest-call-conditions:hide');
                 }).catch(err => {
                     console.error(err)
@@ -680,12 +687,22 @@
 
             Event.$on('full-conditions:add', (ccdProblem) => {
                 //if another condition is created and is attested for the patient, add it to the patient's existing problems
+
+                let is_behavioral = false
+
+                if (ccdProblem.cpm_id){
+                    is_behavioral = !! this.cpmProblems.filter(function(cpmProblem){
+                        return cpmProblem.id == ccdProblem.cpm_id;
+                    })[0].is_behavioral;
+                }
+
+
                 this.tableData.filter(function (p) {
                     return String(p.id) === String(ccdProblem.patient_id);
                 })[0].problems.push({
                     id: ccdProblem.id,
                     name: ccdProblem.name,
-                    is_behavioral: false,
+                    is_behavioral: is_behavioral,
                     code: ccdProblem.codes[0].code
                 });
             })

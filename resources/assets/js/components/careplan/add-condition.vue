@@ -11,8 +11,10 @@
                     <v-select
                             placeholder="Select a Problem"
                             :required="true"
-                            label="name"
                             v-model="newProblem.name"
+                            :value="newProblem.name"
+                            label="name"
+                            index="name"
                             @input="resolveIcd10Code"
                             :options="cpmProblemsForBHISelect">
                     </v-select>
@@ -104,7 +106,7 @@
         },
         computed: {
             cpmProblemsForBHISelect() {
-                return this.cpmProblemsForAutoComplete;
+                return this.cpmProblemsForAutoComplete
             },
             cpmProblemsForAutoComplete() {
                 let probs = this.cpmProbs
