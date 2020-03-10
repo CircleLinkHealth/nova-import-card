@@ -33,7 +33,6 @@ trait NursePerformanceCalculations
         if (0 === $totalMonthlyCompletedPatientsOfNurse) {
             $totalMonthlyCompletedPatientsOfNurse = 1;
         }
-
         return round((float)($totalCCMtimeOnCompletedPatients / $totalMonthlyCompletedPatientsOfNurse) / 60, '2');
     }
 
