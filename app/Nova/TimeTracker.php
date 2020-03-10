@@ -157,6 +157,10 @@ class TimeTracker extends Resource
                 ->sortable()
                 ->readonly(true),
 
+            Text::make('Activity', 'activity_type')
+                ->sortable()
+                ->readonly(true),
+
             Number::make('Duration (seconds)', 'duration')
                   ->sortable()
                   ->readonly(true),
