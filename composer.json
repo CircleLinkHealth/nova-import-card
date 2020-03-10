@@ -127,7 +127,7 @@
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/core-module": "1.4.9",
     "circlelinkhealth/cpm-migrations-module": "1.4.4",
-    "circlelinkhealth/customer-module": "1.9.2",
+    "circlelinkhealth/customer-module": "dev-CPM-2103_fix_diabetes_Tx_importing",
     "circlelinkhealth/eligibility-module": "1.8.9",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
