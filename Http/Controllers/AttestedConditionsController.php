@@ -43,15 +43,19 @@ class AttestedConditionsController extends Controller
                        }])
                        ->findOrFail($userId);
 
+        $attestedProblems = $request->input('attested_problems');
+
         $summary = $patient->patientSummaries->first();
 
+        $attestedProblems = array_merge($attestedProblems, $summary->attestedProblems->where('cpmProblem.is_behavioral', '=', ! $request->input('is_bhi'))->pluck('id')->toArray());
+
         if ($summary) {
-            $summary->syncAttestedProblems($request->input('attested_problems'));
+            $summary->syncAttestedProblems($attestedProblems);
         }
 
         return response()->json([
             'status'            => 200,
-            'attested_problems' => $summary->attestedProblems()->pluck('ccd_problems.id'),
+            'attested_problems' => $summary->attestedProblems()->get()->where('cpmProblem.is_behavioral', '=', $request->input('is_bhi'))->pluck('id')->toArray(),
         ]);
     }
 }

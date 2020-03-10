@@ -25,7 +25,8 @@ Route::group(['prefix' => 'api'], function () {
                         Route::put('ccd/{ccdProblemId}', 'CcdProblemController@update')->middleware('permission:patientProblem.update');
                         Route::delete('ccd/{ccdProblemId}', 'CcdProblemController@destroy')->middleware('permission:patientProblem.delete');
 
-                        Route::post('attest-summary-problems', 'AttestedConditionsController@update')->middleware('permission:attestedProblems.update,attestedProblems.delete');
+                        Route::post('attest-summary-problems', 'AttestedConditionsController@update')
+                             ->middleware('permission:attestedProblems.update,attestedProblems.delete');
                     }
                 );
 
