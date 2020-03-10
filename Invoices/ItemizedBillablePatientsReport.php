@@ -184,29 +184,31 @@ class ItemizedBillablePatientsReport
     private function getBhiAttestedConditions(PatientMonthlySummary $summary, bool $shouldAttachDefaultProblems)
     {
         if ($summary->hasServiceCode(self::BHI_SERVICE_CODE)) {
-            if ($shouldAttachDefaultProblems && $summary->attestedProblems->where('cpmProblem.is_behavioral',
-                    '=',
-                    true)->count() == 0) {
-                $bhiProblem = $summary->billableBhiProblems()->first();
-
-                $attestedBhiProblems = collect([
-                    $bhiProblem
-                        ?: null,
-                ])->filter()->toArray();
-            } else {
-                $attestedBhiProblems = $summary->attestedProblems->where('cpmProblem.is_behavioral',
-                    '=', true);
-            }
-
-            return $this->getProblemCodesForReport($attestedBhiProblems);
+            return 'N/A';
         }
+
+        if ($shouldAttachDefaultProblems && $summary->attestedProblems->where('cpmProblem.is_behavioral',
+                '=',
+                true)->count() == 0) {
+            $bhiProblem = $summary->billableBhiProblems()->first();
+
+            $attestedBhiProblems = collect([
+                $bhiProblem
+                    ?: null,
+            ])->filter()->toArray();
+        } else {
+            $attestedBhiProblems = $summary->attestedProblems->where('cpmProblem.is_behavioral',
+                '=', true);
+        }
+
+        return $this->getProblemCodesForReport($attestedBhiProblems);
     }
 
     private function getProblemCodesForReport($problems){
-        return ! $problems->isEmpty()
+        return $problems->isNotEmpty()
             ? $problems->transform(function (Problem $problem) {
                 return $problem->icd10Code();
-            })->filter()->implode(', ')
+            })->filter()->unique()->implode(', ')
             : 'N/A';
     }
 }
