@@ -128,8 +128,6 @@
     "circlelinkhealth/core-module": "1.4.9",
     "circlelinkhealth/cpm-migrations-module": "1.4.6",
     "circlelinkhealth/customer-module": "1.9.6",
-    "circlelinkhealth/cpm-migrations-module": "1.4.6",
-    "circlelinkhealth/customer-module": "1.9.4",
     "circlelinkhealth/eligibility-module": "1.9.0",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
