@@ -36,6 +36,7 @@
         }
     </style>
     @stack('styles')
+    @include('cpm-module-raygun::partials.real-user-monitoring')
 </head>
 <body>
 

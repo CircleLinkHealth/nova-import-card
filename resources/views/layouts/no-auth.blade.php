@@ -7,6 +7,7 @@
     <title>CarePlanManager | Log In</title>
 
     @include('partials.hotjar-code')
+    @include('cpm-module-raygun::partials.real-user-monitoring')
 
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
     <link href="{{ mix('/compiled/css/stylesheet.css') }}" rel="stylesheet">
