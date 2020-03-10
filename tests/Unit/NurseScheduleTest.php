@@ -6,7 +6,6 @@
 
 namespace Tests\Feature\Unit;
 
-use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
@@ -27,42 +26,48 @@ class NurseScheduleTest extends TestCase
 
     public function test_empty_schedule()
     {
-        $schedule = $this->nurse->nurseInfo->weeklySchedule();
+        $date = $this->date();
+        $schedule = $this->nurse->nurseInfo->weeklySchedule($date);
 
         $this->assertTrue($schedule->isEmpty());
+    }
+
+    public function date()
+    {
+        return Carbon::parse(now());
     }
 
     public function test_non_empty_schedule()
     {
         $this->nurse->nurseInfo->windows()->create([
-            'date'              => Carbon::now()->format('Y-m-d'),
-            'day_of_week'       => 2,
+            'date' => Carbon::now()->format('Y-m-d'),
+            'day_of_week' => 2,
             'window_time_start' => '09:00',
-            'window_time_end'   => '11:00',
+            'window_time_end' => '11:00',
         ]);
 
         $this->nurse->nurseInfo->windows()->create([
-            'date'              => Carbon::now()->format('Y-m-d'),
-            'day_of_week'       => 2,
+            'date' => Carbon::now()->format('Y-m-d'),
+            'day_of_week' => 2,
             'window_time_start' => '13:00',
-            'window_time_end'   => '22:00',
+            'window_time_end' => '22:00',
         ]);
 
         $this->nurse->nurseInfo->windows()->create([
-            'date'              => Carbon::now()->format('Y-m-d'),
-            'day_of_week'       => 1,
+            'date' => Carbon::now()->format('Y-m-d'),
+            'day_of_week' => 1,
             'window_time_start' => '09:00',
-            'window_time_end'   => '11:00',
+            'window_time_end' => '11:00',
         ]);
 
         $this->nurse->nurseInfo->windows()->create([
-            'date'              => Carbon::now()->format('Y-m-d'),
-            'day_of_week'       => 7,
+            'date' => Carbon::now()->format('Y-m-d'),
+            'day_of_week' => 7,
             'window_time_start' => '13:00',
-            'window_time_end'   => '22:00',
+            'window_time_end' => '22:00',
         ]);
 
-        $schedule = $this->nurse->nurseInfo->weeklySchedule();
+        $schedule = $this->nurse->nurseInfo->weeklySchedule($this->date());
 
         //assert 3 days
         $this->assertTrue(3 == $schedule->count());
