@@ -28,7 +28,6 @@ class NurseScheduleTest extends TestCase
     {
         $date = $this->date();
         $schedule = $this->nurse->nurseInfo->weeklySchedule($date);
-
         $this->assertTrue($schedule->isEmpty());
     }
 
