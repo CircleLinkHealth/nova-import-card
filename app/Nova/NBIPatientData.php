@@ -6,9 +6,9 @@
 
 namespace App\Nova;
 
+use App\Nova\Importers\NBIPatientData as NBIPatientDataImporter;
 use App\Rules\NBIPatientDobRule;
 use CircleLinkHealth\Eligibility\Entities\PatientData;
-use App\Nova\Importers\NBIPatientData as NBIPatientDataImporter;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\Number;
@@ -53,8 +53,6 @@ class NBIPatientData extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function actions(Request $request)
@@ -64,8 +62,6 @@ class NBIPatientData extends Resource
 
     /**
      * Get the cards available for the request.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -78,8 +74,6 @@ class NBIPatientData extends Resource
 
     /**
      * Get the fields displayed by the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
@@ -114,8 +108,6 @@ class NBIPatientData extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return array
      */
     public function filters(Request $request)
@@ -133,8 +125,6 @@ class NBIPatientData extends Resource
 
     /**
      * Get the lenses available for the resource.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */

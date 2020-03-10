@@ -35,12 +35,45 @@ class NBIPatientData implements ToCollection, WithChunkReading, WithValidation, 
         $this->modelClass = $modelClass;
     }
 
-    /**
-     * @return int
-     */
     public function chunkSize(): int
     {
         return 200;
+    }
+
+    public function collection(Collection $rows)
+    {
+        $dobs = collect([]);
+
+        //DB transaction will revert once an exception is thrown.
+        DB::transaction(function () use ($rows, &$dobs) {
+            foreach ($rows as $row) {
+                $row = $row->toArray();
+
+                //accept null dobs
+                if ($row['dob']) {
+                    $date = $this->validateDob($row['dob']);
+
+                    if ( ! $date) {
+                        throw new \Exception("Invalid date {$row['dob']}");
+                    }
+
+                    $dobs->push(['dateString' => $date->toDateString()]);
+
+                    if (10 === $dobs->count()) {
+                        //check if Carbon is parsing dates all as the same date
+                        if (10 === $dobs->where('dateString', $date->toDateString())->count()) {
+                            throw new \Exception('Something went wrong while parsing patient dates of birth.');
+                        }
+                        //reset collection
+                        $dobs = collect([]);
+                    }
+
+                    $row['dob'] = $date;
+                }
+
+                $this->persistRow($row);
+            }
+        });
     }
 
     /**
@@ -70,9 +103,6 @@ class NBIPatientData implements ToCollection, WithChunkReading, WithValidation, 
         ];
     }
 
-    /**
-     * @param Row $row
-     */
     public function onRow(Row $row)
     {
         $this->persistRow($row->toArray());
@@ -83,41 +113,21 @@ class NBIPatientData implements ToCollection, WithChunkReading, WithValidation, 
         return $this->rules;
     }
 
-    public function collection(Collection $rows)
+    /**
+     * Subtracts 100 years off date if it's after 1/1/2000.
+     *
+     * @return Carbon
+     */
+    private function correctCenturyIfNeeded(Carbon &$date)
     {
-        $dobs = collect([]);
+        //If a DOB is after 2000 it's because at some point the date incorrectly assumed to be in the 2000's, when it was actually in the 1900's. For example, this date 10/05/04.
+        $cutoffDate = Carbon::createFromDate(2000, 1, 1);
 
-        //DB transaction will revert once an exception is thrown.
-        DB::transaction(function () use ($rows, &$dobs) {
-            foreach ($rows as $row) {
-                $row = $row->toArray();
+        if ($date->gte($cutoffDate)) {
+            $date->subYears(100);
+        }
 
-                //accept null dobs
-                if ($row['dob']){
-                    $date = $this->validateDob($row['dob']);
-
-                    if ( ! $date) {
-                        throw new \Exception("Invalid date {$row['dob']}");
-                    }
-
-                    $dobs->push(['dateString' => $date->toDateString()]);
-
-                    if ($dobs->count() === 10){
-                        //check if Carbon is parsing dates all as the same date
-                        if($dobs->where('dateString', $date->toDateString())->count() === 10){
-                            throw new \Exception('Something went wrong while parsing patient dates of birth.');
-                        }
-                        //reset collection
-                        $dobs = collect([]);
-                    }
-
-                    $row['dob'] = $date;
-                }
-
-
-                $this->persistRow($row);
-            }
-        });
+        return $date;
     }
 
     private function persistRow(array $row)
@@ -144,7 +154,7 @@ class NBIPatientData implements ToCollection, WithChunkReading, WithValidation, 
 
     private function validateDob($dob)
     {
-        if (! $dob){
+        if ( ! $dob) {
             return false;
         }
 
@@ -156,9 +166,7 @@ class NBIPatientData implements ToCollection, WithChunkReading, WithValidation, 
             }
 
             return $this->correctCenturyIfNeeded($date);
-
         } catch (\InvalidArgumentException $e) {
-
             if (str_contains($dob, '/')) {
                 $delimiter = '/';
             } elseif (str_contains($dob, '-')) {
@@ -179,23 +187,5 @@ class NBIPatientData implements ToCollection, WithChunkReading, WithValidation, 
 
             return Carbon::createFromDate($year, $date[0], $date[1]);
         }
-    }
-
-
-    /**
-     * Subtracts 100 years off date if it's after 1/1/2000.
-     *
-     * @return Carbon
-     */
-    private function correctCenturyIfNeeded(Carbon &$date)
-    {
-        //If a DOB is after 2000 it's because at some point the date incorrectly assumed to be in the 2000's, when it was actually in the 1900's. For example, this date 10/05/04.
-        $cutoffDate = Carbon::createFromDate(2000, 1, 1);
-
-        if ($date->gte($cutoffDate)) {
-            $date->subYears(100);
-        }
-
-        return $date;
     }
 }

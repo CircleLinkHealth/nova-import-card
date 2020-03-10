@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of CarePlan Manager by CircleLink Health.
  */
@@ -9,36 +10,39 @@ use Validator;
 
 abstract class ReportsErrorsToSlack
 {
+    protected $channel         = '#background-tasks';
     protected $importingErrors = [];
 
     protected $rowNumber = 2;
 
-    protected $channel = '#background-tasks';
+    public function __destruct()
+    {
+        if ( ! empty($this->importingErrors)) {
+            $rowErrors = collect($this->importingErrors)->transform(function ($item, $key) {
+                return "Row: {$key} - Errors: {$item}. ";
+            })->implode('\n');
+
+            sendSlackMessage($this->reportToChannel(), "{$this->getErrorMessageIntro()} "."\n"."{$rowErrors}");
+        }
+    }
+
+    /**
+     * The message that is displayed before each row error is listed.
+     */
+    abstract protected function getErrorMessageIntro(): string;
+
+    abstract protected function getImportingRules(): array;
 
     protected function reportToChannel(): string
     {
         if ( ! starts_with($this->channel, '#')) {
-            $this->channel = '#' . $this->channel;
+            $this->channel = '#'.$this->channel;
         }
 
         return $this->channel;
     }
 
-    /**
-     * The message that is displayed before each row error is listed.
-     *
-     * @return string
-     */
-    abstract protected function getErrorMessageIntro(): string;
-
-    abstract protected function getImportingRules() : array;
-
-    /**
-     * @param array $row
-     *
-     * @return bool
-     */
-    protected function validateRow(array $row) : bool
+    protected function validateRow(array $row): bool
     {
         $validator = Validator::make(
             $row,
@@ -52,16 +56,5 @@ abstract class ReportsErrorsToSlack
         }
 
         return true;
-    }
-
-    public function __destruct()
-    {
-        if ( ! empty($this->importingErrors)) {
-            $rowErrors = collect($this->importingErrors)->transform(function ($item, $key) {
-                return "Row: {$key} - Errors: {$item}. ";
-            })->implode('\n');
-
-            sendSlackMessage($this->reportToChannel(), "{$this->getErrorMessageIntro()} " . "\n" . "{$rowErrors}");
-        }
     }
 }
