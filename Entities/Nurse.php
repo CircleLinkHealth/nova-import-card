@@ -202,7 +202,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         $dayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
 
-        $weeklySchedule = $this->weeklySchedule();
+        $weeklySchedule = $this->weeklySchedule($date);
 
         $result = null;
 
@@ -221,16 +221,29 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
             return false;
         }
 
-        $result->date = $date->next(clhToCarbonDayOfWeek($result->day_of_week));
-
         return $result;
     }
 
-    public function weeklySchedule()
+    /**
+     * @param Carbon $date
+     * @return Collection
+     */
+    public function weeklySchedule(Carbon $date)
     {
-        $schedule = [];
+        $weekStarts = Carbon::parse($date)->startOfWeek()->toDateString();
+        $weekEnds = Carbon::parse($weekStarts)->endOfWeek()->toDateString();
 
-        foreach ($this->windows->sortBy('window_time_start') as $window) {
+        $schedule = [];
+        $windows = $this->windows()
+            ->whereNotNull('repeat_frequency')
+            ->where('date', '>=', $weekStarts)
+            ->where('date', '<=', $weekEnds)
+            ->orderBy('date')
+            ->get();
+
+
+
+        foreach ($windows as $window) {
             $schedule[$window->day_of_week][] = $window;
         }
 
@@ -268,7 +281,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 
         return $companyHolidays->merge($nurseHolidays)->unique();
     }
-    
+
     /**
      * Get company holidays from a date.
      *
@@ -347,7 +360,7 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
     {
         return $this->hasMany(NurseInvoice::class, 'nurse_info_id');
     }
-    
+
     /**
      * Returns true or false if the date passed is a holiday for this nurse.
      *
