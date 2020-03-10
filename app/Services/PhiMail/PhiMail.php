@@ -199,16 +199,14 @@ class PhiMail implements DirectMail
 
         throw $e;
     }
-    
+
     /**
-     * @param CheckResult $cr
-     *
      * @throws \Exception
      */
     private function handleInvalidMail(CheckResult $cr)
     {
         if ('failed' == $cr->statusCode) {
-            Log::channel('logdna')->error("DirectMail Message Fail. Message ID: `$cr->messageId`. Logged from:".__METHOD__.':'.__LINE__."  Info = " . $cr->info . "\n");
+            Log::channel('logdna')->error("DirectMail Message Fail. Message ID: `$cr->messageId`. Logged from:".__METHOD__.':'.__LINE__.'  Info = '.$cr->info."\n");
         }
 
         $this->connector->acknowledgeStatus();

@@ -12,40 +12,43 @@ use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
 /**
- * App\DirectMailMessage
+ * App\DirectMailMessage.
  *
- * @property int $id
- * @property string $direction
- * @property string $status
- * @property string|null $error_text
- * @property string $message_id
- * @property string $from
- * @property string $to
- * @property string $subject
- * @property string|null $body
- * @property int|null $num_attachments
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\SharedModels\Entities\Ccda[] $ccdas
- * @property-read int|null $ccdas_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\CircleLinkHealth\Customer\Entities\Media[] $media
- * @property-read int|null $media_count
+ * @property int                                                                                     $id
+ * @property string                                                                                  $message_id
+ * @property string                                                                                  $from
+ * @property string                                                                                  $to
+ * @property string                                                                                  $subject
+ * @property string|null                                                                             $body
+ * @property int|null                                                                                $num_attachments
+ * @property \Illuminate\Support\Carbon|null                                                         $created_at
+ * @property \Illuminate\Support\Carbon|null                                                         $updated_at
+ * @property \CircleLinkHealth\SharedModels\Entities\Ccda[]|\Illuminate\Database\Eloquent\Collection $ccdas
+ * @property \App\Media[]|\Illuminate\Database\Eloquent\Collection                                   $media
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereDirection($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereErrorText($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereFrom($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereMessageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereNumAttachments($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereSubject($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereUpdatedAt($value)
  * @mixin \Eloquent
+ *
+ * @property int|null    $ccdas_count
+ * @property int|null    $media_count
+ * @property string      $direction
+ * @property string      $status
+ * @property string|null $error_text
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereDirection($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereErrorText($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\DirectMailMessage whereStatus($value)
  */
 class DirectMailMessage extends Model implements HasMedia
 {
@@ -55,20 +58,22 @@ class DirectMailMessage extends Model implements HasMedia
     const STATUS_FAIL        = 'fail';
 
     const STATUS_SUCCESS = 'success';
-    protected $fillable  = [
+
+    protected $attributes = [
+        'subject' => 'No Subject',
+    ];
+    protected $fillable = [
+        //We get this from PhiMail API
         'message_id',
         'from',
         'to',
         'subject',
+        //The body of the message
         'body',
+        //The number of attachments
         'num_attachments',
-        'error_text',
         'direction',
         'status',
-    ];
-    
-    protected $attributes = [
-        'subject' => 'No Subject'
     ];
 
     public function ccdas()

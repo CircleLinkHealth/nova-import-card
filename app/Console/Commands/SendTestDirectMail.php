@@ -17,10 +17,6 @@ class SendTestDirectMail extends Command
      */
     const CLH_SANDBOX_DM_EMAIL = 'circlelinkhealth@test.directproject.net';
     /**
-     * The subject of the test Direct Mail Message.
-     */
-    const TEST_DM_SUBJECT = 'Test Message from CircleLink Health';
-    /**
      * The body of the test Direct Mail Message.
      */
     const TEST_DM_BODY = 'Hello there! This is a test message from CircleLink Health.';
@@ -28,7 +24,11 @@ class SendTestDirectMail extends Command
      * The number of attachments in the test Direct Mail Message.
      */
     const TEST_DM_NUM_ATTACHMENTS = 2;
-    
+    /**
+     * The subject of the test Direct Mail Message.
+     */
+    const TEST_DM_SUBJECT = 'Test Message from CircleLink Health';
+
     /**
      * The console command description.
      *
@@ -49,8 +49,6 @@ class SendTestDirectMail extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param DirectMail $directMail
      */
     public function __construct(DirectMail $directMail)
     {
@@ -70,7 +68,7 @@ class SendTestDirectMail extends Command
     {
         $this->output->text(var_dump($this->sendTestDM($this->argument('to'))));
     }
-    
+
     public function sendTestDM(string $to)
     {
         $binaryAttachmentFilePath = getSampleNotePdfPath();
@@ -79,7 +77,7 @@ class SendTestDirectMail extends Command
         $patient                  = new User();
         $patient->first_name      = 'Foo';
         $patient->last_name       = 'Bar';
-    
+
         return $this->directMail->send(
             $to,
             $binaryAttachmentFilePath,

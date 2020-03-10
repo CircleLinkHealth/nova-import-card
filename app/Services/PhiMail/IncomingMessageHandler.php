@@ -25,7 +25,7 @@ class IncomingMessageHandler
     {
         return DirectMailMessage::create(
             [
-                'direction'          => DirectMailMessage::DIRECTION_RECEIVED,
+                'direction'       => DirectMailMessage::DIRECTION_RECEIVED,
                 'message_id'      => $message->messageId,
                 'from'            => $message->sender,
                 'to'              => $message->recipient,
@@ -36,7 +36,7 @@ class IncomingMessageHandler
             ]
         );
     }
-    
+
     /**
      * @return mixed
      */
@@ -44,7 +44,7 @@ class IncomingMessageHandler
     {
         return IncomingMessageHandlerFactory::create($dm, $showRes)->handle();
     }
-    
+
     /**
      * Store the subject of the message.
      *

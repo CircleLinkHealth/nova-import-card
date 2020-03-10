@@ -63,7 +63,7 @@ trait NursePerformanceCalculations
             $totalMonthlyCompletedPatientsOfNurse = 1;
         }
 
-        return round(($totalCPMtimeForMonth / 60), 2) / $totalMonthlyCompletedPatientsOfNurse;
+        return round(($totalCPMtimeForMonth / 60) / $totalMonthlyCompletedPatientsOfNurse, 2);
     }
 
     /**
