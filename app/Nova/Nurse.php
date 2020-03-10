@@ -119,7 +119,9 @@ class Nurse extends Resource
                    ->falseValue('inactive'),
 
             Boolean::make('Is Demo?', 'is_demo'),
-            Boolean::make('Variable Rate', 'is_variable_rate'),
+
+            //CPM-2131
+            Boolean::make('Fixed VF or Fixed Hourly', 'is_variable_rate'),
 
             Number::make('Hourly Rate (fixed rate)', 'hourly_rate')
                 ->step(0.01),
