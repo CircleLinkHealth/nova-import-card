@@ -37,7 +37,6 @@ class Insurance extends BaseImporter
             
             if ($insurance->wasRecentlyCreated) {
                 $insurance->approved = false;
-                $insurance->import = true;
                 $insurance->save();
             }
 
