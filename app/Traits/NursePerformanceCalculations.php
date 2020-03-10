@@ -21,21 +21,24 @@ trait NursePerformanceCalculations
      * In dashboard is named : "Avg CCM Time Per Successful Patient". It changes daily (Similar to case completion).
      *
      * @param $patientsForMonth
+     * @param $totalMonthlyCompletedPatientsOfNurse
      *
      * @return float|int
      */
-    public function estAvgCCMTimePerMonth(Carbon $date, $patientsForMonth)
+    public function estAvgCCMTimePerMonth(Carbon $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse)
     {
-        $totalAmountOfCompletedPatientsPerMonth = $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
-        $totalCCMtimeOnCompletedPatients        = 0 === $this->queryPatientMonthlySum($date, $patientsForMonth)->sum('ccm_time') ? 1
-            : $this->queryPatientMonthlySum($date, $patientsForMonth)->sum('ccm_time');
+        $totalCCMtimeOnCompletedPatients = $this->queryPatientMonthlySum($date, $patientsForMonth)->sum('ccm_time');
 
-        return round((float) (($totalAmountOfCompletedPatientsPerMonth / $totalCCMtimeOnCompletedPatients) * 100), 2);
+        if (0 === $totalMonthlyCompletedPatientsOfNurse) {
+            $totalMonthlyCompletedPatientsOfNurse = 1;
+        }
+
+        return round((float) ($totalCCMtimeOnCompletedPatients / $totalMonthlyCompletedPatientsOfNurse) / 60, '2');
     }
 
-    public function estHoursToCompleteCaseLoadMonth(User $nurse, Carbon $date, $patientsForMonth)
+    public function estHoursToCompleteCaseLoadMonth(User $nurse, Carbon $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse)
     {
-        $avgCompletionPerPatient = $this->getAvgCompletionTime($nurse, $date, $patientsForMonth);
+        $avgCompletionPerPatient = $this->getAvgCompletionTime($nurse, $date, $totalMonthlyCompletedPatientsOfNurse);
         $incompletePatientsCount = $this->getIncompletePatientsCount($patientsForMonth);
 
         return round(($avgCompletionPerPatient * $incompletePatientsCount) / 60, 1);
@@ -43,23 +46,24 @@ trait NursePerformanceCalculations
 //        return round($patients->where('patient_time', '<', 20)->sum('patient_time_left') / 60, 1);
     }
 
-    public function getAvgCompletionTime(User $nurse, Carbon $date, $patientsForMonth)
+    /**
+     * @return float|int
+     */
+    public function getAvgCompletionTime(User $nurse, Carbon $date, int $totalMonthlyCompletedPatientsOfNurse)
     {
-        $start = $date->startOfMonth()->toDateString();
-        $end   = $date->endOfMonth()->toDateString();
-
-        $totalCompletedPatientsForMonth = $this->getTotalCompletedPatientsOfNurse($date, $patientsForMonth);
+        $start = $date->copy()->startOfMonth()->toDateString();
+        $end   = $date->copy()->endOfMonth()->toDateString();
 
         $totalCPMtimeForMonth = $nurse->pageTimersAsProvider()
             ->where('start_time', '>=', $start)
             ->where('start_time', '<=', $end)
             ->sum('billable_duration');
 
-        if (0 === $totalCPMtimeForMonth) {
-            $totalCPMtimeForMonth = 1;
+        if (0 === $totalMonthlyCompletedPatientsOfNurse) {
+            $totalMonthlyCompletedPatientsOfNurse = 1;
         }
 
-        return ($totalCompletedPatientsForMonth / $totalCPMtimeForMonth) * 100;
+        return round(($totalCPMtimeForMonth / 60), 2) / $totalMonthlyCompletedPatientsOfNurse;
     }
 
     /**
@@ -106,8 +110,8 @@ trait NursePerformanceCalculations
                 round(
                     (float) (100 * (
                         (floatval($this->successfulCallsMultiplier) * $data['successful']) + (floatval(
-                            $this->unsuccessfulCallsMultiplier
-                        ) * $data['unsuccessful'])
+                                $this->unsuccessfulCallsMultiplier
+                            ) * $data['unsuccessful'])
                     ) / $data['actualHours'])
                 )
             )
@@ -409,7 +413,7 @@ AND patient_info.ccm_status = 'enrolled'"
                     ->where('patient_id', $patient->patient_id)
                     ->where('ccm_time', '>=', OpsDashboardService::TWENTY_MINUTES) // should i use > or >=?
 //                    ->where('no_of_successful_calls', '>=', 1)
-                    ->where('month_year', $date->startOfMonth())
+                    ->where('month_year', $date->copy()->startOfMonth())
                     ->first();
 
                 if ( ! empty($patientMonthlySum)) {

@@ -6,7 +6,6 @@
 
 namespace Tests\Feature\Unit;
 
-use App\Traits\Tests\UserHelpers;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
 use Tests\TestCase;
@@ -25,10 +24,15 @@ class NurseScheduleTest extends TestCase
         $this->be($this->nurse);
     }
 
+    public function date()
+    {
+        return Carbon::parse(now());
+    }
+
     public function test_empty_schedule()
     {
-        $schedule = $this->nurse->nurseInfo->weeklySchedule();
-
+        $date     = $this->date();
+        $schedule = $this->nurse->nurseInfo->weeklySchedule($date);
         $this->assertTrue($schedule->isEmpty());
     }
 
@@ -62,7 +66,7 @@ class NurseScheduleTest extends TestCase
             'window_time_end'   => '22:00',
         ]);
 
-        $schedule = $this->nurse->nurseInfo->weeklySchedule();
+        $schedule = $this->nurse->nurseInfo->weeklySchedule($this->date());
 
         //assert 3 days
         $this->assertTrue(3 == $schedule->count());

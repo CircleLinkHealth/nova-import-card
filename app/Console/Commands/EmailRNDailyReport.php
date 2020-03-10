@@ -97,7 +97,7 @@ class EmailRNDailyReport extends Command
                         $reportDataForNurse = $report->where('nurse_id', $nurse->id)->first();
                         //In case something goes wrong with nurses and states report, or transitioning to new metrics issues
                         if ( ! $reportDataForNurse || ! $this->validateReportData($reportDataForNurse)) {
-                            \Log::error("Invalid/missing report for nurse with id: {$nurse->id} and date {$date->toDateString()}");
+                            \Log::channel('logdna')->error("Invalid/missing report for nurse with id: {$nurse->id} and date {$date->toDateString()}");
                             continue;
                         }
 
@@ -177,12 +177,11 @@ class EmailRNDailyReport extends Command
                             'avgCCMTimePerPatient'  => $reportDataForNurse['avgCCMTimePerPatient'],
                             'avgCompletionTime'     => $reportDataForNurse['avgCompletionTime'],
                             'nextUpcomingWindowDay' => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('l')
+                                ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
                                 : null,
                             'nextUpcomingWindowMonth' => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('F d')
+                                ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
                                 : null,
-
                             'deficitTextColor'     => $deficitTextColor,
                             'deficitOrSurplusText' => $deficitOrSurplusText,
                         ];
