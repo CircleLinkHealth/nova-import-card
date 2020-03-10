@@ -26,7 +26,7 @@
                             <add-condition :cpm-problems="cpmProblems" :patient-id="pId"
                                            :problems="problems" :code-is-required="true"
                                            :is-approve-billable-page="!isNotesPage"
-                            :is-bhi="isBhiModal"></add-condition>
+                            :is-bhi="isBhi"></add-condition>
                         </div>
                     </div>
                 </div>
@@ -72,11 +72,22 @@
             }
 
             Event.$on('full-conditions:add', (ccdProblem) => {
+                let component = this && this.problems ? this : (self && self.problems ? self : null);
+
+                let cpmProblem = component.cpmProblems.filter(function(p){
+                    return p.id == ccdProblem.cpm_id;
+                })[0];
+
                 if (ccdProblem) {
-                    this.problems.push(ccdProblem)
-                    this.attestedProblems.push(ccdProblem.id)
+                    component.problems.push({
+                        id: ccdProblem.id,
+                        name: ccdProblem.name,
+                        code: ccdProblem.code,
+                        is_behavioral: cpmProblem ? cpmProblem.is_behavioral : false
+                    })
+                    component.attestedProblems.push(ccdProblem.id)
                 }
-                this.addCondition = false;
+                component.addCondition = false;
             })
 
             App.$on('modal-attest-call-conditions:hide', () => {
@@ -88,7 +99,7 @@
                 this.patient_id = String(data.patient.id)
                 this.attestedProblems = data.is_bhi ? data.patient.attested_bhi_problems : data.patient.attested_ccm_problems;
                 this.problems = data.patient.problems
-                this.isBhiModal = data.is_bhi
+                this.isBhi = data.is_bhi
             })
         },
         data() {
@@ -98,7 +109,7 @@
                 attestedProblems: [],
                 addCondition: false,
                 error: null,
-                isBhiModal: false,
+                isBhi: false,
             }
         },
         computed: {
@@ -119,33 +130,24 @@
             },
             title() {
 
-                return this.isNotesPage ? 'Please select all conditions addressed in this call:' : (this.isBhiModal ? 'Edit BHI Problem Codes' : 'Edit CCM Problem Codes');
+                return this.isNotesPage ? 'Please select all conditions addressed in this call:' : (this.isBhi ? 'Edit BHI Problem Codes' : 'Edit CCM Problem Codes');
             },
             problemsToAttest() {
 
-                self = self ? self : this;
+                let component = this || self;
+
                 let problemsToAttest = (this.problems || []).filter(function (p) {
                     return !!p.code;
                 });
                 //do not show BHI problems when on Approve Billable Patients Page
-                return this.isNotesPage ? problemsToAttest : (problemsToAttest || []).filter(function (p) {
-                    return self.isBhiModal ? p.is_behavioral : !p.is_behavioral;
+                return component.isNotesPage ? problemsToAttest : (problemsToAttest || []).filter(function (p) {
+                    return component.isBhi ? p.is_behavioral : !p.is_behavioral;
                 });
             },
             isNotesPage() {
                 //if patient id prop has been passed in, then this is for the notes pages, else, approve billable patients page
                 return !!this.patientId
             },
-            bhiProblemsForSelect(){
-                return cpmProblems.filter(function (p){
-                    return p.is_behavioral;
-                }).map(function (p){
-                    return {
-                        label: p.name,
-                        value: p.id,
-                    };
-                });
-            }
         },
         methods: {
             getPatientBillableProblems() {
@@ -158,6 +160,8 @@
                     });
             },
             hideModal() {
+                this.problems = [];
+                this.addCondition = false;
                 this.attestedProblems = [];
                 this.error = null;
                 this.$refs['attest-call-conditions-modal'].visible = false;
@@ -175,7 +179,7 @@
                 App.$emit('call-conditions-attested', {
                     attested_problems: this.attestedProblems,
                     patient_id: this.pId,
-                    is_bhi: this.isBhiModal
+                    is_bhi: this.isBhi
                 });
             },
             toggleAddCondition() {

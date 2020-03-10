@@ -111,10 +111,15 @@
             cpmProblemsForAutoComplete() {
                 let probs = this.cpmProbs
 
-                let self = self ? self : this;
-                if (self.isApproveBillablePage) {
+                let component = this || self;
+
+                if (component.isApproveBillablePage) {
                     probs = probs.filter(function (p) {
-                        return self.isBhi ? p.is_behavioral : !p.is_behavioral;
+                        if (! p.code){
+                            return false;
+                        }
+
+                        return  component.isBhi ? p.is_behavioral : !p.is_behavioral;
                     })
                 }
 
