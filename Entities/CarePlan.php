@@ -427,12 +427,7 @@ class CarePlan extends BaseModel implements PdfReport
     
     public function scopeWithNurseApprovedVia($query)
     {
-        $query->whereHas(
-            'patient.notes',
-            function ($q) {
-                $q->where('type', SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE);
-            }
-        )->with(
+        $query->with(
             [
                 'patient.notes' => function ($q) {
                     $q->where('type', SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE)->with(
@@ -450,5 +445,23 @@ class CarePlan extends BaseModel implements PdfReport
             '=',
             SchedulerService::PROVIDER_REQUEST_FOR_CAREPLAN_APPROVAL_TYPE
         )->call->outboundUser)->getFullName();
+    }
+    
+    /**
+     * Should "Approve" button be shown on "View CarePlan" page?
+     *
+     * @return bool
+     */
+    public function shouldShowApprovalButton():bool
+    {
+        if ($this->status === self::QA_APPROVED && auth()->user()->canApproveCarePlans()) {
+            return true;
+        }
+        
+        if ($this->status === self::DRAFT && auth()->user()->canQAApproveCarePlans()) {
+            return true;
+        }
+        
+        return false;
     }
 }
