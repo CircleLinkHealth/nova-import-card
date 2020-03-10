@@ -36,7 +36,7 @@ class Allergies extends BaseImporter
             $itemLog->import = true;
             $itemLog->save();
 
-            $allergiesList[] = AllergyImport::create([
+            $allergiesList[] = AllergyImport::updateOrCreate([
                 'vendor_id'                  => $itemLog->vendor_id,
                 'ccd_allergy_log_id'         => $itemLog->id,
                 'allergen_name'              => $itemLog->allergen_name,

@@ -375,7 +375,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     protected function createImportedMedicalRecord(): MedicalRecord
     {
-        $this->importedMedicalRecord = ImportedMedicalRecord::create(
+        $this->importedMedicalRecord = ImportedMedicalRecord::updateOrCreate(
             [
                 'medical_record_type' => get_class($this),
                 'medical_record_id'   => $this->id,
