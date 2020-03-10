@@ -52,30 +52,6 @@ class PracticeStaff extends ReportsErrorsToSlack implements WithChunkReading, To
         $this->repo       = new UserRepository();
     }
 
-    /**
-     * The message that is displayed before each row error is listed.
-     *
-     * @return string
-     */
-    protected function getErrorMessageIntro(): string
-    {
-        return "The following rows from queued job to import practice staff for practice '{$this->practice->display_name}', 
-            from file {$this->fileName} failed to import. See reasons below:";
-    }
-
-    protected function getImportingRules(): array
-    {
-        return [
-            'email'              => 'required|email',
-            'first_name'         => 'required',
-            'last_name'          => 'required',
-            'role'               => 'required',
-            'emr_direct_address' => 'nullable|email',
-            'phone_number'       => 'nullable|phone:us',
-            'phone_extension'    => 'nullable|digits_between:2,4',
-        ];
-    }
-
     public static function afterImport(AfterImport $event)
     {
         $importer = $event->getConcernable();
@@ -98,8 +74,9 @@ class PracticeStaff extends ReportsErrorsToSlack implements WithChunkReading, To
 
     public function model(array $row)
     {
-        if (! $this->validateRow($row)) {
+        if ( ! $this->validateRow($row)) {
             ++$this->rowNumber;
+
             return;
         }
 
@@ -128,6 +105,28 @@ class PracticeStaff extends ReportsErrorsToSlack implements WithChunkReading, To
     public function rules(): array
     {
         return $this->rules;
+    }
+
+    /**
+     * The message that is displayed before each row error is listed.
+     */
+    protected function getErrorMessageIntro(): string
+    {
+        return "The following rows from queued job to import practice staff for practice '{$this->practice->display_name}', 
+            from file {$this->fileName} failed to import. See reasons below:";
+    }
+
+    protected function getImportingRules(): array
+    {
+        return [
+            'email'              => 'required|email',
+            'first_name'         => 'required',
+            'last_name'          => 'required',
+            'role'               => 'required',
+            'emr_direct_address' => 'nullable|email',
+            'phone_number'       => 'nullable|phone:us',
+            'phone_extension'    => 'nullable|digits_between:2,4',
+        ];
     }
 
     private function attachEmrDirectAddress(User $user, array $row)
@@ -229,5 +228,4 @@ class PracticeStaff extends ReportsErrorsToSlack implements WithChunkReading, To
 
         return $this->repo->createNewUser($user, $bag);
     }
-
 }

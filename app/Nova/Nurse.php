@@ -115,8 +115,8 @@ class Nurse extends Resource
             Number::make('Case Load Capacity', 'case_load_capacity'),
 
             Boolean::make('Is Active?', 'status')
-                   ->trueValue('active')
-                   ->falseValue('inactive'),
+                ->trueValue('active')
+                ->falseValue('inactive'),
 
             Boolean::make('Is Demo?', 'is_demo'),
 
