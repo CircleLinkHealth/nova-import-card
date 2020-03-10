@@ -94,7 +94,7 @@ class ItemizedBillablePatientsReport
                                          $patientData->setProvider($u->getBillingProviderName());
                                          $patientData->setBillingCodes($u->billingCodes($this->month));
 
-                                         $shouldAttachDefaultProblems = Carbon::parse($summary->month_year)->lte(Carbon::parse(self::ATTACH_DEFAULT_PROBLEMS_FOR_MONTH));
+                                         $shouldAttachDefaultProblems = $summary->month_year->lte(Carbon::parse(self::ATTACH_DEFAULT_PROBLEMS_FOR_MONTH));
 
                                          $patientData->setCcmProblemCodes($this->getCcmAttestedConditions($summary,
                                              $shouldAttachDefaultProblems));
