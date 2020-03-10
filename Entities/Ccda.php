@@ -265,7 +265,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia
         return $this->referring_provider_name;
     }
 
-    public function importedMedicalRecord()
+    public function importedMedicalRecord(): ?ImportedMedicalRecord
     {
         return ImportedMedicalRecord::where('medical_record_type', '=', Ccda::class)
             ->where('medical_record_id', '=', $this->id)
