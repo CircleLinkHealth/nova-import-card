@@ -177,16 +177,16 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
         }
     }
 
-    public function createCarePlan(): CarePlan
+    public function updateOrCreateCarePlan(): CarePlan
     {
-        $user = (new CCDImporterRepository())->createRandomUser($this->demographics, $this);
+        if (! $this->patient_id) {
+            $user = (new CCDImporterRepository())->createRandomUser($this->demographics, $this);
 
-        $this->patient_id = $user->id;
-        $this->save();
+            $this->patient_id = $user->id;
+            $this->save();
+        }
 
-        $helper = new CarePlanHelper($user, $this);
-
-        return $helper->storeImportedValues();
+        return (new CarePlanHelper($user ?? $this->patient, $this))->storeImportedValues();
     }
 
     /**

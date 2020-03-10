@@ -85,7 +85,7 @@ class CarePlanHelper
      */
     public function createNewCarePlan()
     {
-        $this->carePlan = CarePlan::updateOrCreate(
+        $this->carePlan = CarePlan::firstOrCreate(
             [
                 'user_id' => $this->user->id,
             ],
@@ -169,20 +169,28 @@ class CarePlanHelper
         }
         
         foreach ($this->all as $allergy) {
-            $ccdAllergy = Allergy::create(
+            $ccdAllergy = Allergy::updateOrCreate(
                 [
-                    'allergy_import_id'  => $allergy->id,
+                    'allergen_name'      => $allergy->allergen_name,
+                ],
+                [
+                    'allergy_import_id' => $allergy->id,
                     'patient_id'         => $this->user->id,
                     'ccd_allergy_log_id' => $allergy->ccd_allergy_log_id,
-                    'allergen_name'      => $allergy->allergen_name,
                 ]
             );
         }
+    
+        $unique = $this->user->ccdAllergies->unique('name')->pluck('id');
+    
+        $deleted = $this->user->ccdAllergies()->whereNotIn('id', $unique)->delete();
         
         $misc = CpmMisc::whereName(CpmMisc::ALLERGIES)
                        ->first();
-        
-        $this->user->cpmMiscs()->attach(optional($misc)->id);
+    
+        if (! $this->hasMisc($this->user, $misc)) {
+            $this->user->cpmMiscs()->attach(optional($misc)->id);
+        }
         
         return $this;
     }
@@ -198,12 +206,14 @@ class CarePlanHelper
             ?: $this->imr->billing_provider_id;
         
         if ($providerId) {
-            $billing = CarePerson::create(
+            $billing = CarePerson::updateOrCreate(
                 [
-                    'alert'          => true,
                     'user_id'        => $this->user->id,
                     'member_user_id' => $providerId,
                     'type'           => CarePerson::BILLING_PROVIDER,
+                ],
+                [
+                    'alert' => true,
                 ]
             );
         }
@@ -351,8 +361,11 @@ class CarePlanHelper
         
         $misc = CpmMisc::whereName(CpmMisc::MEDICATION_LIST)
                        ->first();
+    
+        if (! $this->hasMisc($this->user, $misc)) {
+            $this->user->cpmMiscs()->attach(optional($misc)->id);
+        }
         
-        $this->user->cpmMiscs()->attach(optional($misc)->id);
         $this->user->cpmMedicationGroups()->sync(array_filter($medicationGroups));
         
         return $this;
@@ -451,11 +464,13 @@ class CarePlanHelper
                         PhoneNumber::HOME
                     ) || $primaryPhone == $number || ! $primaryPhone;
                 
-                $homePhone = PhoneNumber::create(
+                $homePhone = PhoneNumber::updateOrCreate(
                     [
-                        'user_id'    => $this->user->id,
-                        'number'     => $number,
-                        'type'       => PhoneNumber::HOME,
+                        'user_id' => $this->user->id,
+                        'number'  => $number,
+                        'type'    => PhoneNumber::HOME,
+                    ],
+                    [
                         'is_primary' => $makePrimary,
                     ]
                 );
@@ -481,11 +496,13 @@ class CarePlanHelper
                         'cell'
                     ) || $primaryPhone == $number || ! $primaryPhone;
                 
-                $mobilePhone = PhoneNumber::create(
+                $mobilePhone = PhoneNumber::updateOrCreate(
                     [
-                        'user_id'    => $this->user->id,
-                        'number'     => $number,
-                        'type'       => PhoneNumber::MOBILE,
+                        'user_id' => $this->user->id,
+                        'number'  => $number,
+                        'type'    => PhoneNumber::MOBILE,
+                    ],
+                    [
                         'is_primary' => $makePrimary,
                     ]
                 );
@@ -499,11 +516,13 @@ class CarePlanHelper
                 
                 $makePrimary = PhoneNumber::WORK == $primaryPhone || $primaryPhone == $number || ! $primaryPhone;
                 
-                $workPhone = PhoneNumber::create(
+                $workPhone = PhoneNumber::updateOrCreate(
                     [
-                        'user_id'    => $this->user->id,
-                        'number'     => $number,
-                        'type'       => PhoneNumber::WORK,
+                        'user_id' => $this->user->id,
+                        'number'  => $number,
+                        'type'    => PhoneNumber::WORK,
+                    ],
+                    [
                         'is_primary' => $makePrimary,
                     ]
                 );
@@ -525,11 +544,13 @@ class CarePlanHelper
             }
             
             if ( ! $primaryPhone && $this->dem->primary_phone) {
-                PhoneNumber::create(
+                PhoneNumber::updateOrCreate(
                     [
-                        'user_id'    => $this->user->id,
-                        'number'     => $this->str->formatPhoneNumberE164($this->dem->primary_phone),
-                        'type'       => PhoneNumber::HOME,
+                        'user_id' => $this->user->id,
+                        'number'  => $this->str->formatPhoneNumberE164($this->dem->primary_phone),
+                        'type'    => PhoneNumber::HOME,
+                    ],
+                    [
                         'is_primary' => true,
                     ]
                 );
@@ -546,11 +567,13 @@ class CarePlanHelper
                     ] as $type => $phone
                 ) {
                     if ( ! $phone) {
-                        PhoneNumber::create(
+                        PhoneNumber::updateOrCreate(
                             [
-                                'user_id'    => $this->user->id,
-                                'number'     => $number,
-                                'type'       => $type,
+                                'user_id' => $this->user->id,
+                                'number'  => $number,
+                                'type'    => $type,
+                            ],
+                            [
                                 'is_primary' => true,
                             ]
                         );
@@ -596,10 +619,12 @@ class CarePlanHelper
         foreach ($this->probs as $problem) {
             $instruction = $this->getInstruction($problem);
             
-            $ccdProblem = Problem::create(
+            $ccdProblem = Problem::updateOrCreate(
+                [
+                    'problem_import_id' => $problem->id,
+                ],
                 [
                     'is_monitored'       => (bool) $problem->cpm_problem_id,
-                    'problem_import_id'  => $problem->id,
                     'ccd_problem_log_id' => $problem->ccd_problem_log_id,
                     'name'               => $problem->name,
                     'cpm_problem_id'     => $problem->cpm_problem_id,
@@ -613,9 +638,11 @@ class CarePlanHelper
             if ($problemLog) {
                 $problemLog->codes->map(
                     function ($codeLog) use ($ccdProblem) {
-                        ProblemCode::create(
+                        ProblemCode::updateOrCreate(
                             [
-                                'problem_id'       => $ccdProblem->id,
+                                'problem_id' => $ccdProblem->id,
+                            ],
+                            [
                                 'code_system_name' => $codeLog->code_system_name,
                                 'code_system_oid'  => $codeLog->code_system_oid,
                                 'code'             => $codeLog->code,
@@ -626,10 +653,14 @@ class CarePlanHelper
             }
         }
         
+        
+        
         $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
                        ->first();
-        
-        $this->user->cpmMiscs()->attach(optional($misc)->id);
+    
+        if (! $this->hasMisc($this->user, $misc)) {
+            $this->user->cpmMiscs()->attach(optional($misc)->id);
+        }
         
         return $this;
     }
@@ -833,5 +864,10 @@ class CarePlanHelper
                 'name' => $matchingProblem->instructions,
             ]
         );
+    }
+    
+    private function hasMisc(User $user, ?CpmMisc $misc)
+    {
+        return $user->cpmMiscs()->where('cpm_miscs.id', optional($misc)->id)->exists();
     }
 }
