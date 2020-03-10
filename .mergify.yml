@@ -4,6 +4,7 @@ pull_request_rules:
       - status-success=continuous-integration/heroku
       - "#approved-reviews-by>=1"
       - label!=wip
+      - label=shipToProd
       - base=master
       - approved-reviews-by=NektariosX01
       - approved-reviews-by=michalisantoniou6
