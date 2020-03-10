@@ -667,7 +667,8 @@
             App.$on('call-conditions-attested', (data) => {
                 this.$http.post(rootUrl(`api/patients/${data.patient_id}/problems/attest-summary-problems`), {
                     attested_problems: data.attested_problems,
-                    date: this.selectedMonth
+                    date: this.selectedMonth,
+                    is_bhi: data.is_bhi
                 }).then(response => {
                     if (data.is_bhi){
                         this.tableData.filter(function (p) {
