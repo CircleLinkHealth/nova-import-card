@@ -200,28 +200,17 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
 
     public function firstWindowAfter(Carbon $date)
     {
-        $dayOfWeek = carbonToClhDayOfWeek($date->dayOfWeek);
+        $nextWindow = $this->windows()
+            ->whereNotNull('repeat_frequency')
+            ->where('date', '>=', $date)
+            ->orderBy('date')
+            ->first();
 
-        $weeklySchedule = $this->weeklySchedule($date);
-
-        $result = null;
-
-        foreach ($weeklySchedule as $day => $windows) {
-            if ($day > $dayOfWeek) {
-                $result = $windows[0];
-                break;
-            }
-        }
-
-        if (!$result) {
-            $result = $weeklySchedule->first()[0];
-        }
-
-        if (!$result) {
+        if (!$nextWindow) {
             return false;
         }
 
-        return $result;
+        return $nextWindow;
     }
 
     /**
@@ -230,8 +219,8 @@ class Nurse extends \CircleLinkHealth\Core\Entities\BaseModel
      */
     public function weeklySchedule(Carbon $date)
     {
-        $weekStarts = Carbon::parse($date)->startOfWeek()->toDateString();
-        $weekEnds = Carbon::parse($weekStarts)->endOfWeek()->toDateString();
+        $weekStarts = $date->startOfWeek()->toDateString();
+        $weekEnds = $date->endOfWeek()->toDateString();
 
         $schedule = [];
         $windows = $this->windows()
