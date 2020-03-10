@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "73948ba274a1fcffb1ec81c258600b55",
+    "content-hash": "c3f1f7476471d33e4012b9d62ca05c49",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1086,41 +1086,6 @@
                 }
             ],
             "time": "2020-02-04T15:35:11+00:00"
-        },
-        {
-            "name": "circlelinkhealth/raygun-module",
-            "version": "v0.8",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:CircleLinkHealth/module-raygun.git",
-                "reference": "a5db9bd4eed6ad6ac5961ba0db69b6d20f41c981"
-            },
-            "require": {
-                "illuminate/contracts": "^5.0",
-                "mindscape/raygun4php": "1.*",
-                "psr/log": "^1.0"
-            },
-            "type": "laravel-module",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "CircleLinkHealth\\Raygun\\Providers\\RaygunServiceProvider"
-                    ],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CircleLinkHealth\\Raygun\\": ""
-                }
-            },
-            "authors": [
-                {
-                    "name": "Michalis Antoniou",
-                    "email": "mantoniou@cirlelinkhealth.com"
-                }
-            ],
-            "time": "2020-01-17T17:59:21+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
@@ -5324,56 +5289,6 @@
                 "vector"
             ],
             "time": "2019-10-06T11:29:25+00:00"
-        },
-        {
-            "name": "mindscape/raygun4php",
-            "version": "v1.8.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/MindscapeHQ/raygun4php.git",
-                "reference": "7f841d251f5985817cec93e131bb334561c03338"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/MindscapeHQ/raygun4php/zipball/7f841d251f5985817cec93e131bb334561c03338",
-                "reference": "7f841d251f5985817cec93e131bb334561c03338",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8.16"
-            },
-            "suggest": {
-                "ext-curl": "*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Raygun4php": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mindscape",
-                    "email": "contact@mindscape.co.nz",
-                    "homepage": "http://www.mindscapehq.com"
-                }
-            ],
-            "description": "Raygun.io client for PHP 5.3, to send errors and exceptions automatically.",
-            "homepage": "http://raygun.io",
-            "keywords": [
-                "errors",
-                "exceptions",
-                "logging",
-                "raygun"
-            ],
-            "time": "2019-03-07T01:23:01+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",

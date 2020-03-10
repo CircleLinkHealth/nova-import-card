@@ -7,7 +7,6 @@
     <title>CarePlanManager | Log In</title>
 
     @include('partials.hotjar-code')
-    @include('cpm-module-raygun::partials.real-user-monitoring')
 
     <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
     <link href="{{ mix('/compiled/css/stylesheet.css') }}" rel="stylesheet">
@@ -84,5 +83,6 @@
 </div>
 
 <script src="{{mix('js/prevent-multiple-submits.js')}}"></script>
+@include('partials.sentry-js')
 </body>
 </html>

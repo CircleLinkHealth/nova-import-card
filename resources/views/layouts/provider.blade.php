@@ -46,7 +46,6 @@
         }
     </style>
     @stack('styles')
-    @include('cpm-module-raygun::partials.real-user-monitoring')
 </head>
 <body>
 
@@ -105,6 +104,7 @@
     @endif
 @endauth
 
+@include('partials.sentry-js')
 </body>
 
 </html>
