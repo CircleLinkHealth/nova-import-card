@@ -20,14 +20,14 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
     use Queueable;
     public $attachment;
 
-    public  $carePlan;
-    public  $channels = ['database'];
-    public  $pathToPdf;
+    public $carePlan;
+    public $channels = ['database'];
+    public $pathToPdf;
     /**
      * @var array
      */
     private $faxOptions = [];
-    
+
     /**
      * Create a new notification instance.
      *
@@ -71,6 +71,14 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
     }
 
     /**
+     * Add any specific options for eFax API here.
+     */
+    public function getFaxOptions(): array
+    {
+        return $this->faxOptions;
+    }
+
+    /**
      * Get the mail's subject.
      *
      * @return string
@@ -78,6 +86,13 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
     public function getSubject()
     {
         return 'A CarePlan has just been approved';
+    }
+
+    public function setFaxOptions(array $faxOptions): CarePlanProviderApproved
+    {
+        $this->faxOptions = $faxOptions;
+
+        return $this;
     }
 
     /**
@@ -204,25 +219,4 @@ class CarePlanProviderApproved extends Notification implements FaxableNotificati
     {
         return $this->channels;
     }
-    
-    /**
-     * Add any specific options for eFax API here
-     *
-     * @return array
-     */
-    public function getFaxOptions(): array {
-        return $this->faxOptions;
-    }
-    
-    /**
-     * @param array $faxOptions
-     *
-     * @return CarePlanProviderApproved
-     */
-    public function setFaxOptions(array $faxOptions): CarePlanProviderApproved
-    {
-        $this->faxOptions = $faxOptions;
-        
-        return $this;
-}
 }

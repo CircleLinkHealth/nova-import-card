@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\DirectMailMessage;
@@ -11,18 +15,17 @@ use Illuminate\Console\Command;
 class ReprocessUpg0506DmAttachments extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'upg0506:reprocess-attachments {dmIds? : Comma separated direct mail IDs.}';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Reprocess ccd or pdf attachments for a direct mail.';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'upg0506:reprocess-attachments {dmIds? : Comma separated direct mail IDs.}';
 
     /**
      * Create a new command instance.
@@ -50,7 +53,6 @@ class ReprocessUpg0506DmAttachments extends Command
         }
 
         foreach (explode(',', $dmIds) as $dmId) {
-
             $dm = DirectMailMessage::findOrFail($dmId);
 
             //get CCDAs associated with DM, if they exist and they are UPG0506 re-run the job (DecorateUPG0506CcdaWithPdfData) to look for the pdf every 1 minute
@@ -67,5 +69,4 @@ class ReprocessUpg0506DmAttachments extends Command
             $this->info("Queued Direct Mail with ID: $dmId for reprocessing");
         }
     }
-
 }

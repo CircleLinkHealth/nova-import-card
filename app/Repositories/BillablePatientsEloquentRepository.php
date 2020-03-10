@@ -15,45 +15,45 @@ class BillablePatientsEloquentRepository
     public function billablePatients($practiceId, Carbon $date)
     {
         $month = $date->startOfMonth();
-        
+
         $result = User::with(
             [
-                'ccdProblems'      => function ($query) {
+                'ccdProblems' => function ($query) {
                     $query->with(['icd10Codes', 'cpmProblem']);
                 },
                 'patientSummaries' => function ($query) use ($month) {
                     $query->where('month_year', $month)
-                          ->where('total_time', '>=', 1200)
-                          ->where('no_of_successful_calls', '>=', 1)
-                          ->with('chargeableServices');
+                        ->where('total_time', '>=', 1200)
+                        ->where('no_of_successful_calls', '>=', 1)
+                        ->with('chargeableServices');
                 },
                 'cpmProblems',
                 'patientInfo',
                 'primaryPractice',
-                'careTeamMembers'  => function ($q) {
+                'careTeamMembers' => function ($q) {
                     $q->where('type', '=', 'billing_provider');
                 },
             ]
         )
-                      ->has('patientInfo')
-                      ->whereHas(
+            ->has('patientInfo')
+            ->whereHas(
                           'patientSummaries',
                           function ($query) use ($month) {
                               $query->where('month_year', $month)
-                                    ->where('total_time', '>=', 1200)
-                                    ->where('no_of_successful_calls', '>=', 1);
+                                  ->where('total_time', '>=', 1200)
+                                  ->where('no_of_successful_calls', '>=', 1);
                           }
                       )
-                      ->ofType('participant')
-                      ->where('program_id', '=', $practiceId);
-        
+            ->ofType('participant')
+            ->where('program_id', '=', $practiceId);
+
         return $result;
     }
-    
+
     public function billablePatientSummaries($practiceId, Carbon $date, $ignoreWith = false)
     {
         $month = $date->startOfMonth();
-        
+
         $result = PatientMonthlySummary::with(
             [
                 'attestedProblems' => function ($problem) {
@@ -62,15 +62,15 @@ class BillablePatientsEloquentRepository
                 'billableBhiProblems',
             ]
         )
-                                       ->orderBy('needs_qa', 'desc')
-                                       ->where('month_year', $month)
-                                       ->where(
+            ->orderBy('needs_qa', 'desc')
+            ->where('month_year', $month)
+            ->where(
                                            function ($q) {
                                                $q->where('ccm_time', '>=', 1200)
-                                                 ->orWhere('bhi_time', '>=', 1200);
+                                                   ->orWhere('bhi_time', '>=', 1200);
                                            }
                                        )
-                                       ->when(
+            ->when(
                                            false === $ignoreWith,
                                            function ($q) use ($month, $practiceId) {
                                                return $q->with(
@@ -78,7 +78,7 @@ class BillablePatientsEloquentRepository
                                                        'patient' => function ($q) use ($month, $practiceId) {
                                                            $q->with(
                                                                [
-                                                                   'ccdProblems'     => function ($query) {
+                                                                   'ccdProblems' => function ($query) {
                                                                        $query->with(['icd10Codes', 'cpmProblem']);
                                                                    },
                                                                    'billingProvider.user',
@@ -96,7 +96,7 @@ class BillablePatientsEloquentRepository
                                                );
                                            }
                                        )
-                                       ->whereHas(
+            ->whereHas(
                                            'patient',
                                            function ($q) use ($practiceId) {
                                                $q->whereHas(
@@ -112,22 +112,22 @@ class BillablePatientsEloquentRepository
                                                );
                                            }
                                        );
-        
+
         return $result;
     }
-    
+
     public function patientsWithSummaries($practiceId, Carbon $date)
     {
         $month = $date->startOfMonth();
-        
+
         return User::whereHas(
             'patientSummaries',
             function ($query) use ($month) {
                 $query->where('month_year', $month)
-                      ->where('total_time', '>=', 1200);
+                    ->where('total_time', '>=', 1200);
             }
         )
-                   ->ofType('participant')
-                   ->where('program_id', '=', $practiceId);
+            ->ofType('participant')
+            ->where('program_id', '=', $practiceId);
     }
 }
