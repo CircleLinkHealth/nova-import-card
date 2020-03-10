@@ -197,6 +197,8 @@ return [
 
         \App\Providers\NovaServiceProvider::class,
 
+        CircleLinkHealth\Raygun\Providers\RaygunServiceProvider::class,
+
         App\Providers\AppServiceProvider::class,
         App\Providers\AppDeferredServiceProvider::class,
 
