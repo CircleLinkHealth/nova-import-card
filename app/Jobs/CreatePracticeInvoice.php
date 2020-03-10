@@ -18,13 +18,6 @@ use Illuminate\Queue\SerializesModels;
 
 class CreatePracticeInvoice implements ShouldQueue
 {
-    /**
-     * The number of seconds the job can run before timing out.
-     *
-     * @var int
-     */
-    public $timeout = 300;
-    
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
@@ -45,6 +38,12 @@ class CreatePracticeInvoice implements ShouldQueue
      * @var int
      */
     public $requestedByUserId;
+    /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 300;
 
     /**
      * Create a new job instance.
@@ -59,6 +58,9 @@ class CreatePracticeInvoice implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
+     * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
      *
      * @return void
      */
@@ -93,7 +95,7 @@ class CreatePracticeInvoice implements ShouldQueue
             return;
         }
     }
-    
+
     /**
      * Get the tags that should be assigned to the job.
      *

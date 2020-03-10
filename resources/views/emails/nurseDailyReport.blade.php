@@ -53,7 +53,7 @@
             <li><a style="color: green">Surplus</a> indicates you are doing well for the month and are on pace to successfully complete your caseload</li>
             <li><a style="color: red">Deficit</a> indicates you are behind in completing your caseload and need to make up hours or reach out for assistance in completing your caseload</li>
         </ul>
-        <li>Next scheduled shift: {{ $totalHours }} between {{$windowStart}} and {{$windowEnd}} on {{$nextUpcomingWindowDay}}, {{$nextUpcomingWindowMonth}}</li>
+        <li>Next scheduled shift: {{ $totalHours }} hours between {{$windowStart}} and {{$windowEnd}} on {{$nextUpcomingWindowDay}}, {{$nextUpcomingWindowMonth}}</li>
     </ul>
     <p>&nbsp;</p>
     <p>If you have any questions, concerns or schedule changes, please reach out to your CLH managers over Slack.</p>

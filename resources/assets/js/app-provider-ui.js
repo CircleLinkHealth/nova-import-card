@@ -169,6 +169,3 @@ if (window) {
 
 BindWindowFocusChange(window)
 BindWindowVisibilityChange(window, document)
-
-
-console.log(process.env['MIX_LOG_DNA_CLIENT_INGESTION_KEY']);
