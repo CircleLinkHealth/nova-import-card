@@ -56,11 +56,15 @@ class CreatePracticeInvoice implements ShouldQueue
         $this->format            = $format;
         $this->requestedByUserId = $requestedByUserId;
     }
-
+    
     /**
      * Execute the job.
      *
+     * @param PracticeReportsService $practiceReportsService
+     *
      * @return void
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
+     * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
      */
     public function handle(PracticeReportsService $practiceReportsService)
     {
