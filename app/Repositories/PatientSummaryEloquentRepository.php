@@ -382,7 +382,8 @@ class PatientSummaryEloquentRepository
                              || $this->lacksProblems($summary)
                              || $this->lacksProblemCodes($summary)
                              || 0 == $summary->no_of_successful_calls
-                             || in_array($summary->patient->patientInfo->getCcmStatusForMonth($summary->month_year), [Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL]);
+                             || in_array($summary->patient->patientInfo->getCcmStatusForMonth($summary->month_year), [Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL])
+                             || ! $summary->patient->billingProviderUser();
 
         if (
             ($summary->rejected || $summary->approved) && $summary->actor_id

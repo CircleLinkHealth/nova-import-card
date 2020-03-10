@@ -7,7 +7,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalR
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 
-class FixDiabetesTXEnrollees extends Command
+class ReimportCcdasFromEnrolleesUsingMrn extends Command
 {
     /**
      * The name and signature of the console command.
