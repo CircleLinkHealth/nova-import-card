@@ -59,7 +59,7 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
 
         try {
             $practice = $models->first();
-            $location = $practice->locations()->where('fax', $fields->fax_number)->first();
+            $location = $practice->locations()->where('fax', formatPhoneNumberE164($fields->fax_number))->first();
 
             if ( ! $location) {
                 throw new \Exception('Invalid Fax Number.');
