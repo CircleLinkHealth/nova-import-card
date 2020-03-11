@@ -19,11 +19,11 @@
             return;
         }
 
-        const user = @json([
+        const user = @json(auth()->check() ? [
             'id' => auth()->id(),
             'username' => auth()->user()->username,
             'email' => auth()->user()->email
-        ]);
+        ] : []);
 
         Sentry.configureScope(function (scope) {
             scope.setUser(user);
