@@ -154,7 +154,7 @@
                 <template slot="BHI Problem Code(s)" slot-scope="props">
                     <div class="ccm-problem-codes">
                         <span class="blue pointer" style="overflow-wrap: break-word"
-                              @click="showAttestBhiModal(props.row)">{{attestedBhiProblemCodes(props.row) || 'N/A'}}</span>
+                              @click="showBhiModal(props.row)">{{attestedBhiProblemCodes(props.row) || 'N/A'}}</span>
                     </div>
                 </template>
                 <template slot="chargeable_services" slot-scope="props">
@@ -480,7 +480,7 @@
                 })
             },
 
-            showBhiModal(patient, type) {
+            showBhiModal(patient) {
                 if (!patient.isBhiEligible()) {
                     Event.$emit('notifications-billing:create', {
                         text: `Cannot edit BHI Problem. Check that both Practice and Patient are chargeable for ${SERVICES.CPT_99484}.`,
@@ -499,7 +499,7 @@
                     return;
                 }
 
-                this.showProblemsModal(patient, type);
+                this.showProblemsModal(patient, true);
             },
 
             showCcmModal(patient) {
@@ -521,22 +521,13 @@
                     return;
                 }
 
-                this.showProblemsModal(patient);
+                this.showProblemsModal(patient, false);
             },
 
-            showProblemsModal(patient) {
+            showProblemsModal(patient, isBhi) {
                 Event.$emit('modal-attest-call-conditions:show', {
                     'patient': patient,
-                    'is_bhi': false
-                });
-            },
-
-            showAttestBhiModal(patient){
-                //todo: use show ProblemsModal function
-                const self = this;
-                Event.$emit('modal-attest-call-conditions:show', {
-                    'patient': patient,
-                    'is_bhi': true
+                    'is_bhi': isBhi
                 });
             },
 

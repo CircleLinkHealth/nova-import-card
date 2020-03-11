@@ -5,6 +5,9 @@
                 <label class="label label-danger font-14" v-if="patientHasSelectedProblem">
                     Condition is already in care plan. Please add a new condition.
                 </label>
+                <label class="label label-danger font-14" v-if="showNoProblemSelected">
+                    Please select a condition from the dropdown below.
+                </label>
             </div>
             <div v-if="isApproveBillablePage && isBhi">
                 <div class="col-sm-12 top-10">
@@ -149,6 +152,12 @@
         methods: {
             addCcdProblem(e) {
                 e.preventDefault()
+
+                if (this.newProblem.name.length == 0){
+                    this.showNoProblemSelected = true
+                    return;
+                }
+
                 this.loaders.addProblem = true
                 return this.axios.post(rootUrl(`api/patients/${this.pId}/problems/ccd`), {
                     name: this.newProblem.name,
@@ -173,6 +182,7 @@
                 })
             },
             resolveIcd10Code() {
+                this.showNoProblemSelected = false;
                 const autoCompleteProblem = this.cpmProblemsForAutoComplete.find(p => p.name == this.newProblem.name)
                 this.newProblem.icd10 = (autoCompleteProblem || {}).code || (this.problems.find(p => p.name == this.newProblem.name) || {}).code
                 this.newProblem.cpm_problem_id = (autoCompleteProblem || {}).id

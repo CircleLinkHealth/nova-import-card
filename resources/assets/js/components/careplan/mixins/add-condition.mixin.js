@@ -13,7 +13,8 @@ export default {
                 cpm_problem_id: null
             },
             patient_id: null,
-            cpm_problems: []
+            cpm_problems: [],
+            showNoProblemSelected: false
         }
     },
     mixins: [CareplanMixin],
