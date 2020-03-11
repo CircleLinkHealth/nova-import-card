@@ -74,7 +74,9 @@
             Event.$on('full-conditions:add', (ccdProblem) => {
                 let component = this && this.problems ? this : (self && self.problems ? self : null);
 
-                let cpmProblem = component.cpmProblems.filter(function(p){
+                let cpmProbs = self.cpmProbs || this.cpmProbs
+
+                let cpmProblem = cpmProbs.filter(function(p){
                     return p.id == ccdProblem.cpm_id;
                 })[0];
 
@@ -160,7 +162,6 @@
                     });
             },
             hideModal() {
-                this.problems = [];
                 this.addCondition = false;
                 this.attestedProblems = [];
                 this.error = null;
