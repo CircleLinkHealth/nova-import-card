@@ -48,9 +48,11 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
      */
     public function handle(ActionFields $fields, Collection $models)
     {
+        $practice = $models->first();
+        
         if ($models->count() > 1) {
             $this->markAsFailed(
-                $models->first(),
+                $practice,
                 'Invalid number of practices. Action can be performed on 1 practice only.'
             );
 
@@ -58,11 +60,16 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
         }
 
         try {
-            $practice = $models->first();
-            $location = $practice->locations()->where('fax', formatPhoneNumberE164($fields->fax_number))->first();
+            $number = formatPhoneNumberE164($fields->fax_number);
+            $location = $practice->locations()->where('fax', $number)->first();
 
             if ( ! $location) {
-                throw new \Exception('Invalid Fax Number.');
+                $this->markAsFailed(
+                    $practice,
+                    'Could not find a location with fax '.$number
+                );
+    
+                return;
             }
 
             $practice->patients()

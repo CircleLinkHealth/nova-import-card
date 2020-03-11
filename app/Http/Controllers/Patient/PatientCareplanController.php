@@ -15,6 +15,7 @@ use App\Http\Requests\CreateNewPatientRequest;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanService;
 use App\Services\PatientService;
+use App\ValueObjects\PatientCareplanRelations;
 use Auth;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\PdfService;
@@ -161,10 +162,10 @@ class PatientCareplanController extends Controller
             $letter = true;
         }
 
-        $users = explode(',', $request['users']);
+        $userIds = explode(',', $request['users']);
 
         if ($request->input('final')) {
-            foreach ($users as $userId) {
+            foreach ($userIds as $userId) {
                 $careplanService->repo()->approve($userId, auth()->user()->id);
                 $patientService->setStatus($userId, Patient::ENROLLED);
             }
@@ -174,22 +175,14 @@ class PatientCareplanController extends Controller
         $pageFileNames    = [];
 
         $fileNameWithPathBlankPage = $this->pdfService->blankPage();
+        
+        $users = User::with(PatientCareplanRelations::get())->has('patientInfo')->has('billingProvider.user')->findMany($userIds);
 
         // create pdf for each user
         $p = 1;
-        foreach ($users as $user_id) {
-            $user = User::with(['careTeamMembers', 'carePlan.pdfs', 'primaryPractice'])->find($user_id);
-
-            if ( ! $user) {
-                return response()->json("User with id: {$user->id} not found.");
-            }
-
-            if ( ! $user->billingProviderUser()) {
-                return response()->json("User with id: {$user->id}, does not have a billing provider");
-            }
-
+        foreach ($users as $user) {
             $careplan = $this->formatter->formatDataForViewPrintCareplanReport($user);
-            $careplan = $careplan[$user_id];
+            $careplan = $careplan[$user->id];
             if (empty($careplan)) {
                 return false;
             }
@@ -201,13 +194,13 @@ class PatientCareplanController extends Controller
                 return view(
                     'wpUsers.patient.multiview',
                     [
-                        'careplans'                    => [$user_id => $careplan],
+                        'careplans'                    => [$user->id => $careplan],
                         'isPdf'                        => true,
                         'letter'                       => $letter,
                         'problemNames'                 => $careplan['problem'],
                         'careTeam'                     => $user->careTeamMembers,
                         'shouldShowMedicareDisclaimer' => $shouldShowMedicareDisclaimer,
-                        'data'                         => $careplanService->careplan($user_id),
+                        'data'                         => $careplanService->careplan($user->id),
                     ]
                 );
             }
@@ -220,12 +213,12 @@ class PatientCareplanController extends Controller
             $fileNameWithPath = $this->pdfService->createPdfFromView(
                 'wpUsers.patient.multiview',
                 [
-                    'careplans'                    => [$user_id => $careplan],
+                    'careplans'                    => [$user->id => $careplan],
                     'isPdf'                        => true,
                     'letter'                       => $letter,
                     'problemNames'                 => $careplan['problem'],
                     'careTeam'                     => $user->careTeamMembers,
-                    'data'                         => $careplanService->careplan($user_id),
+                    'data'                         => $careplanService->careplan($user->id),
                     'shouldShowMedicareDisclaimer' => $shouldShowMedicareDisclaimer,
                     'pdfCareplan'                  => $pdfCareplan,
                 ],
