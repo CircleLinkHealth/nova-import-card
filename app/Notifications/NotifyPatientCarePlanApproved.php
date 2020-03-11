@@ -144,12 +144,12 @@ class NotifyPatientCarePlanApproved extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->from('noreply@circlelinkhealth.com', $this->notifiable->getPrimaryPracticeName())
+            ->from('noreply@circlelinkhealth.com', $notifiable->getPrimaryPracticeName())
             ->subject($this->getSubject())
             ->markdown('emails.patientCarePlanApproved', [
                 'action_url'    => $this->getActionUrl(),
                 'action_text'   => $this->getActionText(),
-                'practice_name' => $this->notifiable->getPrimaryPracticeName(),
+                'practice_name' => $notifiable->getPrimaryPracticeName(),
                 'reset_url'     => $this->resetUrl(),
                 'body'          => $this->getBody(),
                 'is_followup'   => CarePlan::PROVIDER_APPROVED === $this->carePlan->status,
