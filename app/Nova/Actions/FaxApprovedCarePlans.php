@@ -79,7 +79,7 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
                 ->whereHas('carePlan', function ($cp) {
                     $cp->where('status', CarePlan::PROVIDER_APPROVED);
                 })
-                ->chunk(5, function ($patients) use ($location) {
+                ->chunk(300, function ($patients) use ($location) {
                     FaxPatientCarePlansToLocation::dispatch($patients, $location);
                 });
             $this->markAsFinished($practice);
