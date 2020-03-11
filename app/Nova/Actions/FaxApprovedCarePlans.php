@@ -36,10 +36,13 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
             Text::make('Fax Number'),
         ];
     }
-
+    
     /**
      * Validate models and input,
      * then if location exists with the given Fax number, get enrolled practice patients with provider approved careplans and fax them to Practice.
+     *
+     * @param ActionFields $fields
+     * @param Collection $models
      *
      * @return mixed
      */
@@ -75,6 +78,7 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
             $this->markAsFinished($practice);
         } catch (\Exception $exception) {
             $this->markAsFailed($practice, $exception);
+            throw $exception;
         }
     }
 }

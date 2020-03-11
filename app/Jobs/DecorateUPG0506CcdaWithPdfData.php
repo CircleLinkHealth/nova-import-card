@@ -82,9 +82,9 @@ class DecorateUPG0506CcdaWithPdfData implements ShouldQueue
 
         $pdfMedia = Media::where('custom_properties->is_pdf', 'true')
             ->where(
-                             'custom_properties->is_upg0506',
-                             'true'
-                         )
+                'custom_properties->is_upg0506',
+                'true'
+            )
             ->where('custom_properties->care_plan->demographics->mrn_number', (string) $this->ccda->mrn)
             ->where('model_type', DirectMailMessage::class)->first();
 

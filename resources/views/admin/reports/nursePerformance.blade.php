@@ -65,7 +65,7 @@
                         if (data.Name === "Z - Totals for:") {
                             const color = '#32C132';
                             data.Name.replace('Z - ', '<span style="color:'+color+';">Z - </span>')
-                            $('td:eq(0)', row).css(
+                            $('td:eq(1)', row).css(
                                 {
                                     'background-color': color,
                                 }
@@ -74,10 +74,11 @@
 
                         // Define WORK HOURS text color
                         const workHrsPercentage = ((data['Actual Hrs Worked'] / data['Committed Hrs']) * 100);
+                        const hoursWorkedColumn = 'td:eq(2)';
 
                         // Green if hours worked is >=95% of committed.
                         if (workHrsPercentage >= 95) {
-                            $('td:eq(6)', row).css(
+                            $(hoursWorkedColumn, row).css(
                                 {
                                     'color': '#32C132',
                                 }
@@ -86,7 +87,7 @@
 
                         // Yellow if hours worked is 85% - 94% of committed.
                         if (workHrsPercentage >= 85 && workHrsPercentage <= 94) {
-                            $('td:eq(6)', row).css(
+                            $(hoursWorkedColumn, row).css(
                                 {
                                     'color': '#ffcf10',
                                 }
@@ -95,19 +96,19 @@
 
                         // Red if hours worked is <84% of committed.
                         if (workHrsPercentage <= 84) {
-                            $('td:eq(6)', row).css(
+                            $(hoursWorkedColumn, row).css(
                                 {
-                                    'color': '#ff6c29',
+                                    'color': '#ff8900',
                                 }
                             );
                         }
 
                         // Define WORK HOURS text color - end
-
+                        const hrsDefsColumn = 'td:eq(10)';
                         if (data['Hrs Deficit or Surplus'] < 0) {
-                            $('td:eq(13)', row).css('color', '#FA5353');
+                            $(hrsDefsColumn, row).css('color', '#FA5353');
                         } else {
-                            $('td:eq(13)', row).css('color', '#32C132');
+                            $(hrsDefsColumn, row).css('color', '#32C132');
                         }
                     },
                     "columnDefs": [
@@ -151,20 +152,20 @@
 
                     columns:
                         [
-                            {data: 'Name', name: 'Name'},
                             {data: 'Day', name: 'Day'},
-                            {data: 'Assigned Calls', name: 'Assigned Calls'},
+                            {data: 'Name', name: 'Name'},
+                            {data: 'Actual Hrs Worked', name: 'Actual Hrs Worked'},
+                            {data: 'Committed Hrs', name: 'Committed Hrs'},
+                            // {data: 'Assigned Calls', name: 'Assigned Calls'},
                             {data: 'Actual Calls', name: 'Actual Calls'},
                             {data: 'Successful Calls', name: 'Successful Calls'},
                             {data: 'Unsuccessful Calls', name: 'Unsuccessful Calls'},
                             {data: 'Avg CCM Time Per Successful Patient', name: 'Avg CCM Time Per Successful Patient'},
                             {data: 'Avg Completion Time Per Patient', name: 'Avg Completion Time Per Patient'},
                             {data: 'Est. Hrs to Complete Case Load', name: 'Est. Hrs to Complete Case Load'},
-                            {data: 'Actual Hrs Worked', name: 'Actual Hrs Worked'},
-                            {data: 'Committed Hrs', name: 'Committed Hrs'},
-                            {data: 'Attendance/Calls Completion Rate', name: 'Attendance/Calls Completion Rate'},
-                            {data: 'Efficiency Index', name: 'Efficiency Index'},
-                            {data: 'Projected Hrs. Left In Month', name: 'Projected Hrs. Left In Month'},
+                            // {data: 'Attendance/Calls Completion Rate', name: 'Attendance/Calls Completion Rate'},
+                            // {data: 'Efficiency Index', name: 'Efficiency Index'},
+                            // {data: 'Projected Hrs. Left In Month', name: 'Projected Hrs. Left In Month'},
                             {data: 'Hrs Committed Rest of Month', name: 'Hrs Committed Rest of Month'},
                             {data: 'Hrs Deficit or Surplus', name: 'Hrs Deficit or Surplus'},
                             {data: 'Case Load', name: 'Case Load'},

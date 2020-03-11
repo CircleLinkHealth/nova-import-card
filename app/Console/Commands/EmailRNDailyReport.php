@@ -113,6 +113,7 @@ class EmailRNDailyReport extends Command
                             continue;
                         }
 
+
                         $attendanceRate = 0 != $reportDataForNurse['committedHours']
                             ? (round(
                                 (float) (($reportDataForNurse['actualHours'] / $reportDataForNurse['committedHours']) * 100),
@@ -177,12 +178,11 @@ class EmailRNDailyReport extends Command
                             'avgCCMTimePerPatient'  => $reportDataForNurse['avgCCMTimePerPatient'],
                             'avgCompletionTime'     => $reportDataForNurse['avgCompletionTime'],
                             'nextUpcomingWindowDay' => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('l')
+                                ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
                                 : null,
                             'nextUpcomingWindowMonth' => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('F d')
+                                ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
                                 : null,
-
                             'deficitTextColor'     => $deficitTextColor,
                             'deficitOrSurplusText' => $deficitOrSurplusText,
                         ];
