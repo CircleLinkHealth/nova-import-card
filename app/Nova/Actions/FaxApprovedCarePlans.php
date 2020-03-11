@@ -9,6 +9,7 @@ namespace App\Nova\Actions;
 use App\Jobs\FaxPatientCarePlansToLocation;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\FaxChannel;
+use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\SharedModels\Entities\CarePlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -72,7 +73,7 @@ class FaxApprovedCarePlans extends Action implements ShouldQueue
                 return;
             }
 
-            $practice->patients()
+            User::ofType('participant')->ofPractice($practice->id)
                 ->whereHas('patientInfo', function ($info) {
                     $info->enrolled();
                 })
