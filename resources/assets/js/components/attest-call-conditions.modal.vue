@@ -60,6 +60,7 @@
             'cpmProblems': Array,
         },
         mounted() {
+
             self = this;
 
             App.$on('show-attest-call-conditions-modal', () => {
