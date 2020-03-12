@@ -127,7 +127,7 @@
     "circlelinkhealth/clh-import-card-extended": "*",
     "circlelinkhealth/core-module": "1.5.0",
     "circlelinkhealth/cpm-migrations-module": "1.4.4",
-    "circlelinkhealth/customer-module": "1.9.6",
+    "circlelinkhealth/customer-module": "dev-CPM-2079-attest-bhi-modal",
     "circlelinkhealth/eligibility-module": "1.9.0",
     "circlelinkhealth/generate-patient-call-data-csv": "*",
     "circlelinkhealth/import-practice-staff-csv": "*",
