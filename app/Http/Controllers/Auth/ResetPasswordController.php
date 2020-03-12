@@ -128,6 +128,9 @@ class ResetPasswordController extends Controller
 
             if ($user) {
                 $shouldLockEmailInput = $user->isParticipant();
+                if ( ! $user->isParticipant()) {
+                    $this->forgetCookie();
+                }
             }
         }
 
