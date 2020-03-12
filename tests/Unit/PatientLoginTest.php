@@ -64,7 +64,7 @@ class PatientLoginTest extends CustomerTestCase
             $this->patient,
             NotifyPatientCarePlanApproved::class,
             function ($notification, $channels) {
-                $this->call('GET', $notification->resetUrl())
+                $this->call('GET', $notification->resetUrl($this->patient))
                      ->assertOk();
 
                 $mailData = $notification->toMail($this->patient)->toArray();
@@ -95,7 +95,7 @@ class PatientLoginTest extends CustomerTestCase
             $this->patient,
             NotifyPatientCarePlanApproved::class,
             function ($notification, $channels) {
-                $this->call('GET', $notification->resetUrl())
+                $this->call('GET', $notification->resetUrl($this->patient))
                      ->assertOk();
 
                 $mailData = $notification->toMail($this->patient)->toArray();

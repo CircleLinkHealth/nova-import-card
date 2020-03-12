@@ -71,14 +71,12 @@ class NotifyPatientCarePlanApproved extends Notification
     /**
      * @return string
      */
-    public function getActionUrl()
+    public function getActionUrl($notifiable)
     {
-        $patient = $this->carePlan->patient;
-
         return CarePlan::PROVIDER_APPROVED != $this->carePlan->status
-            ? $this->resetUrl()
+            ? $this->resetUrl($notifiable)
             : route('home', [
-                'practice_id' => $patient->program_id,
+                'practice_id' => $notifiable->program_id,
             ]);
     }
 
@@ -147,10 +145,10 @@ class NotifyPatientCarePlanApproved extends Notification
             ->from('noreply@circlelinkhealth.com', $notifiable->getPrimaryPracticeName())
             ->subject($this->getSubject())
             ->markdown('emails.patientCarePlanApproved', [
-                'action_url'    => $this->getActionUrl(),
+                'action_url'    => $this->getActionUrl($notifiable),
                 'action_text'   => $this->getActionText(),
                 'practice_name' => $notifiable->getPrimaryPracticeName(),
-                'reset_url'     => $this->resetUrl(),
+                'reset_url'     => $this->resetUrl($notifiable),
                 'body'          => $this->getBody(),
                 'is_followup'   => CarePlan::PROVIDER_APPROVED === $this->carePlan->status,
             ]);
@@ -165,8 +163,6 @@ class NotifyPatientCarePlanApproved extends Notification
      */
     public function via($notifiable)
     {
-        $this->notifiable = $notifiable;
-
         return $this->channels;
     }
 
@@ -176,12 +172,12 @@ class NotifyPatientCarePlanApproved extends Notification
      *
      * @return string
      */
-    public function resetUrl()
+    public function resetUrl($notifiable)
     {
         return route('password.reset', [
             'token'       => $this->token,
-            'practice_id' => $this->notifiable->getPrimaryPracticeId(),
-            'email'       => $this->notifiable->email,
+            'practice_id' => $notifiable->getPrimaryPracticeId(),
+            'email'       => $notifiable->email,
         ]);
     }
 }
