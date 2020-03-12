@@ -124,7 +124,7 @@ class NotifyPatientCarePlanApproved extends Notification
             'body'    => $this->getBody(),
             'subject' => $this->getSubject(),
 
-            'reset_url' => $this->resetUrl(),
+            'reset_url' => $this->resetUrl($notifiable),
 
             'careplan_id' => $this->carePlan->id,
         ];
