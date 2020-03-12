@@ -16,7 +16,7 @@ use Illuminate\Support\Collection;
 
 class ItemizedBillablePatientsReport
 {
-    const ATTACH_DEFAULT_PROBLEMS_FOR_MONTH = '2020-03-01';
+    const ATTACH_DEFAULT_PROBLEMS_FOR_MONTH = '2020-02-01';
     const BHI_SERVICE_CODE = 'CPT 99484';
 
     /**
