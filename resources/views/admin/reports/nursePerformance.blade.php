@@ -104,7 +104,7 @@
                         // -------------------------------------
 
                         const hrsDefsColumn = 'td:eq(11)';
-                        const hrsDeficit = parseInt(data['Hrs Deficit or Surplus']);
+                        const hrsDeficit = parseFloat(data['Hrs Deficit or Surplus']);
                         if (hrsDeficit < 0) {
                             $(hrsDefsColumn, row).css('color', '#FA5353');
                         }
