@@ -16,7 +16,7 @@ class SendHraSurveyReminder extends Command
      *
      * @var string
      */
-    protected $signature = 'survey:reminder {daysPrior} {--notifyClh}';
+    protected $signature = 'survey:reminder {daysPrior}';
 
     /**
      * The console command description.
@@ -43,15 +43,13 @@ class SendHraSurveyReminder extends Command
     public function handle()
     {
         $daysPrior = $this->argument('daysPrior');
-        $notifyClh = $this->option('notifyClh');
+        // $notifyClh = $this->option('notifyClh');
 
         $date      = now()->addDays($daysPrior);
         $dateStart = $date->copy()->startOfDay();
         $dateEnd   = $date->copy()->endOfDay();
 
         $service = app(SurveyInvitationLinksService::class);
-
-        $hasSentAtLeastOneReminder = false;
 
         User::ofType('participant', false)
             ->whereHas('awvAppointments', function ($q) use ($dateStart, $dateEnd) {
@@ -63,16 +61,17 @@ class SendHraSurveyReminder extends Command
                 },
             ])
             ->get()
-            ->each(function (User $user) use ($service, &$hasSentAtLeastOneReminder) {
+            ->each(function (User $user) use ($service) {
                 try {
                     $url = $service->createAndSaveUrl($user, Survey::HRA, true);
                 } catch (\Exception $e) {
                     throw $e;
                 }
-                $hasSentAtLeastOneReminder = true;
                 $user->notify(new SurveyInvitationLink($url, Survey::HRA));
             });
 
+        /*
+         * not doing this, but keeping in case we need it in the near future
         if ($hasSentAtLeastOneReminder && $notifyClh) {
             $param        = [
                 'start' => $dateStart->toDateTimeString(),
@@ -82,5 +81,6 @@ class SendHraSurveyReminder extends Command
             $notification = new AppointmentsReminderNotification('#awv', $url);
             sendSlackMessage($notification);
         }
+        */
     }
 }
