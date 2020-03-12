@@ -20,10 +20,9 @@ trait NursePerformanceCalculations
     /**
      * In dashboard is named : "Avg CCM Time Per Successful Patient". It changes daily (Similar to case completion).
      *
-     * @param Carbon $date
      * @param $patientsForMonth
-     *
      * @param $totalMonthlyCompletedPatientsOfNurse
+     *
      * @return float|int
      */
     public function estAvgCCMTimePerMonth(Carbon $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse)
@@ -74,9 +73,6 @@ trait NursePerformanceCalculations
     }
 
     /**
-     * @param User $nurse
-     * @param Carbon $date
-     * @param int $totalMonthlyCompletedPatientsOfNurse
      * @return float|int
      */
     public function getAvgCompletionTime(User $nurse, Carbon $date, int $totalMonthlyCompletedPatientsOfNurse)
@@ -88,7 +84,6 @@ trait NursePerformanceCalculations
             ->where('start_time', '>=', $start)
             ->where('start_time', '<=', $end)
             ->sum('billable_duration');
-
 
         if (0 === $totalMonthlyCompletedPatientsOfNurse) {
             $totalMonthlyCompletedPatientsOfNurse = 1;
@@ -164,31 +159,114 @@ trait NursePerformanceCalculations
     }
 
     /**
+     * @param User $nurse
      * @param Collection $upcomingHolidays
      *
+     * @param Carbon $date
      * @return int
      */
     public function getHoursCommittedRestOfMonth(User $nurse, $upcomingHolidays, Carbon $date)
     {
-        $diff = $date->diffInDays($date->copy()->endOfMonth());
-
+//        Doing this cause date is mutating later.
+        $givenDate = $date->copy();
+        $startOfMonth = $date->startOfMonth();
+        $fullMonthRange = $startOfMonth->diffInDays($startOfMonth->copy()->endOfMonth());
         $mutableDate = $date->copy()->addDay()->startOfDay();
+
         $hours = [];
-        for ($i = $diff; $i > 0; --$i) {
+        for ($i = $fullMonthRange; $i > 0; --$i) {
             $isHolidayForDate = $upcomingHolidays
                 ->where('date', $mutableDate)
                 ->isNotEmpty();
 
             //we count the hours only if the nurse has not scheduled a holiday for that day.
             if (!$isHolidayForDate) {
-                $hours[] = $nurse->nurseInfo->getHoursCommittedForCarbonDate($mutableDate);
+                $hours[] = [
+                    'hours' => $nurse->nurseInfo->getHoursCommittedForCarbonDate($mutableDate),
+                    'date' => $mutableDate->toDateString(),
+                    'dayOfWeek' => $mutableDate->dayOfWeek
+                ];
             }
 
             $mutableDate->addDay()->startOfDay();
         }
 
-        return round(array_sum($hours), 1);
+        $hoursGroupedByWeek = $this->groupCommittedHoursByWeek($hours);
+        //        If whole month is not entered, extrapolate based off of entered hours for the current week
+        $extrapolatedHours = $this->extrapolateMissingWindows($hoursGroupedByWeek);
+        //        Return only the data after the given date here
+        $committedHoursForRestOfMonth = $extrapolatedHours->map(function ($week) use ($givenDate) {
+            $data = [];
+            foreach ($week as $day) {
+                if ($day['date'] > $givenDate->toDateString()) {
+                    $data[] = $day['hours'];
+                }
+            }
+            return $data;
+        });
+
+        return round(array_sum($committedHoursForRestOfMonth->flatten()->toArray()), 1);
     }
+
+    /**
+     * @param array $hours
+     * @return Collection
+     */
+    public function groupCommittedHoursByWeek(array $hours)
+    {
+        return collect($hours)->groupBy(function ($hour) {
+            return Carbon::parse($hour['date'])->format('W');
+        });
+    }
+
+    /**
+     * @param object $hoursGroupedByWeek
+     * @return mixed
+     */
+    public function extrapolateMissingWindows(object $hoursGroupedByWeek)
+    {
+        return $hoursGroupedByWeek->transform(function ($week) use ($hoursGroupedByWeek) {
+            $results = [];
+            foreach ($week as $day => $data) {
+                $emptyWindowDate = Carbon::parse($data['date']);
+                if (empty($data['hours'])) {
+                    $results[] = [
+                        'hours' => $this->extrapolateData($emptyWindowDate, $hoursGroupedByWeek),
+                        'date' => $emptyWindowDate->toDateString()
+                    ];
+                } else {
+                    $results[] = [
+                        'hours' => $data['hours'],
+                        'date' => $emptyWindowDate->toDateString()
+                    ];
+                }
+            }
+            return $results;
+        });
+    }
+
+    /**
+     * @param Carbon $emptyWindowDate
+     * @param object $weeks
+     * @return int|mixed
+     */
+    public function extrapolateData(Carbon $emptyWindowDate, object $weeks)
+    {
+        $dayOfWeek = $emptyWindowDate->dayOfWeek;
+        $extrapolatedWindowHrs = 0;
+        foreach ($weeks as $week) {
+            foreach ($week as $day) {
+//                note:if day is holiday then 'hours' will be zero
+                if ($day['dayOfWeek'] === $dayOfWeek && $day['hours'] > 0) {
+                    $extrapolatedWindowHrs = $day['hours'];
+//                    find the first day with data and then exit loop
+                    break 2;
+                }
+            }
+        }
+        return $extrapolatedWindowHrs;
+    }
+
 
     /**
      * = (average hours worked per committed day during last 10 sessions that care coach committed to) * (number of
@@ -416,7 +494,7 @@ AND patient_info.ccm_status = 'enrolled'"
      */
     public function surplusShortfallHours($data)
     {
-        return round((float)($data['projectedHoursLeftInMonth'] - $data['caseLoadNeededToComplete']), 2);
+        return round((float)($data['hoursCommittedRestOfMonth'] - $data['caseLoadNeededToComplete']), 2);
     }
 
     /**
