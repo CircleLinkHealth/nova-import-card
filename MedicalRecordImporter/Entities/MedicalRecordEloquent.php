@@ -63,6 +63,15 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
         return $this;
     }
+    
+    public function scopeHasUPG0506PdfCareplanMedia($query)
+    {
+        return $query->whereExists(function ($query) {
+            $query->select('id')
+                  ->from('media')
+                  ->where('custom_properties->is_pdf', 'true')->where('custom_properties->is_upg0506', 'true')->where('custom_properties->care_plan->demographics->mrn_number', (string)$this->mrn);
+        });
+    }
 
     /**
      * @return mixed
