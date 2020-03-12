@@ -253,23 +253,18 @@ trait NursePerformanceCalculations
     public function extrapolateData(Carbon $emptyWindowDate, object $weeks)
     {
         $dayOfWeek = $emptyWindowDate->dayOfWeek;
-        $extrapolatedWindow = [];
+        $extrapolatedWindowHrs = 0;
         foreach ($weeks as $week) {
             foreach ($week as $day) {
 //                note:if day is holiday then 'hours' will be zero
                 if ($day['dayOfWeek'] === $dayOfWeek && $day['hours'] > 0) {
-                    $extrapolatedWindow[] = $day;
+                    $extrapolatedWindowHrs = $day['hours'];
 //                    find the first day with data and then exit loop
                     break 2;
                 }
             }
         }
-
-        if (!empty($extrapolatedWindow)) {
-            return $extrapolatedWindow[0]['hours'];
-        }
-
-        return 0;
+        return $extrapolatedWindowHrs;
     }
 
 
