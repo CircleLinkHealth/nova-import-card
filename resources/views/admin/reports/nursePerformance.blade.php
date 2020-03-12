@@ -104,8 +104,10 @@
                         // -------------------------------------
 
                         const hrsDefsColumn = 'td:eq(11)';
-                        if (data['Hrs Deficit or Surplus'] !== '0') {
-                            if (data['Hrs Deficit or Surplus'] < '0') {
+                        const hrsDeficit = parseInt(data['Hrs Deficit or Surplus']);
+
+                        if (hrsDeficit !== 0) {
+                            if (hrsDeficit < 0) {
                                 $(hrsDefsColumn, row).css('color', '#FA5353');
                             } else {
                                 $(hrsDefsColumn, row).css('color', '#32C132');
