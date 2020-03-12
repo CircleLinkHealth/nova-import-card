@@ -257,6 +257,7 @@ trait NursePerformanceCalculations
 //                note:if day is holiday then 'hours' will be zero
                 if ($day['dayOfWeek'] === $dayOfWeek && $day['hours'] > 0) {
                     $extrapolatedWindow[] = $day;
+//                    find the first day with data and then exit loop
                     break 2;
                 }
             }
