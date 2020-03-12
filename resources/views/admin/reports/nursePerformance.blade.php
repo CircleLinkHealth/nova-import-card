@@ -100,12 +100,15 @@
                                 }
                             );
                         }
+                        // END OF _ Define WORK HOURS text color.
+                        // -------------------------------------
 
-                        // Define WORK HOURS text color - end
-                        const hrsDefsColumn = 'td:eq(10)';
-                        if (data['Hrs Deficit or Surplus'] < 0) {
+                        const hrsDefsColumn = 'td:eq(11)';
+                        const hrsDeficit = parseInt(data['Hrs Deficit or Surplus']);
+                        if (hrsDeficit < 0) {
                             $(hrsDefsColumn, row).css('color', '#FA5353');
-                        } else {
+                        }
+                        if (hrsDeficit > 0) {
                             $(hrsDefsColumn, row).css('color', '#32C132');
                         }
                     },
