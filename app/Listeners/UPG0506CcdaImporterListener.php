@@ -17,7 +17,7 @@ use Illuminate\Queue\InteractsWithQueue;
 class UPG0506CcdaImporterListener
 {
     const UPG_NAME = 'UPG';
-
+    
     /**
      * Create the event listener.
      *
@@ -26,7 +26,7 @@ class UPG0506CcdaImporterListener
     public function __construct()
     {
     }
-
+    
     /**
      * Handle the event.
      *
@@ -37,36 +37,32 @@ class UPG0506CcdaImporterListener
     public function handle(CcdaImported $event)
     {
         $ccda = Ccda::find($event->ccdaId);
-        if ($this->shouldBail($ccda)) {
+        if ( ! $ccda || $this->shouldBail($ccda)) {
             return;
         }
-
+        
         Media::where('model_type', Ccda::class)->where('model_id', $ccda->id)->chunkById(
             10,
             function ($medias) {
                 $medias->each(
                     function ($media) {
-                        $data = $media->custom_properties;
-                        $data['is_ccda'] = 'true';
-                        $data['is_upg0506'] = 'true';
+                        $data                        = $media->custom_properties;
+                        $data['is_ccda']             = 'true';
+                        $data['is_upg0506']          = 'true';
                         $data['is_upg0506_complete'] = 'false';
-                        $media->custom_properties = $data;
+                        $media->custom_properties    = $data;
                         $media->save();
                     }
                 );
             }
         );
     }
-
-    private function shouldBail(Ccda $ccda):bool
+    
+    private function shouldBail(Ccda $ccda): bool
     {
-        if (!$ccda) {
-            return true;
-        }
-        
         return ! (str_contains(
-            optional(DirectMailMessage::find($ccda->direct_mail_message_id))->from,
-            '@upg.ssdirect.aprima.com'
-        ) && $ccda->hasProcedureCode('G0506'));
+                      optional(DirectMailMessage::find($ccda->direct_mail_message_id))->from,
+                      '@upg.ssdirect.aprima.com'
+                  ) && $ccda->hasProcedureCode('G0506'));
     }
 }
