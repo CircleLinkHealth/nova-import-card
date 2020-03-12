@@ -47,6 +47,8 @@
     import {Event} from 'vue-tables-2';
     import VueSelect from 'vue-select';
 
+    let self;
+
     export default {
         name: "attest-call-conditions-modal",
         mixins: [CareplanMixin],
@@ -61,6 +63,7 @@
         },
         mounted() {
 
+            //add in created
             self = this;
 
             App.$on('show-attest-call-conditions-modal', () => {
