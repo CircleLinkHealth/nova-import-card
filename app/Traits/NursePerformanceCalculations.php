@@ -159,8 +159,10 @@ trait NursePerformanceCalculations
     }
 
     /**
+     * @param User $nurse
      * @param Collection $upcomingHolidays
      *
+     * @param Carbon $date
      * @return int
      */
     public function getHoursCommittedRestOfMonth(User $nurse, $upcomingHolidays, Carbon $date)
