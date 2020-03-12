@@ -62,7 +62,6 @@
                             <div class="col-lg-12"
                                  style="background-color: white;margin: 0 0px 10px 0px;border-top: #50b2e1 3px solid;">
                                 <div class="col-lg-10 col-lg-offset-1" style="text-align: center">
-                                    <?php xdebug_break(); ?>
                                     @if(\Illuminate\Support\Facades\Cookie::has('practice_name_as_logo') && ! empty(\Illuminate\Support\Facades\Cookie::get('practice_name_as_logo')))
                                         <h2 class="auth-pages-title">{{\Illuminate\Support\Facades\Cookie::get('practice_name_as_logo')}}</h2>
                                     @elseif(isset($_COOKIE['practice_name_as_logo']) && ! empty($_COOKIE['practice_name_as_logo']))
