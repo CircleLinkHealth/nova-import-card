@@ -36,7 +36,7 @@ class UPG0506CcdaImporterListener
      */
     public function handle(CcdaImported $event)
     {
-        $ccda = Ccda::findOrFail($event->ccdaId);
+        $ccda = Ccda::find($event->ccdaId);
         if ($this->shouldBail($ccda)) {
             return;
         }
@@ -58,8 +58,12 @@ class UPG0506CcdaImporterListener
         );
     }
 
-    private function shouldBail(Ccda $ccda)
+    private function shouldBail(Ccda $ccda):bool
     {
+        if (!$ccda) {
+            return true;
+        }
+        
         return ! (str_contains(
             optional(DirectMailMessage::find($ccda->direct_mail_message_id))->from,
             '@upg.ssdirect.aprima.com'
