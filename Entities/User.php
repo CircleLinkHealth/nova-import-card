@@ -755,24 +755,24 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 $user->careTeamMembers()->restore();
             }
         );
-    
+
         static::pivotAttached(function ($user, $relationName, $pivotIds, $pivotIdsAttributes) {
             if ('roles' === $relationName) {$user->clearRolesCache();}
         });
-    
+
         static::pivotDetached(function ($user, $relationName, $pivotIds) {
             if ('roles' === $relationName) {$user->clearRolesCache();}
         });
-        
+
         static::pivotUpdated(function ($user, $relationName, $pivotIds, $pivotIdsAttributes) {
             if ('roles' === $relationName) {$user->clearRolesCache();}
         });
-    
+
         static::updating(function ($model) {
             //this is how we catch standard eloquent events
         });
     }
-    
+
     public function clearRolesCache() {
         ClearUserCache::roles($this);
     }
@@ -2662,7 +2662,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function routeNotificationForTwilio()
     {
-        return $this->getPrimaryPhone();
+        return $this->getPhone();
     }
 
     public function saasAccountName()
