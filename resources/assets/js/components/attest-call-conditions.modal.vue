@@ -61,14 +61,19 @@
             'patientId': String,
             'cpmProblems': Array,
         },
-        mounted() {
-
+        created(){
             //add in created
             self = this;
+        },
+        mounted() {
 
             App.$on('show-attest-call-conditions-modal', () => {
                 this.$refs['attest-call-conditions-modal'].visible = true;
             });
+
+            if(! this.cpmProblems){
+                this.cpm_problems = this.careplan().allCpmProblems || []
+            }
 
             //if in approve billable patients page, we get problems from the billing component
             if (this.isNotesPage) {
@@ -76,24 +81,21 @@
             }
 
             Event.$on('full-conditions:add', (ccdProblem) => {
-                let component = this && this.problems ? this : (self && self.problems ? self : null);
 
-                let cpmProbs = self.cpmProbs || this.cpmProbs
-
-                let cpmProblem = cpmProbs.filter(function(p){
+                let cpmProblem = this.cpmProbs.filter(function(p){
                     return p.id == ccdProblem.cpm_id;
                 })[0];
 
                 if (ccdProblem) {
-                    component.problems.push({
+                    this.problems.push({
                         id: ccdProblem.id,
                         name: ccdProblem.name,
                         code: ccdProblem.code,
                         is_behavioral: cpmProblem ? cpmProblem.is_behavioral : false
                     })
-                    component.attestedProblems.push(ccdProblem.id)
+                    this.attestedProblems.push(ccdProblem.id)
                 }
-                component.addCondition = false;
+                this.addCondition = false;
             })
 
             App.$on('modal-attest-call-conditions:hide', () => {
@@ -140,20 +142,22 @@
             },
             problemsToAttest() {
 
-                let component = this || self;
-
-                let problemsToAttest = (this.problems || []).filter(function (p) {
+                let problemsToAttest = (self.problems || []).filter(function (p) {
                     return !!p.code;
                 });
-                //do not show BHI problems when on Approve Billable Patients Page
-                return component.isNotesPage ? problemsToAttest : (problemsToAttest || []).filter(function (p) {
-                    return component.isBhi ? p.is_behavioral : !p.is_behavioral;
+                //if in notes page, show all problems
+                //if in approve billable patients page, show ccm or bhi, depending on the modal
+                return self.isNotesPage ? problemsToAttest : (problemsToAttest || []).filter(function (p) {
+                    return self.isBhi ? p.is_behavioral : !p.is_behavioral;
                 });
             },
             isNotesPage() {
                 //if patient id prop has been passed in, then this is for the notes pages, else, approve billable patients page
                 return !!this.patientId
             },
+            cpmProbs() {
+                return this.cpmProblems || this.cpm_problems
+            }
         },
         methods: {
             getPatientBillableProblems() {

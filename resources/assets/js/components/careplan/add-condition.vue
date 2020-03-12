@@ -69,6 +69,8 @@
     import AddConditionMixin from './mixins/add-condition.mixin'
 
 
+    let self;
+
     export default {
         name: "add-condition",
         props: {
@@ -109,20 +111,19 @@
         },
         computed: {
             cpmProblemsForBHISelect() {
-                return this.cpmProblemsForAutoComplete
+                return self.cpmProblemsForAutoComplete
             },
             cpmProblemsForAutoComplete() {
-                let probs = this.cpmProbs
+                let probs = self.cpmProbs;
 
-                let component = this || self;
-
-                if (component.isApproveBillablePage) {
+                if (self.isApproveBillablePage) {
                     probs = probs.filter(function (p) {
+
                         if (! p.code){
                             return false;
                         }
 
-                        return  component.isBhi ? p.is_behavioral : !p.is_behavioral;
+                        return  self.isBhi ? p.is_behavioral : !p.is_behavioral;
                     })
                 }
 
@@ -142,7 +143,7 @@
                     .sort((a, b) => (+b.is_snomed) - (+a.is_snomed) || b.name.localeCompare(a.name));
             },
             pId() {
-                return this.patient_id ? this.patient_id : this.patientId;
+                return this.patient_id || this.patientId;
             },
             isNotesPage() {
                 //if patient id prop has been passed in, then this is for the notes pages, else, approve billable patients page
@@ -194,11 +195,12 @@
                 this.newProblem.icd10 = null
             },
         },
-        mounted() {
+        created(){
             self = this
-
+        },
+        mounted() {
             Event.$on('modal-attest-call-conditions:show', (data) => {
-                self.patient_id = String(data.patient.id)
+                this.patient_id = String(data.patient.id)
             })
         }
     }
