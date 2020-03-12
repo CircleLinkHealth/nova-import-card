@@ -89,6 +89,18 @@ class PatientListFilters extends QueryFilters
         return $this->builder->where('eligibility', '=', $status);
     }
 
+    public function appointment($value)
+    {
+        if (empty($value) || ! array_key_exists('start', $value) || ! array_key_exists('end', $value)) {
+            return $this->builder;
+        }
+
+        return $this->builder->whereBetween('appointment', [
+            Carbon::parse($value['start']),
+            Carbon::parse($value['end']),
+        ]);
+    }
+
     public function dob($value)
     {
         if (empty($value)) {

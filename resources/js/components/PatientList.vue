@@ -61,6 +61,7 @@
         mdbDropdownToggle,
         mdbRow
     } from 'mdbvue';
+
     import SendLinkModal from './SendLinkModal';
     import AddPatientModal from './AddPatientModal';
 
@@ -114,6 +115,10 @@
                     perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
+                    dateColumns: ['appointment'],
+                    datepickerOptions: {
+                        opens: 'left',
+                    },
                     listColumns: {
                         hra_status: [
                             {id: 'null', text: this.getStatusTitle('null')},
@@ -129,7 +134,8 @@
                         ]
                     },
                     //todo: eligibility should have a dropdown for filters
-                    filterable: ['mrn', 'patient_name', 'provider_name', 'hra_status', 'vitals_status', 'dob'],
+                    filterable: ['mrn', 'patient_name', 'provider_name', 'hra_status', 'vitals_status', 'appointment', 'dob'],
+                    initFilters: this.getInitialFiltersFromUrl(),
                     sortable: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'appointment', 'dob'],
                     sortIcon: {
                         base: 'fa',
@@ -170,6 +176,21 @@
 
             getWellnessDocsPage(patientId) {
                 return this.wellnessDocsUrl ? this.wellnessDocsUrl.replace("$PATIENT_ID$", patientId) : '#';
+            },
+
+            getInitialFiltersFromUrl() {
+                const search = new URLSearchParams(window.location.search);
+                const val = search.get('appointment');
+                if (!val) {
+                    return null;
+                }
+                const parsed = JSON.parse(val);
+                return {
+                    'appointment': {
+                        'start': moment(parsed['start']),
+                        'end': moment(parsed['end']),
+                    }
+                };
             },
 
             getStatusTitle(id) {

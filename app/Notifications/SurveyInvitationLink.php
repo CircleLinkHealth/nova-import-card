@@ -3,16 +3,19 @@
 namespace App\Notifications;
 
 use App\NotifiableUser;
+use App\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 use NotificationChannels\Twilio\TwilioChannel;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 
-class SurveyInvitationLink extends Notification
+class SurveyInvitationLink extends Notification implements ShouldQueue
 {
     use Queueable;
+
     const VITALS = 'Vitals';
     const SMS_TEXT_FOR_KNOWN_APPOINTMENT_DATE_TIME = "Hello! Dr. {primaryPhysicianLastName} requests you complete this wellness survey before your scheduled appointment on {date}[“mm/dd/yy”] at {time}[hh:mm am/pm].";
     const SMS_TEXT_FOR_KNOWN_APPOINTMENT_DATE_ONLY = "Hello! Dr. {primaryPhysicianLastName} requests you complete this wellness survey before your scheduled appointment on {date}[“mm/dd/yy”].";
@@ -65,12 +68,17 @@ class SurveyInvitationLink extends Notification
      *
      * @param string $url
      * @param string $surveyName
-     * @param $via 'sms' or 'mail'
+     * @param $via 'sms' or 'mail' or null
      * @param null $practiceName
      * @param null $providerFullName
      */
-    public function __construct(string $url, string $surveyName, $via, $practiceName = null, $providerFullName = null)
-    {
+    public function __construct(
+        string $url,
+        string $surveyName,
+        $via = null,
+        $practiceName = null,
+        $providerFullName = null
+    ) {
         $this->url              = $url;
         $this->surveyName       = $surveyName;
         $this->via              = $via;
@@ -87,6 +95,21 @@ class SurveyInvitationLink extends Notification
      */
     public function via($notifiable)
     {
+        if ( ! $this->via) {
+            $channels = [];
+            /** @var User $target */
+            $target = $notifiable;
+            $phone  = $target->getPhone();
+            if ( ! empty($phone)) {
+                $channels[] = TwilioChannel::class;
+            }
+            if ( ! empty($target->email)) {
+                $channels[] = 'mail';
+            }
+
+            return $channels;
+        }
+
         return $this->via === 'mail'
             ? ['mail']
             : [TwilioChannel::class];

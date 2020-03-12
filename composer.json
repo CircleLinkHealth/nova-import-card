@@ -80,6 +80,7 @@
         "fideloper/proxy": "^4.0",
         "fzaninotto/faker": "^1.4",
         "grofgraf/laravel-pdf-merger": "^1.0",
+        "guzzlehttp/guzzle": "^6.5",
         "h4cc/wkhtmltopdf-amd64": "0.12.x",
         "joshbrw/laravel-module-installer": "^0.1.5",
         "lab404/laravel-impersonate": "^1.2",

@@ -104,3 +104,26 @@ if ( ! function_exists('getStringValueFromAnswer')) {
         return $val;
     }
 }
+
+if ( ! function_exists('sendSlackMessage')) {
+    /**
+     * Sends a message to Slack.
+     *
+     * @param Illuminate\Notifications\Notification $notification - must have a toSlack method
+     * @param bool $force - in case you really want the message to go to slack (testing | debugging)
+     */
+    function sendSlackMessage(Illuminate\Notifications\Notification  $notification, $force = false)
+    {
+        $isProduction = config('app.env') === 'production';
+        if ( ! $force && ! $isProduction) {
+            return;
+        }
+        $endpoint = env('SLACK_DEFAULT_ENDPOINT', null);
+        if ( ! $endpoint) {
+            return;
+        }
+        $notifiable = new \Illuminate\Notifications\AnonymousNotifiable();
+        $notifiable->route('slack', $endpoint);
+        $notifiable->notify($notification);
+    }
+}
