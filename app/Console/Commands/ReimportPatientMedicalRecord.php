@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\Notifications\PatientReimportedNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
@@ -27,7 +28,7 @@ class ReimportPatientMedicalRecord extends Command
      *
      * @var string
      */
-    protected $signature = 'patient:recreate {patientUserId}';
+    protected $signature = 'patient:recreate {patientUserId} {initiatorUserId?}';
 
     /**
      * Create a new command instance.
@@ -98,6 +99,10 @@ class ReimportPatientMedicalRecord extends Command
         $this->line("Patient $user->id reimported from CCDA $ccda->id");
 
         $imr->updateOrCreateCarePlan();
+
+        if ($initiatorId = $this->argument('initiatorUserId')) {
+            User::firstOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
+        }
 
         return true;
     }
