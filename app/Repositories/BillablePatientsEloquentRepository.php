@@ -12,28 +12,51 @@ use CircleLinkHealth\Customer\Entities\User;
 
 class BillablePatientsEloquentRepository
 {
-    public function billablePatients($practiceId, Carbon $date)
-    {
+    public function billablePatients(
+        $practiceId,
+        Carbon $date,
+        array $with = [
+            'ccdProblems',
+            'patientSummaries',
+            'cpmProblems',
+            'patientInfo',
+            'primaryPractice',
+            'careTeamMembers',
+        ]
+    ) {
         $month = $date->startOfMonth();
         
         $result = User::with(
-            [
-                'ccdProblems'      => function ($query) {
-                    $query->with(['icd10Codes', 'cpmProblem']);
-                },
-                'patientSummaries' => function ($query) use ($month) {
-                    $query->where('month_year', $month)
-                          ->where('total_time', '>=', 1200)
-                          ->where('no_of_successful_calls', '>=', 1)
-                          ->with('chargeableServices');
-                },
-                'cpmProblems',
-                'patientInfo',
-                'primaryPractice',
-                'careTeamMembers'  => function ($q) {
-                    $q->where('type', '=', 'billing_provider');
-                },
-            ]
+            collect(
+                [
+                    'ccdProblems'      => function ($query) {
+                        $query->with(['icd10Codes', 'cpmProblem']);
+                    },
+                    'patientSummaries' => function ($query) use ($month) {
+                        $query->where('month_year', $month)
+                              ->where('total_time', '>=', 1200)
+                              ->where('no_of_successful_calls', '>=', 1)
+                              ->with('chargeableServices');
+                    },
+                    'cpmProblems',
+                    'patientInfo',
+                    'primaryPractice',
+                    'careTeamMembers'  => function ($q) {
+                        $q->where('type', '=', 'billing_provider');
+                    },
+                ]
+            )->reject(
+                function ($item, $key) use ($with) {
+                    if (in_array($key, $with)) {
+                        return false;
+                    }
+                    if (in_array($item, $with)) {
+                        return false;
+                    }
+                    
+                    return true;
+                }
+            )
         )
                       ->has('patientInfo')
                       ->whereHas(
