@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\RunScheduler;
+use App\Console\Commands\SendHraSurveyReminder;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -20,13 +21,20 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @param \Illuminate\Console\Scheduling\Schedule $schedule
+     *
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command(SendHraSurveyReminder::class, [
+            'daysPrior' => 10,
+            '--notifyClh',
+        ])->dailyAt('09:00')->onOneServer();
+
+        $schedule->command(SendHraSurveyReminder::class, [
+            'daysPrior' => 8,
+        ])->dailyAt('09:05')->onOneServer();
     }
 
     /**
@@ -36,8 +44,8 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
-        $this->load(__DIR__.'/PersonalizedPreventionPlanController');
+        $this->load(__DIR__ . '/Commands');
+        $this->load(__DIR__ . '/PersonalizedPreventionPlanController');
 
         require base_path('routes/console.php');
     }

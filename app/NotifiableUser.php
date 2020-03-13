@@ -47,7 +47,7 @@ class NotifiableUser
     public function __construct(User $user, string $email = null, string $phoneNumber = null)
     {
         $this->user         = $user;
-        $this->email        = $email;
-        $this->phone_number = $phoneNumber;
+        $this->email        = $email ?? $user->email;
+        $this->phone_number = $phoneNumber ?? $user->getPhone();
     }
 }
