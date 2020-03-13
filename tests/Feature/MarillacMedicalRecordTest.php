@@ -16,7 +16,7 @@ class MarillacMedicalRecordTest extends TestCase
     public function expectedResult()
     {
         return [
-            'type'     => 'MarillacMedicalRecord',
+            'type'     => MarillacMedicalRecord::class,
             'document' => [
                 'custodian' => [
                     'name' => 'Demo, Dr MD',
