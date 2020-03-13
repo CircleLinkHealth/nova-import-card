@@ -406,7 +406,7 @@ class CarePlanHelper
         
         $agentDetails = $this->getEnrolleeAgentDetailsIfExist();
         
-        $this->patientInfo = Patient::updateOrCreate(
+        $this->patientInfo = Patient::firstOrCreate(
             [
                 'user_id' => $this->user->id,
             ],
