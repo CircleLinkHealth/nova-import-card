@@ -6,7 +6,7 @@
 
 namespace App\Console;
 
-use App\Console\Commands\CreateLastMonthBillablePatientsReport;
+use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\CheckForMissingLogoutsAndInsert;
@@ -127,11 +127,11 @@ class Kernel extends ConsoleKernel
             ->cron('1 0 1 * *')->onOneServer();
 
         //Run at 12:45am every 1st of month
-        $schedule->command(CreateLastMonthBillablePatientsReport::class, ['--reset-actor' => true])
+        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor' => true, 'date' => now()->subMonth()->startOfMonth()->toDateString()])
             ->cron('45 0 1 * *')->onOneServer();
 
-        $schedule->command(CreateLastMonthBillablePatientsReport::class)
-            ->dailyAt('00:25')->onOneServer();
+        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor' => true, 'date' => now()->startOfMonth()->toDateString()])
+            ->hourly()->onOneServer();
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,
