@@ -27,13 +27,21 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        //set the dayPrior field to aid with QAing
+
+        $isProduction = config('app.env') === 'production';
+
         $schedule->command(SendHraSurveyReminder::class, [
-            'daysPrior' => 10,
+            'daysPrior' => $isProduction
+                ? 10
+                : 2,
             '--notifyClh',
         ])->dailyAt('09:00')->onOneServer();
 
         $schedule->command(SendHraSurveyReminder::class, [
-            'daysPrior' => 8,
+            'daysPrior' => $isProduction
+                ? 8
+                : 1,
         ])->dailyAt('09:05')->onOneServer();
     }
 
