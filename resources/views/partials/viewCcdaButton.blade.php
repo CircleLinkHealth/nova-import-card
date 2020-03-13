@@ -23,3 +23,12 @@
         <b>CCDA N/A For Patient.</b>
     </div>
 @endif
+
+<div style="padding-top: 10px;">
+    <a href="{{ route('medical-record.patient.reimport', ['userId' => $patient->id]) }}"
+       class="btn btn-danger btn-xs"
+       style="font-size: 15px"
+    >
+        Attempt Reimport
+    </a>
+</div>
