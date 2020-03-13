@@ -35,7 +35,6 @@ class Kernel extends ConsoleKernel
             'daysPrior' => $isProduction
                 ? 10
                 : 2,
-            '--notifyClh',
         ])->dailyAt('09:00')->onOneServer();
 
         $schedule->command(SendHraSurveyReminder::class, [
