@@ -14,6 +14,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 class FaxPatientCarePlansToLocation implements ShouldQueue
 {
+    const ALLOCATED_TIME_TO_SEND_ONE_FAX = 120;
+    
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     
     protected $pdfService;
@@ -39,16 +41,24 @@ class FaxPatientCarePlansToLocation implements ShouldQueue
      */
     public function handle()
     {
+        $counter = 1;
+        
         foreach ($this->patients as $patient) {
             $this->location->notify(
                 (new CarePlanProviderApproved($patient->carePlan, [FaxChannel::class]))
                     ->setFaxOptions(
                         [
                             'batch_collision_avoidance' => true,
-                            'batch_delay'               => 60,
                         ]
-                    )
+                    )->delay($this->delayUntil($counter))
             );
+            
+            $counter++;
         }
+    }
+    
+    private function delayUntil(int $counter)
+    {
+        return now()->addSeconds($counter * self::ALLOCATED_TIME_TO_SEND_ONE_FAX);
     }
 }
