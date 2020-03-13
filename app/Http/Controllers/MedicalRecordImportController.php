@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
+use App\Console\Commands\ReimportPatientMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use Illuminate\Http\Request;
 
@@ -180,5 +181,14 @@ class MedicalRecordImportController extends Controller
         }
 
         return response()->json(compact('imported', 'deleted'), 200);
+    }
+
+    public function reImportPatient($userId)
+    {
+        \Artisan::queue(ReimportPatientMedicalRecord::class, [
+            'patientUserId' => $userId,
+        ]);
+
+        return redirect()->back();
     }
 }
