@@ -25,7 +25,8 @@ class FaxPatientCarePlansToLocation implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param $patients
+     * @param Location $location
      */
     public function __construct($patients, Location $location)
     {
