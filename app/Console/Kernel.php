@@ -41,6 +41,7 @@ use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeRem
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Artisan;
 
 class Kernel extends ConsoleKernel
 {
@@ -112,7 +113,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(EmailRNDailyReport::class)
             ->dailyAt('07:05')->onOneServer()->after(function (){
                 if (! DatabaseNotification::where('type', NurseDailyReport::class)->where('created_at', '>=', now()->setTime(7,4))->exists()) {
-                    \Artisan::queue(EmailRNDailyReport::class);
+                    Artisan::queue(EmailRNDailyReport::class);
                 }
             });
 

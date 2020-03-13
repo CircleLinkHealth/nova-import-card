@@ -12,6 +12,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Eligibility\Templates\CommonwealthMedicalRecord;
+use CircleLinkHealth\Eligibility\Templates\MarillacMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 
@@ -56,6 +57,10 @@ class ReimportPatientMedicalRecord extends Command
 
             return;
         }
+    
+        if ($this->attemptTemplate($user)) {
+            return;
+        }
 
         if ($this->attemptCcda($user)) {
             return;
@@ -70,7 +75,7 @@ class ReimportPatientMedicalRecord extends Command
             return false;
         }
 
-        if ($mr = $this->attemptTemplate($user, $ccda)) {
+        if ($mr = $this->attemptDecorator($user, $ccda)) {
             if ( ! is_null($mr)) {
                 $ccda->json = $mr->toJson();
                 $ccda->save();
@@ -106,15 +111,26 @@ class ReimportPatientMedicalRecord extends Command
 
         return true;
     }
+    
+    private function attemptTemplate(User $user)
+    {
+        if ('marillac-clinic-inc' === $user->primaryPractice->name) {
+            $this->warn("Running 'marillac-clinic-inc' decorator");
+            
+            $mr = new MarillacMedicalRecord(Enrollee::whereUserId($user->id)->with('eligibilityJob')->has('eligibilityJob')->first()->eligibilityJob->data);
+        }
+        
+        return null;
+    }
 
-    private function attemptTemplate(User $user, Ccda $ccda)
+    private function attemptDecorator(User $user, Ccda $ccda)
     {
         if ('commonwealth-pain-associates-pllc' === $user->primaryPractice->name) {
             $this->warn("Running 'commonwealth-pain-associates-pllc' decorator");
 
             return new CommonwealthMedicalRecord(Enrollee::whereUserId($user->id)->with('eligibilityJob')->has('eligibilityJob')->first()->eligibilityJob->data, $ccda->bluebuttonJson());
         }
-
+        
         return null;
     }
 }
