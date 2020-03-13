@@ -12,7 +12,7 @@
 @endcomponent
 
 @if($is_followup)
-Haven't setup your password yet? Click here: [Setup password]({{$reset_url}})
+Haven't setup your password yet? Click here: [Setup password]({!!$reset_url!!})
 @endif
 
 Regards,
