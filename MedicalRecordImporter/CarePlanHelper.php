@@ -431,6 +431,19 @@ class CarePlanHelper
             )
         );
         
+        if (! $this->patientInfo->mrn_number) {
+            $this->patientInfo->mrn_number = $mrn;
+        }
+        
+        if (! $this->patientInfo->birth_date) {
+            $this->patientInfo->birth_date = $this->dem->dob;
+        }
+        
+        if ($this->patientInfo->isDirty()) {
+            $this->patientInfo->save();
+        }
+        
+        
         return $this;
     }
     

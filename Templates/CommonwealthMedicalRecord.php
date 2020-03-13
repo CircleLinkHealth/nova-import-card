@@ -116,7 +116,7 @@ class CommonwealthMedicalRecord
     
     public function getMrn(): string
     {
-        return $this->data['mrn'];
+        return $this->data['mrn_number'];
     }
     
     public function getFirstName(): string
