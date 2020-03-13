@@ -206,13 +206,13 @@ class CarePlanHelper
             ?: $this->imr->billing_provider_id;
         
         if ($providerId) {
-            $billing = CarePerson::updateOrCreate(
+            $billing = CarePerson::firstOrCreate(
                 [
-                    'user_id'        => $this->user->id,
-                    'member_user_id' => $providerId,
                     'type'           => CarePerson::BILLING_PROVIDER,
                 ],
                 [
+                    'user_id'        => $this->user->id,
+                    'member_user_id' => $providerId,
                     'alert' => true,
                 ]
             );
@@ -406,7 +406,7 @@ class CarePlanHelper
         
         $agentDetails = $this->getEnrolleeAgentDetailsIfExist();
         
-        $this->patientInfo = Patient::updateOrCreate(
+        $this->patientInfo = Patient::firstOrCreate(
             [
                 'user_id' => $this->user->id,
             ],
