@@ -49,7 +49,6 @@ class ReimportCcdasFromEnrolleesUsingMrn extends Command
     {
         Enrollee::where('practice_id', $this->argument('practiceId'))
             ->with(['user', 'eligibilityJob', 'practice'])
-            ->whereIn('id', [81950])
             ->chunkById(
                     100,
                     function ($enrollees) {
