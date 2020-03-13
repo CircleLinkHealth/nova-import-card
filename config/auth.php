@@ -70,7 +70,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model'  => \CircleLinkHealth\Customer\Entities\User::class,
+            'model'  => \App\User::class,
         ],
 
         // 'users' => [
@@ -80,7 +80,7 @@ return [
     ],
 
     //entrust needs this
-    'model' => \CircleLinkHealth\Customer\Entities\User::class,
+    'model' => \App\User::class,
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords

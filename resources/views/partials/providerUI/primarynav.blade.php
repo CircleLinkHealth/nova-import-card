@@ -10,7 +10,8 @@ if (isset($patient)) {
 } else {
     $monthlyTime = '';
 }
-$user = auth()->user();
+$user                = auth()->user();
+$patientListDropdown = $user->getPatientListDropdown();
 ?>
 @push('styles')
     <style>
@@ -153,16 +154,48 @@ $user = auth()->user();
                                         class="top-nav-item-icon glyphicon glyphicon-home"></i>Home</a>
                         </li>
 
-                        <li>
-                            <a href="{{ route('patients.listing') }}" class="text-white"><i
-                                        class="top-nav-item-icon glyphicon glyphicon-user"></i>Patient List</a>
-                        </li>
+
+                        @if(sizeof($patientListDropdown) === 1)
+                            <li>
+                                @if($patientListDropdown[0] === 'ccm')
+                                    <a href="{{ route('patients.listing') }}" class="text-white">
+                                        <i class="top-nav-item-icon glyphicon glyphicon-user"></i>
+                                        Patient List
+                                    </a>
+                                @else
+                                    <a href="{{ config('services.awv.url') }}" class="text-white">
+                                        <i class="top-nav-item-icon glyphicon glyphicon-user"></i>
+                                        Patient List
+                                    </a>
+                                @endif
+                            </li>
+                        @else
+                            <li class="dropdown">
+                                <div class="dropdown-toggle top-nav-item" data-toggle="dropdown" role="button"
+                                     aria-expanded="false">
+                                    Patient List
+                                    <span class="caret text-white"></span>
+                                </div>
+                                <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                                    <li>
+                                        <a href="{{ route('patients.listing') }}">
+                                            CCM
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ config('services.awv.url') }}">
+                                            Wellness Visit
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endif
 
                         @if($user->isCareCoach())
-                        <li>
-                            <a href="{{ route('patientCallList.index') }}" class="text-white"><i
-                                        class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
-                        </li>
+                            <li>
+                                <a href="{{ route('patientCallList.index') }}" class="text-white"><i
+                                            class="top-nav-item-icon glyphicon glyphicon-earphone"></i>Activities</a>
+                            </li>
                         @endif
 
                         <li class="dropdown">
@@ -172,9 +205,9 @@ $user = auth()->user();
 
                             <ul class="dropdown-menu" role="menu" style="background: white !important;">
                                 @if($user->isAdmin())
-                                <li>
-                                    <a href="{{ route('patients.careplan.printlist') }}">Care Plan Print List</a>
-                                </li>
+                                    <li>
+                                        <a href="{{ route('patients.careplan.printlist') }}">Care Plan Print List</a>
+                                    </li>
                                 @endif
                                 <li>
                                     <a href="{{ route('patient.note.listing') }}">Notes Report</a>
@@ -183,13 +216,13 @@ $user = auth()->user();
                                     <a href="{{route('patient.reports.u20')}}">Under 20 Minutes Report</a>
                                 </li>
                                 @if($user->hasRole('developer'))
-                                <li>
-                                    <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('admin.reports.nurse.metrics') }}">
-                                        Nurse Performance Report</a>
-                                </li>
+                                    <li>
+                                        <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('admin.reports.nurse.metrics') }}">
+                                            Nurse Performance Report</a>
+                                    </li>
                                 @endif
                             </ul>
                         </li>
