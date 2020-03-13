@@ -24,11 +24,11 @@
     </div>
 @endif
 
-<div style="padding-top: 10px;">
+<div class="pull-right" style="padding-top: 10px;">
     <a href="{{ route('medical-record.patient.reimport', ['userId' => $patient->id]) }}"
        class="btn btn-danger btn-xs"
        style="font-size: 15px"
-       onclick="return confirm('CPM will search for the most recent medical record and reimport the patient. Only do this if the patient did not import correctly. After you click ok, there will not be a confirmation message. Check back in 2-3 minutes to see the re-imported patient.')"
+       onclick="return confirm('CPM will search for the most recent medical record and reimport the patient. Only do this if the patient did not import correctly. CPM will notify you once reimporting finishes.')"
     >
         Attempt Reimport
     </a>
