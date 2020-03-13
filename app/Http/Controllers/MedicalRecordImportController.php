@@ -185,8 +185,10 @@ class MedicalRecordImportController extends Controller
 
     public function reImportPatient($userId)
     {
-        \Artisan::command(ReimportPatientMedicalRecord::class, [
+        \Artisan::queue(ReimportPatientMedicalRecord::class, [
             'patientUserId' => $userId,
         ]);
+
+        return redirect()->back();
     }
 }
