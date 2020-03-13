@@ -28,6 +28,8 @@ use App\Console\Commands\ResetPatients;
 use App\Console\Commands\RunScheduler;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
+use App\Notifications\NurseDailyReport;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Eligibility\Console\Athena\AutoPullEnrolleesFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\DetermineTargetPatientEligibility;
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointments;
@@ -108,7 +110,11 @@ class Kernel extends ConsoleKernel
             ->dailyAt('03:00')->onOneServer();
 
         $schedule->command(EmailRNDailyReport::class)
-            ->dailyAt('07:05')->onOneServer();
+            ->dailyAt('07:05')->onOneServer()->after(function (){
+                if (! DatabaseNotification::where('type', NurseDailyReport::class)->where('created_at', '>=', now()->setTime(7,4))->exists()) {
+                    \Artisan::queue(EmailRNDailyReport::class);
+                }
+            });
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
             ->dailyAt('23:40')->onOneServer();
