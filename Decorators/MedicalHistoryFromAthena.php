@@ -56,7 +56,7 @@ class MedicalHistoryFromAthena implements MedicalRecordDecorator
             'Y'
         )->pluck(
             'question'
-        )->each(
+        )->unique()->each(
             function ($problemName) use (&$data) {
                 $data['problems'][] = [
                     'name' => $problemName,
