@@ -9,6 +9,7 @@ namespace App\Console\Commands;
 use App\Notifications\PatientNotReimportedNotification;
 use App\Notifications\PatientReimportedNotification;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Decorators\DemographicsFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\MedicalHistoryFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
@@ -135,7 +136,9 @@ class ReimportPatientMedicalRecord extends Command
                 app(PcmChargeableServices::class)->decorate(
                     app(MedicalHistoryFromAthena::class)->decorate(
                         app(InsuranceFromAthena::class)->decorate(
-                            $this->getEnrollee($user)->eligibilityJob
+                            app(DemographicsFromAthena::class)->decorate(
+                                $this->getEnrollee($user)->eligibilityJob
+                            )
                         )
                     )
                 )->data,
