@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\SendDailyReportToRN;
 use App\Notifications\NurseDailyReport;
 use App\Services\NursesPerformanceReportService;
 use Carbon\Carbon;
@@ -27,12 +28,13 @@ class EmailRNDailyReport extends Command
      * @var string
      */
     protected $signature = 'nurses:emailDailyReport {date? : Date to generate report for in YYYY-MM-DD.} {nurseUserIds? : Comma separated user IDs of nurses to email report to.} ';
-
-    private $report;
+    
     private $service;
-
+    
     /**
      * Create a new command instance.
+     *
+     * @param NursesPerformanceReportService $service
      */
     public function __construct(NursesPerformanceReportService $service)
     {
@@ -90,110 +92,20 @@ class EmailRNDailyReport extends Command
                 }
             )
             ->chunk(
-                10,
+                50,
                 function ($nurses) use (&$counter, &$emailsSent, $date, $report) {
-                    foreach ($nurses as $nurse) {
-                        $this->warn("Processing $nurse->id");
-                        $reportDataForNurse = $report->where('nurse_id', $nurse->id)->first();
-                        //In case something goes wrong with nurses and states report, or transitioning to new metrics issues
-                        if ( ! $reportDataForNurse || ! $this->validateReportData($reportDataForNurse)) {
-                            \Log::error("Invalid/missing report for nurse with id: {$nurse->id} and date {$date->toDateString()}");
-                            continue;
-                        }
+                    foreach ($nurses as $nurseUser) {
+                        $this->warn("Processing $nurseUser->id");
+    
+                        $reportDataForNurse = $report->where('nurse_id', $nurseUser->id)->first();
+                        
+                        SendDailyReportToRN::dispatch($nurseUser, $date, $reportDataForNurse);
 
-                        $systemTime = $reportDataForNurse['systemTime'];
-
-                        $totalMonthSystemTimeSeconds = $reportDataForNurse['totalMonthSystemTimeSeconds'];
-
-                        if (0 == $systemTime) {
-                            continue;
-                        }
-
-                        if ($nurse->nurseInfo->hourly_rate < 1) {
-                            continue;
-                        }
-
-
-                        $attendanceRate = 0 != $reportDataForNurse['committedHours']
-                            ? (round(
-                                (float) (($reportDataForNurse['actualHours'] / $reportDataForNurse['committedHours']) * 100),
-                                2
-                            ))
-                            : 'N/A';
-
-                        $callsCompletionRate = 0 != $reportDataForNurse['scheduledCalls']
-                            ? (0 == $reportDataForNurse['committedHours']
-                                ? 'N/A'
-                                : round(
-                                    (float) (($reportDataForNurse['actualCalls'] / $reportDataForNurse['scheduledCalls']) * 100),
-                                    2
-                                ))
-                            : 0;
-
-                        $totalTimeInSystemOnGivenDate = secondsToHMS($systemTime);
-
-                        $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
-
-                        $totalEarningsThisMonth = round(
-                            (float) ($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
-                            2
-                        );
-
-                        $nextUpcomingWindow = $reportDataForNurse['nextUpcomingWindow'];
-                        $surplusShortfallHours = $reportDataForNurse['surplusShortfallHours'];
-                        $deficitTextColor = $surplusShortfallHours < 0 ? '#f44336' : '#009688';
-                        $deficitOrSurplusText = $surplusShortfallHours < 0 ? 'Deficit' : 'Surplus';
-
-                        $data = [
-                            'name'                         => $nurse->getFullName(),
-                            'actualHours'                  => $reportDataForNurse['actualHours'],
-                            'committedHours'               => $reportDataForNurse['committedHours'],
-                            'completionRate'               => $reportDataForNurse['completionRate'],
-                            'attendanceRate'               => $attendanceRate,
-                            'callsCompletionRate'          => $callsCompletionRate,
-                            'efficiencyIndex'              => $reportDataForNurse['efficiencyIndex'],
-                            'caseLoadComplete'             => $reportDataForNurse['caseLoadComplete'],
-                            'caseLoadNeededToComplete'     => $reportDataForNurse['caseLoadNeededToComplete'],
-                            'hoursCommittedRestOfMonth'    => $reportDataForNurse['hoursCommittedRestOfMonth'],
-                            'surplusShortfallHours'        => $surplusShortfallHours,
-                            'projectedHoursLeftInMonth'    => $reportDataForNurse['projectedHoursLeftInMonth'],
-                            'avgHoursWorkedLast10Sessions' => $reportDataForNurse['avgHoursWorkedLast10Sessions'],
-                            'totalEarningsThisMonth'       => $totalEarningsThisMonth,
-                            'totalTimeInSystemOnGivenDate' => $totalTimeInSystemOnGivenDate,
-                            'totalTimeInSystemThisMonth'   => $totalTimeInSystemThisMonth,
-                            'nextUpcomingWindowLabel'      => $reportDataForNurse['nextUpcomingWindowLabel'],
-                            'totalHours'                   => $reportDataForNurse['totalHours'],
-                            'windowStart'                  => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['window_time_start'])->format('g:i A')
-                                : null,
-                            'windowEnd' => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['window_time_end'])->format('g:i A')
-                                : null,
-
-                            //                            For new daily Report mail
-                            'callsCompleted'        => $reportDataForNurse['actualCalls'],
-                            'successfulCalls'       => $reportDataForNurse['successful'],
-                            'completedPatients'     => $reportDataForNurse['completedPatients'],
-                            'incompletePatients'    => $reportDataForNurse['incompletePatients'],
-                            'avgCCMTimePerPatient'  => $reportDataForNurse['avgCCMTimePerPatient'],
-                            'avgCompletionTime'     => $reportDataForNurse['avgCompletionTime'],
-                            'nextUpcomingWindowDay' => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['date'])->format('l')
-                                : null,
-                            'nextUpcomingWindowMonth' => $nextUpcomingWindow
-                                ? Carbon::parse($nextUpcomingWindow['date'])->format('F d')
-                                : null,
-                            'deficitTextColor'     => $deficitTextColor,
-                            'deficitOrSurplusText' => $deficitOrSurplusText,
-                        ];
-
-                        $nurse->notify(new NurseDailyReport($data, $date));
-
-                        $this->warn("Notified $nurse->id");
+                        $this->warn("Notified $nurseUser->id");
 
                         $emailsSent[] = [
-                            'nurse' => $nurse->getFullName(),
-                            'email' => $nurse->email,
+                            'nurse' => $nurseUser->getFullName(),
+                            'email' => $nurseUser->email,
                         ];
 
                         ++$counter;
@@ -210,23 +122,5 @@ class EmailRNDailyReport extends Command
         );
 
         $this->info("${counter} email(s) sent.");
-    }
-
-    private function validateReportData($report)
-    {
-        return array_keys_exist([
-            'systemTime',
-            'totalMonthSystemTimeSeconds',
-            'completionRate',
-            'efficiencyIndex',
-            'committedHours',
-            'caseLoadComplete',
-            'caseLoadNeededToComplete',
-            'hoursCommittedRestOfMonth',
-            'surplusShortfallHours',
-            'nextUpcomingWindow',
-            'projectedHoursLeftInMonth',
-            'avgHoursWorkedLast10Sessions',
-        ], $report);
     }
 }
