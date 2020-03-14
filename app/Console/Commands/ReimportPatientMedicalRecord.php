@@ -99,8 +99,7 @@ class ReimportPatientMedicalRecord extends Command
             $this->warn("Running 'marillac-clinic-inc' decorator");
             
             $mr = new MarillacMedicalRecord(
-                Enrollee::whereUserId($user->id)->with('eligibilityJob')->has('eligibilityJob')->first(
-                )->eligibilityJob->data
+                $this->getEnrollee($user)->eligibilityJob->data
             );
             
             $ccda = $this->getCcda($user);
@@ -190,7 +189,7 @@ class ReimportPatientMedicalRecord extends Command
     private function getCcda(User $user)
     {
         if ( ! $this->ccda) {
-            $this->ccda=  Ccda::withTrashed()->wherePracticeId($user->program_id)->where(
+            $this->ccda=  Ccda::wherePracticeId($user->program_id)->where(
                 'json->demographics->mrn_number',
                 $user->getMRN()
             )->first();
