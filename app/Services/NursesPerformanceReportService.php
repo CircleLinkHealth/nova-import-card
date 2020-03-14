@@ -13,6 +13,7 @@ use CircleLinkHealth\Customer\Entities\CompanyHoliday;
 use CircleLinkHealth\Customer\Entities\SaasAccount;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\NurseInvoices\AggregatedTotalTimePerNurse;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -192,7 +193,7 @@ class NursesPerformanceReportService
      * @param $days
      *
      * @return Collection
-     * @throws \Exception
+     * @throws Exception
      *
      */
     public function manipulateData($days)
@@ -285,14 +286,12 @@ class NursesPerformanceReportService
 
         return $nurses;
     }
-
+    
     /**
-     * @param $day
+     * @param Carbon $day
      *
-     * @return mixed
-     * @throws \CircleLinkHealth\Core\Exceptions\FileNotFoundException
-     *
-     * @throws \Exception
+     * @return Collection
+     * @throws FileNotFoundException
      */
     public function showDataFromS3(Carbon $day)
     {
