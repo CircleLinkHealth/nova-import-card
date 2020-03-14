@@ -28,7 +28,7 @@ class ReimportCcdasFromEnrolleesUsingMrn extends Command
      *
      * @var string
      */
-    protected $signature = 'reimport:enrollees {practiceId} {--tmr} {--ccd} {--ej}';
+    protected $signature = 'reimport:enrollees {practiceId} {--tmr} {--ccd}';
 
     /**
      * Create a new command instance.
@@ -64,18 +64,6 @@ class ReimportCcdasFromEnrolleesUsingMrn extends Command
                         );
                     }
                 );
-    }
-
-    private function createCcdaFromEligibilityJob(Enrollee $e)
-    {
-        if ( ! $e->eligibilityJob) {
-            return;
-        }
-
-        $mr  = new MarillacMedicalRecord($e->eligibilityJob->data, $e->practice_id);
-        $arr = $mr->toArray();
-
-        return $mr;
     }
 
     private function linkCcdaUsingMrn(Enrollee $e): ?Ccda

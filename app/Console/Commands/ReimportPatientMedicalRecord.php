@@ -99,8 +99,7 @@ class ReimportPatientMedicalRecord extends Command
             $this->warn("Running 'marillac-clinic-inc' decorator");
             
             $mr = new MarillacMedicalRecord(
-                Enrollee::whereUserId($user->id)->with('eligibilityJob')->has('eligibilityJob')->first(
-                )->eligibilityJob->data
+                $this->getEnrollee($user)->eligibilityJob->data
             );
             
             $ccda = $this->getCcda($user);
