@@ -658,11 +658,11 @@ class CarePlanHelper
                         ProblemCode::updateOrCreate(
                             [
                                 'problem_id' => $ccdProblem->id,
+                                'code'             => $codeLog->code,
                             ],
                             [
                                 'code_system_name' => $codeLog->code_system_name,
                                 'code_system_oid'  => $codeLog->code_system_oid,
-                                'code'             => $codeLog->code,
                             ]
                         );
                     }
