@@ -84,5 +84,6 @@
 </div>
 
 <script src="{{mix('js/prevent-multiple-submits.js')}}"></script>
+@include('partials.sentry-js')
 </body>
 </html>

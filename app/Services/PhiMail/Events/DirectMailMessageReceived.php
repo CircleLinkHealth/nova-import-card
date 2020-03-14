@@ -24,11 +24,9 @@ class DirectMailMessageReceived
      * @var DirectMailMessage
      */
     public $directMailMessage;
-    
+
     /**
      * Create a new event instance.
-     *
-     * @param DirectMailMessage $directMailMessage
      */
     public function __construct(DirectMailMessage $directMailMessage)
     {

@@ -63,9 +63,11 @@
                 $('#nurse_metrics').DataTable({
                     "rowCallback": function (row, data) {
                         if (data.Name === "Z - Totals for:") {
+                            const color = '#32C132';
+                            data.Name.replace('Z - ', '<span style="color:'+color+';">Z - </span>')
                             $('td:eq(1)', row).css(
                                 {
-                                    'background-color': '#32C132',
+                                    'background-color': color,
                                 }
                             );
                         }

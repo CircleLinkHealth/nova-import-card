@@ -105,6 +105,7 @@
     @endif
 @endauth
 
+@include('partials.sentry-js')
 </body>
 
 </html>
