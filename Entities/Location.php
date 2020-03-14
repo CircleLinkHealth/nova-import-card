@@ -83,10 +83,8 @@ use Laravel\Scout\Searchable;
 class Location extends \CircleLinkHealth\Core\Entities\BaseModel
 {
     use HasEmrDirectAddress;
-    use
-        Notifiable;
-    use
-        SoftDeletes;
+    use Notifiable;
+    use SoftDeletes;
     use Searchable;
 
     //Aprima's constant location id.
