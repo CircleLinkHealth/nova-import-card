@@ -6,12 +6,12 @@
 
 namespace App\Console;
 
+use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
 use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
-use App\Console\Commands\CreateLastMonthBillablePatientsReport;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\NursesPerformanceDailyReport;
@@ -27,7 +27,9 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
+use App\Notifications\NurseDailyReport;
 use CircleLinkHealth\Core\Console\Commands\RunScheduler;
+use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Eligibility\Console\Athena\AutoPullEnrolleesFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\DetermineTargetPatientEligibility;
 use CircleLinkHealth\Eligibility\Console\Athena\GetAppointments;
@@ -39,6 +41,7 @@ use CircleLinkHealth\NurseInvoices\Console\Commands\SendResolveInvoiceDisputeRem
 use CircleLinkHealth\NurseInvoices\Console\SendMonthlyNurseInvoiceFAN;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Artisan;
 
 class Kernel extends ConsoleKernel
 {
@@ -108,7 +111,11 @@ class Kernel extends ConsoleKernel
             ->dailyAt('03:00')->onOneServer();
 
         $schedule->command(EmailRNDailyReport::class)
-            ->dailyAt('07:05')->onOneServer();
+            ->dailyAt('07:05')->onOneServer()->after(function (){
+                if (! DatabaseNotification::where('type', NurseDailyReport::class)->where('created_at', '>=', now()->setTime(7,4))->exists()) {
+                    Artisan::queue(EmailRNDailyReport::class);
+                }
+            });
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
             ->dailyAt('23:40')->onOneServer();
@@ -121,11 +128,11 @@ class Kernel extends ConsoleKernel
             ->cron('1 0 1 * *')->onOneServer();
 
         //Run at 12:45am every 1st of month
-        $schedule->command(CreateLastMonthBillablePatientsReport::class, ['--reset-actor' => true])
+        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor' => true, 'date' => now()->subMonth()->startOfMonth()->toDateString()])
             ->cron('45 0 1 * *')->onOneServer();
 
-        $schedule->command(CreateLastMonthBillablePatientsReport::class)
-            ->dailyAt('00:25')->onOneServer();
+        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor' => true, 'date' => now()->startOfMonth()->toDateString()])
+            ->hourly()->onOneServer();
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,

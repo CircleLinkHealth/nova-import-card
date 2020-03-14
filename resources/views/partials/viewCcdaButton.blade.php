@@ -23,3 +23,13 @@
         <b>CCDA N/A For Patient.</b>
     </div>
 @endif
+
+<div class="pull-right" style="padding-top: 10px;">
+    <a href="{{ route('medical-record.patient.reimport', ['userId' => $patient->id]) }}"
+       class="btn btn-danger btn-xs"
+       style="font-size: 15px"
+       onclick="return confirm('CPM will search for the most recent medical record and reimport the patient. Only do this if the patient did not import correctly. CPM will notify you once reimporting finishes.')"
+    >
+        Attempt Reimport
+    </a>
+</div>

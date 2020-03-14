@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Entities\TargetPatient;
+use Illuminate\Support\Facades\Artisan;
 
 class PatientObserver
 {
@@ -61,7 +62,7 @@ class PatientObserver
                 Patient::UNREACHABLE,
             ]
         )) {
-            \Artisan::queue(
+            Artisan::queue(
                 RemoveScheduledCallsForWithdrawnAndPausedPatients::class,
                 ['patientUserIds' => [$patient->user_id]]
             );

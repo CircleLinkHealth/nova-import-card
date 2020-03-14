@@ -11,7 +11,7 @@ use CircleLinkHealth\Customer\Entities\Practice;
 use App\Jobs\ProcessLastMonthBillablePatients;
 use Illuminate\Console\Command;
 
-class CreateLastMonthBillablePatientsReport extends Command
+class CreateApprovableBillablePatientsReport extends Command
 {
     /**
      * The console command description.
@@ -57,12 +57,12 @@ class CreateLastMonthBillablePatientsReport extends Command
                     1,
                     function ($practices) use ($month) {
                         foreach ($practices as $practice) {
-                            $this->comment("BEGIN CreateLastMonthBillablePatientsReport for $practice->display_name for {$month->toDateString()}");
+                            $this->comment("BEGIN CreateApprovableBillablePatientsReport for $practice->display_name for {$month->toDateString()}");
                     
                             ProcessLastMonthBillablePatients::dispatch($practice->id, $month, (bool) $this->option('from-scratch'), (bool) $this->option('reset-actor'));
                     
                             $this->output->success(
-                                "END CreateLastMonthBillablePatientsReport for $practice->display_name for {$month->toDateString()}"
+                                "END CreateApprovableBillablePatientsReport for $practice->display_name for {$month->toDateString()}"
                             );
                         }
                     }
