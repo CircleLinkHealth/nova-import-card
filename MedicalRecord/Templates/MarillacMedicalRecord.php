@@ -1,8 +1,9 @@
 <?php
 
-namespace CircleLinkHealth\Eligibility\Templates;
+namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
 use Carbon\Carbon;
+use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
 
 class MarillacMedicalRecord
 {
@@ -361,29 +362,13 @@ class MarillacMedicalRecord
                         return false;
                     }
                     
-                    return [
-                        'reference'        => null,
-                        'reference_title'  => null,
-                        'date_range'       => [
-                            'start' => $problem->AddedDate,
-                            'end'   => null,
-                        ],
-                        'name'             => $problem->Name,
-                        'status'           => null,
-                        'age'              => null,
-                        'code'             => $problem->Code,
-                        'code_system'      => null,
-                        'code_system_name' => $problem->CodeType,
-                        'translations'     => [
-                            [
-                                'name'             => null,
-                                'code'             => null,
-                                'code_system'      => null,
-                                'code_system_name' => null,
-                            ],
-                        ],
-                        'comment'          => null,
-                    ];
+                    return (new Problem())
+                        ->setName($problem->Name)
+                        ->setStartDate($problem->AddedDate)
+                        ->setEndDate($problem->ResolveDate)
+                        ->setCode($problem->Code)
+                        ->setCodeSystemName($problem->CodeType)
+                        ->toObject();
                 }
             )
             ->filter()
