@@ -69,7 +69,7 @@ class ReimportPatientMedicalRecord extends Command
 
     private function attemptCcda(User $user)
     {
-        $ccda = Ccda::wherePracticeId($user->program_id)->where('json->mrn', $user->getMRN())->first();
+        $ccda = Ccda::withTrashed()->wherePracticeId($user->program_id)->where('json->demographics->mrn_number', $user->getMRN())->first();
 
         if ( ! $ccda) {
             return false;
@@ -106,6 +106,7 @@ class ReimportPatientMedicalRecord extends Command
         $imr->updateOrCreateCarePlan();
 
         if ($initiatorId = $this->argument('initiatorUserId')) {
+            $this->warn("Notifying user:$initiatorId");
             User::firstOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
         }
 
