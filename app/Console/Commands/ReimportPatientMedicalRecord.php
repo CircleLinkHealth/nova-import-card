@@ -107,7 +107,7 @@ class ReimportPatientMedicalRecord extends Command
     
         if ($initiatorId = $this->argument('initiatorUserId')) {
             $this->warn("Notifying user:$initiatorId");
-            User::firstOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
+            User::findOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
         }
 
         return true;
