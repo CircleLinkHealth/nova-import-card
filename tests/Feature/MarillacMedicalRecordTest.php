@@ -17,7 +17,7 @@ class MarillacMedicalRecordTest extends TestCase
     public function expectedResult()
     {
         return [
-            'type'     => MarillacMedicalRecord::class,
+            'type'     => 'marillac-clinic-inc',
             'document'     =>
                 (object)
                 [
@@ -147,8 +147,7 @@ class MarillacMedicalRecordTest extends TestCase
                             'encounter_date' => null,
                         ],
                 ],
-            'allergies'    =>
-                (object) [
+            'allergies'    => [
                     '0' =>
                         [
                             'date_range'       =>
@@ -296,8 +295,7 @@ class MarillacMedicalRecordTest extends TestCase
                         ],
                 ],
             
-            'medications' =>
-                (object) [
+            'medications' => [
                     '0'  =>
                         [
                             'reference'       => null,
@@ -1514,11 +1512,9 @@ class MarillacMedicalRecordTest extends TestCase
                                 ],
                         ],
                 ],
-            'payers'      =>
-                (object) [
+            'payers'      => [
                 ],
-            'problems'    =>
-                (object) [
+            'problems'    => [
                     '0' =>
                         (object) [
                             'reference'        => null,
@@ -1735,8 +1731,7 @@ class MarillacMedicalRecordTest extends TestCase
                             'comment'          => null,
                         ],
                 ],
-            'vitals'      =>
-                (object) [
+            'vitals'      => [
                     '0' =>
                         [
                             'date'    => null,
