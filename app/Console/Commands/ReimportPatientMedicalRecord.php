@@ -73,7 +73,7 @@ class ReimportPatientMedicalRecord extends Command
     
     private function attemptCcda(User $user)
     {
-        $ccda = $this->getCcda($user);
+        $ccda = $this->getCcdaFromMrn($user->getMRN(), $user->program_id);
         
         if ( ! $ccda) {
             return false;
@@ -102,7 +102,7 @@ class ReimportPatientMedicalRecord extends Command
                 $this->getEnrollee($user)->eligibilityJob->data
             );
             
-            $ccda = $this->getCcda($user);
+            $ccda = $this->getCcdaFromMrn($user->getMRN(), $user->program_id);
             
             if ( ! $ccda) {
                 $ccda = Ccda::create(
@@ -190,12 +190,16 @@ class ReimportPatientMedicalRecord extends Command
         )->find($this->argument('patientUserId'));
     }
     
-    private function getCcda(User $user)
+    private function getCcdaFromMrn($mrn, int $practiceId)
     {
+        if ( ! $mrn || ! $practiceId) {
+            return null;
+        }
+        
         if ( ! $this->ccda) {
-            $this->ccda = Ccda::wherePracticeId($user->program_id)->where(
+            $this->ccda = Ccda::wherePracticeId($practiceId)->where(
                 'json->demographics->mrn_number',
-                $user->getMRN()
+                $mrn
             )->first();
         }
         
