@@ -83,7 +83,7 @@ class PatientReimportedNotification extends Notification implements ShouldBroadc
     public function toMail($notifiable)
     {
         return (new MailMessage())
-            ->subject($this->getSubjectn($notifiable))
+            ->subject($this->getSubject($notifiable))
             ->line($this->description($notifiable))
             ->action('View CarePlan', $this->redirectLink($notifiable))
             ->line('Thank you for using our application!');
