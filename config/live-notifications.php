@@ -18,6 +18,7 @@ return [
         App\Notifications\CcdaImportedNotification::class,
         App\Notifications\InvoicesCreatedNotification::class,
         App\Notifications\PatientReimportedNotification::class,
+        App\Notifications\PatientNotReimportedNotification::class,
         App\Notifications\SendSignedUrlToDownloadPracticeReport::class,
     ],
 ];
