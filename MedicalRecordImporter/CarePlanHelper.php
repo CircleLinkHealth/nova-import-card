@@ -231,6 +231,10 @@ class CarePlanHelper
         // update timezone
         $this->user->timezone = optional($this->imr->location)->timezone ?? 'America/New_York';
         
+        if (PatientContactWindow::where('patient_info_id', $this->user->patientInfo->id)->exists()) {
+            return $this;
+        }
+        
         $preferredCallDays  = parseCallDays($this->dem->preferred_call_days);
         $preferredCallTimes = parseCallTimes($this->dem->preferred_call_times);
         

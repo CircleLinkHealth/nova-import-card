@@ -31,7 +31,7 @@ interface MedicalRecordTemplate
     
     public function getDemographics();
     
-    public function getType();
+    public function getType(): string;
     
     public function getVitals();
     

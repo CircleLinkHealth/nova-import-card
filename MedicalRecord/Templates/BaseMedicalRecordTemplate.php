@@ -37,14 +37,7 @@ abstract class BaseMedicalRecordTemplate implements MedicalRecordTemplate
         return json_encode($this->toArray());
     }
     
-    public function getType()
-    {
-        if ( ! $this->type) {
-            $this->type = __CLASS__;
-        }
-        
-        return $this->type;
-    }
+    abstract public function getType():string;
     
     public function getProblems()
     {

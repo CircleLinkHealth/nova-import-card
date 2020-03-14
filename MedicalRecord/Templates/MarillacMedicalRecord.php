@@ -421,4 +421,9 @@ class MarillacMedicalRecord extends BaseMedicalRecordTemplate
     {
         return [];
     }
+    
+    public function getType(): string
+    {
+        return 'marillac-clinic-inc';
+    }
 }

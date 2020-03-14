@@ -153,4 +153,9 @@ class CommonwealthMedicalRecord extends BaseMedicalRecordTemplate
     {
         return $this->ccdaMedicalRecord->fillPayersSection();
     }
+    
+    public function getType(): string
+    {
+        return 'commonwealth-pain-associates-pllc';
+    }
 }

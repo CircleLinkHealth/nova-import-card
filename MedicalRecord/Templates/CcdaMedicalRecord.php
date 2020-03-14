@@ -88,4 +88,9 @@ class CcdaMedicalRecord extends BaseMedicalRecordTemplate
     {
         return $this->ccda->payers;
     }
+    
+    public function getType(): string
+    {
+        return $this->ccda->source;
+    }
 }
