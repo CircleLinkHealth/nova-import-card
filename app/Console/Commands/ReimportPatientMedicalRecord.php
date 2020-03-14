@@ -189,7 +189,7 @@ class ReimportPatientMedicalRecord extends Command
     private function getCcda(User $user)
     {
         if ( ! $this->ccda) {
-            $this->ccda=  Ccda::withTrashed()->wherePracticeId($user->program_id)->where(
+            $this->ccda=  Ccda::wherePracticeId($user->program_id)->where(
                 'json->demographics->mrn_number',
                 $user->getMRN()
             )->first();
