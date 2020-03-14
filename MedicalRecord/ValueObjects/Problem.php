@@ -16,6 +16,8 @@ class Problem
     private $codeSystem;
     private $codeSystemName;
     private $translations;
+    private $startDate;
+    private $endDate;
     
     public function toObject()
     {
@@ -35,8 +37,8 @@ class Problem
             'reference'        => $this->getReference(),
             'reference_title'  => $this->getReferenceTitle(),
             'date_range'       => [
-                'start' => null,
-                'end'   => null,
+                'start' => $this->getStartDate(),
+                'end'   => $this->getEndDate(),
             ],
             'name'             => $this->getName(),
             'status'           => $this->getStatus(),
@@ -269,4 +271,44 @@ class Problem
         
         return $this;
 }
+    
+    /**
+     * @param mixed $startDate
+     *
+     * @return Problem
+     */
+    public function setStartDate($startDate)
+    {
+        $this->startDate = $startDate;
+        
+        return $this;
+}
+    
+    /**
+     * @param mixed $endDate
+     *
+     * @return Problem
+     */
+    public function setEndDate($endDate)
+    {
+        $this->endDate = $endDate;
+        
+        return $this;
+}
+    
+    /**
+     * @return mixed
+     */
+    public function getStartDate()
+    {
+        return $this->startDate;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getEndDate()
+    {
+        return $this->endDate;
+    }
 }
