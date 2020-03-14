@@ -12,6 +12,7 @@ use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Eligibility\Templates\CommonwealthMedicalRecord;
+use CircleLinkHealth\Eligibility\Templates\MarillacMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use Illuminate\Console\Command;
 
@@ -56,6 +57,10 @@ class ReimportPatientMedicalRecord extends Command
 
             return;
         }
+    
+        if ($this->attemptTemplate($user)) {
+            return;
+        }
 
         if ($this->attemptCcda($user)) {
             return;
@@ -64,13 +69,13 @@ class ReimportPatientMedicalRecord extends Command
 
     private function attemptCcda(User $user)
     {
-        $ccda = Ccda::wherePracticeId($user->program_id)->where('json->mrn', $user->getMRN())->first();
+        $ccda = Ccda::withTrashed()->wherePracticeId($user->program_id)->where('json->demographics->mrn_number', $user->getMRN())->first();
 
         if ( ! $ccda) {
             return false;
         }
 
-        if ($mr = $this->attemptTemplate($user, $ccda)) {
+        if ($mr = $this->attemptDecorator($user, $ccda)) {
             if ( ! is_null($mr)) {
                 $ccda->json = $mr->toJson();
                 $ccda->save();
@@ -95,26 +100,38 @@ class ReimportPatientMedicalRecord extends Command
         $imr->save();
 
         $this->warn("Creating CarePlan from CCDA:$ccda->id");
-
-        $this->line("Patient $user->id reimported from CCDA $ccda->id");
-
+        
         $imr->updateOrCreateCarePlan();
-
+        
+        $this->line("Patient $user->id reimported from CCDA $ccda->id");
+    
         if ($initiatorId = $this->argument('initiatorUserId')) {
-            User::firstOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
+            $this->warn("Notifying user:$initiatorId");
+            User::findOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
         }
 
         return true;
     }
+    
+    private function attemptTemplate(User $user)
+    {
+        if ('marillac-clinic-inc' === $user->primaryPractice->name) {
+            $this->warn("Running 'marillac-clinic-inc' decorator");
+            
+            $mr = new MarillacMedicalRecord(Enrollee::whereUserId($user->id)->with('eligibilityJob')->has('eligibilityJob')->first()->eligibilityJob->data);
+        }
+        
+        return null;
+    }
 
-    private function attemptTemplate(User $user, Ccda $ccda)
+    private function attemptDecorator(User $user, Ccda $ccda)
     {
         if ('commonwealth-pain-associates-pllc' === $user->primaryPractice->name) {
             $this->warn("Running 'commonwealth-pain-associates-pllc' decorator");
 
             return new CommonwealthMedicalRecord(Enrollee::whereUserId($user->id)->with('eligibilityJob')->has('eligibilityJob')->first()->eligibilityJob->data, $ccda->bluebuttonJson());
         }
-
+        
         return null;
     }
 }
