@@ -51,7 +51,7 @@ class SendDailyReportToRN implements ShouldQueue
         //In case something goes wrong with nurses and states report, or transitioning to new metrics issues
         if ( ! $this->reportDataForNurse || ! $this->validateReportData($this->reportDataForNurse)) {
             \Log::error(
-                "Invalid/missing report for nurse with id: {$this->nurseUser->id} and date {$this->date->toDateString()}"
+                "Invalid report for nurse with id: {$this->nurseUser->id} and date {$this->date->toDateString()}"
             );
             
             return;
