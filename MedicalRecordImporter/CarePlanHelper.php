@@ -346,17 +346,17 @@ class CarePlanHelper
             }
             $ccdMedication = Medication::updateOrCreate(
                 [
-                    'ccd_medication_log_id' => $medication->ccd_medication_log_id,
-                ],
-                [
-                    'medication_import_id' => $medication->id,
-                    'medication_group_id'  => $medication->medication_group_id,
+                    'patient_id'           => $this->user->id,
                     'name'                 => $medication->name,
                     'sig'                  => $medication->sig,
+                ],
+                [
+                    'ccd_medication_log_id' => $medication->ccd_medication_log_id,
+                    'medication_import_id' => $medication->id,
+                    'medication_group_id'  => $medication->medication_group_id,
                     'code'                 => $medication->code,
                     'code_system'          => $medication->code_system,
                     'code_system_name'     => $medication->code_system_name,
-                    'patient_id'           => $this->user->id,
                 ]
             );
             
@@ -638,14 +638,14 @@ class CarePlanHelper
             
             $ccdProblem = Problem::updateOrCreate(
                 [
-                    'problem_import_id' => $problem->id,
+                    'name'               => $problem->name,
+                    'patient_id'         => $this->user->id,
+                    'cpm_problem_id'     => $problem->cpm_problem_id,
                 ],
                 [
+                    'problem_import_id' => $problem->id,
                     'is_monitored'       => (bool) $problem->cpm_problem_id,
                     'ccd_problem_log_id' => $problem->ccd_problem_log_id,
-                    'name'               => $problem->name,
-                    'cpm_problem_id'     => $problem->cpm_problem_id,
-                    'patient_id'         => $this->user->id,
                     'cpm_instruction_id' => optional($instruction)->id ?? null,
                 ]
             );
