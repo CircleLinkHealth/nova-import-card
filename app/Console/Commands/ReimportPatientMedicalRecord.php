@@ -100,11 +100,11 @@ class ReimportPatientMedicalRecord extends Command
         $imr->save();
 
         $this->warn("Creating CarePlan from CCDA:$ccda->id");
-
-        $this->line("Patient $user->id reimported from CCDA $ccda->id");
-
+        
         $imr->updateOrCreateCarePlan();
-
+        
+        $this->line("Patient $user->id reimported from CCDA $ccda->id");
+    
         if ($initiatorId = $this->argument('initiatorUserId')) {
             $this->warn("Notifying user:$initiatorId");
             User::firstOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
