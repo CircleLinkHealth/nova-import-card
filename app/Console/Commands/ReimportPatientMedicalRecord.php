@@ -133,7 +133,7 @@ class ReimportPatientMedicalRecord extends Command
     private function getEnrollee(User $user): Enrollee
     {
         if ( ! $this->enrollee) {
-            $this->enrollee = Enrollee::whereUserId($user->id)->with('eligibilityJob')->has('eligibilityJob')->first();
+            $this->enrollee = Enrollee::whereUserId($user->id)->wherePracticeId($user->program_id)->with('eligibilityJob')->has('eligibilityJob')->first();
         }
         
         return $this->enrollee;
