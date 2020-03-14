@@ -17,15 +17,15 @@ class SendDailyReportToRN implements ShouldQueue
     /**
      * @var Carbon
      */
-    protected $date;
+    public $date;
     /**
      * @var array
      */
-    protected $reportDataForNurse;
+    public $reportDataForNurse;
     /**
      * @var User
      */
-    protected $nurseUser;
+    public $nurseUser;
     
     /**
      * Create a new job instance.
