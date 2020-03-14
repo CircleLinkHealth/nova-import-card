@@ -209,9 +209,9 @@ class CarePlanHelper
             $billing = CarePerson::firstOrCreate(
                 [
                     'type'           => CarePerson::BILLING_PROVIDER,
+                    'user_id'        => $this->user->id,
                 ],
                 [
-                    'user_id'        => $this->user->id,
                     'member_user_id' => $providerId,
                     'alert' => true,
                 ]
