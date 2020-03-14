@@ -9,9 +9,14 @@ namespace App\Console\Commands;
 use App\Notifications\PatientNotReimportedNotification;
 use App\Notifications\PatientReimportedNotification;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
+use CircleLinkHealth\Eligibility\Decorators\MedicalHistoryFromAthena;
+use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\MarillacMedicalRecord;
@@ -76,7 +81,7 @@ class ReimportPatientMedicalRecord extends Command
     
     private function attemptCcda(User $user)
     {
-        $ccda = $this->getCcdaFromMrn($user->getMRN(), $user->program_id);
+        $ccda = $this->attemptFetchCcda($user);
         
         if ( ! $ccda) {
             return false;
@@ -89,7 +94,7 @@ class ReimportPatientMedicalRecord extends Command
             }
         }
         
-        $this->importCcda($ccda, $user);
+        $this->importCcdaAndFillCarePlan($ccda, $user);
         
         $this->notifySuccess($user);
         
@@ -127,7 +132,13 @@ class ReimportPatientMedicalRecord extends Command
             $this->warn("Running 'commonwealth-pain-associates-pllc' decorator");
             
             return new CommonwealthMedicalRecord(
-                $this->getEnrollee($user)->eligibilityJob->data,
+                app(PcmChargeableServices::class)->decorate(
+                    app(MedicalHistoryFromAthena::class)->decorate(
+                        app(InsuranceFromAthena::class)->decorate(
+                            $this->getEnrollee($user)->eligibilityJob
+                        )
+                    )
+                )->data,
                 new CcdaMedicalRecord($ccda->bluebuttonJson())
             );
         }
@@ -146,7 +157,7 @@ class ReimportPatientMedicalRecord extends Command
         return $this->enrollee;
     }
     
-    private function importCcda($ccda, User $user)
+    private function importCcdaAndFillCarePlan($ccda, User $user)
     {
         $this->warn("Importing CCDA:$ccda->id");
         $ccda->import();
@@ -208,12 +219,44 @@ class ReimportPatientMedicalRecord extends Command
         }
         
         if ( ! $this->ccda) {
-            $this->ccda = Ccda::wherePracticeId($practiceId)->where(
-                'json->demographics->mrn_number',
-                $mrn
+            $this->ccda = Ccda::where('practice_id', $practiceId)->where(
+                function ($q) use ($mrn) {
+                    $q->where('patient_id', $this->argument('patientUserId'))
+                      ->orWhere('mrn', $mrn);
+                }
             )->first();
         }
         
         return $this->ccda;
+    }
+    
+    private function attemptFetchCcda(User $user)
+    {
+        if ($ccda = $this->getCcdaFromMrn($user->getMRN(), $user->program_id)) {
+            return $ccda;
+        }
+        
+        if ($ccda = $this->getCcdaFromAthenaAPI($user)) {
+            return $ccda;
+        }
+    }
+    
+    /**
+     * @param User $user
+     *
+     * @return MedicalRecord|null
+     * @throws \Exception
+     */
+    private function getCcdaFromAthenaAPI(User $user): ?MedicalRecord
+    {
+        $user->loadMissing('ehrInfo');
+        
+        if ( ! $user->ehrInfo) {
+            return null;
+        }
+        
+        $this->warn("Fetching CCDA from AthenaAPI for user:$user->id");
+        
+        return AthenaEligibilityCheckableFactory::getCCDFromAthenaApi($user->ehrInfo);
     }
 }
