@@ -171,24 +171,24 @@ class CarePlanHelper
         foreach ($this->all as $allergy) {
             $ccdAllergy = Allergy::updateOrCreate(
                 [
-                    'allergen_name'      => $allergy->allergen_name,
+                    'allergen_name' => $allergy->allergen_name,
                 ],
                 [
-                    'allergy_import_id' => $allergy->id,
+                    'allergy_import_id'  => $allergy->id,
                     'patient_id'         => $this->user->id,
                     'ccd_allergy_log_id' => $allergy->ccd_allergy_log_id,
                 ]
             );
         }
-    
+        
         $unique = $this->user->ccdAllergies->unique('name')->pluck('id');
-    
+        
         $deleted = $this->user->ccdAllergies()->whereNotIn('id', $unique)->delete();
         
         $misc = CpmMisc::whereName(CpmMisc::ALLERGIES)
                        ->first();
-    
-        if (! $this->hasMisc($this->user, $misc)) {
+        
+        if ( ! $this->hasMisc($this->user, $misc)) {
             $this->user->cpmMiscs()->attach(optional($misc)->id);
         }
         
@@ -208,12 +208,12 @@ class CarePlanHelper
         if ($providerId) {
             $billing = CarePerson::firstOrCreate(
                 [
-                    'type'           => CarePerson::BILLING_PROVIDER,
-                    'user_id'        => $this->user->id,
+                    'type'    => CarePerson::BILLING_PROVIDER,
+                    'user_id' => $this->user->id,
                 ],
                 [
                     'member_user_id' => $providerId,
-                    'alert' => true,
+                    'alert'          => true,
                 ]
             );
         }
@@ -228,8 +228,9 @@ class CarePlanHelper
      */
     public function storeContactWindows()
     {
-        // update timezone
-        $this->user->timezone = optional($this->imr->location)->timezone ?? 'America/New_York';
+        if ( ! $this->user->timezone) {
+            $this->user->timezone = optional($this->imr->location)->timezone ?? 'America/New_York';
+        }
         
         if (PatientContactWindow::where('patient_info_id', $this->user->patientInfo->id)->exists()) {
             return $this;
@@ -346,17 +347,17 @@ class CarePlanHelper
             }
             $ccdMedication = Medication::updateOrCreate(
                 [
-                    'patient_id'           => $this->user->id,
-                    'name'                 => $medication->name,
-                    'sig'                  => $medication->sig,
+                    'patient_id' => $this->user->id,
+                    'name'       => $medication->name,
+                    'sig'        => $medication->sig,
                 ],
                 [
                     'ccd_medication_log_id' => $medication->ccd_medication_log_id,
-                    'medication_import_id' => $medication->id,
-                    'medication_group_id'  => $medication->medication_group_id,
-                    'code'                 => $medication->code,
-                    'code_system'          => $medication->code_system,
-                    'code_system_name'     => $medication->code_system_name,
+                    'medication_import_id'  => $medication->id,
+                    'medication_group_id'   => $medication->medication_group_id,
+                    'code'                  => $medication->code,
+                    'code_system'           => $medication->code_system,
+                    'code_system_name'      => $medication->code_system_name,
                 ]
             );
             
@@ -365,8 +366,8 @@ class CarePlanHelper
         
         $misc = CpmMisc::whereName(CpmMisc::MEDICATION_LIST)
                        ->first();
-    
-        if (! $this->hasMisc($this->user, $misc)) {
+        
+        if ( ! $this->hasMisc($this->user, $misc)) {
             $this->user->cpmMiscs()->attach(optional($misc)->id);
         }
         
@@ -435,11 +436,11 @@ class CarePlanHelper
             )
         );
         
-        if (! $this->patientInfo->mrn_number) {
+        if ( ! $this->patientInfo->mrn_number) {
             $this->patientInfo->mrn_number = $mrn;
         }
         
-        if (! $this->patientInfo->birth_date) {
+        if ( ! $this->patientInfo->birth_date) {
             $this->patientInfo->birth_date = $this->dem->dob;
         }
         
@@ -638,12 +639,12 @@ class CarePlanHelper
             
             $ccdProblem = Problem::updateOrCreate(
                 [
-                    'name'               => $problem->name,
-                    'patient_id'         => $this->user->id,
-                    'cpm_problem_id'     => $problem->cpm_problem_id,
+                    'name'           => $problem->name,
+                    'patient_id'     => $this->user->id,
+                    'cpm_problem_id' => $problem->cpm_problem_id,
                 ],
                 [
-                    'problem_import_id' => $problem->id,
+                    'problem_import_id'  => $problem->id,
                     'is_monitored'       => (bool) $problem->cpm_problem_id,
                     'ccd_problem_log_id' => $problem->ccd_problem_log_id,
                     'cpm_instruction_id' => optional($instruction)->id ?? null,
@@ -658,7 +659,7 @@ class CarePlanHelper
                         ProblemCode::updateOrCreate(
                             [
                                 'problem_id' => $ccdProblem->id,
-                                'code'             => $codeLog->code,
+                                'code'       => $codeLog->code,
                             ],
                             [
                                 'code_system_name' => $codeLog->code_system_name,
@@ -671,11 +672,10 @@ class CarePlanHelper
         }
         
         
-        
         $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
                        ->first();
-    
-        if (! $this->hasMisc($this->user, $misc)) {
+        
+        if ( ! $this->hasMisc($this->user, $misc)) {
             $this->user->cpmMiscs()->attach(optional($misc)->id);
         }
         
