@@ -6,6 +6,7 @@
 
 namespace App\Repositories;
 
+use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
@@ -34,7 +35,7 @@ class BillablePatientsEloquentRepository
                     },
                     'patientSummaries' => function ($query) use ($month) {
                         $query->where('month_year', $month)
-                              ->where('total_time', '>=', 1200)
+                              ->where('total_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS)
                               ->where('no_of_successful_calls', '>=', 1)
                               ->with('chargeableServices');
                     },
