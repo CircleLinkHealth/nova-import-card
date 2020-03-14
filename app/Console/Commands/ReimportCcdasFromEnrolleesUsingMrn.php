@@ -9,7 +9,7 @@ namespace App\Console\Commands;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
-use CircleLinkHealth\Eligibility\Templates\MarillacMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\MarillacMedicalRecord;
 use CircleLinkHealth\Eligibility\ValueObjects\BlueButtonMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
