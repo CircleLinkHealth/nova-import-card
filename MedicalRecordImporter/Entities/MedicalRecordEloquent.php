@@ -384,15 +384,35 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
     protected function createImportedMedicalRecord(): MedicalRecord
     {
-        $this->importedMedicalRecord = ImportedMedicalRecord::updateOrCreate(
+        $args = [
+            'practice_id'         => $this->getPracticeId(),
+            'billing_provider_id' => $this->getBillingProviderId(),
+            'location_id'         => $this->getLocationId(),
+        ];
+        
+        $this->importedMedicalRecord = ImportedMedicalRecord::firstOrCreate(
             [
                 'medical_record_type' => get_class($this),
                 'medical_record_id'   => $this->id,
-                'billing_provider_id' => $this->getBillingProviderId(),
-                'location_id'         => $this->getLocationId(),
-                'practice_id'         => $this->getPracticeId(),
-            ]
+            ],
+            $args
         );
+        
+        if (! $this->importedMedicalRecord->practice_id) {
+            $this->importedMedicalRecord->practice_id = $args['practice_id'];
+        }
+    
+        if (! $this->importedMedicalRecord->billing_provider_id) {
+            $this->importedMedicalRecord->billing_provider_id = $args['billing_provider_id'];
+        }
+    
+        if (! $this->importedMedicalRecord->location_id) {
+            $this->importedMedicalRecord->location_id = $args['location_id'];
+        }
+        
+        if ($this->importedMedicalRecord->isDirty()) {
+            $this->importedMedicalRecord->save();
+        }
 
         return $this;
     }
