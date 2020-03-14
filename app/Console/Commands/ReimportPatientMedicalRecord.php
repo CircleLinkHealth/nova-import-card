@@ -107,7 +107,7 @@ class ReimportPatientMedicalRecord extends Command
             
             if ( ! $ccda) {
                 $ccda = Ccda::create([
-                                         'source'      => $mr->to,
+                                         'source'      => $mr->getType(),
                                          'json' => $mr->toJson(),
                                          'practice_id' => (int) $user->program_id,
                                      ]);
