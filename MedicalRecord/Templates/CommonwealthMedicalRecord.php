@@ -1,6 +1,6 @@
 <?php
 
-namespace CircleLinkHealth\Eligibility\Templates;
+namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
@@ -156,6 +156,10 @@ class CommonwealthMedicalRecord
         )->unique()
                                                                          ->map(
                                                                              function ($historyItem) {
+                                                                                 if ( ! validProblemName($historyItem)) {
+                                                                                     return false;
+                                                                                 }
+                                                                                 
                                                                                  return (new Problem())->setName($historyItem)->toObject();
                                                                              }
                                                                          )->all();
