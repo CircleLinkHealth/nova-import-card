@@ -1683,14 +1683,35 @@ if ( ! function_exists('patientLoginIsEnabledForPractice')) {
     /**
      * Key: enable_patient_login_for_practice
      * Default: false.
+     *
+     * @param int $practiceId
+     *
+     * @return bool
      */
-    function patientLoginIsEnabledForPractice($practiceId): bool
+    function patientLoginIsEnabledForPractice(int $practiceId): bool
     {
         $key = 'enable_patient_login_for_practice';
 
-        return \Cache::remember($key, 2, function () use ($key, $practiceId) {
+        return \Cache::remember("{$key}_{$practiceId}", 2, function () use ($key, $practiceId) {
             return AppConfig::where('config_key', $key)
                             ->where('config_value', $practiceId)->exists();
+        });
+    }
+}
+
+if ( ! function_exists('reimporitIsEnabledForUser')) {
+    /**
+     * @param $userId
+     *
+     * @return bool
+     */
+    function reimporitIsEnabledForUser($userId): bool
+    {
+        $key = 'enable_reimporting_for_user';
+        
+        return \Cache::remember("{$key}_{$userId}", 2, function () use ($key, $userId) {
+            return AppConfig::where('config_key', $key)
+                            ->where('config_value', $userId)->exists();
         });
     }
 }
