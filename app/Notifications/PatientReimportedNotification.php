@@ -38,7 +38,7 @@ class PatientReimportedNotification extends Notification implements ShouldBroadc
      */
     public function description($notifiable): string
     {
-        return "Visit the patient's CarePlan to see the newly imported date.";
+        return "Visit the patient's CarePlan to see the newly imported patient data.";
     }
 
     /**
