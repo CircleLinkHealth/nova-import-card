@@ -182,11 +182,11 @@ if ( ! function_exists('activeNurseNames')) {
                     },
                 ]
             )->whereHas(
-                       'nurseInfo',
-                       function ($q) {
-                           $q->where('is_demo', '!=', true);
-                       }
-                   )->where('user_status', 1)
+                'nurseInfo',
+                function ($q) {
+                    $q->where('is_demo', '!=', true);
+                }
+            )->where('user_status', 1)
             ->pluck('display_name', 'id');
     }
 }
@@ -1684,13 +1684,28 @@ if ( ! function_exists('patientLoginIsEnabledForPractice')) {
      * Key: enable_patient_login_for_practice
      * Default: false.
      */
-    function patientLoginIsEnabledForPractice($practiceId): bool
+    function patientLoginIsEnabledForPractice(int $practiceId): bool
     {
         $key = 'enable_patient_login_for_practice';
 
-        return \Cache::remember($key, 2, function () use ($key, $practiceId) {
+        return \Cache::remember(sha1("{$key}_{$practiceId}"), 2, function () use ($key, $practiceId) {
             return AppConfig::where('config_key', $key)
-                            ->where('config_value', $practiceId)->exists();
+                ->where('config_value', $practiceId)->exists();
+        });
+    }
+}
+
+if ( ! function_exists('reimportingPatientsIsEnabledForUser')) {
+    /**
+     * @param $userId
+     */
+    function reimportingPatientsIsEnabledForUser(int $userId): bool
+    {
+        $key = 'enable_reimporting_for_user';
+
+        return \Cache::remember(sha1("{$key}_{$userId}"), 2, function () use ($key, $userId) {
+            return AppConfig::where('config_key', $key)
+                ->where('config_value', $userId)->exists();
         });
     }
 }
