@@ -28,6 +28,7 @@ use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
 use App\Notifications\NurseDailyReport;
+use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Eligibility\Console\Athena\AutoPullEnrolleesFromAthena;
 use CircleLinkHealth\Eligibility\Console\Athena\DetermineTargetPatientEligibility;
