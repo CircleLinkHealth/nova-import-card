@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\Notifications\PatientNotReimportedNotification;
 use App\Notifications\PatientReimportedNotification;
 use CircleLinkHealth\Customer\Entities\User;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
@@ -69,11 +70,13 @@ class ReimportPatientMedicalRecord extends Command
         if ($this->attemptCcda($user)) {
             return;
         }
+        
+        $this->notifyFailure($user);
     }
     
     private function attemptCcda(User $user)
     {
-        $ccda = $this->getCcda($user);
+        $ccda = $this->getCcdaFromMrn($user->getMRN(), $user->program_id);
         
         if ( ! $ccda) {
             return false;
@@ -88,7 +91,7 @@ class ReimportPatientMedicalRecord extends Command
         
         $this->importCcda($ccda, $user);
         
-        $this->notify($user);
+        $this->notifySuccess($user);
         
         return true;
     }
@@ -102,7 +105,7 @@ class ReimportPatientMedicalRecord extends Command
                 $this->getEnrollee($user)->eligibilityJob->data
             );
             
-            $ccda = $this->getCcda($user);
+            $ccda = $this->getCcdaFromMrn($user->getMRN(), $user->program_id);
             
             if ( ! $ccda) {
                 $ccda = Ccda::create(
@@ -173,11 +176,19 @@ class ReimportPatientMedicalRecord extends Command
         $this->getEnrollee($user)->save();
     }
     
-    private function notify(User $user)
+    private function notifySuccess(User $user)
     {
         if ($initiatorId = $this->argument('initiatorUserId')) {
             $this->warn("Notifying user:$initiatorId");
             User::findOrFail($initiatorId)->notify(new PatientReimportedNotification($user->id));
+        }
+    }
+    
+    private function notifyFailure(User $user)
+    {
+        if ($initiatorId = $this->argument('initiatorUserId')) {
+            $this->warn("Notifying of failure user:$initiatorId");
+            User::findOrFail($initiatorId)->notify(new PatientNotReimportedNotification($user->id));
         }
     }
     
@@ -190,12 +201,16 @@ class ReimportPatientMedicalRecord extends Command
         )->find($this->argument('patientUserId'));
     }
     
-    private function getCcda(User $user)
+    private function getCcdaFromMrn($mrn, int $practiceId)
     {
+        if ( ! $mrn || ! $practiceId) {
+            return null;
+        }
+        
         if ( ! $this->ccda) {
-            $this->ccda = Ccda::wherePracticeId($user->program_id)->where(
+            $this->ccda = Ccda::wherePracticeId($practiceId)->where(
                 'json->demographics->mrn_number',
-                $user->getMRN()
+                $mrn
             )->first();
         }
         

@@ -1698,6 +1698,8 @@ if ( ! function_exists('patientLoginIsEnabledForPractice')) {
 if ( ! function_exists('reimportingPatientsIsEnabledForUser')) {
     /**
      * @param $userId
+     *
+     * @return bool
      */
     function reimportingPatientsIsEnabledForUser(int $userId): bool
     {
