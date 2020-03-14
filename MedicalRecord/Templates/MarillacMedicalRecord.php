@@ -5,7 +5,7 @@ namespace CircleLinkHealth\Eligibility\MedicalRecord\Templates;
 use Carbon\Carbon;
 use CircleLinkHealth\Eligibility\MedicalRecord\ValueObjects\Problem;
 
-class MarillacMedicalRecord
+class MarillacMedicalRecord extends BaseMedicalRecordTemplate
 {
     /**
      * @var array
@@ -17,30 +17,7 @@ class MarillacMedicalRecord
         $this->data = $medicalRecord;
     }
     
-    public function toArray()
-    {
-        return [
-            'type'         => __CLASS__,
-            'document'     => $this->fillDocumentSection(),
-            'allergies'    => $this->fillAllergiesSection(),
-            'demographics' => $this->fillDemographicsSection(),
-            'medications'  => $this->fillMedicationsSection(),
-            'payers'       => [
-            ],
-            'problems'     => $this->fillProblemsSection(),
-            'vitals'       => $this->fillVitals(),
-        ];
-    }
-    
-    /**
-     * @return string
-     */
-    public function toJson()
-    {
-        return json_encode($this->toArray());
-    }
-    
-    private function fillAllergiesSection()
+    public function fillAllergiesSection(): array
     {
         return collect(collect(json_decode($this->data['allergies_string']))->first())
             ->map(
@@ -85,9 +62,9 @@ class MarillacMedicalRecord
             ->toArray();
     }
     
-    private function fillDemographicsSection()
+    public function fillDemographicsSection(): object
     {
-        return [
+        return (object) [
             'ids'              => [
                 'mrn_number' => $this->getMrn(),
             ],
@@ -177,9 +154,9 @@ class MarillacMedicalRecord
         ];
     }
     
-    private function fillDocumentSection()
+    public function fillDocumentSection(): object
     {
-        return [
+        return (object) [
             'custodian'           => [
                 'name' => $this->getProviderName(),
             ],
@@ -273,7 +250,7 @@ class MarillacMedicalRecord
         ];
     }
     
-    private function fillMedicationsSection()
+    public function fillMedicationsSection(): array
     {
         return collect(collect(json_decode($this->data['medications_string']))->first())
             ->map(
@@ -353,7 +330,7 @@ class MarillacMedicalRecord
             ->toArray();
     }
     
-    private function fillProblemsSection()
+    public function fillProblemsSection(): array
     {
         return collect(collect(json_decode($this->data['problems_string']))->first())
             ->map(
@@ -376,7 +353,7 @@ class MarillacMedicalRecord
             ->toArray();
     }
     
-    private function fillVitals()
+    public function fillVitals(): array
     {
         return [
             [
@@ -395,7 +372,7 @@ class MarillacMedicalRecord
         ];
     }
     
-    private function getAllergyName($allergy):string
+    private function getAllergyName($allergy): string
     {
         return $allergy->Name;
     }
@@ -415,7 +392,7 @@ class MarillacMedicalRecord
         return $this->data['first_name'];
     }
     
-    public function getDob():Carbon
+    public function getDob(): Carbon
     {
         return Carbon::parse($this->data['dob']);
     }
@@ -438,5 +415,10 @@ class MarillacMedicalRecord
     private function getZipCode(): string
     {
         return $this->data['zip'];
+    }
+    
+    public function fillPayersSection(): array
+    {
+        return [];
     }
 }
