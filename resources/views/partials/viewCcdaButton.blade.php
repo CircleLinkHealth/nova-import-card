@@ -30,7 +30,7 @@
             </a>
         </div>
 
-        <div style="padding-top: 10px;">
+        <div style="padding: 10px 0;">
             <a href="{{ route('medical-record.patient.reimport', ['userId' => $patient->id, 'clearCcda' => 'on']) }}"
                class="btn btn-danger btn-xs"
                style="font-size: 15px"
