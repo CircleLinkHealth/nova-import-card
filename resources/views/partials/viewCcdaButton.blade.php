@@ -1,5 +1,5 @@
-@if($patient->hasCcda())
-    <div class="pull-right">
+<div class="pull-right">
+    @if($patient->hasCcda())
         <div style="padding-left: 15px;">
             <a href="{{ route('get.CCDViewerController.showByUserId', [ 'userId' => $patient->id]) }}"
                class="btn btn-primary btn-xs"
@@ -17,21 +17,29 @@
                 Export all CCDAs
             </a>
         </div>
-    </div>
-@else
-    <div class="">
-        <b>CCDA N/A For Patient.</b>
-    </div>
-@endif
+    @endif
 
-@if(auth()->check() && reimportingPatientsIsEnabledForUser(auth()->id()))
-    <div class="pull-right" style="padding-top: 10px;">
-        <a href="{{ route('medical-record.patient.reimport', ['userId' => $patient->id]) }}"
-           class="btn btn-danger btn-xs"
-           style="font-size: 15px"
-           onclick="return confirm('CPM will search for the most recent medical record and reimport the patient. Only do this if the patient did not import correctly. CPM will notify you once reimporting finishes.')"
-        >
-            Attempt Reimport
-        </a>
-    </div>
-@endif
+    @if(auth()->check() && reimportingPatientsIsEnabledForUser(auth()->id()))
+        <div style="padding-top: 10px;">
+            <a href="{{ route('medical-record.patient.reimport', ['userId' => $patient->id]) }}"
+               class="btn btn-info btn-xs"
+               style="font-size: 15px"
+               onclick="return confirm('CPM will search for the most recent medical record and reimport the patient. Only do this if the patient did not import correctly. CPM will notify you once reimporting finishes.')"
+            >
+                Reimport
+            </a>
+        </div>
+
+        <div style="padding: 10px 0;">
+            <a href="{{ route('medical-record.patient.reimport', ['userId' => $patient->id, 'clearCcda' => 'on']) }}"
+               class="btn btn-danger btn-xs"
+               style="font-size: 15px"
+               onclick="return confirm('CPM will clear Problems, Medications, Insurances, and Allergies. You typically want to do that in scenarios such as when Problems are imported wrongly due to CPM having false ICD codes. ICD codes were corrected, and now we want to re-import.')"
+            >
+                Clear and Reimport
+            </a>
+        </div>
+    @endif
+</div>
+
+
