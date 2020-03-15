@@ -203,8 +203,8 @@ class MedicalRecordImportController extends Controller
             'initiatorUserId' => auth()->id(),
         ];
 
-        if ('on' === $request->input('clearCcda')) {
-            $args['--clear-ccda-data'] = true;
+        if ('on' === $request->input('flushCcd')) {
+            $args['--flush-ccd'] = true;
         }
 
         Artisan::queue(
