@@ -1021,7 +1021,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "1dc6e3e60c486af3060a8f8a48924e41eca1d0ac"
+                "reference": "fa1055d712abe36b26511f75ba76f74217f77fc6"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1046,7 +1046,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-14T19:39:53+00:00"
+            "time": "2020-03-14T22:46:54+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
@@ -1266,7 +1266,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/shared-models-module.git",
-                "reference": "a1ae0566f2900bd2efc6c8390a59947a48c6f56b"
+                "reference": "3fe282357531520d556f2092585153a2ad5005c8"
             },
             "type": "laravel-module",
             "autoload": {
@@ -1280,7 +1280,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-12T17:07:50+00:00"
+            "time": "2020-03-14T22:46:54+00:00"
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
