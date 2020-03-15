@@ -18,10 +18,21 @@ use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\CarePlanHelper;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\AllergyImport;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\MarillacMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\InsuranceLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemImport;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ProblemLog;
+use CircleLinkHealth\SharedModels\Entities\Allergy;
+use CircleLinkHealth\SharedModels\Entities\AllergyLog;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\CcdInsurancePolicy;
+use CircleLinkHealth\SharedModels\Entities\Medication;
+use CircleLinkHealth\SharedModels\Entities\Problem;
 use Illuminate\Console\Command;
 
 class ReimportPatientMedicalRecord extends Command
@@ -37,7 +48,7 @@ class ReimportPatientMedicalRecord extends Command
      *
      * @var string
      */
-    protected $signature = 'patient:recreate {patientUserId} {initiatorUserId?}';
+    protected $signature = 'patient:recreate {patientUserId} {initiatorUserId?} {--clear-ccda-data}';
     /**
      * @var Enrollee
      */
@@ -54,6 +65,65 @@ class ReimportPatientMedicalRecord extends Command
         parent::__construct();
     }
     
+    private function clearImportRecordsFor()
+    {
+        $u = $this->getUser()->load([
+                                        'ccdas' => function ($q) {
+                                            return $q->select('id');
+                                        }
+                                    ]);
+        
+        $userId = $u->id;
+        
+        $u->ccdas->each(function ($ccda){
+            $class = get_class($ccda);
+            
+            ProblemImport::where('medical_record_id', '=', $ccda->id)
+                         ->where('medical_record_type', '=', $class)
+                         ->delete();
+            
+            ProblemLog::where('medical_record_id', '=', $ccda->id)
+                      ->where('medical_record_type', '=', $class)
+                      ->delete();
+            
+            MedicationImport::where('medical_record_id', '=', $ccda->id)
+                            ->where('medical_record_type', '=', $class)
+                            ->delete();
+            
+            MedicationLog::where('medical_record_id', '=', $ccda->id)
+                         ->where('medical_record_type', '=', $class)
+                         ->delete();
+            
+            AllergyImport::where('medical_record_id', '=', $ccda->id)
+                         ->where('medical_record_type', '=', $class)
+                         ->delete();
+            
+            AllergyLog::where('medical_record_id', '=', $ccda->id)
+                      ->where('medical_record_type', '=', $class)
+                      ->delete();
+    
+            InsuranceLog::where('medical_record_id', '=', $ccda->id)
+                         ->where('medical_record_type', '=', $class)
+                         ->delete();
+    
+            CcdInsurancePolicy::where('medical_record_id', '=', $ccda->id)
+                        ->where('medical_record_type', '=', $class)
+                        ->delete();
+        });
+        
+        Problem::where('patient_id', '=', $userId)
+               ->delete();
+        
+        Medication::where('patient_id', '=', $userId)
+                  ->delete();
+        
+        Allergy::where('patient_id', '=', $userId)
+               ->delete();
+    
+        CcdInsurancePolicy::where('patient_id', '=', $userId)
+               ->delete();
+    }
+    
     /**
      * Execute the console command.
      *
@@ -67,6 +137,11 @@ class ReimportPatientMedicalRecord extends Command
             $this->error('User not found');
             
             return;
+        }
+        
+        if ($this->option('clear-ccda-data')) {
+            $this->warn('Clearing CCDA data.');
+            $this->clearImportRecordsFor();
         }
         
         if ($this->attemptTemplate($user)) {
