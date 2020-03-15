@@ -203,7 +203,7 @@ class MedicalRecordImportController extends Controller
             'initiatorUserId' => auth()->id(),
         ];
 
-        if ('on' === $request->input('clearCcda')) {
+        if ('on' === $request->input('flushCcd')) {
             $args['--flush-ccd'] = true;
         }
 
