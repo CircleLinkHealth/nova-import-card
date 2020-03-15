@@ -67,11 +67,7 @@ class ReimportPatientMedicalRecord extends Command
     
     private function clearImportRecordsFor()
     {
-        $u = $this->getUser()->load([
-                                        'ccdas' => function ($q) {
-                                            return $q->select('id');
-                                        }
-                                    ]);
+        $u = $this->getUser()->load(['ccdas']);
         
         $userId = $u->id;
         
