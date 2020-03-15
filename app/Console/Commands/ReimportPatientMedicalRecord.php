@@ -119,6 +119,8 @@ class ReimportPatientMedicalRecord extends Command
                         'source'      => $mr->getType(),
                         'json'        => $mr->toJson(),
                         'practice_id' => (int) $user->program_id,
+                        'patient_id' => $user->id,
+                        'mrn' => $user->getMRN(),
                     ]
                 );
             }
@@ -200,6 +202,7 @@ class ReimportPatientMedicalRecord extends Command
     
     private function notifyFailure(User $user)
     {
+        $this->warn("Could not find any records for user:{$user->id}.");
         if ($initiatorId = $this->argument('initiatorUserId')) {
             $this->warn("Notifying of failure user:$initiatorId");
             User::findOrFail($initiatorId)->notify(new PatientNotReimportedNotification($user->id));
