@@ -35,9 +35,11 @@ class MedicalRecordImportController extends Controller
 
             if ($imr) {
                 $medicalRecord = $imr->medicalRecord();
-                $medicalRecord->update([
-                    'imported' => false,
-                ]);
+                $medicalRecord->update(
+                    [
+                        'imported' => false,
+                    ]
+                );
 
                 $imr->delete();
             } else {
@@ -67,11 +69,14 @@ class MedicalRecordImportController extends Controller
                         $imr['practice_id']         = $record['Practice'];
                         $imr['billing_provider_id'] = $record['Billing Provider'];
                         $carePlan                   = $imr->updateOrCreateCarePlan();
-                        array_push($importedRecords, [
-                            'id'        => $id,
-                            'completed' => true,
-                            'patient'   => $carePlan->patient()->first(),
-                        ]);
+                        array_push(
+                            $importedRecords,
+                            [
+                                'id'        => $id,
+                                'completed' => true,
+                                'patient'   => $carePlan->patient()->first(),
+                            ]
+                        );
                     } catch (\Exception $ex) {
                         //throwing Exceptions to help debug importing issues
                         throw $ex;
@@ -87,9 +92,12 @@ class MedicalRecordImportController extends Controller
             return response()->json($importedRecords, 200);
         }
 
-        return response()->json([
-            'message' => 'no records provided',
-        ], 400);
+        return response()->json(
+            [
+                'message' => 'no records provided',
+            ],
+            400
+        );
     }
 
     public function importDEPRECATED(Request $request)
@@ -125,9 +133,11 @@ class MedicalRecordImportController extends Controller
                 $imr = ImportedMedicalRecord::find($id);
 
                 $medicalRecord = app($imr->medical_record_type)->find($imr->medical_record_id);
-                $medicalRecord->update([
-                    'imported' => false,
-                ]);
+                $medicalRecord->update(
+                    [
+                        'imported' => false,
+                    ]
+                );
 
                 $imr->delete();
 
@@ -171,9 +181,11 @@ class MedicalRecordImportController extends Controller
                 $imr = ImportedMedicalRecord::find($id);
 
                 $medicalRecord = app($imr->medical_record_type)->find($imr->medical_record_id);
-                $medicalRecord->update([
-                    'imported' => false,
-                ]);
+                $medicalRecord->update(
+                    [
+                        'imported' => false,
+                    ]
+                );
 
                 $imr->delete();
 
@@ -184,12 +196,21 @@ class MedicalRecordImportController extends Controller
         return response()->json(compact('imported', 'deleted'), 200);
     }
 
-    public function reImportPatient($userId)
+    public function reImportPatient(Request $request, $userId)
     {
-        Artisan::queue(ReimportPatientMedicalRecord::class, [
+        $args = [
             'patientUserId'   => $userId,
             'initiatorUserId' => auth()->id(),
-        ]);
+        ];
+
+        if ('on' === $request->input('flushCcd')) {
+            $args['--flush-ccd'] = true;
+        }
+
+        Artisan::queue(
+            ReimportPatientMedicalRecord::class,
+            $args
+        );
 
         return redirect()->back();
     }

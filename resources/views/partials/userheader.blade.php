@@ -225,9 +225,6 @@
 
                 <span class="sometimes-hidden" style="font-size:15px"></span>
 
-                @if(auth()->user()->isAdmin())
-                    @include('partials.viewCcdaButton')
-                @endif
                 <div id="header-perform-status-select" class="ccm-status col-xs-offset-3">
                     @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
                         <li class="inline-block">
@@ -288,6 +285,10 @@
                             </div>
                         </div>
                     </div>
+                @endif
+
+                @if(auth()->user()->isAdmin())
+                    @include('partials.viewCcdaButton')
                 @endif
             </div>
 
