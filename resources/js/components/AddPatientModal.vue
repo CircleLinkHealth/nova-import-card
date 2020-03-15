@@ -376,7 +376,8 @@
                     })
             },
 
-            cancel() {
+            cancel(e) {
+                e.preventDefault();
                 this.options.onDone();
             },
 

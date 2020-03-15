@@ -75,7 +75,12 @@ class HraSurveyReminderTest extends TestCase
                 } catch (\Exception $e) {
                     throw $e;
                 }
-                $user->notify(new SurveyInvitationLink($url, Survey::HRA));
+
+                $practiceName     = optional($user->primaryPractice)->display_name;
+                $providerFullName = optional($user->billingProviderUser())->getFullName();
+                $appointment      = $user->latestAwvAppointment()->appointment;
+                $user->notify(new SurveyInvitationLink($url, Survey::HRA, null, $practiceName, $providerFullName,
+                    $appointment));
 
                 Notification::assertSentTo($user, SurveyInvitationLink::class,
                     function ($notification, $channels) {
