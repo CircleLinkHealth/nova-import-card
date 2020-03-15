@@ -204,7 +204,7 @@ class MedicalRecordImportController extends Controller
         ];
 
         if ('on' === $request->input('clearCcda')) {
-            $args['--clear-ccda-data'] = true;
+            $args['--flush-ccd'] = true;
         }
 
         Artisan::queue(

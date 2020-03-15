@@ -48,7 +48,7 @@ class ReimportPatientMedicalRecord extends Command
      *
      * @var string
      */
-    protected $signature = 'patient:recreate {patientUserId} {initiatorUserId?} {--clear-ccda-data}';
+    protected $signature = 'patient:recreate {patientUserId} {initiatorUserId?} {--flush-ccd}';
     private $ccda;
     /**
      * @var Enrollee
@@ -80,7 +80,7 @@ class ReimportPatientMedicalRecord extends Command
             return;
         }
 
-        if ($this->option('clear-ccda-data')) {
+        if ($this->option('flush-ccd')) {
             $this->warn('Clearing CCDA data.');
             $this->clearImportRecordsFor();
         }
