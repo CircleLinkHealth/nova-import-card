@@ -2,9 +2,9 @@
     <mdb-navbar animated animation="2" :class="{'is-login-route': isLoginRoute}">
         <mdb-navbar-brand>
             <a class="navbar-title" href="/">
-                <img src="../../images/clh_logo_lt.png"
+                <img src="../../images/logos/LogoHorizontal_White.svg"
                      alt="CarePlan Manager"
-                     style="width:50px; height: 50px; margin-left: 5px; position:relative;">
+                     style="height: 50px; margin-left: 5px; position:relative;">
             </a>
         </mdb-navbar-brand>
         <mdb-navbar-toggler>

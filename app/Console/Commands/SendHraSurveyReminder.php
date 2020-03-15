@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Notifications\AppointmentsReminderNotification;
 use App\Notifications\SurveyInvitationLink;
 use App\Services\SurveyInvitationLinksService;
 use App\Survey;
@@ -67,7 +66,12 @@ class SendHraSurveyReminder extends Command
                 } catch (\Exception $e) {
                     throw $e;
                 }
-                $user->notify(new SurveyInvitationLink($url, Survey::HRA));
+
+                $practiceName     = optional($user->primaryPractice)->display_name;
+                $providerFullName = optional($user->billingProviderUser())->getFullName();
+                $appointment      = $user->latestAwvAppointment()->appointment;
+                $user->notify(new SurveyInvitationLink($url, Survey::HRA, null, $practiceName, $providerFullName,
+                    $appointment));
             });
 
         /*

@@ -123,6 +123,7 @@ class InvitationLinksController extends Controller
 
         $user = User
             ::with([
+                'awvAppointments',
                 'phoneNumbers',
                 'patientInfo',
                 'primaryPractice',
@@ -134,7 +135,8 @@ class InvitationLinksController extends Controller
             ->where('id', '=', $target_user_id)
             ->firstOrFail();
 
-        $url = $this->service->createAndSaveUrl($user, $surveyName, true);
+        $appointment = optional($user->latestAwvAppointment())->appointment;
+        $url         = $this->service->createAndSaveUrl($user, $surveyName, true);
 
         /** @var User $targetNotifiable */
         $targetNotifiable = null;
@@ -149,8 +151,15 @@ class InvitationLinksController extends Controller
             $targetNotifiable = User::whereEmail($channelValue)->first();
         }
 
-        if ( ! $targetNotifiable) {
+        // we do not allow sending Vitals survey to channels not registered in the system
+        if ($surveyName === Survey::VITALS && ! $targetNotifiable) {
             throw new \Exception("Could not find user[$channelValue] in the system.");
+        }
+
+        if ( ! $targetNotifiable) {
+            //just mock it
+            $targetNotifiable     = new User();
+            $targetNotifiable->id = 999;
         }
 
         //in case notifiable user is not the patient
@@ -175,7 +184,7 @@ class InvitationLinksController extends Controller
             : null, $channel === 'sms'
             ? $channelValue
             : null))
-            ->notify(new SurveyInvitationLink($url, $surveyName, $channel, $practiceName, $providerFullName));
+            ->notify(new SurveyInvitationLink($url, $surveyName, $channel, $practiceName, $providerFullName, $appointment));
 
         return true;
     }
