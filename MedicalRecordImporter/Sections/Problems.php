@@ -99,11 +99,6 @@ class Problems extends BaseImporter
                     return ['monitored' => $problem];
                 }
 
-                //do not import not monitored conditions for ottawa
-                if (158 == $importedMedicalRecord->practice_id) {
-                    return ['do_not_import' => $problem];
-                }
-
                 return ['not_monitored' => $problem];
             });
 
@@ -116,7 +111,7 @@ class Problems extends BaseImporter
 
         $monitored = $problemsGroups->get('monitored', collect())
             ->unique(function ($p) {
-                return $p['attributes']['cpm_problem_id'];
+                return $p['attributes']['name'];
             })
             ->map($callback);
 
