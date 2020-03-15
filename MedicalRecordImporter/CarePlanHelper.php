@@ -162,6 +162,9 @@ class CarePlanHelper
         )->first();
         
         if ($enrollee) {
+            if (strtolower($this->user->first_name) != strtolower($enrollee->first_name)) {
+                throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} and user:{$this->user->id} do not match");
+            }
             $this->enrollee        = $enrollee;
             $enrollee->user_id     = $this->user->id;
             $enrollee->provider_id = $this->imr->billing_provider_id;
