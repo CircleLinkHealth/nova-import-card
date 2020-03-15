@@ -60,17 +60,18 @@ class Problems extends BaseImporter
                     return ['do_not_import' => $itemLog->id];
                 }
 
-                $cpmProblem = optional($this->getCpmProblem($itemLog, $problemCodes->cons_name));
+                $cpmProblem = $this->getCpmProblem($itemLog, $problemCodes->cons_name);
+                $cpmProblemId = optional($cpmProblem)->id;
 
                 //if problem is Diabetes and string contains 2, it's probably diabetes type 2
-                if (1 == $cpmProblem->id && str_contains($problemCodes->cons_name, ['2'])) {
+                if (1 == $cpmProblemId && str_contains($problemCodes->cons_name, ['2'])) {
                     $cpmProblem = $this->cpmProblems->firstWhere(
                         'name',
                         'Diabetes Type 2'
                                             );
                 }
                 //if problem is Diabetes and string contains 1, it's probably diabetes type 1
-                elseif (1 == $cpmProblem->id && str_contains(
+                elseif (1 == $cpmProblemId && str_contains(
                     $problemCodes->cons_name,
                     ['1']
                                         )) {
@@ -78,7 +79,7 @@ class Problems extends BaseImporter
                         'name',
                         'Diabetes Type 1'
                                             );
-                } elseif (1 == $cpmProblem->id) {
+                } elseif (1 == $cpmProblemId) {
                     return ['do_not_import' => $itemLog->id];
                 }
 
@@ -89,9 +90,9 @@ class Problems extends BaseImporter
                         'imported_medical_record_id' => $importedMedicalRecord->id,
                         'ccd_problem_log_id'         => $itemLog->id,
                         'name'                       => $problemCodes->cons_name,
-                        'cpm_problem_id'             => $cpmProblem->id,
+                        'cpm_problem_id'             => $cpmProblemId,
                     ],
-                    'is_behavioral' => $cpmProblem->is_behavioral,
+                    'is_behavioral' => optional($cpmProblem)->is_behavioral,
                     'itemLog'       => $itemLog,
                 ];
 
@@ -174,7 +175,7 @@ class Problems extends BaseImporter
                 break;
             }
 
-            $keywords = array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name]);
+            $keywords = array_filter(array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name]));
 
             foreach ($keywords as $keyword) {
                 if ( ! $keyword || empty($keyword)) {
@@ -183,10 +184,7 @@ class Problems extends BaseImporter
 
                 $keyword = trim($keyword);
 
-                if (str_contains(strtolower($problemName), strtolower($keyword)) || str_contains(
-                    strtolower($keyword),
-                    strtolower($problemName)
-                )) {
+                if (str_contains(strtolower($problemName), strtolower($keyword))) {
                     return $cpmProblem;
                 }
             }
