@@ -24,7 +24,7 @@
             <a href="{{ route('medical-record.patient.reimport', ['userId' => $patient->id, 'flushCcd' => 'on']) }}"
                class="btn btn-danger btn-xs"
                style="font-size: 15px"
-               onclick="return confirm('This will delete all Problems, Medications, Insurances, and Allergies, and re-import them using Importer (v3 beta). If something looks off, or Problems are imported wrongly due to CPM having false ICD codes. ICD codes were corrected, please continue.')"
+               onclick="return confirm('This will delete and re-import Problems, Medications, Insurances, and Allergies. Would you like to proceed?')"
             >
                 Reimport (beta)
             </a>
