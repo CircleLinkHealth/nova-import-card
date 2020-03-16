@@ -10,8 +10,7 @@
     <div class="container">
 
         <div class="text-right">
-            <img style="float: right;" src="{{ public_path('img/logos/LogoHorizontal_Color.svg') }}" width="170" height="70"
-                 class="img-responsive" alt="CLH Logo">
+            <img style="float: right;" src="{{mix('/img/logos/LogoHorizontal_Color.svg')}}" width="170" height="70" class="img-responsive" alt="CLH Logo">
         </div>
 
         <div class="clearfix"></div>
@@ -19,16 +18,18 @@
         <br>
         <br>
 
-        <h4>
+        <div style="width: 100%;">
+            <h4>
             <span style="float: left;">
                 To: Dr. {{ $provider->getFullName() }}
             </span>
-            <span style="float: right;">
+                <span style="float: right;">
                 {{ $note->created_at }}
             </span>
-            <br>
-            From: {{ $sender->getFullName() }}
-        </h4>
+                <br>
+                From: {{ $sender->getFullName() }}
+            </h4>
+        </div>
 
         <br>
 
