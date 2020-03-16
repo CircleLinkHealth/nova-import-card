@@ -4,13 +4,19 @@
     h4 {
         color: black !important;
     }
+
+    .image.clh-logo {
+        background: url({{ asset('img/logos/LogoHorizontal_Color.svg', isProductionEnv()) }}) no-repeat;
+        margin-top: 1px;
+        width: 170px;
+        height: 70px;
+    }
 </style>
 
 @section('content')
     <div class="container">
-        <div class="text-right">
-            <img src="{{asset('img/logos/LogoHorizontal_Color.svg', isProductionEnv())}}" width="170" height="70"
-                 class="img-responsive" alt="">
+        <div class="text-left">
+            <div class="img-responsive image clh-logo"></div>
         </div>
 
         <div class="clearfix"></div>
