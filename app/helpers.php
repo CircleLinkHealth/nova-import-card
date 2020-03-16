@@ -1721,8 +1721,8 @@ if ( ! function_exists('isDownloadingNotesEnabledForUser')) {
         return \Cache::remember(sha1("{$key}_{$userId}"), 2, function () use ($key, $userId) {
             return AppConfig::where('config_key', $key)
                 ->where(function ($q) use ($userId) {
-                                $q->where('config_value', $userId)->orWhere('config_value', 'all');
-                            })->exists();
+                    $q->where('config_value', $userId)->orWhere('config_value', 'all');
+                })->exists();
         });
     }
 }

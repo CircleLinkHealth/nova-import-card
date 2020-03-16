@@ -8,9 +8,8 @@
 
 @section('content')
     <div class="container">
-
         <div class="text-right">
-            <img style="float: right;" src="{{asset('img/logos/LogoHorizontal_Color.svg')}}" width="170" height="70"
+            <img src="{{asset('img/logos/LogoHorizontal_Color.svg', isProductionEnv())}}" width="170" height="70"
                  class="img-responsive" alt="">
         </div>
 
@@ -20,12 +19,14 @@
         <br>
 
         <div class="row">
-            <h4 class="col-md-6 text-left">
-                To: Dr. {{ $provider->getFullName() }}
+            <h4 class="col-md-12 text-left">
+                Performed at: {{ presentDate($note->performed_at, true, true, true) }}
             </h4>
+        </div>
 
-            <h4 class="col-md-6 text-right">
-                {{ $note->created_at }}
+        <div class="row">
+            <h4 class="col-md-12 text-left">
+                To: Dr. {{ $provider->getFullName() }}
             </h4>
         </div>
 

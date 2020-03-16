@@ -321,9 +321,10 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         $fileName = Carbon::today()->toDateString().'-'.$this->patient->id.'.pdf';
         $filePath = storage_path('pdfs/notes/'.$fileName);
 
-        if (file_exists($filePath)) {
+        if (file_exists($filePath) && ! $renderHtml) {
             return $filePath;
         }
+
         $problems = $this->patient
             ->ccdProblems
             ->where('is_monitored', true)
