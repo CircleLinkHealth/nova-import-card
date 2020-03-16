@@ -10,7 +10,8 @@
     <div class="container">
 
         <div class="text-right">
-            <img style="float: right;" src="{{asset('img/logos/LogoHorizontal_Color.svg')}}" width="170" height="70" class="img-responsive" alt="">
+            <img style="float: right;" src="{{asset('img/logos/LogoHorizontal_Color.svg')}}" width="170" height="70"
+                 class="img-responsive" alt="">
         </div>
 
         <div class="clearfix"></div>
@@ -18,54 +19,65 @@
         <br>
         <br>
 
-        <div style="width: 100%;">
-            <h4>
-            <span style="float: left;">
+        <div class="row">
+            <h4 class="col-md-6 text-left">
                 To: Dr. {{ $provider->getFullName() }}
-            </span>
-                <span style="float: right;">
+            </h4>
+
+            <h4 class="col-md-6 text-right">
                 {{ $note->created_at }}
-            </span>
-                <br>
+            </h4>
+        </div>
+
+        <div class="row">
+            <h4 class="col-md-12 text-left">
                 From: {{ $sender->getFullName() }}
             </h4>
         </div>
 
         <br>
 
-        <h4>
-            Re: {{ $patient->getFullName() }} &#124; DOB: {{ $patient->getBirthDate() }} &#124; {{ $patient->getGender() }}
-            &#124; {{$patient->getAge()}} yrs &#124; {{ $patient->getPhone() }}
-        </h4>
+        <div class="row">
+            <h4 class="col-md-12 text-left">
+                Re: {{ $patient->getFullName() }} &#124; DOB: {{ $patient->getBirthDate() }}
+                &#124; {{ $patient->getGender() }}
+                &#124; {{$patient->getAge()}} yrs &#124; {{ $patient->getPhone() }}
+            </h4>
+        </div>
 
         <br>
 
-        <h4>
-            Chronic conditions tracked:
-            <ul>
-                @foreach($problems as $problem)
-                    <li>{{ $problem }}</li>
-                @endforeach
-            </ul>
-        </h4>
+        <div class="row">
+            <h4 class="col-md-12">
+                Chronic conditions tracked:
+                <ul>
+                    @foreach($problems as $problem)
+                        <li>{{ $problem }}</li>
+                    @endforeach
+                </ul>
+            </h4>
+        </div>
 
         <br>
 
-        <h4>
-            Note:
-            {{ $note->body }}
-        </h4>
+        <div class="row">
+            <h4 class="col-md-12">
+                <b>Note</b>:
+                {{ $note->body }}
+            </h4>
+        </div>
 
         <br>
         <br>
 
+        <div class="row">
+            <h4 class="col-md-12">
+                With regards,
+            </h4>
 
-        <h4>
-            With regards,
-        </h4>
-
-        <h4>
-            CircleLink Team
-        </h4>
+            <h4 class="col-md-12">
+                CircleLink Team
+            </h4>
+        </div>
     </div>
 @endsection
