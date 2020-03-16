@@ -1698,8 +1698,6 @@ if ( ! function_exists('patientLoginIsEnabledForPractice')) {
 if ( ! function_exists('reimportingPatientsIsEnabledForUser')) {
     /**
      * @param $userId
-     *
-     * @return bool
      */
     function reimportingPatientsIsEnabledForUser(int $userId): bool
     {
@@ -1708,6 +1706,23 @@ if ( ! function_exists('reimportingPatientsIsEnabledForUser')) {
         return \Cache::remember(sha1("{$key}_{$userId}"), 2, function () use ($key, $userId) {
             return AppConfig::where('config_key', $key)
                 ->where('config_value', $userId)->exists();
+        });
+    }
+}
+
+if ( ! function_exists('isDownloadingNotesEnabledForUser')) {
+    /**
+     * @param $userId
+     */
+    function isDownloadingNotesEnabledForUser(int $userId): bool
+    {
+        $key = 'enable_downloading_notes_for_user';
+
+        return \Cache::remember(sha1("{$key}_{$userId}"), 2, function () use ($key, $userId) {
+            return AppConfig::where('config_key', $key)
+                ->where(function ($q) use ($userId) {
+                                $q->where('config_value', $userId)->orWhere('config_value', 'all');
+                            })->exists();
         });
     }
 }

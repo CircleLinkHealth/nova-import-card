@@ -35,7 +35,7 @@
                class="btn btn-default btn-xs tooltip-bottom"
                data-tooltip="Export all CCDAs"
             >
-                <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
             </a>
         </div>
     @endif
