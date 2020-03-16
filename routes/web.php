@@ -954,6 +954,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'NotesController@storeAddendum',
                 'as'   => 'note.store.addendum',
             ])->middleware('permission:addendum.create');
+            Route::get('download/{noteId}', [
+                'uses' => 'NotesController@download',
+                'as'   => 'patient.note.download',
+            ])->middleware(['permission:patient.read', 'cacheResponse']);
         });
 
         Route::get('progress', [

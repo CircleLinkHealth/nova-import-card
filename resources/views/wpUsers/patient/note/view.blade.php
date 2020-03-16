@@ -45,6 +45,13 @@
                 margin-right: 10px;
                 display: table-cell;
             }
+
+            .download-note-pdf-btn {
+                font-size: 18px;
+                color: #fff;
+                background-color: #4fb2e3;
+                border-color: #4fb2e3;
+            }
         </style>
     @endpush
 
@@ -56,6 +63,17 @@
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     View Note
+
+                    @if(isDownloadingNotesEnabledForUser(auth()->id()))
+                        <div class="pull-right">
+                            <a href="{{ route('patient.note.download', ['patientId' => $patient->id, 'noteId' => $note['id'], 'format' => 'pdf']) }}"
+                               class="download-note-pdf-btn tooltip-top"
+                               data-tooltip="Download Note in PDF"
+                            >
+                                <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                            </a>
+                        </div>
+                    @endif
                 </div>
 
                 {!! Form::open(array('url' => route('patient.note.send', ['patientId' => $patient->id, 'noteId' => $note['id']]), 'class' => 'form-horizontal', 'id' => 'viewNote')) !!}
@@ -256,7 +274,7 @@
                                         const validateEmailBody = async () => {
                                             return await window.axios
                                                 .post(validateEmailBodyUrl, {
-                                                    patient_emaile_subject:  $("[id='email-subject']").val(),
+                                                    patient_emaile_subject: $("[id='email-subject']").val(),
                                                     patient_email_body: $("[id='patient-email-body-input']").val()
                                                 })
                                                 .then((response) => {
@@ -294,7 +312,7 @@
                                 @endpush
                                 {!! Form::close() !!}
                                 @if(authUserCanSendPatientEmail())
-                                @include('wpUsers.patient.note.patient-emails')
+                                    @include('wpUsers.patient.note.patient-emails')
                                 @endif
                                 <div class="col-sm-12">
                                     @include('wpUsers.patient.note.manage-addendums')
