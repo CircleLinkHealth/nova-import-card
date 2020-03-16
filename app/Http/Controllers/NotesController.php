@@ -224,12 +224,8 @@ class NotesController extends Controller
 
     public function download(Request $request, $patientId, $noteId)
     {
-        if ('pdf' === $request->input('format')) {
-            $path = Note::wherePatientId($patientId)->findOrFail($noteId)->toPdf();
-
-            if ($path) {
-                return response()->download($path, "patient-$patientId-note-$noteId.pdf")->deleteFileAfterSend();
-            }
+        if ('pdf' === $request->input('format') && $path = Note::wherePatientId($patientId)->findOrFail($noteId)->toPdf()) {
+            return response()->download($path, "patient-$patientId-note-$noteId.pdf")->deleteFileAfterSend();
         }
 
         return redirect()->back();
