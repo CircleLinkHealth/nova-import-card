@@ -10,7 +10,7 @@
     <div class="container">
 
         <div class="text-right">
-            <img style="float: right;" src="{{public_path('img/logos/LogoHorizontal_Color.svg')}}" width="170" height="70" class="img-responsive" alt="">
+            <img style="float: right;" src="{{asset('img/logos/LogoHorizontal_Color.svg')}}" width="170" height="70" class="img-responsive" alt="">
         </div>
 
         <div class="clearfix"></div>
