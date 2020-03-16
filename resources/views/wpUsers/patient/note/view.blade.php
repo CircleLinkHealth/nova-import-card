@@ -68,7 +68,7 @@
                         <div class="pull-right">
                             <a href="{{ route('patient.note.download', ['patientId' => $patient->id, 'noteId' => $note['id'], 'format' => 'pdf']) }}"
                                class="download-note-pdf-btn tooltip-top"
-                               data-tooltip="Download Note in PDF"
+                               data-tooltip="Download Note as PDF"
                             >
                                 <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
                             </a>
