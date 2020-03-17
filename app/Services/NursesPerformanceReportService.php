@@ -72,7 +72,10 @@ class NursesPerformanceReportService
                             $info->where('is_demo', false);
                         });
                 }
-            )
+            )/*->where([
+                ['created_at', '>=', Carbon::parse(now())->startOfDay()],
+                ['created_at', '<=', Carbon::parse(now())->endOfDay()]
+            ])*/
             ->chunk(
                 35,
                 function ($nurses) use (&$data, $date) {
