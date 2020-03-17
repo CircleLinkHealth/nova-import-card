@@ -13,11 +13,8 @@ return [
     */
 
     'supportsCredentials'    => true,
-    'allowedOrigins'         => (env('APP_ENV', 'production') === 'production' || env('APP_ENV',
-            'production') === 'worker' || env('APP_ENV', 'production') === 'staging')
-        ? ['*careplanmanager.com', '*clh-staging.com']
-        : ['*.ngrok.io', '*.test'],
-    'allowedOriginsPatterns' => [],
+    'allowedOrigins'         => ['*careplanmanager.com', '*clh-staging.com', '*.ngrok.io', '*.test'],
+    'allowedOriginsPatterns' => ['*careplanmanager.com', '*clh-staging.com', '*.ngrok.io', '*.test'],
     'allowedHeaders'         => ['*'],
     'allowedMethods'         => ['*'],
     'exposedHeaders'         => [],
