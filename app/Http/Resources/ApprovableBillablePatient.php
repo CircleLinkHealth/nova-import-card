@@ -7,7 +7,7 @@
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\ChargeableService;
+use CircleLinkHealth\Customer\Entities\ChargeableService as ChargeableServiceEloquent;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Http\Resources\Json\Resource;
 
@@ -78,7 +78,7 @@ class ApprovableBillablePatient extends Resource
 
         $attestedBhiProblems = [];
         //get Bhi attested Problems
-        if ($this->hasServiceCode(ChargeableService::BHI)) {
+        if ($this->hasServiceCode(ChargeableServiceEloquent::BHI)) {
             if ($shouldAttachDefaultProblems && 0 == $attestedProblems->where(
                     'cpmProblem.is_behavioral',
                     '=',
