@@ -19,7 +19,6 @@ use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\UserService;
 use Carbon\Carbon;
-use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Exceptions\InvalidArgumentException;
 use CircleLinkHealth\Core\Filters\Filterable;
@@ -757,15 +756,21 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         );
 
         static::pivotAttached(function ($user, $relationName, $pivotIds, $pivotIdsAttributes) {
-            if ('roles' === $relationName) {$user->clearRolesCache();}
+            if ('roles' === $relationName) {
+                $user->clearRolesCache();
+            }
         });
 
         static::pivotDetached(function ($user, $relationName, $pivotIds) {
-            if ('roles' === $relationName) {$user->clearRolesCache();}
+            if ('roles' === $relationName) {
+                $user->clearRolesCache();
+            }
         });
 
         static::pivotUpdated(function ($user, $relationName, $pivotIds, $pivotIdsAttributes) {
-            if ('roles' === $relationName) {$user->clearRolesCache();}
+            if ('roles' === $relationName) {
+                $user->clearRolesCache();
+            }
         });
 
         static::updating(function ($model) {
@@ -773,7 +778,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         });
     }
 
-    public function clearRolesCache() {
+    public function clearRolesCache()
+    {
         ClearUserCache::roles($this);
     }
 
@@ -2146,6 +2152,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function isCcm()
     {
+        return $this->ccmNoOfMonitoredProblems() >= 1;
+    }
+
+    private function ccmNoOfMonitoredProblems() {
         return $this->ccdProblems()
                     ->where('is_monitored', 1)
                     ->whereHas(
@@ -2154,7 +2164,28 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                             return $cpm->where('is_behavioral', 0);
                         }
                     )
-                    ->exists();
+                    ->count();
+    }
+
+    public function isPcm()
+    {
+        if ($this->ccmNoOfMonitoredProblems() >= 2) {
+            return false;
+        }
+
+        return $this->whereHas('ccdProblems', function ($q){
+            $q->where(function ($q){
+                $q->whereHas('codes', function ($q) {
+                    $q->whereIn('code', function ($q) {
+                        $q->select('code')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
+                    });
+                });
+            })->orWhere(function ($q){
+                $q->whereIn('name', function ($q) {
+                    $q->select('description')->from('pcm_problems')->where('practice_id', '=', $this->program_id);
+                });
+            });
+        })->exists();
     }
 
     /**
@@ -2167,7 +2198,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->isCcm() && $this->primaryPractice->hasCCMPlusServiceCode();
     }
 
-    public function shouldShowCcmPlusBadge() {
+    public function shouldShowCcmPlusBadge()
+    {
         return isPatientCcmPlusBadgeEnabled() && $this->isCcmPlus();
     }
 
