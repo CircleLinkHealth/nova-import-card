@@ -119,6 +119,7 @@ class EnrollmentCenterController extends Controller
             //no calls available
             return view('enrollment-ui.no-available-calls');
         }
+        //add check if provider exists?
 
         return view(
             'enrollment-ui.dashboard',
