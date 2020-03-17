@@ -143,15 +143,14 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
             'noteId'    => $this->id,
         ]);
     }
-
+    
     /**
      * Forwards note to CareTeam and/or Support.
      *
-     * @param bool      $notifyCareteam
-     * @param bool      $notifySupport
-     * @param bool|null $force
+     * @param bool $notifyCareteam
+     * @param bool $notifySupport
      */
-    public function forward(bool $notifyCareteam = null, bool $notifySupport = null, bool $force = false)
+    public function forward(bool $notifyCareteam = null, bool $notifySupport = null)
     {
         $this->load([
             'patient.primaryPractice.settings',
@@ -164,10 +163,6 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
 
         if ($notifyCareteam) {
             $recipients = $this->patient->getCareTeamReceivesAlerts();
-
-            if ($force) {
-                $recipients->push($this->patient->billingProviderUser());
-            }
         }
 
         if ($notifySupport) {

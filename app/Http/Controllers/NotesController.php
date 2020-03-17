@@ -552,8 +552,7 @@ class NotesController extends Controller
 
         event(new NoteFinalSaved($note, [
             'notifyCareTeam' => $input['notify_careteam'] ?? false,
-            'notifyCLH'      => $input['notify_circlelink_support'] ?? false,
-            'forceNotify'    => false,
+            'notifyCLH'      => $input['notify_circlelink_support'] ?? false
         ]));
 
         if ($shouldSendPatientEmail) {
