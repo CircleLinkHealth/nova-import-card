@@ -17,8 +17,10 @@
     "dependencies": {
         "aos": "^3.0.0-beta.6",
         "core-js": "^3.3.2",
+        "daterangepicker": "^3.0.5",
         "jquery.scrollto": "^2.1.2",
         "mdbvue": "./mdb/mdbvue/mdbvue-v6.0.1.tgz",
+        "moment": "^2.24.0",
         "twilio-client": "^1.7.5",
         "typeface-poppins": "0.0.72",
         "vue-progressbar": "^0.7.5",

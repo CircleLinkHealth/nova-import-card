@@ -1,7 +1,7 @@
 @extends('layouts.surveysMaster')
 @section('content')
-    <div class="container main-container">
-        <div class="survey-container">
+    <div class="container main-container login">
+        <div class="survey-container login">
             <div class="practice-title">
                 <div id="title">
                     <strong>{{$practiceName}}</strong>
@@ -69,6 +69,14 @@
 
 @push('styles')
     <style>
+
+        .main-container.login {
+            height: initial;
+        }
+
+        .survey-container.login {
+            height: initial;
+        }
 
         .form-group-input {
             text-align: left;

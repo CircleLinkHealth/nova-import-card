@@ -35,6 +35,8 @@ import {ClientTable, ServerTable} from 'vue-tables-2';
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 import $ from 'jquery';
+import moment from 'moment';
+import dateRangePicker from 'daterangepicker';
 import 'lodash';
 import 'popper.js';
 
@@ -50,7 +52,10 @@ Vue.component('send-assessment-link', SendAssessmentLink);
 Vue.use(ClientTable, {}, false);
 Vue.use(ServerTable, {}, false, 'bootstrap4');
 
+$().daterangepicker = dateRangePicker;
 window.$ = $;
+window.moment = moment;
+
 require('jquery.scrollto');
 
 export const app = new Vue({

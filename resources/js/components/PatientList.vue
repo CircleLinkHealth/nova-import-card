@@ -61,6 +61,7 @@
         mdbDropdownToggle,
         mdbRow
     } from 'mdbvue';
+
     import SendLinkModal from './SendLinkModal';
     import AddPatientModal from './AddPatientModal';
 
@@ -96,7 +97,7 @@
                     patientId: null,
                     onDone: null,
                 },
-                columns: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob', 'actions'],
+                columns: ['mrn', 'patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob', 'appointment', 'actions'],
                 options: {
                     debounce: 1500,
                     requestAdapter(data) {
@@ -114,6 +115,10 @@
                     perPageValues: [10, 25, 50, 100, 200],
                     skin: "table-striped table-bordered table-hover",
                     filterByColumn: true,
+                    dateColumns: ['appointment'],
+                    datepickerOptions: {
+                        opens: 'left',
+                    },
                     listColumns: {
                         hra_status: [
                             {id: 'null', text: this.getStatusTitle('null')},
@@ -129,8 +134,9 @@
                         ]
                     },
                     //todo: eligibility should have a dropdown for filters
-                    filterable: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'dob'],
-                    sortable: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'dob'],
+                    filterable: ['mrn', 'patient_name', 'provider_name', 'hra_status', 'vitals_status', 'appointment', 'dob'],
+                    initFilters: this.getInitialFiltersFromUrl(),
+                    sortable: ['patient_name', 'provider_name', 'hra_status', 'vitals_status', 'eligibility', 'appointment', 'dob'],
                     sortIcon: {
                         base: 'fa',
                         is: 'fa-sort',
@@ -138,12 +144,14 @@
                         down: 'fa-sort-desc'
                     },
                     headings: {
+                        'mrn': 'MRN',
                         'patient_name': 'Patient Name',
                         'provider_name': 'Provider Name',
                         'hra_status': 'HRA Status',
                         'vitals_status': 'Vitals Status',
                         'eligibility': 'Eligibility',
                         'dob': 'DOB',
+                        'appointment': 'AWV Date',
                         'actions': 'Actions'
                     }
                 },
@@ -168,6 +176,21 @@
 
             getWellnessDocsPage(patientId) {
                 return this.wellnessDocsUrl ? this.wellnessDocsUrl.replace("$PATIENT_ID$", patientId) : '#';
+            },
+
+            getInitialFiltersFromUrl() {
+                const search = new URLSearchParams(window.location.search);
+                const val = search.get('appointment');
+                if (!val) {
+                    return null;
+                }
+                const parsed = JSON.parse(val);
+                return {
+                    'appointment': {
+                        'start': moment(parsed['start']),
+                        'end': moment(parsed['end']),
+                    }
+                };
             },
 
             getStatusTitle(id) {

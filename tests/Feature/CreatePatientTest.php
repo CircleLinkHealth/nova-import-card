@@ -5,11 +5,15 @@ namespace Tests\Feature;
 use App\User;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\Practice;
-use CircleLinkHealth\Customer\Entities\Role;
+use Tests\Helpers\PatientHelpers;
+use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 
 class CreatePatientTest extends TestCase
 {
+    use UserHelpers;
+    use PatientHelpers;
+
     protected function setUp()
     {
         parent::setUp();
@@ -22,37 +26,7 @@ class CreatePatientTest extends TestCase
      */
     public function testCreatePatientWithProviderId()
     {
-        /** @var User $providerUser */
-        $providerUser = factory(User::class)->create();
-
-        /** @var Practice $practice */
-        $practice = factory(Practice::class)->create();
-
-        /** @var User $patient */
-        $patient = factory(User::class)->make();
-
-        $response = $this->json('POST', '/manage-patients/store', [
-            'patient'  => [
-                'firstName'   => $patient->first_name,
-                'lastName'    => $patient->last_name,
-                'dob'         => Carbon::now()->year(1970)->toISOString(),
-                'phoneNumber' => '+1234567890',
-                'email'       => $patient->email,
-            ],
-            'provider' => [
-                'id'                => $providerUser->id,
-                'primaryPracticeId' => $practice->id,
-            ],
-        ]);
-
-        $this->assertTrue($response->status() === 200, $response->content());
-
-        $this->assertTrue(User::whereEmail($patient->email)->count() === 1,
-            'patient with this email should be exactly one');
-
-        $createdUser = User::whereEmail($patient->email)->first();
-        $this->assertTrue($createdUser->billingProviderUser()->id === $providerUser->id);
-        $this->assertTrue($createdUser->patientInfo->is_awv === 1, 'user must have is_awv = true');
+        $this->createPatient();
     }
 
     /**
@@ -103,20 +77,6 @@ class CreatePatientTest extends TestCase
         $this->assertTrue($createdUser->patientInfo->is_awv === 1, 'user must have is_awv = true');
     }
 
-    /**
-     * Creates an admin user to be used with tests
-     *
-     * @return User
-     */
-    private function createAdminUser()
-    {
-        /** @var User $user */
-        $user      = factory(User::class)->create();
-        $adminRole = Role::getIdsFromNames(['administrator']);
-        $user->attachGlobalRole($adminRole);
-
-        return $user;
-    }
 
     /**
      * Become an admin user for the session

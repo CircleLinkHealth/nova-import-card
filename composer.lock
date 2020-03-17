@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3d51c3b750462207f29bcc99047d0ee6",
+    "content-hash": "d39fb445e8ee2ba87333d8df42b5f4a6",
     "packages": [
         {
             "name": "appstract/laravel-opcache",
@@ -524,11 +524,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "v1.4.6",
+            "version": "dev-core_logic_for_projects",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "db3f262c3be07ea7cf298de77ed154b4c81ed6c8"
+                "reference": "f2f543cf0b36fe4be92f9ea376f98d2167f15d2c"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -557,15 +557,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-24T09:15:44+00:00"
+            "time": "2020-03-05T12:33:40+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
-            "version": "v1.4.2",
+            "version": "v1.4.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/cpm-migrations-module.git",
-                "reference": "2b65fa709103eaecba2c20209aa31d62cc00292c"
+                "reference": "8b7b6ff07581ea4605d26ed125780e66e23e9f11"
             },
             "type": "laravel-module",
             "extra": {
@@ -587,15 +587,15 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-17T20:39:22+00:00"
+            "time": "2020-03-05T16:34:12+00:00"
         },
         {
             "name": "circlelinkhealth/customer-module",
-            "version": "v1.8.8",
+            "version": "v1.9.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-customer.git",
-                "reference": "c273c33b4f323a5687de3f2e11b493bc7d643a2d"
+                "reference": "3fee331284e59fd437486d50a2961903f22fc6b3"
             },
             "require": {
                 "circlelinkhealth/cerberus-gatekeeper-module": "*",
@@ -629,7 +629,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-02-18T20:19:04+00:00"
+            "time": "2020-03-12T08:20:40+00:00"
         },
         {
             "name": "circlelinkhealth/revisionable-module",
@@ -702,11 +702,11 @@
         },
         {
             "name": "circlelinkhealth/sqlviews-module",
-            "version": "v1.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/sqlviews-module.git",
-                "reference": "6e8a2ddace3ba0337846827af55b50b550f30c9c"
+                "reference": "caaca105f93451583f7a2fcedc7fa5999f6abcdb"
             },
             "type": "laravel-module",
             "extra": {
@@ -731,7 +731,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-01-14T23:51:12+00:00"
+            "time": "2020-03-05T16:36:15+00:00"
         },
         {
             "name": "circlelinkhealth/timetracking-module",
@@ -10599,6 +10599,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "circlelinkhealth/core-module": 20,
         "michalisantoniou6/laravel-cerberus": 20,
         "waavi/url-shortener": 20
     },

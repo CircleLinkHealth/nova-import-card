@@ -69,17 +69,18 @@
         "appstract/laravel-opcache": "^2",
         "barryvdh/laravel-cors": "^0.11.3",
         "barryvdh/laravel-snappy": "^0.4.5",
-        "circlelinkhealth/core-module": "1.4.6",
-        "circlelinkhealth/cpm-migrations-module": "1.4.2",
-        "circlelinkhealth/customer-module": "1.8.8",
+        "circlelinkhealth/core-module": "dev-core_logic_for_projects",
+        "circlelinkhealth/cpm-migrations-module": "1.4.5",
+        "circlelinkhealth/customer-module": "1.9.7",
         "circlelinkhealth/revisionable-module": "^1.4",
         "circlelinkhealth/shared-models-module": "1.1.5",
-        "circlelinkhealth/sqlviews-module": "1.0",
+        "circlelinkhealth/sqlviews-module": "1.1.0",
         "circlelinkhealth/timetracking-module": "1.1.7",
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.0",
         "fzaninotto/faker": "^1.4",
         "grofgraf/laravel-pdf-merger": "^1.0",
+        "guzzlehttp/guzzle": "^6.5",
         "h4cc/wkhtmltopdf-amd64": "0.12.x",
         "joshbrw/laravel-module-installer": "^0.1.5",
         "lab404/laravel-impersonate": "^1.2",
@@ -141,6 +142,12 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
+        "test-not-working-at-the-moment": [
+            "php artisan --env=testing test:prepare-test_suite-db",
+            "php artisan --env=testing migrate:fresh",
+            "php artisan --env=testing migrate:views",
+            "./vendor/phpunit/phpunit/phpunit --testsuite=Feature,Unit --stop-on-failure --colors --testdox"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

@@ -45,8 +45,8 @@ class PatientController extends Controller
     public function store(StorePatientRequest $request, SurveyInvitationLinksService $service)
     {
         $providerUserId = $this->getPatientProvider($request);
-        $result  = $this->createPatient($request, $service);
-        $patientUserId = $result['user_id'];
+        $result         = $this->createPatient($request, $service);
+        $patientUserId  = $result['user_id'];
 
         CarePerson::updateOrCreate([
             'user_id'        => $patientUserId,
@@ -191,6 +191,12 @@ class PatientController extends Controller
                 'birth_date'      => Carbon::parse($input['dob']),
                 'is_awv'          => true,
             ]);
+
+            if ( ! empty($input['appointment'])) {
+                $appointment = Carbon::parse($input['appointment']);
+                $user->addAppointment($appointment);
+            }
+
         } else {
             $isClinical = $input['suffix'] === 'non-clinical';
             ProviderInfo::updateOrCreate([

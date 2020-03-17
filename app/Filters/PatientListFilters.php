@@ -17,6 +17,15 @@ class PatientListFilters extends QueryFilters
         parent::__construct($request);
     }
 
+    public function mrn($value)
+    {
+        if (empty($value)) {
+            return $this->builder;
+        }
+
+        return $this->builder->where('mrn', 'like', '%' . $value . '%');
+    }
+
     public function patient_name($name)
     {
         if (empty($name)) {
@@ -78,6 +87,18 @@ class PatientListFilters extends QueryFilters
         }
 
         return $this->builder->where('eligibility', '=', $status);
+    }
+
+    public function appointment($value)
+    {
+        if (empty($value) || ! array_key_exists('start', $value) || ! array_key_exists('end', $value)) {
+            return $this->builder;
+        }
+
+        return $this->builder->whereBetween('appointment', [
+            Carbon::parse($value['start']),
+            Carbon::parse($value['end']),
+        ]);
     }
 
     public function dob($value)

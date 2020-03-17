@@ -9,7 +9,6 @@ use App\Services\SurveyInvitationLinksService;
 use App\Services\TwilioClientService;
 use App\Survey;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class SendInvitationLinkUsingSMS extends Command
@@ -63,6 +62,7 @@ class SendInvitationLinkUsingSMS extends Command
 
         $user = User
             ::with([
+                'awvAppointments',
                 'phoneNumbers',
                 'patientInfo',
                 'primaryPractice',
@@ -79,6 +79,8 @@ class SendInvitationLinkUsingSMS extends Command
 
             return;
         }
+
+        $appointment = optional($user->latestAwvAppointment())->appointment;
 
         try {
             $url = $service->createAndSaveUrl($user, $surveyName, true);
@@ -109,14 +111,14 @@ class SendInvitationLinkUsingSMS extends Command
         //in case notifiable user is not the patient
         $providerFullName = "PROVIDER";
         if ( ! $targetNotifiable->is($user)) {
-            $practiceName     = $user->primaryPractice->display_name;
+            $practiceName = $user->primaryPractice->display_name;
 
             $billingProviderUser = $user->billingProviderUser();
             if ($billingProviderUser) {
                 $providerFullName = $billingProviderUser->getFullName();
             }
         } else {
-            $practiceName     = $targetNotifiable->primaryPractice->display_name;
+            $practiceName        = $targetNotifiable->primaryPractice->display_name;
             $billingProviderUser = $targetNotifiable->billingProviderUser();
             if ($billingProviderUser) {
                 $providerFullName = $billingProviderUser->getFullName();
@@ -124,7 +126,8 @@ class SendInvitationLinkUsingSMS extends Command
         }
 
         $notifiableUser = new NotifiableUser($targetNotifiable, null, $phoneNumber);
-        $invitation     = new SurveyInvitationLink($url, $surveyName, 'sms', $practiceName, $providerFullName);
+        $invitation     = new SurveyInvitationLink($url, $surveyName, 'sms', $practiceName, $providerFullName,
+            $appointment);
 
         try {
             if ($this->isDryRun()) {
