@@ -10,7 +10,6 @@ use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalRecord;
-use CircleLinkHealth\Eligibility\MedicalRecord\Templates\DefaultMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
 
 class MedicalRecordFactory
