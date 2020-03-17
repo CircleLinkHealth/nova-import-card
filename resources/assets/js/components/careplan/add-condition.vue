@@ -114,7 +114,7 @@
                 return self.cpmProblemsForAutoComplete
             },
             cpmProblemsForAutoComplete() {
-                let probs = self.cpmProbs;
+                let probs = self.cpm_problems;
 
                 if (self.isApproveBillablePage) {
                     probs = probs.filter(function (p) {
@@ -142,9 +142,6 @@
                 }, []).distinct(p => p.name)
                     .sort((a, b) => (+b.is_snomed) - (+a.is_snomed) || b.name.localeCompare(a.name));
             },
-            pId() {
-                return this.patient_id || this.patientId;
-            },
             isNotesPage() {
                 //if patient id prop has been passed in, then this is for the notes pages, else, approve billable patients page
                 return !!this.patientId
@@ -160,7 +157,7 @@
                 }
 
                 this.loaders.addProblem = true
-                return this.axios.post(rootUrl(`api/patients/${this.pId}/problems/ccd`), {
+                return this.axios.post(rootUrl(`api/patients/${this.patient_id}/problems/ccd`), {
                     name: this.newProblem.name,
                     cpm_problem_id: this.newProblem.cpm_problem_id,
                     is_monitored: this.newProblem.is_monitored,
@@ -171,7 +168,7 @@
 
                     //If another condition is created and is attested for the patient from admin/billing/index.vue,
                     //we need patient id to add it to the patient's existing problems in the client table
-                    response.data.patient_id = this.pId;
+                    response.data.patient_id = this.patient_id;
                     Event.$emit('full-conditions:add', response.data)
 
                     this.reset()

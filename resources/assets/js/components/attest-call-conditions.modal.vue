@@ -23,7 +23,7 @@
                             {{addConditionLabel}}
                         </button>
                         <div v-if="addCondition" style="padding-top: 20px">
-                            <add-condition :cpm-problems="cpmProblems" :patient-id="pId"
+                            <add-condition :cpm-problems="cpmProblems" :patient-id="patient_id"
                                            :problems="problems" :code-is-required="true"
                                            :is-approve-billable-page="!isNotesPage"
                             :is-bhi="isBhi"></add-condition>
@@ -62,7 +62,6 @@
             'cpmProblems': Array,
         },
         created(){
-            //add in created
             self = this;
         },
         mounted() {
@@ -73,6 +72,12 @@
 
             if(! this.cpmProblems){
                 this.cpm_problems = this.careplan().allCpmProblems || []
+            }else{
+                this.cpm_problems = this.cpmProblems
+            }
+
+            if (this.patientId){
+                this.patient_id = this.patientId;
             }
 
             //if in approve billable patients page, we get problems from the billing component
@@ -82,7 +87,7 @@
 
             Event.$on('full-conditions:add', (ccdProblem) => {
 
-                let cpmProblem = this.cpmProbs.filter(function(p){
+                let cpmProblem = this.cpm_problems.filter(function(p){
                     return p.id == ccdProblem.cpm_id;
                 })[0];
 
@@ -133,9 +138,6 @@
                     'm-top-5': !this.errorExists,
                 }
             },
-            pId() {
-                return this.patient_id ? this.patient_id : this.patientId;
-            },
             title() {
 
                 return this.isNotesPage ? 'Please select all conditions addressed in this call:' : (this.isBhi ? 'Edit BHI Problem Codes' : 'Edit CCM Problem Codes');
@@ -154,9 +156,6 @@
             isNotesPage() {
                 //if patient id prop has been passed in, then this is for the notes pages, else, approve billable patients page
                 return !!this.patientId
-            },
-            cpmProbs() {
-                return this.cpmProblems || this.cpm_problems
             }
         },
         methods: {
@@ -187,7 +186,7 @@
                 }
                 App.$emit('call-conditions-attested', {
                     attested_problems: this.attestedProblems,
-                    patient_id: this.pId,
+                    patient_id: this.patient_id,
                     is_bhi: this.isBhi
                 });
             },
