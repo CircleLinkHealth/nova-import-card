@@ -21,14 +21,12 @@ u.id as patient_id,
 u.display_name as patient_name,
 u.program_id as practice_id,
 pi.birth_date as dob,
-pi.mrn_number as mrn,
 ctm.provider_name,
 hra.status as hra_status,
 if(hra.completed_at is null, hra.created_at, hra.completed_at) as hra_display_date,
 v.status as vitals_status,
 if(v.completed_at is null, v.created_at, v.completed_at) as v_display_date,
-if(hra.year is null, v.year, hra.year) as year,
-apps.appointment
+if(hra.year is null, v.year, hra.year) as year
 
 from users u
 
@@ -41,15 +39,11 @@ LEFT JOIN (SELECT us.user_id, us.status, us.created_at, us.completed_at, si.year
 LEFT JOIN surveys s on us.survey_id=s.id WHERE s.name='HRA') hra on hra.user_id=u.id
 LEFT JOIN (SELECT us.user_id, us.status, us.created_at, us.completed_at, si.year, s.name from users_surveys us LEFT JOIN survey_instances si on us.survey_instance_id=si.id
 LEFT JOIN surveys s on us.survey_id=s.id WHERE s.name='Vitals') v on v.user_id=u.id
-
-# get latest appointment
-LEFT JOIN (select a1.* from awv_appointments a1 where a1.id = (select a2.id from awv_appointments a2 where a1.id=a2.id order by appointment desc limit 1)) apps on apps.user_id=u.id
-
-WHERE IF ((pi.is_awv = 1) OR (hra.year IS NULL AND v.year IS NOT NULL) OR (hra.year IS NOT NULL AND v.year IS NULL), true, hra.year = v.year)
+WHERE IF ((hra.year IS NULL AND v.year IS NOT NULL) OR (hra.year IS NOT NULL AND v.year IS NULL), true, hra.year = v.year)
 AND u.deleted_at is null
       ");
     }
-
+    
     /**
      * Get the name of the sql view.
      */
