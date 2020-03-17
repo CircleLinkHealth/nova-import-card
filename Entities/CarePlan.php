@@ -17,7 +17,6 @@ use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NotifyPatientCarePlanApproved;
-use App\Rules\DoesNotHaveBothTypesOfDiabetes;
 use App\Rules\HasEnoughProblems;
 use App\Services\CareplanService;
 use App\Traits\PdfReportTrait;
