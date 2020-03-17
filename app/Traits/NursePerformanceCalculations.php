@@ -92,7 +92,7 @@ trait NursePerformanceCalculations
         return round(($totalCPMtimeForMonth / 60) / $totalMonthlyCompletedPatientsOfNurse, 2);
     }
 
-    public function getIncompletePatientsCount($patientsForMonth, $successfulCalls)
+    public function getIncompletePatientsCount($patientsForMonth, $successfulCallsDaily)
     {
 //        $incompletePatients = [];
 //        foreach ($patientsForMonth as $patient) {
@@ -103,7 +103,12 @@ trait NursePerformanceCalculations
 //        }
 //
 //        return collect($incompletePatients)->count();
-        return collect($patientsForMonth)->count() - $successfulCalls;
+
+//        Explaning to future Antonis...
+//        Every time a patient with status "schedule" has been reached,
+//        the next time that "getUniquePatientsAssignedForNurseForMonth()"
+//        runs, will NOT collect the same patient. Hence doing "$patientsFormMonth - $successfulCallsDaily" makes sense.
+        return collect($patientsForMonth)->count() - $successfulCallsDaily;
     }
 
     /**

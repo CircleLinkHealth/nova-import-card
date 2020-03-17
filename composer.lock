@@ -416,16 +416,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.36",
+            "version": "3.133.37",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "59e824e235220730a8e1d276d036a9f085486512"
+                "reference": "94ced25e191a2a951edd5d9195820bbd2c1d8567"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/59e824e235220730a8e1d276d036a9f085486512",
-                "reference": "59e824e235220730a8e1d276d036a9f085486512",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/94ced25e191a2a951edd5d9195820bbd2c1d8567",
+                "reference": "94ced25e191a2a951edd5d9195820bbd2c1d8567",
                 "shasum": ""
             },
             "require": {
@@ -496,7 +496,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-03-13T18:09:32+00:00"
+            "time": "2020-03-16T18:10:35+00:00"
         },
         {
             "name": "balping/json-raw-encoder",
@@ -787,8 +787,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ClhImportCardExtended",
-                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8",
-                "shasum": null
+                "reference": "fd54a074fb274442571b91f127ad0bc43eb4c2f8"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -963,8 +962,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/GeneratePatientCallDataCsv",
-                "reference": "8b21629514943da628f3f5acb602c7610c2d9167",
-                "shasum": null
+                "reference": "8b21629514943da628f3f5acb602c7610c2d9167"
             },
             "require": {
                 "php": ">=7.1.0"
@@ -997,8 +995,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ImportPracticeStaffCsv",
-                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5",
-                "shasum": null
+                "reference": "376c054cfcdb0c0bdd432a8fcac7db79ba6747e5"
             },
             "require": {
                 "php": ">=7.1.0",

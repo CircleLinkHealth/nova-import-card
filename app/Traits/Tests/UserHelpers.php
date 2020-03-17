@@ -139,7 +139,7 @@ trait UserHelpers
                 'window_time_start' => $window['start'],
                 'window_time_end'   => $window['end'],
 
-                'day_of_week' => 5,
+                'day_of_week' => Carbon::parse($st->toDateString())->dayOfWeek,
 
                 'nurse_info_id' => $nurse->id,
             ]
