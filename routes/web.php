@@ -630,6 +630,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'get.CCDViewerController.exportAllCCDs',
     ])->middleware('permission:ccda.read');
 
+    Route::get('medical-record/patient/attempt-reimport/{userId}', [
+        'uses' => 'MedicalRecordImportController@reImportPatient',
+        'as'   => 'medical-record.patient.reimport',
+    ])->middleware('permission:ccda.read');
+
     Route::get('ccd/show/{ccdaId}', [
         'uses' => 'CCDViewer\CCDViewerController@show',
         'as'   => 'get.CCDViewerController.show',

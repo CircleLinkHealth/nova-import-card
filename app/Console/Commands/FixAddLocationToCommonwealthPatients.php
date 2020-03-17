@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Eligibility\Contracts\AthenaApiImplementation;
@@ -10,11 +14,9 @@ use Illuminate\Console\Command;
 class FixAddLocationToCommonwealthPatients extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
+     * @var AthenaApiImplementation
      */
-    protected $signature = 'batch:add-department {batchId}';
+    protected $api;
 
     /**
      * The console command description.
@@ -23,14 +25,14 @@ class FixAddLocationToCommonwealthPatients extends Command
      */
     protected $description = 'Add department (location) from Athena API to each patient in the given batch.';
     /**
-     * @var AthenaApiImplementation
+     * The name and signature of the console command.
+     *
+     * @var string
      */
-    protected $api;
-    
+    protected $signature = 'batch:add-department {batchId}';
+
     /**
      * Create a new command instance.
-     *
-     * @param AthenaApiImplementation $api
      */
     public function __construct(AthenaApiImplementation $api)
     {
@@ -46,7 +48,7 @@ class FixAddLocationToCommonwealthPatients extends Command
     public function handle()
     {
         ini_set('memory_limit', '2000M');
-    
+
         TargetPatient::whereBatchId($this->argument('batchId'))->with(['eligibilityJob', 'batch'])->has(
             'eligibilityJob'
         )->chunk(
@@ -62,7 +64,7 @@ class FixAddLocationToCommonwealthPatients extends Command
                 );
             }
         );
-        
+
         $this->line('Command done');
     }
 }
