@@ -25,7 +25,7 @@ class CreateApprovableBillablePatientsReport extends Command
      *
      * @var string
      */
-    protected $signature = 'summaries:attach-problems-to-last-month
+    protected $signature = 'generate:abp
                                 {date? : the month we are calculating for in YYYY-MM-DD}
                                 {practiceIds? : comma separated. leave empty to recalculate for all}
                                 {--reset-actor : delete actor id}
@@ -43,7 +43,7 @@ class CreateApprovableBillablePatientsReport extends Command
         
         $datePassed = $this->argument('date');
         $month      = $datePassed
-            ? Carbon::parse($datePassed)->startOfMonth()
+            ? Carbon::createFromFormat('Y-m-d', $datePassed)->startOfMonth()
             : Carbon::now()->subMonth()->startOfMonth();
         
         Practice::active()
