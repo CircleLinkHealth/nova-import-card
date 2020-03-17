@@ -6,6 +6,7 @@
 
 namespace App\Console\Commands;
 
+use App\Search\ProviderByName;
 use CircleLinkHealth\Eligibility\Contracts\ImportedMedicalRecord;
 use Illuminate\Console\Command;
 
@@ -88,7 +89,7 @@ class OverwriteNBIImportedData extends Command
 
             if ($datas->provider) {
                 $term                     = strtoupper($datas->provider);
-                $imr->billing_provider_id = $map[$term] ?? null;
+                $imr->billing_provider_id = $map[$term] ?? optional(ProviderByName::first($term))->id;
             }
 
             $imr->practice_id = 201;

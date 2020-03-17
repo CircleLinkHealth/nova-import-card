@@ -58,7 +58,7 @@ class ProcessLastMonthBillablePatients implements ShouldQueue
     {
         $billablePatientsRepo->billablePatients($this->practiceId, $this->date)
                              ->chunk(
-                                 30,
+                                 100,
                                  function ($users) {
                                      foreach ($users as $user) {
                                          $pms = $user->patientSummaries->first();

@@ -78,6 +78,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $addendums_count
  * @property int|null $notifications_count
  * @property int|null $revision_history_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereSuccessStory($value)
+ * @property int $success_story
  */
 class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfReport, AttachableToNotification
 {
@@ -177,6 +179,10 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         $channelsForUsers = $channelsForLocation;
 
         if ($cpmSettings->email_note_was_forwarded) {
+            $channelsForUsers[] = 'mail';
+        }
+
+        if ($force && empty($channelsForUsers)) {
             $channelsForUsers[] = 'mail';
         }
 

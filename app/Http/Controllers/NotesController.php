@@ -913,7 +913,7 @@ class NotesController extends Controller
             [Patient::ENROLLED, Patient::WITHDRAWN, Patient::PAUSED, Patient::WITHDRAWN_1ST_CALL]
         )) {
             $inputCcmStatus = $input['ccm_status'];
-            if (Patient::WITHDRAWN === $inputCcmStatus && $patient->onFirstCall(isset($input['welcome_call']) || isset($input['other_call']))) {
+            if (Patient::WITHDRAWN === $inputCcmStatus && $patient->onFirstCall()) {
                 $inputCcmStatus = Patient::WITHDRAWN_1ST_CALL;
             }
 

@@ -7,12 +7,16 @@
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
-use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
+use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Http\Resources\Json\Resource;
 
 class ApprovableBillablePatient extends Resource
 {
+    const ATTACH_DEFAULT_PROBLEMS_FOR_MONTH = '2020-03-01';
+    const BHI_SERVICE_CODE                  = 'CPT 99484';
+
     public function allCcdProblems(User $patient)
     {
         return $patient->ccdProblems->map(function ($prob) {
@@ -44,37 +48,61 @@ class ApprovableBillablePatient extends Resource
             'patient' => $this->patient->id,
         ]);
 
-        $bhiProblemCode = 'N/A';
-
-        if ($this->hasServiceCode('CPT 99484')) {
-            $bhiProblem = $this->billableBhiProblems()->first();
-
-            if ($bhiProblem) {
-                $bhiProblemCode = $bhiProblem->pivot->icd_10_code ?? null;
-            }
-        }
-
         $status = $this->closed_ccm_status;
         if (null == $status) {
-            $status = $this->patient->patientInfo->ccm_status;
+            $status = $this->patient->patientInfo->getCcmStatusForMonth(Carbon::parse($this->month_year));
         }
 
-        if (Carbon::parse($this->month_year)->lt(Carbon::parse(PatientMonthlySummary::DATE_ATTESTED_CONDITIONS_ENABLED)) && $this->attestedProblems()->count() == 0) {
-            $attestedProblems = collect([
+        $shouldAttachDefaultProblems = Carbon::parse($this->month_year)->lte(Carbon::parse(self::ATTACH_DEFAULT_PROBLEMS_FOR_MONTH));
+
+        //remove problems that have no icd10 codes due to bug, for months that this has happened. Wrap in if to minimize performance loss for other months
+        if ($shouldAttachDefaultProblems) {
+            $attestedProblems = $this->attestedProblems->filter(function ($p) {
+                return (bool) $p->icd10Code();
+            });
+        } else {
+            $attestedProblems = $this->attestedProblems;
+        }
+
+        //get Ccm attested problems
+        if ($shouldAttachDefaultProblems && 0 == $attestedProblems->where(
+            'cpmProblem.is_behavioral',
+            '=',
+            false
+        )->count()) {
+            $attestedCcmProblems = collect([
                 optional($this->billableProblem1)->id,
                 optional($this->billableProblem2)->id,
             ])->filter()->toArray();
         } else {
-            $attestedProblems = $this->attestedProblems->where('cpmProblem.is_behavioral', '=', false)->pluck('id');
+            $attestedCcmProblems = $attestedProblems->where('cpmProblem.is_behavioral', '=', false)->pluck('id');
         }
 
+        $attestedBhiProblems = [];
+        //get Bhi attested Problems
+        if ($this->hasServiceCode(self::BHI_SERVICE_CODE)) {
+            if ($shouldAttachDefaultProblems && 0 == $attestedProblems->where(
+                'cpmProblem.is_behavioral',
+                '=',
+                true
+            )->count()) {
+                $bhiProblem          = $this->billableBhiProblems()->first();
+                $attestedBhiProblems = collect([
+                    $bhiProblem
+                        ? $bhiProblem->id
+                        : null,
+                ])->filter()->toArray();
+            } else {
+                $attestedBhiProblems = $attestedProblems->where('cpmProblem.is_behavioral', '=', true)->pluck('id');
+            }
+        }
 
         return [
-            'id'                     => $this->patient->id,
-            'mrn'                    => $this->patient->getMRN(),
-            'name'                   => $name,
-            'url'                    => $url,
-            'provider'               => $bP
+            'id'       => $this->patient->id,
+            'mrn'      => $this->patient->getMRN(),
+            'name'     => $name,
+            'url'      => $url,
+            'provider' => $bP
                 ? optional($bP->user)->getFullName()
                 : '',
             'practice'               => $this->patient->primaryPractice->display_name,
@@ -92,9 +120,9 @@ class ApprovableBillablePatient extends Resource
             'report_id'              => $this->id,
             'actor_id'               => $this->actor_id,
             'qa'                     => $this->needs_qa || ( ! $this->approved && ! $this->rejected),
-            'attested_problems'      => $attestedProblems,
+            'attested_ccm_problems'  => $attestedCcmProblems,
             'chargeable_services'    => ChargeableService::collection($this->whenLoaded('chargeableServices')),
-            'bhi_problem_code'       => $bhiProblemCode,
+            'attested_bhi_problems'  => $attestedBhiProblems,
         ];
     }
 }

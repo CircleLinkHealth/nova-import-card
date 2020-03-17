@@ -9,6 +9,7 @@ namespace App\Billing\Practices;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\Entities\Practice;
+use CircleLinkHealth\Customer\Invoices\ItemizedBillablePatientsReport;
 
 class PracticeInvoiceGenerator
 {
@@ -44,7 +45,7 @@ class PracticeInvoiceGenerator
 
         $data = [
             'invoice_url' => $pdfInvoice->getUrl(),
-            'mediaIds'       => [$pdfInvoice->id],
+            'mediaIds'    => [$pdfInvoice->id],
         ];
 
         if ($withItemized) {
@@ -52,7 +53,7 @@ class PracticeInvoiceGenerator
             $pdfPatientReport = $this->makePatientReportPdf($reportName);
 
             $data['patient_report_url'] = $pdfPatientReport->getUrl();
-            $data['mediaIds'][] = $pdfPatientReport->id;
+            $data['mediaIds'][]         = $pdfPatientReport->id;
         }
 
         $data['practiceId'] = $this->practice->id;
@@ -98,7 +99,7 @@ class PracticeInvoiceGenerator
 
         $path = storage_path("/download/${reportName}.pdf");
 
-        $pdf = $pdfService->createPdfFromView('billing.practice.itemized', $this->practice->getItemizedPatientData($this->month), $path);
+        $pdf = $pdfService->createPdfFromView('billing.practice.itemized', (new ItemizedBillablePatientsReport($this->practice->id, $this->practice->display_name, $this->month))->toArray(), $path);
 
         return $this->practice
             ->addMedia($path)

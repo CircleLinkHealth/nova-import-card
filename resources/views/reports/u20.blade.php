@@ -135,6 +135,12 @@
                                             sort: 'string'
                                         },
                                         {
+                                            id: "mrn",
+                                            header: ["MRN", "(Medical Rec Number)"],
+                                            adjust: true,
+                                            sort: 'string'
+                                        },
+                                        {
                                             id: "colsum_careplan",
                                             header: ["CarePlan", "(Min:Sec)"],
                                             sort: 'int',
@@ -310,6 +316,7 @@
                                            'patient_name':       { header:'Patient Name', width: 200, template: webix.template('#patient_name#') },
                                            'site':             { header:'Program',    width:150, sort:'string', template: webix.template('#site#')},
                                            'dob':              { header:'DOB',    width:100, sort:'string', template: webix.template('#dob#')},
+                                           'mrn':              { header:'MRN',    width:100, sort:'string', template: webix.template('#mrn#')},
 
                                            'colsum_careplan':  { header: 'CarePlan (Min:Sec)', width: 70, sort: 'int',
                                            template:function (obj) {
