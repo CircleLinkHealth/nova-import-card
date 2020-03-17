@@ -13,8 +13,8 @@ return [
     */
 
     'supportsCredentials'    => true,
-    'allowedOrigins'         => ['*careplanmanager.com', '*clh-staging.com', '*.ngrok.io', '*.test'],
-    'allowedOriginsPatterns' => ['*careplanmanager.com', '*clh-staging.com', '*.ngrok.io', '*.test'],
+    'allowedOrigins'         => ['*'],
+    'allowedOriginsPatterns' => ['*'],
     'allowedHeaders'         => ['*'],
     'allowedMethods'         => ['*'],
     'exposedHeaders'         => [],
