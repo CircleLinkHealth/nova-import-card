@@ -178,9 +178,13 @@ class NoteService
      * @param bool $notifyCLH
      * @param bool $forceNotify
      */
-    public function forwardNoteIfYouMust(Note $note, $notifyCareTeam = false, $notifyCLH = false)
+    public function forwardNoteIfYouMust(Note $note, $notifyCareTeam = false, $notifyCLH = false, $forceNotify = false)
     {
-        return $note->forward($notifyCareTeam, $notifyCLH);
+        if ($note->isTCM) {
+            $notifyCareTeam = $forceNotify = true;
+        }
+
+        return $note->forward($notifyCareTeam, $notifyCLH, $forceNotify);
     }
 
     public function getAllForwardedNotesWithRange(

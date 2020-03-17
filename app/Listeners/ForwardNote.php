@@ -15,7 +15,7 @@ class ForwardNote
      * @var NoteService
      */
     protected $noteService;
-    
+
     /**
      * Create the event listener.
      *
@@ -25,7 +25,7 @@ class ForwardNote
     {
         $this->noteService = $noteService;
     }
-    
+
     /**
      * Handle the event.
      *
@@ -34,14 +34,10 @@ class ForwardNote
     public function handle(NoteFinalSaved $event)
     {
         if ($params = $event->params) {
-            if (array_keys_exist(
-                [
-                    'notifyCareTeam',
-                    'notifyCLH',
-                ],
-                $params
-            )) {
-                $this->noteService->forwardNoteIfYouMust($event->note, $params['notifyCareTeam'], $params['notifyCLH']);
+            if (array_keys_exist(['notifyCareTeam',
+                'notifyCLH',
+                'forceNotify', ], $params)) {
+                $this->noteService->forwardNoteIfYouMust($event->note, $params['notifyCareTeam'], $params['notifyCLH'], $params['forceNotify']);
             }
         }
     }
