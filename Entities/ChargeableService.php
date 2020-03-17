@@ -48,6 +48,7 @@ class ChargeableService extends BaseModel
     const CCM_PLUS_60 = 'G2058(>60mins)';
     const GENERAL_CARE_MANAGEMENT = 'G0511';
     const SOFTWARE_ONLY = 'Software-Only';
+    const PCM = 'G2065';
 
     const AWV_INITIAL = 'AWV: G0438';
     const AWV_SUBSEQUENT = 'AWV: G0439';
