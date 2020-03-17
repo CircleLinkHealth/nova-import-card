@@ -7,12 +7,10 @@
 namespace CircleLinkHealth\Customer\Entities;
 
 use App\CareAmbassadorLog;
-use CircleLinkHealth\Core\StringManipulation;
 use App\EnrolleeCustomFilter;
-use App\Repositories\PatientSummaryEloquentRepository;
-use App\ValueObjects\PatientReportData;
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Traits\HasChargeableServices;
 use CircleLinkHealth\Customer\Traits\HasSettings;
 use CircleLinkHealth\Customer\Traits\SaasAccountable;
@@ -388,126 +386,6 @@ class Practice extends BaseModel implements HasMedia
     public function getInvoiceRecipientsArray()
     {
         return array_values(array_filter(array_map('trim', explode(',', $this->invoice_recipients))));
-    }
-
-    public function getItemizedPatientData($month)
-    {
-        $repo = app(PatientSummaryEloquentRepository::class);
-
-        $data          = [];
-        $data['name']  = $this->display_name;
-        $data['month'] = $month->toDateString();
-
-        $patients = User::orderBy('first_name', 'asc')
-                        ->ofType('participant')
-                        ->with(
-                            [
-                                'patientSummaries' => function ($q) use ($month) {
-                                    $q
-                                        ->with(['billableBhiProblems', 'attestedProblems' => function($problem){
-                                            $problem->with(['cpmProblem', 'codes']);
-                                        }])
-                                        ->where('month_year', $month->toDateString())
-                                        ->where('approved', '=', true);
-                                },
-                                'billingProvider',
-                                'patientInfo.location'
-                            ]
-                        )
-                        ->whereProgramId($this->id)
-                        ->whereHas(
-                            'patientSummaries',
-                            function ($query) use ($month) {
-                                $query->where('month_year', $month->toDateString())
-                                      ->where('approved', '=', true);
-                            }
-                        )
-            ->has('patientInfo')
-                        ->chunkById(
-                            100,
-                            function ($patients) use (&$data, $repo, $month) {
-                                foreach ($patients as $u) {
-                                    $summary = $u->patientSummaries->first();
-
-                                    if ( ! $repo->hasBillableProblemsNameAndCode($summary)) {
-                                        $summary = $repo->fillBillableProblemsNameAndCode($summary);
-                                        $summary->save();
-                                    }
-
-                                    $patientData = new PatientReportData();
-                                    $patientData->setCcmTime(round($summary->ccm_time / 60, 2));
-                                    $patientData->setBhiTime(round($summary->bhi_time / 60, 2));
-                                    $patientData->setName($u->getFullName());
-                                    $patientData->setDob($u->getBirthDate());
-                                    $patientData->setPractice($u->program_id);
-                                    $patientData->setProvider($u->getBillingProviderName());
-                                    $patientData->setBillingCodes($u->billingCodes($month));
-
-                                    $patientData->setCcmProblemCodes($summary->getAttestedProblemsForReport());
-
-                                    $patientData->setBhiCode(
-                                        optional(optional($summary->billableProblems->first())->pivot)->icd_10_code
-                                    );
-                                    $patientData->setLocationName($u->getPreferredLocationName());
-
-                                    $data['patientData'][$u->id] = $patientData;
-                                }
-                            }
-                        );
-
-        $data['patientData'] = array_key_exists('patientData', $data)
-            ? collect($data['patientData'])->sortBy(
-                function ($data) {
-                    return sprintf('%-12s%s', $data->getProvider(), $data->getName());
-                }
-            )
-            : null;
-
-        $awvPatients = User::ofType('participant')
-                           ->ofPractice($this->id)
-                           ->whereHas(
-                               'patientAWVSummaries',
-                               function ($query) use ($month) {
-                                   $query->where('is_billable', true)
-                                         ->where('year', $month->year);
-                               }
-                           )
-                           ->with(
-                               [
-                                   'patientAWVSummaries' => function ($q) use ($month) {
-                                       $q->where('is_billable', true)
-                                         ->where('year', $month->year);
-                                   },
-                                   'billingProvider',
-                               ]
-                           )
-                           ->chunk(
-                               100,
-                               function ($patients) use (&$data) {
-                                   foreach ($patients as $u) {
-                                       $summary = $u->patientAWVSummaries->first();
-
-                                       $patientData = new PatientReportData();
-                                       $patientData->setName($u->getFullName());
-                                       $patientData->setDob($u->getBirthDate());
-                                       $patientData->setPractice($u->program_id);
-                                       $patientData->setProvider($u->getBillingProviderName());
-                                       $patientData->setAwvDate($summary->billable_at);
-
-                                       $data['awvPatientData'][$u->id] = $patientData;
-                                   }
-                               }
-                           );
-
-        $data['awvPatientData'] = array_key_exists('awvPatientData', $data)
-            ? collect($data['awvPatientData'])->sortBy(
-                function ($data) {
-                    return sprintf('%-12s%s', $data->getProvider(), $data->getName());
-                }
-            )
-            : null;
-
-        return $data;
     }
 
     /**

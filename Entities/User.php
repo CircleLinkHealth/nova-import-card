@@ -65,6 +65,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\Rule;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Scout\Searchable;
@@ -1785,9 +1786,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'consent_date'            => 'required',
             'ccm_status'              => 'required',
             'program_id'              => 'required',
-            'email'                   => 'sometimes|email|unique:users,email' . (null != $this->id
-                    ? (',' . $this->id)
-                    : ''),
+            'email' => [
+                'sometimes',
+                Rule::unique('users', 'email')->ignore($this)
+            ],
         ];
     }
 
@@ -2315,15 +2317,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasMany('App\Observation', 'user_id', 'id');
     }
 
-    public function onFirstCall($isNoteCreatePageAndSuccessfullCall = false): bool
+    public function onFirstCall(): bool
     {
-        $onFirstCall = 1;
-        if ($isNoteCreatePageAndSuccessfullCall) {
-            $onFirstCall = 0;
-        }
-
         return $this->inboundCalls()
-                    ->where('status', 'reached')->count() <= $onFirstCall;
+                    ->where('status', 'reached')->count() == 0;
     }
 
     /**
@@ -2697,7 +2694,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function routeNotificationForTwilio()
     {
-        return $this->getPrimaryPhone();
+        return $this->getPhone();
     }
 
     public function saasAccountName()

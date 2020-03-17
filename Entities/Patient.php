@@ -11,6 +11,7 @@ use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalR
 use Carbon\Carbon;
 use CircleLinkHealth\Core\Entities\BaseModel;
 use CircleLinkHealth\Core\Filters\Filterable;
+use CircleLinkHealth\Revisionable\Entities\Revision;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -767,5 +768,35 @@ class Patient extends BaseModel
     
     public function importedMedicalRecord() {
         return $this->hasOne(ImportedMedicalRecord::class);
+    }
+    
+    /**
+     * Get last ccm_status for a specific month:
+     * 1. Get next month
+     * 2. Find first entry from end of month
+     * 3. If exists, then return the `old_value`
+     * 4. Otherwise, return ccm_status from {@link Patient @patientInfo}
+     *
+     * @param Carbon $monthYear
+     *
+     * @return string
+     */
+    public function getCcmStatusForMonth(Carbon $monthYear)
+    {
+        $endOfMonth = $monthYear->endOfMonth();
+        
+        /** @var Revision|null $revision */
+        $revision = Revision::where('revisionable_id', '=', $this->id)
+                            ->where('revisionable_type', '=', self::class)
+                            ->where('created_at', '>=', $endOfMonth)
+                            ->where('key', '=', 'ccm_status')
+                            ->orderBy('id')
+                            ->first();
+        
+        if ($revision && $revision->old_value) {
+            return $revision->old_value;
+        }
+        
+        return $this->ccm_status;
     }
 }

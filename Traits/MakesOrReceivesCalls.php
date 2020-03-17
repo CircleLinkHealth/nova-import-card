@@ -18,8 +18,8 @@ trait MakesOrReceivesCalls
     {
         return $this->calls()
             ->where([
-                ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
+                ['called_date', '>=', $date->copy()->startOfDay()->toDateTimeString()],
+                ['called_date', '<=', $date->copy()->endOfDay()->toDateTimeString()],
             ])->whereIn('calls.status', ['reached', 'not reached']);
     }
 
@@ -147,8 +147,8 @@ trait MakesOrReceivesCalls
     {
         return $this->calls()
             ->where([
-                ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
+                ['called_date', '>=', $date->copy()->startOfDay()->toDateTimeString()],
+                ['called_date', '<=', $date->copy()->endOfDay()->toDateTimeString()],
                 ['calls.status', '=', 'reached'],
             ]);
     }
@@ -169,8 +169,8 @@ trait MakesOrReceivesCalls
     {
         return $this->calls()
             ->where([
-                ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
+                ['called_date', '>=', $date->copy()->startOfDay()->toDateTimeString()],
+                ['called_date', '<=', $date->copy()->endOfDay()->toDateTimeString()],
                 ['calls.status', '=', 'not reached'],
             ]);
     }
