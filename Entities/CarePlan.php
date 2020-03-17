@@ -17,15 +17,16 @@ use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NotifyPatientCarePlanApproved;
-use App\Rules\HasAtLeast2CcmOr1BhiProblems;
-use CircleLinkHealth\Eligibility\Rules\HasValidNbiMrn;
+use App\Rules\DoesNotHaveBothTypesOfDiabetes;
+use App\Rules\HasEnoughProblems;
 use App\Services\CareplanService;
-use CircleLinkHealth\Core\PdfService;
 use App\Traits\PdfReportTrait;
 use CircleLinkHealth\Core\Entities\BaseModel;
+use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Patient;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\Eligibility\Rules\HasValidNbiMrn;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Log;
 use Validator;
@@ -87,11 +88,11 @@ class CarePlan extends BaseModel implements PdfReport
     use PdfReportTrait;
     
     // status options
-    const DRAFT             = 'draft';
-    const PDF               = 'pdf';
+    const DRAFT = 'draft';
+    const PDF = 'pdf';
     const PROVIDER_APPROVED = 'provider_approved';
     const QA_APPROVED       = 'qa_approved';
-    
+
     // mode options
     const WEB = 'web';
     
@@ -398,7 +399,7 @@ class CarePlan extends BaseModel implements PdfReport
             $data,
             [
                 'conditions'      => [
-                    new HasAtLeast2CcmOr1BhiProblems(),
+                    new HasEnoughProblems(),
                     //If Approver has confirmed that Diabetes Conditions are correct or if Care Plan has already been approved, bypass check
                     //todo: move rule to this module (currently did not because CarePlan exists both in Shared Models and eligibility)
                     ! $confirmDiabetesConditions && self::DRAFT === $this->status
