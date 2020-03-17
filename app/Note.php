@@ -185,10 +185,6 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
             $channelsForUsers[] = 'mail';
         }
 
-        if ($force && empty($channelsForUsers)) {
-            $channelsForUsers[] = 'mail';
-        }
-
         // Notify Users
         $recipients->unique()
             ->values()
