@@ -15,6 +15,7 @@ use CircleLinkHealth\Eligibility\Decorators\MedicalHistoryFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
 use CircleLinkHealth\Eligibility\Factories\AthenaEligibilityCheckableFactory;
+use CircleLinkHealth\Eligibility\MedicalRecord\MedicalRecordFactory;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CcdaMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\CommonwealthMedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecord\Templates\MarillacMedicalRecord;
@@ -120,21 +121,10 @@ class ReimportPatientMedicalRecord extends Command
 
     private function attemptDecorator(User $user, Ccda $ccda)
     {
-        if ('commonwealth-pain-associates-pllc' === $user->primaryPractice->name) {
-            $this->warn("Running 'commonwealth-pain-associates-pllc' decorator");
-
-            return new CommonwealthMedicalRecord(
-                app(PcmChargeableServices::class)->decorate(
-                    app(MedicalHistoryFromAthena::class)->decorate(
-                        app(InsuranceFromAthena::class)->decorate(
-                            app(DemographicsFromAthena::class)->decorate(
-                                $this->getEnrollee($user)->eligibilityJob
-                            )
-                        )
-                    )
-                )->data,
-                new CcdaMedicalRecord($ccda->bluebuttonJson())
-            );
+        if ($mr = MedicalRecordFactory::create($user, $ccda)) {
+            $this->warn("Running '{$user->primaryPractice->name}' decorator");
+        
+            return $mr;
         }
 
         return null;
