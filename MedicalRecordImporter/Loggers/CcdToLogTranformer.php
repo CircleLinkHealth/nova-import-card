@@ -214,6 +214,8 @@ class CcdToLogTranformer
         }
 
         foreach ($ccdProblem->translations as $translation) {
+            if (empty($translation)) continue;
+            
             if ( ! $translation->code_system_name) {
                 $translation->code_system_name = getProblemCodeSystemName([$translation->code_system]);
 

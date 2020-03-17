@@ -43,7 +43,6 @@ class Medications extends BaseImporter
             ->get();
 
         $this->processLogs($itemLogs);
-
         if (0 == count($this->imported)) {
             $this->processLogs($itemLogs, true);
         }
@@ -66,7 +65,6 @@ class Medications extends BaseImporter
             'medical_record_type'        => $this->medicalRecordType,
             'medical_record_id'          => $this->medicalRecordId,
             'imported_medical_record_id' => $this->importedMedicalRecord->id,
-            'vendor_id'                  => $itemLog->vendor_id,
             'name'                       => ucfirst($consolidatedMed->cons_name),
         ], [
             'ccd_medication_log_id' => $itemLog->id,

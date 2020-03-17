@@ -19,7 +19,7 @@ interface ImportedMedicalRecord
      */
     public function allergies();
 
-    public function createCarePlan(): CarePlan;
+    public function updateOrCreateCarePlan(): CarePlan;
 
     /**
      * Get the Demographics that were imported for QA.

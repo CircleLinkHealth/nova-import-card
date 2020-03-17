@@ -247,7 +247,7 @@ interface AthenaApiImplementation
         $workphone = null,
         $departmentId = null
     );
-
+    
     /**
      * Get problems for a patient.
      *
@@ -255,6 +255,8 @@ interface AthenaApiImplementation
      * @param $practiceId
      * @param $departmentId
      * @param bool $showDiagnosisInfo
+     *
+     * @param bool $showinactive
      *
      * @return mixed
      */
