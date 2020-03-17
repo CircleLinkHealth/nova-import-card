@@ -92,6 +92,10 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
     /**
      * An option in validation_checks.
      */
+    const CHECK_HAS_AT_LEAST_1_CCM_CONDITION = 'has_at_least_1_ccm_condition';
+    /**
+     * An option in validation_checks.
+     */
     const CHECK_HAS_AT_LEAST_2_CCM_CONDITIONS = 'has_at_least_2_ccm_conditions';
     /**
      * An option in validation_checks.
@@ -103,6 +107,11 @@ class ImportedMedicalRecord extends \CircleLinkHealth\Core\Entities\BaseModel im
      * Currently this only applies to NBI.
      */
     const WAS_NBI_OVERWRITTEN = 'was_nbi_overwritten';
+    /**
+     * An option in validation_checks.
+     * Indicates whether CLH can offer PCM service to the patient, if practice has PCM enabled.
+     */
+    const CHECK_PRACTICE_HAS_PCM = 'practice_has_pcm';
 
     protected $casts = [
         'validation_checks' => 'array',
