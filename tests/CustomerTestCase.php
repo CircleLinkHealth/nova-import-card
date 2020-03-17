@@ -35,7 +35,11 @@ class CustomerTestCase extends TestCase
      * @var array|User
      */
     private $provider;
-
+    /**
+     * @var array|User
+     */
+    private $superadmin;
+    
     /**
      * @return array|User
      */
@@ -46,6 +50,18 @@ class CustomerTestCase extends TestCase
         }
 
         return $this->careCoach;
+    }
+    
+    /**
+     * @return array|User
+     */
+    protected function superadmin(int $number = 1)
+    {
+        if ( ! $this->superadmin) {
+            $this->superadmin = $this->createUsersOfType('administrator', $number);
+        }
+        
+        return $this->superadmin;
     }
 
     /**
