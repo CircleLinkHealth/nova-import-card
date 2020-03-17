@@ -151,6 +151,8 @@ such as <style>, as they will not be parsed.--}}
                     @if(isset($altAlgoEnabled) && !$altAlgoEnabled)
                         <th style="width: 25%">CCM Hours (High Rates)</th>
                         <th style="width: 25%">CCM Hours (${{$nurseLowRate}}/Hour)</th>
+                    @elseif(isset($visitsPerDayAvailable) && $visitsPerDayAvailable)
+                        <th style="width: 25%">Visits</th>
                     @elseif (!isset($altAlgoEnabled))
                         <th style="width: 25%">CCM Hours (High Rate)</th>
                         <th style="width: 25%">CCM Hours (${{$nurseLowRate}}/Hour)</th>
@@ -167,6 +169,8 @@ such as <style>, as they will not be parsed.--}}
                     @if(isset($altAlgoEnabled) && !$altAlgoEnabled)
                         <td>{{$totalTimeTowardsCcmInHours}}</td>
                         <td>{{$totalTimeAfterCcmInHours}}</td>
+                    @elseif(isset($visitsPerDayAvailable) && $visitsPerDayAvailable)
+                        <td>{{$visitsCount}}</td>
                     @elseif (!isset($altAlgoEnabled))
                         <td>{{$totalTimeTowardsCcmInHours ?? $totalTimeTowardsCcm}}</td>
                         <td>{{$totalTimeAfterCcmInHours ?? $totalTimeAfterCcm}}</td>
@@ -191,6 +195,8 @@ such as <style>, as they will not be parsed.--}}
                         @if(isset($altAlgoEnabled) && !$altAlgoEnabled)
                             <td>{{$row['towards']}}</td>
                             <td>{{$row['after']}}</td>
+                        @elseif(isset($visitsPerDayAvailable) && $visitsPerDayAvailable)
+                            <td>{{$row['visits_count']}}</td>
                         @elseif (!isset($altAlgoEnabled))
                             <td>{{$row['towards']}}</td>
                             <td>{{$row['after']}}</td>

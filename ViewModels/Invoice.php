@@ -37,6 +37,11 @@ class Invoice extends ViewModel
     public $bhiVisits;
 
     /**
+     * @var array $pcmVisits A 2d array, key[patient id] => value[array]. The value array is key[range] => value[pay]
+     */
+    public $pcmVisits;
+
+    /**
      * @var int the total number of visits when option 1 algo is enabled
      */
     public $visitsCount;
@@ -60,6 +65,14 @@ class Invoice extends ViewModel
      * @return Collection
      */
     public $timePerDay;
+
+    /**
+     * An array showing the total visits per day.
+     *
+     * @return bool
+     */
+    public $visitsPerDayAvailable;
+
     public $totalTimeAfterCcmInHours;
     public $totalTimeTowardsCcmInHours;
 
@@ -417,12 +430,14 @@ class Invoice extends ViewModel
      */
     private function getVariableRatePay()
     {
-        $calculationResult        = $this->variablePayCalculator->calculate($this->user);
-        $this->visits             = $calculationResult->visits;
-        $this->bhiVisits          = $calculationResult->bhiVisits;
-        $this->visitsCount        = $calculationResult->visitsCount;
-        $this->ccmPlusAlgoEnabled = $calculationResult->ccmPlusAlgoEnabled;
-        $this->altAlgoEnabled     = $calculationResult->altAlgoEnabled;
+        $calculationResult           = $this->variablePayCalculator->calculate($this->user);
+        $this->visits                = $calculationResult->visits;
+        $this->bhiVisits             = $calculationResult->bhiVisits;
+        $this->pcmVisits             = $calculationResult->pcmVisits;
+        $this->visitsCount           = round($calculationResult->visitsCount, 2);
+        $this->ccmPlusAlgoEnabled    = $calculationResult->ccmPlusAlgoEnabled;
+        $this->altAlgoEnabled        = $calculationResult->altAlgoEnabled;
+        $this->visitsPerDayAvailable = true;
 
         return round($calculationResult->totalPay, 2);
     }
@@ -473,10 +488,25 @@ class Invoice extends ViewModel
             });
         }
 
-
+        $allVisits = collect($this->visits, $this->bhiVisits, $this->pcmVisits);
         foreach ($period as $date) {
             $dateStr = $date->toDateString();
 
+            //region visits per day
+            $visitsCountForDay = 0.0;
+            $allVisits->each(function (Collection $coll) use (&$visitsCountForDay, $dateStr) {
+                $coll->each(function (array $perPatient, $key) use (&$visitsCountForDay, $dateStr) {
+
+                    if ($key !== $dateStr) {
+                        return;
+                    }
+
+                    $visitsCountForDay += $perPatient['count'];
+                });
+            });
+            //endregion
+
+            //region time per day
             $dataForDay = $this->aggregatedTotalTime->first(
                 function ($value) use ($dateStr) {
                     return 0 == $value->is_billable && $value->date == $dateStr;
@@ -499,14 +529,16 @@ class Invoice extends ViewModel
                     'after'   => 0,
                 ]);
 
-                $row['towards'] = round($variablePayForDay['towards'] / 3600, 2);
-                $row['after']   = round($variablePayForDay['after'] / 3600, 2);
+                $row['towards']      = round($variablePayForDay['towards'] / 3600, 2);
+                $row['after']        = round($variablePayForDay['after'] / 3600, 2);
+                $row['visits_count'] = round($visitsCountForDay, 2);
             }
 
             $table->put(
                 $dateStr,
                 $row
             );
+            //endregion
         }
 
         $this->timePerDay                 = $table;
