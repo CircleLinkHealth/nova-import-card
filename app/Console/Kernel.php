@@ -201,15 +201,15 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckForYesterdaysActivitiesAndUpdateContactWindows::class)->dailyAt('00:10')->onOneServer();
         
         $schedule->command(ImportCommand::class, [
-            'model' => User::class
+            User::class
         ])->dailyAt('03:05');
     
         $schedule->command(ImportCommand::class, [
-            'model' => Practice::class
+            Practice::class
         ])->dailyAt('03:10');
         
         $schedule->command(ImportCommand::class, [
-            'model' => Location::class
+            Location::class
         ])->dailyAt('03:15');
     }
 }
