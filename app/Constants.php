@@ -7,6 +7,7 @@
 namespace App;
 
 use CircleLinkHealth\Customer\Entities\Ehr;
+use CircleLinkHealth\SharedModels\Entities\ProblemCodeSystem;
 
 class Constants
 {
@@ -29,15 +30,15 @@ class Constants
         Constants::ICD10_NAME  => 2,
         Constants::SNOMED_NAME => 3,
     ];
-    const ICD10      = 'icd_10_code';
-    const ICD10_NAME = 'ICD-10';
+    const ICD10      = ProblemCodeSystem::ICD10;
+    const ICD10_NAME = ProblemCodeSystem::ICD10_NAME;
 
     /**
      * Problem Codes.
      */
-    const ICD9 = 'icd_9_code';
+    const ICD9 = ProblemCodeSystem::ICD9;
 
-    const ICD9_NAME = 'ICD-9';
+    const ICD9_NAME = ProblemCodeSystem::ICD9_NAME;
 
     const MONTHLY_BILLABLE_TIME_TARGET_IN_SECONDS = 1200;
 
@@ -62,8 +63,8 @@ class Constants
         'margin-bottom'      => '15',
         'margin-right'       => '0.75',
     ];
-    const SNOMED                     = 'snomed_code';
-    const SNOMED_NAME                = 'SNOMED CT';
+    const SNOMED                     = ProblemCodeSystem::SNOMED;
+    const SNOMED_NAME                = ProblemCodeSystem::SNOMED_NAME;
     const TRIX_ALLOWABLE_TAGS_STRING = '<div><strong><h1><em><del><blockquote><pre><br><ul><ol><li><span><a>';
     const TRIX_FIELDS                = ['patient-email-body'];
     const VIEWING_PATIENT            = 'viewing-patient';
