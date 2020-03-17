@@ -161,12 +161,14 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
         $recipients = collect();
 
         $cpmSettings = $this->patient->primaryPractice->cpmSettings();
+        
+        $patientBillingProviderUser = $this->patient->billingProviderUser();
 
         if ($notifyCareteam) {
             $recipients = $this->patient->getCareTeamReceivesAlerts();
 
-            if ($force) {
-                $recipients->push($this->patient->billingProviderUser());
+            if ($force && $patientBillingProviderUser) {
+                $recipients->push($patientBillingProviderUser);
             }
         }
 
@@ -190,12 +192,27 @@ class Note extends \CircleLinkHealth\Core\Entities\BaseModel implements PdfRepor
             $channelsForUsers[] = 'mail';
         }
 
+        if ($force && empty($channelsForUsers)) {
+            $channelsForUsers = [
+                'mail',
+                DirectMailChannel::class,
+                FaxChannel::class,
+            ];
+        }
+
         // Notify Users
         $recipients->unique()
             ->values()
             ->map(function ($carePersonUser) use ($channelsForUsers) {
                 optional($carePersonUser)->notify(new NoteForwarded($this, $channelsForUsers));
             });
+    
+        if ($force && empty($channelsForLocation)) {
+            $channelsForLocation = [
+                DirectMailChannel::class,
+                FaxChannel::class,
+            ];
+        }
 
         if ( ! $notifyCareteam || empty($channelsForLocation)) {
             return;
