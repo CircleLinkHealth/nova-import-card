@@ -47,7 +47,7 @@
                onclick="return confirm('This will delete and re-import Problems, Medications, Insurances, and Allergies. Would you like to proceed?')"
                data-tooltip="Reimport (beta)"
             >
-                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
             </a>
         </div>
     @endif
