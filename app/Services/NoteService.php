@@ -184,7 +184,7 @@ class NoteService
      */
     public function forwardNoteIfYouMust(Note $note, $notifyCareTeam = false, $notifyCLH = false, $forceNotify = false)
     {
-        if ($note->isTCM && $this->practiceHasNotesNotificationsEnabled($note)) {
+        if ($note->isTCM && $this->practiceHasNotesNotificationsEnabled($note->patient->primaryPractice)) {
             $notifyCareTeam = $forceNotify = true;
         }
 
