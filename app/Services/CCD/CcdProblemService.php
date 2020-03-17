@@ -161,11 +161,11 @@ class CcdProblemService
         if ($p) {
             return [
                 'id'                              => $p->id,
-                'name'                            => $p->name,
-                'original_name'                   => $p->original_name,
+                'name'                            => $p->name ?? '',
+                'original_name'                   => $p->original_name ?? '',
                 'cpm_id'                          => $p->cpm_problem_id,
                 'codes'                           => $p->codes,
-                'code'                            => $p->icd10code(),
+                'code'                            => $p->icd10code() ?? '',
                 'is_monitored'                    => $p->is_monitored,
                 'instruction'                     => $p->cpmInstruction,
                 'should_show_default_instruction' => $shouldShowDefaultInstruction,
