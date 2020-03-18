@@ -85,17 +85,31 @@ class CarePlanHelper
      */
     public function createNewCarePlan()
     {
+        $args = [
+            'care_plan_template_id' => $this->user->service()->firstOrDefaultCarePlan(
+                $this->user
+            )->care_plan_template_id,
+            'status'                => 'draft',
+        ];
+        
         $this->carePlan = CarePlan::firstOrCreate(
             [
                 'user_id' => $this->user->id,
             ],
-            [
-                'care_plan_template_id' => $this->user->service()->firstOrDefaultCarePlan(
-                    $this->user
-                )->care_plan_template_id,
-                'status'                => 'draft',
-            ]
+            $args
         );
+        
+        if (!$this->carePlan->care_plan_template_id) {
+            $this->carePlan->care_plan_template_id = $args['care_plan_template_id'];
+        }
+    
+        if (!$this->carePlan->status) {
+            $this->carePlan->status = $args['status'];
+        }
+        
+        if ($this->carePlan->isDirty()) {
+            $this->carePlan->save();
+        }
         
         return $this;
     }
@@ -148,6 +162,9 @@ class CarePlanHelper
         )->first();
         
         if ($enrollee) {
+            if (strtolower($this->user->first_name) != strtolower($enrollee->first_name)) {
+                throw new \Exception("Something fishy is going on. enrollee:{$enrollee->id} and user:{$this->user->id} do not match");
+            }
             $this->enrollee        = $enrollee;
             $enrollee->user_id     = $this->user->id;
             $enrollee->provider_id = $this->imr->billing_provider_id;
@@ -171,24 +188,24 @@ class CarePlanHelper
         foreach ($this->all as $allergy) {
             $ccdAllergy = Allergy::updateOrCreate(
                 [
-                    'allergen_name'      => $allergy->allergen_name,
+                    'allergen_name' => $allergy->allergen_name,
                 ],
                 [
-                    'allergy_import_id' => $allergy->id,
+                    'allergy_import_id'  => $allergy->id,
                     'patient_id'         => $this->user->id,
                     'ccd_allergy_log_id' => $allergy->ccd_allergy_log_id,
                 ]
             );
         }
-    
+        
         $unique = $this->user->ccdAllergies->unique('name')->pluck('id');
-    
+        
         $deleted = $this->user->ccdAllergies()->whereNotIn('id', $unique)->delete();
         
         $misc = CpmMisc::whereName(CpmMisc::ALLERGIES)
                        ->first();
-    
-        if (! $this->hasMisc($this->user, $misc)) {
+        
+        if ( ! $this->hasMisc($this->user, $misc)) {
             $this->user->cpmMiscs()->attach(optional($misc)->id);
         }
         
@@ -202,20 +219,33 @@ class CarePlanHelper
      */
     public function storeBillingProvider()
     {
-        $providerId = empty($this->imr->billing_provider_id)
-            ?: $this->imr->billing_provider_id;
+        $providerId = $this->imr->billing_provider_id ?? null;
         
         if ($providerId) {
+            $args = [
+                'member_user_id' => $providerId,
+                'alert'          => true,
+            ];
+            
             $billing = CarePerson::firstOrCreate(
                 [
-                    'type'           => CarePerson::BILLING_PROVIDER,
+                    'type'    => CarePerson::BILLING_PROVIDER,
+                    'user_id' => $this->user->id,
                 ],
-                [
-                    'user_id'        => $this->user->id,
-                    'member_user_id' => $providerId,
-                    'alert' => true,
-                ]
+                $args
             );
+            
+            if (!$billing->member_user_id) {
+                $billing->member_user_id = $args['member_user_id'];
+            }
+    
+            if (!$billing->alert) {
+                $billing->alert = $args['alert'];
+            }
+            
+            if ($billing->isDirty()) {
+                $billing->save();
+            }
         }
         
         return $this;
@@ -228,8 +258,9 @@ class CarePlanHelper
      */
     public function storeContactWindows()
     {
-        // update timezone
-        $this->user->timezone = optional($this->imr->location)->timezone ?? 'America/New_York';
+        if ( ! $this->user->timezone) {
+            $this->user->timezone = optional($this->imr->location)->timezone ?? 'America/New_York';
+        }
         
         if (PatientContactWindow::where('patient_info_id', $this->user->patientInfo->id)->exists()) {
             return $this;
@@ -317,8 +348,7 @@ class CarePlanHelper
      */
     public function storeLocation()
     {
-        $locationId = empty($this->imr->location_id)
-            ?: $this->imr->location_id;
+        $locationId = $this->imr->location_id ?? null;
         
         if ($locationId) {
             $this->user->attachLocation($locationId);
@@ -346,17 +376,17 @@ class CarePlanHelper
             }
             $ccdMedication = Medication::updateOrCreate(
                 [
-                    'patient_id'           => $this->user->id,
-                    'name'                 => $medication->name,
-                    'sig'                  => $medication->sig,
+                    'patient_id' => $this->user->id,
+                    'name'       => $medication->name,
+                    'sig'        => $medication->sig,
                 ],
                 [
                     'ccd_medication_log_id' => $medication->ccd_medication_log_id,
-                    'medication_import_id' => $medication->id,
-                    'medication_group_id'  => $medication->medication_group_id,
-                    'code'                 => $medication->code,
-                    'code_system'          => $medication->code_system,
-                    'code_system_name'     => $medication->code_system_name,
+                    'medication_import_id'  => $medication->id,
+                    'medication_group_id'   => $medication->medication_group_id,
+                    'code'                  => $medication->code,
+                    'code_system'           => $medication->code_system,
+                    'code_system_name'      => $medication->code_system_name,
                 ]
             );
             
@@ -365,8 +395,8 @@ class CarePlanHelper
         
         $misc = CpmMisc::whereName(CpmMisc::MEDICATION_LIST)
                        ->first();
-    
-        if (! $this->hasMisc($this->user, $misc)) {
+        
+        if ( ! $this->hasMisc($this->user, $misc)) {
             $this->user->cpmMiscs()->attach(optional($misc)->id);
         }
         
@@ -409,39 +439,93 @@ class CarePlanHelper
         }
         
         $agentDetails = $this->getEnrolleeAgentDetailsIfExist();
+    
+        $args = array_merge(
+            [
+                'imported_medical_record_id' => $this->imr->id,
+                'ccda_id'                    => Ccda::class == $this->imr->medical_record_type
+                    ? $this->imr->medical_record_id
+                    : null,
+                'birth_date'                 => $this->dem->dob,
+                'ccm_status'                 => 'enrolled',
+                'consent_date'               => $this->dem->consent_date,
+                'gender'                     => $this->dem->gender,
+                'mrn_number'                 => $mrn,
+                'preferred_contact_language' => $this->dem->preferred_contact_language,
+                'preferred_contact_location' => $this->imr->location_id,
+                'preferred_contact_method'   => 'CCT',
+                'registration_date'          => $this->user->user_registered,
+            ],
+            $agentDetails
+        );
         
         $this->patientInfo = Patient::firstOrCreate(
             [
                 'user_id' => $this->user->id,
             ],
-            array_merge(
-                [
-                    'imported_medical_record_id' => $this->imr->id,
-                    'ccda_id'                    => Ccda::class == $this->imr->medical_record_type
-                        ? $this->imr->medical_record_id
-                        : null,
-                    'birth_date'                 => $this->dem->dob,
-                    'ccm_status'                 => 'enrolled',
-                    'consent_date'               => $this->dem->consent_date,
-                    'gender'                     => $this->dem->gender,
-                    'mrn_number'                 => $mrn,
-                    'preferred_contact_language' => $this->dem->preferred_contact_language,
-                    'preferred_contact_location' => $this->imr->location_id,
-                    'preferred_contact_method'   => 'CCT',
-                    'user_id'                    => $this->user->id,
-                    'registration_date'          => $this->user->user_registered,
-                ],
-                $agentDetails
-            )
+            $args
         );
         
-        if (! $this->patientInfo->mrn_number) {
-            $this->patientInfo->mrn_number = $mrn;
+        if ( ! $this->patientInfo->mrn_number) {
+            $this->patientInfo->mrn_number = $args['mrn_number'];
         }
         
-        if (! $this->patientInfo->birth_date) {
-            $this->patientInfo->birth_date = $this->dem->dob;
+        if ( ! $this->patientInfo->birth_date) {
+            $this->patientInfo->birth_date = $args['birth_date'];
         }
+    
+        if ( ! $this->patientInfo->imported_medical_record_id) {
+            $this->patientInfo->imported_medical_record_id = $args['imported_medical_record_id'];
+        }
+    
+        if ( ! $this->patientInfo->ccda_id) {
+            $this->patientInfo->ccda_id = $args['ccda_id'];
+        }
+    
+        if ( ! $this->patientInfo->ccm_status) {
+            $this->patientInfo->ccm_status = $args['ccm_status'];
+        }
+        
+        if ( ! $this->patientInfo->consent_date) {
+            $this->patientInfo->consent_date = $args['consent_date'];
+        }
+    
+        if ( ! $this->patientInfo->gender) {
+            $this->patientInfo->gender = $args['gender'];
+        }
+    
+        if ( ! $this->patientInfo->preferred_contact_language) {
+            $this->patientInfo->preferred_contact_language = $args['preferred_contact_language'];
+        }
+        
+        if ( ! $this->patientInfo->preferred_contact_location) {
+            $this->patientInfo->preferred_contact_location = $args['preferred_contact_location'];
+        }
+    
+        if ( ! $this->patientInfo->preferred_contact_method) {
+            $this->patientInfo->preferred_contact_method = $args['preferred_contact_method'];
+        }
+        
+        if ( ! $this->patientInfo->agent_name) {
+            $this->patientInfo->agent_name = $args['agent_name'] ?? null;
+        }
+    
+        if ( ! $this->patientInfo->agent_telephone) {
+            $this->patientInfo->agent_telephone = $args['agent_telephone'] ?? null;
+        }
+    
+        if ( ! $this->patientInfo->agent_email) {
+            $this->patientInfo->agent_email = $args['agent_email'] ?? null;
+        }
+        
+        if ( ! $this->patientInfo->agent_relationship) {
+            $this->patientInfo->agent_relationship = $args['agent_relationship'] ?? null;
+        }
+        
+        if ( ! $this->patientInfo->registration_date) {
+            $this->patientInfo->registration_date = $args['registration_date'];
+        }
+        
         
         if ($this->patientInfo->isDirty()) {
             $this->patientInfo->save();
@@ -610,8 +694,7 @@ class CarePlanHelper
     
     public function storePractice()
     {
-        $practiceId = empty($this->imr->practice_id)
-            ?: $this->imr->practice_id;
+        $practiceId = $this->imr->practice_id ?? null;
         
         if ($practiceId) {
             $this->user->attachPractice($practiceId, [Role::whereName('participant')->firstOrFail()->id]);
@@ -638,12 +721,12 @@ class CarePlanHelper
             
             $ccdProblem = Problem::updateOrCreate(
                 [
-                    'name'               => $problem->name,
-                    'patient_id'         => $this->user->id,
-                    'cpm_problem_id'     => $problem->cpm_problem_id,
+                    'name'           => $problem->name,
+                    'patient_id'     => $this->user->id,
+                    'cpm_problem_id' => $problem->cpm_problem_id,
                 ],
                 [
-                    'problem_import_id' => $problem->id,
+                    'problem_import_id'  => $problem->id,
                     'is_monitored'       => (bool) $problem->cpm_problem_id,
                     'ccd_problem_log_id' => $problem->ccd_problem_log_id,
                     'cpm_instruction_id' => optional($instruction)->id ?? null,
@@ -658,11 +741,11 @@ class CarePlanHelper
                         ProblemCode::updateOrCreate(
                             [
                                 'problem_id' => $ccdProblem->id,
+                                'code'       => $codeLog->code,
                             ],
                             [
                                 'code_system_name' => $codeLog->code_system_name,
                                 'code_system_oid'  => $codeLog->code_system_oid,
-                                'code'             => $codeLog->code,
                             ]
                         );
                     }
@@ -671,11 +754,10 @@ class CarePlanHelper
         }
         
         
-        
         $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
                        ->first();
-    
-        if (! $this->hasMisc($this->user, $misc)) {
+        
+        if ( ! $this->hasMisc($this->user, $misc)) {
             $this->user->cpmMiscs()->attach(optional($misc)->id);
         }
         

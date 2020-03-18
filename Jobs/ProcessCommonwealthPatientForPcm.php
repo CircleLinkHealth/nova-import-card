@@ -2,16 +2,13 @@
 
 namespace CircleLinkHealth\Eligibility\Jobs;
 
-use CircleLinkHealth\Eligibility\Decorators\CareTeamFromAthena;
-use CircleLinkHealth\Eligibility\Decorators\DemographicsFromAthena;
-use CircleLinkHealth\Eligibility\Decorators\InsuranceFromAthena;
 use CircleLinkHealth\Eligibility\Decorators\PcmChargeableServices;
 use CircleLinkHealth\Eligibility\Entities\EligibilityJob;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class ProcessCommonwealthPatientForPcm implements ShouldQueue
 {
@@ -34,13 +31,9 @@ class ProcessCommonwealthPatientForPcm implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param DemographicsFromAthena $addDemographicsFromAthenaToEligibilityJob
-     * @param CareTeamFromAthena $addCareTeamFromAthenaToEligibilityJob
-     * @param InsuranceFromAthena $addInsuranceFromAthenaToEligibilityJob
      * @param PcmChargeableServices $addPcmChargeableServices
      *
      * @return void
-     * @throws \Exception
      */
     public function handle(
         PcmChargeableServices $addPcmChargeableServices
