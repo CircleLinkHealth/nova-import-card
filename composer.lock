@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "33023441b95aa4d0d6ac152b6178a312",
+    "content-hash": "523319e97c866dc88c4a000507740c96",
     "packages": [
         {
             "name": "alexbowers/nova-prepopulate-searchable",
@@ -1017,11 +1017,11 @@
         },
         {
             "name": "circlelinkhealth/eligibility-module",
-            "version": "v1.9.2",
+            "version": "v1.9.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/eligibility-module.git",
-                "reference": "a8d7a480d3d32455a47e930b494505cbe8e2f027"
+                "reference": "e5ba6efba8e0460ac7e299386b7b9615a5ccc8ee"
             },
             "require": {
                 "circlelinkhealth/customer-module": "*"
@@ -1046,7 +1046,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-18T03:29:10+00:00"
+            "time": "2020-03-18T04:48:26+00:00"
         },
         {
             "name": "circlelinkhealth/generate-patient-call-data-csv",
