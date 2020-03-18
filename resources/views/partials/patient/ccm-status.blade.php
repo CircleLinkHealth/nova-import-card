@@ -1,5 +1,8 @@
 @php
 use CircleLinkHealth\Customer\Entities\Patient;
+
+$ccmStatus = $patient->getCcmStatus();
+
 @endphp
 
 @if(Route::is('patient.note.create') || Route::is('patient.note.edit'))
@@ -7,29 +10,29 @@ use CircleLinkHealth\Customer\Entities\Patient;
         <select id="ccm_status" name="ccm_status" class="selectpickerX dropdownValid form-control"
                 data-size="2"
                 style="width: 135px">
-            <option value="{{Patient::ENROLLED}}" {{$patient->getCcmStatus() == Patient::ENROLLED ? 'selected' : ''}}>
+            <option value="{{Patient::ENROLLED}}" {{$ccmStatus == Patient::ENROLLED ? 'selected' : ''}}>
                 Enrolled
             </option>
-            @if($patient->getCcmStatus() == Patient::WITHDRAWN_1ST_CALL)
+            @if($ccmStatus == Patient::WITHDRAWN_1ST_CALL)
                 <option class="withdrawn_1st_call"
-                        value="{{Patient::WITHDRAWN_1ST_CALL}}" {{$patient->getCcmStatus() == Patient::WITHDRAWN_1ST_CALL ? 'selected' : ''}}>
+                        value="{{Patient::WITHDRAWN_1ST_CALL}}" {{$ccmStatus == Patient::WITHDRAWN_1ST_CALL ? 'selected' : ''}}>
                     Wthdrn 1st Call
                 </option>
             @else
                 <option
                         class="withdrawn"
-                        value="{{CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN ? 'selected' : ''}}>
+                        value="{{Patient::WITHDRAWN}}" {{$ccmStatus == Patient::WITHDRAWN ? 'selected' : ''}}>
                     Withdrawn
                 </option>
             @endif
             <option class="paused"
-                    value="{{CircleLinkHealth\Customer\Entities\Patient::PAUSED}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::PAUSED ? 'selected' : ''}}>
+                    value="{{Patient::PAUSED}}" {{$ccmStatus == Patient::PAUSED ? 'selected' : ''}}>
                 Paused
             </option>
             @if($patient->getCcmStatus() == Patient::UNREACHABLE)
                 <option
                         class="unreachable"
-                        value="{{CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE}}" {{$patient->getCcmStatus() == CircleLinkHealth\Customer\Entities\Patient::UNREACHABLE ? 'selected' : ''}}>
+                        value="{{Patient::UNREACHABLE}}" {{$ccmStatus == Patient::UNREACHABLE ? 'selected' : ''}}>
                     Unreachable
                 </option>
             @endif
@@ -37,9 +40,9 @@ use CircleLinkHealth\Customer\Entities\Patient;
     </li>
 @else
     <li style="font-size: 18px"
-        class="inline-block col-xs-pull-1 {{$patient->getCcmStatus()}}"><?= (empty($patient->getCcmStatus()))
+        class="inline-block col-xs-pull-1 {{$ccmStatus}}"><?= (empty($ccmStatus))
             ? 'N/A'
-            : (CircleLinkHealth\Customer\Entities\Patient::WITHDRAWN_1ST_CALL === $patient->getCcmStatus()
+            : (Patient::WITHDRAWN_1ST_CALL === $ccmStatus
                 ? 'Withdrawn 1st Call'
-                : ucwords($patient->getCcmStatus())); ?></li>
+                : ucwords($ccmStatus)); ?></li>
 @endif
