@@ -56,7 +56,7 @@ class CcdaMedicalRecord extends BaseMedicalRecordTemplate
     
     public function fillAllergiesSection(): array
     {
-        return $this->ccda->allergies;
+        return (array) $this->ccda->allergies;
     }
     
     public function fillDemographicsSection(): object
@@ -71,22 +71,22 @@ class CcdaMedicalRecord extends BaseMedicalRecordTemplate
     
     public function fillMedicationsSection(): array
     {
-        return $this->ccda->medications;
+        return (array) $this->ccda->medications;
     }
     
     public function fillProblemsSection(): array
     {
-        return $this->ccda->problems;
+        return (array) $this->ccda->problems;
     }
     
     public function fillVitals(): array
     {
-        return $this->ccda->vitals;
+        return (array) $this->ccda->vitals;
     }
     
     public function fillPayersSection(): array
     {
-        return $this->ccda->payers;
+        return (array) $this->ccda->payers;
     }
     
     public function getType(): string
