@@ -125,14 +125,14 @@ class ApproveCPViaDM extends CustomerTestCase
         $this->enableFeatureFlag($this->practice()->id);
         
         Notification::fake();
-        $this->actingAs($this->administrator());
+        $this->actingAs($this->superadmin());
 
         $patient = $this->patient();
         $patient->setCarePlanStatus(CarePlan::DRAFT);
         $patient->setBillingProviderId($this->provider()->id);
 
         $this->assertEquals(CarePlan::DRAFT, $patient->carePlan->status);
-        event(new CarePlanWasApproved($patient, $this->administrator()));
+        event(new CarePlanWasApproved($patient, $this->superadmin()));
         $patient->carePlan->fresh();
         $this->assertEquals(CarePlan::QA_APPROVED, $patient->carePlan->status);
 
