@@ -514,7 +514,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
 
         $user = $query->first();
 
-        if ($user) {
+        if ($user && (int) $this->importedMedicalRecord->duplicate_id !== (int) $user->id) {
             $this->importedMedicalRecord->duplicate_id = $user->id;
             $this->importedMedicalRecord->save();
 
@@ -528,7 +528,7 @@ abstract class MedicalRecordEloquent extends \CircleLinkHealth\Core\Entities\Bas
             }
         )->whereMrnNumber($demos->mrn_number)->first();
 
-        if ($patient) {
+        if ($patient && (int) $this->importedMedicalRecord->duplicate_id !== (int) $user->id) {
             $this->importedMedicalRecord->duplicate_id = $patient->user_id;
             $this->importedMedicalRecord->save();
 
