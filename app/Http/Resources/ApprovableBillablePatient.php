@@ -15,7 +15,7 @@ use Illuminate\Http\Resources\Json\Resource;
 class ApprovableBillablePatient extends Resource
 {
     const ATTACH_DEFAULT_PROBLEMS_FOR_MONTH = '2020-03-01';
-    const BHI_SERVICE_CODE = 'CPT 99484';
+    const BHI_SERVICE_CODE                  = 'CPT 99484';
 
     public function allCcdProblems(User $patient)
     {
@@ -58,15 +58,18 @@ class ApprovableBillablePatient extends Resource
         //remove problems that have no icd10 codes due to bug, for months that this has happened. Wrap in if to minimize performance loss for other months
         if ($shouldAttachDefaultProblems) {
             $attestedProblems = $this->attestedProblems->filter(function ($p) {
-                return ! ! $p->icd10Code();
+                return (bool) $p->icd10Code();
             });
         } else {
             $attestedProblems = $this->attestedProblems;
         }
 
         //get Ccm attested problems
-        if ($shouldAttachDefaultProblems && $attestedProblems->where('cpmProblem.is_behavioral', '=',
-                false)->count() == 0) {
+        if ($shouldAttachDefaultProblems && 0 == $attestedProblems->where(
+            'cpmProblem.is_behavioral',
+            '=',
+            false
+        )->count()) {
             $attestedCcmProblems = collect([
                 optional($this->billableProblem1)->id,
                 optional($this->billableProblem2)->id,
@@ -78,8 +81,11 @@ class ApprovableBillablePatient extends Resource
         $attestedBhiProblems = [];
         //get Bhi attested Problems
         if ($this->hasServiceCode(self::BHI_SERVICE_CODE)) {
-            if ($shouldAttachDefaultProblems && $attestedProblems->where('cpmProblem.is_behavioral', '=',
-                    true)->count() == 0) {
+            if ($shouldAttachDefaultProblems && 0 == $attestedProblems->where(
+                'cpmProblem.is_behavioral',
+                '=',
+                true
+            )->count()) {
                 $bhiProblem          = $this->billableBhiProblems()->first();
                 $attestedBhiProblems = collect([
                     $bhiProblem
@@ -92,11 +98,11 @@ class ApprovableBillablePatient extends Resource
         }
 
         return [
-            'id'                     => $this->patient->id,
-            'mrn'                    => $this->patient->getMRN(),
-            'name'                   => $name,
-            'url'                    => $url,
-            'provider'               => $bP
+            'id'       => $this->patient->id,
+            'mrn'      => $this->patient->getMRN(),
+            'name'     => $name,
+            'url'      => $url,
+            'provider' => $bP
                 ? optional($bP->user)->getFullName()
                 : '',
             'practice'               => $this->patient->primaryPractice->display_name,

@@ -1683,6 +1683,8 @@ if ( ! function_exists('patientLoginIsEnabledForPractice')) {
     /**
      * Key: enable_patient_login_for_practice
      * Default: false.
+     *
+     * @param mixed $practiceId
      */
     function patientLoginIsEnabledForPractice(int $practiceId): bool
     {

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace Tests\Unit;
 
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\MedicationLog;
@@ -9,7 +13,7 @@ use Tests\TestCase;
 class ConsolidateMedicationInfoTest extends TestCase
 {
     use ConsolidatesMedicationInfo;
-    
+
     /**
      * A basic unit test example.
      *
@@ -34,9 +38,9 @@ class ConsolidateMedicationInfoTest extends TestCase
                 'import'                       => true,
             ]
         );
-        
+
         $consMed = $this->consolidateMedicationInfo($log);
-        
+
         $this->assertEquals($log->product_name, $consMed->cons_name);
         $this->assertFalse($this->containsSigKeywords($consMed->cons_name));
     }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Notifications\CarePlanProviderApproved;
@@ -7,10 +11,10 @@ use App\Notifications\Channels\FaxChannel;
 use CircleLinkHealth\Core\PdfService;
 use CircleLinkHealth\Customer\Entities\Location;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class FaxPatientCarePlansToLocation implements ShouldQueue
 {
@@ -19,9 +23,9 @@ class FaxPatientCarePlansToLocation implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     
     protected $pdfService;
-    protected $patients;
-    protected $location;
-    
+    public $patients;
+    public $location;
+
     /**
      * Create a new job instance.
      *
@@ -34,7 +38,7 @@ class FaxPatientCarePlansToLocation implements ShouldQueue
         $this->location   = $location;
         $this->pdfService = app(PdfService::class);
     }
-    
+
     /**
      * Execute the job.
      *

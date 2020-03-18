@@ -12,7 +12,7 @@
 @endcomponent
 
 @if($is_followup)
-Haven't setup your password yet? Click here: [Setup password]({{$reset_url}})
+Haven't setup your password yet? Click here: [Setup password]({!!$reset_url!!})
 @endif
 
 Regards,
@@ -22,7 +22,7 @@ Regards,
 @slot('subcopy')
 @component('mail::subcopy')
 
-If you're having trouble clicking the "{{$action_text}}" button, copy and past the URL below into your web browser: {{$action_url}}.
+If you're having trouble clicking the "{{$action_text}}" button, copy and past the URL below into your web browser: {!!$action_url!!}.
 
 @endcomponent
 @endslot
