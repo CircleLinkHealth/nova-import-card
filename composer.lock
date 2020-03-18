@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d39fb445e8ee2ba87333d8df42b5f4a6",
+    "content-hash": "fbd94fa1a4fcb4a6d75702dbc974d20e",
     "packages": [
         {
             "name": "appstract/laravel-opcache",
@@ -524,11 +524,11 @@
         },
         {
             "name": "circlelinkhealth/core-module",
-            "version": "dev-core_logic_for_projects",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:CircleLinkHealth/module-core.git",
-                "reference": "f2f543cf0b36fe4be92f9ea376f98d2167f15d2c"
+                "reference": "0868a7f278e4e1dc9f39c4f9dc91785fa640f454"
             },
             "require": {
                 "maatwebsite/excel": "^3.1"
@@ -557,7 +557,7 @@
                     "email": "mantoniou@cirlelinkhealth.com"
                 }
             ],
-            "time": "2020-03-05T12:33:40+00:00"
+            "time": "2020-03-06T15:55:55+00:00"
         },
         {
             "name": "circlelinkhealth/cpm-migrations-module",
@@ -6034,6 +6034,7 @@
                 "fpdi",
                 "pdf"
             ],
+            "abandoned": true,
             "time": "2019-01-30T14:38:19+00:00"
         },
         {
@@ -10599,7 +10600,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "circlelinkhealth/core-module": 20,
         "michalisantoniou6/laravel-cerberus": 20,
         "waavi/url-shortener": 20
     },

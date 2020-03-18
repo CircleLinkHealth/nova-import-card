@@ -109,12 +109,11 @@ class SurveyInvitationLink extends Notification implements ShouldQueue
      *
      * @return array
      */
-    public function via($notifiable)
+    public function via(NotifiableUser $notifiable)
     {
         if ( ! $this->via) {
             $channels = [];
-            /** @var User $target */
-            $target = $notifiable;
+            $target = $notifiable->user;
             $phone  = $target->getPhone();
             if ( ! empty($phone)) {
                 $channels[] = TwilioChannel::class;
