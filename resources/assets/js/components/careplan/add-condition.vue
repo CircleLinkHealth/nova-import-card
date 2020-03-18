@@ -127,7 +127,8 @@
                     })
                 }
 
-                return probs.filter(p => p && p.name).reduce((pA, pB) => {
+                return probs.filter(p => p && p.name)
+                    .reduce((pA, pB) => {
                     return pA.concat([{
                         name: pB.name,
                         id: pB.id,
