@@ -19,7 +19,7 @@ class PerformanceTest extends CustomerTestCase
     protected function setUp()
     {
         parent::setUp();
-        \Artisan::call('db:seed', ['--class' => \PopulateNursePerformanceTable::class]);
+        \Artisan::call('db:seed', ['--class' => \PopulateNursePerformanceSeeder::class]);
     }
 
     public function test_example()
