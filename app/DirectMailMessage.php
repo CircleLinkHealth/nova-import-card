@@ -55,7 +55,11 @@ class DirectMailMessage extends Model implements HasMedia
     const STATUS_FAIL        = 'fail';
 
     const STATUS_SUCCESS = 'success';
-    protected $fillable  = [
+
+    protected $attributes = [
+        'subject' => 'No Subject',
+    ];
+    protected $fillable = [
         //We get this from PhiMail API
         'message_id',
         'from',
@@ -67,10 +71,6 @@ class DirectMailMessage extends Model implements HasMedia
         'num_attachments',
         'direction',
         'status',
-    ];
-    
-    protected $attributes = [
-        'subject' => 'No Subject'
     ];
 
     public function ccdas()

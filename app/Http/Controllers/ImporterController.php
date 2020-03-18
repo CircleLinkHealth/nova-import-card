@@ -40,6 +40,9 @@ class ImporterController extends Controller
             ->with('practice')
             ->with('location')
             ->with('billingProvider')
+            ->whereHas('practice', function ($q) {
+                $q->whereIn('id', auth()->user()->viewableProgramIds());
+            })
             ->get()
             //where not in UPG + G0506
             //where media. where id = upg, custom_properties->mrn = imr.mrn, finished_processing()
@@ -114,6 +117,7 @@ class ImporterController extends Controller
         //example: http://cpm.clh.test/ccd-importer?source=importer_awv
         $source = $this->getSource($request);
 
+        $ccdas = [];
         foreach ($request->file('file') as $file) {
             \Log::channel('logdna')->warning("reading file $file");
 
@@ -126,7 +130,10 @@ class ImporterController extends Controller
             ]);
 
             ImportCcda::dispatch($ccda, true);
+            $ccdas[] = $ccda->id;
         }
+
+        return $ccdas;
     }
 
     /**
@@ -186,13 +193,13 @@ class ImporterController extends Controller
      */
     public function uploadRecords(Request $request)
     {
-        $this::handleCcdFilesUpload($request);
+        $ccdas = $this::handleCcdFilesUpload($request);
 
         if ( ! $request->has('json')) {
             return redirect()->route('import.ccd.remix');
         }
 
-        return response()->json([]);
+        return response()->json(['ccdas' => $ccdas]);
     }
 
     /**

@@ -107,6 +107,6 @@ class Kernel extends HttpKernel
         'doNotCacheResponse'     => DummyPlaceholder::class,
         'cacheResponse'          => DummyPlaceholder::class,
         'checkPatientUserData'   => CheckPatientUserData::class,
-        'enrollmentCenter'       => EnrollmentCenter::class
+        'enrollmentCenter'       => EnrollmentCenter::class,
     ];
 }

@@ -9,8 +9,8 @@ namespace App\Console;
 use App\Console\Commands\CreateApprovableBillablePatientsReport;
 use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
-use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckEnrolledPatientsForScheduledCalls;
+use App\Console\Commands\CheckForMissingLogoutsAndInsert;
 use App\Console\Commands\CheckForYesterdaysActivitiesAndUpdateContactWindows;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
@@ -25,10 +25,10 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
-use App\Console\Commands\RunScheduler;
 use App\Console\Commands\SendCarePlanApprovalReminders;
 use App\Console\Commands\TuneScheduledCalls;
 use App\Notifications\NurseDailyReport;
+use CircleLinkHealth\Core\Console\Commands\RunScheduler;
 use CircleLinkHealth\Core\Entities\DatabaseNotification;
 use CircleLinkHealth\Customer\Entities\Location;
 use CircleLinkHealth\Customer\Entities\Practice;
@@ -53,7 +53,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        RunScheduler::class
+        RunScheduler::class,
     ];
 
     /**
@@ -95,7 +95,7 @@ class Kernel extends ConsoleKernel
 
         //family calls will be scheduled in RescheduleMissedCalls
         //$schedule->command(SyncFamilialCalls::class)->dailyAt('00:30')->onOneServer();
-        
+
         $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyMinute()->withoutOverlapping()->onOneServer();
 
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
@@ -132,11 +132,11 @@ class Kernel extends ConsoleKernel
             ->cron('1 0 1 * *')->onOneServer();
 
         //Run at 12:45am every 1st of month
-        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor' => true, 'date' => now()->subMonth()->startOfMonth()->toDateString()])
+        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor', now()->subMonth()->startOfMonth()->toDateString()])
             ->cron('45 0 1 * *')->onOneServer();
 
-        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor' => true, 'date' => now()->startOfMonth()->toDateString()])
-            ->hourly()->onOneServer();
+        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor', now()->startOfMonth()->toDateString()])
+            ->everyThirtyMinutes()->onOneServer();
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,
@@ -201,15 +201,15 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckForYesterdaysActivitiesAndUpdateContactWindows::class)->dailyAt('00:10')->onOneServer();
         
         $schedule->command(ImportCommand::class, [
-            'model' => User::class
+            User::class
         ])->dailyAt('03:05');
     
         $schedule->command(ImportCommand::class, [
-            'model' => Practice::class
+            Practice::class
         ])->dailyAt('03:10');
         
         $schedule->command(ImportCommand::class, [
-            'model' => Location::class
+            Location::class
         ])->dailyAt('03:15');
     }
 }

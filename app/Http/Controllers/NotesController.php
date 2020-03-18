@@ -458,7 +458,7 @@ class NotesController extends Controller
 
         return view('wpUsers.patient.note.view', $view_data);
     }
-
+    
     /**
      * Store a note.
      * If note has call and user is care-center:
@@ -471,9 +471,12 @@ class NotesController extends Controller
      * Also: in some conditions call will be stored for other roles as well.
      * They are never redirected to Schedule Next Call page.
      *
+     * @param SafeRequest $request
+     * @param SchedulerService $schedulerService
      * @param $patientId
      *
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(
         SafeRequest $request,

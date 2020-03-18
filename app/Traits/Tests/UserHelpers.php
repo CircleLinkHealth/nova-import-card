@@ -10,6 +10,7 @@ use App\Call;
 use App\CLH\Repositories\UserRepository;
 use App\Repositories\PatientWriteRepository;
 use Carbon\Carbon;
+use CircleLinkHealth\Core\Entities\AppConfig;
 use CircleLinkHealth\Core\StringManipulation;
 use CircleLinkHealth\Customer\Entities\Nurse;
 use CircleLinkHealth\Customer\Entities\NurseContactWindow;
@@ -18,6 +19,8 @@ use CircleLinkHealth\Customer\Entities\PatientContactWindow;
 use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\Role;
 use CircleLinkHealth\Customer\Entities\User;
+use CircleLinkHealth\NurseInvoices\Config\NurseCcmPlusConfig;
+use CircleLinkHealth\SharedModels\Entities\CpmProblem;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -226,5 +229,102 @@ trait UserHelpers
         $user->locations()->sync($locations);
 
         return $user;
+    }
+
+    private function setupNurse(
+        User $nurse,
+        bool $variableRate = true,
+        float $hourlyRate = 29.0,
+        bool $enableCcmPlus = false,
+        float $visitFee = null
+    ) {
+        $nurse->nurseInfo->is_variable_rate = $variableRate;
+        $nurse->nurseInfo->hourly_rate      = $hourlyRate;
+        $nurse->nurseInfo->high_rate        = 30.00;
+        $nurse->nurseInfo->high_rate_2      = 28.00;
+        $nurse->nurseInfo->high_rate_3      = 27.50;
+
+        $nurse->nurseInfo->low_rate = 10;
+
+        if ($visitFee) {
+            $nurse->nurseInfo->visit_fee   = $visitFee;
+            $nurse->nurseInfo->visit_fee_2 = 12.00;
+            $nurse->nurseInfo->visit_fee_3 = 11.75;
+        }
+
+        $nurse->nurseInfo->save();
+
+        AppConfig::updateOrCreate(
+            [
+                'config_key' => NurseCcmPlusConfig::NURSE_CCM_PLUS_ENABLED_FOR_ALL,
+            ],
+            [
+                'config_value' => $enableCcmPlus
+                    ? 'true'
+                    : 'false',
+            ]
+        );
+
+        if ($enableCcmPlus && $visitFee) {
+            $current = implode(',', NurseCcmPlusConfig::altAlgoEnabledForUserIds());
+            AppConfig::updateOrCreate(
+                [
+                    'config_key' => NurseCcmPlusConfig::NURSE_CCM_PLUS_ALT_ALGO_ENABLED_FOR_USER_IDS,
+                ],
+                [
+                    'config_value' => $current . (empty($current)
+                            ? ''
+                            : ',') . $nurse->id,
+                ]
+            );
+
+            //hack for SmartCacheManager
+            \Cache::store('array')->clear();
+        }
+
+        return $nurse;
+    }
+
+    private function setupPatient(Practice $practice, $isBhi = false, $pcmOnly = false)
+    {
+        $patient = $this->createUser($practice->id, 'participant');
+        $patient->setPreferredContactLocation($this->location->id);
+
+        if ($isBhi) {
+            $consentDate = Carbon::parse(Patient::DATE_CONSENT_INCLUDES_BHI);
+            $consentDate->addDay();
+            $patient->patientInfo->consent_date = $consentDate;
+        }
+
+        $patient->patientInfo->save();
+        $cpmProblems = CpmProblem::get();
+
+        //$pcmOnly means one ccm condition only
+        if ($pcmOnly) {
+            $ccdProblems = $patient->ccdProblems()->createMany([
+                ['name' => 'test' . str_random(5)],
+            ]);
+        }
+        else {
+            $ccdProblems = $patient->ccdProblems()->createMany([
+                ['name' => 'test' . str_random(5), 'is_monitored' => 1],
+                ['name' => 'test' . str_random(5)],
+                ['name' => 'test' . str_random(5)],
+            ]);
+        }
+
+        $len = $ccdProblems->count();
+        for ($i = 0; $i < $len; $i++) {
+            $problem = $ccdProblems->get($i);
+            $isLast  = $i === $len - 1;
+            if ($isLast && $isBhi) {
+                $problem->cpmProblem()->associate($cpmProblems->firstWhere('is_behavioral', '=', 1));
+            } else {
+                $problem->cpmProblem()->associate($cpmProblems->random());
+            }
+            $problem->save();
+        }
+
+        return $patient;
     }
 }

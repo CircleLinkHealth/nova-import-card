@@ -14,10 +14,12 @@
     </ul>
     <p>&nbsp;</p>
     <ol start="2">
+
         <li> Monthly Case Completion ({{$caseLoadComplete}}%)</li>
     </ol>
     <ul>
         <li>Monthly caseload: {{$totalPatientsInCaseLoad}} patients</li>
+
         {{--        <li>Patients completed for the month: {{$completedPatients}}</li>--}}
         {{--        <li>Patients remaining: {{$incompletePatients}}</li>--}}
     </ul>

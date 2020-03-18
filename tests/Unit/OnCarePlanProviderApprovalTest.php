@@ -113,7 +113,7 @@ class OnCarePlanProviderApprovalTest extends TestCase
 
         $this->assertTrue($validator->fails());
         $this->assertEquals(
-            'The Care Plan must have two CPM problems, or one BHI problem.',
+            'The Care Plan must have two CPM problems for CCM, one if practice has PCM (G2065) enabled or one BHI problem.',
             $validator->errors()->first('conditions')
         );
         $this->assertEquals('The dob field is required.', $validator->errors()->first('dob'));

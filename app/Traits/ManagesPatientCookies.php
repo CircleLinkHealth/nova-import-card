@@ -58,6 +58,7 @@ trait ManagesPatientCookies
     private function forgetCookie()
     {
         if ($this->cookieExists()) {
+            unset($_COOKIE['practice_name_as_logo']);
             Cookie::queue(Cookie::forget('practice_name_as_logo'));
         }
     }

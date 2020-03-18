@@ -107,6 +107,13 @@ return [
             'table'    => 'lv_password_resets',
             'expire'   => 60,
         ],
+        //token for patients, CPM 2081 patient-login
+        'patient_users' => [
+            'provider' => 'users',
+            'email'    => 'emails.password',
+            'table'    => 'lv_password_resets',
+            'expire' => \App\Constants::THIRTY_DAYS_IN_MINUTES,
+        ],
     ],
 
     /*
