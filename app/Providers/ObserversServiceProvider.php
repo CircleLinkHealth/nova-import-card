@@ -8,6 +8,7 @@ namespace App\Providers;
 
 use App\Call;
 use App\Models\Addendum;
+use App\Note;
 use App\Observers\AddendumObserver;
 use App\Observers\AppConfigObserver;
 use App\Observers\CallObserver;
@@ -16,6 +17,7 @@ use App\Observers\CarePlanTemplateObserver;
 use App\Observers\EligibilityBatchObserver;
 use App\Observers\HolidayObserver;
 use App\Observers\MedicationObserver;
+use App\Observers\NoteObserver;
 use App\Observers\NurseContactWindowObserver;
 use App\Observers\NurseInvoiceDailyDisputeObserver;
 use App\Observers\NurseInvoiceExtrasObserver;
@@ -63,6 +65,7 @@ class ObserversServiceProvider extends ServiceProvider
         NurseContactWindow::observe(NurseContactWindowObserver::class);
         Holiday::observe(HolidayObserver::class);
         Medication::observe(MedicationObserver::class);
+        Note::observe(NoteObserver::class);
         NurseInvoiceExtra::observe(NurseInvoiceExtrasObserver::class);
         PageTimer::observe(PageTimerObserver::class);
         Patient::observe(PatientObserver::class);

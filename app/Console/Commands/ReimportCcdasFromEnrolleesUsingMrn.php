@@ -7,8 +7,12 @@
 namespace App\Console\Commands;
 
 use CircleLinkHealth\Eligibility\Entities\Enrollee;
+use CircleLinkHealth\Eligibility\MedicalRecordImporter\Contracts\MedicalRecord;
 use CircleLinkHealth\Eligibility\MedicalRecordImporter\Entities\ImportedMedicalRecord;
+use CircleLinkHealth\Eligibility\MedicalRecord\Templates\MarillacMedicalRecord;
+use CircleLinkHealth\Eligibility\ValueObjects\BlueButtonMedicalRecord;
 use CircleLinkHealth\SharedModels\Entities\Ccda;
+use CircleLinkHealth\SharedModels\Entities\TabularMedicalRecord;
 use Illuminate\Console\Command;
 
 class ReimportCcdasFromEnrolleesUsingMrn extends Command
@@ -24,7 +28,7 @@ class ReimportCcdasFromEnrolleesUsingMrn extends Command
      *
      * @var string
      */
-    protected $signature = 'reimport:enrollees {practiceId}';
+    protected $signature = 'reimport:enrollees {practiceId} {--tmr} {--ccd}';
 
     /**
      * Create a new command instance.
@@ -44,7 +48,7 @@ class ReimportCcdasFromEnrolleesUsingMrn extends Command
     public function handle()
     {
         Enrollee::where('practice_id', $this->argument('practiceId'))
-            ->with('user')
+            ->with(['user', 'eligibilityJob', 'practice'])
             ->chunkById(
                     100,
                     function ($enrollees) {
@@ -53,7 +57,7 @@ class ReimportCcdasFromEnrolleesUsingMrn extends Command
                                 $this->showPreMessage($e);
                                 $this->updateOrCreateCarePlan(
                                     $this->reimport(
-                                        $this->linkCcdaUsingMrn($e)
+                                        $this->medicalRecord($e)
                                     )
                                 );
                             }
@@ -65,7 +69,7 @@ class ReimportCcdasFromEnrolleesUsingMrn extends Command
     private function linkCcdaUsingMrn(Enrollee $e): ?Ccda
     {
         $ccda = Ccda::withTrashed()->where('practice_id', $this->argument('practiceId'))->where(
-            'mrn',
+            'json->demographics->mrn_number',
             $e->mrn
         )->orderBy('deleted_at')->first();
 
@@ -84,14 +88,51 @@ class ReimportCcdasFromEnrolleesUsingMrn extends Command
         return null;
     }
 
-    private function reimport(?Ccda $ccda): ?ImportedMedicalRecord
+    private function linkTMRUsingMrn(Enrollee $e): ?TabularMedicalRecord
     {
-        if ( ! $ccda) {
+        $tmr = TabularMedicalRecord::withTrashed()->where('practice_id', $this->argument('practiceId'))->where(
+            'mrn',
+            $e->mrn
+        )->orderBy('deleted_at')->first();
+
+        if ($tmr) {
+            $e->medical_record_id   = $tmr->id;
+            $e->medical_record_type = TabularMedicalRecord::class;
+            $e->save();
+
+            if ( ! is_null($tmr->deleted_at)) {
+                $tmr->restore();
+            }
+
+            return $tmr;
+        }
+
+        return null;
+    }
+
+    private function medicalRecord(Enrollee $e)
+    {
+        if ($this->option('tmr')) {
+            return $this->linkTMRUsingMrn($e);
+        }
+
+        if ($this->option('ccd')) {
+            return $this->linkCcdaUsingMrn($e);
+        }
+
+        if ($this->option('ej')) {
+            return $this->createCcdaFromEligibilityJob($e);
+        }
+    }
+
+    private function reimport(?MedicalRecord $mr): ?ImportedMedicalRecord
+    {
+        if ( ! $mr) {
             return null;
         }
 
-        if ($imr = $ccda->importedMedicalRecord()) {
-            $ccda->import();
+        if ($imr = $mr->importedMedicalRecord()) {
+            $mr->import();
 
             return $imr;
         }

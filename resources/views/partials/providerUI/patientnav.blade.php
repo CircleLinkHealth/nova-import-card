@@ -27,12 +27,12 @@
                         <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">Patient
                             Activity Report</a>
                     </li>
-                    @if(auth()->user()->isNotSaas())
-                        <li>
-                            <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress
-                                Report</a>
-                        </li>
-                    @endif
+{{--                    @if(auth()->user()->isNotSaas())--}}
+{{--                        <li>--}}
+{{--                            <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress--}}
+{{--                                Report</a>--}}
+{{--                        </li>--}}
+{{--                    @endif--}}
                     <li>
                         <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.care-docs', array('patient' => $patient->id)) }}">Wellness Visit Docs</a>
                     </li>

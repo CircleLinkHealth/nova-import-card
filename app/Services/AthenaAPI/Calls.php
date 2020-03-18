@@ -360,6 +360,20 @@ class Calls implements AthenaApiImplementation
         return $this->response($response);
     }
 
+    public function getDepartmentInfo($practiceId, $departmentId, $providerList = false)
+    {
+        $this->api()->setPracticeId($practiceId);
+
+        $response = $this->api()->GET(
+            "departments/${departmentId}",
+            [
+                'providerlist' => $providerList,
+            ]
+        );
+
+        return $this->response($response);
+    }
+
     /**
      * Get all department ids for a practice.
      *
@@ -379,20 +393,6 @@ class Calls implements AthenaApiImplementation
             [
                 'practiceid'         => $practiceId,
                 'showalldepartments' => $showAllDepartments,
-            ]
-        );
-
-        return $this->response($response);
-    }
-
-    public function getDepartmentInfo($practiceId, $departmentId, $providerList = false)
-    {
-        $this->api()->setPracticeId($practiceId);
-
-        $response = $this->api()->GET(
-            "departments/${departmentId}",
-            [
-                'providerlist' => $providerList,
             ]
         );
 
