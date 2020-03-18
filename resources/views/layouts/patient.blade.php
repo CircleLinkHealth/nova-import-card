@@ -52,6 +52,7 @@
 
 </div> <!-- end #app -->
 
+@include('partials.sentry-js')
 </body>
 
 </html>

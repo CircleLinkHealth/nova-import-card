@@ -62,9 +62,9 @@
                             <div class="col-lg-12"
                                  style="background-color: white;margin: 0 0px 10px 0px;border-top: #50b2e1 3px solid;">
                                 <div class="col-lg-10 col-lg-offset-1" style="text-align: center">
-                                    @if(\Illuminate\Support\Facades\Cookie::has('practice_name_as_logo'))
+                                    @if(\Illuminate\Support\Facades\Cookie::has('practice_name_as_logo') && ! empty(\Illuminate\Support\Facades\Cookie::get('practice_name_as_logo')))
                                         <h2 class="auth-pages-title">{{\Illuminate\Support\Facades\Cookie::get('practice_name_as_logo')}}</h2>
-                                    @elseif(isset($_COOKIE['practice_name_as_logo']))
+                                    @elseif(isset($_COOKIE['practice_name_as_logo']) && ! empty($_COOKIE['practice_name_as_logo']))
                                         <h2 class="auth-pages-title">{{$_COOKIE['practice_name_as_logo']}}</h2>
                                     @else
                                         <img class="img-responsive" src="{{ mix('img/logos/LogoHorizontal_Color.svg') }}"
@@ -84,5 +84,6 @@
 </div>
 
 <script src="{{mix('js/prevent-multiple-submits.js')}}"></script>
+@include('partials.sentry-js')
 </body>
 </html>

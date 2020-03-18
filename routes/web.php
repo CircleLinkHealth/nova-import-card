@@ -954,6 +954,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'NotesController@storeAddendum',
                 'as'   => 'note.store.addendum',
             ])->middleware('permission:addendum.create');
+            Route::get('download/{noteId}', [
+                'uses' => 'NotesController@download',
+                'as'   => 'patient.note.download',
+            ])->middleware(['permission:patient.read', 'cacheResponse']);
         });
 
         Route::get('progress', [
@@ -1040,11 +1044,6 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/counts', [
                     'uses' => 'Billing\PracticeInvoiceController@counts',
                 ])->middleware('permission:patientSummary.read');
-
-                Route::post('/storeProblem', [
-                    'uses' => 'Billing\PracticeInvoiceController@storeProblem',
-                    'as'   => 'monthly.billing.store-problem',
-                ])->middleware('permission:patientSummary.update');
 
                 Route::post('/close', [
                     'uses' => 'Billing\PracticeInvoiceController@closeMonthlySummaryStatus',

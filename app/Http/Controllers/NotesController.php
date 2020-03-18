@@ -222,6 +222,21 @@ class NotesController extends Controller
         return redirect()->route('patient.note.index', ['patientId' => $patientId]);
     }
 
+    public function download(Request $request, $patientId, $noteId)
+    {
+        $format = $request->input('format');
+        $note   = Note::with('patient.ccdProblems')->wherePatientId($patientId)->findOrFail($noteId);
+
+        if ('pdf' === $format) {
+            return response()->download($note->toPdf(), "patient-$patientId-note-$noteId.pdf")->deleteFileAfterSend();
+        }
+        if ('html' === $format) {
+            return $note->toPdf(null, true);
+        }
+
+        return redirect()->back();
+    }
+
     /**
      * @param $noteId
      *
@@ -443,7 +458,7 @@ class NotesController extends Controller
 
         return view('wpUsers.patient.note.view', $view_data);
     }
-
+    
     /**
      * Store a note.
      * If note has call and user is care-center:
@@ -456,9 +471,12 @@ class NotesController extends Controller
      * Also: in some conditions call will be stored for other roles as well.
      * They are never redirected to Schedule Next Call page.
      *
+     * @param SafeRequest $request
+     * @param SchedulerService $schedulerService
      * @param $patientId
      *
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(
         SafeRequest $request,
