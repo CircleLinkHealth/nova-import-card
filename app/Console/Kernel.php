@@ -132,11 +132,11 @@ class Kernel extends ConsoleKernel
             ->cron('1 0 1 * *')->onOneServer();
 
         //Run at 12:45am every 1st of month
-        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor' => true, 'date' => now()->subMonth()->startOfMonth()->toDateString()])
+        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor', now()->subMonth()->startOfMonth()->toDateString()])
             ->cron('45 0 1 * *')->onOneServer();
 
-        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor' => true, 'date' => now()->startOfMonth()->toDateString()])
-            ->hourly()->onOneServer();
+        $schedule->command(CreateApprovableBillablePatientsReport::class, ['--reset-actor', now()->startOfMonth()->toDateString()])
+            ->everyThirtyMinutes()->onOneServer();
 
 //        $schedule->command(
 //            SendCareCoachInvoices::class,
@@ -201,15 +201,15 @@ class Kernel extends ConsoleKernel
         $schedule->command(CheckForYesterdaysActivitiesAndUpdateContactWindows::class)->dailyAt('00:10')->onOneServer();
         
         $schedule->command(ImportCommand::class, [
-            'model' => User::class
+            User::class
         ])->dailyAt('03:05');
     
         $schedule->command(ImportCommand::class, [
-            'model' => Practice::class
+            Practice::class
         ])->dailyAt('03:10');
         
         $schedule->command(ImportCommand::class, [
-            'model' => Location::class
+            Location::class
         ])->dailyAt('03:15');
     }
 }

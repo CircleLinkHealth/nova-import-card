@@ -18,6 +18,7 @@ use App\View\MetaTag;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\CarePerson;
 use CircleLinkHealth\Customer\Entities\Media;
+use CircleLinkHealth\Customer\Entities\Practice;
 use CircleLinkHealth\Customer\Entities\User;
 use Illuminate\Support\Facades\URL;
 
@@ -168,19 +169,22 @@ class NoteService
 
         return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment($userId, $authorId, $body));
     }
-
+    
     /**
      * Forward the note.
      *
      * Force forwards to CareTeam if the patient's in the hospital, ie `if(true === note->isTCM)`
      *
+     * @param Note $note
      * @param bool $notifyCareTeam
      * @param bool $notifyCLH
      * @param bool $forceNotify
+     *
+     * @return void
      */
     public function forwardNoteIfYouMust(Note $note, $notifyCareTeam = false, $notifyCLH = false, $forceNotify = false)
     {
-        if ($note->isTCM) {
+        if ($note->isTCM && $this->practiceHasNotesNotificationsEnabled($note->patient->primaryPractice)) {
             $notifyCareTeam = $forceNotify = true;
         }
 
@@ -521,5 +525,17 @@ class NoteService
                 ->whereNotNull('read_at')
                 ->exists()
             : null;
+    }
+    
+    /**
+     * @param Practice $practice
+     *
+     * @return bool
+     */
+    public function practiceHasNotesNotificationsEnabled(Practice $practice) : bool
+    {
+        return with($practice->cpmSettings(), function ($settings) {
+            return $settings->email_note_was_forwarded || $settings->efax_pdf_notes || $settings->dm_pdf_notes;
+        });
     }
 }

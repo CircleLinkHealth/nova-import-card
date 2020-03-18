@@ -2,16 +2,15 @@
 
 namespace App\Jobs;
 
-use App\Jobs\AttachBillableProblemsToSummary;
 use App\Repositories\BillablePatientsEloquentRepository;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class ProcessLastMonthBillablePatients implements ShouldQueue
+class ProcessBillablePatients implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     /**
@@ -73,7 +72,7 @@ class ProcessLastMonthBillablePatients implements ShouldQueue
                                              $pms->save();
                                          }
                     
-                                         AttachBillableProblemsToSummary::dispatch(
+                                         ProcessApprovableBillablePatientSummary::dispatch(
                                              $pms
                                          );
                                      }

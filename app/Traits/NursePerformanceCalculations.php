@@ -62,10 +62,10 @@ trait NursePerformanceCalculations
         return collect($results);
     }
 
-    public function estHoursToCompleteCaseLoadMonth(User $nurse, Carbon $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse)
+    public function estHoursToCompleteCaseLoadMonth(User $nurse, Carbon $date, $patientsForMonth, $totalMonthlyCompletedPatientsOfNurse, $successfulCalls)
     {
         $avgCompletionPerPatient = $this->getAvgCompletionTime($nurse, $date, $totalMonthlyCompletedPatientsOfNurse);
-        $incompletePatientsCount = $this->getIncompletePatientsCount($patientsForMonth);
+        $incompletePatientsCount = $this->getIncompletePatientsCount($patientsForMonth, $successfulCalls);
 
         return round(($avgCompletionPerPatient * $incompletePatientsCount) / 60, 1);
         //        This is the old calculation
@@ -92,18 +92,18 @@ trait NursePerformanceCalculations
         return round(($totalCPMtimeForMonth / 60) / $totalMonthlyCompletedPatientsOfNurse, 2);
     }
 
-    public function getIncompletePatientsCount($patientsForMonth)
+    public function getIncompletePatientsCount($patientsForMonth, $successfulCalls)
     {
-        $incompletePatients = [];
-        foreach ($patientsForMonth as $patient) {
-            $successfulCalls = $patient->successful_calls;
-//             If its the opposite of "completed" then this should be enough.
-            if (0 === $successfulCalls) {
-                $incompletePatients[] = $patient->patient_id;
-            }
-        }
-
-        return collect($incompletePatients)->count();
+//        $incompletePatients = [];
+//        foreach ($patientsForMonth as $patient) {
+//            $successfulCalls = $patient->successful_calls;
+//            if (0 === $successfulCalls) {
+//                $incompletePatients[] = $patient->patient_id;
+//            }
+//        }
+//
+//        return collect($incompletePatients)->count();
+        return collect($patientsForMonth)->count() - $successfulCalls;
     }
 
     /**

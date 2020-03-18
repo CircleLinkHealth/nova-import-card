@@ -584,7 +584,7 @@
             },
             attestedCcmProblemCodes(patient) {
                 return patient.problems.filter(function (p) {
-                    return patient.attested_ccm_problems.includes(p.id) && !!p.code;
+                    return (patient.attested_ccm_problems || []).includes(p.id) && !!p.code;
                 })
                     .map(function (p) {
                         return p.code;

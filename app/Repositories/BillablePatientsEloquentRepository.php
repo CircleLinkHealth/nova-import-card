@@ -7,6 +7,7 @@
 namespace App\Repositories;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use App\Constants;
 use Carbon\Carbon;
 use CircleLinkHealth\Customer\Entities\PatientMonthlySummary;
 use CircleLinkHealth\Customer\Entities\User;
@@ -17,12 +18,10 @@ class BillablePatientsEloquentRepository
         $practiceId,
         Carbon $date,
         array $with = [
-            'ccdProblems',
-            'patientSummaries',
-            'cpmProblems',
+            'careTeamMembers',
             'patientInfo',
             'primaryPractice',
-            'careTeamMembers',
+            'patientSummaries',
         ]
     ) {
         $month = $date->startOfMonth();
@@ -30,16 +29,14 @@ class BillablePatientsEloquentRepository
         $result = User::with(
             collect(
                 [
-                    'ccdProblems'      => function ($query) {
-                        $query->with(['icd10Codes', 'cpmProblem']);
-                    },
                     'patientSummaries' => function ($query) use ($month) {
                         $query->where('month_year', $month)
                               ->where('total_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS)
                               ->where('no_of_successful_calls', '>=', 1)
-                              ->with('chargeableServices');
+                              ->with('chargeableServices')
+                              ->with('attestedProblems.cpmProblem')
+                              ->with('attestedProblems.icd10Codes');
                     },
-                    'cpmProblems',
                     'patientInfo',
                     'primaryPractice',
                     'careTeamMembers'  => function ($q) {
@@ -57,14 +54,14 @@ class BillablePatientsEloquentRepository
                     
                     return true;
                 }
-            )
+            )->all()
         )
             ->has('patientInfo')
             ->whereHas(
                           'patientSummaries',
                           function ($query) use ($month) {
                               $query->where('month_year', $month)
-                                  ->where('total_time', '>=', 1200)
+                                  ->where('total_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS)
                                   ->where('no_of_successful_calls', '>=', 1);
                           }
                       )
@@ -83,15 +80,14 @@ class BillablePatientsEloquentRepository
                 'attestedProblems' => function ($problem) {
                     $problem->with(['cpmProblem', 'codes']);
                 },
-                'billableBhiProblems',
             ]
         )
             ->orderBy('needs_qa', 'desc')
             ->where('month_year', $month)
             ->where(
                                            function ($q) {
-                                               $q->where('ccm_time', '>=', 1200)
-                                                   ->orWhere('bhi_time', '>=', 1200);
+                                               $q->where('ccm_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS)
+                                                   ->orWhere('bhi_time', '>=', AlternativeCareTimePayableCalculator::MONTHLY_TIME_TARGET_IN_SECONDS);
                                            }
                                        )
             ->when(
@@ -102,14 +98,9 @@ class BillablePatientsEloquentRepository
                                                        'patient' => function ($q) use ($month, $practiceId) {
                                                            $q->with(
                                                                [
-                                                                   'ccdProblems' => function ($query) {
-                                                                       $query->with(['icd10Codes', 'cpmProblem']);
-                                                                   },
-                                                                   'billingProvider.user',
-                                                                   'cpmProblems',
                                                                    'patientInfo',
                                                                    'primaryPractice',
-                                                                   'careTeamMembers' => function ($q) {
+                                                                   'careTeamMembers'  => function ($q) {
                                                                        $q->where('type', '=', 'billing_provider');
                                                                    },
                                                                ]
@@ -138,20 +129,5 @@ class BillablePatientsEloquentRepository
                                        );
 
         return $result;
-    }
-
-    public function patientsWithSummaries($practiceId, Carbon $date)
-    {
-        $month = $date->startOfMonth();
-
-        return User::whereHas(
-            'patientSummaries',
-            function ($query) use ($month) {
-                $query->where('month_year', $month)
-                    ->where('total_time', '>=', 1200);
-            }
-        )
-            ->ofType('participant')
-            ->where('program_id', '=', $practiceId);
     }
 }
